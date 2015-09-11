@@ -5,10 +5,14 @@
  */
 package com.opengg.core.test;
 
+import java.net.SocketException;
+
 /**
  *
  * @author 19coindreauj
  */
 public class Test {
-    
+    public void main(String args[]) throws SocketException{
+        throw new SocketException();
+    }
 }
