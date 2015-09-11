@@ -18,7 +18,7 @@ public class OpenGGTest {
         System.out.println("GG, SCRUBBSSS");
         
     }
-    public void print(String s){
-        System.out.println(s);
+    public void print(String su){
+        System.out.println(su);
     }
 }
