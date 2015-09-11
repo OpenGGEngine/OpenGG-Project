@@ -12,7 +12,12 @@ import java.net.SocketException;
  * @author 19coindreauj
  */
 public class Test {
-    public void main(String args[]) throws SocketException{
-        throw new SocketException();
+    public void main(String args[]){
+        try{
+            throw new SocketException();
+        }catch(SocketException e){
+            
+        }
+            
     }
 }
