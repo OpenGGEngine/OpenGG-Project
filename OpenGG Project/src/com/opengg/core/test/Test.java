@@ -27,8 +27,9 @@ public class Test {
             window = win.init(1280, 720, "Test", false);
         } catch (Exception ex){ex.printStackTrace();}
         
-        
+        loop();
     }
+    
     
     static void loop(){
          GL.setCurrent(GLContext.createFromCurrent()); 
