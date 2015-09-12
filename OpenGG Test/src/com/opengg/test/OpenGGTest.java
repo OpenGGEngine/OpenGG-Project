@@ -113,5 +113,4 @@ public class OpenGGTest {
     public static void main(String[] args) {
         new OpenGGTest().run();
     }
- 
 }
