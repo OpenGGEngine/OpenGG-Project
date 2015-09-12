@@ -6,18 +6,16 @@
 package com.opengg.core.test;
 
 import java.net.SocketException;
+import com.opengg.core.window.Window;
 
 /**
  *
  * @author 19coindreauj
  */
 public class Test {
-    public void main(String args[]){
-        try{
-            throw new SocketException();
-        }catch(SocketException e){
-            
-        }
+    public static void main(String args[]){
+        Window win = new Window();
+	win.start();
             
     }
 }
