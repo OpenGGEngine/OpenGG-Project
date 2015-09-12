@@ -37,7 +37,7 @@ public class OpenGGTest {
     }
  
     private void init() {
-        boolean fullscreen = true;
+        boolean fullscreen = false;
         // Setup an error callback. The default implementation
         // will print the error message in System.err.
         glfwSetErrorCallback(errorCallback = errorCallbackPrint(System.err));
