@@ -37,6 +37,7 @@ public class OpenGGTest {
     }
  
     private void init() {
+        boolean fullscreen = false;
         // Setup an error callback. The default implementation
         // will print the error message in System.err.
         glfwSetErrorCallback(errorCallback = errorCallbackPrint(System.err));
@@ -54,7 +55,11 @@ public class OpenGGTest {
         int HEIGHT = 300;
  
         // Create the window
+        if(fullscreen){
+            window = glfwCreateWindow(WIDTH, HEIGHT, " Fullscreen Hello World!",  glfwGetPrimaryMonitor(), NULL);
+        }else{
         window = glfwCreateWindow(WIDTH, HEIGHT, "Hello World!", NULL, NULL);
+        }
         if ( window == NULL )
             throw new RuntimeException("Failed to create the GLFW window");
  
@@ -114,4 +119,4 @@ public class OpenGGTest {
         new OpenGGTest().run();
     
 }
-}
+    }
