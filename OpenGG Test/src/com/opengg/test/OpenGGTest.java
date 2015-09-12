@@ -4,12 +4,14 @@ import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
  
 import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
+import org.lwjgl.BufferUtils;
  
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.system.MemoryUtil.*;
- 
 public class OpenGGTest {
  
     // We need to strongly reference callback instances.
@@ -37,7 +39,7 @@ public class OpenGGTest {
     }
  
     private void init() {
-        boolean fullscreen = true;
+        boolean fullscreen = false;
         // Setup an error callback. The default implementation
         // will print the error message in System.err.
         glfwSetErrorCallback(errorCallback = errorCallbackPrint(System.err));
@@ -45,16 +47,24 @@ public class OpenGGTest {
         // Initialize GLFW. Most GLFW functions will not work before doing this.
         if ( glfwInit() != GL11.GL_TRUE )
             throw new IllegalStateException("Unable to initialize GLFW");
- 
+        
         // Configure our window
         glfwDefaultWindowHints(); // optional, the current window hints are already the default
         glfwWindowHint(GLFW_VISIBLE, GL_FALSE); // the window will stay hidden after creation
         glfwWindowHint(GLFW_RESIZABLE, GL_TRUE); // the window will be resizable
- 
-        int WIDTH = 1920;
-        int HEIGHT = 1080;
- 
-        // Create the window
+        
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+      
+        
+        
+        int WIDTH = 1280;
+        int HEIGHT = 720;
+             
+        
+        
         if(fullscreen){
             window = glfwCreateWindow(WIDTH, HEIGHT, " Fullscreen Hello World!",  glfwGetPrimaryMonitor(), NULL);
         }else{
@@ -63,24 +73,28 @@ public class OpenGGTest {
         if ( window == NULL )
             throw new RuntimeException("Failed to create the GLFW window");
  
-        // Setup a key callback. It will be called every time a key is pressed, repeated or released.
         glfwSetKeyCallback(window, keyCallback = new GLFWKeyCallback() {
             @Override
             public void invoke(long window, int key, int scancode, int action, int mods) {
                 if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
                     glfwSetWindowShouldClose(window, GL_TRUE); // We will detect this in our rendering loop
             }
-        });
- 
-        // Get the resolution of the primary monitor
+        });        
+        
+        
+        
         ByteBuffer vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-        // Center our window
+        
+        
+        
         glfwSetWindowPos(
             window,
             (GLFWvidmode.width(vidmode) - WIDTH) / 2,
             (GLFWvidmode.height(vidmode) - HEIGHT) / 2
         );
  
+        
+        
         // Make the OpenGL context current
         glfwMakeContextCurrent(window);
         // Enable v-sync
@@ -88,6 +102,11 @@ public class OpenGGTest {
  
         // Make the window visible
         glfwShowWindow(window);
+        
+        
+        
+        
+
     }
  
     private void loop() {
@@ -100,15 +119,27 @@ public class OpenGGTest {
         //GLContext.createFromCurrent(); // use this line instead with the 3.0.0a build
  
         // Set the clear color
-        glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
+        //glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
  
         // Run the rendering loop until the user has attempted to close
         // the window or has pressed the ESCAPE key.
         while ( glfwWindowShouldClose(window) == GL_FALSE ) {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
- 
+            FloatBuffer vertices = BufferUtils.createFloatBuffer(3 * 6);
+                vertices.put(-0.6f).put(-0.4f).put(0f).put(1f).put(0f).put(0f);
+                vertices.put(0.6f).put(-0.4f).put(0f).put(0f).put(1f).put(0f);
+                vertices.put(0f).put(0.6f).put(0f).put(0f).put(0f).put(1f);
+            vertices.flip();
+            
+            
+            int vbo = glGenBuffers();
+                glBindBuffer(GL_ARRAY_BUFFER, vbo);
+                glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW);
+            
+            glDrawArrays(GL_TRIANGLES, 0, 3);    
+                
             glfwSwapBuffers(window); // swap the color buffers
- 
+            
             // Poll for window events. The key callback above will only be
             // invoked during this call.
             glfwPollEvents();
