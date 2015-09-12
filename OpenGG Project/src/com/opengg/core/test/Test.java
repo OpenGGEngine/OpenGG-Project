@@ -6,10 +6,8 @@
 package com.opengg.core.test;
 
 import com.opengg.core.window.Window;
-import static org.lwjgl.glfw.GLFW.glfwDestroyWindow;
 import static org.lwjgl.glfw.GLFW.glfwPollEvents;
 import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
-import static org.lwjgl.glfw.GLFW.glfwTerminate;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 import org.lwjgl.opengl.GL;
 import static org.lwjgl.opengl.GL11.*;
@@ -28,11 +26,8 @@ public class Test {
         try {
             window = win.init(1280, 720, "Test", false);
         } catch (Exception ex){ex.printStackTrace();}
-        loop();
-        glfwDestroyWindow(window);
-
-            // Terminate GLFW and release the GLFWerrorfun
-        glfwTerminate();
+        
+        
     }
     
     static void loop(){

@@ -35,30 +35,26 @@ public class MovementLoader {
     private static long lastFrame;
     private static volatile boolean running = true;
     static final Logger main = Logger.getLogger("main");
+    
+    public void invoke(long window, int key, int scancode, int action, int mods) {
+            if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
+            glfwSetWindowShouldClose(window, GL_TRUE); // We will detect this in our rendering loop
+   }
+    
+    public void invoke(long window, double xpos, double ypos) {
+        // Add delta of x and y mouse coordinates
+        mouseDX += (int)xpos - mouseX;
+        mouseDY += (int)xpos - mouseY;
+        // Set new positions of x and y
+        mouseX = (int) xpos;
+        mouseY = (int) ypos;
+    }
+    
     public MovementLoader(long w){   
         window = w;
-        glfwSetKeyCallback(window, keyCallback = new GLFWKeyCallback() {
-                @Override
-                public void invoke(long window, int key, int scancode, int action, int mods) {
-                    if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
-                        glfwSetWindowShouldClose(window, GL_TRUE); // We will detect this in our rendering loop
-                }
-            });
- 
-            // Initialize all mouse values as 0
-            mouseX = mouseY = mouseDX = mouseDY = 0;
-            glfwSetCursorPosCallback(window, cursorPosCallback = new GLFWCursorPosCallback(){
- 
-                @Override
-                public void invoke(long window, double xpos, double ypos) {
-                    // Add delta of x and y mouse coordinates
-                    mouseDX += (int)xpos - mouseX;
-                    mouseDY += (int)xpos - mouseY;
-                    // Set new positions of x and y
-                    mouseX = (int) xpos;
-                    mouseY = (int) ypos;
-                }
-            });
+        
+        mouseX = mouseY = mouseDX = mouseDY = 0;
+            
 
     }
     private static int getDelta() {
