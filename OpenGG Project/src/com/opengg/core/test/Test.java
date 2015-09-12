@@ -13,9 +13,10 @@ import com.opengg.core.window.Window;
  * @author 19coindreauj
  */
 public class Test {
+    
     public static void main(String args[]){
         Window win = new Window();
-	win.start();
+        win.run();
             
     }
 }
