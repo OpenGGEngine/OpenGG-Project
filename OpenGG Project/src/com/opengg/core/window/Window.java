@@ -13,38 +13,32 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
-// Easy access to all the GLFW and OpenGL methods and constants (otherwise you would have to write GLFW.glfw.. every time)
 
-/**
- * Code is based on the following sample code: http://www.lwjgl.org/guide
- */
+
 public class Window {
- private long window;
+    
+    int WIDTH = 300;
+    int HEIGHT = 300;
+    
+    private long window;
+    
+     
     private GLFWErrorCallback errorCallback;
     private GLFWKeyCallback   keyCallback;
     // The GLFW error callback: this tells GLFW what to do if things go wrong
     public void Window() {
        System.out.println("Window inited");
     }
-    public void run(){
-        try {
-            init();
-            loop();
- 
-            // Release window and window callbacks
-            glfwDestroyWindow(window);
-            keyCallback.release();
-        } finally {
-            // Terminate GLFW and release the GLFWerrorfun
-            glfwTerminate();
-            errorCallback.release();
-        }
-    }
-     public void init() {
+    
+    
+    public long init(int w, int h, String name, boolean fullscreen) throws Exception{
         // Setup an error callback. The default implementation
         // will print the error message in System.err.
         glfwSetErrorCallback(errorCallback = errorCallbackPrint(System.err));
- 
+        
+        HEIGHT = h;
+        WIDTH = w;
+        
         // Initialize GLFW. Most GLFW functions will not work before doing this.
         if ( glfwInit() != GL11.GL_TRUE )
             throw new IllegalStateException("Unable to initialize GLFW");
@@ -53,12 +47,18 @@ public class Window {
         glfwDefaultWindowHints(); // optional, the current window hints are already the default
         glfwWindowHint(GLFW_VISIBLE, GL_FALSE); // the window will stay hidden after creation
         glfwWindowHint(GLFW_RESIZABLE, GL_TRUE); // the window will be resizable
- 
-        int WIDTH = 300;
-        int HEIGHT = 300;
- 
-        // Create the window
-        window = glfwCreateWindow(WIDTH, HEIGHT, "Hello World!", NULL, NULL);
+        
+        
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+        
+         if(fullscreen){
+            window = glfwCreateWindow(WIDTH, HEIGHT, name,  glfwGetPrimaryMonitor(), NULL);
+        }else{
+        window = glfwCreateWindow(WIDTH, HEIGHT, name, NULL, NULL);
+        }
         if ( window == NULL )
             throw new RuntimeException("Failed to create the GLFW window");
  
@@ -81,37 +81,8 @@ public class Window {
  
         // Make the window visible
         glfwShowWindow(window);
+        return window;
     }
     
-    public void update(){
-    	if(KeyBoardHandler.isKeyDown(GLFW_KEY_SPACE))
-    		System.out.println("Space Key Pressed");
-    }
- 
-    public void loop() {
-        // This line is critical for LWJGL's interoperation with GLFW's
-        // OpenGL context, or any context that is managed externally.
-        // LWJGL detects the context that is current in the current thread,
-        // creates the ContextCapabilities instance and makes the OpenGL
-        // bindings available for use.
-        GLContext.createFromCurrent();
- 
-        // Set the clear color
-        glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
- 
-        // Run the rendering loop until the user has attempted to close
-        // the window or has pressed the ESCAPE key.
-        while ( glfwWindowShouldClose(window) == GL_FALSE ) {
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
- 
-            glfwSwapBuffers(window); // swap the color buffers
- 
-            // Poll for window events. The key callback above will only be
-            // invoked during this call.
-            glfwPollEvents();
-            
-            update();
-            
-        }
-    }
+    
 }
