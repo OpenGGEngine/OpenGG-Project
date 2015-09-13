@@ -10,19 +10,23 @@ package com.opengg.core.input;
  * @author Warren
  */
 
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWKeyCallback;
 import static org.lwjgl.glfw.GLFW.*;
 
 public class KeyBoardHandler extends GLFWKeyCallback{
 
-	public static boolean[] keys = new boolean[65536];
-	
-	
-	
+	static boolean[] keys = new boolean[256];
+
 	@Override
 	public void invoke(long window, int key, int scancode, int action, int mods) {
-		// TODO Auto-generated method stub
 		keys[key] = action != GLFW_RELEASE;
+                if(action == GLFW_RELEASE){
+                    KeyboardEventHandler.keyReleased(key);
+                }else if(action == GLFW_PRESS){
+                    KeyboardEventHandler.keyPressed(key);
+                }
+                
 	}
 	
 	
