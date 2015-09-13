@@ -133,4 +133,7 @@ public class Window {
         
         errorCallback.release();
     }
+    public void update(){
+     glClearColor(0.0f, 0.0f, 1.0f, 0.0f);
+    }
 }
