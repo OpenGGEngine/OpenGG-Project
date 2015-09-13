@@ -10,6 +10,7 @@ import org.lwjgl.opengl.GL;
 import static org.lwjgl.opengl.GL11.*;
 import org.lwjgl.opengl.GLContext;
 import com.opengg.core.input.*;
+import com.opengg.core.window.DisplayMode;
 import static org.lwjgl.glfw.GLFW.*;
 /**
  *
@@ -26,7 +27,7 @@ public class Test implements KeyboardListener{
     public Test(){
         win = new Window();
         try {
-            window = win.init(1280, 720, "Test", false);
+            window = win.init(1280, 720, "Test", DisplayMode.WINDOWED);
         } catch (Exception ex){ex.printStackTrace();}
         
         loop();
@@ -54,11 +55,19 @@ public class Test implements KeyboardListener{
 
     @Override
     public void keyPressed(int key) {
-        win.setResolution(640, 480);
+        if(key == GLFW_KEY_ESCAPE){
+            close();
+            
+        }
     }
 
     @Override
     public void keyReleased(int key) {
         
+    }
+    
+    void close(){
+        glfwSetWindowShouldClose(window, 1);
+        win.destroy();
     }
 }

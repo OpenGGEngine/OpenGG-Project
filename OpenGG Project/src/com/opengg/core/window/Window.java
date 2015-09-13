@@ -22,7 +22,8 @@ public class Window {
     
     private long window;
     
-     
+    GLFWvidmode mode; 
+    ByteBuffer vidmode;
     private GLFWErrorCallback errorCallback;
     private GLFWKeyCallback   keyCallback;
     // The GLFW error callback: this tells GLFW what to do if things go wrong
@@ -31,7 +32,7 @@ public class Window {
     }
     
     
-    public long init(int w, int h, String name, boolean fullscreen) throws Exception{
+    public long init(int w, int h, String name, DisplayMode m) throws Exception{
         // Setup an error callback. The default implementation
         // will print the error message in System.err.
         glfwSetErrorCallback(errorCallback = errorCallbackPrint(System.err));
@@ -54,10 +55,31 @@ public class Window {
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
         
-         if(fullscreen){
+        vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());   
+        mode = new GLFWvidmode(glfwGetVideoMode(glfwGetPrimaryMonitor()));
+        if(m == DisplayMode.FULLSCREEN_WINDOWED){
+            glfwWindowHint(GLFW_RED_BITS, mode.getRedBits());
+            glfwWindowHint(GLFW_GREEN_BITS, mode.getGreenBits());
+            glfwWindowHint(GLFW_BLUE_BITS, mode.getBlueBits());
+            glfwWindowHint(GLFW_REFRESH_RATE, mode.getRefreshRate());
+            
+            window = glfwCreateWindow(mode.getWidth(), mode.getHeight(), name, NULL, NULL);
+            
+            glfwSetWindowPos(
+                window,
+                0,
+                0
+            );
+        }else if(m == DisplayMode.FULLSCREEN){
             window = glfwCreateWindow(WIDTH, HEIGHT, name,  glfwGetPrimaryMonitor(), NULL);
         }else{
-        window = glfwCreateWindow(WIDTH, HEIGHT, name, NULL, NULL);
+        
+            window = glfwCreateWindow(WIDTH, HEIGHT, name, NULL, NULL);
+            glfwSetWindowPos(
+                window,
+                (GLFWvidmode.width(vidmode) - WIDTH) / 2,
+                (GLFWvidmode.height(vidmode) - HEIGHT) / 2
+            );
         }
         if ( window == NULL )
             throw new RuntimeException("Failed to create the GLFW window");
@@ -66,13 +88,9 @@ public class Window {
         glfwSetKeyCallback(window, keyCallback = new KeyBoardHandler());
  
         // Get the resolution of the primary monitor
-        ByteBuffer vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+        //ByteBuffer vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
         // Center our window
-        glfwSetWindowPos(
-            window,
-            (GLFWvidmode.width(vidmode) - WIDTH) / 2,
-            (GLFWvidmode.height(vidmode) - HEIGHT) / 2
-        );
+        
         
         // Make the OpenGL context current
         glfwMakeContextCurrent(window);
@@ -90,7 +108,24 @@ public class Window {
         WIDTH = w;
         HEIGHT = h;
         glfwSetWindowSize(window, WIDTH, HEIGHT);
+        
+        glfwSetWindowPos(
+            window,
+            (GLFWvidmode.width(vidmode) - WIDTH) / 2,
+            (GLFWvidmode.height(vidmode) - HEIGHT) / 2
+        );
+        
     }
+    
+    public void fullscreen(){
+        glfwSetWindowSize(window, mode.getWidth(), mode.getHeight());
+        glfwSetWindowPos(
+            window,
+            0,
+            0
+        );
+    }
+    
     public void destroy(){
         glfwDestroyWindow(window);
         

@@ -16,7 +16,7 @@ import static org.lwjgl.glfw.GLFW.*;
 
 public class KeyBoardHandler extends GLFWKeyCallback{
 
-	static boolean[] keys = new boolean[256];
+	static boolean[] keys = new boolean[65536];
 
 	@Override
 	public void invoke(long window, int key, int scancode, int action, int mods) {
