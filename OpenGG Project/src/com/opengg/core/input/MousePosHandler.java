@@ -6,7 +6,6 @@
 package com.opengg.core.input;
 
 import com.opengg.core.Vector2f;
-import static org.lwjgl.glfw.GLFW.glfwPollEvents;
 import static org.lwjgl.glfw.GLFW.glfwSetCursorPosCallback;
 import org.lwjgl.glfw.GLFWCursorPosCallback;
 
