@@ -47,6 +47,7 @@ public class Test implements KeyboardListener{
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
             
               win.update();
+              //Blue Screen
             
             glfwSwapBuffers(window);
             glfwPollEvents();
