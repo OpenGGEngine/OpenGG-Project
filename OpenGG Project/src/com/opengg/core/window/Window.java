@@ -73,16 +73,29 @@ public class Window {
             (GLFWvidmode.width(vidmode) - WIDTH) / 2,
             (GLFWvidmode.height(vidmode) - HEIGHT) / 2
         );
- 
+        
         // Make the OpenGL context current
         glfwMakeContextCurrent(window);
         // Enable v-sync
         glfwSwapInterval(1);
- 
+        
+        //glViewport(0, 0, WIDTH, HEIGHT);
+        
         // Make the window visible
         glfwShowWindow(window);
         return window;
     }
     
-    
+    public void setResolution(int w, int h){
+        WIDTH = w;
+        HEIGHT = h;
+        glfwSetWindowSize(window, WIDTH, HEIGHT);
+    }
+    public void destroy(){
+        glfwDestroyWindow(window);
+        
+        glfwTerminate();
+        
+        errorCallback.release();
+    }
 }
