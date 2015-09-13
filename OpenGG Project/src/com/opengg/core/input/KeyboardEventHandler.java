@@ -5,17 +5,37 @@
  */
 package com.opengg.core.input;
 
-import org.lwjgl.glfw.GLFWKeyCallback;
-
 /**
  *
  * @author Javier
  */
-public class KeyboardEventHandler  extends GLFWKeyCallback{
-
-    @Override
-    public void invoke(long window, int key, int scancode, int action, int mods) {
+public class KeyboardEventHandler {
+    static int counter;
+    static KeyboardListener[] k = new KeyboardListener[16];;
+    
+    public static void addToPool(KeyboardListener ks){
+        k[counter] = ks;
+        counter++;
         
+    }
+    
+    public static void keyPressed(int key){
+        try{
+            for (KeyboardListener k1 : k) {
+                k1.keyPressed(key);
+            }
+        }catch(NullPointerException e){
+            
+        }
+    }
+    public static void keyReleased(int key){
+        try{
+            for (KeyboardListener k1 : k) {
+                k1.keyReleased(key);
+            }
+        }catch(NullPointerException e){
+            
+        }
     }
     
 }
