@@ -5,6 +5,9 @@
  */
 package com.opengg.core;
 
+import java.nio.FloatBuffer;
+import org.lwjgl.BufferUtils;
+
 /**
  *
  * @author Javier
@@ -55,5 +58,35 @@ public class Vector2f {
     public String toString(){
         String s = String.valueOf(this.x) + ", " + String.valueOf(this.y);
         return s;
+    }
+    
+    /*
+    Returns the degree of angle of vector
+    */
+    
+    public double getAngle()
+    {
+        if(Math.abs(x)!= x)
+        {
+            return Math.toDegrees(Math.atan2(y, x)) + 180;
+        }
+        if(Math.abs(y) != y)
+        {
+            return Math.toDegrees(Math.atan2(y, x)) + 360;
+        }
+        return Math.toDegrees(Math.atan2(y, x));
+    }
+    
+    /*
+    Returns magnitude of vector
+    */
+    
+    public double getMagnitude()
+    {
+        return Math.sqrt((x*x) + (y*y));
+    }
+
+    public FloatBuffer getBuffer() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

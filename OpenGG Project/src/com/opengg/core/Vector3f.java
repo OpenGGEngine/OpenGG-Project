@@ -5,6 +5,7 @@
  */
 package com.opengg.core;
 import java.nio.FloatBuffer;
+import org.lwjgl.BufferUtils;
 /**
  *
  * @author Javier
@@ -56,4 +57,44 @@ public class Vector3f {
        
     }
 
+    public float length() {
+
+        return (float) Math.sqrt(lengthSquared()); 
+      
+        
+
+    }
+
+    public Vector3f normalize() { 
+         float length = length(); 
+         return divide(length); 
+     } 
+
+    
+    private double lengthSquared() {
+        return x * x + y * y + z * z;
+    }
+
+    private Vector3f divide(float scalar) {
+        return scale(1f / scalar);
+    }
+
+    private Vector3f scale(float scalar) {
+        float x = this.x * scalar; 
+         float y = this.y * scalar; 
+        float z = this.z * scalar; 
+        return new Vector3f(x, y, z); 
+
+    }
+
+    public FloatBuffer getBuffer() {
+        FloatBuffer buffer = BufferUtils.createFloatBuffer(2); 
+        buffer.put(x).put(y).put(z); 
+        buffer.flip(); 
+        return buffer;
+    }
+    
+
+
+    
 }
