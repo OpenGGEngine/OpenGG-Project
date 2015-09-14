@@ -66,14 +66,6 @@ public class Vector2f {
     
     public double getAngle()
     {
-        if(Math.abs(x)!= x)
-        {
-            return Math.toDegrees(Math.atan2(y, x)) + 180;
-        }
-        if(Math.abs(y) != y)
-        {
-            return Math.toDegrees(Math.atan2(y, x)) + 360;
-        }
         return Math.toDegrees(Math.atan2(y, x));
     }
     
