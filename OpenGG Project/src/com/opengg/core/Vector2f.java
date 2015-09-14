@@ -5,6 +5,9 @@
  */
 package com.opengg.core;
 
+import java.nio.FloatBuffer;
+import org.lwjgl.BufferUtils;
+
 /**
  *
  * @author Javier
@@ -81,5 +84,9 @@ public class Vector2f {
     public double getMagnitude()
     {
         return Math.sqrt((x*x) + (y*y));
+    }
+
+    public FloatBuffer getBuffer() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
