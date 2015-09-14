@@ -53,7 +53,7 @@ public class Vector3f {
      */
     
     public float getDistance(Vector3f v){
-        return (float) Math.sqrt((this.x * v.x)+(this.y * v.y)+(this.z * v.z));  
+        return (float) Math.sqrt(Math.pow((this.x - v.x), 2)+Math.pow((this.y - v.y), 2)+Math.pow((this.z - v.z), 2));  
        
     }
 
@@ -94,7 +94,20 @@ public class Vector3f {
         return buffer;
     }
     
-
+    public double getRadius()
+    {
+        return Math.sqrt((x*x) + (y*y) + (z*z));
+    }
+    
+    public double getInclination()
+    {
+        return Math.toDegrees(Math.acos(z/getRadius()));
+    }
+    
+    public double getAzimuth()
+    {
+        return Math.toDegrees(Math.atan2(y,x));
+    }
 
     
 }
