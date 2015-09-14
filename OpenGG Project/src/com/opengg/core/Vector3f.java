@@ -101,12 +101,12 @@ public class Vector3f {
     
     public double getInclination()
     {
-        return Math.toRadians(Math.acos(z/getRadius()));
+        return Math.toDegrees(Math.acos(z/getRadius()));
     }
     
     public double getAzimuth()
     {
-        return Math.toRadians(Math.atan2(y,x));
+        return Math.toDegrees(Math.atan2(y,x));
     }
 
     
