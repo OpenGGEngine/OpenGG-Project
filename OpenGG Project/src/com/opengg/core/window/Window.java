@@ -1,4 +1,5 @@
 package com.opengg.core.window;
+import com.opengg.core.Vector2f;
 import org.lwjgl.Sys;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
@@ -54,6 +55,7 @@ public class Window {
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+        glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
         
         vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());   
         mode = new GLFWvidmode(glfwGetVideoMode(glfwGetPrimaryMonitor()));
@@ -101,6 +103,7 @@ public class Window {
         
         // Make the window visible
         glfwShowWindow(window);
+        GL.setCurrent(GLContext.createFromCurrent());
         return window;
     }
     
@@ -135,5 +138,8 @@ public class Window {
     }
     public void update(){
      glClearColor(0.0f, 0.0f, 1.0f, 0.0f);
+    }
+    public Vector2f getResolution(){
+        return new Vector2f(WIDTH, HEIGHT);
     }
 }
