@@ -1,4 +1,5 @@
 # OpenGG-Project
 The Official OpenGG Project!
-Hey jav should we use external library slick?
 Also, did you guys get the robotics stuff? I didnt -Ethan
+I didn't get the email either, neither did Javier.
+Also why are there so many key handlers?
