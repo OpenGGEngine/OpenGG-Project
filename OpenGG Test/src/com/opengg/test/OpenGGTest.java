@@ -28,7 +28,9 @@ public class OpenGGTest implements KeyboardListener{
     // We need to strongly reference callback instances.
     static long window;
     Window win = new Window();
-
+    
+    boolean draw = true;
+    
     int uniView;
     public float x,y,z;
     
@@ -196,13 +198,18 @@ public class OpenGGTest implements KeyboardListener{
         program.use();
 
         Matrix4f model = Matrix4f.rotate(lerpAngle, 0f, 0f, 1f);
+        Matrix4f move = Matrix4f.translate(x, 0, 0);
         
         //Matrix4f c = new Matrix4f(model.m00, model.m01, model.m02, m2.m03, model.m10, model.m11, model.m12, m2.m13, model.m20, model.m21, model.m22, m2.m23, model.m00, model.m00, model.m00, model.m00);
         
-        program.setUniform(uniModel, model);
+        program.setUniform(uniModel, move);
         
-        
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        if(draw){
+            glDrawArrays(GL_TRIANGLES, 0, 3);
+            draw = false;
+        }else{
+            draw = true;d
+        }
         
     }
     
@@ -215,9 +222,11 @@ public class OpenGGTest implements KeyboardListener{
     public void keyPressed(int key) {
         if(key == GLFW_KEY_A){
             rot1 += 0.2;
+            x += 1;
         }
         if(key == GLFW_KEY_D){
             rot1 += 0.2;
+            x -= 1;
             backwards = true;
         }
     }
@@ -226,10 +235,12 @@ public class OpenGGTest implements KeyboardListener{
     public void keyReleased(int key) {
         if(key == GLFW_KEY_A){
             rot1 -= 0.2;
+            x -= 1;
             backwards = false;
         }
         if(key == GLFW_KEY_D){
             rot1 -= 0.2;
+            x += 1;
             backwards = false;
         }
     }
