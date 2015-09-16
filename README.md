@@ -1,4 +1,4 @@
 # OpenGG-Project
                         The Official OpenGG Project!
 ___________________________________________________________________________
-OpenGG is an open source game engine that is actually source 2 in disguise. 
+OpenGG is proud to be the least efficient engine ever designed!
