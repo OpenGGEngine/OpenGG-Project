@@ -150,14 +150,9 @@ public class OpenGGTest implements KeyboardListener{
         uniView = program.getUniformLocation("view");
         program.setUniform(uniView, view);
 
-        /* Get width and height for calculating the ratio */
-        long window = GLFW.glfwGetCurrentContext();
-        IntBuffer width = BufferUtils.createIntBuffer(1);
-        IntBuffer height = BufferUtils.createIntBuffer(1);
-        GLFW.glfwGetFramebufferSize(window, width, height);
-        float ratio = width.get() / (float) height.get();
 
-        /* Set projection matrix to an orthographic projection */
+        float ratio = win.getRatio();
+        
         //Matrix4f projection = Matrix4f.orthographic(-ratio, ratio, -1f, 1f, -4f, 4f);
         Matrix4f projection = Matrix4f.perspective(100, 640/480, 0.1f, 10);
         int uniProjection = program.getUniformLocation("projection");
@@ -208,9 +203,9 @@ public class OpenGGTest implements KeyboardListener{
 
         Matrix4f model = Matrix4f.rotate(lerpAngle, 0f, 1f, 0f);
         Matrix4f move = Matrix4f.translate(x, y, z);
-        Matrix4f scale = Matrix4f.scale(0.4f, 0.4f, 0.4f);
+        //Matrix4f scale = Matrix4f.scale(0.4f, 0.4f, 0.4f);
         
-        //Matrix4f c = new Matrix4f(model.m00, model.m01, model.m02, m2.m03, model.m10, model.m11, model.m12, m2.m13, model.m20, model.m21, model.m22, m2.m23, model.m00, model.m00, model.m00, model.m00);
+        
         
         program.setUniform(uniModel, move);
         
@@ -260,6 +255,22 @@ public class OpenGGTest implements KeyboardListener{
             ym -= 0.1;
 
         }
+        if(key == GLFW_KEY_L){
+
+            Matrix4f projection = Matrix4f.perspective(100, 640/480, 0.1f, 10);
+            int uniProjection = program.getUniformLocation("projection");
+            program.setUniform(uniProjection, projection);
+
+        }
+        if(key == GLFW_KEY_P){
+            
+            float ratio = win.getRatio();
+            
+            Matrix4f projection = Matrix4f.orthographic(-ratio, ratio, -1f, 1f, -4f, 4f);
+            int uniProjection = program.getUniformLocation("projection");
+            program.setUniform(uniProjection, projection);
+
+        }
     }
 
     @Override
@@ -292,5 +303,6 @@ public class OpenGGTest implements KeyboardListener{
             ym += 0.1;
 
         }
+        
     }
 }
