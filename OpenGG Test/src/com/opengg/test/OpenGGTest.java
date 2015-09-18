@@ -208,7 +208,7 @@ public class OpenGGTest implements KeyboardListener{
             glDrawArrays(GL_TRIANGLES, 0, 3);
             draw = false;
         }else{
-            draw = true;d
+            draw = true;
         }
         
     }
