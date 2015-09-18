@@ -5,6 +5,7 @@
  */
 package com.opengg.core.entities;
 
+import com.opengg.core.Model;
 import com.opengg.core.Vector3f;
 
 /**
@@ -16,14 +17,15 @@ public class Entity {
     static public int entityCount = 0;
     public Vector3f pos = new Vector3f();
     public float velocity = 0f;
+    
     public float acceleration;
     public boolean ground;
     public float mass;
     public float volume;
 
     
-    public Entity() {
-
+    public Entity(Model model) {
+        
         pos.x = 0f;
         pos.y = 0f;
         pos.z = 0f;
