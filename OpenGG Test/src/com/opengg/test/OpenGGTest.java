@@ -109,10 +109,13 @@ public class OpenGGTest implements KeyboardListener{
         vao.bind();
 
         /* Vertex data */
-        FloatBuffer vertices = BufferUtils.createFloatBuffer(3 * 6);
+        FloatBuffer vertices = BufferUtils.createFloatBuffer(6 * 6);
         vertices.put(-0.6f).put(-0.4f).put(0f).put(1f).put(0f).put(0f);
         vertices.put(0.6f).put(-0.4f).put(0f).put(0f).put(1f).put(0f);
-        vertices.put(0f).put(0.4f).put(0f).put(0f).put(1f).put(1f);
+        vertices.put(0f).put(0.5f).put(0f).put(0f).put(0f).put(1f);
+        vertices.put(0f).put(2f).put(0f).put(1f).put(0f).put(1f);
+        vertices.put(1f).put(0.4f).put(0f).put(0f).put(1f).put(1f);
+        vertices.put(1f).put(1f).put(0f).put(0f).put(1f).put(1f);
         vertices.flip();
 
         /* Generate Vertex Buffer Object */
@@ -151,7 +154,7 @@ public class OpenGGTest implements KeyboardListener{
         float ratio = width.get() / (float) height.get();
 
         /* Set projection matrix to an orthographic projection */
-        Matrix4f projection = Matrix4f.orthographic(-ratio, ratio, -1f, 1f, -1f, 1f);
+        Matrix4f projection = Matrix4f.orthographic(-ratio, ratio, -1f, 1f, -4f, 4f);
         int uniProjection = program.getUniformLocation("projection");
         program.setUniform(uniProjection, projection);
         vao.bind();
@@ -197,7 +200,7 @@ public class OpenGGTest implements KeyboardListener{
         vao.bind();
         program.use();
 
-        Matrix4f model = Matrix4f.rotate(lerpAngle, 0f, 0f, 1f);
+        Matrix4f model = Matrix4f.rotate(lerpAngle, 0f, 0f, 0f);
         Matrix4f move = Matrix4f.translate(x, 0, 0);
         
         //Matrix4f c = new Matrix4f(model.m00, model.m01, model.m02, m2.m03, model.m10, model.m11, model.m12, m2.m13, model.m20, model.m21, model.m22, m2.m23, model.m00, model.m00, model.m00, model.m00);
@@ -205,8 +208,8 @@ public class OpenGGTest implements KeyboardListener{
         program.setUniform(uniModel, move);
         
         if(draw){
-            glDrawArrays(GL_TRIANGLES, 0, 3);
-            draw = false;
+            glDrawArrays(GL_TRIANGLES, 0, 6);
+            draw = true;
         }else{
             draw = true;
         }
