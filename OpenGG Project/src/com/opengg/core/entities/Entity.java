@@ -24,6 +24,11 @@ public class Entity {
     public float volume;
 
     
+    public Entity()
+    {
+        
+    }
+    
     public Entity(Model model) {
         
         pos.x = 0f;
@@ -43,19 +48,17 @@ public class Entity {
      * @param x
      * @param y
      * @param z
-     * @param velocity
      * @param force
-     * @param ground
      * @param mass
      * @param volume
      */
-    public Entity(float x, float y, float z, float force, boolean ground, float mass, float volume) {
+    public Entity(float x, float y, float z, float force, float mass, float volume) {
         
         pos.x = x;
         pos.y = y;
         pos.z = z;
         this.acceleration = force/mass;
-        this.ground = ground;
+        this.ground = y>60;
         this.volume = volume;
         this.mass = mass;
         Entity.entityCount++;

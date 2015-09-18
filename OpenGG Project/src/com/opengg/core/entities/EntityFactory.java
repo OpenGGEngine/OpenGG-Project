@@ -5,6 +5,7 @@
  */
 package com.opengg.core.entities;
 
+import com.opengg.core.Model;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,9 +16,10 @@ import java.util.List;
 public abstract class EntityFactory {
     static public int entityCount = 0;
     List<Entity> list = new ArrayList<>();
-    public Entity generateEntity(){
+    public boolean generatePhysicsEntity(PhysicsEntity p, Model m){
         entityCount++;
-        return new Entity();
+        p = new PhysicsEntity(m);
+        return list.add(p);
     }
     
 }
