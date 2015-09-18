@@ -5,10 +5,16 @@
  */
 package com.opengg.core.entities;
 
+import com.opengg.core.Model;
+
 /**
  *
  * @author 19coindreauj
  */
 public class StaticEntity extends Entity{
+
+    public StaticEntity(Model model) {
+        super(model);
+    }
     
 }
