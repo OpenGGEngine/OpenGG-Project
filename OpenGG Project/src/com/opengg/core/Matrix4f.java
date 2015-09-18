@@ -182,7 +182,32 @@ public class Matrix4f {
 
         return result;
     }
+    
+     public static Matrix4f perspective(float fovy, float aspect, float near, float far) {
+        Matrix4f perspective = new Matrix4f();
 
+        float f = (float) (1f / Math.tan(Math.toRadians(fovy) / 2f));
+
+        perspective.m00 = f / aspect;
+        perspective.m11 = f;
+        perspective.m22 = (far + near) / (near - far);
+        perspective.m32 = -1f;
+        perspective.m23 = (2f * far * near) / (near - far);
+        perspective.m33 = 0f;
+
+        return perspective;
+    }
+     
+     
+     public static Matrix4f scale(float x, float y, float z) {
+        Matrix4f scaling = new Matrix4f();
+
+        scaling.m00 = x;
+        scaling.m11 = y;
+        scaling.m22 = z;
+
+        return scaling;
+    }
 //    public Matrix4f(Matrix4f old){
 //        
 //    }
