@@ -31,13 +31,14 @@ public class OpenGGTest implements KeyboardListener{
     Window win = new Window();
     
     boolean draw = true;
-    int vertAmount = 0;
+    int vertAmount;
     int triangleAmount;
-    
+    int squares = 4;
     private Shader vertexTex;
     private Shader fragmentTex;
     
     {
+        vertAmount = squares * 6;
         triangleAmount = vertAmount / 3;
     }
     int uniView;
@@ -54,15 +55,18 @@ public class OpenGGTest implements KeyboardListener{
     }
     private VertexArrayObject vao;
     private VertexBufferObject vbo;
+    
     Shader vertexShader, fragmentShader;
+    
     private ShaderProgram program;
     private ShaderProgram program2;
+    
     private int uniModel;
     private float previousAngle;
     
     Texture t1 = new Texture();
     
-    float speed = 1f;
+    float speed = 0.2f;
     
     FloatBuffer vertices;
     FloatBuffer vertices2;
@@ -103,11 +107,26 @@ public class OpenGGTest implements KeyboardListener{
         
 
         
-        vertices = BufferUtils.createFloatBuffer(8 * 8);
+        vertices = BufferUtils.createFloatBuffer(squares * 4 * 8);
         vertices.put(-2).put(-2).put(-1f).put(0f).put(1f).put(0f).put(0f).put(0f); 
         vertices.put(2).put(-2).put(-1f).put(0f).put(0f).put(1f).put(1f).put(0f);
         vertices.put(2).put(2).put(-1f).put(1f).put(0f).put(0f).put(1f).put(1f);
         vertices.put(-2).put(2).put(-1f).put(0f).put(0f).put(0f).put(0f).put(1f);
+        
+        vertices.put(-2).put(-2).put(-3f).put(0f).put(1f).put(0f).put(0f).put(0f); 
+        vertices.put(2).put(-2).put(-3f).put(0f).put(0f).put(1f).put(1f).put(0f);
+        vertices.put(2).put(2).put(-3f).put(1f).put(0f).put(0f).put(1f).put(1f);
+        vertices.put(-2).put(2).put(-3f).put(0f).put(0f).put(0f).put(0f).put(1f);
+        
+        vertices.put(-2).put(2).put(-3f).put(0f).put(1f).put(0f).put(0f).put(0f); 
+        vertices.put(2).put(2).put(-3f).put(0f).put(0f).put(1f).put(1f).put(0f);
+        vertices.put(2).put(2).put(-1f).put(1f).put(0f).put(0f).put(1f).put(1f);
+        vertices.put(-2).put(2).put(-1f).put(0f).put(0f).put(0f).put(0f).put(1f);
+        
+        vertices.put(-2).put(-2).put(-3f).put(0f).put(1f).put(0f).put(0f).put(0f); 
+        vertices.put(2).put(-2).put(-3f).put(0f).put(0f).put(1f).put(1f).put(0f);
+        vertices.put(2).put(-2).put(-1f).put(1f).put(0f).put(0f).put(1f).put(1f);
+        vertices.put(-2).put(-2).put(-1f).put(0f).put(0f).put(0f).put(0f).put(1f);
         
         vertices.flip();
 
@@ -115,11 +134,12 @@ public class OpenGGTest implements KeyboardListener{
         int ebo = glGenBuffers();
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
         
-        IntBuffer elements = BufferUtils.createIntBuffer(2 * 3);
-        elements.put(0).put(1).put(2);
-        elements.put(2).put(3).put(0);
-//        elements.put(4).put(5).put(6);
-//        elements.put(6).put(7).put(4);
+        IntBuffer elements = BufferUtils.createIntBuffer(vertAmount);
+        
+        
+        for(int i = 0; i < squares; i++){
+            elements.put(0 + (i*4)).put(1 + (i*4)).put(2 + (i*4)).put(2 + (i*4)).put(3 + (i*4)).put(0 + (i*4));
+        }
         elements.flip();
         
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, elements, GL_STATIC_DRAW);
@@ -225,7 +245,7 @@ public class OpenGGTest implements KeyboardListener{
         program.setUniform(uniModel, move);
         
        
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, vertAmount, GL_UNSIGNED_INT, 0);
             
         
         
