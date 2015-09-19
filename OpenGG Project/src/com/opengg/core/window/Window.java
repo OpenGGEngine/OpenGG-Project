@@ -117,7 +117,7 @@ public class Window {
             (GLFWvidmode.width(vidmode) - WIDTH) / 2,
             (GLFWvidmode.height(vidmode) - HEIGHT) / 2
         );
-        
+               
     }
     
     public void fullscreen(){
@@ -142,4 +142,8 @@ public class Window {
     public Vector2f getResolution(){
         return new Vector2f(WIDTH, HEIGHT);
     }
+    public float getRatio(){
+        return(WIDTH/HEIGHT);
+    }
+    
 }

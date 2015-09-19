@@ -7,6 +7,7 @@ import com.opengg.core.render.VertexArrayObject;
 import com.opengg.core.render.VertexBufferObject;
 import com.opengg.core.shader.Shader;
 import com.opengg.core.shader.ShaderProgram;
+import com.opengg.core.util.Time;
 import org.lwjgl.Sys;
 import org.lwjgl.opengl.*;
  
@@ -33,7 +34,7 @@ public class OpenGGTest implements KeyboardListener{
     
     int uniView;
     public float x,y,z;
-    
+    public float xm = 0, ym=0, zm=0;
     private float angle = 0f;
     private float anglePerSecond = 10f;
     
@@ -93,10 +94,12 @@ public class OpenGGTest implements KeyboardListener{
         }
         GL.setCurrent(GLContext.createFromCurrent());
         //e.enter();
+        float delta;
         setup();
         while(GLFW.glfwWindowShouldClose(window) == GL_FALSE){
             //e.render(1);
-            update(1);
+            delta = Time.getDelta();
+            update(delta / 1000);
             render(rot1);
             glfwSwapBuffers(window);
             glfwPollEvents();
@@ -110,12 +113,13 @@ public class OpenGGTest implements KeyboardListener{
 
         /* Vertex data */
         FloatBuffer vertices = BufferUtils.createFloatBuffer(6 * 6);
-        vertices.put(-0.6f).put(-0.4f).put(0f).put(1f).put(0f).put(0f);
-        vertices.put(0.6f).put(-0.4f).put(0f).put(0f).put(1f).put(0f);
-        vertices.put(0f).put(0.5f).put(0f).put(0f).put(0f).put(1f);
-        vertices.put(0f).put(2f).put(0f).put(1f).put(0f).put(1f);
-        vertices.put(1f).put(0.4f).put(0f).put(0f).put(1f).put(1f);
-        vertices.put(1f).put(1f).put(0f).put(0f).put(1f).put(1f);
+        vertices.put(0f).put(0.9f).put(-2f).put(1f).put(0f).put(1f);
+        vertices.put(0.9f).put(0.4f).put(-2f).put(0f).put(1f).put(1f);
+        vertices.put(0.9f).put(0.8f).put(0f).put(0f).put(1f).put(1f);
+        vertices.put(-0.6f).put(-0.4f).put(-1f).put(1f).put(0f).put(0f);
+        vertices.put(0.6f).put(-0.4f).put(-1f).put(0f).put(1f).put(0f);
+        vertices.put(0f).put(0.5f).put(-1f).put(0f).put(0f).put(1f);
+        
         vertices.flip();
 
         /* Generate Vertex Buffer Object */
@@ -146,15 +150,11 @@ public class OpenGGTest implements KeyboardListener{
         uniView = program.getUniformLocation("view");
         program.setUniform(uniView, view);
 
-        /* Get width and height for calculating the ratio */
-        long window = GLFW.glfwGetCurrentContext();
-        IntBuffer width = BufferUtils.createIntBuffer(1);
-        IntBuffer height = BufferUtils.createIntBuffer(1);
-        GLFW.glfwGetFramebufferSize(window, width, height);
-        float ratio = width.get() / (float) height.get();
 
-        /* Set projection matrix to an orthographic projection */
-        Matrix4f projection = Matrix4f.orthographic(-ratio, ratio, -1f, 1f, -4f, 4f);
+        float ratio = win.getRatio();
+        
+        //Matrix4f projection = Matrix4f.orthographic(-ratio, ratio, -1f, 1f, -4f, 4f);
+        Matrix4f projection = Matrix4f.perspective(100, 640/480, 0.1f, 10);
         int uniProjection = program.getUniformLocation("projection");
         program.setUniform(uniProjection, projection);
         vao.bind();
@@ -196,14 +196,16 @@ public class OpenGGTest implements KeyboardListener{
             lerpAngle = -lerpAngle;
         }
         
+        
        
         vao.bind();
         program.use();
 
-        Matrix4f model = Matrix4f.rotate(lerpAngle, 0f, 0f, 0f);
-        Matrix4f move = Matrix4f.translate(x, 0, 0);
+        Matrix4f model = Matrix4f.rotate(lerpAngle, 0f, 1f, 0f);
+        Matrix4f move = Matrix4f.translate(x, y, z);
+        //Matrix4f scale = Matrix4f.scale(0.4f, 0.4f, 0.4f);
         
-        //Matrix4f c = new Matrix4f(model.m00, model.m01, model.m02, m2.m03, model.m10, model.m11, model.m12, m2.m13, model.m20, model.m21, model.m22, m2.m23, model.m00, model.m00, model.m00, model.m00);
+        
         
         program.setUniform(uniModel, move);
         
@@ -219,18 +221,55 @@ public class OpenGGTest implements KeyboardListener{
     public void update(float delta) {
         previousAngle = angle;
         angle += delta * anglePerSecond;
+        x += xm;
+        y += ym;
+        z += zm;
     }
 
     @Override
     public void keyPressed(int key) {
         if(key == GLFW_KEY_A){
-            rot1 += 0.2;
-            x += 1;
+            rot1 -= 0.2;
+            xm -= 0.1;
         }
         if(key == GLFW_KEY_D){
-            rot1 += 0.2;
-            x -= 1;
-            backwards = true;
+
+            xm += 0.1;
+
+        }
+        if(key == GLFW_KEY_W){
+ 
+            zm -= 0.1;
+        }
+        if(key == GLFW_KEY_S){
+
+            zm += 0.1;
+
+        }
+        if(key == GLFW.GLFW_KEY_LEFT_SHIFT){
+
+            ym += 0.1;
+        }
+        if(key == GLFW_KEY_LEFT_CONTROL){
+
+            ym -= 0.1;
+
+        }
+        if(key == GLFW_KEY_L){
+
+            Matrix4f projection = Matrix4f.perspective(100, 640/480, 0.1f, 10);
+            int uniProjection = program.getUniformLocation("projection");
+            program.setUniform(uniProjection, projection);
+
+        }
+        if(key == GLFW_KEY_P){
+            
+            float ratio = win.getRatio();
+            
+            Matrix4f projection = Matrix4f.orthographic(-ratio, ratio, -1f, 1f, -4f, 4f);
+            int uniProjection = program.getUniformLocation("projection");
+            program.setUniform(uniProjection, projection);
+
         }
     }
 
@@ -238,13 +277,32 @@ public class OpenGGTest implements KeyboardListener{
     public void keyReleased(int key) {
         if(key == GLFW_KEY_A){
             rot1 -= 0.2;
-            x -= 1;
+            xm += 0.1;
             backwards = false;
         }
         if(key == GLFW_KEY_D){
             rot1 -= 0.2;
-            x += 1;
+            xm -= 0.1;
             backwards = false;
         }
+        if(key == GLFW_KEY_W){
+ 
+            zm += 0.1;
+        }
+        if(key == GLFW_KEY_S){
+
+            zm -= 0.1;
+
+        }
+        if(key == GLFW.GLFW_KEY_LEFT_SHIFT){
+
+            ym -= 0.1;
+        }
+        if(key == GLFW_KEY_LEFT_CONTROL){
+
+            ym += 0.1;
+
+        }
+        
     }
 }
