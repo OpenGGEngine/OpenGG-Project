@@ -62,7 +62,7 @@ public class OpenGGTest implements KeyboardListener{
     
     Texture t1 = new Texture();
     
-    float speed = 0.3f;
+    float speed = 1f;
     
     FloatBuffer vertices;
     FloatBuffer vertices2;
@@ -80,13 +80,13 @@ public class OpenGGTest implements KeyboardListener{
         //e.enter();
         float delta;
         setup();
-        while(!win.shouldClose((long) window)){
+        while(!win.shouldClose(window)){
             
             startFrame();
             delta = Time.getDelta();
             update(delta / 1000);
             render(rot1);
-            endFrame((long) window);
+            endFrame(window);
         }
         exit();
     }
@@ -104,10 +104,10 @@ public class OpenGGTest implements KeyboardListener{
 
         
         vertices = BufferUtils.createFloatBuffer(8 * 8);
-        vertices.put(-2).put(-2).put(0).put(0f).put(1f).put(0f).put(0f).put(0f); 
-        vertices.put(2).put(-2).put(0).put(0f).put(0f).put(1f).put(1f).put(0f);
-        vertices.put(2).put(2).put(0).put(1f).put(0f).put(0f).put(1f).put(1f);
-        vertices.put(-2).put(2).put(0).put(0f).put(0f).put(0f).put(0f).put(1f);
+        vertices.put(-2).put(-2).put(-1f).put(0f).put(1f).put(0f).put(0f).put(0f); 
+        vertices.put(2).put(-2).put(-1f).put(0f).put(0f).put(1f).put(1f).put(0f);
+        vertices.put(2).put(2).put(-1f).put(1f).put(0f).put(0f).put(1f).put(1f);
+        vertices.put(-2).put(2).put(-1f).put(0f).put(0f).put(0f).put(0f).put(1f);
         
         vertices.flip();
 
@@ -164,7 +164,7 @@ public class OpenGGTest implements KeyboardListener{
         float ratio = win.getRatio();
         
         //Matrix4f projection = Matrix4f.orthographic(-ratio, ratio, -1f, 1f, -4f, 4f);
-        ViewUtil.setPerspective(100, ratio, 0.1f, 300, program);
+        ViewUtil.setPerspective(100, ratio, 0.3f, 300f, program);
         vao.bind();
         program.use();
         
@@ -222,16 +222,12 @@ public class OpenGGTest implements KeyboardListener{
         Matrix4f end = move.add(model);
         vbo.uploadData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW);
         
-        program.setUniform(uniModel, end);
+        program.setUniform(uniModel, move);
         
-        if(draw){
-            glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
+       
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
             
-            draw = true;
-        }else{
-            
-            draw = true;
-        }
+        
         
     }
     

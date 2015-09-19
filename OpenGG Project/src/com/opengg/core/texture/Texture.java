@@ -23,6 +23,10 @@ import static org.lwjgl.opengl.GL13.*;
  * @author Javier
  */
 public class Texture {
+    public Texture(){
+        
+    }
+    
     ByteBuffer buffer;
     public int loadTexture(String path){
         int texture = glGenTextures();
@@ -35,10 +39,12 @@ public class Texture {
         try {
             in = new FileInputStream(path);
             BufferedImage image = ImageIO.read(in);
+            
             AffineTransform transform = AffineTransform.getScaleInstance(1f, -1f);
             transform.translate(0, -image.getHeight());
             AffineTransformOp operation = new AffineTransformOp(transform, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
             image = operation.filter(image, null);
+            
             int width = image.getWidth();
             int height = image.getHeight();
 
