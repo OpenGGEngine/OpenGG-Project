@@ -28,6 +28,13 @@ public class Texture {
         
     }
     
+    public void useTexture(){
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+    }
+    
+    int width;
+    int height;
+    
     ByteBuffer buffer;
     public int loadTexture(String path){
         int texture = glGenTextures();
@@ -46,8 +53,8 @@ public class Texture {
             AffineTransformOp operation = new AffineTransformOp(transform, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
             image = operation.filter(image, null);
             
-            int width = image.getWidth();
-            int height = image.getHeight();
+            width = image.getWidth();
+            height = image.getHeight();
 
             int[] pixels = new int[width * height];
             image.getRGB(0, 0, width, height, pixels, 0, width);

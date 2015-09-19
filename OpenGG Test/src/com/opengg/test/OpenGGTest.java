@@ -65,11 +65,13 @@ public class OpenGGTest implements KeyboardListener{
     private float previousAngle;
     
     Texture t1 = new Texture();
+    Texture t2 = new Texture();
     
     float speed = 0.2f;
     
     FloatBuffer vertices;
     FloatBuffer vertices2;
+    
     public OpenGGTest(){
         Window w = new Window();
         long window = 1;
@@ -100,13 +102,9 @@ public class OpenGGTest implements KeyboardListener{
         vao.bind();
         
         t1.loadTexture("C:/res/tex1.png");
-        
-        ByteBuffer texBuffer = t1.getData();
-        
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 128, 128, 0, GL_RGBA, GL_UNSIGNED_BYTE, texBuffer);
-        
-
-        
+        t2.loadTexture("C:/res/tex2.png");
+                
+          
         vertices = BufferUtils.createFloatBuffer(squares * 4 * 8);
         vertices.put(-2).put(-2).put(-1f).put(0f).put(1f).put(0f).put(0f).put(0f); 
         vertices.put(2).put(-2).put(-1f).put(0f).put(0f).put(1f).put(1f).put(0f);
@@ -129,7 +127,14 @@ public class OpenGGTest implements KeyboardListener{
         vertices.put(-2).put(-2).put(-1f).put(0f).put(0f).put(0f).put(0f).put(1f);
         
         vertices.flip();
-
+        
+        vertices2 = BufferUtils.createFloatBuffer(squares * 4 * 8);
+        vertices2.put(-2).put(-8).put(-4f).put(0f).put(1f).put(0f).put(0f).put(0f); 
+        vertices2.put(2).put(-8).put(-4f).put(0f).put(0f).put(1f).put(1f).put(0f);
+        vertices2.put(2).put(-4).put(-4f).put(1f).put(0f).put(0f).put(1f).put(1f);
+        vertices2.put(-2).put(-4).put(-4f).put(0f).put(0f).put(0f).put(0f).put(1f);
+        
+        vertices2.flip();
         
         int ebo = glGenBuffers();
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
@@ -233,8 +238,8 @@ public class OpenGGTest implements KeyboardListener{
             lerpAngle = -lerpAngle;
         }
 
-        vao.bind();
-        program.use();
+        //vao.bind();
+        //program.use();
 
         Matrix4f model = Matrix4f.rotate(lerpAngle, 0f, 1f, 0f);
         Matrix4f move = Matrix4f.translate(x, y, z);
@@ -244,11 +249,15 @@ public class OpenGGTest implements KeyboardListener{
         
         program.setUniform(uniModel, move);
         
-       
+        t1.useTexture();
+        
         glDrawElements(GL_TRIANGLES, vertAmount, GL_UNSIGNED_INT, 0);
-            
         
+        t2.useTexture();
         
+        vbo.uploadData(GL_ARRAY_BUFFER, vertices2, GL_STATIC_DRAW);
+        
+        glDrawElements(GL_TRIANGLES, vertAmount, GL_UNSIGNED_INT, 0);
     }
     
     public void update(float delta) {
