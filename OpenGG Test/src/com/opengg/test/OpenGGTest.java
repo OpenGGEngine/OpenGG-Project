@@ -21,6 +21,7 @@ import static com.opengg.core.window.RenderUtil.startFrame;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -75,7 +76,7 @@ public class OpenGGTest implements KeyboardListener{
     Texture blank = new Texture();
     
     float speed = 0.2f;
-    
+        
     FloatBuffer awpb;
     FloatBuffer vertices;
     FloatBuffer vertices2;
@@ -113,24 +114,50 @@ public class OpenGGTest implements KeyboardListener{
         t2.loadTexture("C:/res/tex2.png");
         blank.loadTexture("C:/res/blank.png");
         
-        Model awpm = ObjLoader.loadModel("C:/res/awp.obj");
+        Model awpm = ObjLoader.loadModel("C:/res/awp2.obj");
         List<Vector3f> awp = awpm.getVertices();
-        
-        awpb = BufferUtils.createFloatBuffer(awp.size() * 8);
-        
-        for (Vector3f awp1 : awp) {
-            awpb.put(awp1.x/2).put(awp1.y/2).put(awp1.z/2 + 20).put(0.6f).put(0.6f).put(0.6f).put(0f).put(0f);
+        List<Vector3f> awpn = awpm.getNormals();
+        List<Model.Face> awpf = awpm.getFaces();
+
+        FloatBuffer awpnm = BufferUtils.createFloatBuffer(awpn.size()*3);
+        for (Vector3f awpn1 : awpn){
+            awpnm.put(awpn1.x).put(awpn1.y).put(awpn1.z);
         }
         
+        awpnm.flip();
+        
+        int normal = glGenBuffers();
+        glBindBuffer(GL_ARRAY_BUFFER, normal);
+        glBufferData(GL_ARRAY_BUFFER,  awpnm, awpnm.capacity());
+        
+        glEnableVertexAttribArray(2);
+        glBindBuffer(GL_ARRAY_BUFFER, normal);
+        glVertexAttribPointer(
+            2,                                // attribute
+            awpnm.capacity(),                                // size
+            GL_FLOAT,                         // type
+            false,                         // normalized?
+            0,                                // stride
+            0                          // array buffer offset
+        );
+
+        
+        
+        
+        awpb = BufferUtils.createFloatBuffer(awp.size() * 8);
+        for (Vector3f awp1 : awp) {
+            awpb.put(awp1.x).put(awp1.y).put(awp1.z).put(0.2f).put(0.2f).put(0.4f).put(0f).put(0f);
+            //System.out.println(awp1.x);
+        }
         awpb.flip();
      
         int ebo = glGenBuffers();
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
         
-        IntBuffer elements = BufferUtils.createIntBuffer(awp.size());
-
-        for(int i = 0; i < awp.size()/6; i++){
-            elements.put(0 + (i*4)).put(1 + (i*4)).put(2 + (i*4)).put(2 + (i*4)).put(3 + (i*4)).put(0 + (i*4));
+        IntBuffer elements = BufferUtils.createIntBuffer(awpf.size()*3);
+        for (Model.Face awpf1 : awpf) {
+            int[] ind = awpf1.getVertexIndices();
+            elements.put(ind[0]).put(ind[1]).put(ind[2]);
         }
         elements.flip();
         
@@ -202,8 +229,6 @@ public class OpenGGTest implements KeyboardListener{
         glEnable(GL_DEPTH_TEST);
 
         glDepthFunc(GL_LESS);
-
-        
     }
     
     
@@ -267,7 +292,7 @@ public class OpenGGTest implements KeyboardListener{
         
         vbo.uploadData(GL_ARRAY_BUFFER, awpb, GL_STATIC_DRAW);      
         glDrawElements(GL_TRIANGLES, awpb.capacity(), GL_UNSIGNED_INT, 0);
-        
+        //glDrawArrays(GL_TRIANGLES, 0, awpb.capacity());
     }
     
     public void update(float delta) {

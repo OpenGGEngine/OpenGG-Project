@@ -145,6 +145,8 @@ public class ObjLoader {
                     continue;
                 } else if(prefix.equals("o")) {
                     continue;
+                } else if(prefix.equals("mtllib")) {
+                    continue;
                 }else{
                     throw new RuntimeException("OBJ file contains line which cannot be parsed correctly: " + line);
                 }
