@@ -1,6 +1,6 @@
 package com.opengg.test;
 import com.opengg.core.Matrix4f;
-import com.opengg.core.Texture.Texture;
+import com.opengg.core.texture.Texture;
 import com.opengg.core.input.KeyboardEventHandler;
 import com.opengg.core.input.KeyboardListener;
 import com.opengg.core.render.VertexArrayObject;
@@ -8,10 +8,13 @@ import com.opengg.core.render.VertexBufferObject;
 import com.opengg.core.shader.Shader;
 import com.opengg.core.shader.ShaderProgram;
 import com.opengg.core.util.Time;
+import com.opengg.core.util.ViewUtil;
  
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import com.opengg.core.window.*;
+import static com.opengg.core.window.RenderUtil.endFrame;
+import static com.opengg.core.window.RenderUtil.startFrame;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -77,13 +80,13 @@ public class OpenGGTest implements KeyboardListener{
         //e.enter();
         float delta;
         setup();
-        while(!win.shouldClose((int) window)){
+        while(!win.shouldClose((long) window)){
             
             startFrame();
             delta = Time.getDelta();
             update(delta / 1000);
             render(rot1);
-            finishFrame((int) window);
+            endFrame((long) window);
         }
         exit();
     }
@@ -92,7 +95,7 @@ public class OpenGGTest implements KeyboardListener{
         vao = new VertexArrayObject();
         vao.bind();
         
-        t1.getBMP("C:/res/tex1.png");
+        t1.loadTexture("C:/res/tex1.png");
         
         ByteBuffer texBuffer = t1.getData();
         
