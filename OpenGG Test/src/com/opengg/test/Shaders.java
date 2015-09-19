@@ -13,56 +13,28 @@ import org.lwjgl.BufferUtils;
  * @author Javier
  */
 public class Shaders {
-    static FloatBuffer vertices = BufferUtils.createFloatBuffer(36 * 6);
+    static FloatBuffer vertices = BufferUtils.createFloatBuffer(16 * 8);
     static{                
-        vertices.put(-0.6f).put(-0.6f).put(-1.6f).put(0f).put(0f).put(1f);
-        vertices.put(0f).put(-0.6f).put(-1.6f).put(0f).put(0f).put(1f);
-        vertices.put(-0.6f).put(0f).put(-1.6f).put(0f).put(0f).put(1f);
+        vertices.put(-2).put(-2).put(-1f).put(0f).put(1f).put(0f).put(0f).put(0f); 
+        vertices.put(2).put(-2).put(-1f).put(0f).put(0f).put(1f).put(1f).put(0f);
+        vertices.put(2).put(2).put(-1f).put(1f).put(0f).put(0f).put(1f).put(1f);
+        vertices.put(-2).put(2).put(-1f).put(0f).put(0f).put(0f).put(0f).put(1f);
         
-        vertices.put(0f).put(0f).put(-1.6f).put(1f).put(0f).put(0f);
-        vertices.put(0f).put(-0.6f).put(-1.6f).put(0f).put(1f).put(0f);
-        vertices.put(-0.6f).put(0f).put(-1.6f).put(0f).put(0f).put(1f);
+        vertices.put(-2).put(-2).put(-3f).put(0f).put(1f).put(0f).put(0f).put(0f); 
+        vertices.put(2).put(-2).put(-3f).put(0f).put(0f).put(1f).put(1f).put(0f);
+        vertices.put(2).put(2).put(-3f).put(1f).put(0f).put(0f).put(1f).put(1f);
+        vertices.put(-2).put(2).put(-3f).put(0f).put(0f).put(0f).put(0f).put(1f);
         
-        vertices.put(-0.6f).put(-0.6f).put(-1f).put(1f).put(1f).put(1f);
-        vertices.put(0f).put(-0.6f).put(-1f).put(0f).put(1f).put(1f);
-        vertices.put(0f).put(-0.6f).put(-1.6f).put(0f).put(1f).put(1f);
+        vertices.put(-2).put(2).put(-3f).put(0f).put(1f).put(0f).put(0f).put(0f); 
+        vertices.put(2).put(2).put(-3f).put(0f).put(0f).put(1f).put(1f).put(0f);
+        vertices.put(2).put(2).put(-1f).put(1f).put(0f).put(0f).put(1f).put(1f);
+        vertices.put(-2).put(2).put(-1f).put(0f).put(0f).put(0f).put(0f).put(1f);
         
-        vertices.put(-0.6f).put(-0.6f).put(-1f).put(1f).put(1f).put(1f);
-        vertices.put(-0.6f).put(-0.6f).put(-1.6f).put(0f).put(1f).put(1f);
-        vertices.put(0f).put(-0.6f).put(-1.6f).put(0f).put(0f).put(1f);
+        vertices.put(-2).put(-2).put(-3f).put(0f).put(1f).put(0f).put(0f).put(0f); 
+        vertices.put(2).put(-2).put(-3f).put(0f).put(0f).put(1f).put(1f).put(0f);
+        vertices.put(2).put(-2).put(-1f).put(1f).put(0f).put(0f).put(1f).put(1f);
+        vertices.put(-2).put(-2).put(-1f).put(0f).put(0f).put(0f).put(0f).put(1f);
         
-        vertices.put(-0.6f).put(0f).put(-1f).put(1f).put(1f).put(1f);
-        vertices.put(0f).put(0f).put(-1f).put(0f).put(1f).put(1f);
-        vertices.put(0f).put(0f).put(-1.6f).put(0f).put(1f).put(1f);
-        
-        vertices.put(-0.6f).put(0f).put(-1f).put(1f).put(1f).put(1f);
-        vertices.put(-0.6f).put(0f).put(-1.6f).put(0f).put(1f).put(1f);
-        vertices.put(0f).put(0f).put(-1.6f).put(0f).put(0f).put(1f);
-        
-        vertices.put(0f).put(0f).put(-1f).put(1f).put(0f).put(0f);
-        vertices.put(0f).put(-0.6f).put(-1f).put(0f).put(1f).put(0f);
-        vertices.put(-0.6f).put(0f).put(-1f).put(0f).put(0f).put(1f);
-        
-        vertices.put(-0.6f).put(-0.6f).put(-1f).put(0f).put(0f).put(1f);
-        vertices.put(0f).put(-0.6f).put(-1f).put(0f).put(0f).put(1f);
-        vertices.put(-0.6f).put(0f).put(-1f).put(0f).put(0f).put(1f);
-        
-        vertices.put(-0.6f).put(-0.6f).put(-1f).put(0f).put(1f).put(1f);
-        vertices.put(-0.6f).put(-0.6f).put(-1.6f).put(0f).put(1f).put(1f);
-        vertices.put(-0.6f).put(0f).put(-1f).put(0f).put(1f).put(1f);
-        
-        vertices.put(-0.6f).put(-0.6f).put(-1.6f).put(0f).put(1f).put(1f);
-        vertices.put(-0.6f).put(0f).put(-1.6f).put(0f).put(1f).put(1f);
-        vertices.put(-0.6f).put(0f).put(-1f).put(0f).put(0f).put(1f);
-        
-        vertices.put(0f).put(-0.6f).put(-1f).put(0f).put(1f).put(1f);
-        vertices.put(0f).put(-0.6f).put(-1.6f).put(0f).put(1f).put(1f);
-        vertices.put(0f).put(0f).put(-1f).put(0f).put(1f).put(1f);
-        
-        vertices.put(0f).put(-0.6f).put(-1.6f).put(0f).put(1f).put(1f);
-        vertices.put(0f).put(0f).put(-1.6f).put(0f).put(1f).put(1f);
-        vertices.put(0f).put(0f).put(-1f).put(0f).put(0f).put(1f);
-
         vertices.flip();
     }
     public static final CharSequence vertexSource
@@ -72,7 +44,6 @@ public class Shaders {
             +"layout(location = 1) in vec2 vertexUV;\n"
             + "in vec3 position;\n"
             + "in vec3 color;\n"
-            +"out vec2 UV;\n"
             + "\n"
             + "out vec3 vertexColor;\n"
             + "\n"
@@ -84,7 +55,6 @@ public class Shaders {
             + "    vertexColor = color;\n"
             + "    mat4 mvp = projection * view * model;\n"
             + "    gl_Position = mvp * vec4(position, 1.0);\n"
-            +"     UV = vertexUV;\n"
             + "}";
     public static final CharSequence fragmentSource
             = "#version 330 core\n"
