@@ -228,20 +228,20 @@ public class OpenGGTest implements KeyboardListener{
 
     @Override
     public void keyPressed(int key) {
-        if(key == GLFW_KEY_A){
+        if(key == GLFW_KEY_D){
             rot1 -= 0.2;
             xm -= 0.1;
         }
-        if(key == GLFW_KEY_D){
+        if(key == GLFW_KEY_A){
 
             xm += 0.1;
 
         }
-        if(key == GLFW_KEY_W){
+        if(key == GLFW_KEY_S){
  
             zm -= 0.1;
         }
-        if(key == GLFW_KEY_S){
+        if(key == GLFW_KEY_W){
 
             zm += 0.1;
 
@@ -275,21 +275,21 @@ public class OpenGGTest implements KeyboardListener{
 
     @Override
     public void keyReleased(int key) {
-        if(key == GLFW_KEY_A){
+        if(key == GLFW_KEY_D){
             rot1 -= 0.2;
             xm += 0.1;
             backwards = false;
         }
-        if(key == GLFW_KEY_D){
+        if(key == GLFW_KEY_A){
             rot1 -= 0.2;
             xm -= 0.1;
             backwards = false;
         }
-        if(key == GLFW_KEY_W){
+        if(key == GLFW_KEY_S){
  
             zm += 0.1;
         }
-        if(key == GLFW_KEY_S){
+        if(key == GLFW_KEY_W){
 
             zm -= 0.1;
 
