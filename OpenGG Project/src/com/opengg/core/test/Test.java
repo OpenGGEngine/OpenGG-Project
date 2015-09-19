@@ -5,12 +5,16 @@
  */
 package com.opengg.core.test;
 
+import com.opengg.core.Model;
 import com.opengg.core.window.Window;
 import org.lwjgl.opengl.GL;
 import static org.lwjgl.opengl.GL11.*;
 import org.lwjgl.opengl.GLContext;
 import com.opengg.core.input.*;
+import com.opengg.core.io.BuilderInterface;
+import com.opengg.core.io.ObjLoader;
 import com.opengg.core.window.DisplayMode;
+import java.io.File;
 import static org.lwjgl.glfw.GLFW.*;
 /**
  *
@@ -28,6 +32,9 @@ public class Test implements KeyboardListener{
         win = new Window();
         try {
             window = win.init(1280, 720, "Test", DisplayMode.WINDOWED);
+            
+            ObjLoader obj = new ObjLoader();
+            Model model = obj.loadTexturedModel(new File("C:\\test.obj"));
         } catch (Exception ex){ex.printStackTrace();}
         
         loop();
