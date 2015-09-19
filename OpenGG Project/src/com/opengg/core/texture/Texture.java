@@ -15,6 +15,7 @@ import java.nio.ByteBuffer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import org.lwjgl.BufferUtils;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.*;
 
@@ -50,7 +51,7 @@ public class Texture {
 
             int[] pixels = new int[width * height];
             image.getRGB(0, 0, width, height, pixels, 0, width);
-            
+            buffer = BufferUtils.createByteBuffer(width * height * 4);
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width; x++) {
                     /* Pixel as RGBA: 0xAARRGGBB */
@@ -76,7 +77,7 @@ public class Texture {
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Texture.class.getName()).severe("File not found!");
         }  catch (Exception e){
-            
+            e.printStackTrace();
         }
         return texture;
     }

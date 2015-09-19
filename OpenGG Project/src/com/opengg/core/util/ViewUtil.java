@@ -7,6 +7,7 @@ package com.opengg.core.util;
 
 import com.opengg.core.Matrix4f;
 import com.opengg.core.shader.ShaderProgram;
+import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
 
 /**
  *
@@ -17,5 +18,6 @@ public class ViewUtil {
         Matrix4f projection = Matrix4f.perspective(fov, aspect, znear, zfar);
         int uniProjection = program.getUniformLocation("projection");
         program.setUniform(uniProjection, projection);
+        glUniformMatrix4fv(uniProjection, false, projection.getBuffer());
     }
 }
