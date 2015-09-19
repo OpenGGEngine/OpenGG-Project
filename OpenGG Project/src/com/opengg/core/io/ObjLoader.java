@@ -1,14 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
+
+
 package com.opengg.core.io;
 
-/**
- *
- * @author warren
- */
+import com.opengg.core.Model;
 import org.lwjgl.BufferUtils;
 import com.opengg.core.Vector2f;
 import com.opengg.core.Vector3f;
@@ -16,10 +11,10 @@ import com.opengg.core.Vector3f;
 
 import java.io.*;
 import java.nio.FloatBuffer;
+import org.lwjgl.opengl.GL11;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;
-import com.opengg.core.Model;
 
 /**
  * @author Oskar
@@ -146,20 +141,21 @@ public class ObjLoader {
         return m;
     }
 
-   /* public static int createTexturedDisplayList(Model m) {
+    public static int createTexturedDisplayList(Model m) {
         int displayList = glGenLists(1);
         glNewList(displayList, GL_COMPILE);
         {
             glBegin(GL_TRIANGLES);
             for (Model.Face face : m.getFaces()) {
                 if (face.hasTextureCoordinates()) {
-                    glMaterial(GL_FRONT, GL_DIFFUSE, BufferTools.asFlippedFloatBuffer(face.getMaterial()
+                    /*glMaterial(GL_FRONT, GL_DIFFUSE, BufferTools.asFlippedFloatBuffer(face.getMaterial()
                             .diffuseColour[0], face.getMaterial().diffuseColour[1],
                             face.getMaterial().diffuseColour[2], 1));
                     glMaterial(GL_FRONT, GL_AMBIENT, BufferTools.asFlippedFloatBuffer(face.getMaterial()
                             .ambientColour[0], face.getMaterial().ambientColour[1],
                             face.getMaterial().ambientColour[2], 1));
                     glMaterialf(GL_FRONT, GL_SHININESS, face.getMaterial().specularCoefficient);
+                    */
                 }
                 if (face.hasNormals()) {
                     Vector3f n1 = m.getNormals().get(face.getNormalIndices()[0] - 1);
@@ -204,7 +200,7 @@ public class ObjLoader {
         Model.Material currentMaterial = new Model.Material();
         String line;
         while ((line = reader.readLine()) != null) {
-            if (line.startsWith("#")) {
+            if (line.startsWith("#")||line.startsWith("g")) {
                 continue;
             }
             if (line.startsWith("mtllib ")) {
@@ -215,7 +211,7 @@ public class ObjLoader {
                 Model.Material parseMaterial = new Model.Material();
                 String parseMaterialName = "";
                 while ((materialLine = materialFileReader.readLine()) != null) {
-                    if (materialLine.startsWith("#")) {
+                    if (materialLine.startsWith("#")||materialLine.startsWith("g")) {
                         continue;
                     }
                     if (materialLine.startsWith("newmtl ")) {
@@ -242,9 +238,10 @@ public class ObjLoader {
                         parseMaterial.diffuseColour[1] = Float.valueOf(rgb[2]);
                         parseMaterial.diffuseColour[2] = Float.valueOf(rgb[3]);
                     } else if (materialLine.startsWith("map_Kd")) {
-                        parseMaterial.texture = TextureLoader.getTexture("PNG",
+                        /*parseMaterial.texture = TextureLoader.getTexture("PNG",
                                 new FileInputStream(new File(f.getParentFile().getAbsolutePath() + "/" + materialLine
-                                        .split(" ")[1])));
+                                        .split(" ")[1])));*/
+                        System.out.println("WOrk to do");
                     } else {
                         System.err.println("[MTL] Unknown Line: " + materialLine);
                     }
@@ -304,5 +301,4 @@ public class ObjLoader {
         reader.close();
         return m;
     }
-    %*/
 }

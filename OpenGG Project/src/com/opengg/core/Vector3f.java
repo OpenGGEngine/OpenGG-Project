@@ -5,6 +5,7 @@
  */
 package com.opengg.core;
 import java.nio.FloatBuffer;
+import java.util.List;
 import org.lwjgl.BufferUtils;
 /**
  *
@@ -78,7 +79,16 @@ public class Vector3f {
     private Vector3f divide(float scalar) {
         return scale(1f / scalar);
     }
-
+    public float getX(){
+      return this.x;
+    }
+      public float getY(){
+      return this.y;
+    }
+        public float getZ(){
+      return this.z;
+    }
+      
     private Vector3f scale(float scalar) {
         float x = this.x * scalar; 
          float y = this.y * scalar; 
