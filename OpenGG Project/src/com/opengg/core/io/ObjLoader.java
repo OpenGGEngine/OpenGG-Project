@@ -119,7 +119,7 @@ public class ObjLoader {
         }
     }
 
-    public static Model loadModel(String path){
+    public static Model loadModel(String path)throws IOException{
         InputStream in;
         BufferedReader reader;
         Model m = new Model();
@@ -214,7 +214,8 @@ public class ObjLoader {
         return displayList;
     }
 
-    public static Model loadTexturedModel(File f) throws IOException {
+    public static Model loadTexturedModel(String path) throws IOException {
+        File f = new File(path);
         BufferedReader reader = new BufferedReader(new FileReader(f));
         Model m = new Model();
         Model.Material currentMaterial = new Model.Material();

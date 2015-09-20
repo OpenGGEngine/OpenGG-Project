@@ -36,7 +36,7 @@ public class Test implements KeyboardListener{
             window = win.init(1280, 720, "Test", DisplayMode.WINDOWED);
             
             ObjLoader obj = new ObjLoader();
-            Model model = obj.loadTexturedModel(new File("C:\\test.obj"));
+            Model model = obj.loadTexturedModel("C:\\test.obj");
             for(Vector3f v : model.getVertices()) {
             System.out.println("X is " + v.getX() );
             System.out.println("Y is " +v.getY() );
