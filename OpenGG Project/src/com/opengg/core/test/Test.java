@@ -5,12 +5,18 @@
  */
 package com.opengg.core.test;
 
+import com.opengg.core.Model;
+import com.opengg.core.Vector3f;
 import com.opengg.core.window.Window;
 import org.lwjgl.opengl.GL;
 import static org.lwjgl.opengl.GL11.*;
 import org.lwjgl.opengl.GLContext;
 import com.opengg.core.input.*;
+import com.opengg.core.io.ObjLoader;
 import com.opengg.core.window.DisplayMode;
+import java.io.File;
+import java.util.Arrays;
+import java.util.List;
 import static org.lwjgl.glfw.GLFW.*;
 /**
  *
@@ -28,8 +34,16 @@ public class Test implements KeyboardListener{
         win = new Window();
         try {
             window = win.init(1280, 720, "Test", DisplayMode.WINDOWED);
+            
+            ObjLoader obj = new ObjLoader();
+            Model model = obj.loadTexturedModel("C:\\test.obj");
+            for(Vector3f v : model.getVertices()) {
+            System.out.println("X is " + v.getX() );
+            System.out.println("Y is " +v.getY() );
+            System.out.println("Z is " +v.getZ() );
+        }
         } catch (Exception ex){ex.printStackTrace();}
-        
+       
         loop();
         
         win.destroy();

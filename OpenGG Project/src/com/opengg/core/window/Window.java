@@ -136,6 +136,13 @@ public class Window {
         
         errorCallback.release();
     }
+    public boolean shouldClose(long wind){
+        if(glfwWindowShouldClose(wind) == GL_FALSE){
+            return false;
+        }else{
+            return true;
+        }
+    }
     public void update(){
      glClearColor(0.0f, 0.0f, 1.0f, 0.0f);
     }
