@@ -61,9 +61,6 @@ public class Vector3f {
     public float length() {
 
         return (float) Math.sqrt(lengthSquared()); 
-      
-        
-
     }
 
     public Vector3f normalize() { 
@@ -78,15 +75,6 @@ public class Vector3f {
 
     private Vector3f divide(float scalar) {
         return scale(1f / scalar);
-    }
-    public float getX(){
-      return this.x;
-    }
-      public float getY(){
-      return this.y;
-    }
-        public float getZ(){
-      return this.z;
     }
       
     private Vector3f scale(float scalar) {
@@ -112,11 +100,6 @@ public class Vector3f {
         this.x = (float) (radi * Math.cos(inclination) * Math.cos(azimuth));
         this.y = (float) (radi * Math.cos(inclination) * Math.sin(azimuth));
         this.x = (float) (radi * Math.cos(inclination));
-    }
-    
-    public float getRadius()
-    {
-        return (float)Math.sqrt((x*x) + (y*y) + (z*z));
     }
     
     public float getInclination()
