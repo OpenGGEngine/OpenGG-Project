@@ -14,15 +14,11 @@ import com.opengg.core.Vector3f;
  */
 public class Entity {
     
-    static public int entityCount = 0;
     public Vector3f pos = new Vector3f();
-    public float velocity = 0f;
-    
-    public float acceleration;
+    public float volume;
     public boolean ground;
     public float mass;
-    public float volume;
-
+    public float force;
     
     public Entity()
     {
@@ -34,12 +30,9 @@ public class Entity {
         pos.x = 0f;
         pos.y = 0f;
         pos.z = 0f;
-        this.velocity = 0f;
-        this.acceleration = 0f;
         this.ground = true;
         this.volume = 0f;
         this.mass = 0f;
-        Entity.entityCount++;
     }
 
     /**
@@ -57,11 +50,10 @@ public class Entity {
         pos.x = x;
         pos.y = y;
         pos.z = z;
-        this.acceleration = force/mass;
-        this.ground = y>60;
+        this.force = force;
+        this.ground = (y > 60);
         this.volume = volume;
         this.mass = mass;
-        Entity.entityCount++;
     }
 
     /**
@@ -74,29 +66,21 @@ public class Entity {
         pos.x = v.pos.x;
         pos.y = v.pos.y;
         pos.z = v.pos.z;
-        this.velocity = v.velocity;
-        this.acceleration = v.acceleration;
+        this.force = v.force;
         this.ground = v.ground;
         this.volume = v.volume;
         this.mass = v.mass;
-        Entity.entityCount++;
     }
-
-    /**
-     * Creates new Entity off of old entity with different movement speed
-     * 
-     * @param force
-     * @param v Entity to be copied
-     */
-    public Entity(float force, Entity v) {
-        
-        this.acceleration = force/v.mass;
-        pos.x = v.pos.x;
-        pos.y = v.pos.y;
-        pos.z = v.pos.z;
-        this.ground = v.ground;
-        this.volume = v.volume;
-        this.mass = v.mass;
-        Entity.entityCount++;
+    
+    public void setXYZ(float x, float y, float z)
+    {
+        this.pos.x = x;
+        this.pos.y = y;
+        this.pos.z = z;
+    }
+    
+    public void setForce(float force)
+    {
+        this.force = force;
     }
 }

@@ -11,7 +11,7 @@ import com.opengg.core.Model;
  *
  * @author 19coindreauj
  */
-public class PhysicsEntity extends Entity{
+public class PhysicsEntity extends EntityUpdate{
 
     public PhysicsEntity(Model model) {
         super(model);
