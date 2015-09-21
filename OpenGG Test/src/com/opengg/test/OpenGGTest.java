@@ -18,11 +18,14 @@ import static org.lwjgl.opengl.GL11.*;
 import com.opengg.core.window.*;
 import static com.opengg.core.window.RenderUtil.endFrame;
 import static com.opengg.core.window.RenderUtil.startFrame;
+import static com.opengg.test.Shaders.vertices;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.lwjgl.BufferUtils;
@@ -41,8 +44,6 @@ public class OpenGGTest implements KeyboardListener{
     int squares = 4;
     private Shader vertexTex;
     private Shader fragmentTex;
-    private int uniView2;
-    private int uniModel2;
     
     {
         vertAmount = squares * 6;
@@ -98,63 +99,50 @@ public class OpenGGTest implements KeyboardListener{
         while(!win.shouldClose(window)){
             
             startFrame();
-            delta = Time.getDelta();
-            update(delta / 1000);
+            //delta = Time.getDelta();
+            update(1);
             render(rot1);
             endFrame(window);
         }
         exit();
     }
+    
+    IntBuffer ind;
+    IntBuffer elements;
     public void setup(){
         /* Generate Vertex Array Object */
         vao = new VertexArrayObject();
         vao.bind();
         
-        t1.loadTexture("C:/res/tex1.png");
-        t2.loadTexture("C:/res/tex2.png");
-        blank.loadTexture("C:/res/blank.png");
+//        t1.loadTexture("C:/res/tex1.png");
+//        t2.loadTexture("C:/res/tex2.png");
+        blank.loadTexture("C:\\Users\\19coindreauj\\Documents\\NetBeansProjects\\OpenGG-Project\\OpenGG Project\\src\\com\\opengg\\core\\extrafiles\\tex1.png");
         
-        Model awpm = ObjLoader.loadModel("C:/res/awp2.obj");
+        Model awpm = new Model();
+        try {
+            awpm = ObjLoader.loadTexturedModel("C:\\Users\\19coindreauj\\Documents\\NetBeansProjects\\OpenGG-Project\\OpenGG Test\\src\\com\\opengg\\test\\awp.obj");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
         List<Vector3f> awp = awpm.getVertices();
         List<Vector3f> awpn = awpm.getNormals();
         List<Model.Face> awpf = awpm.getFaces();
 
-        FloatBuffer awpnm = BufferUtils.createFloatBuffer(awpn.size()*3);
-        for (Vector3f awpn1 : awpn){
-            awpnm.put(awpn1.x).put(awpn1.y).put(awpn1.z);
-        }
-        
-        awpnm.flip();
-        
-        int normal = glGenBuffers();
-        glBindBuffer(GL_ARRAY_BUFFER, normal);
-        glBufferData(GL_ARRAY_BUFFER,  awpnm, awpnm.capacity());
-        
-        glEnableVertexAttribArray(2);
-        glBindBuffer(GL_ARRAY_BUFFER, normal);
-        glVertexAttribPointer(
-            2,                                // attribute
-            awpnm.capacity(),                                // size
-            GL_FLOAT,                         // type
-            false,                         // normalized?
-            0,                                // stride
-            0                          // array buffer offset
-        );
-
-        
-        
+        Random random = new Random();
         
         awpb = BufferUtils.createFloatBuffer(awp.size() * 8);
         for (Vector3f awp1 : awp) {
-            awpb.put(awp1.x).put(awp1.y).put(awp1.z).put(0.2f).put(0.2f).put(0.4f).put(0f).put(0f);
-            //System.out.println(awp1.x);
+            float color = random.nextFloat() % 10;
+                    
+            awpb.put(awp1.x).put(awp1.y).put(awp1.z).put(color).put(color).put(color).put(0f).put(0f);
+
         }
         awpb.flip();
      
         int ebo = glGenBuffers();
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
         
-        IntBuffer elements = BufferUtils.createIntBuffer(awpf.size()*3);
+        elements = BufferUtils.createIntBuffer(awpf.size()*3);
         for (Model.Face awpf1 : awpf) {
             int[] ind = awpf1.getVertexIndices();
             elements.put(ind[0]).put(ind[1]).put(ind[2]);
@@ -163,7 +151,21 @@ public class OpenGGTest implements KeyboardListener{
         
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, elements, GL_STATIC_DRAW);
         
+        vertices = BufferUtils.createFloatBuffer(4 * 8);
+        
+        vertices.put(-2).put(-2).put(-1f).put(0f).put(1f).put(0f).put(0f).put(0f); 
+        vertices.put(2).put(-2).put(-1f).put(0f).put(0f).put(1f).put(1f).put(0f);
+        vertices.put(2).put(2).put(-1f).put(1f).put(0f).put(0f).put(1f).put(1f);
+        vertices.put(-2).put(2).put(-1f).put(0f).put(0f).put(0f).put(0f).put(1f);
+        
+        vertices.flip();
 
+        ind = BufferUtils.createIntBuffer(6);
+        
+        ind.put(0).put(1).put(2).put(2).put(3).put(0);
+        
+        ind.flip();
+        
         vbo = new VertexBufferObject();
         vbo.bind(GL_ARRAY_BUFFER);
 
@@ -181,19 +183,9 @@ public class OpenGGTest implements KeyboardListener{
         program.link();
         program.use();
         program.checkStatus();
-        
-        program2 = new ShaderProgram();
-        program2.attachShader(vertexShader);   
-        program2.attachShader(fragmentShader);  
-        program2.bindFragmentDataLocation(0, "fragColor");
-        program2.link();
-        
-        program2.checkStatus();
-        
+  
         //specifyVertexAttributes(program2, false);
         specifyVertexAttributes(program, true);
-        
-       
 
         /* Set shader variables */
         Matrix4f view = new Matrix4f();
@@ -208,21 +200,12 @@ public class OpenGGTest implements KeyboardListener{
         program.setUniform(uniTex, 0);
         
         
-//        program2.use();
-//        uniView2 = program2.getUniformLocation("view");
-//        
-//        program2.setUniform(uniView, view);
-//        uniModel2 = program2.getUniformLocation("model");
-        
-        
 
         float ratio = win.getRatio();
         
         program.use();
         ViewUtil.setPerspective(100, ratio, 0.3f, 300f, program);
         
-//        program2.use();
-//        ViewUtil.setPerspective(100, ratio, 0.3f, 300f, program2);
 
         vao.bind();      
         
@@ -285,14 +268,20 @@ public class OpenGGTest implements KeyboardListener{
         //Matrix4f scale = Matrix4f.scale(0.4f, 0.4f, 0.4f);
         Matrix4f end = move.add(model);
         
-        program.use();
+        //program.use();
         program.setUniform(uniModel, move);
         
         blank.useTexture();
         
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, elements, GL_STATIC_DRAW);
+        
         vbo.uploadData(GL_ARRAY_BUFFER, awpb, GL_STATIC_DRAW);      
         glDrawElements(GL_TRIANGLES, awpb.capacity(), GL_UNSIGNED_INT, 0);
         //glDrawArrays(GL_TRIANGLES, 0, awpb.capacity());
+        
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, ind, GL_STATIC_DRAW);
+        vbo.uploadData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW);
+        glDrawElements(GL_TRIANGLES, 4, GL_UNSIGNED_INT, 0);
     }
     
     public void update(float delta) {

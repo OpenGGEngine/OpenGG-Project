@@ -14,8 +14,7 @@ import org.lwjgl.BufferUtils;
  */
 public class Shaders {
     static FloatBuffer vertices = BufferUtils.createFloatBuffer(16 * 8);
-    static{                
-        vertices.put(-2).put(-2).put(-1f).put(0f).put(1f).put(0f).put(0f).put(0f); 
+    static{                vertices.put(-2).put(-2).put(-1f).put(0f).put(1f).put(0f).put(0f).put(0f); 
         vertices.put(2).put(-2).put(-1f).put(0f).put(0f).put(1f).put(1f).put(0f);
         vertices.put(2).put(2).put(-1f).put(1f).put(0f).put(0f).put(1f).put(1f);
         vertices.put(-2).put(2).put(-1f).put(0f).put(0f).put(0f).put(0f).put(1f);
@@ -36,6 +35,7 @@ public class Shaders {
         vertices.put(-2).put(-2).put(-1f).put(0f).put(0f).put(0f).put(0f).put(1f);
         
         vertices.flip();
+        
     }
     public static final CharSequence vertexSource
             = "#version 330 core\n"
