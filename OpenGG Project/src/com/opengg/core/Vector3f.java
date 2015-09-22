@@ -59,7 +59,6 @@ public class Vector3f {
     }
 
     public float length() {
-
         return (float) Math.sqrt(lengthSquared()); 
     }
 
@@ -92,20 +91,20 @@ public class Vector3f {
         return buffer;
     }
     
-//    public void setRadius(float radi)
-//    {
-//        float inclination = getInclination();
-//        float azimuth = getAzimuth();
-//        
-//        this.x = (float) (radi * Math.cos(inclination) * Math.cos(azimuth));
-//        this.y = (float) (radi * Math.cos(inclination) * Math.sin(azimuth));
-//        this.x = (float) (radi * Math.cos(inclination));
-//    }
+    public void setRadius(float radi)
+    {
+        float inclination = getInclination();
+        float azimuth = getAzimuth();
+        
+        this.x = (float) (radi * Math.cos(inclination) * Math.cos(azimuth));
+        this.y = (float) (radi * Math.cos(inclination) * Math.sin(azimuth));
+        this.x = (float) (radi * Math.cos(inclination));
+    }
     
-//    public float getInclination()
-//    {
-//        return (float)Math.toDegrees(Math.acos(y/getRadius()));
-//    }
+    public float getInclination()
+    {
+        return (float)Math.toDegrees(Math.acos(y/length()));
+    }
     
     public float getAzimuth()
     {
