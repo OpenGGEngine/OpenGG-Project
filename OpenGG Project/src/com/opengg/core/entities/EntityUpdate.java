@@ -19,9 +19,22 @@ public abstract class EntityUpdate extends Entity {
     public float lastAcceleration;
     public float velocity;
     public Vector3f direction = null;
+    float timeStep;
     
     public EntityUpdate(Model m)
     {
-        super(m); 
+        super(m);
+        updateXYZ();
+    }
+    
+    public void updateXYZ()
+    {
+        timeStep = time.getDeltaSec();
+        lastAcceleration = acceleration;
+        /*position += velocity * timeStep + ( 0.5 * lastAcceleration * timeStep * timeStep );
+        find ratios for x to y to z movement
+        */
+        acceleration = force / mass;
+        velocity += (lastAcceleration + acceleration ) / 2 * timeStep;
     }
 }

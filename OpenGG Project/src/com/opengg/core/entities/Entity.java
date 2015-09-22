@@ -20,6 +20,8 @@ public class Entity {
     public float mass;
     public float force;
     
+    //Bounding Boxes
+    
     public Entity()
     {
         

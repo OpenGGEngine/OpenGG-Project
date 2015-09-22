@@ -15,7 +15,7 @@ import java.util.List;
  */
     public abstract class EntityFactory {
         static public int entityCount = 0;
-        List<Entity> list = new ArrayList<>();
+        public List<Entity> list = new ArrayList<>();
         public boolean generatePhysicsEntity(PhysicsEntity p, Model m){
             entityCount++;
             p = new PhysicsEntity(m);

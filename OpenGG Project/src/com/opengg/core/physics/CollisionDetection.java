@@ -5,7 +5,7 @@
  */
 package com.opengg.core.physics;
 
-import com.opengg.core.entities.Entity;
+import com.opengg.core.entities.EntityFactory;
 import com.opengg.core.entities.PhysicsEntity;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,8 +14,7 @@ import java.util.List;
  *
  * @author ethachu19
  */
-public class CollisionDetection {
-    List<PhysicsEntity> list = new ArrayList<>();
+public class CollisionDetection extends EntityFactory{
     
     public void addEntity(PhysicsEntity entity)
     {
@@ -35,6 +34,7 @@ public class CollisionDetection {
     
     public boolean areColliding(int x, int y)
     {
+        //Possible error checking
         if(list.get(x) == null || list.get(y) == null)
         {
             return false;
