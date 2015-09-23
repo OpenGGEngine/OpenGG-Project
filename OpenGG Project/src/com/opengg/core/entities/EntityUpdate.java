@@ -6,6 +6,7 @@
 package com.opengg.core.entities;
 
 import com.opengg.core.Model;
+import com.opengg.core.Vector2f;
 import com.opengg.core.Vector3f;
 import com.opengg.core.util.Time;
 
@@ -13,11 +14,15 @@ import com.opengg.core.util.Time;
  *
  * @author ethachu19
  */
+
+//need to implement air resistance
 public abstract class EntityUpdate extends Entity {
     Time time = new Time();
     public Vector3f acceleration = new Vector3f();
     public Vector3f lastAcceleration = new Vector3f();
     private float timeStep;
+    final float gravity = 9.8f;
+    public Vector2f wind = new Vector2f();
     
     public EntityUpdate(Model m)
     {
@@ -47,6 +52,8 @@ public abstract class EntityUpdate extends Entity {
     
     public void calculateForces()
     {
-        
+        force.x = force.x + wind.x;
+        force.z = force.y + wind.y;
+        force.y = force.y - gravity;
     }
 }
