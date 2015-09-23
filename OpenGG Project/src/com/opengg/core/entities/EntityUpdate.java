@@ -15,9 +15,8 @@ import com.opengg.core.util.Time;
  */
 public abstract class EntityUpdate extends Entity {
     Time time = new Time();
-    public float acceleration;
-    public float lastAcceleration;
-    public Vector3f direction = null;
+    public Vector3f acceleration = new Vector3f();
+    public Vector3f lastAcceleration = new Vector3f();
     private float timeStep;
     
     public EntityUpdate(Model m)
@@ -34,11 +33,20 @@ public abstract class EntityUpdate extends Entity {
     {
         timeStep = time.getDeltaSec();
         lastAcceleration = acceleration;
-        /*position += velocity * timeStep + ( 0.5 * lastAcceleration * timeStep * timeStep );
-        find ratios for x to y to z movement
-        */
+        pos.x += velocity.x * timeStep + ( 0.5 * lastAcceleration.x * timeStep * timeStep );
+        pos.y += velocity.y * timeStep + ( 0.5 * lastAcceleration.x * timeStep * timeStep );
+        pos.z += velocity.z * timeStep + ( 0.5 * lastAcceleration.x * timeStep * timeStep );
         ground = (pos.y < 60);
-        acceleration = force / mass;
-        velocity += (lastAcceleration + acceleration ) / 2 * timeStep;
+        acceleration.x = force.x/mass;
+        acceleration.y = force.y/mass;
+        acceleration.z = force.z/mass;
+        velocity.x += (lastAcceleration.x + acceleration.x ) / 2 * timeStep;
+        velocity.y += (lastAcceleration.y + acceleration.y ) / 2 * timeStep;
+        velocity.z += (lastAcceleration.z + acceleration.z ) / 2 * timeStep;
+    }
+    
+    public void calculateForces()
+    {
+        
     }
 }
