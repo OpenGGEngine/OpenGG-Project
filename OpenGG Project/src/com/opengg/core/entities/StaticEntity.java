@@ -11,7 +11,7 @@ import com.opengg.core.Model;
  *
  * @author 19coindreauj
  */
-public class StaticEntity extends Entity{
+public class StaticEntity extends EntityUpdate{
 
     public StaticEntity(Model model) {
         super(model);

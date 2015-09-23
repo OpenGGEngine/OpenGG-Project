@@ -19,8 +19,8 @@ public class Entity {
     public boolean ground;
     public float mass;
     public float force;
+    public float velocity;
     
-    //Bounding Boxes
     
     public Entity()
     {
@@ -69,6 +69,7 @@ public class Entity {
         pos.y = v.pos.y;
         pos.z = v.pos.z;
         this.force = v.force;
+        this.velocity = v.velocity;
         this.ground = v.ground;
         this.volume = v.volume;
         this.mass = v.mass;

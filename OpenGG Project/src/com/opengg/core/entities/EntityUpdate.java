@@ -17,9 +17,8 @@ public abstract class EntityUpdate extends Entity {
     Time time = new Time();
     public float acceleration;
     public float lastAcceleration;
-    public float velocity;
     public Vector3f direction = null;
-    float timeStep;
+    private float timeStep;
     
     public EntityUpdate(Model m)
     {

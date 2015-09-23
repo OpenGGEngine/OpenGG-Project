@@ -6,9 +6,6 @@
 package com.opengg.core.physics;
 
 import com.opengg.core.entities.EntityFactory;
-import com.opengg.core.entities.PhysicsEntity;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
@@ -16,26 +13,10 @@ import java.util.List;
  */
 public class CollisionDetection extends EntityFactory{
     
-    public void addEntity(PhysicsEntity entity)
-    {
-        list.add(entity);
-    }
-    
-    public void checkforNulls()
-    {
-        for(int i = 0; i<list.size(); i++)
-        {
-            if(list.get(i) == null)
-            {
-                list.remove(i);
-            }
-        }
-    }
-    
     public boolean areColliding(int x, int y)
     {
         //Possible error checking
-        if(list.get(x) == null || list.get(y) == null)
+        if(PhysicsList.get(x) == null || EntityList.get(y) == null)
         {
             return false;
         }
