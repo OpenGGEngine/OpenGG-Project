@@ -23,8 +23,12 @@ public abstract class EntityUpdate extends Entity {
     public EntityUpdate(Model m)
     {
         super(m);
-        updateXYZ();
+        updateXYZ(); //Flushes out getDeltaSec for accurate values of timeStep
     }
+    
+    /**
+     * Updates XYZ based on velocity and acceleration and calculates new values for all of them
+     */
     
     public void updateXYZ()
     {
@@ -33,6 +37,7 @@ public abstract class EntityUpdate extends Entity {
         /*position += velocity * timeStep + ( 0.5 * lastAcceleration * timeStep * timeStep );
         find ratios for x to y to z movement
         */
+        ground = (pos.y < 60);
         acceleration = force / mass;
         velocity += (lastAcceleration + acceleration ) / 2 * timeStep;
     }

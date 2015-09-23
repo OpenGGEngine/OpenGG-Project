@@ -15,7 +15,7 @@ import java.util.List;
  */
     public abstract class EntityFactory {
         static public int entityCount = 0;
-        public List<Entity> EntityList = new ArrayList<>();
+        public List<EntityUpdate> EntityList = new ArrayList<>();
         public List<PhysicsEntity> PhysicsList = new ArrayList<>();
         
     public boolean generatePhysicsEntity(PhysicsEntity p, Model m){
@@ -32,14 +32,22 @@ import java.util.List;
         return EntityList.add(s);
     }
     
-    public boolean destroyEntity(Entity en)
+    public boolean destroyEntity(StaticEntity en)
     {
-        if(en instanceof PhysicsEntity)
+        entityCount--;
+        if(!EntityList.remove(en))
         {
-            if(!PhysicsList.remove(en))
-            {
-                return false;
-            }
+            return false;
+        }
+        en = null;
+        return true;
+    }
+    
+    public boolean destroyEntity(PhysicsEntity en)
+    {
+        if(!PhysicsList.remove(en))
+        {
+            return false;
         }
         entityCount--;
         if(!EntityList.remove(en))

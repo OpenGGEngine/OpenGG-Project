@@ -27,6 +27,12 @@ public class Entity {
         
     }
     
+    /**
+     * Makes default Entity
+     * 
+     * @param model Model to be bound to Entity
+     */
+    
     public Entity(Model model) {
         
         pos.x = 0f;
@@ -53,7 +59,7 @@ public class Entity {
         pos.y = y;
         pos.z = z;
         this.force = force;
-        this.ground = (y > 60);
+        this.ground = (pos.y < 60);
         this.volume = volume;
         this.mass = mass;
     }
@@ -75,12 +81,26 @@ public class Entity {
         this.mass = v.mass;
     }
     
+    /**
+     * Sets the Entity's XYZ Coordinates to something
+     * 
+     * @param x X to be set
+     * @param y Y to be set
+     * @param z Z to be set
+     */
+    
     public void setXYZ(float x, float y, float z)
     {
         this.pos.x = x;
         this.pos.y = y;
         this.pos.z = z;
     }
+    
+    /**
+     * Sets an amount of force to be pushed onto entity
+     * 
+     * @param force Force of push
+     */
     
     public void setForce(float force)
     {
