@@ -5,6 +5,7 @@ import com.opengg.core.Vector3f;
 import com.opengg.core.texture.Texture;
 import com.opengg.core.input.KeyboardEventHandler;
 import com.opengg.core.input.KeyboardListener;
+import com.opengg.core.io.FileStringLoader;
 import com.opengg.core.io.ObjLoader;
 import com.opengg.core.render.VertexArrayObject;
 import com.opengg.core.render.VertexBufferObject;
@@ -172,8 +173,8 @@ public class OpenGGTest implements KeyboardListener{
          /* Load shaders */
         vertexShader= new Shader(GL_VERTEX_SHADER, Shaders.vertexSource); 
         fragmentShader = new Shader(GL_FRAGMENT_SHADER, Shaders.fragmentSource); 
-        vertexTex= new Shader(GL_VERTEX_SHADER, Shaders.vertexTex); 
-        fragmentTex = new Shader(GL_FRAGMENT_SHADER, Shaders.fragmentTex); 
+        vertexTex= new Shader(GL_VERTEX_SHADER, FileStringLoader.loadStringSequence("C:/res/sh1.vert")); 
+        fragmentTex = new Shader(GL_FRAGMENT_SHADER, FileStringLoader.loadStringSequence("C:/res/sh1.frag")); 
 
         /* Create shader program */
         program = new ShaderProgram();
