@@ -6,6 +6,7 @@
 package com.opengg.core.entities;
 
 import com.opengg.core.Model;
+import com.opengg.core.Vector2f;
 import com.opengg.core.Vector3f;
 
 /**
@@ -20,7 +21,7 @@ public class Entity {
     public float mass;
     public Vector3f force = new Vector3f();
     public Vector3f velocity = new Vector3f();
-    public Vector3f direction = new Vector3f();
+    public Vector2f direction = new Vector2f();
     
     
     public Entity()

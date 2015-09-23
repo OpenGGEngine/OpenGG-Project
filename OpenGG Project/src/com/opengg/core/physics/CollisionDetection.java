@@ -13,17 +13,17 @@ import com.opengg.core.entities.EntityFactory;
  */
 public class CollisionDetection extends EntityFactory{
     
-    public boolean areColliding(int x, int y)
+    public int areColliding(int x, int y)
     {
         //Possible error checking
         if(PhysicsList.get(x) == null || EntityList.get(y) == null)
         {
-            return false;
+            return -1;
         }
         
         
         
-        return true;
+        return 0;
     }
     
 }

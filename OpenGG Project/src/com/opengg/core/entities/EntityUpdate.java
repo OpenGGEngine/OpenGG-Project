@@ -54,6 +54,14 @@ public abstract class EntityUpdate extends Entity {
     {
         force.x = force.x + wind.x;
         force.z = force.y + wind.y;
-        force.y = force.y - gravity;
+        if(!ground)
+        {
+            force.y = force.y - gravity;
+        }
+    }
+    
+    public boolean collisionResponse(Vector3f force)
+    {
+        return true;
     }
 }
