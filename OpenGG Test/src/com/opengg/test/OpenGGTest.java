@@ -7,6 +7,7 @@ import com.opengg.core.input.KeyboardEventHandler;
 import com.opengg.core.input.KeyboardListener;
 import com.opengg.core.io.FileStringLoader;
 import com.opengg.core.io.ObjLoader;
+import com.opengg.core.movement.MovementLoader;
 import com.opengg.core.render.VertexArrayObject;
 import com.opengg.core.render.VertexBufferObject;
 import com.opengg.core.shader.Shader;
@@ -52,11 +53,16 @@ public class OpenGGTest implements KeyboardListener{
     }
     int uniView;
     public float x,y,z;
+    public float xrot;
+    public float rot1 = 0;
     public float xm = 0, ym=0, zm=0;
     private float angle = 0f;
     private float anglePerSecond = 10f;
-
-    double rot1 = 0;
+    
+    Vector3f rot = new Vector3f(0,0,0);
+    Vector3f pos = new Vector3f(0,0,0);
+    
+    
     boolean backwards = false;
     
     public static void main(String[] args) {
@@ -86,6 +92,7 @@ public class OpenGGTest implements KeyboardListener{
     public OpenGGTest(){
         Window w = new Window();
         long window = 1;
+        
         KeyboardEventHandler.addToPool(this);
         
         try {
@@ -110,18 +117,21 @@ public class OpenGGTest implements KeyboardListener{
     
     IntBuffer ind;
     IntBuffer elements;
+
+    
     public void setup(){
+        //MovementLoader.setup(window);
         /* Generate Vertex Array Object */
         vao = new VertexArrayObject();
         vao.bind();
         
 //        t1.loadTexture("C:/res/tex1.png");
 //        t2.loadTexture("C:/res/tex2.png");
-        blank.loadTexture("C:\\Users\\19coindreauj\\Documents\\NetBeansProjects\\OpenGG-Project\\OpenGG Project\\src\\com\\opengg\\core\\extrafiles\\tex1.png");
+        blank.loadTexture("C:/res/blank.png");
         
         Model awpm = new Model();
         try {
-            awpm = ObjLoader.loadTexturedModel("C:\\Users\\19coindreauj\\Documents\\NetBeansProjects\\OpenGG-Project\\OpenGG Test\\src\\com\\opengg\\test\\awp.obj");
+            awpm = ObjLoader.loadTexturedModel("C:/res/engineblock.obj");
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -133,9 +143,11 @@ public class OpenGGTest implements KeyboardListener{
         
         awpb = BufferUtils.createFloatBuffer(awp.size() * 8);
         for (Vector3f awp1 : awp) {
-            float color = random.nextFloat() % 10;
-                    
-            awpb.put(awp1.x).put(awp1.y).put(awp1.z).put(color).put(color).put(color).put(0f).put(0f);
+            float colorg = random.nextFloat() % 10;
+            float colorr = random.nextFloat() % 10;
+            float colorb = random.nextFloat() % 10;
+            //float color = 0.6f;        
+            awpb.put(awp1.x).put(awp1.y).put(awp1.z).put(colorr).put(colorg).put(colorb).put(0f).put(0f);
 
         }
         awpb.flip();
@@ -251,26 +263,13 @@ public class OpenGGTest implements KeyboardListener{
     public void render(double alpha) {
         
 
-        float lerpAngle;
-        if(rot1 != 0){
-            lerpAngle = (float) ((1f - alpha) * previousAngle + alpha * angle);
-        }else{
-            lerpAngle = 0;
-        }
-        if(backwards){
-            lerpAngle = -lerpAngle;
-        }
 
-        //vao.bind();
+     
+        Matrix4f model = Matrix4f.rotate(xrot, 0f, 1f, 0f);
+        Matrix4f move = Matrix4f.translate(x,y,z);
+     
         //program.use();
-
-        Matrix4f model = Matrix4f.rotate(lerpAngle, 0f, 1f, 0f);
-        Matrix4f move = Matrix4f.translate(x, y, z);
-        //Matrix4f scale = Matrix4f.scale(0.4f, 0.4f, 0.4f);
-        Matrix4f end = move.add(model);
-        
-        //program.use();
-        program.setUniform(uniModel, move);
+        program.setUniform(uniModel, move.add(model));
         
         blank.useTexture();
         
@@ -280,17 +279,17 @@ public class OpenGGTest implements KeyboardListener{
         glDrawElements(GL_TRIANGLES, awpb.capacity(), GL_UNSIGNED_INT, 0);
         //glDrawArrays(GL_TRIANGLES, 0, awpb.capacity());
         
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, ind, GL_STATIC_DRAW);
-        vbo.uploadData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW);
-        glDrawElements(GL_TRIANGLES, 4, GL_UNSIGNED_INT, 0);
+        //glBufferData(GL_ELEMENT_ARRAY_BUFFER, ind, GL_STATIC_DRAW);
+        //vbo.uploadData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW);
+        //glDrawElements(GL_TRIANGLES, 4, GL_UNSIGNED_INT, 0);
     }
     
-    public void update(float delta) {
-        previousAngle = angle;
-        angle += delta * anglePerSecond;
+    public void update(float delta) {       
         x += xm;
         y += ym;
         z += zm;
+        xrot += rot1;
+        
     }
 
     @Override
@@ -322,11 +321,11 @@ public class OpenGGTest implements KeyboardListener{
 
         }
         if(key == GLFW_KEY_Q){
-            rot1 += 0.6;
+            rot1 += 3;
             
         }
         if(key == GLFW_KEY_E){
-            rot1 -= 0.6;
+            rot1 -= 3;
             
         }
     }

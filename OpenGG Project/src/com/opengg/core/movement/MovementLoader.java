@@ -6,11 +6,9 @@ import java.util.logging.Logger;
 import org.lwjgl.glfw.GLFW;
 import com.opengg.core.Vector3f;
 import com.opengg.core.input.KeyBoardHandler;
+import com.opengg.core.input.MousePosHandler;
 import static org.lwjgl.glfw.GLFW.*;
-import org.lwjgl.glfw.GLFWCursorPosCallback;
-import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWKeyCallback;
-import static org.lwjgl.opengl.GL11.GL_TRUE;
 
 /**
  * Simple lightweight movement processor for 3d LWJGL programs.
@@ -25,9 +23,7 @@ public class MovementLoader {
     
     
     private static final int maxLookUp = 89;
-    private static GLFWErrorCallback errorCallback;
     private static GLFWKeyCallback   keyCallback;
-    private static GLFWCursorPosCallback cursorPosCallback;
     
     
     private static final int maxLookDown = -89;
@@ -36,27 +32,20 @@ public class MovementLoader {
     private static volatile boolean running = true;
     static final Logger main = Logger.getLogger("main");
     
-    public void invoke(long window, int key, int scancode, int action, int mods) {
-            if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
-            glfwSetWindowShouldClose(window, GL_TRUE); // We will detect this in our rendering loop
-   }
-    
-    public void invoke(long window, double xpos, double ypos) {
-        // Add delta of x and y mouse coordinates
-        mouseDX += (int)xpos - mouseX;
-        mouseDY += (int)xpos - mouseY;
-        // Set new positions of x and y
-        mouseX = (int) xpos;
-        mouseY = (int) ypos;
+  
+    public MovementLoader(long w){   
+        
+
     }
     
-    public MovementLoader(long w){   
+    public static void setup(long w){
         window = w;
+        MousePosHandler.setup(w);
         
         mouseX = mouseY = mouseDX = mouseDY = 0;
             
-
     }
+    
     private static int getDelta() {
         long currentTime = (long) GLFW.glfwGetTime();
         int delta = (int) (currentTime - lastFrame);
@@ -76,22 +65,25 @@ public class MovementLoader {
 
     
     public static Vector3f processRotation(Vector3f rotation){
-            glfwPollEvents ();            
-            if (rotation.y + mouseDX >= 360) {
-                rotation.y = rotation.y + mouseDX - 360;
-            } else if (rotation.y + mouseDX < 0) {
-                rotation.y = 360 - rotation.y + mouseDX;
-            } else {
-                rotation.y += mouseDX;
-            }
-            if (rotation.x - mouseDY >= maxLookDown && rotation.x - mouseDY <= maxLookUp) {
-                rotation.x += -mouseDY;
-            } else if (rotation.x - mouseDY < maxLookDown) {
-                rotation.x = maxLookDown;
-            } else if (rotation.x - mouseDY > maxLookUp) {
-                rotation.x = maxLookUp;
-            }
             
+//            if (rotation.y + mouseDX >= 360) {
+//                rotation.y = rotation.y + mouseDX - 360;
+//            } else if (rotation.y + mouseDX < 0) {
+//                rotation.y = 360 - rotation.y + mouseDX;
+//            } else {
+//                rotation.y += mouseDX;
+//            }
+//            if (rotation.x - mouseDY >= maxLookDown && rotation.x - mouseDY <= maxLookUp) {
+//                rotation.x += -mouseDY;
+//            } else if (rotation.x - mouseDY < maxLookDown) {
+//                rotation.x = maxLookDown;
+//            } else if (rotation.x - mouseDY > maxLookUp) {
+//                rotation.x = maxLookUp;
+//            }
+        
+        double x = MousePosHandler.getX();
+        double y = MousePosHandler.getY();
+        System.out.println(x);
         return rotation;
     }
     
@@ -229,8 +221,6 @@ public class MovementLoader {
                       
             
             
-            position = new Vector3f(0, 0, 0);
-            rotation = new Vector3f(0, 0, 0);
 //                if (window, GLFW_isKeyDown(window, GLFW_KEY_O)) {
 //                    mouseSpeed += 1;
 //                    main.log(Level.INFO, "Mouse speed changed to {0}.", mouseSpeed);
