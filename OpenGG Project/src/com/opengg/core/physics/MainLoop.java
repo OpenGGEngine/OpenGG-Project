@@ -40,7 +40,7 @@ public class MainLoop extends EntityFactory implements Runnable{
             {
                 for(x = 0; iterateEntity.hasNext(); x++)
                 {
-                    if(PhysicsList.get(i) == EntityList.get(x))
+                    if(PhysicsList.get(i).equals(EntityList.get(x)))
                     {
                         continue;
                     }
@@ -52,7 +52,9 @@ public class MainLoop extends EntityFactory implements Runnable{
                             EntityList.get(x).collisionResponse(PhysicsList.get(i).velocity);
                         }
                     }
+                    iterateEntity.next();
                 }
+                iteratePhysics.next();
             }
         }
     }
