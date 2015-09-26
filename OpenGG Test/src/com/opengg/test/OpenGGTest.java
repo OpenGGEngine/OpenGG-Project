@@ -22,6 +22,8 @@ import static com.opengg.core.window.RenderUtil.endFrame;
 import static com.opengg.core.window.RenderUtil.startFrame;
 import static com.opengg.test.Shaders.vertices;
 import java.io.IOException;
+import java.net.URL;
+import java.net.URLDecoder;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -127,11 +129,13 @@ public class OpenGGTest implements KeyboardListener{
         
 //        t1.loadTexture("C:/res/tex1.png");
 //        t2.loadTexture("C:/res/tex2.png");
-        blank.loadTexture("C:/res/blank.png");
+        //blank.loadTexture("C:/res/blank.png");
         
         Model awpm = new Model();
         try {
-            awpm = ObjLoader.loadTexturedModel("C:/res/engineblock.obj");
+            URL path = OpenGGTest.class.getResource("awp.obj");
+            
+            awpm = ObjLoader.loadTexturedModel(path);
         } catch (IOException ex) {
             ex.printStackTrace();
         }
