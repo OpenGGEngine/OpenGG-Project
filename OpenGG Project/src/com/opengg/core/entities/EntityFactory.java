@@ -13,45 +13,58 @@ import java.util.List;
  *
  * @author Ethan
  */
-    public abstract class EntityFactory {
-        static public int entityCount = 0;
-        public List<EntityUpdate> EntityList = new ArrayList<>();
-        public List<PhysicsEntity> PhysicsList = new ArrayList<>();
-        
-    public boolean generatePhysicsEntity(PhysicsEntity p, Model m){
+public abstract class EntityFactory {
+
+    static public int entityCount = 0;
+    public List<EntityUpdate> EntityList = new ArrayList<>();
+    public List<PhysicsEntity> PhysicsList = new ArrayList<>();
+    
+    /**
+     * Generates a physics entity for the object given
+     * 
+     * @param p What object to be initialized
+     * @param m Model to be bound to Entity
+     * @return Error
+     */
+    
+    public boolean generatePhysicsEntity(PhysicsEntity p, Model m) {
         entityCount++;
         p = new PhysicsEntity(m);
         PhysicsList.add(p);
         return EntityList.add(p);
     }
+
+    /**
+     * Generates a physics entity for the object given
+     * 
+     * @param s What object to be initialized
+     * @param m Model to be bound to Entity
+     * @return Error
+     */
     
-    public boolean generateStaticEntity(StaticEntity s, Model m)
-    {
+    public boolean generateStaticEntity(StaticEntity s, Model m) {
         entityCount++;
         s = new StaticEntity(m);
         return EntityList.add(s);
     }
     
-    public boolean destroyEntity(StaticEntity en)
-    {
+    
+    
+    public boolean destroyEntity(StaticEntity en) {
         entityCount--;
-        if(!EntityList.remove(en))
-        {
+        if (!EntityList.remove(en)) {
             return false;
         }
         en = null;
         return true;
     }
-    
-    public boolean destroyEntity(PhysicsEntity en)
-    {
-        if(!PhysicsList.remove(en))
-        {
+
+    public boolean destroyEntity(PhysicsEntity en) {
+        if (!PhysicsList.remove(en)) {
             return false;
         }
         entityCount--;
-        if(!EntityList.remove(en))
-        {
+        if (!EntityList.remove(en)) {
             return false;
         }
         en = null;

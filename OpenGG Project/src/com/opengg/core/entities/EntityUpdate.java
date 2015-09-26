@@ -50,6 +50,10 @@ public abstract class EntityUpdate extends Entity {
         velocity.z += (lastAcceleration.z + acceleration.z ) / 2 * timeStep;
     }
     
+    /**
+     * Calculates forces currently acting on objects
+     */
+    
     public void calculateForces()
     {
         force.x = force.x + wind.x;
@@ -60,8 +64,17 @@ public abstract class EntityUpdate extends Entity {
         }
     }
     
+    /**
+     * The collision response when collision with another entity is detected
+     * 
+     * @param force Force for how much it should react
+     * @return Error
+     */
+    
     public boolean collisionResponse(Vector3f force)
     {
+        
+        
         return true;
     }
 }

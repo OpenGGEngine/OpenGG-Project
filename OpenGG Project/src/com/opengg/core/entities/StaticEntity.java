@@ -9,7 +9,7 @@ import com.opengg.core.Model;
 
 /**
  *
- * @author 19coindreauj
+ * @author ethachu19
  */
 public class StaticEntity extends EntityUpdate{
 
