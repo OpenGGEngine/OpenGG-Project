@@ -10,6 +10,8 @@ import com.opengg.core.Vector3f;
 
 
 import java.io.*;
+import java.net.URL;
+import java.net.URLDecoder;
 import java.nio.FloatBuffer;
 import org.lwjgl.opengl.GL11;
 
@@ -214,7 +216,8 @@ public class ObjLoader {
         return displayList;
     }
 
-    public static Model loadTexturedModel(String path) throws IOException {
+    public static Model loadTexturedModel(URL paths) throws IOException {
+        String path = URLDecoder.decode(paths.getFile(), "UTF-8");
         File f = new File(path);
         BufferedReader reader = new BufferedReader(new FileReader(f));
         Model m = new Model();
