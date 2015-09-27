@@ -56,11 +56,16 @@ public abstract class EntityUpdate extends Entity {
     
     public void calculateForces()
     {
-        force.x = force.x + wind.x;
-        force.z = force.y + wind.y;
         if(!ground)
         {
+            force.x = force.x + wind.x;
+            force.z = force.y + wind.y;
             force.y = force.y - gravity;
+        }
+        else
+        {
+            force.x = force.x + wind.x;
+            force.z = force.y + wind.y;
         }
     }
     

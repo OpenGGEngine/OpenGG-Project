@@ -15,9 +15,12 @@ import java.util.List;
  */
 public abstract class EntityFactory {
 
-    static public int entityCount = 0;
-    public List<EntityUpdate> EntityList = new ArrayList<>();
-    public List<PhysicsEntity> PhysicsList = new ArrayList<>();
+    /**
+     * Number of Entities currently loaded.
+     */
+    public static int entityCount = 0;
+    public static List<EntityUpdate> EntityList = new ArrayList<>();
+    public static List<PhysicsEntity> PhysicsList = new ArrayList<>();
     
     /**
      * Generates a physics entity for the object given
@@ -27,7 +30,9 @@ public abstract class EntityFactory {
      * @return Error
      */
     
-    public boolean generatePhysicsEntity(PhysicsEntity p, Model m) {
+    public static boolean generatePhysicsEntity(PhysicsEntity p, Model m) {
+        if(entityCount > 44)
+        { p = null; return false;}
         entityCount++;
         p = new PhysicsEntity(m);
         PhysicsList.add(p);
@@ -35,22 +40,29 @@ public abstract class EntityFactory {
     }
 
     /**
-     * Generates a physics entity for the object given
+     * Generates a static entity for the object given
      * 
      * @param s What object to be initialized
      * @param m Model to be bound to Entity
      * @return Error
      */
     
-    public boolean generateStaticEntity(StaticEntity s, Model m) {
+    public static boolean generateStaticEntity(StaticEntity s, Model m) {
+        if(entityCount > 44)
+        { s = null; return false;}
         entityCount++;
         s = new StaticEntity(m);
         return EntityList.add(s);
     }
     
+    /**
+     * Destroys the entity given
+     * 
+     * @param en
+     * @return Error
+     */
     
-    
-    public boolean destroyEntity(StaticEntity en) {
+    public static boolean destroyEntity(StaticEntity en) {
         entityCount--;
         if (!EntityList.remove(en)) {
             return false;
@@ -58,8 +70,15 @@ public abstract class EntityFactory {
         en = null;
         return true;
     }
-
-    public boolean destroyEntity(PhysicsEntity en) {
+    
+    /**
+     * Destroys the entity given
+     * 
+     * @param en
+     * @return Error 
+     */
+    
+    public static boolean destroyEntity(PhysicsEntity en) {
         if (!PhysicsList.remove(en)) {
             return false;
         }
