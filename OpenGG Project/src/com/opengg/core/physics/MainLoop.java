@@ -15,11 +15,6 @@ import java.util.Iterator;
  */
 public class MainLoop extends EntityFactory implements Runnable{
     
-    CollisionDetection collision;
-
-    public MainLoop() {
-        this.collision = new CollisionDetection();
-    }
     @Override
     public void run()
     {
@@ -44,7 +39,7 @@ public class MainLoop extends EntityFactory implements Runnable{
                     {
                         continue;
                     }
-                    if(collision.areColliding(i, x) == 1)
+                    if(CollisionDetection.areColliding(i, x) == 1)
                     {
                         PhysicsList.get(i).collisionResponse(EntityList.get(x).velocity);
                         if(EntityList.get(x) instanceof PhysicsEntity)
