@@ -119,7 +119,8 @@ public class OpenGGTest implements KeyboardListener{
     
     IntBuffer ind;
     IntBuffer elements;
-
+    
+    Matrix4f view;
     
     public void setup(){
         //MovementLoader.setup(window);
@@ -129,7 +130,7 @@ public class OpenGGTest implements KeyboardListener{
         
 //        t1.loadTexture("C:/res/tex1.png");
 //        t2.loadTexture("C:/res/tex2.png");
-        //blank.loadTexture("C:/res/blank.png");
+        blank.loadTexture("C:\\Users\\19coindreauj\\Documents\\NetBeansProjects\\OpenGG-Project\\OpenGG Project\\src\\com\\opengg\\core\\extrafiles\\tex1.png");
         
         Model awpm = new Model();
         try {
@@ -168,22 +169,7 @@ public class OpenGGTest implements KeyboardListener{
         elements.flip();
         
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, elements, GL_STATIC_DRAW);
-        
-        vertices = BufferUtils.createFloatBuffer(4 * 8);
-        
-        vertices.put(-2).put(-2).put(-1f).put(0f).put(1f).put(0f).put(0f).put(0f); 
-        vertices.put(2).put(-2).put(-1f).put(0f).put(0f).put(1f).put(1f).put(0f);
-        vertices.put(2).put(2).put(-1f).put(1f).put(0f).put(0f).put(1f).put(1f);
-        vertices.put(-2).put(2).put(-1f).put(0f).put(0f).put(0f).put(0f).put(1f);
-        
-        vertices.flip();
-
-        ind = BufferUtils.createIntBuffer(6);
-        
-        ind.put(0).put(1).put(2).put(2).put(3).put(0);
-        
-        ind.flip();
-        
+    
         vbo = new VertexBufferObject();
         vbo.bind(GL_ARRAY_BUFFER);
 
@@ -206,7 +192,7 @@ public class OpenGGTest implements KeyboardListener{
         specifyVertexAttributes(program, true);
 
         /* Set shader variables */
-        Matrix4f view = new Matrix4f();
+        view = new Matrix4f();
         
         program.use();
         uniModel = program.getUniformLocation("model");
@@ -216,14 +202,16 @@ public class OpenGGTest implements KeyboardListener{
         
         int uniTex = program.getUniformLocation("texImage");
         program.setUniform(uniTex, 0);
-        
-        
 
         float ratio = win.getRatio();
         
         program.use();
-        ViewUtil.setPerspective(100, ratio, 0.3f, 300f, program);
-        
+        //ViewUtil.setPerspective(100, ratio, 0.3f, 300f, program);
+        Matrix4f projection = Matrix4f.frustum(0f,0f,640f,480f,0.1f,100f);
+        int uniProjection = program.getUniformLocation("projection");
+        program.setUniform(uniProjection, projection);
+        glUniformMatrix4fv(uniProjection, false, projection.getBuffer());
+        program.checkStatus();
 
         vao.bind();      
         
@@ -269,9 +257,12 @@ public class OpenGGTest implements KeyboardListener{
 
         Matrix4f model = Matrix4f.rotate(xrot, 0f, 1f, 0f);
         Matrix4f move = Matrix4f.translate(x,y,z);
-     
+        
+        
         //program.use();
         program.setUniform(uniModel, move);
+        
+        program.setUniform(uniView, move.add(model));
         
         blank.useTexture();
         
