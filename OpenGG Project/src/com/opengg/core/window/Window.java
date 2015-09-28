@@ -103,7 +103,7 @@ public class Window {
         
         // Make the window visible
         glfwShowWindow(window);
-        GL.setCurrent(GLContext.createFromCurrent());
+        GL.createCapabilities();
         return window;
     }
     

@@ -133,12 +133,13 @@ public class OpenGGTest implements KeyboardListener{
         
         Model awpm = new Model();
         try {
-            URL path = OpenGGTest.class.getResource("awp.obj");
+            URL path = OpenGGTest.class.getResource("engineblock.obj");
             
             awpm = ObjLoader.loadTexturedModel(path);
         } catch (IOException ex) {
             ex.printStackTrace();
         }
+        
         List<Vector3f> awp = awpm.getVertices();
         List<Vector3f> awpn = awpm.getNormals();
         List<Model.Face> awpf = awpm.getFaces();
@@ -152,7 +153,7 @@ public class OpenGGTest implements KeyboardListener{
             float colorb = random.nextFloat() % 10;
             //float color = 0.6f;        
             awpb.put(awp1.x).put(awp1.y).put(awp1.z).put(colorr).put(colorg).put(colorb).put(0f).put(0f);
-
+            System.out.println(awp1.x);
         }
         awpb.flip();
      
@@ -189,8 +190,8 @@ public class OpenGGTest implements KeyboardListener{
          /* Load shaders */
         vertexShader= new Shader(GL_VERTEX_SHADER, Shaders.vertexSource); 
         fragmentShader = new Shader(GL_FRAGMENT_SHADER, Shaders.fragmentSource); 
-        vertexTex= new Shader(GL_VERTEX_SHADER, FileStringLoader.loadStringSequence("C:/res/sh1.vert")); 
-        fragmentTex = new Shader(GL_FRAGMENT_SHADER, FileStringLoader.loadStringSequence("C:/res/sh1.frag")); 
+        vertexTex= new Shader(GL_VERTEX_SHADER, Shaders.vertexTex); 
+        fragmentTex = new Shader(GL_FRAGMENT_SHADER, Shaders.fragmentTex); 
 
         /* Create shader program */
         program = new ShaderProgram();
@@ -265,27 +266,19 @@ public class OpenGGTest implements KeyboardListener{
     }
     
     public void render(double alpha) {
-        
 
-
-     
         Matrix4f model = Matrix4f.rotate(xrot, 0f, 1f, 0f);
         Matrix4f move = Matrix4f.translate(x,y,z);
      
         //program.use();
-        program.setUniform(uniModel, move.add(model));
+        program.setUniform(uniModel, move);
         
         blank.useTexture();
         
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, elements, GL_STATIC_DRAW);
         
         vbo.uploadData(GL_ARRAY_BUFFER, awpb, GL_STATIC_DRAW);      
-        glDrawElements(GL_TRIANGLES, awpb.capacity(), GL_UNSIGNED_INT, 0);
-        //glDrawArrays(GL_TRIANGLES, 0, awpb.capacity());
-        
-        //glBufferData(GL_ELEMENT_ARRAY_BUFFER, ind, GL_STATIC_DRAW);
-        //vbo.uploadData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW);
-        //glDrawElements(GL_TRIANGLES, 4, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, awpb.capacity(), GL_UNSIGNED_INT, 0);   
     }
     
     public void update(float delta) {       
