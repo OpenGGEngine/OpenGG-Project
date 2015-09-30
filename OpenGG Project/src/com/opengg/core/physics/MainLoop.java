@@ -5,8 +5,8 @@
  */
 package com.opengg.core.physics;
 
+import static com.opengg.core.entities.Entity.EntityType.*;
 import com.opengg.core.entities.EntityFactory;
-import com.opengg.core.entities.PhysicsEntity;
 import java.util.Iterator;
 
 /**
@@ -19,9 +19,9 @@ public class MainLoop extends EntityFactory implements Runnable{
     public void run()
     {
         Iterator iterateEntity = EntityList.iterator();
-        Iterator iteratePhysics = PhysicsList.iterator();
-        int i;
-        int x;
+        Iterator iteratePhysics = EntityList.iterator();
+        int i, x;
+        
         while(true)// put in some condition? Idk
         {
             for(i = 0; iterateEntity.hasNext(); i++)
@@ -33,18 +33,24 @@ public class MainLoop extends EntityFactory implements Runnable{
             //Calculate direction
             for(i = 0; iteratePhysics.hasNext(); i++)
             {
+                if(EntityList.get(i).type == Static || EntityList.get(i).type == Particle)
+                {
+                    iterateEntity.next();
+                    continue;
+                }
                 for(x = 0; iterateEntity.hasNext(); x++)
                 {
-                    if(PhysicsList.get(i).equals(EntityList.get(x)))
+                    if(EntityList.get(i).equals(EntityList.get(x)))
                     {
+                        iteratePhysics.next();
                         continue;
                     }
                     if(CollisionDetection.areColliding(i, x) == 1)
                     {
-                        PhysicsList.get(i).collisionResponse(EntityList.get(x).velocity);
-                        if(EntityList.get(x) instanceof PhysicsEntity)
+                        EntityList.get(i).collisionResponse(EntityList.get(x).force);
+                        if(EntityList.get(x).type == Physics)
                         {
-                            EntityList.get(x).collisionResponse(PhysicsList.get(i).velocity);
+                            EntityList.get(x).collisionResponse(EntityList.get(i).force);
                         }
                     }
                     iterateEntity.next();

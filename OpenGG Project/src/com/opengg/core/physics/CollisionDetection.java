@@ -16,7 +16,7 @@ public class CollisionDetection extends EntityFactory{
     public static int areColliding(int x, int y)
     {
         //Possible error checking
-        if(PhysicsList.get(x) == null || EntityList.get(y) == null)
+        if(EntityList.get(x) == null || EntityList.get(y) == null)
         {
             return -1;
         }
