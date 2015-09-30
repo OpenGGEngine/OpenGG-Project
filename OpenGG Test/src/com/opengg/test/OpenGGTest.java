@@ -2,38 +2,31 @@ package com.opengg.test;
 import com.opengg.core.Matrix4f;
 import com.opengg.core.Model;
 import com.opengg.core.Vector3f;
-import com.opengg.core.texture.Texture;
 import com.opengg.core.input.KeyboardEventHandler;
 import com.opengg.core.input.KeyboardListener;
-import com.opengg.core.io.FileStringLoader;
 import com.opengg.core.io.ObjLoader;
-import com.opengg.core.movement.MovementLoader;
 import com.opengg.core.render.VertexArrayObject;
 import com.opengg.core.render.VertexBufferObject;
 import com.opengg.core.shader.Shader;
 import com.opengg.core.shader.ShaderProgram;
-import com.opengg.core.util.Time;
+import com.opengg.core.texture.Texture;
 import com.opengg.core.util.ViewUtil;
- 
-import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.*;
 import com.opengg.core.window.*;
 import static com.opengg.core.window.RenderUtil.endFrame;
 import static com.opengg.core.window.RenderUtil.startFrame;
-import static com.opengg.test.Shaders.vertices;
 import java.io.IOException;
 import java.net.URL;
-import java.net.URLDecoder;
-import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFW;
+ 
+import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
 public class OpenGGTest implements KeyboardListener{
@@ -98,7 +91,7 @@ public class OpenGGTest implements KeyboardListener{
         KeyboardEventHandler.addToPool(this);
         
         try {
-            window = w.init(640,480, "Test", DisplayMode.WINDOWED);
+            window = w.init(1280,960, "Test", DisplayMode.WINDOWED);
         } catch (Exception ex) {
             Logger.getLogger(OpenGGTest.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -130,7 +123,8 @@ public class OpenGGTest implements KeyboardListener{
         
 //        t1.loadTexture("C:/res/tex1.png");
 //        t2.loadTexture("C:/res/tex2.png");
-        blank.loadTexture("C:\\Users\\19coindreauj\\Documents\\NetBeansProjects\\OpenGG-Project\\OpenGG Project\\src\\com\\opengg\\core\\extrafiles\\tex1.png");
+        
+        blank.loadTexture("C:/res/blank.png");
         
         Model awpm = new Model();
         try {
@@ -154,7 +148,7 @@ public class OpenGGTest implements KeyboardListener{
             float colorb = random.nextFloat() % 10;
             //float color = 0.6f;        
             awpb.put(awp1.x).put(awp1.y).put(awp1.z).put(colorr).put(colorg).put(colorb).put(0f).put(0f);
-            System.out.println(awp1.x);
+            
         }
         awpb.flip();
      
@@ -206,12 +200,7 @@ public class OpenGGTest implements KeyboardListener{
         float ratio = win.getRatio();
         
         program.use();
-        //ViewUtil.setPerspective(100, ratio, 0.3f, 300f, program);
-        Matrix4f projection = Matrix4f.frustum(0f,0f,640f,480f,0.1f,100f);
-        int uniProjection = program.getUniformLocation("projection");
-        program.setUniform(uniProjection, projection);
-        glUniformMatrix4fv(uniProjection, false, projection.getBuffer());
-        program.checkStatus();
+        ViewUtil.setPerspective(100, ratio, 0.3f, 300f, program);
 
         vao.bind();      
         
