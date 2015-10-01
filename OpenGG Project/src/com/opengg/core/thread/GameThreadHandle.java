@@ -13,11 +13,11 @@ package com.opengg.core.thread;
 public class GameThreadHandle {
     ThreadHandle r, u;
     private GameThreadHandle(){
-        r = ThreadHandlerFactory.getHandle(5, ThreadType.RENDER);
-        u = ThreadHandlerFactory.getHandle(8, ThreadType.UPDATE);
+        r = ThreadHandle.getHandle(5, ThreadType.RENDER);
+        u = ThreadHandle.getHandle(8, ThreadType.UPDATE);
     }
     
-    public static GameThreadHandle getHandle(){
+    public static GameThreadHandle getHandle(GameThreaded g){
         return new GameThreadHandle();
     }
 }

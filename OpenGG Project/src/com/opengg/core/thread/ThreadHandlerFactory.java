@@ -12,13 +12,9 @@ package com.opengg.core.thread;
  */
 public class ThreadHandlerFactory {
     
-    public static ThreadHandle getHandle(int priority, ThreadType t){
-        return ThreadHandle.getHandle(priority,t);
-        
-    }
     
-    public static GameThreadHandle getHandle(){
-        return GameThreadHandle.getHandle();
+    public static GameThreadHandle getHandle(GameThreaded g){
+        return GameThreadHandle.getHandle(g);
         
     }
     private ThreadHandlerFactory(){}

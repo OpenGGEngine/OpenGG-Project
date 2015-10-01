@@ -12,11 +12,11 @@ package com.opengg.core.thread;
  */
 public class ThreadHandle {
     
-    private ThreadHandle(int priority){
+    private ThreadHandle(int priority, GameThreaded g){
         
     }
     
-    protected static ThreadHandle getHandle(int priority, ThreadType t){
-        return new ThreadHandle(priority);
+    protected static ThreadHandle getHandle(int priority, ThreadType t, GameThreaded g){
+        return new ThreadHandle(priority,g);
     }
 }
