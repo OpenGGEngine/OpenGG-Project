@@ -16,6 +16,7 @@ public class GameThreadHandle {
         r = ThreadHandlerFactory.getHandle(5, ThreadType.RENDER);
         u = ThreadHandlerFactory.getHandle(8, ThreadType.UPDATE);
     }
+    
     public static GameThreadHandle getHandle(){
         return new GameThreadHandle();
     }
