@@ -9,6 +9,10 @@ import com.opengg.core.Model;
 import com.opengg.core.Vector2f;
 import com.opengg.core.Vector3f;
 import com.opengg.core.util.Time;
+import static com.opengg.core.entities.Entity.EntityType.*;
+import static com.opengg.core.entities.Entity.Collide.*;
+import static com.opengg.core.entities.Entity.UpdateXYZ.*;
+import static com.opengg.core.entities.Entity.UpdateForce.*;
 
 
 /**
@@ -20,10 +24,25 @@ public class Entity {
     public enum EntityType{
         /* Update Movement, Force Update, No Collsion Response*/Static, 
         /* Update Movement, Force Update, Collision Detection*/Physics, 
-        /* Update Movement, No force update, No Collision*/Particle
+        /* Update Movement, No force update, No Collision*/Particle,
+        /* User Defined*/Other
     }
     
-    public EntityType type;
+    public enum Collide{
+        Collidable, Uncollidable, NoResponse
+    }
+    
+    public enum UpdateXYZ{
+        Movable, Unmovable
+    }
+    
+    public enum UpdateForce{
+        Realistic, Unrealistic
+    }
+    
+    public UpdateForce updateForce;
+    public UpdateXYZ updatePosition;
+    public Collide collision;
     public Vector3f pos = new Vector3f();
     public float volume;
     public boolean ground;
@@ -32,7 +51,7 @@ public class Entity {
     public Vector3f velocity = new Vector3f();
     public Vector2f direction = new Vector2f();
     
-    private Time time = new Time();
+    private final Time time = new Time();
     public Vector3f acceleration = new Vector3f();
     public Vector3f lastAcceleration = new Vector3f();
     private float timeStep;
@@ -53,11 +72,28 @@ public class Entity {
      */
     
     public Entity(Model model, EntityType type) {
-        this.type = type;
         setXYZ(0f,0f,0f);
         this.ground = true;
         this.volume = 0f;
         this.mass = 0f;
+        if(type == Static)
+        {
+            updatePosition = Movable;
+            updateForce = Realistic;
+            collision = NoResponse;
+        }
+        else if(type == Physics)
+        {
+            updatePosition = Movable;
+            updateForce = Realistic;
+            collision = Collidable;
+        }
+        else if(type == Particle)
+        {
+            updatePosition = Movable;
+            updateForce = Unrealistic;
+            collision = Uncollidable;
+        }
     }
 
     /**
@@ -78,7 +114,24 @@ public class Entity {
         this.ground = (pos.y < 60);
         this.volume = volume;
         this.mass = mass;
-        this.type = type;
+        if(type == Static)
+        {
+            updatePosition = Movable;
+            updateForce = Realistic;
+            collision = NoResponse;
+        }
+        else if(type == Physics)
+        {
+            updatePosition = Movable;
+            updateForce = Realistic;
+            collision = Collidable;
+        }
+        else if(type == Particle)
+        {
+            updatePosition = Movable;
+            updateForce = Unrealistic;
+            collision = Uncollidable;
+        }
     }
 
     /**
@@ -95,7 +148,38 @@ public class Entity {
         this.volume = v.volume;
         this.mass = v.mass;
         
-        this.type = v.type;
+        this.collision = v.collision;
+        this.updatePosition = v.updatePosition;
+        this.updateForce = v.updateForce;
+    }
+    
+    public void setTags(Collide collision, UpdateForce updateForce, UpdateXYZ updatePosition)
+    {
+        this.collision = collision;
+        this.updateForce = updateForce;
+        this.updatePosition = updatePosition;
+    }
+    
+    public void setTags(EntityType type)
+    {
+        if(type == Static)
+        {
+            updatePosition = Movable;
+            updateForce = Realistic;
+            collision = NoResponse;
+        }
+        else if(type == Physics)
+        {
+            updatePosition = Movable;
+            updateForce = Realistic;
+            collision = Collidable;
+        }
+        else if(type == Particle)
+        {
+            updatePosition = Movable;
+            updateForce = Unrealistic;
+            collision = Uncollidable;
+        }
     }
     
     /**
