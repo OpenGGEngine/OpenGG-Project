@@ -3,18 +3,18 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.opengg.core.entities;
 
-import com.opengg.core.Model;
+package com.opengg.core.thread;
 
 /**
  *
- * @author 19coindreauj
+ * @author Javier
  */
-public class PhysicsEntity extends EntityUpdate{
+public class RenderThread implements Runnable{
 
-    public PhysicsEntity(Model model) {
-        super(model);
+    @Override
+    public void run() {
+        
     }
     
 }

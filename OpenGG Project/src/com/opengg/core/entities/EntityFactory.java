@@ -6,6 +6,7 @@
 package com.opengg.core.entities;
 
 import com.opengg.core.Model;
+import static com.opengg.core.entities.Entity.EntityType.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,8 +20,10 @@ public abstract class EntityFactory {
      * Number of Entities currently loaded.
      */
     public static int entityCount = 0;
-    public static List<EntityUpdate> EntityList = new ArrayList<>();
-    public static List<PhysicsEntity> PhysicsList = new ArrayList<>();
+    /**
+     * List of currently loaded enemies
+     */
+    public static List<Entity> EntityList = new ArrayList<>();
     
     /**
      * Generates a physics entity for the object given
@@ -30,12 +33,11 @@ public abstract class EntityFactory {
      * @return Error
      */
     
-    public static boolean generatePhysicsEntity(PhysicsEntity p, Model m) {
+    public static boolean generatePhysicsEntity(Entity p, Model m) {
         if(entityCount > 44)
         { p = null; return false;}
         entityCount++;
-        p = new PhysicsEntity(m);
-        PhysicsList.add(p);
+        p = new Entity(m, Physics);
         return EntityList.add(p);
     }
 
@@ -47,11 +49,11 @@ public abstract class EntityFactory {
      * @return Error
      */
     
-    public static boolean generateStaticEntity(StaticEntity s, Model m) {
+    public static boolean generateStaticEntity(Entity s, Model m) {
         if(entityCount > 44)
         { s = null; return false;}
         entityCount++;
-        s = new StaticEntity(m);
+        s = new Entity(m, Static);
         return EntityList.add(s);
     }
     
@@ -62,26 +64,7 @@ public abstract class EntityFactory {
      * @return Error
      */
     
-    public static boolean destroyEntity(StaticEntity en) {
-        entityCount--;
-        if (!EntityList.remove(en)) {
-            return false;
-        }
-        en = null;
-        return true;
-    }
-    
-    /**
-     * Destroys the entity given
-     * 
-     * @param en
-     * @return Error 
-     */
-    
-    public static boolean destroyEntity(PhysicsEntity en) {
-        if (!PhysicsList.remove(en)) {
-            return false;
-        }
+    public static boolean destroyEntity(Entity en) {
         entityCount--;
         if (!EntityList.remove(en)) {
             return false;
