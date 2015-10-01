@@ -5,9 +5,11 @@
  */
 package com.opengg.core.physics;
 
-import static com.opengg.core.entities.Entity.EntityType.*;
+import com.opengg.core.entities.Entity;
+import static com.opengg.core.entities.Entity.Collide.*;
+import static com.opengg.core.entities.Entity.UpdateForce.*;
+import static com.opengg.core.entities.Entity.UpdateXYZ.*;
 import com.opengg.core.entities.EntityFactory;
-import java.util.Iterator;
 
 /**
  *
@@ -18,44 +20,39 @@ public class MainLoop extends EntityFactory implements Runnable{
     @Override
     public void run()
     {
-        Iterator iterateEntity = EntityList.iterator();
-        Iterator iteratePhysics = EntityList.iterator();
-        int i, x;
         
         while(true)// put in some condition? Idk
         {
-            for(i = 0; iterateEntity.hasNext(); i++)
+            for(Entity collide: EntityList)
             {
-                EntityList.get(i).updateXYZ();
-                EntityList.get(i).calculateForces();
-                iterateEntity.next();
+                collide.updateXYZ();
+                if(collide.updateForce == Realistic)
+                {
+                    collide.calculateForces();
+                }
             }
             //Calculate direction
-            for(i = 0; iteratePhysics.hasNext(); i++)
+            for(Entity collide: EntityList)
             {
-                if(EntityList.get(i).type == Static || EntityList.get(i).type == Particle)
+                if(collide.collision != Collidable)
                 {
-                    iterateEntity.next();
                     continue;
                 }
-                for(x = 0; iterateEntity.hasNext(); x++)
+                for(Entity collidee: EntityList)
                 {
-                    if(EntityList.get(i).equals(EntityList.get(x)))
+                    if(collide.equals(collidee) || collidee.collision == Uncollidable)
                     {
-                        iteratePhysics.next();
                         continue;
                     }
-                    if(CollisionDetection.areColliding(i, x) == 1)
+                    if(CollisionDetection.areColliding(collide, collidee) == 1)
                     {
-                        EntityList.get(i).collisionResponse(EntityList.get(x).force);
-                        if(EntityList.get(x).type == Physics)
+                        collide.collisionResponse(collidee.force);
+                        if(collidee.collision == Collidable)
                         {
-                            EntityList.get(x).collisionResponse(EntityList.get(i).force);
+                            collidee.collisionResponse(collide.force);
                         }
                     }
-                    iterateEntity.next();
                 }
-                iteratePhysics.next();
             }
         }
     }

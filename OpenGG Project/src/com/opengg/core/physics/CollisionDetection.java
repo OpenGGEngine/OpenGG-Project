@@ -5,6 +5,7 @@
  */
 package com.opengg.core.physics;
 
+import com.opengg.core.entities.Entity;
 import com.opengg.core.entities.EntityFactory;
 
 /**
@@ -13,10 +14,10 @@ import com.opengg.core.entities.EntityFactory;
  */
 public class CollisionDetection extends EntityFactory{
     
-    public static int areColliding(int x, int y)
+    public static int areColliding(Entity x, Entity y)
     {
         //Possible error checking
-        if(EntityList.get(x) == null || EntityList.get(y) == null)
+        if(x == null || y == null)
         {
             return -1;
         }
