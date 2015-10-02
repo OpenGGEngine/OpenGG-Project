@@ -12,12 +12,24 @@ package com.opengg.core.thread;
  */
 public class GameThreadHandle {
     ThreadHandle r, u;
-    private GameThreadHandle(){
-        r = ThreadHandle.getHandle(5, ThreadType.RENDER);
-        u = ThreadHandle.getHandle(8, ThreadType.UPDATE);
+    GameThreaded g;
+    private GameThreadHandle(GameThreaded g){
+        this.g = g;
+        r = ThreadHandle.getHandle(5, ThreadType.RENDER,g);
+        u = ThreadHandle.getHandle(8, ThreadType.UPDATE,g);
+        
     }
     
-    public static GameThreadHandle getHandle(GameThreaded g){
-        return new GameThreadHandle();
+    public static GameThreadHandle getHandle(GameThreaded ge){
+        
+        return new GameThreadHandle(ge);
+    }
+    public void kill(){
+        r.kill();
+        u.kill();
+    }
+    public void run(){
+        r.run();
+        u.run();
     }
 }

@@ -21,7 +21,7 @@ public class Window {
     int WIDTH = 300;
     int HEIGHT = 300;
     
-    private long window;
+    public static long window;
     
     GLFWvidmode mode; 
     ByteBuffer vidmode;
