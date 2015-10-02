@@ -5,6 +5,7 @@
  */
 package com.opengg.core.physics;
 
+import com.opengg.core.Vector3f;
 import com.opengg.core.entities.Entity;
 import static com.opengg.core.entities.Entity.Collide.*;
 import static com.opengg.core.entities.Entity.UpdateForce.*;
@@ -51,6 +52,11 @@ public class MainLoop extends EntityFactory implements Runnable{
                     }
                     if(CollisionDetection.areColliding(collide, collidee) == 1)
                     {
+                        if(collidee.updatePosition == Immovable)
+                        {
+                            collide.collisionResponse(new Vector3f(-collide.force.x*2, collide.force.y, -collide.force.z*2));
+                            continue;
+                        }
                         collide.collisionResponse(collidee.force);
                         if(collidee.collision == Collidable)
                         {
@@ -65,9 +71,9 @@ public class MainLoop extends EntityFactory implements Runnable{
     public static void start() throws Exception
     {
         if(MainLoop.loopStarted == false)
-        {MainLoop.loopStarted = true;}
+            MainLoop.loopStarted = true;
         else
-        {throw new Exception("Loop already started");}
+            throw new Exception("Loop already started");
         Thread update = new Thread(new MainLoop());
         update.start();
     }

@@ -21,26 +21,21 @@ import static com.opengg.core.entities.Entity.UpdateForce.*;
 public class Entity {
 
     public enum EntityType {
-        /* Update Movement, Force Update, No Collsion Response*/
-
-        Static,
+        /* Update Movement, Force Update, No Collsion Response*/ Static,
         /* Update Movement, Force Update, Collision Detection*/ Physics,
         /* Update Movement, No force update, No Collision*/ Particle,
         /* User Defined*/ Other
     }
 
     public enum Collide {
-
         Collidable, Uncollidable, NoResponse
     }
 
     public enum UpdateXYZ {
-
         Movable, Immovable
     }
 
     public enum UpdateForce {
-
         Realistic, Unrealistic
     }
     
@@ -49,14 +44,16 @@ public class Entity {
     public UpdateXYZ updatePosition;
     public Collide collision;
     
+    /* Native to Entity*/
     public Vector3f pos = new Vector3f();
     public float volume;
     public boolean ground;
     public float mass;
+    
+    /* Physics*/
     public Vector3f force = new Vector3f();
     public Vector3f velocity = new Vector3f();
     public Vector2f direction = new Vector2f();
-
     private final Time time = new Time();
     public Vector3f acceleration = new Vector3f();
     public Vector3f lastAcceleration = new Vector3f();
@@ -77,8 +74,8 @@ public class Entity {
     public Entity(Model model, EntityType type) {
         setXYZ(0f, 0f, 0f);
         this.ground = true;
-        this.volume = 0f;
-        this.mass = 0f;
+        this.volume = 60f;
+        this.mass = 40f;
         switch (type) {
             case Static:
                 updatePosition = Movable;
@@ -103,13 +100,13 @@ public class Entity {
     /**
      * Creates an entity based off of 5 parameters.
      *
-     * @param x
-     * @param y
-     * @param z
+     * @param x X coordinate
+     * @param y Y coordinate
+     * @param z Z coordinate
      * @param f Force vector
-     * @param mass
-     * @param volume
-     * @param type
+     * @param mass Mass of Entity
+     * @param volume Volume of Entity
+     * @param type Type of entity
      */
     public Entity(float x, float y, float z, Vector3f f, float mass, float volume, EntityType type) {
 
@@ -241,8 +238,7 @@ public class Entity {
     }
 
     /**
-     * Updates XYZ based on velocity and acceleration and calculates new values
-     * for all of them
+     * Updates XYZ based on velocity and acceleration and calculates new values for all of them
      */
     public void updateXYZ() {
         timeStep = time.getDeltaSec();
@@ -280,7 +276,10 @@ public class Entity {
      * @return Error
      */
     public boolean collisionResponse(Vector3f force) {
-
+        
+        this.force.x += force.x;
+        this.force.y += force.y;
+        this.force.z += force.z;
         return true;
     }
 
