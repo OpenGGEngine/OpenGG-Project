@@ -37,7 +37,7 @@ public class Window {
         // Setup an error callback. The default implementation
         // will print the error message in System.err.
         glfwSetErrorCallback(errorCallback = errorCallbackPrint(System.err));
-        
+        System.out.println("5");
         HEIGHT = h;
         WIDTH = w;
         

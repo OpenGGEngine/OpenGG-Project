@@ -6,6 +6,9 @@
 
 package com.opengg.core.thread;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author Javier
@@ -30,9 +33,15 @@ public class GameThreadHandle {
         r.kill();
         u.kill();
         p.kill();
+        g.end();
     }
     public void run(){
         r.run();
+        try {
+            Thread.sleep(5);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(GameThreadHandle.class.getName()).log(Level.SEVERE, null, ex);
+        }
         u.run();
         p.kill();
     }
