@@ -11,12 +11,14 @@ package com.opengg.core.thread;
  * @author Javier
  */
 public class GameThreadHandle {
-    ThreadHandle r, u;
+    public ThreadHandle r, u;
+    ThreadHandle p;
     GameThreaded g;
     private GameThreadHandle(GameThreaded g){
         this.g = g;
         r = ThreadHandle.getHandle(5, ThreadType.RENDER,g);
         u = ThreadHandle.getHandle(8, ThreadType.UPDATE,g);
+        p = ThreadHandle.getHandle(5, ThreadType.PHYSICS, g);
         
     }
     
@@ -27,9 +29,11 @@ public class GameThreadHandle {
     public void kill(){
         r.kill();
         u.kill();
+        p.kill();
     }
     public void run(){
         r.run();
         u.run();
+        p.kill();
     }
 }

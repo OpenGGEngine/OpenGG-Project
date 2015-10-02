@@ -6,7 +6,7 @@
 
 package com.opengg.core.thread;
 
-import org.lwjgl.opengl.GL;
+import com.opengg.core.physics.MainLoop;
 
 /**
  *
@@ -42,6 +42,9 @@ public class GlobalThread implements Runnable{
             }
             if(t == ThreadType.UPDATE){
                 g.update(1);
+            }
+            if(t == ThreadType.PHYSICS){
+                MainLoop.process();
             }
         }
     }

@@ -16,12 +16,9 @@ import com.opengg.core.entities.EntityFactory;
  *
  * @author ethachu19
  */
-public class MainLoop extends EntityFactory implements Runnable{
-    
-    private static boolean loopStarted = false;
-    
-    @Override
-    public void run()
+public class MainLoop extends EntityFactory{
+
+    public static void process()
     {
         
         while(true)// put in some condition? Idk
@@ -66,15 +63,5 @@ public class MainLoop extends EntityFactory implements Runnable{
                 }
             }
         }
-    }
-    
-    public static void start() throws Exception
-    {
-        if(MainLoop.loopStarted == false)
-            MainLoop.loopStarted = true;
-        else
-            throw new Exception("Loop already started");
-        Thread update = new Thread(new MainLoop());
-        update.start();
     }
 }

@@ -5,6 +5,9 @@ import com.opengg.core.Vector3f;
 import com.opengg.core.input.KeyboardEventHandler;
 import com.opengg.core.input.KeyboardListener;
 import com.opengg.core.io.ObjLoader;
+import com.opengg.core.objloader.parser.OBJFace;
+import com.opengg.core.objloader.parser.OBJModel;
+import com.opengg.core.objloader.parser.OBJParser;
 import com.opengg.core.render.VertexArrayObject;
 import com.opengg.core.render.VertexBufferObject;
 import com.opengg.core.shader.Shader;
@@ -14,8 +17,12 @@ import com.opengg.core.util.ViewUtil;
 import com.opengg.core.window.*;
 import static com.opengg.core.window.RenderUtil.endFrame;
 import static com.opengg.core.window.RenderUtil.startFrame;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.List;
@@ -80,6 +87,8 @@ public class OpenGGTest implements KeyboardListener{
     
     float speed = 0.2f;
         
+    OBJModel m2;
+    
     FloatBuffer awpb;
     FloatBuffer vertices;
     FloatBuffer vertices2;
@@ -127,18 +136,20 @@ public class OpenGGTest implements KeyboardListener{
         blank.loadTexture("C:/res/blank.png");
         
         Model awpm = new Model();
+
         try {
-            URL path = OpenGGTest.class.getResource("engineblock.obj");
-            
+            URL path = OpenGGTest.class.getResource("awp.obj");
+            m2 = new OBJParser().parse(path);
             awpm = ObjLoader.loadTexturedModel(path);
         } catch (IOException ex) {
             ex.printStackTrace();
         }
         
-        List<Vector3f> awp = awpm.getVertices();
+        List<Vector3f> awp = m2.getVertices();
         List<Vector3f> awpn = awpm.getNormals();
         List<Model.Face> awpf = awpm.getFaces();
-
+        List<OBJFace> f = m2.getObjects().get(0).getMeshes().get(0).getFaces();
+        
         Random random = new Random();
         
         awpb = BufferUtils.createFloatBuffer(awp.size() * 8);
@@ -156,10 +167,20 @@ public class OpenGGTest implements KeyboardListener{
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
         
         elements = BufferUtils.createIntBuffer(awpf.size()*3);
-        for (Model.Face awpf1 : awpf) {
-            int[] ind = awpf1.getVertexIndices();
-            elements.put(ind[0]).put(ind[1]).put(ind[2]);
+//        for (Model.Face awpf1 : awpf) {
+//            int[] ind = awpf1.getVertexIndices();
+//            elements.put(ind[0]).put(ind[1]).put(ind[2]);
+//        }
+        
+        //System.out.println(f.get(0).getReferences().get(3).vertexIndex);
+        
+        for (OBJFace fa : f){
+            int x = fa.getReferences().get(0).vertexIndex;
+            int y = fa.getReferences().get(1).vertexIndex;
+            int z = fa.getReferences().get(2).vertexIndex;
+            elements.put(x).put(y).put(z);
         }
+        
         elements.flip();
         
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, elements, GL_STATIC_DRAW);
