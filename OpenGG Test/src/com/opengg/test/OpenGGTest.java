@@ -4,6 +4,7 @@ import com.opengg.core.Model;
 import com.opengg.core.Vector3f;
 import com.opengg.core.input.KeyboardEventHandler;
 import com.opengg.core.input.KeyboardListener;
+import com.opengg.core.io.FileStringLoader;
 import com.opengg.core.io.ObjLoader;
 import com.opengg.core.objloader.parser.OBJFace;
 import com.opengg.core.objloader.parser.OBJModel;
@@ -17,12 +18,8 @@ import com.opengg.core.util.ViewUtil;
 import com.opengg.core.window.*;
 import static com.opengg.core.window.RenderUtil.endFrame;
 import static com.opengg.core.window.RenderUtil.startFrame;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
-import java.net.URLDecoder;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.List;
@@ -53,17 +50,17 @@ public class OpenGGTest implements KeyboardListener{
         vertAmount = squares * 6;
         triangleAmount = vertAmount / 3;
     }
-    int uniView;
+    
     public float x,y,z;
     public float xrot;
     public float rot1 = 0;
     public float xm = 0, ym=0, zm=0;
-    private float angle = 0f;
-    private float anglePerSecond = 10f;
+
     
     Vector3f rot = new Vector3f(0,0,0);
     Vector3f pos = new Vector3f(0,0,0);
     
+    boolean rotated = false;
     
     boolean backwards = false;
     
@@ -76,10 +73,12 @@ public class OpenGGTest implements KeyboardListener{
     Shader vertexShader, fragmentShader;
     
     private ShaderProgram program;
-    private ShaderProgram program2;
+
+    private int xrotM, yrotM, zrotM;
     
+    private int uniView;
     private int uniModel;
-    private float previousAngle;
+
     
     Texture t1 = new Texture();
     Texture t2 = new Texture();
@@ -111,7 +110,7 @@ public class OpenGGTest implements KeyboardListener{
         while(!win.shouldClose(window)){
             
             startFrame();
-            //delta = Time.getDelta();
+
             update(1);
             render(rot1);
             endFrame(window);
@@ -125,14 +124,10 @@ public class OpenGGTest implements KeyboardListener{
     Matrix4f view;
     
     public void setup(){
-        //MovementLoader.setup(window);
-        /* Generate Vertex Array Object */
+
         vao = new VertexArrayObject();
         vao.bind();
-        
-//        t1.loadTexture("C:/res/tex1.png");
-//        t2.loadTexture("C:/res/tex2.png");
-        
+
         blank.loadTexture("C:/res/blank.png");
         
         Model awpm = new Model();
@@ -156,10 +151,8 @@ public class OpenGGTest implements KeyboardListener{
         for (Vector3f awp1 : awp) {
             float colorg = random.nextFloat() % 10;
             float colorr = random.nextFloat() % 10;
-            float colorb = random.nextFloat() % 10;
-            //float color = 0.6f;        
-            awpb.put(awp1.x).put(awp1.y).put(awp1.z).put(colorr).put(colorg).put(colorb).put(0f).put(0f);
-            
+            float colorb = random.nextFloat() % 10;    
+            awpb.put(awp1.x ).put(awp1.y).put(awp1.z + 60).put(colorr).put(colorg).put(colorb).put(0f).put(0f);           
         }
         awpb.flip();
      
@@ -167,13 +160,7 @@ public class OpenGGTest implements KeyboardListener{
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
         
         elements = BufferUtils.createIntBuffer(awpf.size()*3);
-//        for (Model.Face awpf1 : awpf) {
-//            int[] ind = awpf1.getVertexIndices();
-//            elements.put(ind[0]).put(ind[1]).put(ind[2]);
-//        }
-        
-        //System.out.println(f.get(0).getReferences().get(3).vertexIndex);
-        
+
         for (OBJFace fa : f){
             int x = fa.getReferences().get(0).vertexIndex;
             int y = fa.getReferences().get(1).vertexIndex;
@@ -191,8 +178,8 @@ public class OpenGGTest implements KeyboardListener{
          /* Load shaders */
         vertexShader= new Shader(GL_VERTEX_SHADER, Shaders.vertexSource); 
         fragmentShader = new Shader(GL_FRAGMENT_SHADER, Shaders.fragmentSource); 
-        vertexTex= new Shader(GL_VERTEX_SHADER, Shaders.vertexTex); 
-        fragmentTex = new Shader(GL_FRAGMENT_SHADER, Shaders.fragmentTex); 
+        vertexTex= new Shader(GL_VERTEX_SHADER, FileStringLoader.loadStringSequence("C:/res/sh1.vert")); 
+        fragmentTex = new Shader(GL_FRAGMENT_SHADER, FileStringLoader.loadStringSequence("C:/res/sh1.frag")); 
 
         /* Create shader program */
         program = new ShaderProgram();
@@ -217,7 +204,17 @@ public class OpenGGTest implements KeyboardListener{
         
         int uniTex = program.getUniformLocation("texImage");
         program.setUniform(uniTex, 0);
+        
 
+        xrotM = program.getUniformLocation("xrot");
+        program.setUniform(xrotM, 0);
+        
+        yrotM = program.getUniformLocation("yrot");
+        program.setUniform(yrotM, 0);
+        
+        zrotM = program.getUniformLocation("zrot");
+        program.setUniform(zrotM, 0);
+        
         float ratio = win.getRatio();
         
         program.use();
@@ -265,15 +262,12 @@ public class OpenGGTest implements KeyboardListener{
     
     public void render(double alpha) {
 
-        Matrix4f model = Matrix4f.rotate(xrot, 0f, 1f, 0f);
-        Matrix4f move = Matrix4f.translate(x,y,z);
-        
+        Matrix4f move = Matrix4f.translate(x,y,z);       
         
         //program.use();
         program.setUniform(uniModel, move);
         
-        program.setUniform(uniView, move.add(model));
-        
+        program.setUniform(yrotM, xrot);
         blank.useTexture();
         
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, elements, GL_STATIC_DRAW);
@@ -286,7 +280,7 @@ public class OpenGGTest implements KeyboardListener{
         x += xm;
         y += ym;
         z += zm;
-        xrot += rot1;
+        xrot += rot1/10;
         
     }
 
@@ -319,13 +313,14 @@ public class OpenGGTest implements KeyboardListener{
 
         }
         if(key == GLFW_KEY_Q){
-            rot1 += 3;
+            rot1 += 0.3;
             
         }
         if(key == GLFW_KEY_E){
-            rot1 -= 3;
+            rot1 -= 0.3;
             
         }
+
     }
 
     @Override
@@ -358,12 +353,13 @@ public class OpenGGTest implements KeyboardListener{
 
         }
         if(key == GLFW_KEY_Q){
-            rot1 -= 0.6;
+            rot1 -= 0.3;
             
         }
         if(key == GLFW_KEY_E){
-            rot1 += 0.6;
+            rot1 += 0.3;
             
         }
+
     }
 }
