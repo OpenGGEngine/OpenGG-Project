@@ -2,12 +2,15 @@ package com.opengg.test;
 import com.opengg.core.Matrix4f;
 import com.opengg.core.Model;
 import com.opengg.core.Vector3f;
+import com.opengg.core.buffer.ObjectBuffers;
 import com.opengg.core.input.KeyboardEventHandler;
 import com.opengg.core.input.KeyboardListener;
 import com.opengg.core.io.FileStringLoader;
 import com.opengg.core.io.ObjLoader;
+import com.opengg.core.movement.MovementLoader;
 import com.opengg.core.objloader.parser.OBJFace;
 import com.opengg.core.objloader.parser.OBJModel;
+import com.opengg.core.objloader.parser.OBJNormal;
 import com.opengg.core.objloader.parser.OBJParser;
 import com.opengg.core.render.VertexArrayObject;
 import com.opengg.core.render.VertexBufferObject;
@@ -45,6 +48,7 @@ public class OpenGGTest implements KeyboardListener{
     int squares = 4;
     private Shader vertexTex;
     private Shader fragmentTex;
+    private int rotm;
     
     {
         vertAmount = squares * 6;
@@ -55,7 +59,8 @@ public class OpenGGTest implements KeyboardListener{
     public float xrot;
     public float rot1 = 0;
     public float xm = 0, ym=0, zm=0;
-
+    
+    int normalbuffer;
     
     Vector3f rot = new Vector3f(0,0,0);
     Vector3f pos = new Vector3f(0,0,0);
@@ -67,6 +72,8 @@ public class OpenGGTest implements KeyboardListener{
     public static void main(String[] args) {
         new OpenGGTest();
     }
+    
+    int ebo;
     private VertexArrayObject vao;
     private VertexBufferObject vbo;
     
@@ -74,11 +81,11 @@ public class OpenGGTest implements KeyboardListener{
     
     private ShaderProgram program;
 
-    private int xrotM, yrotM, zrotM;
     
     private int uniView;
     private int uniModel;
-
+    
+    List<OBJNormal> norm;
     
     Texture t1 = new Texture();
     Texture t2 = new Texture();
@@ -89,6 +96,7 @@ public class OpenGGTest implements KeyboardListener{
     OBJModel m2;
     
     FloatBuffer awpb;
+    FloatBuffer normals;
     FloatBuffer vertices;
     FloatBuffer vertices2;
     
@@ -121,57 +129,67 @@ public class OpenGGTest implements KeyboardListener{
     IntBuffer ind;
     IntBuffer elements;
     
+    FloatBuffer test;
+    
     Matrix4f view;
     
     public void setup(){
-
+        
+        MovementLoader.setup(window,60);
+        
+        
         vao = new VertexArrayObject();
         vao.bind();
 
         blank.loadTexture("C:/res/blank.png");
-        
-        Model awpm = new Model();
 
         try {
-            URL path = OpenGGTest.class.getResource("awp.obj");
+            URL path = OpenGGTest.class.getResource("test3.obj");
             m2 = new OBJParser().parse(path);
-            awpm = ObjLoader.loadTexturedModel(path);
         } catch (IOException ex) {
             ex.printStackTrace();
         }
         
         List<Vector3f> awp = m2.getVertices();
-        List<Vector3f> awpn = awpm.getNormals();
-        List<Model.Face> awpf = awpm.getFaces();
+        norm = m2.getNormals();
         List<OBJFace> f = m2.getObjects().get(0).getMeshes().get(0).getFaces();
+        
+        test = ObjectBuffers.genBuffer(m2, 0.6f);
         
         Random random = new Random();
         
-        awpb = BufferUtils.createFloatBuffer(awp.size() * 8);
+        awpb = BufferUtils.createFloatBuffer(awp.size() * 9);
         for (Vector3f awp1 : awp) {
             float colorg = random.nextFloat() % 10;
             float colorr = random.nextFloat() % 10;
-            float colorb = random.nextFloat() % 10;    
-            awpb.put(awp1.x ).put(awp1.y).put(awp1.z + 60).put(colorr).put(colorg).put(colorb).put(0f).put(0f);           
+            float colorb = random.nextFloat() % 10; 
+            awpb.put(awp1.x ).put(awp1.y).put(awp1.z).put(colorr).put(colorg).put(colorb).put(0.7f);        
         }
         awpb.flip();
      
-        int ebo = glGenBuffers();
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-        
-        elements = BufferUtils.createIntBuffer(awpf.size()*3);
-
+        ebo = glGenBuffers();
+        elements = BufferUtils.createIntBuffer(f.size()*3);
         for (OBJFace fa : f){
             int x = fa.getReferences().get(0).vertexIndex;
             int y = fa.getReferences().get(1).vertexIndex;
             int z = fa.getReferences().get(2).vertexIndex;
             elements.put(x).put(y).put(z);
         }
-        
         elements.flip();
+//        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+//        glBufferData(GL_ELEMENT_ARRAY_BUFFER, elements, GL_STATIC_DRAW);
         
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, elements, GL_STATIC_DRAW);
-    
+        
+//        normalbuffer = glGenBuffers();
+//        normals = BufferUtils.createFloatBuffer(norm.size() * 3);
+//        for (OBJNormal norm2 : norm) {
+//            normals.put(norm2.x).put(norm2.y).put(norm2.z);
+//        }
+//        normals.flip();
+//        glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
+//        glBufferData(GL_ARRAY_BUFFER, norm.size()*3, GL_STATIC_DRAW);
+        
+
         vbo = new VertexBufferObject();
         vbo.bind(GL_ARRAY_BUFFER);
 
@@ -186,6 +204,8 @@ public class OpenGGTest implements KeyboardListener{
         program.attachShader(vertexTex);   
         program.attachShader(fragmentTex);  
         program.bindFragmentDataLocation(0, "fragColor");
+        int r = program.getAttributeLocation("normal");
+        System.out.print(r);
         program.link();
         program.use();
         program.checkStatus();
@@ -206,21 +226,19 @@ public class OpenGGTest implements KeyboardListener{
         program.setUniform(uniTex, 0);
         
 
-        xrotM = program.getUniformLocation("xrot");
-        program.setUniform(xrotM, 0);
-        
-        yrotM = program.getUniformLocation("yrot");
-        program.setUniform(yrotM, 0);
-        
-        zrotM = program.getUniformLocation("zrot");
-        program.setUniform(zrotM, 0);
+        rotm = program.getUniformLocation("rot");
+        program.setUniform(rotm, new Vector3f(0,0,0));
         
         float ratio = win.getRatio();
         
         program.use();
-        ViewUtil.setPerspective(100, ratio, 0.3f, 300f, program);
+        ViewUtil.setPerspective(80, ratio, 0.3f, 300f, program);
 
         vao.bind();      
+        
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
         
         glEnable(GL_DEPTH_TEST);
 
@@ -239,17 +257,21 @@ public class OpenGGTest implements KeyboardListener{
         programv.use();
         int posAttrib = programv.getAttributeLocation("position");
         programv.enableVertexAttribute(posAttrib);
-        programv.pointVertexAttribute(posAttrib, 3, 8 * Float.BYTES, 0);
+        programv.pointVertexAttribute(posAttrib, 3, 12 * Float.BYTES, 0);
 
         /* Specify Color Pointer */
         int colAttrib = programv.getAttributeLocation("color");
         programv.enableVertexAttribute(colAttrib);
-        programv.pointVertexAttribute(colAttrib, 3, 8 * Float.BYTES, 3 * Float.BYTES);
-        if(textured){
-            int texAttrib = programv.getAttributeLocation("texcoord");
-            programv.enableVertexAttribute(texAttrib);
-            programv.pointVertexAttribute(texAttrib, 2, 8 * Float.BYTES, 6 * Float.BYTES);
-        }
+        programv.pointVertexAttribute(colAttrib, 4, 12 * Float.BYTES, 3 * Float.BYTES);
+        
+        int normAttrib = programv.getAttributeLocation("normal"); 
+        programv.enableVertexAttribute(normAttrib);
+        programv.pointVertexAttribute(normAttrib, 3, 12 * Float.BYTES, 7 * Float.BYTES);
+        
+        int texAttrib = programv.getAttributeLocation("texcoord"); 
+        programv.enableVertexAttribute(texAttrib);
+        programv.pointVertexAttribute(texAttrib, 2, 12 * Float.BYTES, 10 * Float.BYTES);
+
     }
     
     public void exit() {
@@ -261,27 +283,42 @@ public class OpenGGTest implements KeyboardListener{
     }
     
     public void render(double alpha) {
-
-        Matrix4f move = Matrix4f.translate(x,y,z);       
+        
+        rot = new Vector3f(0,-xrot,0);
+        
+        pos = MovementLoader.processMovement(pos, rot);
+        
+        Matrix4f cameraR = Matrix4f.translate(pos.x,pos.y,pos.z);       
+        
+        Matrix4f cameraM = Matrix4f.rotate(-xrot,0,1,0);
         
         //program.use();
-        program.setUniform(uniModel, move);
+        program.setUniform(uniView, cameraM.multiply(cameraR));      
+        program.setUniform(uniModel, new Matrix4f());
+
         
-        program.setUniform(yrotM, xrot);
+        program.checkStatus();
+        
         blank.useTexture();
         
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, elements, GL_STATIC_DRAW);
         
-        vbo.uploadData(GL_ARRAY_BUFFER, awpb, GL_STATIC_DRAW);      
-        glDrawElements(GL_TRIANGLES, awpb.capacity(), GL_UNSIGNED_INT, 0);   
+//        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+//        glBufferData(GL_ELEMENT_ARRAY_BUFFER, elements, GL_STATIC_DRAW);
+//        
+        vbo.uploadData(GL_ARRAY_BUFFER, test, GL_STATIC_DRAW);  
+
+        glDrawArrays(GL_TRIANGLES, 0, m2.getVertices().size()*100);
+        
+        //vbo.uploadData(GL_ARRAY_BUFFER, awpb, GL_STATIC_DRAW);  
+        
+        //glDrawElements(GL_TRIANGLES, awpb.capacity(), GL_UNSIGNED_INT, 0);   
     }
     
     public void update(float delta) {       
         x += xm;
         y += ym;
         z += zm;
-        xrot += rot1/10;
-        
+        xrot += rot1*5;
     }
 
     @Override
