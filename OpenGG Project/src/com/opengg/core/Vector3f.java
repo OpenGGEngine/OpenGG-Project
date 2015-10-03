@@ -85,7 +85,7 @@ public class Vector3f {
     }
 
     public FloatBuffer getBuffer() {
-        FloatBuffer buffer = BufferUtils.createFloatBuffer(2); 
+        FloatBuffer buffer = BufferUtils.createFloatBuffer(3); 
         buffer.put(x).put(y).put(z); 
         buffer.flip(); 
         return buffer;
