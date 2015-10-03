@@ -10,7 +10,6 @@ package com.opengg.core.input;
  * @author Warren
  */
 
-import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWKeyCallback;
 import static org.lwjgl.glfw.GLFW.*;
 

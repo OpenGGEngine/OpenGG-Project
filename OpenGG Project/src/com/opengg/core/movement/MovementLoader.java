@@ -17,7 +17,7 @@ import org.lwjgl.glfw.GLFWKeyCallback;
 public class MovementLoader {
     private static int mouseX, mouseY, mouseDX, mouseDY;
     private static long window;
-    private static final int baseSpeed = 30;
+    private static int baseSpeed = 30;
     private static int walkingSpeed = 30;
     private static int mouseSpeed = 2;
     
@@ -28,7 +28,7 @@ public class MovementLoader {
     
     private static final int maxLookDown = -89;
     private static final boolean resizable = true;
-    private static long lastFrame;
+    private static double lastFrame;
     private static volatile boolean running = true;
     static final Logger main = Logger.getLogger("main");
     
@@ -38,19 +38,24 @@ public class MovementLoader {
 
     }
     
-    public static void setup(long w){
+    public static void setSpeed(int s){
+        baseSpeed = s;
+    }
+    
+    public static void setup(long w, int s){
         window = w;
-        MousePosHandler.setup(w);
+        
+        baseSpeed = s;
         
         mouseX = mouseY = mouseDX = mouseDY = 0;
             
     }
     
-    private static int getDelta() {
-        long currentTime = (long) GLFW.glfwGetTime();
-        int delta = (int) (currentTime - lastFrame);
-        lastFrame = (long) GLFW.glfwGetTime();
-        return delta;
+    private static float getDelta() {
+        double currentTime = GLFW.glfwGetTime();
+        float delta = (float) (currentTime - lastFrame);
+        lastFrame = GLFW.glfwGetTime();
+        return delta * 1000;
     }
     
     public int getDX(){
@@ -81,9 +86,9 @@ public class MovementLoader {
 //                rotation.x = maxLookUp;
 //            }
         
-        double x = MousePosHandler.getX();
-        double y = MousePosHandler.getY();
-        System.out.println(x);
+        double x = MousePosHandler.getX(window);
+        double y = MousePosHandler.getY(window);
+
         return rotation;
     }
     
@@ -91,20 +96,20 @@ public class MovementLoader {
         
 
             
-            
             boolean keyUp = KeyBoardHandler.isKeyDown(GLFW_KEY_W);
             boolean keyDown = KeyBoardHandler.isKeyDown(GLFW_KEY_S);
             boolean keyLeft = KeyBoardHandler.isKeyDown(GLFW_KEY_A);
             boolean keyRight = KeyBoardHandler.isKeyDown(GLFW_KEY_D);
             boolean flyUp = KeyBoardHandler.isKeyDown(GLFW_KEY_SPACE);
             boolean flyDown = KeyBoardHandler.isKeyDown(GLFW_KEY_LEFT_SHIFT);
+
             
             boolean moveFaster = KeyBoardHandler.isKeyDown(GLFW_KEY_LEFT_CONTROL);
             boolean moveMuchFaster = KeyBoardHandler.isKeyDown(GLFW_KEY_TAB);
             boolean reset = KeyBoardHandler.isKeyDown(GLFW_KEY_C);
-            int delta = getDelta();
+            float delta = getDelta();
             
-            
+
             if(moveFaster){
                 walkingSpeed = baseSpeed * 4;
             }else{
@@ -239,8 +244,6 @@ public class MovementLoader {
 //                    main.log(Level.INFO, "Flying speed changed to {0}.", walkingSpeed);
 //                    walkingSpeed -= 1;
 //                }
-               
-            
             return position;
     }
     
