@@ -6,7 +6,9 @@
 package com.opengg.core.entities;
 
 import com.opengg.core.Model;
-import static com.opengg.core.entities.Entity.EntityType.*;
+import com.opengg.core.Vector3f;
+import com.opengg.core.entities.Entity.EntityType;
+import com.opengg.core.physics.ForceManipulation;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,32 +31,40 @@ public abstract class EntityFactory {
      * Generates a physics entity for the object given
      * 
      * @param p What object to be initialized
+     * @param tag What type of entity
      * @param m Model to be bound to Entity
      * @return Error
      */
-    
-    public static boolean generatePhysicsEntity(Entity p, Model m) {
+    public static boolean generateEntity(Entity p, EntityType tag, Model m) {
         if(entityCount > 44)
         { p = null; return false;}
         entityCount++;
-        p = new Entity(m, Physics);
+        p = new Entity(m, tag);
+        p.forceCalculator = new ForceManipulation(p);
         return EntityList.add(p);
     }
-
-    /**
-     * Generates a static entity for the object given
-     * 
-     * @param s What object to be initialized
-     * @param m Model to be bound to Entity
-     * @return Error
-     */
     
-    public static boolean generateStaticEntity(Entity s, Model m) {
+    public static boolean generateEntity(Entity p, EntityType tag, float x, float y, float z, Vector3f f, float mass, float volume) {
         if(entityCount > 44)
-        { s = null; return false;}
+        { p = null; return false;}
         entityCount++;
-        s = new Entity(m, Static);
-        return EntityList.add(s);
+        
+            p = new Entity(x,y,z,f,mass,volume,tag);
+        
+        
+            p.forceCalculator = new ForceManipulation(p);
+        
+        return EntityList.add(p);
+    }
+    
+    public static boolean copyEntity(Entity p, Entity v) {
+        if(entityCount > 44)
+        { p = null; return false;}
+        entityCount++;
+        p = new Entity(v);
+        p.forceCalculator = new ForceManipulation(v.forceCalculator.airResistance, v.forceCalculator.force, p);
+        
+        return EntityList.add(p);
     }
     
     /**
@@ -63,7 +73,6 @@ public abstract class EntityFactory {
      * @param en
      * @return Error
      */
-    
     public static boolean destroyEntity(Entity en) {
         entityCount--;
         if (!EntityList.remove(en)) {

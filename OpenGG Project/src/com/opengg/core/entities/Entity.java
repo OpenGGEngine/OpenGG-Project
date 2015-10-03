@@ -13,6 +13,7 @@ import static com.opengg.core.entities.Entity.EntityType.*;
 import static com.opengg.core.entities.Entity.Collide.*;
 import static com.opengg.core.entities.Entity.UpdateXYZ.*;
 import static com.opengg.core.entities.Entity.UpdateForce.*;
+import com.opengg.core.physics.ForceManipulation;
 
 /**
  *
@@ -51,15 +52,13 @@ public class Entity {
     public float mass;
     
     /* Physics*/
-    public Vector3f force = new Vector3f();
     public Vector3f velocity = new Vector3f();
     public Vector2f direction = new Vector2f();
     private final Time time = new Time();
     public Vector3f acceleration = new Vector3f();
     public Vector3f lastAcceleration = new Vector3f();
+    public ForceManipulation forceCalculator;
     private float timeStep;
-    final static float gravity = 9.8f;
-    public static Vector2f wind = new Vector2f();
 
     public Entity() {
 
@@ -71,30 +70,12 @@ public class Entity {
      * @param model Model to be bound to Entity
      * @param type Type of Entity
      */
-    public Entity(Model model, EntityType type) {
+    public Entity(Model model, EntityType type){
         setXYZ(0f, 0f, 0f);
         this.ground = true;
         this.volume = 60f;
         this.mass = 40f;
-        switch (type) {
-            case Static:
-                updatePosition = Movable;
-                updateForce = Realistic;
-                collision = NoResponse;
-                break;
-
-            case Physics:
-                updatePosition = Movable;
-                updateForce = Realistic;
-                collision = Collidable;
-                break;
-
-            case Particle:
-                updatePosition = Movable;
-                updateForce = Unrealistic;
-                collision = Uncollidable;
-                break;
-        }
+        setTags(type);
     }
 
     /**
@@ -108,70 +89,93 @@ public class Entity {
      * @param volume Volume of Entity
      * @param type Type of entity
      */
-    public Entity(float x, float y, float z, Vector3f f, float mass, float volume, EntityType type) {
+    public Entity(float x, float y, float z, Vector3f f, float mass, float volume, EntityType type){
 
         setXYZ(x, y, z);
         setForce(f);
         this.ground = (pos.y < 60);
         this.volume = volume;
         this.mass = mass;
-        switch (type) {
-            case Static:
-                updatePosition = Movable;
-                updateForce = Realistic;
-                collision = NoResponse;
-                break;
-
-            case Physics:
-                updatePosition = Movable;
-                updateForce = Realistic;
-                collision = Collidable;
-                break;
-
-            case Particle:
-                updatePosition = Movable;
-                updateForce = Unrealistic;
-                collision = Uncollidable;
-                break;
-        }
+        setTags(type);
     }
 
     /**
-     * Creates a new vector based off another.
+     * Creates a new entity based off another.
      *
      * @param v Entity to be copied
      */
-    public Entity(Entity v) {
+    public Entity(Entity v){
 
         setXYZ(v.pos.x, v.pos.y, v.pos.z);
-        setForce(v.force);
+        setForce(v.forceCalculator.force);
         setVelocity(v.velocity);
         this.ground = (pos.y < 60);
         this.volume = v.volume;
         this.mass = v.mass;
-
+        
         this.collision = v.collision;
         this.updatePosition = v.updatePosition;
         this.updateForce = v.updateForce;
     }
-
+    
+    /**
+     * Sets the entity's tags
+     * 
+     * @param collision Tag for Collision Detection
+     * @return True
+     */
+    public boolean setTags(Collide collision)     
+    {
+        this.collision = collision;
+        return true;
+    }
+    
+    /**
+     * Sets the entity's tags
+     * 
+     * @param updateForce Tag for realistic force calculation
+     * @return True
+     */
+    public boolean setTags(UpdateForce updateForce)
+    {
+        this.updateForce = updateForce;
+        return true;
+    }
+    
+    /**
+     * Sets the entity's tags
+     * 
+     * @param updatePosition Tag for movable entity
+     * @return True
+     */
+    public boolean setTags(UpdateXYZ updatePosition)
+    {
+        this.updatePosition = updatePosition;
+        if(this.updatePosition == Immovable)
+        {
+            this.updateForce = Unrealistic;
+        }
+        return true;
+    }
+    
     /**
      * Sets the entity's tags
      * 
      * @param collision The tag for collision
      * @param updateForce The tag for realistic movement
      * @param updatePosition The tag for movement
-     * @throws IllegalStateException for optimization
+     * @return Error
      */
-    
-    public void setTags(Collide collision, UpdateForce updateForce, UpdateXYZ updatePosition) throws IllegalStateException {
+    public boolean setTags(Collide collision, UpdateForce updateForce, UpdateXYZ updatePosition) {
         this.collision = collision;
-        if(updatePosition == Immovable && updateForce == Realistic)
+        this.updatePosition = updatePosition;
+        if(this.updatePosition == Immovable)
         {
-            throw new IllegalStateException("Cannot have force without moving");
+            this.updateForce = Unrealistic;
+            return this.updateForce == updateForce;
         }
         this.updateForce = updateForce;
-        this.updatePosition = updatePosition;
+        return true;
     }
     
     /**
@@ -180,7 +184,7 @@ public class Entity {
      * @param type Type of entity to be set
      */
     
-    public void setTags(EntityType type) {
+    public final void setTags(EntityType type) {
         switch (type) {
             case Static:
                 updatePosition = Movable;
@@ -221,9 +225,9 @@ public class Entity {
      * @param f Force vector
      */
     public final void setForce(Vector3f f) {
-        this.force.x = f.x;
-        this.force.y = f.y;
-        this.force.z = f.z;
+        this.forceCalculator.force.x = f.x;
+        this.forceCalculator.force.y = f.y;
+        this.forceCalculator.force.z = f.z;
     }
 
     /**
@@ -247,26 +251,12 @@ public class Entity {
         pos.y += velocity.y * timeStep + (0.5 * lastAcceleration.x * timeStep * timeStep);
         pos.z += velocity.z * timeStep + (0.5 * lastAcceleration.x * timeStep * timeStep);
         ground = (pos.y < 60);
-        acceleration.x = force.x / mass;
-        acceleration.y = force.y / mass;
-        acceleration.z = force.z / mass;
+        acceleration.x = forceCalculator.force.x / mass;
+        acceleration.y = forceCalculator.force.y / mass;
+        acceleration.z = forceCalculator.force.z / mass;
         velocity.x += (lastAcceleration.x + acceleration.x) / 2 * timeStep;
         velocity.y += (lastAcceleration.y + acceleration.y) / 2 * timeStep;
         velocity.z += (lastAcceleration.z + acceleration.z) / 2 * timeStep;
-    }
-
-    /**
-     * Calculates forces currently acting on objects
-     */
-    public void calculateForces() {
-        if (!ground) {
-            force.x = force.x + Entity.wind.x;
-            force.z = force.y + Entity.wind.y;
-            force.y = force.y - Entity.gravity;
-        } else {
-            force.x = force.x + Entity.wind.x;
-            force.z = force.y + Entity.wind.y;
-        }
     }
 
     /**
@@ -277,9 +267,9 @@ public class Entity {
      */
     public boolean collisionResponse(Vector3f force) {
         
-        this.force.x += force.x;
-        this.force.y += force.y;
-        this.force.z += force.z;
+        this.forceCalculator.force.x += force.x;
+        this.forceCalculator.force.y += force.y;
+        this.forceCalculator.force.z += force.z;
         return true;
     }
 

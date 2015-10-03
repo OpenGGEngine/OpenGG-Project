@@ -20,7 +20,6 @@ public class MainLoop extends EntityFactory{
 
     public static void process()
     {
-        
         while(true)// put in some condition? Idk
         {
             for(Entity collide: EntityList)
@@ -31,12 +30,11 @@ public class MainLoop extends EntityFactory{
                 }
                 if(collide.updateForce == Realistic)
                 {
-                    collide.calculateForces();
+                    collide.forceCalculator.calculateAirResistance();
+                    collide.forceCalculator.calculateForces();
                 }
             }
-            //Calculate direction
-            for(Entity collide: EntityList)
-            {
+            for (Entity collide : EntityList) {
                 if(collide.collision != Collidable)
                 {
                     continue;
@@ -51,13 +49,13 @@ public class MainLoop extends EntityFactory{
                     {
                         if(collidee.updatePosition == Immovable)
                         {
-                            collide.collisionResponse(new Vector3f(-collide.force.x*2, collide.force.y, -collide.force.z*2));
+                            collide.collisionResponse(new Vector3f(-collide.forceCalculator.force.x*2, collide.forceCalculator.force.y, -collide.forceCalculator.force.z*2));
                             continue;
                         }
-                        collide.collisionResponse(collidee.force);
+                        collide.collisionResponse(collidee.forceCalculator.force);
                         if(collidee.collision == Collidable)
                         {
-                            collidee.collisionResponse(collide.force);
+                            collidee.collisionResponse(collide.forceCalculator.force);
                         }
                     }
                 }
