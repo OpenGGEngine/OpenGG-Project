@@ -1,0 +1,71 @@
+newmtl Preview
+Ns 50
+Ka 0 0 0
+Kd 0.925138 0.781762 0.639699
+Ks 0.0915311 0.0604877 0.189959
+newmtl 09_-_BronzeStatues
+Ns 10
+Ka 0 0 0
+Kd 0.8 0.8 0.8
+Ks 0 0 0
+map_Kd BronzeStatues1.jpg
+newmtl 02_-_Marble
+Ns 10
+Ka 0 0 0
+Kd 0.8 0.8 0.8
+Ks 0 0 0
+map_Kd MarbleColumns2.jpg
+newmtl 04_-_BronzeRoof
+Ns 10
+Ka 0 0 0
+Kd 0.8 0.8 0.8
+Ks 0 0 0
+map_Kd BronzeRoof1.jpg
+newmtl 05_-_Fregio
+Ns 10
+Ka 0 0 0
+Kd 0.8 0.8 0.8
+Ks 0 0 0
+map_Kd Fregio1.jpg
+newmtl 05_-_MarbleColumns
+Ns 10
+Ka 0 0 0
+Kd 0.8 0.8 0.8
+Ks 0 0 0
+map_Kd MarbleColumns2.jpg
+newmtl 03_-_Wall
+Ns 10
+Ka 0 0 0
+Kd 0.8 0.8 0.8
+Ks 0 0 0
+map_Kd WhiteWall1.jpg
+newmtl 08_-_DarkerWall
+Ns 10
+Ka 0 0 0
+Kd 0.8 0.8 0.8
+Ks 0 0 0
+map_Kd DarkerWall1.jpg
+newmtl 01_-_Columns
+Ns 10
+Ka 0 0 0
+Kd 0.8 0.8 0.8
+Ks 0 0 0
+map_Kd Columns1.jpg
+newmtl 06_-_SideGliph
+Ns 10
+Ka 0 0 0
+Kd 0.8 0.8 0.8
+Ks 0 0 0
+map_Kd SideGliph1.jpg
+newmtl 01_-_TempleFront
+Ns 10
+Ka 0 0 0
+Kd 0.8 0.8 0.8
+Ks 0 0 0
+map_Kd TempleFront1.jpg
+newmtl 07_-_SideBuilding
+Ns 10
+Ka 0 0 0
+Kd 0.8 0.8 0.8
+Ks 0 0 0
+map_Kd WindowsBuilding1.jpg
