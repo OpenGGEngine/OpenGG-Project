@@ -39,13 +39,13 @@ public class ObjectBuffers {
             float z3 = m.getVertices().get(i3).z;
             
             int ni1 = 0, ni2 = 0, ni3 = 0;
-            float xn = 0, yn = 0, zn = 0;
-            float xn2 = 0, yn2 = 0, zn2 = 0;
-            float xn3 = 0, yn3 = 0, zn3 = 0;
-            float u = 0, v = 0;
-            float u2 = 0, v2 = 0;
-            float u3 = 0, v3 = 0;
-            int ui = 0, vi = 0;
+            float xn = 0.1f, yn = 0.1f, zn = 0.1f;
+            float xn2 = 0.1f, yn2 = 0.1f, zn2 = 0.1f;
+            float xn3 = 0.1f, yn3 = 0.1f, zn3 = 0.1f;
+            float u = 0.1f, v = 0.1f;
+            float u2 = 0.1f, v2 = 0.1f;
+            float u3 = 0.1f, v3 = 0.1f;
+            int uv1= 0, uv2 = 0, uv3 = 0;
             if(fa.hasNormals()){
                 ni1 = fa.getReferences().get(0).normalIndex;
                 ni2 = fa.getReferences().get(1).normalIndex;
@@ -61,14 +61,15 @@ public class ObjectBuffers {
                 zn3 = m.getNormals().get(ni3).z;
             }
             if(fa.hasTextureCoordinates()){
-                ui = fa.getReferences().get(0).normalIndex;
-                vi = fa.getReferences().get(1).normalIndex;
-                u = m.getTexCoords().get(ui).u;
-                v = m.getTexCoords().get(ui).v;
-                u2 = m.getTexCoords().get(ui).u;
-                v2 = m.getTexCoords().get(ui).v;
-                u3 = m.getTexCoords().get(ui).u;
-                v3 = m.getTexCoords().get(ui).v;
+                uv1 = fa.getReferences().get(0).normalIndex;
+                uv2 = fa.getReferences().get(1).normalIndex;
+                uv3 = fa.getReferences().get(1).normalIndex;
+                u = m.getTexCoords().get(uv1).u;
+                v = m.getTexCoords().get(uv1).v;
+                u2 = m.getTexCoords().get(uv2).u;
+                v2 = m.getTexCoords().get(uv2).v;
+                u3 = m.getTexCoords().get(uv3).u;
+                v3 = m.getTexCoords().get(uv3).v;
             }
             Random random = new Random();
             float colorg = random.nextFloat() % 10;
