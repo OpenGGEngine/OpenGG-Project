@@ -90,9 +90,11 @@ public class OpenGGTest implements KeyboardListener{
     Texture t1 = new Texture();
     Texture t2 = new Texture();
     Texture blank = new Texture();
+    Texture blank2 = new Texture();
     
     float speed = 0.2f;
-        
+    
+    OBJModel m;
     OBJModel m2;
     
     FloatBuffer awpb;
@@ -129,6 +131,7 @@ public class OpenGGTest implements KeyboardListener{
     IntBuffer ind;
     IntBuffer elements;
     
+    FloatBuffer test2;
     FloatBuffer test;
     
     Matrix4f view;
@@ -142,53 +145,20 @@ public class OpenGGTest implements KeyboardListener{
         vao.bind();
 
         blank.loadTexture("C:/res/blank.png");
-
+        blank2.loadTexture("C:/res/blank2.png");
+        
+        
         try {
-            URL path = OpenGGTest.class.getResource("test3.obj");
-            m2 = new OBJParser().parse(path);
+            URL path = OpenGGTest.class.getResource("flashbang.obj");
+            URL path2 = OpenGGTest.class.getResource("awp3.obj");
+            m = new OBJParser().parse(path);
+            m2 = new OBJParser().parse(path2);
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-        
-        List<Vector3f> awp = m2.getVertices();
-        norm = m2.getNormals();
-        List<OBJFace> f = m2.getObjects().get(0).getMeshes().get(0).getFaces();
-        
-        test = ObjectBuffers.genBuffer(m2, 1f);
-        
-        Random random = new Random();
-        
-        awpb = BufferUtils.createFloatBuffer(awp.size() * 9);
-        for (Vector3f awp1 : awp) {
-            float colorg = random.nextFloat() % 10;
-            float colorr = random.nextFloat() % 10;
-            float colorb = random.nextFloat() % 10; 
-            awpb.put(awp1.x ).put(awp1.y).put(awp1.z).put(colorr).put(colorg).put(colorb).put(0.7f);        
-        }
-        awpb.flip();
-     
-        ebo = glGenBuffers();
-        elements = BufferUtils.createIntBuffer(f.size()*3);
-        for (OBJFace fa : f){
-            int x = fa.getReferences().get(0).vertexIndex;
-            int y = fa.getReferences().get(1).vertexIndex;
-            int z = fa.getReferences().get(2).vertexIndex;
-            elements.put(x).put(y).put(z);
-        }
-        elements.flip();
-//        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-//        glBufferData(GL_ELEMENT_ARRAY_BUFFER, elements, GL_STATIC_DRAW);
-        
-        
-//        normalbuffer = glGenBuffers();
-//        normals = BufferUtils.createFloatBuffer(norm.size() * 3);
-//        for (OBJNormal norm2 : norm) {
-//            normals.put(norm2.x).put(norm2.y).put(norm2.z);
-//        }
-//        normals.flip();
-//        glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
-//        glBufferData(GL_ARRAY_BUFFER, norm.size()*3, GL_STATIC_DRAW);
-        
+
+        test = ObjectBuffers.genBuffer(m, 1f, 1);
+        test2 = ObjectBuffers.genBuffer(m2, 1f, 0.2f);
 
         vbo = new VertexBufferObject();
         vbo.bind(GL_ARRAY_BUFFER);
@@ -204,8 +174,6 @@ public class OpenGGTest implements KeyboardListener{
         program.attachShader(vertexTex);   
         program.attachShader(fragmentTex);  
         program.bindFragmentDataLocation(0, "fragColor");
-        int r = program.getAttributeLocation("normal");
-        System.out.print(r);
         program.link();
         program.use();
         program.checkStatus();
@@ -230,7 +198,7 @@ public class OpenGGTest implements KeyboardListener{
         program.setUniform(rotm, new Vector3f(0,0,0));
         
         int lightpos = program.getUniformLocation("lightpos");
-        program.setUniform(lightpos, new Vector3f(1,1,1));
+        program.setUniform(lightpos, new Vector3f(-30,0,-30));
         
         float ratio = win.getRatio();
         
@@ -302,7 +270,7 @@ public class OpenGGTest implements KeyboardListener{
         
         program.checkStatus();
         
-        blank.useTexture();
+        blank2.useTexture();
         
         
 //        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
@@ -311,6 +279,10 @@ public class OpenGGTest implements KeyboardListener{
         vbo.uploadData(GL_ARRAY_BUFFER, test, GL_STATIC_DRAW);  
 
         glDrawArrays(GL_TRIANGLES, 0, m2.getVertices().size()*100);
+        
+        vbo.uploadData(GL_ARRAY_BUFFER, test2, GL_STATIC_DRAW);  
+
+        glDrawArrays(GL_TRIANGLES, 0, m.getVertices().size()*100);
         
         //vbo.uploadData(GL_ARRAY_BUFFER, awpb, GL_STATIC_DRAW);  
         

@@ -17,7 +17,7 @@ import org.lwjgl.BufferUtils;
  * @author Javier
  */
 public class ObjectBuffers {
-    public static FloatBuffer genBuffer(OBJModel m, float transparency){
+    public static FloatBuffer genBuffer(OBJModel m, float transparency, float scale){
         
         List<OBJFace> f = m.getObjects().get(0).getMeshes().get(0).getFaces();
         
@@ -27,16 +27,20 @@ public class ObjectBuffers {
             int i1 = fa.getReferences().get(0).vertexIndex;
             int i2 = fa.getReferences().get(1).vertexIndex;
             int i3 = fa.getReferences().get(2).vertexIndex;
-
-            float x1 = m.getVertices().get(i1).x;
-            float y1 = m.getVertices().get(i1).y;
-            float z1 = m.getVertices().get(i1).z;
-            float x2 = m.getVertices().get(i2).x;
-            float y2 = m.getVertices().get(i2).y;
-            float z2 = m.getVertices().get(i2).z;
-            float x3 = m.getVertices().get(i3).x;
-            float y3 = m.getVertices().get(i3).y;
-            float z3 = m.getVertices().get(i3).z;
+            
+            if(i1 > 11500){
+                continue;
+            }
+            
+            float x1 = m.getVertices().get(i1).x*scale;
+            float y1 = m.getVertices().get(i1).y*scale;
+            float z1 = m.getVertices().get(i1).z*scale;
+            float x2 = m.getVertices().get(i2).x*scale;
+            float y2 = m.getVertices().get(i2).y*scale;
+            float z2 = m.getVertices().get(i2).z*scale;
+            float x3 = m.getVertices().get(i3).x*scale;
+            float y3 = m.getVertices().get(i3).y*scale;
+            float z3 = m.getVertices().get(i3).z*scale;
             
             int ni1 = 0, ni2 = 0, ni3 = 0;
             float xn = 0.1f, yn = 0.1f, zn = 0.1f;
@@ -63,7 +67,7 @@ public class ObjectBuffers {
             if(fa.hasTextureCoordinates()){
                 uv1 = fa.getReferences().get(0).normalIndex;
                 uv2 = fa.getReferences().get(1).normalIndex;
-                uv3 = fa.getReferences().get(1).normalIndex;
+                uv3 = fa.getReferences().get(2).normalIndex;
                 u = m.getTexCoords().get(uv1).u;
                 v = m.getTexCoords().get(uv1).v;
                 u2 = m.getTexCoords().get(uv2).u;
