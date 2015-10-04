@@ -5,7 +5,6 @@
  */
 package com.opengg.core.entities;
 
-import com.opengg.core.Model;
 import com.opengg.core.Vector2f;
 import com.opengg.core.Vector3f;
 import com.opengg.core.util.Time;
@@ -13,6 +12,7 @@ import static com.opengg.core.entities.Entity.EntityType.*;
 import static com.opengg.core.entities.Entity.Collide.*;
 import static com.opengg.core.entities.Entity.UpdateXYZ.*;
 import static com.opengg.core.entities.Entity.UpdateForce.*;
+import com.opengg.core.objloader.parser.OBJModel;
 import com.opengg.core.physics.ForceManipulation;
 
 /**
@@ -70,7 +70,7 @@ public class Entity {
      * @param model Model to be bound to Entity
      * @param type Type of Entity
      */
-    public Entity(Model model, EntityType type){
+    public Entity(OBJModel model, EntityType type){
         setXYZ(0f, 0f, 0f);
         this.ground = true;
         this.volume = 60f;

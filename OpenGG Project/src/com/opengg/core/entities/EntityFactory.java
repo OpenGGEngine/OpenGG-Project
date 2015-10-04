@@ -5,9 +5,9 @@
  */
 package com.opengg.core.entities;
 
-import com.opengg.core.Model;
 import com.opengg.core.Vector3f;
 import com.opengg.core.entities.Entity.EntityType;
+import com.opengg.core.objloader.parser.OBJModel;
 import com.opengg.core.physics.ForceManipulation;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +35,7 @@ public abstract class EntityFactory {
      * @param m Model to be bound to Entity
      * @return Error
      */
-    public static boolean generateEntity(Entity p, EntityType tag, Model m) {
+    public static boolean generateEntity(Entity p, EntityType tag, OBJModel m) {
         if(entityCount > 44)
         { p = null; return false;}
         entityCount++;
