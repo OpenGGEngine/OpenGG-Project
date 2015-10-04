@@ -81,7 +81,7 @@ public class OpenGGTest implements KeyboardListener{
     
     private ShaderProgram program;
 
-    
+    int lightpos;
     private int uniView;
     private int uniModel;
     
@@ -146,7 +146,7 @@ public class OpenGGTest implements KeyboardListener{
 
         blank.loadTexture("C:/res/blank.png");
         blank2.loadTexture("C:/res/blank2.png");
-        
+        t1.loadTexture("C:/res/tex1.png");
         
         try {
             URL path = OpenGGTest.class.getResource("flashbang.obj");
@@ -197,13 +197,13 @@ public class OpenGGTest implements KeyboardListener{
         rotm = program.getUniformLocation("rot");
         program.setUniform(rotm, new Vector3f(0,0,0));
         
-        int lightpos = program.getUniformLocation("lightpos");
-        program.setUniform(lightpos, new Vector3f(-30,0,-30));
+        lightpos = program.getUniformLocation("lightpos");
+        program.setUniform(lightpos, new Vector3f(-30,0,-10));
         
         float ratio = win.getRatio();
         
         program.use();
-        ViewUtil.setPerspective(80, ratio, 0.3f, 300f, program);
+        ViewUtil.setPerspective(90, ratio, 0.3f, 300f, program);
 
         vao.bind();      
         
@@ -267,26 +267,22 @@ public class OpenGGTest implements KeyboardListener{
         program.setUniform(uniView, cameraM.multiply(cameraR));      
         program.setUniform(uniModel, new Matrix4f());
 
+        //program.setUniform(lightpos, new Vector3f(x,y,z));
         
         program.checkStatus();
         
-        blank2.useTexture();
-        
-        
-//        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-//        glBufferData(GL_ELEMENT_ARRAY_BUFFER, elements, GL_STATIC_DRAW);
-//        
+        blank.useTexture();
+
         vbo.uploadData(GL_ARRAY_BUFFER, test, GL_STATIC_DRAW);  
 
-        glDrawArrays(GL_TRIANGLES, 0, m2.getVertices().size()*100);
+        glDrawArrays(GL_TRIANGLES, 0, m.getVertices().size()*12);
+        
+        program.setUniform(uniModel, new Matrix4f());
         
         vbo.uploadData(GL_ARRAY_BUFFER, test2, GL_STATIC_DRAW);  
 
-        glDrawArrays(GL_TRIANGLES, 0, m.getVertices().size()*100);
-        
-        //vbo.uploadData(GL_ARRAY_BUFFER, awpb, GL_STATIC_DRAW);  
-        
-        //glDrawElements(GL_TRIANGLES, awpb.capacity(), GL_UNSIGNED_INT, 0);   
+        glDrawArrays(GL_TRIANGLES, 0, m2.getVertices().size()*12);
+ 
     }
     
     public void update(float delta) {       
@@ -298,30 +294,30 @@ public class OpenGGTest implements KeyboardListener{
 
     @Override
     public void keyPressed(int key) {
-        if(key == GLFW_KEY_A){
+        if(key == GLFW_KEY_LEFT){
             xm += speed;
 
         }
-        if(key == GLFW_KEY_D){
+        if(key == GLFW_KEY_RIGHT){
             xm -= speed;
 
         }
-        if(key == GLFW_KEY_W){
+        if(key == GLFW_KEY_UP){
  
             zm += speed;
         }
-        if(key == GLFW_KEY_S){
+        if(key == GLFW_KEY_DOWN){
 
             zm -= speed;
 
         }
         if(key == GLFW.GLFW_KEY_LEFT_SHIFT){
 
-            ym -= speed;
+            //ym -= speed;
         }
         if(key == GLFW_KEY_LEFT_CONTROL){
 
-            ym += speed;
+            //ym += speed;
 
         }
         if(key == GLFW_KEY_Q){
@@ -337,31 +333,31 @@ public class OpenGGTest implements KeyboardListener{
 
     @Override
     public void keyReleased(int key) {
-        if(key == GLFW_KEY_A){
+        if(key == GLFW_KEY_LEFT){
 
             xm -= speed;
         }
-        if(key == GLFW_KEY_D){
+        if(key == GLFW_KEY_RIGHT){
 
             xm += speed;
 
         }
-        if(key == GLFW_KEY_W){
+        if(key == GLFW_KEY_UP){
  
             zm -= speed;
         }
-        if(key == GLFW_KEY_S){
+        if(key == GLFW_KEY_DOWN){
 
             zm += speed;
 
         }
         if(key == GLFW.GLFW_KEY_LEFT_SHIFT){
 
-            ym += speed;
+            //ym += speed;
         }
         if(key == GLFW_KEY_LEFT_CONTROL){
 
-            ym -= speed;
+            //ym -= speed;
 
         }
         if(key == GLFW_KEY_Q){
