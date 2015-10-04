@@ -154,7 +154,7 @@ public class OpenGGTest implements KeyboardListener{
         norm = m2.getNormals();
         List<OBJFace> f = m2.getObjects().get(0).getMeshes().get(0).getFaces();
         
-        test = ObjectBuffers.genBuffer(m2, 0.6f);
+        test = ObjectBuffers.genBuffer(m2, 1f);
         
         Random random = new Random();
         
@@ -228,6 +228,9 @@ public class OpenGGTest implements KeyboardListener{
 
         rotm = program.getUniformLocation("rot");
         program.setUniform(rotm, new Vector3f(0,0,0));
+        
+        int lightpos = program.getUniformLocation("lightpos");
+        program.setUniform(lightpos, new Vector3f(1,1,1));
         
         float ratio = win.getRatio();
         
