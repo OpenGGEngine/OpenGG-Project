@@ -10,6 +10,8 @@ import com.opengg.core.Vector3f;
 
 
 import java.io.*;
+import java.net.URL;
+import java.net.URLDecoder;
 import java.nio.FloatBuffer;
 import org.lwjgl.opengl.GL11;
 
@@ -119,25 +121,45 @@ public class ObjLoader {
         }
     }
 
-    public static Model loadModel(File f) throws IOException {
-        BufferedReader reader = new BufferedReader(new FileReader(f));
+    public static Model loadModel(String path)throws IOException{
+        InputStream in;
+        BufferedReader reader;
         Model m = new Model();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            String prefix = line.split(" ")[0];
-            if (prefix.equals("#")) {
-                continue;
-            } else if (prefix.equals("v")) {
-                m.getVertices().add(parseVertex(line));
-            } else if (prefix.equals("vn")) {
-                m.getNormals().add(parseNormal(line));
-            } else if (prefix.equals("f")) {
-                m.getFaces().add(parseFace(m.hasNormals(), line));
-            } else {
-                throw new RuntimeException("OBJ file contains line which cannot be parsed correctly: " + line);
+        //reader = new BufferedReader(new FileReader(path));
+        try {
+            in = new FileInputStream(path);
+            reader = new BufferedReader(new FileReader(path));
+            
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String prefix = line.split(" ")[0];
+                if (prefix.equals("#")) {
+                    continue;
+                } else if (prefix.equals("v")) {
+                    m.getVertices().add(parseVertex(line));
+                } else if (prefix.equals("vn")) {
+                    m.getNormals().add(parseNormal(line));
+                } else if (prefix.equals("f")) {
+                    m.getFaces().add(parseFace(m.hasNormals(), line));
+                } else if(prefix.equals("usemtl")) {
+                    continue;
+                } else if(prefix.equals("s")) {
+                    continue;
+                } else if(prefix.equals("o")) {
+                    continue;
+                } else if(prefix.equals("mtllib")) {
+                    continue;
+                }else{
+                    throw new RuntimeException("OBJ file contains line which cannot be parsed correctly: " + line);
+                }
             }
+            reader.close();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            
         }
-        reader.close();
+        
         return m;
     }
 
@@ -194,7 +216,9 @@ public class ObjLoader {
         return displayList;
     }
 
-    public static Model loadTexturedModel(File f) throws IOException {
+    public static Model loadTexturedModel(URL paths) throws IOException {
+        String path = URLDecoder.decode(paths.getFile(), "UTF-8");
+        File f = new File(path);
         BufferedReader reader = new BufferedReader(new FileReader(f));
         Model m = new Model();
         Model.Material currentMaterial = new Model.Material();

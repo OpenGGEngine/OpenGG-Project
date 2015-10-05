@@ -5,21 +5,80 @@
  */
 package com.opengg.core.entities;
 
-import com.opengg.core.Model;
+import com.opengg.core.Vector3f;
+import com.opengg.core.entities.Entity.EntityType;
+import com.opengg.core.objloader.parser.OBJModel;
+import com.opengg.core.physics.ForceManipulation;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  *
- * @author 19coindreauj
+ * @author Ethan
  */
 public abstract class EntityFactory {
-    static public int entityCount = 0;
-    List<Entity> list = new ArrayList<>();
-    public boolean generatePhysicsEntity(PhysicsEntity p, Model m){
+
+    /**
+     * Number of Entities currently loaded.
+     */
+    public static int entityCount = 0;
+    /**
+     * List of currently loaded enemies
+     */
+    public static List<Entity> EntityList = new ArrayList<>();
+    
+    /**
+     * Generates a physics entity for the object given
+     * 
+     * @param p What object to be initialized
+     * @param tag What type of entity
+     * @param m Model to be bound to Entity
+     * @return Error
+     */
+    public static boolean generateEntity(Entity p, EntityType tag, OBJModel m) {
+        if(entityCount > 44)
+        { p = null; return false;}
         entityCount++;
-        p = new PhysicsEntity(m);
-        return list.add(p);
+        p = new Entity(m, tag);
+        p.forceCalculator = new ForceManipulation(p);
+        return EntityList.add(p);
     }
     
+    public static boolean generateEntity(Entity p, EntityType tag, float x, float y, float z, Vector3f f, float mass, float volume) {
+        if(entityCount > 44)
+        { p = null; return false;}
+        entityCount++;
+        
+            p = new Entity(x,y,z,f,mass,volume,tag);
+        
+        
+            p.forceCalculator = new ForceManipulation(p);
+        
+        return EntityList.add(p);
+    }
+    
+    public static boolean copyEntity(Entity p, Entity v) {
+        if(entityCount > 44)
+        { p = null; return false;}
+        entityCount++;
+        p = new Entity(v);
+        p.forceCalculator = new ForceManipulation(v.forceCalculator.airResistance, v.forceCalculator.force, p);
+        
+        return EntityList.add(p);
+    }
+    
+    /**
+     * Destroys the entity given
+     * 
+     * @param en
+     * @return Error
+     */
+    public static boolean destroyEntity(Entity en) {
+        entityCount--;
+        if (!EntityList.remove(en)) {
+            return false;
+        }
+        en = null;
+        return true;
+    }
 }

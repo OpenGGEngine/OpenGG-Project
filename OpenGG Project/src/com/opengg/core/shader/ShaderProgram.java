@@ -131,6 +131,16 @@ public class ShaderProgram {
      * @param location Uniform location
      * @param value Value to set
      */
+    public void setUniform(int location, float value) {
+        glUniform1f(location, value);
+    }
+    
+    /**
+     * Sets the uniform variable for specified location.
+     *
+     * @param location Uniform location
+     * @param value Value to set
+     */
     public void setUniform(int location, Vector2f value) {
         glUniform2fv(location, value.getBuffer());
     }

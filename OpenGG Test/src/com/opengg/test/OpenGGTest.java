@@ -1,178 +1,277 @@
 package com.opengg.test;
 import com.opengg.core.Matrix4f;
+import com.opengg.core.Model;
+import com.opengg.core.Vector3f;
+import com.opengg.core.buffer.ObjectBuffers;
 import com.opengg.core.input.KeyboardEventHandler;
 import com.opengg.core.input.KeyboardListener;
-import com.opengg.core.input.MousePosHandler;
+import com.opengg.core.io.FileStringLoader;
+import com.opengg.core.io.ObjLoader;
+import com.opengg.core.movement.MovementLoader;
+import com.opengg.core.objloader.parser.IMTLParser;
+import com.opengg.core.objloader.parser.MTLLibrary;
+import com.opengg.core.objloader.parser.MTLMaterial;
+import com.opengg.core.objloader.parser.MTLParser;
+import com.opengg.core.objloader.parser.OBJFace;
+import com.opengg.core.objloader.parser.OBJModel;
+import com.opengg.core.objloader.parser.OBJNormal;
+import com.opengg.core.objloader.parser.OBJParser;
 import com.opengg.core.render.VertexArrayObject;
 import com.opengg.core.render.VertexBufferObject;
 import com.opengg.core.shader.Shader;
 import com.opengg.core.shader.ShaderProgram;
-import com.opengg.core.util.Time;
-import org.lwjgl.Sys;
-import org.lwjgl.opengl.*;
- 
-import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.*;
+import com.opengg.core.texture.Texture;
+import com.opengg.core.util.ViewUtil;
 import com.opengg.core.window.*;
+import static com.opengg.core.window.RenderUtil.endFrame;
+import static com.opengg.core.window.RenderUtil.startFrame;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.nio.charset.Charset;
+import java.text.MessageFormat;
+import java.util.List;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFW;
-import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
-import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
-import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
-import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
+ 
+import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL15.*;
+import static org.lwjgl.opengl.GL20.*;
 public class OpenGGTest implements KeyboardListener{
  
     // We need to strongly reference callback instances.
     static long window;
     Window win = new Window();
-    
+    final IMTLParser mtlParser = new MTLParser();
     boolean draw = true;
+    int vertAmount;
+    int triangleAmount;
+    int squares = 4;
+    private Shader vertexTex;
+    private Shader fragmentTex;
+    private int rotm;
     
-    int uniView;
+    {
+        vertAmount = squares * 6;
+        triangleAmount = vertAmount / 3;
+    }
+    
     public float x,y,z;
+    public float xrot;
+    public float rot1 = 0;
     public float xm = 0, ym=0, zm=0;
-    private float angle = 0f;
-    private float anglePerSecond = 10f;
     
-    private final CharSequence vertexSource
-            = "#version 150 core\n"
-            + "\n"
-            + "in vec3 position;\n"
-            + "in vec3 color;\n"
-            + "\n"
-            + "out vec3 vertexColor;\n"
-            + "\n"
-            + "uniform mat4 model;\n"
-            + "uniform mat4 view;\n"
-            + "uniform mat4 projection;\n"
-            + "\n"
-            + "void main() {\n"
-            + "    vertexColor = color;\n"
-            + "    mat4 mvp = projection * view * model;\n"
-            + "    gl_Position = mvp * vec4(position, 1.0);\n"
-            + "}";
-    private final CharSequence fragmentSource
-            = "#version 150 core\n"
-            + "\n"
-            + "in vec3 vertexColor;\n"
-            + "\n"
-            + "out vec4 fragColor;\n"
-            + "\n"
-            + "void main() {\n"
-            + "    fragColor = vec4(vertexColor, 1.0);\n"
-            + "}";
+    int normalbuffer;
     
-    /**
-     * @param args the command line arguments
-     */
-    double rot1 = 0;
+    Vector3f rot = new Vector3f(0,0,0);
+    Vector3f pos = new Vector3f(0,0,0);
+    
+    boolean rotated = false;
+    
     boolean backwards = false;
     
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         new OpenGGTest();
     }
+    
+    int ebo;
     private VertexArrayObject vao;
     private VertexBufferObject vbo;
-    Shader vertexShader, fragmentShader;
-    private ShaderProgram program;
-    private int uniModel;
-    private float previousAngle;
     
-    public OpenGGTest(){
+    Shader vertexShader, fragmentShader;
+    
+    private ShaderProgram program;
+
+    int lightpos;
+    private int uniView;
+    private int uniModel;
+    
+    List<OBJNormal> norm;
+    
+    Texture t1 = new Texture();
+    Texture t2 = new Texture();
+    Texture blank = new Texture();
+    Texture blank2 = new Texture();
+    
+    float speed = 0.2f;
+    
+    OBJModel m;
+    OBJModel m2;
+    
+    FloatBuffer awpb;
+    FloatBuffer normals;
+    FloatBuffer vertices;
+    FloatBuffer vertices2;
+    
+    public OpenGGTest() throws IOException{
         Window w = new Window();
         long window = 1;
+        
         KeyboardEventHandler.addToPool(this);
         
         try {
-            window = w.init(640,480, "Test", DisplayMode.WINDOWED);
+            window = w.init(1280,960, "Test", DisplayMode.WINDOWED);
         } catch (Exception ex) {
             Logger.getLogger(OpenGGTest.class.getName()).log(Level.SEVERE, null, ex);
         }
-        GL.setCurrent(GLContext.createFromCurrent());
+        
         //e.enter();
         float delta;
         setup();
-        while(GLFW.glfwWindowShouldClose(window) == GL_FALSE){
-            //e.render(1);
-            delta = Time.getDelta();
-            update(delta / 1000);
+        while(!win.shouldClose(window)){
+            
+            startFrame();
+
+            update(1);
             render(rot1);
-            glfwSwapBuffers(window);
-            glfwPollEvents();
+            endFrame(window);
         }
         exit();
     }
-    public void setup(){
-        /* Generate Vertex Array Object */
+    
+    IntBuffer ind;
+    IntBuffer elements;
+    
+    FloatBuffer test2;
+    FloatBuffer test;
+    
+    Matrix4f view;
+    
+    public void setup() throws FileNotFoundException, IOException{
+        
+        MovementLoader.setup(window,60);
+        
+        
         vao = new VertexArrayObject();
         vao.bind();
 
-        /* Vertex data */
-        FloatBuffer vertices = BufferUtils.createFloatBuffer(6 * 6);
-        vertices.put(0f).put(0.9f).put(-2f).put(1f).put(0f).put(1f);
-        vertices.put(0.9f).put(0.4f).put(-2f).put(0f).put(1f).put(1f);
-        vertices.put(0.9f).put(0.8f).put(0f).put(0f).put(1f).put(1f);
-        vertices.put(-0.6f).put(-0.4f).put(-1f).put(1f).put(0f).put(0f);
-        vertices.put(0.6f).put(-0.4f).put(-1f).put(0f).put(1f).put(0f);
-        vertices.put(0f).put(0.5f).put(-1f).put(0f).put(0f).put(1f);
+        blank.loadTexture("C:/res/blank.png");
+        blank2.loadTexture("C:/res/blank2.png");
+        t1.loadTexture("C:/res/tex1.png");
         
-        vertices.flip();
+        try {
+            URL path = OpenGGTest.class.getResource("sds.obj");
+            URL path2 = OpenGGTest.class.getResource("karambit.obj");
+            m = new OBJParser().parse(path);
+            m2 = new OBJParser().parse(path2);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+       
+       final IMTLParser parser = new MTLParser();
+       
+        
+        for (String libraryReference : m.getMaterialLibraries()) {
+            URL path = OpenGGTest.class.getResource(libraryReference);
+          String pas = URLDecoder.decode(path.getFile(), "UTF-8");
+            File f = new File(pas);
+            final InputStream mtlStream = new FileInputStream(f); // You will need to resolve this based on `libraryReference`
+            final MTLLibrary library = mtlParser.parse(mtlStream);
+            for (MTLMaterial material : library.getMaterials()) {
+            System.out.println(MessageFormat.format("Material with name ``{0}``.", material.getName()));
+        }
+            
+            System.out.println(libraryReference);
+    // Do something with the library. Maybe store it for later usage.
+        }
+        test = ObjectBuffers.genBuffer(m, 1f, 1);
+        test2 = ObjectBuffers.genBuffer(m2, 1f, 0.2f);
 
-        /* Generate Vertex Buffer Object */
         vbo = new VertexBufferObject();
         vbo.bind(GL_ARRAY_BUFFER);
-        vbo.uploadData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW);
-        
-         /* Load shaders */
-        vertexShader= new Shader(GL_VERTEX_SHADER, vertexSource); 
-        fragmentShader = new Shader(GL_FRAGMENT_SHADER, fragmentSource); 
 
+         /* Load shaders */
+        vertexShader= new Shader(GL_VERTEX_SHADER, Shaders.vertexSource); 
+        fragmentShader = new Shader(GL_FRAGMENT_SHADER, Shaders.fragmentSource); 
+        vertexTex= new Shader(GL_VERTEX_SHADER, Shaders.vertexTex); 
+        fragmentTex = new Shader(GL_FRAGMENT_SHADER, Shaders.fragmentTex); 
 
         /* Create shader program */
         program = new ShaderProgram();
-        program.attachShader(vertexShader);   
-        program.attachShader(fragmentShader);  
+        program.attachShader(vertexTex);   
+        program.attachShader(fragmentTex);  
         program.bindFragmentDataLocation(0, "fragColor");
         program.link();
         program.use();
         program.checkStatus();
-        specifyVertexAttributes();
+  
+        //specifyVertexAttributes(program2, false);
+        specifyVertexAttributes(program, true);
 
-        /* Get uniform location for the model matrix */
+        /* Set shader variables */
+        view = new Matrix4f();
+        
+        program.use();
         uniModel = program.getUniformLocation("model");
-
-        /* Set view matrix to identity matrix */
-        Matrix4f view = new Matrix4f();
+        
         uniView = program.getUniformLocation("view");
         program.setUniform(uniView, view);
+        
+        int uniTex = program.getUniformLocation("texImage");
+        program.setUniform(uniTex, 0);
+        
 
-
+        rotm = program.getUniformLocation("rot");
+        program.setUniform(rotm, new Vector3f(0,0,0));
+        
+        lightpos = program.getUniformLocation("lightpos");
+        program.setUniform(lightpos, new Vector3f(-30,0,-10));
+        
         float ratio = win.getRatio();
         
-        //Matrix4f projection = Matrix4f.orthographic(-ratio, ratio, -1f, 1f, -4f, 4f);
-        Matrix4f projection = Matrix4f.perspective(100, 640/480, 0.1f, 10);
-        int uniProjection = program.getUniformLocation("projection");
-        program.setUniform(uniProjection, projection);
-        vao.bind();
         program.use();
+        ViewUtil.setPerspective(90, ratio, 0.3f, 300f, program);
 
+        vao.bind();      
+        
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        
+        glEnable(GL_DEPTH_TEST);
+
+        glDepthFunc(GL_LESS);
     }
     
     
-    private void specifyVertexAttributes() {
-        /* Specify Vertex Pointer */
-        int posAttrib = program.getAttributeLocation("position");
-        program.enableVertexAttribute(posAttrib);
-        program.pointVertexAttribute(posAttrib, 3, 6 * Float.BYTES, 0);
+    private void specifyVertexAttributes(ShaderProgram programv, boolean textured) {
+        int buffersize;
+        if(textured){
+            buffersize = 8; 
+        }else{
+            buffersize = 6;
+        }
+        
+        programv.use();
+        int posAttrib = programv.getAttributeLocation("position");
+        programv.enableVertexAttribute(posAttrib);
+        programv.pointVertexAttribute(posAttrib, 3, 12 * Float.BYTES, 0);
 
         /* Specify Color Pointer */
-        int colAttrib = program.getAttributeLocation("color");
-        program.enableVertexAttribute(colAttrib);
-        program.pointVertexAttribute(colAttrib, 3, 6 * Float.BYTES, 3 * Float.BYTES);
+        int colAttrib = programv.getAttributeLocation("color");
+        programv.enableVertexAttribute(colAttrib);
+        programv.pointVertexAttribute(colAttrib, 4, 12 * Float.BYTES, 3 * Float.BYTES);
+        
+        int normAttrib = programv.getAttributeLocation("normal"); 
+        programv.enableVertexAttribute(normAttrib);
+        programv.pointVertexAttribute(normAttrib, 3, 12 * Float.BYTES, 7 * Float.BYTES);
+        
+        int texAttrib = programv.getAttributeLocation("texcoord"); 
+        programv.enableVertexAttribute(texAttrib);
+        programv.pointVertexAttribute(texAttrib, 2, 12 * Float.BYTES, 10 * Float.BYTES);
+
     }
     
     public void exit() {
@@ -184,125 +283,120 @@ public class OpenGGTest implements KeyboardListener{
     }
     
     public void render(double alpha) {
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        
+        rot = new Vector3f(0,-xrot,0);
+        
+        pos = MovementLoader.processMovement(pos, rot);
+        
+        Matrix4f cameraR = Matrix4f.translate(pos.x,pos.y,pos.z);       
+        
+        Matrix4f cameraM = Matrix4f.rotate(-xrot,0,1,0);
+        
+        //program.use();
+        program.setUniform(uniView, cameraM.multiply(cameraR));      
+        program.setUniform(uniModel, new Matrix4f());
 
-        float lerpAngle;
-        if(rot1 != 0){
-            lerpAngle = (float) ((1f - alpha) * previousAngle + alpha * angle);
-        }else{
-            lerpAngle = 0;
-        }
-        if(backwards){
-            lerpAngle = -lerpAngle;
-        }
+        //program.setUniform(lightpos, new Vector3f(x,y,z));
         
+        program.checkStatus();
         
-       
-        vao.bind();
-        program.use();
+        blank.useTexture();
 
-        Matrix4f model = Matrix4f.rotate(lerpAngle, 0f, 1f, 0f);
-        Matrix4f move = Matrix4f.translate(x, y, z);
-        //Matrix4f scale = Matrix4f.scale(0.4f, 0.4f, 0.4f);
+        vbo.uploadData(GL_ARRAY_BUFFER, test, GL_STATIC_DRAW);  
+
+        glDrawArrays(GL_TRIANGLES, 0, m.getVertices().size()*12);
         
+        program.setUniform(uniModel, new Matrix4f());
         
-        
-        program.setUniform(uniModel, move);
-        
-        if(draw){
-            glDrawArrays(GL_TRIANGLES, 0, 6);
-            draw = true;
-        }else{
-            draw = true;
-        }
-        
+        vbo.uploadData(GL_ARRAY_BUFFER, test2, GL_STATIC_DRAW);  
+
+        glDrawArrays(GL_TRIANGLES, 0, m2.getVertices().size()*12);
+ 
     }
     
-    public void update(float delta) {
-        previousAngle = angle;
-        angle += delta * anglePerSecond;
+    public void update(float delta) {       
         x += xm;
         y += ym;
         z += zm;
+        xrot += rot1*5;
     }
 
     @Override
     public void keyPressed(int key) {
-        if(key == GLFW_KEY_D){
-            rot1 -= 0.2;
-            xm -= 0.1;
-        }
-        if(key == GLFW_KEY_A){
-
-            xm += 0.1;
+        if(key == GLFW_KEY_LEFT){
+            xm += speed;
 
         }
-        if(key == GLFW_KEY_S){
+        if(key == GLFW_KEY_RIGHT){
+            xm -= speed;
+
+        }
+        if(key == GLFW_KEY_UP){
  
-            zm -= 0.1;
+            zm += speed;
         }
-        if(key == GLFW_KEY_W){
+        if(key == GLFW_KEY_DOWN){
 
-            zm += 0.1;
+            zm -= speed;
 
         }
         if(key == GLFW.GLFW_KEY_LEFT_SHIFT){
 
-            ym += 0.1;
+            //ym -= speed;
         }
         if(key == GLFW_KEY_LEFT_CONTROL){
 
-            ym -= 0.1;
+            //ym += speed;
 
         }
-        if(key == GLFW_KEY_L){
-
-            Matrix4f projection = Matrix4f.perspective(100, 640/480, 0.1f, 10);
-            int uniProjection = program.getUniformLocation("projection");
-            program.setUniform(uniProjection, projection);
-
-        }
-        if(key == GLFW_KEY_P){
+        if(key == GLFW_KEY_Q){
+            rot1 += 0.3;
             
-            float ratio = win.getRatio();
-            
-            Matrix4f projection = Matrix4f.orthographic(-ratio, ratio, -1f, 1f, -4f, 4f);
-            int uniProjection = program.getUniformLocation("projection");
-            program.setUniform(uniProjection, projection);
-
         }
+        if(key == GLFW_KEY_E){
+            rot1 -= 0.3;
+            
+        }
+
     }
 
     @Override
     public void keyReleased(int key) {
-        if(key == GLFW_KEY_D){
-            rot1 -= 0.2;
-            xm += 0.1;
-            backwards = false;
-        }
-        if(key == GLFW_KEY_A){
-            rot1 -= 0.2;
-            xm -= 0.1;
-            backwards = false;
-        }
-        if(key == GLFW_KEY_S){
- 
-            zm += 0.1;
-        }
-        if(key == GLFW_KEY_W){
+        if(key == GLFW_KEY_LEFT){
 
-            zm -= 0.1;
+            xm -= speed;
+        }
+        if(key == GLFW_KEY_RIGHT){
+
+            xm += speed;
+
+        }
+        if(key == GLFW_KEY_UP){
+ 
+            zm -= speed;
+        }
+        if(key == GLFW_KEY_DOWN){
+
+            zm += speed;
 
         }
         if(key == GLFW.GLFW_KEY_LEFT_SHIFT){
 
-            ym -= 0.1;
+            //ym += speed;
         }
         if(key == GLFW_KEY_LEFT_CONTROL){
 
-            ym += 0.1;
+            //ym -= speed;
 
         }
-        
+        if(key == GLFW_KEY_Q){
+            rot1 -= 0.3;
+            
+        }
+        if(key == GLFW_KEY_E){
+            rot1 += 0.3;
+            
+        }
+
     }
 }

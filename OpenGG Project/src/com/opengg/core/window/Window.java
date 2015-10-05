@@ -21,7 +21,7 @@ public class Window {
     int WIDTH = 300;
     int HEIGHT = 300;
     
-    private long window;
+    public static long window;
     
     GLFWvidmode mode; 
     ByteBuffer vidmode;
@@ -103,7 +103,7 @@ public class Window {
         
         // Make the window visible
         glfwShowWindow(window);
-        GL.setCurrent(GLContext.createFromCurrent());
+        GL.createCapabilities();
         return window;
     }
     
@@ -135,6 +135,13 @@ public class Window {
         glfwTerminate();
         
         errorCallback.release();
+    }
+    public boolean shouldClose(long wind){
+        if(glfwWindowShouldClose(wind) == GL_FALSE){
+            return false;
+        }else{
+            return true;
+        }
     }
     public void update(){
      glClearColor(0.0f, 0.0f, 1.0f, 0.0f);

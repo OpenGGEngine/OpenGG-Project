@@ -59,11 +59,7 @@ public class Vector3f {
     }
 
     public float length() {
-
         return (float) Math.sqrt(lengthSquared()); 
-      
-        
-
     }
 
     public Vector3f normalize() { 
@@ -79,15 +75,6 @@ public class Vector3f {
     private Vector3f divide(float scalar) {
         return scale(1f / scalar);
     }
-    public float getX(){
-      return this.x;
-    }
-      public float getY(){
-      return this.y;
-    }
-        public float getZ(){
-      return this.z;
-    }
       
     private Vector3f scale(float scalar) {
         float x = this.x * scalar; 
@@ -98,25 +85,30 @@ public class Vector3f {
     }
 
     public FloatBuffer getBuffer() {
-        FloatBuffer buffer = BufferUtils.createFloatBuffer(2); 
+        FloatBuffer buffer = BufferUtils.createFloatBuffer(3); 
         buffer.put(x).put(y).put(z); 
         buffer.flip(); 
         return buffer;
     }
     
-    public double getRadius()
+    public void setRadius(float radi)
     {
-        return Math.sqrt((x*x) + (y*y) + (z*z));
+        float inclination = getInclination();
+        float azimuth = getAzimuth();
+        
+        this.x = (float) (radi * Math.cos(inclination) * Math.cos(azimuth));
+        this.y = (float) (radi * Math.cos(inclination) * Math.sin(azimuth));
+        this.x = (float) (radi * Math.cos(inclination));
     }
     
-    public double getInclination()
+    public float getInclination()
     {
-        return Math.toDegrees(Math.acos(z/getRadius()));
+        return (float)Math.toDegrees(Math.acos(y/length()));
     }
     
-    public double getAzimuth()
+    public float getAzimuth()
     {
-        return Math.toDegrees(Math.atan2(y,x));
+        return (float)Math.toDegrees(Math.atan2(z,x));
     }
 
     

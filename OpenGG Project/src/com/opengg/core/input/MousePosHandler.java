@@ -6,40 +6,29 @@
 package com.opengg.core.input;
 
 import com.opengg.core.Vector2f;
-import static org.lwjgl.glfw.GLFW.glfwSetCursorPosCallback;
 import org.lwjgl.glfw.GLFWCursorPosCallback;
 
 /**
  *
  * @author Javier
  */
-public class MousePosHandler{
+public class MousePosHandler extends GLFWCursorPosCallback{
     static double x=0,y=0;
-    private static GLFWCursorPosCallback cursorPosCallback;
     
-//    @Override
-//    public void invoke(long window, double xpos, double ypos) {
-//        x = (int)xpos;
-//        y = (int)ypos;
-//        System.out.println(xpos);
-//    }
-    
-    public static void setup(long window){
-        glfwSetCursorPosCallback(window, cursorPosCallback = new GLFWCursorPosCallback(){
- 
-                @Override
-                public void invoke(long window, double xpos, double ypos) {
-                    x = xpos;
-                    y = ypos;
-                }
-            });
 
-    }    
+    @Override
+    public void invoke(long window, double xpos, double ypos) {
+        x = xpos;
+        y = ypos;
+        System.out.println(x);
+    }  
     
-    public static double getX(){
+    public static double getX(long w){
+
         return x;
     }
-    public static double getY(){
+    public static double getY(long w){
+
         return y;
     }
     

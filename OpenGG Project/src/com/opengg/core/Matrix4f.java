@@ -211,4 +211,23 @@ public class Matrix4f {
 //    public Matrix4f(Matrix4f old){
 //        
 //    }
+     public static Matrix4f frustum(float left, float right, float bottom, float top, float near, float far) {
+        Matrix4f frustum = new Matrix4f();
+
+        float a = (right + left) / (right - left);
+        float b = (top + bottom) / (top - bottom);
+        float c = -(far + near) / (far - near);
+        float d = -(2f * far * near) / (far - near);
+
+        frustum.m00 = (2f * near) / (right - left);
+        frustum.m11 = (2f * near) / (top - bottom);
+        frustum.m02 = a;
+        frustum.m12 = b;
+        frustum.m22 = c;
+        frustum.m32 = -1f;
+        frustum.m23 = d;
+        frustum.m33 = 0f;
+
+        return frustum;
+    }
 }

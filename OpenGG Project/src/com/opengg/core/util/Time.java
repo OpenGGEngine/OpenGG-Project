@@ -10,20 +10,21 @@ package com.opengg.core.util;
  * @author Javier
  */
 public class Time {
-    static float currentTime;
-    static float timeStep;
-    static float lastTime;
+    float currentTime;
+    float timeStep;
+    float lastTime;
     
-    static{
-        lastTime = 1;
+    public Time(){
+        lastTime = currentTime;
     }
-    private Time(){
-        
-    }
-    public static float getDelta(){
+    public float getDeltaMs(){
         currentTime = System.currentTimeMillis();
         timeStep = currentTime - lastTime;
         lastTime = currentTime;
         return timeStep;
+    }
+    
+    public float getDeltaSec(){
+        return getDeltaMs() /1000f;
     }
 }
