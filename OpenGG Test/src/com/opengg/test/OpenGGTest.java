@@ -25,13 +25,18 @@ import com.opengg.core.util.ViewUtil;
 import com.opengg.core.window.*;
 import static com.opengg.core.window.RenderUtil.endFrame;
 import static com.opengg.core.window.RenderUtil.startFrame;
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.nio.charset.Charset;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.Random;
@@ -157,18 +162,29 @@ public class OpenGGTest implements KeyboardListener{
         t1.loadTexture("C:/res/tex1.png");
         
         try {
-            URL path = OpenGGTest.class.getResource("flashbang.obj");
-            URL path2 = OpenGGTest.class.getResource("awp3.obj");
+            URL path = OpenGGTest.class.getResource("sds.obj");
+            URL path2 = OpenGGTest.class.getResource("karambit.obj");
             m = new OBJParser().parse(path);
             m2 = new OBJParser().parse(path2);
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-       final InputStream in = new FileInputStream("C://res//BrandenburgGate.mtl");
+       
        final IMTLParser parser = new MTLParser();
-       final MTLLibrary library = parser.parse(in);
-        for (MTLMaterial material : library.getMaterials()) {
+       
+        
+        for (String libraryReference : m.getMaterialLibraries()) {
+            URL path = OpenGGTest.class.getResource(libraryReference);
+          String pas = URLDecoder.decode(path.getFile(), "UTF-8");
+            File f = new File(pas);
+            final InputStream mtlStream = new FileInputStream(f); // You will need to resolve this based on `libraryReference`
+            final MTLLibrary library = mtlParser.parse(mtlStream);
+            for (MTLMaterial material : library.getMaterials()) {
             System.out.println(MessageFormat.format("Material with name ``{0}``.", material.getName()));
+        }
+            
+            System.out.println(libraryReference);
+    // Do something with the library. Maybe store it for later usage.
         }
         test = ObjectBuffers.genBuffer(m, 1f, 1);
         test2 = ObjectBuffers.genBuffer(m2, 1f, 0.2f);
