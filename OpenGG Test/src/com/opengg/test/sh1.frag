@@ -15,12 +15,13 @@ void main() {
 	vec3 lightcol = vec3(1,1,1);
 	float lightpower = 1000.0f;
 	
-	vec3 diffuse = texture2D( texImage, textureCoord ).rgb;
-	if(texture2D(texImage,textureCoord).a == 0){
-		diffuse = vertexColor.rgb;
-	}
-	vec3 ambient = vec3(0.2,0.2,0.2) * diffuse;
-	vec3 specular = vec3(0.3,0.3,0.3);
+	float lightdistance = 1.3;
+	
+	vec3 diffuse = vertexColor.rgb;
+	
+	
+	vec3 ambient = vec3(0.1,0.1,0.1) * diffuse;
+	vec3 specular = vec3(0.2,0.2,0.2);
 	
 	float distance = length( lightposition - vec3(pos.x,pos.y,pos.z) );
 	
@@ -42,10 +43,11 @@ void main() {
 		// Ambient : simulates indirect lighting
 		vec4((ambient +
 		// Diffuse : "color" of the object
-		diffuse * lightcol * lightpower * cosTheta / ((distance*distance)/1.2) +
+		diffuse * lightcol * lightpower * cosTheta / ((distance*distance)/lightdistance) +
 		// Specular : reflective highlight, like a mirror
-		specular * lightcol * lightpower * pow(cosAlpha,5) / ((distance*distance)/1.2)), vertexColor.a);
+		specular * lightcol * lightpower * pow(cosAlpha,5) / ((distance*distance)/lightdistance)), vertexColor.a);
 		
 		
 };
+
 
