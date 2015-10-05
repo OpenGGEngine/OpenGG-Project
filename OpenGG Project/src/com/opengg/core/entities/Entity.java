@@ -71,11 +71,14 @@ public class Entity {
      * @param type Type of Entity
      */
     public Entity(OBJModel model, EntityType type){
+        forceCalculator = new ForceManipulation(new Vector3f(0,0,0), new Vector3f(0,0,0), this);
         setXYZ(0f, 0f, 0f);
         this.ground = true;
         this.volume = 60f;
         this.mass = 40f;
         setTags(type);
+        
+        EntityFactory.EntityList.add(this);
     }
 
     /**
@@ -90,13 +93,15 @@ public class Entity {
      * @param type Type of entity
      */
     public Entity(float x, float y, float z, Vector3f f, float mass, float volume, EntityType type){
-
+        forceCalculator = new ForceManipulation(this);
         setXYZ(x, y, z);
         setForce(f);
         this.ground = (pos.y < 60);
         this.volume = volume;
         this.mass = mass;
         setTags(type);
+        
+        EntityFactory.EntityList.add(this);
     }
 
     /**
@@ -105,9 +110,8 @@ public class Entity {
      * @param v Entity to be copied
      */
     public Entity(Entity v){
-
+        forceCalculator = new ForceManipulation(v.forceCalculator.airResistance, v.forceCalculator.force, this);
         setXYZ(v.pos.x, v.pos.y, v.pos.z);
-        setForce(v.forceCalculator.force);
         setVelocity(v.velocity);
         this.ground = (pos.y < 60);
         this.volume = v.volume;
@@ -116,6 +120,8 @@ public class Entity {
         this.collision = v.collision;
         this.updatePosition = v.updatePosition;
         this.updateForce = v.updateForce;
+        
+        EntityFactory.EntityList.add(this);
     }
     
     /**

@@ -8,7 +8,6 @@ package com.opengg.core.entities;
 import com.opengg.core.Vector3f;
 import com.opengg.core.entities.Entity.EntityType;
 import com.opengg.core.objloader.parser.OBJModel;
-import com.opengg.core.physics.ForceManipulation;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,49 +21,38 @@ public abstract class EntityFactory {
      * Number of Entities currently loaded.
      */
     public static int entityCount = 0;
-    /**
-     * List of currently loaded enemies
-     */
-    public static List<Entity> EntityList = new ArrayList<>();
     
     /**
-     * Generates a physics entity for the object given
+     * List of currently loaded entities
+     */
+    public static final List<Entity> EntityList = new ArrayList<>();
+    
+    /**
+     * Generates a entity with the parameters given
      * 
-     * @param p What object to be initialized
      * @param tag What type of entity
      * @param m Model to be bound to Entity
      * @return Error
      */
-    public static boolean generateEntity(Entity p, EntityType tag, OBJModel m) {
+    public static Entity generateEntity(EntityType tag, OBJModel m) {
         if(entityCount > 44)
-        { p = null; return false;}
+        {return null;}
         entityCount++;
-        p = new Entity(m, tag);
-        p.forceCalculator = new ForceManipulation(p);
-        return EntityList.add(p);
+        return new Entity(m, tag);
     }
     
-    public static boolean generateEntity(Entity p, EntityType tag, float x, float y, float z, Vector3f f, float mass, float volume) {
+    public static Entity generateEntity(EntityType tag, float x, float y, float z, Vector3f f, float mass, float volume) {
         if(entityCount > 44)
-        { p = null; return false;}
+        {return null;}
         entityCount++;
-        
-            p = new Entity(x,y,z,f,mass,volume,tag);
-        
-        
-            p.forceCalculator = new ForceManipulation(p);
-        
-        return EntityList.add(p);
+        return new Entity(x,y,z,f,mass,volume,tag);
     }
     
-    public static boolean copyEntity(Entity p, Entity v) {
+    public static Entity generateEntity(Entity v) {
         if(entityCount > 44)
-        { p = null; return false;}
+        {return null;}
         entityCount++;
-        p = new Entity(v);
-        p.forceCalculator = new ForceManipulation(v.forceCalculator.airResistance, v.forceCalculator.force, p);
-        
-        return EntityList.add(p);
+        return new Entity(v);
     }
     
     /**
