@@ -144,6 +144,9 @@ public class OpenGGTest implements KeyboardListener{
     IntBuffer ind;
     IntBuffer elements;
     
+    int i = 1;
+    
+    FloatBuffer base;
     FloatBuffer test2;
     FloatBuffer test;
     
@@ -157,36 +160,20 @@ public class OpenGGTest implements KeyboardListener{
         vao = new VertexArrayObject();
         vao.bind();
 
-        blank.loadTexture("C:/res/blank.png");
-        blank2.loadTexture("C:/res/blank2.png");
+
         t1.loadTexture("C:/res/tex1.png");
         
         try {
-            URL path = OpenGGTest.class.getResource("sds.obj");
-            URL path2 = OpenGGTest.class.getResource("karambit.obj");
+            URL path = OpenGGTest.class.getResource("awp3.obj");
+            URL path2 = OpenGGTest.class.getResource("flashbang.obj");
             m = new OBJParser().parse(path);
             m2 = new OBJParser().parse(path2);
         } catch (IOException ex) {
             ex.printStackTrace();
         }
        
-       final IMTLParser parser = new MTLParser();
-       
-        
-        for (String libraryReference : m.getMaterialLibraries()) {
-            URL path = OpenGGTest.class.getResource(libraryReference);
-          String pas = URLDecoder.decode(path.getFile(), "UTF-8");
-            File f = new File(pas);
-            final InputStream mtlStream = new FileInputStream(f); // You will need to resolve this based on `libraryReference`
-            final MTLLibrary library = mtlParser.parse(mtlStream);
-            for (MTLMaterial material : library.getMaterials()) {
-            System.out.println(MessageFormat.format("Material with name ``{0}``.", material.getName()));
-        }
-            
-            System.out.println(libraryReference);
-    // Do something with the library. Maybe store it for later usage.
-        }
-        test = ObjectBuffers.genBuffer(m, 1f, 1);
+        base = ObjectBuffers.getSquare(1000,1000, -1000, -4, -1000, 1f);
+        test = ObjectBuffers.genBuffer(m, 1f, 0.2f);
         test2 = ObjectBuffers.genBuffer(m2, 1f, 0.2f);
 
         vbo = new VertexBufferObject();
@@ -195,8 +182,8 @@ public class OpenGGTest implements KeyboardListener{
          /* Load shaders */
         vertexShader= new Shader(GL_VERTEX_SHADER, Shaders.vertexSource); 
         fragmentShader = new Shader(GL_FRAGMENT_SHADER, Shaders.fragmentSource); 
-        vertexTex= new Shader(GL_VERTEX_SHADER, Shaders.vertexTex); 
-        fragmentTex = new Shader(GL_FRAGMENT_SHADER, Shaders.fragmentTex); 
+        vertexTex= new Shader(GL_VERTEX_SHADER, FileStringLoader.loadStringSequence("C:/res/sh1.vert")); 
+        fragmentTex = new Shader(GL_FRAGMENT_SHADER, FileStringLoader.loadStringSequence("C:/res/sh1.frag")); 
 
         /* Create shader program */
         program = new ShaderProgram();
@@ -227,7 +214,7 @@ public class OpenGGTest implements KeyboardListener{
         program.setUniform(rotm, new Vector3f(0,0,0));
         
         lightpos = program.getUniformLocation("lightpos");
-        program.setUniform(lightpos, new Vector3f(-30,0,-10));
+        program.setUniform(lightpos, new Vector3f(-10,10,-10));
         
         float ratio = win.getRatio();
         
@@ -300,17 +287,26 @@ public class OpenGGTest implements KeyboardListener{
         
         program.checkStatus();
         
-        blank.useTexture();
 
+        t1.useTexture();
+        rotm = program.getUniformLocation("rot");
+        program.setUniform(rotm, new Vector3f(0,0,0));
         vbo.uploadData(GL_ARRAY_BUFFER, test, GL_STATIC_DRAW);  
 
         glDrawArrays(GL_TRIANGLES, 0, m.getVertices().size()*12);
         
         program.setUniform(uniModel, new Matrix4f());
         
+        
         vbo.uploadData(GL_ARRAY_BUFFER, test2, GL_STATIC_DRAW);  
 
         glDrawArrays(GL_TRIANGLES, 0, m2.getVertices().size()*12);
+        
+        program.setUniform(uniModel, new Matrix4f());
+        
+        vbo.uploadData(GL_ARRAY_BUFFER, base, GL_STATIC_DRAW);  
+
+        glDrawArrays(GL_TRIANGLES, 0, 6*12);
  
     }
     
