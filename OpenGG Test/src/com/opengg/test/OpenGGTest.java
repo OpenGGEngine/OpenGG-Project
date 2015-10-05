@@ -8,6 +8,10 @@ import com.opengg.core.input.KeyboardListener;
 import com.opengg.core.io.FileStringLoader;
 import com.opengg.core.io.ObjLoader;
 import com.opengg.core.movement.MovementLoader;
+import com.opengg.core.objloader.parser.IMTLParser;
+import com.opengg.core.objloader.parser.MTLLibrary;
+import com.opengg.core.objloader.parser.MTLMaterial;
+import com.opengg.core.objloader.parser.MTLParser;
 import com.opengg.core.objloader.parser.OBJFace;
 import com.opengg.core.objloader.parser.OBJModel;
 import com.opengg.core.objloader.parser.OBJNormal;
@@ -21,10 +25,19 @@ import com.opengg.core.util.ViewUtil;
 import com.opengg.core.window.*;
 import static com.opengg.core.window.RenderUtil.endFrame;
 import static com.opengg.core.window.RenderUtil.startFrame;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.nio.charset.Charset;
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
@@ -41,7 +54,7 @@ public class OpenGGTest implements KeyboardListener{
     // We need to strongly reference callback instances.
     static long window;
     Window win = new Window();
-    
+    final IMTLParser mtlParser = new MTLParser();
     boolean draw = true;
     int vertAmount;
     int triangleAmount;
@@ -69,7 +82,7 @@ public class OpenGGTest implements KeyboardListener{
     
     boolean backwards = false;
     
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         new OpenGGTest();
     }
     
@@ -102,7 +115,7 @@ public class OpenGGTest implements KeyboardListener{
     FloatBuffer vertices;
     FloatBuffer vertices2;
     
-    public OpenGGTest(){
+    public OpenGGTest() throws IOException{
         Window w = new Window();
         long window = 1;
         
@@ -136,7 +149,7 @@ public class OpenGGTest implements KeyboardListener{
     
     Matrix4f view;
     
-    public void setup(){
+    public void setup() throws FileNotFoundException, IOException{
         
         MovementLoader.setup(window,60);
         
@@ -149,14 +162,30 @@ public class OpenGGTest implements KeyboardListener{
         t1.loadTexture("C:/res/tex1.png");
         
         try {
-            URL path = OpenGGTest.class.getResource("flashbang.obj");
-            URL path2 = OpenGGTest.class.getResource("awp3.obj");
+            URL path = OpenGGTest.class.getResource("sds.obj");
+            URL path2 = OpenGGTest.class.getResource("karambit.obj");
             m = new OBJParser().parse(path);
             m2 = new OBJParser().parse(path2);
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-
+       
+       final IMTLParser parser = new MTLParser();
+       
+        
+        for (String libraryReference : m.getMaterialLibraries()) {
+            URL path = OpenGGTest.class.getResource(libraryReference);
+          String pas = URLDecoder.decode(path.getFile(), "UTF-8");
+            File f = new File(pas);
+            final InputStream mtlStream = new FileInputStream(f); // You will need to resolve this based on `libraryReference`
+            final MTLLibrary library = mtlParser.parse(mtlStream);
+            for (MTLMaterial material : library.getMaterials()) {
+            System.out.println(MessageFormat.format("Material with name ``{0}``.", material.getName()));
+        }
+            
+            System.out.println(libraryReference);
+    // Do something with the library. Maybe store it for later usage.
+        }
         test = ObjectBuffers.genBuffer(m, 1f, 1);
         test2 = ObjectBuffers.genBuffer(m2, 1f, 0.2f);
 
@@ -166,8 +195,8 @@ public class OpenGGTest implements KeyboardListener{
          /* Load shaders */
         vertexShader= new Shader(GL_VERTEX_SHADER, Shaders.vertexSource); 
         fragmentShader = new Shader(GL_FRAGMENT_SHADER, Shaders.fragmentSource); 
-        vertexTex= new Shader(GL_VERTEX_SHADER, FileStringLoader.loadStringSequence("C:/res/sh1.vert")); 
-        fragmentTex = new Shader(GL_FRAGMENT_SHADER, FileStringLoader.loadStringSequence("C:/res/sh1.frag")); 
+        vertexTex= new Shader(GL_VERTEX_SHADER, Shaders.vertexTex); 
+        fragmentTex = new Shader(GL_FRAGMENT_SHADER, Shaders.fragmentTex); 
 
         /* Create shader program */
         program = new ShaderProgram();
