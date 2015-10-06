@@ -164,10 +164,11 @@ public class OpenGGTest implements KeyboardListener{
         t1.loadTexture("C:/res/tex1.png");
         
         try {
-            URL path = OpenGGTest.class.getResource("awp3.obj");
+            URL path = OpenGGTest.class.getResource("awp.obj");
             URL path2 = OpenGGTest.class.getResource("flashbang.obj");
             m = new OBJParser().parse(path);
             m2 = new OBJParser().parse(path2);
+             System.out.println("Model has " + m.getObjects().size()+ " objects");
         } catch (IOException ex) {
             ex.printStackTrace();
         }
