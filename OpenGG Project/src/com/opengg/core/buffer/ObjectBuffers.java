@@ -20,7 +20,7 @@ public class ObjectBuffers {
     public static FloatBuffer genBuffer(OBJModel m, float transparency, float scale){
         
         List<OBJFace> f = m.getObjects().get(0).getMeshes().get(0).getFaces();
-        
+       
         FloatBuffer elements = BufferUtils.createFloatBuffer(m.getVertices().size() * 100);
         for (OBJFace fa : f){
 
@@ -65,9 +65,9 @@ public class ObjectBuffers {
                 zn3 = m.getNormals().get(ni3).z;
             }
             if(fa.hasTextureCoordinates()){
-                uv1 = fa.getReferences().get(0).normalIndex;
-                uv2 = fa.getReferences().get(1).normalIndex;
-                uv3 = fa.getReferences().get(2).normalIndex;
+                uv1 = fa.getReferences().get(0).texCoordIndex;
+                uv2 = fa.getReferences().get(1).texCoordIndex;
+                uv3 = fa.getReferences().get(2).texCoordIndex;
                 u = m.getTexCoords().get(uv1).u;
                 v = m.getTexCoords().get(uv1).v;
                 u2 = m.getTexCoords().get(uv2).u;
