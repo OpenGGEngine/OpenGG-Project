@@ -17,7 +17,7 @@ void main() {
 	
 	float lightdistance = 1.3;
 	
-	vec3 diffuse = vertexColor.rgb;
+	vec3 diffuse = texture2D( texImage, textureCoord ).rgb * vertexColor.rgb;
 	
 	
 	vec3 ambient = vec3(0.1,0.1,0.1) * diffuse;

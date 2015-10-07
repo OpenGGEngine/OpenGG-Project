@@ -28,9 +28,9 @@ public class ObjectBuffers {
             int i2 = fa.getReferences().get(1).vertexIndex;
             int i3 = fa.getReferences().get(2).vertexIndex;
             
-            if(i1 > 11500){
-                continue;
-            }
+//            if(i1 > 11950){
+//                continue;
+//            }
             
             float x1 = m.getVertices().get(i1).x*scale;
             float y1 = m.getVertices().get(i1).y*scale;

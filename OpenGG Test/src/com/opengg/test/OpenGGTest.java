@@ -161,11 +161,13 @@ public class OpenGGTest implements KeyboardListener{
         vao.bind();
 
 
-        t1.loadTexture("C:/res/tex1.png");
+        t1.loadTexture("C:/res/checkerboard.png");
+
+        
         
         try {
-            URL path = OpenGGTest.class.getResource("res/awp.obj");
-            URL path2 = OpenGGTest.class.getResource("res/flashbang.obj");
+            URL path = OpenGGTest.class.getResource("res/awp3.obj");
+            URL path2 = OpenGGTest.class.getResource("res/sds2.obj");
             m = new OBJParser().parse(path);
             m2 = new OBJParser().parse(path2);
              System.out.println("Model has " + m.getObjects().size()+ " objects");
@@ -175,7 +177,7 @@ public class OpenGGTest implements KeyboardListener{
        
         base = ObjectBuffers.getSquare(1000,1000, -1000, -4, -1000, 1f);
         test = ObjectBuffers.genBuffer(m, 1f, 0.2f);
-        test2 = ObjectBuffers.genBuffer(m2, 1f, 0.2f);
+        test2 = ObjectBuffers.genBuffer(m2, 1f, 1f);
 
         vbo = new VertexBufferObject();
         vbo.bind(GL_ARRAY_BUFFER);
@@ -298,7 +300,7 @@ public class OpenGGTest implements KeyboardListener{
         
         program.setUniform(uniModel, new Matrix4f());
         
-        
+
         vbo.uploadData(GL_ARRAY_BUFFER, test2, GL_STATIC_DRAW);  
 
         glDrawArrays(GL_TRIANGLES, 0, m2.getVertices().size()*12);
@@ -306,8 +308,10 @@ public class OpenGGTest implements KeyboardListener{
         program.setUniform(uniModel, new Matrix4f());
         
         vbo.uploadData(GL_ARRAY_BUFFER, base, GL_STATIC_DRAW);  
-
-        glDrawArrays(GL_TRIANGLES, 0, 6*12);
+        
+//        blank.useTexture();
+//        
+//        glDrawArrays(GL_TRIANGLES, 0, 6*12);
  
     }
     
