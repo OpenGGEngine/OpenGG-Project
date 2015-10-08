@@ -174,6 +174,8 @@ public class OpenGGTest implements KeyboardListener{
         } catch (IOException ex) {
             ex.printStackTrace();
         }
+         URL verts = OpenGGTest.class.getResource("res/sh1.vert");
+         URL frags = OpenGGTest.class.getResource("res/sh1.frag");
        
         base = ObjectBuffers.getSquare(1000,1000, -1000, -4, -1000, 1f);
         test = ObjectBuffers.genBuffer(m, 1f, 0.2f);
@@ -185,8 +187,8 @@ public class OpenGGTest implements KeyboardListener{
          /* Load shaders */
         vertexShader= new Shader(GL_VERTEX_SHADER, Shaders.vertexSource); 
         fragmentShader = new Shader(GL_FRAGMENT_SHADER, Shaders.fragmentSource); 
-        vertexTex= new Shader(GL_VERTEX_SHADER, FileStringLoader.loadStringSequence("C:/res/sh1.vert")); 
-        fragmentTex = new Shader(GL_FRAGMENT_SHADER, FileStringLoader.loadStringSequence("C:/res/sh1.frag")); 
+        vertexTex= new Shader(GL_VERTEX_SHADER, FileStringLoader.loadStringSequence(URLDecoder.decode(verts.getFile(), "UTF-8"))); 
+        fragmentTex = new Shader(GL_FRAGMENT_SHADER, FileStringLoader.loadStringSequence(URLDecoder.decode(frags.getFile(), "UTF-8"))); 
 
         /* Create shader program */
         program = new ShaderProgram();
