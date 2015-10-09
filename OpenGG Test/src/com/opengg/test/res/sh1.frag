@@ -13,14 +13,18 @@ uniform sampler2D texImage;
 void main() {
 	
 	vec3 lightcol = vec3(1,1,1);
-	float lightpower = 1000.0f;
+	float lightpower = 300f;
 	
-	float lightdistance = 1.3;
+	float lightdistance = 1.6;
 	
-	vec3 diffuse = texture2D( texImage, textureCoord ).rgb * vertexColor.rgb;
+	float amb = 0.5;
 	
+	vec3 diffuse = texture2D(texImage, textureCoord).rgb;
 	
-	vec3 ambient = vec3(0.1,0.1,0.1) * diffuse;
+	if(texture2D(texImage,textureCoord).a == 0){
+		diffuse = vertexColor.rgb;
+	}
+	vec3 ambient = vec3(amb,amb,amb) * diffuse;
 	vec3 specular = vec3(0.2,0.2,0.2);
 	
 	float distance = length( lightposition - vec3(pos.x,pos.y,pos.z) );

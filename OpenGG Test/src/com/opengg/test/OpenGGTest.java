@@ -1,18 +1,13 @@
 package com.opengg.test;
 import com.opengg.core.Matrix4f;
-import com.opengg.core.Model;
 import com.opengg.core.Vector3f;
 import com.opengg.core.buffer.ObjectBuffers;
 import com.opengg.core.input.KeyboardEventHandler;
 import com.opengg.core.input.KeyboardListener;
 import com.opengg.core.io.FileStringLoader;
-import com.opengg.core.io.ObjLoader;
 import com.opengg.core.movement.MovementLoader;
 import com.opengg.core.objloader.parser.IMTLParser;
-import com.opengg.core.objloader.parser.MTLLibrary;
-import com.opengg.core.objloader.parser.MTLMaterial;
 import com.opengg.core.objloader.parser.MTLParser;
-import com.opengg.core.objloader.parser.OBJFace;
 import com.opengg.core.objloader.parser.OBJModel;
 import com.opengg.core.objloader.parser.OBJNormal;
 import com.opengg.core.objloader.parser.OBJParser;
@@ -25,27 +20,23 @@ import com.opengg.core.util.ViewUtil;
 import com.opengg.core.window.*;
 import static com.opengg.core.window.RenderUtil.endFrame;
 import static com.opengg.core.window.RenderUtil.startFrame;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.nio.charset.Charset;
-import java.text.MessageFormat;
 import java.util.List;
-import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFW;
- 
 import static org.lwjgl.glfw.GLFW.*;
+import org.lwjgl.openal.AL;
+import org.lwjgl.openal.AL10;
+import org.lwjgl.openal.ALCCapabilities;
+import org.lwjgl.openal.ALContext;
+import org.lwjgl.openal.ALDevice;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
@@ -72,6 +63,21 @@ public class OpenGGTest implements KeyboardListener{
     public float xrot;
     public float rot1 = 0;
     public float xm = 0, ym=0, zm=0;
+    
+    IntBuffer buffer = BufferUtils.createIntBuffer(1),source = BufferUtils.createIntBuffer(1);
+    
+    FloatBuffer sourcePos = BufferUtils.createFloatBuffer(3).put(new float[] { 0.0f, 0.0f, 0.0f });
+ 
+
+    FloatBuffer sourceVel = BufferUtils.createFloatBuffer(3).put(new float[] { 0.0f, 0.0f, 0.0f });
+
+    FloatBuffer listenerPos = BufferUtils.createFloatBuffer(3).put(new float[] { 0.0f, 0.0f, 0.0f });
+
+    FloatBuffer listenerVel = BufferUtils.createFloatBuffer(3).put(new float[] { 0.0f, 0.0f, 0.0f });
+    
+    FloatBuffer listenerOri =
+    BufferUtils.createFloatBuffer(6).put(new float[] { 0.0f, 0.0f, -1.0f,  0.0f, 1.0f, 0.0f });
+
     
     int normalbuffer;
     
@@ -118,7 +124,6 @@ public class OpenGGTest implements KeyboardListener{
     public OpenGGTest() throws IOException{
         Window w = new Window();
         long window = 1;
-        
         KeyboardEventHandler.addToPool(this);
         
         try {
@@ -156,18 +161,53 @@ public class OpenGGTest implements KeyboardListener{
         
         MovementLoader.setup(window,60);
         
+        ALContext context = ALContext.create();
+        ALDevice device = context.getDevice();
+
+        // Make the context current
+        context.makeCurrent();
+
+        ALCCapabilities capabilities = device.getCapabilities();
+ 
+    if (!capabilities.OpenALC10)
+        throw new RuntimeException("OpenAL Context Creation failed");
+
+
         
         vao = new VertexArrayObject();
         vao.bind();
 
+        AL10.alEnable((int) window);
+        t1.loadTexture("C:/res/tex2.png");
 
-        t1.loadTexture("C:/res/checkerboard.png");
+        AL10.alGenBuffers(buffer);
+ 
+        if(AL10.alGetError() != AL10.AL_NO_ERROR)
+            System.out.println(AL10.alGetError());
+        URL audio = OpenGGTest.class.getResource("res/meat.wav");
+        WaveData waveFile = WaveData.create(audio);
+        AL10.alBufferData(buffer.get(0), waveFile.format, waveFile.data, waveFile.samplerate);
+        waveFile.dispose();
 
+        AL10.alGenSources(source);
+ 
+        if (AL10.alGetError() != AL10.AL_NO_ERROR)
+          System.out.println(AL10.alGetError());
+
+        AL10.alSourcei(source.get(0), AL10.AL_BUFFER,buffer.get(0) );
+        AL10.alSourcef(source.get(0), AL10.AL_PITCH,1.0f );
+        AL10.alSourcef(source.get(0), AL10.AL_GAIN,1.0f);
+        AL10.alSource3f (source.get(0), AL10.AL_POSITION, 0,0,0);
+        AL10.alSource3f (source.get(0), AL10.AL_VELOCITY, 0,0,0);
         
+        AL10.alListener3f(AL10.AL_POSITION,0,0,0);
+        AL10.alListener3f(AL10.AL_VELOCITY,0,0,0);
+        AL10.alListener3f(AL10.AL_ORIENTATION,0,0,0);
+
         
         try {
             URL path = OpenGGTest.class.getResource("res/awp3.obj");
-            URL path2 = OpenGGTest.class.getResource("res/sds2.obj");
+            URL path2 = OpenGGTest.class.getResource("res/flashbang.obj");
             m = new OBJParser().parse(path);
             m2 = new OBJParser().parse(path2);
              System.out.println("Model has " + m.getObjects().size()+ " objects");
@@ -224,17 +264,19 @@ public class OpenGGTest implements KeyboardListener{
         float ratio = win.getRatio();
         
         program.use();
-        ViewUtil.setPerspective(90, ratio, 0.3f, 300f, program);
+        ViewUtil.setPerspective(90, ratio, 0.3f, 1000f, program);
 
         vao.bind();      
         
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
+        
+        t1.useTexture();
         
         glEnable(GL_DEPTH_TEST);
 
         glDepthFunc(GL_LESS);
+        AL10.alSourcePlay(source.get(0));
     }
     
     
@@ -271,7 +313,9 @@ public class OpenGGTest implements KeyboardListener{
         vbo.delete();
         vertexShader.delete();
         program.delete();
-        
+        AL10.alDeleteSources(source);
+        AL10.alDeleteBuffers(buffer);
+
     }
     
     public void render(double alpha) {
@@ -293,7 +337,7 @@ public class OpenGGTest implements KeyboardListener{
         program.checkStatus();
         
 
-        t1.useTexture();
+        
         rotm = program.getUniformLocation("rot");
         program.setUniform(rotm, new Vector3f(0,0,0));
         vbo.uploadData(GL_ARRAY_BUFFER, test, GL_STATIC_DRAW);  
@@ -311,10 +355,11 @@ public class OpenGGTest implements KeyboardListener{
         
         vbo.uploadData(GL_ARRAY_BUFFER, base, GL_STATIC_DRAW);  
         
-//        blank.useTexture();
-//        
-//        glDrawArrays(GL_TRIANGLES, 0, 6*12);
- 
+        glDrawArrays(GL_TRIANGLES, 0, 6*12);
+        
+        
+
+
     }
     
     public void update(float delta) {       
