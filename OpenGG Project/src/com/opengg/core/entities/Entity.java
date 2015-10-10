@@ -52,11 +52,11 @@ public class Entity {
     public float mass;
     
     /* Physics*/
-    public Vector3f velocity = new Vector3f();
-    public Vector2f direction = new Vector2f();
+    public Vector3f velocity = new Vector3f(0,0,0);
+    public Vector2f direction = new Vector2f(0,0);
     private final Time time = new Time();
-    public Vector3f acceleration = new Vector3f();
-    public Vector3f lastAcceleration = new Vector3f();
+    public Vector3f acceleration = new Vector3f(0,0,0);
+    public Vector3f lastAcceleration = new Vector3f(0,0,0);
     public ForceManipulation forceCalculator;
     private float timeStep;
     private float height = 5f;

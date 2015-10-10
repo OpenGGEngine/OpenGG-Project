@@ -13,10 +13,10 @@ import com.opengg.core.entities.Entity;
  * @author ethachu19
  */
 public class ForceManipulation {
-    public Vector3f airResistance = new Vector3f();
-    public Vector3f force = new Vector3f();
+    public Vector3f airResistance = new Vector3f(1.5f,1.5f,1.5f);
+    public Vector3f force = new Vector3f(0,0,0);
     public static Vector3f wind = new Vector3f(0,0,0);
-    public final static float gravity = 9.8f;
+    private final static float gravity = 9.8f;
     Entity update;
     
     public ForceManipulation(Vector3f aR, Vector3f f, Entity v)
@@ -48,11 +48,6 @@ public class ForceManipulation {
             force.x = force.x + airResistance.x;
             force.z = force.y + airResistance.y;
         }
-    }
-    
-    public final void calculateAirResistance()
-    {
-        //the Literal Bane of my existance: dynamic AirResistance calculation
     }
     
     

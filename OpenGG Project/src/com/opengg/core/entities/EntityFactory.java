@@ -41,6 +41,18 @@ public abstract class EntityFactory {
         return new Entity(m, tag);
     }
     
+    /**
+     * Generates a entity with the parameters given
+     * 
+     * @param tag
+     * @param x
+     * @param y
+     * @param z
+     * @param f
+     * @param mass
+     * @param volume
+     * @return 
+     */
     public static Entity generateEntity(EntityType tag, float x, float y, float z, Vector3f f, float mass, float volume) {
         if(entityCount > 44)
         {return null;}
@@ -48,6 +60,12 @@ public abstract class EntityFactory {
         return new Entity(x,y,z,f,mass,volume,tag);
     }
     
+    /**
+     * Generates a entity with the parameters given
+     * 
+     * @param v Entity to be copied
+     * @return 
+     */
     public static Entity generateEntity(Entity v) {
         if(entityCount > 44)
         {return null;}

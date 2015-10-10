@@ -32,12 +32,11 @@ public class WorldObject {
     public WorldObject(Vector3f pos, Vector3f rot, Entity e){
         this.pos = pos;
         this.rot = rot;
-        this.e = e;
+        this.e = EntityFactory.generateEntity(e);
     }
     public WorldObject(Entity e){
         pos = new Vector3f(0,0,0);
         rot = new Vector3f(0,0,0);
-        this.e = e;
-               
+        this.e = EntityFactory.generateEntity(e);
     }
 }

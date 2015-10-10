@@ -30,7 +30,6 @@ public class MainLoop extends EntityFactory{
                 }
                 if(collide.updateForce == Realistic)
                 {
-                    collide.forceCalculator.calculateAirResistance();
                     collide.forceCalculator.calculateForces();
                 }
             }
