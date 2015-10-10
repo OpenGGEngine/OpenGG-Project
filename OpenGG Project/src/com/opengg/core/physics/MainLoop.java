@@ -22,7 +22,7 @@ public class MainLoop extends EntityFactory{
     {
         while(true)// put in some condition? Idk
         {
-            Updating: for(Entity collide: EntityList)
+            for(Entity collide: EntityList)
             {
                 if(collide.updatePosition == Movable)
                 {
@@ -33,12 +33,12 @@ public class MainLoop extends EntityFactory{
                     collide.forceCalculator.calculateForces();
                 }
             }
-            Collision: for (Entity collide : EntityList) {
+            for (Entity collide : EntityList) {
                 if(collide.collision != Collidable)
                 {
                     continue;
                 }
-                CollidingEntity: for(Entity collidee: EntityList)
+                for(Entity collidee: EntityList)
                 {
                     if(collide.equals(collidee) || collidee.collision == Uncollidable)
                     {

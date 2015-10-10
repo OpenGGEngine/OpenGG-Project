@@ -44,14 +44,14 @@ public abstract class EntityFactory {
     /**
      * Generates a entity with the parameters given
      * 
-     * @param tag
-     * @param x
-     * @param y
-     * @param z
-     * @param f
-     * @param mass
-     * @param volume
-     * @return 
+     * @param tag EntityType
+     * @param x X Coordinate of Entity
+     * @param y Y Coordinate of Entity
+     * @param z Z Coordinate of Entity
+     * @param f f Force Vector
+     * @param mass Mass of Entity
+     * @param volume Volume of Entity
+     * @return New Entity
      */
     public static Entity generateEntity(EntityType tag, float x, float y, float z, Vector3f f, float mass, float volume) {
         if(entityCount > 44)
@@ -64,7 +64,7 @@ public abstract class EntityFactory {
      * Generates a entity with the parameters given
      * 
      * @param v Entity to be copied
-     * @return 
+     * @return New Entity
      */
     public static Entity generateEntity(Entity v) {
         if(entityCount > 44)
@@ -84,6 +84,7 @@ public abstract class EntityFactory {
         if (!EntityList.remove(en)) {
             return false;
         }
+        en.forceCalculator = null;
         en = null;
         return true;
     }

@@ -15,7 +15,7 @@ import com.opengg.core.entities.Entity;
 public class ForceManipulation {
     public Vector3f airResistance = new Vector3f(1.5f,1.5f,1.5f);
     public Vector3f force = new Vector3f(0,0,0);
-    public static Vector3f wind = new Vector3f(0,0,0);
+    private static Vector3f wind = new Vector3f(0,0,0);
     private final static float gravity = 9.8f;
     Entity update;
     
@@ -43,12 +43,17 @@ public class ForceManipulation {
         if (!update.ground) {
             force.x = force.x - airResistance.x + ForceManipulation.wind.x;
             force.z = force.y - airResistance.z + ForceManipulation.wind.z;
-            force.y = force.y - gravity + airResistance.y + ForceManipulation.wind.y;
+            force.y = force.y - gravity - airResistance.y + ForceManipulation.wind.y;
         } else {
             force.x = force.x + airResistance.x;
             force.z = force.y + airResistance.y;
         }
     }
     
-    
+    public static final void setWind(Vector3f wind)
+    {
+        ForceManipulation.wind.x = wind.x;
+        ForceManipulation.wind.y = wind.y;
+        ForceManipulation.wind.z = wind.z;
+    }
 }
