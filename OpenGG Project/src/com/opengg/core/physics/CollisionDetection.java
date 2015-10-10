@@ -33,7 +33,7 @@ public class CollisionDetection extends EntityFactory{
         
          
          
-        return 0;
+        return 1;
     }
     
 }
