@@ -22,10 +22,10 @@ public class CollisionDetection extends EntityFactory{
             return -1;
         }
         
-         if (collide.boundingBox[4].x < collidee.boundingBox[6].x || 
-             collide.boundingBox[4].y < collidee.boundingBox[6].y || 
-             collide.boundingBox[6].x > collidee.boundingBox[4].x || 
-             collide.boundingBox[6].y > collidee.boundingBox[4].y) 
+         if (collide.boundingBox[1].x < collidee.boundingBox[0].x || 
+             collide.boundingBox[1].y < collidee.boundingBox[0].y || 
+             collide.boundingBox[0].x > collidee.boundingBox[1].x || 
+             collide.boundingBox[0].y > collidee.boundingBox[1].y) 
             {
                 return 0;
             }

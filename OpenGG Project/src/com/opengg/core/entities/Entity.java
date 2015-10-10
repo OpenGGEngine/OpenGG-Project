@@ -62,20 +62,21 @@ public class Entity {
     private float height = 5f;
     private float width = 5f;
     private float length = 5f;
-    public Vector3f[] boundingBox = new Vector3f[8];
+    /* Max - 1, Min - 0 */
+    public Vector3f[] boundingBox = new Vector3f[2];
     /*
     
-   1 *---x---* 4
+     *---x---* 1
      | bottom|
      z       |
      |       |
-   2 *-------* 3
+     *-------* 
     
-   8 *---x---* 5
+     *---x---* 
      |  top  |
      z       |
      |       |
-   7 *-------* 6
+   0 *-------* 
     
     */
     public OBJModel model;
@@ -249,25 +250,13 @@ public class Entity {
         this.pos.y = y;
         this.pos.z = z;
         
-        for(int i = 0; i < 4; i++)
-            boundingBox[i].y = y;
-        for(int i = 4; i < 8; i++)
-            boundingBox[i].y = y + height;
-        for(int i = 2; i < 6; i++)
-            boundingBox[i].x = x + width/2;
+        boundingBox[0].y = y + height;
         boundingBox[0].x = x - width/2;
-        boundingBox[1].x = x - width/2;
-        boundingBox[6].x = x - width/2;
-        boundingBox[7].x = x - width/2;
+        boundingBox[0].z = z + length/2;
         
-        boundingBox[0].z = z - length/2;
-        boundingBox[1].z = z + length/2;
-        boundingBox[2].z = z + length/2;
-        boundingBox[3].z = z - length/2;
-        boundingBox[4].z = z - length/2;
-        boundingBox[5].z = z + length/2;
-        boundingBox[6].z = z + length/2;
-        boundingBox[7].z = z - length/2;
+        boundingBox[1].y = y;
+        boundingBox[1].x = x + width/2;
+        boundingBox[1].z = z - length/2;
     }
 
     /**
