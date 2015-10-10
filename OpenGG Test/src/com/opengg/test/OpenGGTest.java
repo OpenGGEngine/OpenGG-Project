@@ -1,6 +1,7 @@
 package com.opengg.test;
 import com.opengg.core.Matrix4f;
 import com.opengg.core.Vector3f;
+import com.opengg.core.audio.AudioHandler;
 import com.opengg.core.buffer.ObjectBuffers;
 import com.opengg.core.input.KeyboardEventHandler;
 import com.opengg.core.input.KeyboardListener;
@@ -11,6 +12,7 @@ import com.opengg.core.objloader.parser.MTLParser;
 import com.opengg.core.objloader.parser.OBJModel;
 import com.opengg.core.objloader.parser.OBJNormal;
 import com.opengg.core.objloader.parser.OBJParser;
+import com.opengg.core.render.DrawnObject;
 import com.opengg.core.render.VertexArrayObject;
 import com.opengg.core.render.VertexBufferObject;
 import com.opengg.core.shader.Shader;
@@ -30,13 +32,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.lwjgl.BufferUtils;
-import org.lwjgl.glfw.GLFW;
 import static org.lwjgl.glfw.GLFW.*;
-import org.lwjgl.openal.AL;
-import org.lwjgl.openal.AL10;
-import org.lwjgl.openal.ALCCapabilities;
-import org.lwjgl.openal.ALContext;
-import org.lwjgl.openal.ALDevice;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
@@ -53,6 +49,7 @@ public class OpenGGTest implements KeyboardListener{
     private Shader vertexTex;
     private Shader fragmentTex;
     private int rotm;
+    private VertexBufferObject vbo2;
     
     {
         vertAmount = squares * 6;
@@ -63,21 +60,6 @@ public class OpenGGTest implements KeyboardListener{
     public float xrot;
     public float rot1 = 0;
     public float xm = 0, ym=0, zm=0;
-    
-    IntBuffer buffer = BufferUtils.createIntBuffer(1),source = BufferUtils.createIntBuffer(1);
-    
-    FloatBuffer sourcePos = BufferUtils.createFloatBuffer(3).put(new float[] { 0.0f, 0.0f, 0.0f });
- 
-
-    FloatBuffer sourceVel = BufferUtils.createFloatBuffer(3).put(new float[] { 0.0f, 0.0f, 0.0f });
-
-    FloatBuffer listenerPos = BufferUtils.createFloatBuffer(3).put(new float[] { 0.0f, 0.0f, 0.0f });
-
-    FloatBuffer listenerVel = BufferUtils.createFloatBuffer(3).put(new float[] { 0.0f, 0.0f, 0.0f });
-    
-    FloatBuffer listenerOri =
-    BufferUtils.createFloatBuffer(6).put(new float[] { 0.0f, 0.0f, -1.0f,  0.0f, 1.0f, 0.0f });
-
     
     int normalbuffer;
     
@@ -110,6 +92,10 @@ public class OpenGGTest implements KeyboardListener{
     Texture t2 = new Texture();
     Texture blank = new Texture();
     Texture blank2 = new Texture();
+    
+    DrawnObject test3;
+    DrawnObject test4;
+    DrawnObject base2;
     
     float speed = 0.2f;
     
@@ -158,59 +144,24 @@ public class OpenGGTest implements KeyboardListener{
     Matrix4f view;
     
     public void setup() throws FileNotFoundException, IOException{
-        
         MovementLoader.setup(window,60);
         
-        ALContext context = ALContext.create();
-        ALDevice device = context.getDevice();
-
-        // Make the context current
-        context.makeCurrent();
-
-        ALCCapabilities capabilities = device.getCapabilities();
- 
-    if (!capabilities.OpenALC10)
-        throw new RuntimeException("OpenAL Context Creation failed");
-
-
-        
         vao = new VertexArrayObject();
+        
         vao.bind();
-
-        AL10.alEnable((int) window);
+        vbo = new VertexBufferObject();
+        vbo.bind(GL_ARRAY_BUFFER);
+        
         t1.loadTexture("C:/res/tex2.png");
-
-        AL10.alGenBuffers(buffer);
- 
-        if(AL10.alGetError() != AL10.AL_NO_ERROR)
-            System.out.println(AL10.alGetError());
-        URL audio = OpenGGTest.class.getResource("res/meat.wav");
-        WaveData waveFile = WaveData.create(audio);
-        AL10.alBufferData(buffer.get(0), waveFile.format, waveFile.data, waveFile.samplerate);
-        waveFile.dispose();
-
-        AL10.alGenSources(source);
- 
-        if (AL10.alGetError() != AL10.AL_NO_ERROR)
-          System.out.println(AL10.alGetError());
-
-        AL10.alSourcei(source.get(0), AL10.AL_BUFFER,buffer.get(0) );
-        AL10.alSourcef(source.get(0), AL10.AL_PITCH,1.0f );
-        AL10.alSourcef(source.get(0), AL10.AL_GAIN,1.0f);
-        AL10.alSource3f (source.get(0), AL10.AL_POSITION, 0,0,0);
-        AL10.alSource3f (source.get(0), AL10.AL_VELOCITY, 0,0,0);
-        
-        AL10.alListener3f(AL10.AL_POSITION,0,0,0);
-        AL10.alListener3f(AL10.AL_VELOCITY,0,0,0);
-        AL10.alListener3f(AL10.AL_ORIENTATION,0,0,0);
-
-        
+        t1.useTexture();        
+        AudioHandler.init((int)window);
+        AudioHandler.setSoundBuffer(OpenGGTest.class.getResource("res/maw.wav"));
+        AudioHandler.play();
         try {
             URL path = OpenGGTest.class.getResource("res/awp3.obj");
             URL path2 = OpenGGTest.class.getResource("res/flashbang.obj");
             m = new OBJParser().parse(path);
             m2 = new OBJParser().parse(path2);
-             System.out.println("Model has " + m.getObjects().size()+ " objects");
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -220,13 +171,10 @@ public class OpenGGTest implements KeyboardListener{
         base = ObjectBuffers.getSquare(1000,1000, -1000, -4, -1000, 1f);
         test = ObjectBuffers.genBuffer(m, 1f, 0.2f);
         test2 = ObjectBuffers.genBuffer(m2, 1f, 1f);
+        test3 = new DrawnObject(test,vbo);
+        test4 = new DrawnObject(test2,vbo);        
+        base2 = new DrawnObject(base,vbo);
 
-        vbo = new VertexBufferObject();
-        vbo.bind(GL_ARRAY_BUFFER);
-
-         /* Load shaders */
-        vertexShader= new Shader(GL_VERTEX_SHADER, Shaders.vertexSource); 
-        fragmentShader = new Shader(GL_FRAGMENT_SHADER, Shaders.fragmentSource); 
         vertexTex= new Shader(GL_VERTEX_SHADER, FileStringLoader.loadStringSequence(URLDecoder.decode(verts.getFile(), "UTF-8"))); 
         fragmentTex = new Shader(GL_FRAGMENT_SHADER, FileStringLoader.loadStringSequence(URLDecoder.decode(frags.getFile(), "UTF-8"))); 
 
@@ -254,7 +202,6 @@ public class OpenGGTest implements KeyboardListener{
         int uniTex = program.getUniformLocation("texImage");
         program.setUniform(uniTex, 0);
         
-
         rotm = program.getUniformLocation("rot");
         program.setUniform(rotm, new Vector3f(0,0,0));
         
@@ -264,19 +211,13 @@ public class OpenGGTest implements KeyboardListener{
         float ratio = win.getRatio();
         
         program.use();
-        ViewUtil.setPerspective(90, ratio, 0.3f, 1000f, program);
+        ViewUtil.setPerspective(90, ratio, 0.3f, 2000f, program);     
 
-        vao.bind();      
-        
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        
-        t1.useTexture();
-        
-        glEnable(GL_DEPTH_TEST);
 
+        glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
-        AL10.alSourcePlay(source.get(0));
     }
     
     
@@ -309,17 +250,25 @@ public class OpenGGTest implements KeyboardListener{
     }
     
     public void exit() {
-        vao.delete();
-        vbo.delete();
-        vertexShader.delete();
-        program.delete();
-        AL10.alDeleteSources(source);
-        AL10.alDeleteBuffers(buffer);
+        try{
+            
+            vertexShader.delete();
+            fragmentShader.delete();
+            program.delete();
+            AudioHandler.destroy();
+            vao.delete();
+            vbo.delete();
+            test3.destroy();
+            test4.destroy();
+            base2.destroy();
+        }catch(Exception e){
+            
+        }
 
     }
     
     public void render(double alpha) {
-        
+        vao.bind();
         rot = new Vector3f(0,-xrot,0);
         
         pos = MovementLoader.processMovement(pos, rot);
@@ -327,39 +276,15 @@ public class OpenGGTest implements KeyboardListener{
         Matrix4f cameraR = Matrix4f.translate(pos.x,pos.y,pos.z);       
         
         Matrix4f cameraM = Matrix4f.rotate(-xrot,0,1,0);
-        
-        //program.use();
+
         program.setUniform(uniView, cameraM.multiply(cameraR));      
         program.setUniform(uniModel, new Matrix4f());
 
-        //program.setUniform(lightpos, new Vector3f(x,y,z));
-        
         program.checkStatus();
         
-
-        
-        rotm = program.getUniformLocation("rot");
-        program.setUniform(rotm, new Vector3f(0,0,0));
-        vbo.uploadData(GL_ARRAY_BUFFER, test, GL_STATIC_DRAW);  
-
-        glDrawArrays(GL_TRIANGLES, 0, m.getVertices().size()*12);
-        
-        program.setUniform(uniModel, new Matrix4f());
-        
-
-        vbo.uploadData(GL_ARRAY_BUFFER, test2, GL_STATIC_DRAW);  
-
-        glDrawArrays(GL_TRIANGLES, 0, m2.getVertices().size()*12);
-        
-        program.setUniform(uniModel, new Matrix4f());
-        
-        vbo.uploadData(GL_ARRAY_BUFFER, base, GL_STATIC_DRAW);  
-        
-        glDrawArrays(GL_TRIANGLES, 0, 6*12);
-        
-        
-
-
+        test3.draw();
+        test4.draw();
+        base2.draw();
     }
     
     public void update(float delta) {       
@@ -371,32 +296,7 @@ public class OpenGGTest implements KeyboardListener{
 
     @Override
     public void keyPressed(int key) {
-        if(key == GLFW_KEY_LEFT){
-            xm += speed;
-
-        }
-        if(key == GLFW_KEY_RIGHT){
-            xm -= speed;
-
-        }
-        if(key == GLFW_KEY_UP){
- 
-            zm += speed;
-        }
-        if(key == GLFW_KEY_DOWN){
-
-            zm -= speed;
-
-        }
-        if(key == GLFW.GLFW_KEY_LEFT_SHIFT){
-
-            //ym -= speed;
-        }
-        if(key == GLFW_KEY_LEFT_CONTROL){
-
-            //ym += speed;
-
-        }
+       
         if(key == GLFW_KEY_Q){
             rot1 += 0.3;
             
@@ -410,33 +310,7 @@ public class OpenGGTest implements KeyboardListener{
 
     @Override
     public void keyReleased(int key) {
-        if(key == GLFW_KEY_LEFT){
-
-            xm -= speed;
-        }
-        if(key == GLFW_KEY_RIGHT){
-
-            xm += speed;
-
-        }
-        if(key == GLFW_KEY_UP){
- 
-            zm -= speed;
-        }
-        if(key == GLFW_KEY_DOWN){
-
-            zm += speed;
-
-        }
-        if(key == GLFW.GLFW_KEY_LEFT_SHIFT){
-
-            //ym += speed;
-        }
-        if(key == GLFW_KEY_LEFT_CONTROL){
-
-            //ym -= speed;
-
-        }
+        
         if(key == GLFW_KEY_Q){
             rot1 -= 0.3;
             

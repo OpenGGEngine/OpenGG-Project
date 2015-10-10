@@ -21,7 +21,7 @@ public class ObjectBuffers {
         
         List<OBJFace> f = m.getObjects().get(0).getMeshes().get(0).getFaces();
        
-        FloatBuffer elements = BufferUtils.createFloatBuffer(m.getVertices().size() * 100);
+        FloatBuffer elements = BufferUtils.createFloatBuffer(m.getVertices().size() * 78);
         for (OBJFace fa : f){
 
             int i1 = fa.getReferences().get(0).vertexIndex;
@@ -100,9 +100,9 @@ public class ObjectBuffers {
         
         sq.put(x1).put(y).put(z1).put(1).put(0).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(0).put(0);
         sq.put(x1).put(y).put(z2).put(0).put(1).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(0).put(1);
-        sq.put(x2).put(y).put(z1).put(0).put(0).put(1).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(0).put(1);
-        sq.put(x2).put(y).put(z1).put(0).put(1).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(0).put(1);
-        sq.put(x2).put(y).put(z2).put(0).put(0).put(1).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(0).put(1);
+        sq.put(x2).put(y).put(z1).put(0).put(0).put(1).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(1).put(0);
+        sq.put(x2).put(y).put(z1).put(0).put(1).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(1).put(0);
+        sq.put(x2).put(y).put(z2).put(0).put(0).put(1).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(1).put(1);
         sq.put(x1).put(y).put(z2).put(1).put(0).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(0).put(1);
         
         sq.flip();

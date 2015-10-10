@@ -11,6 +11,7 @@ package com.opengg.core.render;
  */
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import static org.lwjgl.opengl.GL11.GL_VERTEX_ARRAY;
 
 import static org.lwjgl.opengl.GL15.*;
 
@@ -31,6 +32,7 @@ public class VertexBufferObject {
      */
     public VertexBufferObject() {
         id = glGenBuffers();
+        
     }
 
     /**
@@ -41,6 +43,7 @@ public class VertexBufferObject {
      */
     public void bind(int target) {
         glBindBuffer(target, id);
+        uploadData(GL_ARRAY_BUFFER, 10000000, GL_STATIC_DRAW);
     }
 
     /**
@@ -78,7 +81,7 @@ public class VertexBufferObject {
      * @param offset Offset where the data should go in bytes
      * @param data Buffer with the data to upload
      */
-    public void uploadSubData(int target, long offset, FloatBuffer data) {
+    public void uploadSubData(int target, long offset,FloatBuffer data) {
         glBufferSubData(target, offset, data);
     }
 
