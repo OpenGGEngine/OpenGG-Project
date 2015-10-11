@@ -1,4 +1,4 @@
-# HEY jav whens hackathon
+# The Official OpenGG Engine
                         
 ___________________________________________________________________________
-OpenGG is proud to be the least efficient engine ever designed! We are just as bad as Gamebyro.
+OpenGG is proud to be the least efficient engine ever designed!
