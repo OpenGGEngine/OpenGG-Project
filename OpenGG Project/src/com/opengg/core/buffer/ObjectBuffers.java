@@ -20,17 +20,17 @@ public class ObjectBuffers {
     public static FloatBuffer genBuffer(OBJModel m, float transparency, float scale){
         
         List<OBJFace> f = m.getObjects().get(0).getMeshes().get(0).getFaces();
-        
-        FloatBuffer elements = BufferUtils.createFloatBuffer(m.getVertices().size() * 100);
+       
+        FloatBuffer elements = BufferUtils.createFloatBuffer(m.getVertices().size() * 78);
         for (OBJFace fa : f){
 
             int i1 = fa.getReferences().get(0).vertexIndex;
             int i2 = fa.getReferences().get(1).vertexIndex;
             int i3 = fa.getReferences().get(2).vertexIndex;
             
-            if(i1 > 11500){
-                continue;
-            }
+//            if(i1 > 11950){
+//                continue;
+//            }
             
             float x1 = m.getVertices().get(i1).x*scale;
             float y1 = m.getVertices().get(i1).y*scale;
@@ -65,9 +65,9 @@ public class ObjectBuffers {
                 zn3 = m.getNormals().get(ni3).z;
             }
             if(fa.hasTextureCoordinates()){
-                uv1 = fa.getReferences().get(0).normalIndex;
-                uv2 = fa.getReferences().get(1).normalIndex;
-                uv3 = fa.getReferences().get(2).normalIndex;
+                uv1 = fa.getReferences().get(0).texCoordIndex;
+                uv2 = fa.getReferences().get(1).texCoordIndex;
+                uv3 = fa.getReferences().get(2).texCoordIndex;
                 u = m.getTexCoords().get(uv1).u;
                 v = m.getTexCoords().get(uv1).v;
                 u2 = m.getTexCoords().get(uv2).u;
@@ -93,5 +93,19 @@ public class ObjectBuffers {
         
         elements.flip();
         return elements;
+    }
+    
+    public static FloatBuffer getSquare(float x1, float z1, float x2, float y, float z2, float transparency){
+        FloatBuffer sq = BufferUtils.createFloatBuffer(6*12);
+        
+        sq.put(x1).put(y).put(z1).put(1).put(0).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(0).put(0);
+        sq.put(x1).put(y).put(z2).put(0).put(1).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(0).put(1);
+        sq.put(x2).put(y).put(z1).put(0).put(0).put(1).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(1).put(0);
+        sq.put(x2).put(y).put(z1).put(0).put(1).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(1).put(0);
+        sq.put(x2).put(y).put(z2).put(0).put(0).put(1).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(1).put(1);
+        sq.put(x1).put(y).put(z2).put(1).put(0).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(0).put(1);
+        
+        sq.flip();
+        return sq;
     }
 }

@@ -44,5 +44,11 @@ public class VertexArrayObject {
     public int getID() {
         return id;
     }
+    /**
+     * Unbinds VAO
+     */
+    public void unbind(){
+        glBindVertexArray(0);
+    }
 }
 

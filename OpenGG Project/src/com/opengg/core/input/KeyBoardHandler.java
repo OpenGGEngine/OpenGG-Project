@@ -19,12 +19,16 @@ public class KeyBoardHandler extends GLFWKeyCallback{
 
 	@Override
 	public void invoke(long window, int key, int scancode, int action, int mods) {
+            try{
 		keys[key] = action != GLFW_RELEASE;
                 if(action == GLFW_RELEASE){
                     KeyboardEventHandler.keyReleased(key);
                 }else if(action == GLFW_PRESS){
                     KeyboardEventHandler.keyPressed(key);
                 }
+            }catch(ArrayIndexOutOfBoundsException e){
+                
+            }
                 
 	}
 	

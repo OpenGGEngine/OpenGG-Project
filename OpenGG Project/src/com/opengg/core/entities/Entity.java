@@ -52,16 +52,37 @@ public class Entity {
     public float mass;
     
     /* Physics*/
-    public Vector3f velocity = new Vector3f();
-    public Vector2f direction = new Vector2f();
+    public Vector3f velocity = new Vector3f(0,0,0);
+    public Vector2f direction = new Vector2f(0,0);
     private final Time time = new Time();
-    public Vector3f acceleration = new Vector3f();
-    public Vector3f lastAcceleration = new Vector3f();
+    public Vector3f acceleration = new Vector3f(0,0,0);
+    public Vector3f lastAcceleration = new Vector3f(0,0,0);
     public ForceManipulation forceCalculator;
     private float timeStep;
+    private float height = 5f;
+    private float width = 5f;
+    private float length = 5f;
+    /* Max - 1, Min - 0 */
+    public Vector3f[] boundingBox = new Vector3f[2];
+    /*
+    
+     *---x---* 1
+     | bottom|
+     z       |
+     |       |
+     *-------* 
+    
+     *---x---* 
+     |  top  |
+     z       |
+     |       |
+   0 *-------* 
+    
+    */
+    public OBJModel model;
 
     public Entity() {
-
+        
     }
 
     /**
@@ -71,11 +92,15 @@ public class Entity {
      * @param type Type of Entity
      */
     public Entity(OBJModel model, EntityType type){
+        forceCalculator = new ForceManipulation(new Vector3f(0,0,0), new Vector3f(0,0,0), this);
         setXYZ(0f, 0f, 0f);
         this.ground = true;
         this.volume = 60f;
         this.mass = 40f;
         setTags(type);
+        this.model = model;
+        
+        EntityFactory.EntityList.add(this);
     }
 
     /**
@@ -90,13 +115,15 @@ public class Entity {
      * @param type Type of entity
      */
     public Entity(float x, float y, float z, Vector3f f, float mass, float volume, EntityType type){
-
+        forceCalculator = new ForceManipulation(this);
         setXYZ(x, y, z);
         setForce(f);
         this.ground = (pos.y < 60);
         this.volume = volume;
         this.mass = mass;
         setTags(type);
+        
+        EntityFactory.EntityList.add(this);
     }
 
     /**
@@ -105,9 +132,8 @@ public class Entity {
      * @param v Entity to be copied
      */
     public Entity(Entity v){
-
+        forceCalculator = new ForceManipulation(v.forceCalculator.airResistance, v.forceCalculator.force, this);
         setXYZ(v.pos.x, v.pos.y, v.pos.z);
-        setForce(v.forceCalculator.force);
         setVelocity(v.velocity);
         this.ground = (pos.y < 60);
         this.volume = v.volume;
@@ -116,6 +142,8 @@ public class Entity {
         this.collision = v.collision;
         this.updatePosition = v.updatePosition;
         this.updateForce = v.updateForce;
+        
+        EntityFactory.EntityList.add(this);
     }
     
     /**
@@ -139,6 +167,10 @@ public class Entity {
     public boolean setTags(UpdateForce updateForce)
     {
         this.updateForce = updateForce;
+        if(this.updateForce == Realistic && this.updatePosition != Movable)
+        {
+            updatePosition = Movable;
+        }
         return true;
     }
     
@@ -217,6 +249,14 @@ public class Entity {
         this.pos.x = x;
         this.pos.y = y;
         this.pos.z = z;
+        
+        boundingBox[0].y = y + height;
+        boundingBox[0].x = x - width/2;
+        boundingBox[0].z = z + length/2;
+        
+        boundingBox[1].y = y;
+        boundingBox[1].x = x + width/2;
+        boundingBox[1].z = z - length/2;
     }
 
     /**
@@ -248,8 +288,14 @@ public class Entity {
         timeStep = time.getDeltaSec();
         lastAcceleration = acceleration;
         pos.x += velocity.x * timeStep + (0.5 * lastAcceleration.x * timeStep * timeStep);
-        pos.y += velocity.y * timeStep + (0.5 * lastAcceleration.x * timeStep * timeStep);
-        pos.z += velocity.z * timeStep + (0.5 * lastAcceleration.x * timeStep * timeStep);
+        pos.y += velocity.y * timeStep + (0.5 * lastAcceleration.y * timeStep * timeStep);
+        pos.z += velocity.z * timeStep + (0.5 * lastAcceleration.z * timeStep * timeStep);
+        for(Vector3f x: boundingBox)
+            x.x += velocity.x * timeStep + (0.5 * lastAcceleration.x * timeStep * timeStep);
+        for(Vector3f y: boundingBox)
+            y.y += velocity.y * timeStep + (0.5 * lastAcceleration.y * timeStep * timeStep);
+        for(Vector3f z: boundingBox)
+            z.z += velocity.z * timeStep + (0.5 * lastAcceleration.z * timeStep * timeStep);
         ground = (pos.y < 60);
         acceleration.x = forceCalculator.force.x / mass;
         acceleration.y = forceCalculator.force.y / mass;

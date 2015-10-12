@@ -39,13 +39,14 @@ public class GlobalThread implements Runnable{
         while(notDead){
             if(t == ThreadType.RENDER){
                 g.render();
+                
             }
             if(t == ThreadType.UPDATE){
                 g.update(1);
             }
-            if(t == ThreadType.PHYSICS){
-                MainLoop.process();
-            }
+//            if(t == ThreadType.PHYSICS){
+//                MainLoop.process();
+//            }
         }
     }
 

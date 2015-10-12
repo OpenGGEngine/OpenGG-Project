@@ -14,17 +14,26 @@ import com.opengg.core.entities.EntityFactory;
  */
 public class CollisionDetection extends EntityFactory{
     
-    public static int areColliding(Entity x, Entity y)
+    public static int areColliding(Entity collide, Entity collidee)
     {
         //Possible error checking
-        if(x == null || y == null)
+        if(collide == null || collidee == null)
         {
             return -1;
         }
         
+         if (collide.boundingBox[1].x < collidee.boundingBox[0].x || 
+             collide.boundingBox[1].y < collidee.boundingBox[0].y || 
+             collide.boundingBox[0].x > collidee.boundingBox[1].x || 
+             collide.boundingBox[0].y > collidee.boundingBox[1].y) 
+            {
+                return 0;
+            }
         
         
-        return 0;
+         
+         
+        return 1;
     }
     
 }
