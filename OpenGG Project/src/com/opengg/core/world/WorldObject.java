@@ -27,12 +27,13 @@ public class WorldObject {
         pos = new Vector3f(0,0,0);
         rot = new Vector3f(0,0,0);
         e = EntityFactory.generateEntity(Entity.EntityType.Static, pos.x, pos.y, pos.z, rot, 10, 2);
-
     }
     public WorldObject(Vector3f pos, Vector3f rot, Entity e){
         this.pos = pos;
         this.rot = rot;
         this.e = EntityFactory.generateEntity(e);
+        this.e.setXYZ(pos.x, pos.y, pos.z);
+        this.e.setForce(rot);
     }
     public WorldObject(Entity e){
         pos = new Vector3f(0,0,0);

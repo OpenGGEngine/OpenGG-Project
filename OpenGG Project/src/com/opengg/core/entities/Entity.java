@@ -291,17 +291,11 @@ public class Entity {
         pos.y += velocity.y * timeStep + (0.5 * lastAcceleration.y * timeStep * timeStep);
         pos.z += velocity.z * timeStep + (0.5 * lastAcceleration.z * timeStep * timeStep);
         for(Vector3f x: boundingBox)
-        {
             x.x += velocity.x * timeStep + (0.5 * lastAcceleration.x * timeStep * timeStep);
-        }
         for(Vector3f y: boundingBox)
-        {
             y.y += velocity.y * timeStep + (0.5 * lastAcceleration.y * timeStep * timeStep);
-        }
         for(Vector3f z: boundingBox)
-        {
             z.z += velocity.z * timeStep + (0.5 * lastAcceleration.z * timeStep * timeStep);
-        }
         ground = (pos.y < 60);
         acceleration.x = forceCalculator.force.x / mass;
         acceleration.y = forceCalculator.force.y / mass;
