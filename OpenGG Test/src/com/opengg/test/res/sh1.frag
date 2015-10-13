@@ -13,11 +13,11 @@ uniform sampler2D texImage;
 void main() {
 	
 	vec3 lightcol = vec3(1,1,1);
-	float lightpower = 300f;
+	float lightpower = 1000f;
 	
-	float lightdistance = 1.6;
+	float lightdistance = 2;
 	
-	float amb = 0.5;
+	float amb = 0.3;
 	
 	vec3 diffuse = texture2D(texImage, textureCoord).rgb;
 	

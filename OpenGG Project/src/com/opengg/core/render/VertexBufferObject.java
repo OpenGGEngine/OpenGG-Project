@@ -9,6 +9,7 @@ package com.opengg.core.render;
  *
  * @author 19coindreauj
  */
+import com.opengg.core.buffer.ObjectBuffers;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import static org.lwjgl.opengl.GL11.GL_VERTEX_ARRAY;
@@ -43,7 +44,8 @@ public class VertexBufferObject {
      */
     public void bind(int target) {
         glBindBuffer(target, id);
-        uploadData(GL_ARRAY_BUFFER, 10000000, GL_STATIC_DRAW);
+        uploadData(GL_ARRAY_BUFFER, 100000000, GL_STATIC_DRAW);
+        uploadData(GL_ARRAY_BUFFER, ObjectBuffers.createDefaultBufferData(100000000), GL_STATIC_DRAW);
     }
 
     /**

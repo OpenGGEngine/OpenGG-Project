@@ -7,8 +7,6 @@ import com.opengg.core.input.KeyboardEventHandler;
 import com.opengg.core.input.KeyboardListener;
 import com.opengg.core.io.FileStringLoader;
 import com.opengg.core.movement.MovementLoader;
-import com.opengg.core.objloader.parser.IMTLParser;
-import com.opengg.core.objloader.parser.MTLParser;
 import com.opengg.core.objloader.parser.OBJModel;
 import com.opengg.core.objloader.parser.OBJNormal;
 import com.opengg.core.objloader.parser.OBJParser;
@@ -27,11 +25,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.lwjgl.BufferUtils;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;
@@ -41,7 +37,6 @@ public class OpenGGTest implements KeyboardListener{
     // We need to strongly reference callback instances.
     static long window;
     Window win = new Window();
-    final IMTLParser mtlParser = new MTLParser();
     boolean draw = true;
     int vertAmount;
     int triangleAmount;
@@ -49,26 +44,18 @@ public class OpenGGTest implements KeyboardListener{
     private Shader vertexTex;
     private Shader fragmentTex;
     private int rotm;
-    private VertexBufferObject vbo2;
     
     {
         vertAmount = squares * 6;
         triangleAmount = vertAmount / 3;
     }
     
-    public float x,y,z;
     public float xrot;
-    public float rot1 = 0;
+    public float rot1=0;
     public float xm = 0, ym=0, zm=0;
-    
-    int normalbuffer;
     
     Vector3f rot = new Vector3f(0,0,0);
     Vector3f pos = new Vector3f(0,0,0);
-    
-    boolean rotated = false;
-    
-    boolean backwards = false;
     
     public static void main(String[] args) throws IOException {
         new OpenGGTest();
@@ -86,8 +73,6 @@ public class OpenGGTest implements KeyboardListener{
     private int uniView;
     private int uniModel;
     
-    List<OBJNormal> norm;
-    
     Texture t1 = new Texture();
     Texture t2 = new Texture();
     Texture blank = new Texture();
@@ -101,11 +86,6 @@ public class OpenGGTest implements KeyboardListener{
     
     OBJModel m;
     OBJModel m2;
-    
-    FloatBuffer awpb;
-    FloatBuffer normals;
-    FloatBuffer vertices;
-    FloatBuffer vertices2;
     
     public OpenGGTest() throws IOException{
         Window w = new Window();
@@ -126,15 +106,11 @@ public class OpenGGTest implements KeyboardListener{
             startFrame();
 
             update(1);
-            render(rot1);
+            render();
             endFrame(window);
         }
         exit();
-    }
-    
-    IntBuffer ind;
-    IntBuffer elements;
-    
+    }   
     int i = 1;
     
     FloatBuffer base;
@@ -156,17 +132,18 @@ public class OpenGGTest implements KeyboardListener{
         t1.useTexture();        
         AudioHandler.init((int)window);
         AudioHandler.setSoundBuffer(OpenGGTest.class.getResource("res/maw.wav"));
+        AudioHandler.shouldLoop(true);
         AudioHandler.play();
         try {
             URL path = OpenGGTest.class.getResource("res/awp3.obj");
-            URL path2 = OpenGGTest.class.getResource("res/flashbang.obj");
+            URL path2 = OpenGGTest.class.getResource("res/cessna.obj");
             m = new OBJParser().parse(path);
             m2 = new OBJParser().parse(path2);
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-         URL verts = OpenGGTest.class.getResource("res/sh1.vert");
-         URL frags = OpenGGTest.class.getResource("res/sh1.frag");
+        URL verts = OpenGGTest.class.getResource("res/sh1.vert");
+        URL frags = OpenGGTest.class.getResource("res/sh1.frag");
        
         base = ObjectBuffers.getSquare(1000,1000, -1000, -4, -1000, 1f);
         test = ObjectBuffers.genBuffer(m, 1f, 0.2f);
@@ -206,7 +183,7 @@ public class OpenGGTest implements KeyboardListener{
         program.setUniform(rotm, new Vector3f(0,0,0));
         
         lightpos = program.getUniformLocation("lightpos");
-        program.setUniform(lightpos, new Vector3f(-10,10,-10));
+        program.setUniform(lightpos, new Vector3f(-100,50,-10));
         
         float ratio = win.getRatio();
         
@@ -222,13 +199,6 @@ public class OpenGGTest implements KeyboardListener{
     
     
     private void specifyVertexAttributes(ShaderProgram programv, boolean textured) {
-        int buffersize;
-        if(textured){
-            buffersize = 8; 
-        }else{
-            buffersize = 6;
-        }
-        
         programv.use();
         int posAttrib = programv.getAttributeLocation("position");
         programv.enableVertexAttribute(posAttrib);
@@ -249,25 +219,14 @@ public class OpenGGTest implements KeyboardListener{
 
     }
     
-    public void exit() {
-        try{
-            
-            vertexShader.delete();
-            fragmentShader.delete();
-            program.delete();
-            AudioHandler.destroy();
-            vao.delete();
-            vbo.delete();
-            test3.destroy();
-            test4.destroy();
-            base2.destroy();
-        }catch(Exception e){
-            
-        }
-
+    public void exit() {   
+        program.delete();
+        AudioHandler.destroy();
+        vao.delete();
+        vbo.delete();
     }
     
-    public void render(double alpha) {
+    public void render() {
         vao.bind();
         rot = new Vector3f(0,-xrot,0);
         
@@ -278,19 +237,18 @@ public class OpenGGTest implements KeyboardListener{
         Matrix4f cameraM = Matrix4f.rotate(-xrot,0,1,0);
 
         program.setUniform(uniView, cameraM.multiply(cameraR));      
-        program.setUniform(uniModel, new Matrix4f());
 
         program.checkStatus();
         
-        test3.draw();
-        test4.draw();
+        program.setUniform(uniModel, Matrix4f.translate(30, 0, 0));
+        
+         test3.draw();
+        program.setUniform(uniModel, Matrix4f.translate(0, 0, 0));
+        test4.draw(); 
         base2.draw();
     }
     
     public void update(float delta) {       
-        x += xm;
-        y += ym;
-        z += zm;
         xrot += rot1*5;
     }
 

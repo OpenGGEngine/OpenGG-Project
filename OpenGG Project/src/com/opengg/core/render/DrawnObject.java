@@ -22,16 +22,12 @@ public class DrawnObject {
         offset = DrawnObjectHandler.getOffset();
         this.b = b;
         vbo = vbo2;
-        System.out.println(offset);
         vbo2.uploadSubData(GL_ARRAY_BUFFER, offset * 4 , b);
         DrawnObjectHandler.addToOffset(b.limit());
     }
     public void draw(){
+        System.out.println(offset);
         glDrawArrays(GL_TRIANGLES, (int)offset * 4 ,  b.limit());
         
-    }
-    public void destroy()
-    {
-
     }
 }

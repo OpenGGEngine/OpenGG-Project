@@ -48,5 +48,5 @@ void main() {
 	vec3 lightposCamera = ( view * vec4(lightpos,1)).xyz;
 	lightdir = lightposCamera + eyedir;
 	
-	norm = ( view * model * vec4(normal,0)).xyz;
+	norm = ( model * view *  vec4(normal,0)).xyz;
 };
