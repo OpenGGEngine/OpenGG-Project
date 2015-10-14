@@ -16,18 +16,20 @@ import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
  */
 public class DrawnObject {
     VertexBufferObject vbo;
-    long offset;
+    int offset;
     FloatBuffer b;
+    int limit;
     public DrawnObject(FloatBuffer b, VertexBufferObject vbo2){
+        limit = b.limit();
         offset = DrawnObjectHandler.getOffset();
         this.b = b;
         vbo = vbo2;
-        vbo2.uploadSubData(GL_ARRAY_BUFFER, offset * 4 , b);
-        DrawnObjectHandler.addToOffset(b.limit());
+        vbo.uploadSubData(GL_ARRAY_BUFFER, offset * 8, b);
+        System.out.println(limit);
+        DrawnObjectHandler.addToOffset(limit);
     }
     public void draw(){
-        System.out.println(offset);
-        glDrawArrays(GL_TRIANGLES, (int)offset * 4 ,  b.limit());
+            glDrawArrays(GL_TRIANGLES, offset * 8, limit);
         
     }
 }

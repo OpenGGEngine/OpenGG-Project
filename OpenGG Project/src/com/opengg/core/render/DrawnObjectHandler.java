@@ -10,11 +10,12 @@ package com.opengg.core.render;
  * @author Javier
  */
 public class DrawnObjectHandler {
-    static long currentOffset = 0;
-    public static long getOffset(){
+    static int currentOffset = 0;
+    public static int getOffset(){
         return currentOffset;
     }
     public static void addToOffset(long offset){
+        System.out.println(offset);
         currentOffset += offset;
     }
 }

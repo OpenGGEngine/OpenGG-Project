@@ -12,7 +12,6 @@ package com.opengg.core.render;
 import com.opengg.core.buffer.ObjectBuffers;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import static org.lwjgl.opengl.GL11.GL_VERTEX_ARRAY;
 
 import static org.lwjgl.opengl.GL15.*;
 

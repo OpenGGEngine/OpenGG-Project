@@ -9,6 +9,7 @@ package com.opengg.core.world;
 import com.opengg.core.Vector3f;
 import com.opengg.core.entities.Entity;
 import com.opengg.core.entities.EntityFactory;
+import com.opengg.core.render.DrawnObject;
 
 /**
  *
@@ -18,6 +19,7 @@ public class WorldObject {
     private Vector3f pos;
     private Vector3f rot;
     private Entity e;
+    private DrawnObject d;
     public WorldObject(Vector3f pos, Vector3f rot){
         this.pos = pos;
         this.rot = rot;

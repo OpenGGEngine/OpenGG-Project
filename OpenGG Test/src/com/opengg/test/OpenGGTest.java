@@ -8,7 +8,6 @@ import com.opengg.core.input.KeyboardListener;
 import com.opengg.core.io.FileStringLoader;
 import com.opengg.core.movement.MovementLoader;
 import com.opengg.core.objloader.parser.OBJModel;
-import com.opengg.core.objloader.parser.OBJNormal;
 import com.opengg.core.objloader.parser.OBJParser;
 import com.opengg.core.render.DrawnObject;
 import com.opengg.core.render.VertexArrayObject;
@@ -20,12 +19,13 @@ import com.opengg.core.util.ViewUtil;
 import com.opengg.core.window.*;
 import static com.opengg.core.window.RenderUtil.endFrame;
 import static com.opengg.core.window.RenderUtil.startFrame;
+import com.opengg.core.world.Terrain;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.FloatBuffer;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static org.lwjgl.glfw.GLFW.*;
@@ -61,7 +61,6 @@ public class OpenGGTest implements KeyboardListener{
         new OpenGGTest();
     }
     
-    int ebo;
     private VertexArrayObject vao;
     private VertexBufferObject vbo;
     
@@ -93,13 +92,11 @@ public class OpenGGTest implements KeyboardListener{
         KeyboardEventHandler.addToPool(this);
         
         try {
-            window = w.init(1280,960, "Test", DisplayMode.WINDOWED);
+            window = w.init(1280,1024, "Test", DisplayMode.WINDOWED);
         } catch (Exception ex) {
             Logger.getLogger(OpenGGTest.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        //e.enter();
-        float delta;
         setup();
         while(!win.shouldClose(window)){
             
@@ -111,7 +108,6 @@ public class OpenGGTest implements KeyboardListener{
         }
         exit();
     }   
-    int i = 1;
     
     FloatBuffer base;
     FloatBuffer test2;
@@ -120,16 +116,18 @@ public class OpenGGTest implements KeyboardListener{
     Matrix4f view;
     
     public void setup() throws FileNotFoundException, IOException{
-        MovementLoader.setup(window,60);
+        MovementLoader.setup(window,80);
         
         vao = new VertexArrayObject();
-        
         vao.bind();
+        
         vbo = new VertexBufferObject();
         vbo.bind(GL_ARRAY_BUFFER);
         
-        t1.loadTexture("C:/res/tex2.png");
-        t1.useTexture();        
+        t1.loadTexture("C:/res/h.jpg");
+        t2.loadTexture("C:/res/trump.png");
+        t2.useTexture();   
+        
         AudioHandler.init((int)window);
         AudioHandler.setSoundBuffer(OpenGGTest.class.getResource("res/maw.wav"));
         AudioHandler.shouldLoop(true);
@@ -137,20 +135,21 @@ public class OpenGGTest implements KeyboardListener{
         try {
             URL path = OpenGGTest.class.getResource("res/awp3.obj");
             URL path2 = OpenGGTest.class.getResource("res/cessna.obj");
-            m = new OBJParser().parse(path);
+           m = new OBJParser().parse(path);
             m2 = new OBJParser().parse(path2);
         } catch (IOException ex) {
             ex.printStackTrace();
         }
         URL verts = OpenGGTest.class.getResource("res/sh1.vert");
         URL frags = OpenGGTest.class.getResource("res/sh1.frag");
-       
-        base = ObjectBuffers.getSquare(1000,1000, -1000, -4, -1000, 1f);
+        InputStream s = OpenGGTest.class.getResource("res/h.jpg").openStream();
+        
         test = ObjectBuffers.genBuffer(m, 1f, 0.2f);
         test2 = ObjectBuffers.genBuffer(m2, 1f, 1f);
+        test4 = new DrawnObject(test2,vbo); 
         test3 = new DrawnObject(test,vbo);
-        test4 = new DrawnObject(test2,vbo);        
-        base2 = new DrawnObject(base,vbo);
+        Terrain base = new Terrain(0,0,t1);
+        base2 = new DrawnObject(base.generateTerrain(s),vbo);
 
         vertexTex= new Shader(GL_VERTEX_SHADER, FileStringLoader.loadStringSequence(URLDecoder.decode(verts.getFile(), "UTF-8"))); 
         fragmentTex = new Shader(GL_FRAGMENT_SHADER, FileStringLoader.loadStringSequence(URLDecoder.decode(frags.getFile(), "UTF-8"))); 
@@ -188,7 +187,7 @@ public class OpenGGTest implements KeyboardListener{
         float ratio = win.getRatio();
         
         program.use();
-        ViewUtil.setPerspective(90, ratio, 0.3f, 2000f, program);     
+        ViewUtil.setPerspective(80, ratio, 0.3f, 3000f, program);     
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -204,7 +203,6 @@ public class OpenGGTest implements KeyboardListener{
         programv.enableVertexAttribute(posAttrib);
         programv.pointVertexAttribute(posAttrib, 3, 12 * Float.BYTES, 0);
 
-        /* Specify Color Pointer */
         int colAttrib = programv.getAttributeLocation("color");
         programv.enableVertexAttribute(colAttrib);
         programv.pointVertexAttribute(colAttrib, 4, 12 * Float.BYTES, 3 * Float.BYTES);
@@ -227,25 +225,20 @@ public class OpenGGTest implements KeyboardListener{
     }
     
     public void render() {
-        vao.bind();
-        rot = new Vector3f(0,-xrot,0);
         
+        rot = new Vector3f(0,-xrot,0);      
         pos = MovementLoader.processMovement(pos, rot);
         
-        Matrix4f cameraR = Matrix4f.translate(pos.x,pos.y,pos.z);       
-        
+        Matrix4f cameraR = Matrix4f.translate(pos.x,pos.y,pos.z);               
         Matrix4f cameraM = Matrix4f.rotate(-xrot,0,1,0);
 
         program.setUniform(uniView, cameraM.multiply(cameraR));      
-
         program.checkStatus();
+        program.setUniform(uniModel, Matrix4f.translate(100, 0, 0));
         
-        program.setUniform(uniModel, Matrix4f.translate(30, 0, 0));
-        
-         test3.draw();
+        test3.draw();
         program.setUniform(uniModel, Matrix4f.translate(0, 0, 0));
         test4.draw(); 
-        base2.draw();
     }
     
     public void update(float delta) {       

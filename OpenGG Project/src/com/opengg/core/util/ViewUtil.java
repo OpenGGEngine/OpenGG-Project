@@ -20,4 +20,10 @@ public class ViewUtil {
         program.setUniform(uniProjection, projection);
         glUniformMatrix4fv(uniProjection, false, projection.getBuffer());
     }
+    public static void setOrtho(float left, float right, float bottom, float top, float near, float far, ShaderProgram program){
+        Matrix4f projection = Matrix4f.orthographic(left, right, bottom, top, near, far);
+        int uniProjection = program.getUniformLocation("projection");
+        program.setUniform(uniProjection, projection);
+        glUniformMatrix4fv(uniProjection, false, projection.getBuffer());
+    }
 }

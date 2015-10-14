@@ -29,7 +29,7 @@ public class Camera {
     public void use(){
         Matrix4f posm = Matrix4f.translate(pos.x, pos.y, pos.z);
         Matrix4f rotm = Matrix4f.rotate(rot.x,0,1,0);
-        s.setUniform(uniView, rotm.multiply(posm));  
+        s.setUniform(uniView, posm.multiply(rotm));  
     }
     public void setPos(Vector3f posi){
         pos = posi;
