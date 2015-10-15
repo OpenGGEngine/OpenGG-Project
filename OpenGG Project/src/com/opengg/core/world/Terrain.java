@@ -44,22 +44,43 @@ public class Terrain {
         image = ImageIO.read(heightmap);       
         int VERTEX_COUNT = image.getHeight();
         int count = VERTEX_COUNT * VERTEX_COUNT;
-        FloatBuffer elements = BufferUtils.createFloatBuffer(count*18);
+        FloatBuffer elements = BufferUtils.createFloatBuffer(count*18*3);
         
-        for (int i = 0; i < image.getWidth(); i++) {
-            for (int j = 0; j < image.getHeight(); j++) {
-                float x1 = (float) j / ((float) VERTEX_COUNT - 1) * SIZE;            
-                float y1 = getHeight(j, i, image) /100000;
-                float z1 = (float) i / ((float) VERTEX_COUNT - 1) * SIZE;
+        for (int i = 0; i < image.getWidth(); i=i+4) {
+            for (int j = 0; j < image.getHeight(); j=j+4) {
+                float x = (float) j / ((float) VERTEX_COUNT - 1) * SIZE;            
+                float y = getHeight(j, i, image) ;
+                float z = (float) (i+1) / ((float) VERTEX_COUNT - 1) * SIZE;
                 Vector3f normal = calculateNormal(i, j, image);
                 float xn = normal.x;
                 float yn = normal.y;
                 float zn = normal.z;
+                float x1 = (float) (j+1) / ((float) VERTEX_COUNT - 1) * SIZE;            
+                float y1 = getHeight(j+1, i+1, image) ;
+                float z1 = (float) (i+1) / ((float) VERTEX_COUNT - 1) * SIZE;
+                Vector3f normal2 = calculateNormal(i, j, image);
+                float xn1 = normal2.x;
+                float yn1 = normal2.y;
+                float zn1 = normal2.z;
+                float x2 = (float) (j+2) / ((float) VERTEX_COUNT - 1) * SIZE;            
+                float y2 = getHeight(j+2, i+2, image) ;
+                float z2 = (float) (i+2) / ((float) VERTEX_COUNT - 1) * SIZE;
+                 float x3 = (float) (j+3) / ((float) VERTEX_COUNT - 1) * SIZE;            
+                float y3 = getHeight(j+3, i+3, image) ;
+                float z3 = (float) (i+3) / ((float) VERTEX_COUNT - 1) * SIZE;
+                
                 float u = (float) j / ((float) VERTEX_COUNT - 1);
                 float v = (float) i / ((float) VERTEX_COUNT - 1);
+               
+                 elements.put(x).put(0).put(z).put(255).put(255).put(255).put(1).put(xn).put(yn).put(zn).put(u).put(v);
+                 elements.put(x1).put(0).put(z1).put(0).put(0).put(255).put(1).put(xn1).put(yn1).put(zn1).put(u).put(v);
+                 elements.put(x3).put(0).put(z3).put(255).put(255).put(255).put(1).put(xn).put(yn).put(zn).put(u).put(v);
+                 elements.put(x3).put(0).put(z3).put(255).put(255).put(255).put(1).put(xn).put(yn).put(zn).put(u).put(v);
+                 elements.put(x1).put(0).put(z1).put(0).put(0).put(255).put(1).put(xn1).put(yn1).put(zn1).put(u).put(v);
+                 elements.put(x2).put(0).put(z2).put(255).put(255).put(255).put(1).put(xn).put(yn).put(zn).put(u).put(v);
             }
         }
-
+       
         elements.flip();
         return elements;
     }
