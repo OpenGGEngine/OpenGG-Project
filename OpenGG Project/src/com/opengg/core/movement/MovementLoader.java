@@ -5,8 +5,8 @@ package com.opengg.core.movement;
 import java.util.logging.Logger;
 import org.lwjgl.glfw.GLFW;
 import com.opengg.core.Vector3f;
-import com.opengg.core.input.KeyBoardHandler;
-import com.opengg.core.input.MousePosHandler;
+import com.opengg.core.io.input.KeyBoardHandler;
+import com.opengg.core.io.input.MousePosHandler;
 import static org.lwjgl.glfw.GLFW.*;
 import org.lwjgl.glfw.GLFWKeyCallback;
 

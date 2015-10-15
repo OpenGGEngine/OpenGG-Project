@@ -9,7 +9,7 @@ package com.opengg.core.render;
  *
  * @author 19coindreauj
  */
-import com.opengg.core.buffer.ObjectBuffers;
+import com.opengg.core.render.buffer.ObjectBuffers;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 

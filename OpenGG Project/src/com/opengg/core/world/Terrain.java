@@ -7,7 +7,7 @@ package com.opengg.core.world;
 
 import com.opengg.core.Vector3f;
 import com.opengg.core.io.ImageProcessor;
-import com.opengg.core.texture.Texture;
+import com.opengg.core.render.texture.Texture;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
