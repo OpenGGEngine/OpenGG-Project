@@ -5,6 +5,7 @@
  */
 package com.opengg.core.render.buffer;
 
+import com.opengg.core.Vector3f;
 import com.opengg.core.io.objloader.parser.OBJFace;
 import com.opengg.core.io.objloader.parser.OBJModel;
 import java.nio.FloatBuffer;
@@ -106,6 +107,33 @@ public class ObjectBuffers {
         sq.put(x1).put(y).put(z2).put(1).put(0).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(1).put(1);
         
         sq.flip();
+        return sq;
+    }
+    public static FloatBuffer getSquare(float x1, float z1, float x2, float y1,float y2, float y3, float y4, float z2, float transparency){
+        FloatBuffer sq = BufferUtils.createFloatBuffer(6*12);
+        
+        sq.put(x1).put(y1).put(z1).put(1).put(0).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(1).put(0);
+        sq.put(x1).put(y2).put(z2).put(0).put(1).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(1).put(1);
+        sq.put(x2).put(y3).put(z1).put(0).put(0).put(1).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(0).put(0);
+        sq.put(x2).put(y3).put(z1).put(0).put(1).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(0).put(0);
+        sq.put(x2).put(y4).put(z2).put(0).put(0).put(1).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(0).put(1);
+        sq.put(x1).put(y2).put(z2).put(1).put(0).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(1).put(1);
+        
+        sq.flip();
+        return sq;
+    }
+    public static FloatBuffer getSquareTerrain(float x1, float z1, float x2, float z2, float y1,float y2, float y3, float y4, float transparency, float v1, float u1, float v2, float u2, Vector3f n1, Vector3f n2, Vector3f n3, Vector3f n4){
+        FloatBuffer sq = BufferUtils.createFloatBuffer(6*12);
+        
+        sq.put(x1).put(y1).put(z1).put(1).put(1).put(1).put(transparency).put(n1.x).put(n1.y).put(n1.z).put(v2).put(u1);
+        sq.put(x1).put(y2).put(z2).put(0).put(1).put(0).put(transparency).put(n1.x).put(0.1f).put(0.1f).put(v2).put(u2);
+        sq.put(x2).put(y3).put(z1).put(0).put(0).put(1).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(v1).put(u1);
+        sq.put(x2).put(y3).put(z1).put(0).put(1).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(v1).put(u1);
+        sq.put(x2).put(y4).put(z2).put(0).put(0).put(1).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(v1).put(u2);
+        sq.put(x1).put(y2).put(z2).put(1).put(0).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(v2).put(u2);
+        
+        sq.flip();
+        
         return sq;
     }
     public static FloatBuffer createDefaultBufferData(int size){

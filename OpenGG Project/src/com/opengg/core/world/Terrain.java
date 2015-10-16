@@ -7,11 +7,14 @@ package com.opengg.core.world;
 
 import com.opengg.core.Vector3f;
 import com.opengg.core.io.ImageProcessor;
+import com.opengg.core.render.buffer.ObjectBuffers;
 import com.opengg.core.render.texture.Texture;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.FloatBuffer;
+import java.util.ArrayList;
+import java.util.List;
 import javax.imageio.ImageIO;
 import org.lwjgl.BufferUtils;
 
@@ -27,7 +30,9 @@ public class Terrain {
     // private static int VERTEX_COUNT = 128;
     String heightmap;
     private float x, z;
-
+    
+    private List<FloatBuffer> buffers = new ArrayList<>();
+    
     private Texture texture;
 
     public Terrain(int gridx, int gridz, Texture tex) {
@@ -44,43 +49,44 @@ public class Terrain {
         image = ImageIO.read(heightmap);       
         int VERTEX_COUNT = image.getHeight();
         int count = VERTEX_COUNT * VERTEX_COUNT;
-        FloatBuffer elements = BufferUtils.createFloatBuffer(count*18*3);
-        
-        for (int i = 0; i < image.getWidth(); i=i+4) {
-            for (int j = 0; j < image.getHeight(); j=j+4) {
+        int i2 = 0;
+        for (int i = 0; i < image.getWidth(); i+=2) {
+            for (int j = 0; j < image.getHeight(); j+=2) {
+                
                 float x = (float) j / ((float) VERTEX_COUNT - 1) * SIZE;            
                 float y = getHeight(j, i, image) ;
-                float z = (float) (i+1) / ((float) VERTEX_COUNT - 1) * SIZE;
+                float z = (float) (i) / ((float) VERTEX_COUNT - 1) * SIZE;   
+                           
+                float y1 = getHeight(j+1, i, image) ;
+                
+                float x2 = (float) (j+1) / ((float) VERTEX_COUNT - 1) * SIZE;            
+                float y2 = getHeight(j+1, i+1, image) ;
+                float z2 = (float) (i+1) / ((float) VERTEX_COUNT - 1) * SIZE;
+                          
+                float y3 = getHeight(j, i+1, image) ;
+                
                 Vector3f normal = calculateNormal(i, j, image);
-                float xn = normal.x;
-                float yn = normal.y;
-                float zn = normal.z;
-                float x1 = (float) (j+1) / ((float) VERTEX_COUNT - 1) * SIZE;            
-                float y1 = getHeight(j+1, i+1, image) ;
-                float z1 = (float) (i+1) / ((float) VERTEX_COUNT - 1) * SIZE;
-                Vector3f normal2 = calculateNormal(i, j, image);
-                float xn1 = normal2.x;
-                float yn1 = normal2.y;
-                float zn1 = normal2.z;
-                float x2 = (float) (j+2) / ((float) VERTEX_COUNT - 1) * SIZE;            
-                float y2 = getHeight(j+2, i+2, image) ;
-                float z2 = (float) (i+2) / ((float) VERTEX_COUNT - 1) * SIZE;
-                 float x3 = (float) (j+3) / ((float) VERTEX_COUNT - 1) * SIZE;            
-                float y3 = getHeight(j+3, i+3, image) ;
-                float z3 = (float) (i+3) / ((float) VERTEX_COUNT - 1) * SIZE;
+
+                Vector3f normal2 = calculateNormal(i++, j, image);
+
+                Vector3f normal3 = calculateNormal(i, j++, image);
+
+                Vector3f normal4 = calculateNormal(i++, j++, image);
                 
                 float u = (float) j / ((float) VERTEX_COUNT - 1);
                 float v = (float) i / ((float) VERTEX_COUNT - 1);
-               
-                 elements.put(x).put(0).put(z).put(255).put(255).put(255).put(1).put(xn).put(yn).put(zn).put(u).put(v);
-                 elements.put(x1).put(0).put(z1).put(0).put(0).put(255).put(1).put(xn1).put(yn1).put(zn1).put(u).put(v);
-                 elements.put(x3).put(0).put(z3).put(255).put(255).put(255).put(1).put(xn).put(yn).put(zn).put(u).put(v);
-                 elements.put(x3).put(0).put(z3).put(255).put(255).put(255).put(1).put(xn).put(yn).put(zn).put(u).put(v);
-                 elements.put(x1).put(0).put(z1).put(0).put(0).put(255).put(1).put(xn1).put(yn1).put(zn1).put(u).put(v);
-                 elements.put(x2).put(0).put(z2).put(255).put(255).put(255).put(1).put(xn).put(yn).put(zn).put(u).put(v);
+                float u2 = (float) j++ / ((float) VERTEX_COUNT - 1);
+                float v2 = (float) i++ / ((float) VERTEX_COUNT - 1);
+                
+                buffers.add(ObjectBuffers.getSquareTerrain(x, z, x2, z2, y, y1, y2, y3, 1, v, u, v2, u2, normal, normal2, normal3, normal4));
+                i++;
             }
         }
-       
+        FloatBuffer elements = BufferUtils.createFloatBuffer(buffers.size()*1000);
+        for(FloatBuffer buffer:buffers){
+            elements.put(buffer);
+        }
+        
         elements.flip();
         return elements;
     }
