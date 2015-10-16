@@ -127,9 +127,9 @@ public class ObjectBuffers {
         
         sq.put(x1).put(y1).put(z1).put(1).put(1).put(1).put(transparency).put(n1.x).put(n1.y).put(n1.z).put(v2).put(u1);
         sq.put(x1).put(y2).put(z2).put(1).put(1).put(1).put(transparency).put(n2.x).put(n2.y).put(n2.z).put(v2).put(u2);
-        sq.put(x2).put(y3).put(z1).put(1).put(1).put(1).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(v1).put(u1);
-        sq.put(x2).put(y3).put(z1).put(1).put(1).put(1).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(v1).put(u1);
-        sq.put(x2).put(y4).put(z2).put(1).put(1).put(1).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(v1).put(u2);
+        sq.put(x2).put(y3).put(z1).put(1).put(1).put(1).put(transparency).put(n3.x).put(n3.y).put(n3.z).put(v1).put(u1);
+        sq.put(x2).put(y3).put(z1).put(1).put(1).put(1).put(transparency).put(n4.x).put(n4.y).put(n4.z).put(v1).put(u1);
+        sq.put(x2).put(y4).put(z2).put(1).put(1).put(1).put(transparency).put(n2.x).put(n2.y).put(n2.z).put(v1).put(u2);
         sq.put(x1).put(y2).put(z2).put(1).put(1).put(1).put(transparency).put(n2.x).put(n2.y).put(n2.z).put(v2).put(u2);
         
         sq.flip();
