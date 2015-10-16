@@ -15,7 +15,7 @@ public class DrawnObjectHandler {
         return currentOffset;
     }
     public static void addToOffset(long offset){
-        System.out.println(offset);
+
         currentOffset += offset;
     }
 }

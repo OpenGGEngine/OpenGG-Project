@@ -25,7 +25,6 @@ public class DrawnObject {
         this.b = b;
         vbo = vbo2;
         vbo.uploadSubData(GL_ARRAY_BUFFER, offset * 8, b);
-        System.out.println(limit);
         DrawnObjectHandler.addToOffset(limit);
     }
     public void draw(){
