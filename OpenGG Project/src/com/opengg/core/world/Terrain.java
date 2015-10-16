@@ -52,9 +52,9 @@ public class Terrain {
         for (int i = 0; i < image.getWidth(); i+=2) {
             for (int j = 0; j < image.getHeight(); j+=2) {
                 
-                float x = j;//(float) j / ((float) VERTEX_COUNT - 1) * SIZE;            
+                float x1 = j;//(float) j / ((float) VERTEX_COUNT - 1) * SIZE;            
                 float y = getHeight(j, i, image) ;
-                float z = i;//(float) (i) / ((float) VERTEX_COUNT - 1) * SIZE;   
+                float z1 = i;//(float) (i) / ((float) VERTEX_COUNT - 1) * SIZE;   
                            
                 float y1 = getHeight(j+1, i, image) ;
                 
