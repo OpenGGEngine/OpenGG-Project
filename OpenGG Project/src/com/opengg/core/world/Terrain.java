@@ -49,19 +49,18 @@ public class Terrain {
         image = ImageIO.read(heightmap);       
         int VERTEX_COUNT = image.getHeight();
         int count = VERTEX_COUNT * VERTEX_COUNT;
-        int i2 = 0;
         for (int i = 0; i < image.getWidth(); i+=2) {
             for (int j = 0; j < image.getHeight(); j+=2) {
                 
-                float x = (float) j / ((float) VERTEX_COUNT - 1) * SIZE;            
+                float x = j;//(float) j / ((float) VERTEX_COUNT - 1) * SIZE;            
                 float y = getHeight(j, i, image) ;
-                float z = (float) (i) / ((float) VERTEX_COUNT - 1) * SIZE;   
+                float z = i;//(float) (i) / ((float) VERTEX_COUNT - 1) * SIZE;   
                            
                 float y1 = getHeight(j+1, i, image) ;
                 
-                float x2 = (float) (j+1) / ((float) VERTEX_COUNT - 1) * SIZE;            
+                float x2 = j+1;//(float) (j+1) / ((float) VERTEX_COUNT - 1) * SIZE;            
                 float y2 = getHeight(j+1, i+1, image) ;
-                float z2 = (float) (i+1) / ((float) VERTEX_COUNT - 1) * SIZE;
+                float z2 = i+1;//(float) (i+1) / ((float) VERTEX_COUNT - 1) * SIZE;
                           
                 float y3 = getHeight(j, i+1, image) ;
                 
@@ -76,15 +75,18 @@ public class Terrain {
                 float u = (float) j / ((float) VERTEX_COUNT - 1);
                 float v = (float) i / ((float) VERTEX_COUNT - 1);
                 float u2 = (float) j++ / ((float) VERTEX_COUNT - 1);
-                float v2 = (float) i++ / ((float) VERTEX_COUNT - 1);
+                float v2 = (float) i++ / ((float) VERTEX_COUNT - 1);               
                 
                 buffers.add(ObjectBuffers.getSquareTerrain(x, z, x2, z2, y, y1, y2, y3, 1, v, u, v2, u2, normal, normal2, normal3, normal4));
-                i++;
             }
         }
-        FloatBuffer elements = BufferUtils.createFloatBuffer(buffers.size()*1000);
+        
+        FloatBuffer elements = BufferUtils.createFloatBuffer(buffers.size()*100);
         for(FloatBuffer buffer:buffers){
-            elements.put(buffer);
+            for(int i = 0; i < buffer.limit(); i++){
+                elements.put(buffer.get(i));
+            }
+            
         }
         
         elements.flip();
@@ -104,7 +106,8 @@ public class Terrain {
         height += MAX_PIXEL_COLOR / 2f;
         height /= MAX_PIXEL_COLOR / 2f;
         height *= MAX_PIXEL_COLOR;
-        return height;
+        return 0;
+        //return height;
     }
 
     private Vector3f calculateNormal(int x, int z, BufferedImage image) {
@@ -115,7 +118,7 @@ public class Terrain {
         
         Vector3f normal = new Vector3f(heightl - heightr, 2f, heightd - heightu);
         normal.normalize();
-        return normal;
-
+        //return normal;
+        return new Vector3f(0,1,0);
     }
 }
