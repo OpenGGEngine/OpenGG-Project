@@ -64,7 +64,7 @@ public class Terrain {
                 float y2 = getHeight(i+1, j+1, image) ;
                 float y3 = getHeight(i, j+1, image) ;
                 
-                System.out.println(i);
+                //System.out.println(i);
                 
                 Vector3f normal = calculateNormal(i, j, image);
 
@@ -100,11 +100,12 @@ public class Terrain {
             return 0;
         }
         float height = 0;
-       try{
-         height = image.getRGB(x, z);
-       }catch(Exception e){
-           height = 0;
-       }
+//       try{
+//         height = image.getRGB(x, z);
+//       }catch(Exception e){
+//           //e.printStackTrace();
+//           height = 0;
+//       }
         height += MAX_PIXEL_COLOR / 2f;
         height /= MAX_PIXEL_COLOR / 2f;
         height *= MAX_PIXEL_COLOR;
