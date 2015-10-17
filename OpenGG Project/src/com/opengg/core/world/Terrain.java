@@ -56,6 +56,7 @@ public class Terrain {
                // System.out.println(w+","+p);
                 int j = p;
                 int i = w;
+                
                 float x1 = i;//(float) j / ((float) VERTEX_COUNT - 1) * SIZE;   
                 //float x1 = (float) (i) / ((float) VERTEX_COUNT - 1) * SIZE; 
                float z1 = j;//(float) (i) / ((float) VERTEX_COUNT - 1) * SIZE;  
@@ -108,13 +109,17 @@ public class Terrain {
             return -100;
         }
         float height = 0;
-        try{
-            height = image.getRGB(x, z);
-        }catch(Exception e){
-            height = -100;
-        }
+      
+            if(x>1023){
+           x--;
+            }
+            if(z>1023){
+                z--;
+            }
+             height = image.getRGB(x, z);
+        
         return (height/399990)+100;
-       // return 0;
+     
     }
 
     private Vector3f calculateNormal(int x, int z, BufferedImage image) {
