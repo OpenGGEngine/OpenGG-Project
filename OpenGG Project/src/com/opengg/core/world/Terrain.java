@@ -9,6 +9,7 @@ import com.opengg.core.Vector3f;
 import com.opengg.core.io.ImageProcessor;
 import com.opengg.core.render.buffer.ObjectBuffers;
 import com.opengg.core.render.texture.Texture;
+import static com.opengg.core.util.GlobalUtil.print;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -49,23 +50,23 @@ public class Terrain {
         image = ImageIO.read(heightmap);       
         int VERTEX_COUNT = image.getHeight();
         int count = VERTEX_COUNT * VERTEX_COUNT;
-        System.out.println(image.getHeight());
-        System.out.println(image.getWidth());
-        for (int i = 0; i < image.getWidth(); i+=2) {
-            for (int j = 0; j < image.getHeight(); j+=2) {
-
+        for (int w = 0; w < image.getWidth(); w+=1) {
+            for (int p = 0; p < image.getHeight(); p+=1) {
+                int j = p;
+                int i = w;
                 float x1 = i;//(float) j / ((float) VERTEX_COUNT - 1) * SIZE;   
-                float z1 = j;//(float) (i) / ((float) VERTEX_COUNT - 1) * SIZE;   
-                float x2 = (i+1);//(float) (j+1) / ((float) VERTEX_COUNT - 1) * SIZE;                         
+                float z1 = j;//(float) (i) / ((float) VERTEX_COUNT - 1) * SIZE;  
+
+                float x2 = (i+1);//(float) (j+1) / ((float) VERTEX_COUNT - 1) * SIZE;    
                 float z2 = (j+1);//(float) (i+1) / ((float) VERTEX_COUNT - 1) * SIZE;
-                
-                float y = getHeight(i, j, image) ;           
+
+                float y = getHeight(i, j, image) ;    
                 float y1 = getHeight(i+1, j, image) ;
                 float y2 = getHeight(i+1, j+1, image) ;
+                j = p;
+                i = w;
                 float y3 = getHeight(i, j+1, image) ;
-                
-                //System.out.println(i);
-                
+
                 Vector3f normal = calculateNormal(i, j, image);
 
                 Vector3f normal2 = calculateNormal(i++, j, image);
@@ -79,7 +80,7 @@ public class Terrain {
                 float u2 = i+1;//(float) j++ / ((float) VERTEX_COUNT - 1);
                 float v2 = j+1;//(float) i++ / ((float) VERTEX_COUNT - 1);               
                 
-                buffers.add(ObjectBuffers.getSquareTerrain(x1, z1, x2, z2, y, y1, y2, y3, 1, v, u, v2, u2, normal, normal2, normal3, normal4));
+                buffers.add(ObjectBuffers.getSquareTerrain(x1, z1, x2, z2, y, y1, y2, y3, 1, u, v, u2, v2, normal, normal2, normal3, normal4));
             }
         }
         
@@ -97,20 +98,15 @@ public class Terrain {
 
     private float getHeight(int x, int z, BufferedImage image) {
         if (x < 0 || x > image.getWidth() || z < 0 || z > image.getHeight()) {
-            return 0;
+            return -100;
         }
         float height = 0;
-//       try{
-//         height = image.getRGB(x, z);
-//       }catch(Exception e){
-//           //e.printStackTrace();
-//           height = 0;
-//       }
-        height += MAX_PIXEL_COLOR / 2f;
-        height /= MAX_PIXEL_COLOR / 2f;
-        height *= MAX_PIXEL_COLOR;
-        return 0;
-        //return height;
+        try{
+            height = image.getRGB(x, z);
+        }catch(Exception e){
+            height = -100;
+        }
+        return (height/100000)+100;
     }
 
     private Vector3f calculateNormal(int x, int z, BufferedImage image) {
@@ -121,7 +117,7 @@ public class Terrain {
         
         Vector3f normal = new Vector3f(heightl - heightr, 2f, heightd - heightu);
         normal.normalize();
-        //return normal;
-        return new Vector3f(0,0.1f,0);
+        return normal;
+        //return new Vector3f(0,0.1f,0);
     }
 }

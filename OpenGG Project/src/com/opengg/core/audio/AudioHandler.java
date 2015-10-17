@@ -39,7 +39,7 @@ public class AudioHandler {
             throw new RuntimeException("OpenAL Context Creation failed");
         AL10.alEnable(window);
         AL10.alSourcei(source.get(0), AL10.AL_BUFFER,buffer.get(0) );
-        AL10.alSourcef(source.get(0), AL10.AL_PITCH,1.0f );
+        AL10.alSourcef(source.get(0), AL10.AL_PITCH,0.1f );
         AL10.alSourcef(source.get(0), AL10.AL_GAIN,0.5f);
         AL10.alSource3f (source.get(0), AL10.AL_POSITION, 0,0,0);
         AL10.alSource3f (source.get(0), AL10.AL_VELOCITY, 0,0,0);
