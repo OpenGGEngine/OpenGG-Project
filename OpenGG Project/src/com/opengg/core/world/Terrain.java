@@ -69,7 +69,7 @@ public class Terrain {
                
                 float y1 = getHeight(i+1, j, image) ;
                 float y2 = getHeight(i+1, j+1, image) ;
-                System.out.println(w+","+p +","+y);
+               // System.out.println(w+","+p +","+y);
                 j = p;
                 i = w;
                 float y3 = getHeight(i, j+1, image) ;
