@@ -50,19 +50,26 @@ public class Terrain {
         image = ImageIO.read(heightmap);       
         int VERTEX_COUNT = image.getHeight();
         int count = VERTEX_COUNT * VERTEX_COUNT;
-        for (int w = 0; w < image.getWidth(); w+=1) {
-            for (int p = 0; p < image.getHeight(); p+=1) {
+        for (int w = 0; w < image.getWidth(); w++) {
+            
+            for (int p = 0; p < image.getHeight(); p++) {
+               // System.out.println(w+","+p);
                 int j = p;
                 int i = w;
                 float x1 = i;//(float) j / ((float) VERTEX_COUNT - 1) * SIZE;   
-                float z1 = j;//(float) (i) / ((float) VERTEX_COUNT - 1) * SIZE;  
+                //float x1 = (float) (i) / ((float) VERTEX_COUNT - 1) * SIZE; 
+               float z1 = j;//(float) (i) / ((float) VERTEX_COUNT - 1) * SIZE;  
+                //float z1 = (float) j / ((float) VERTEX_COUNT - 1) * SIZE;   
 
                 float x2 = (i+1);//(float) (j+1) / ((float) VERTEX_COUNT - 1) * SIZE;    
+              // float x2 = (float) (i+1) / ((float) VERTEX_COUNT - 1) * SIZE; 
                 float z2 = (j+1);//(float) (i+1) / ((float) VERTEX_COUNT - 1) * SIZE;
 
                 float y = getHeight(i, j, image) ;    
+               
                 float y1 = getHeight(i+1, j, image) ;
                 float y2 = getHeight(i+1, j+1, image) ;
+                System.out.println(w+","+p +","+y);
                 j = p;
                 i = w;
                 float y3 = getHeight(i, j+1, image) ;
@@ -84,7 +91,7 @@ public class Terrain {
             }
         }
         
-        FloatBuffer elements = BufferUtils.createFloatBuffer(buffers.size()*100);
+        FloatBuffer elements = BufferUtils.createFloatBuffer(buffers.size()*80);
         for(FloatBuffer buffer:buffers){
             for(int k = 0; k < buffer.limit(); k++){
                 elements.put(buffer.get(k));
@@ -106,7 +113,8 @@ public class Terrain {
         }catch(Exception e){
             height = -100;
         }
-        return (height/100000)+100;
+        return (height/399990)+100;
+       // return 0;
     }
 
     private Vector3f calculateNormal(int x, int z, BufferedImage image) {
