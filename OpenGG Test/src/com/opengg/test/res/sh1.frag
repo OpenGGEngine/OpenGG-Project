@@ -15,9 +15,9 @@ void main() {
 	vec3 lightcol = vec3(1,1,1);
 	float lightpower = 1000f;
 	
-	float lightdistance = 2;
+	float lightdistance = 4;
 	
-	float amb = 0.3;
+	float amb = 0.2;
 	
 	vec3 diffuse = texture2D(texImage, textureCoord).rgb;
 	

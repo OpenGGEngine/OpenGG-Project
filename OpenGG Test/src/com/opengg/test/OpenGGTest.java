@@ -20,6 +20,7 @@ import static com.opengg.core.render.window.RenderUtil.endFrame;
 import static com.opengg.core.render.window.RenderUtil.startFrame;
 import com.opengg.core.render.window.ViewUtil;
 import com.opengg.core.render.window.Window;
+import com.opengg.core.world.Camera;
 import com.opengg.core.world.Terrain;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -70,7 +71,7 @@ public class OpenGGTest implements KeyboardListener{
     private ShaderProgram program;
 
     int lightpos;
-    private int uniView;
+    Camera c;
     private int uniModel;
     
     Texture t1 = new Texture();
@@ -89,7 +90,6 @@ public class OpenGGTest implements KeyboardListener{
     
     public OpenGGTest() throws IOException{
         Window w = new Window();
-        long window = 1;
         KeyboardEventHandler.addToPool(this);
         
         try {
@@ -125,7 +125,6 @@ public class OpenGGTest implements KeyboardListener{
         vbo = new VertexBufferObject();
         vbo.bind(GL_ARRAY_BUFFER);
         
-        t1.loadTexture("C:/res/h.jpg");
         t2.loadTexture("C:/res/trump.png");
         t2.useTexture();   
         
@@ -173,8 +172,7 @@ public class OpenGGTest implements KeyboardListener{
         program.use();
         uniModel = program.getUniformLocation("model");
         
-        uniView = program.getUniformLocation("view");
-        program.setUniform(uniView, view);
+        c = new Camera(program,pos,rot);
         
         int uniTex = program.getUniformLocation("texImage");
         program.setUniform(uniTex, 0);
@@ -183,7 +181,7 @@ public class OpenGGTest implements KeyboardListener{
         program.setUniform(rotm, new Vector3f(0,0,0));
         
         lightpos = program.getUniformLocation("lightpos");
-        program.setUniform(lightpos, new Vector3f(-100,50,-10));
+        program.setUniform(lightpos, new Vector3f(200,50,-10));
         
         float ratio = win.getRatio();
         
@@ -229,11 +227,11 @@ public class OpenGGTest implements KeyboardListener{
         
         rot = new Vector3f(0,-xrot,0);      
         pos = MovementLoader.processMovement(pos, rot);
-        
-        Matrix4f cameraR = Matrix4f.translate(pos.x,pos.y,pos.z);               
-        Matrix4f cameraM = Matrix4f.rotate(-xrot,0,1,0);
-
-        program.setUniform(uniView, cameraM.multiply(cameraR));      
+        rot = new Vector3f(-xrot,0,0);  
+        AudioHandler.setListenerPos(pos);
+        c.setPos(pos);
+        c.setRot(rot);
+        c.use();
         program.checkStatus();
         program.setUniform(uniModel, Matrix4f.translate(100, 0, 0));
         
