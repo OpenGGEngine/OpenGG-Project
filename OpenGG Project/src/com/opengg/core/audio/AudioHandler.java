@@ -5,6 +5,7 @@
  */
 package com.opengg.core.audio;
 
+import com.opengg.core.Vector3f;
 import java.net.URL;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -39,7 +40,7 @@ public class AudioHandler {
             throw new RuntimeException("OpenAL Context Creation failed");
         AL10.alEnable(window);
         AL10.alSourcei(source.get(0), AL10.AL_BUFFER,buffer.get(0) );
-        AL10.alSourcef(source.get(0), AL10.AL_PITCH,0.1f );
+        AL10.alSourcef(source.get(0), AL10.AL_PITCH,1f );
         AL10.alSourcef(source.get(0), AL10.AL_GAIN,0.5f);
         AL10.alSource3f (source.get(0), AL10.AL_POSITION, 0,0,0);
         AL10.alSource3f (source.get(0), AL10.AL_VELOCITY, 0,0,0);
@@ -47,7 +48,6 @@ public class AudioHandler {
         AL10.alListener3f(AL10.AL_POSITION,0,0,0);
         AL10.alListener3f(AL10.AL_VELOCITY,0,0,0);
         AL10.alListener3f(AL10.AL_ORIENTATION,0,0,0);
-
     }
     public static void setSoundBuffer(URL sound){
         AL10.alGenBuffers(buffer);
@@ -76,5 +76,8 @@ public class AudioHandler {
         }else{
             AL10.alSourcei(source.get(0), AL10.AL_LOOPING,  AL10.AL_FALSE  );
         }
+    }
+    public static void setListenerPos(Vector3f pos){
+        AL10.alListener3f(AL10.AL_POSITION,pos.x,pos.y,pos.z);
     }
 }

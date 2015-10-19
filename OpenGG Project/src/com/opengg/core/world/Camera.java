@@ -23,13 +23,12 @@ public class Camera {
         this.s = s;
         this.pos = pos;
         this.rot = rot;
-        int i = 1;
         uniView = s.getUniformLocation("view");
     }
     public void use(){
         Matrix4f posm = Matrix4f.translate(pos.x, pos.y, pos.z);
         Matrix4f rotm = Matrix4f.rotate(rot.x,0,1,0);
-        s.setUniform(uniView, posm.multiply(rotm));  
+        s.setUniform(uniView, rotm.multiply(posm));  
     }
     public void setPos(Vector3f posi){
         pos = posi;
