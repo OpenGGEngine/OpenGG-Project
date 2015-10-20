@@ -28,7 +28,10 @@ public class DrawnObject {
         DrawnObjectHandler.addToOffset(limit);
     }
     public void draw(){
-            glDrawArrays(GL_TRIANGLES, offset * 8, limit);
+            glDrawArrays(GL_TRIANGLES, offset * 8, limit/8);
         
+    }
+    public void removeBuffer(){
+        b = null;
     }
 }

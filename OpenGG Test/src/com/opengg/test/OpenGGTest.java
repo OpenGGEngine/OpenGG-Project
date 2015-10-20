@@ -146,11 +146,15 @@ public class OpenGGTest implements KeyboardListener{
         
         test = ObjectBuffers.genBuffer(m, 1f, 0.2f);
         test2 = ObjectBuffers.genBuffer(m2, 1f, 1f);
-        test4 = new DrawnObject(test2,vbo); 
         test3 = new DrawnObject(test,vbo);
+        test4 = new DrawnObject(test2,vbo); 
+        test2 = null;
+        test = null;
+        test3.removeBuffer();
+        test4.removeBuffer();
         Terrain base = new Terrain(0,0,t1);
         base2 = new DrawnObject(base.generateTerrain(s),vbo);
-
+        base.removeBuffer();
         vertexTex= new Shader(GL_VERTEX_SHADER, FileStringLoader.loadStringSequence(URLDecoder.decode(verts.getFile(), "UTF-8"))); 
         fragmentTex = new Shader(GL_FRAGMENT_SHADER, FileStringLoader.loadStringSequence(URLDecoder.decode(frags.getFile(), "UTF-8"))); 
 
@@ -233,11 +237,10 @@ public class OpenGGTest implements KeyboardListener{
         c.setRot(rot);
         c.use();
         program.checkStatus();
-        program.setUniform(uniModel, Matrix4f.translate(100, 0, 0));
-        
-        test3.draw();
         program.setUniform(uniModel, Matrix4f.translate(0, 0, 0));
-        test4.draw(); 
+        test3.draw();
+        //base2.draw();
+        //program.setUniform(uniModel, Matrix4f.translate(0, 0, 0)); 
     }
     
     public void update(float delta) {       

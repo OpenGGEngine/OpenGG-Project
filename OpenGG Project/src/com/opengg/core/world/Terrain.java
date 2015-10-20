@@ -80,7 +80,7 @@ public class Terrain {
             }
         }
         
-        FloatBuffer elements = BufferUtils.createFloatBuffer(buffers.size()*100);
+        FloatBuffer elements = BufferUtils.createFloatBuffer(buffers.size()*72);
         for(FloatBuffer buffer:buffers){
             for(int k = 0; k < buffer.limit(); k++){
                 elements.put(buffer.get(k));
@@ -111,9 +111,14 @@ public class Terrain {
         float heightd = getHeight(x, z - 1, image);
         float heightu = getHeight(x, z + 1, image);
         
-        Vector3f normal = new Vector3f(heightl - heightr, 2f, heightu - heightd);
+        Vector3f normal = new Vector3f(heightl - heightr, 1f, heightu - heightd);
         normal.normalize();
         return normal;
         //return new Vector3f(0,0.1f,0);
+    }
+    public void removeBuffer(){
+        for(FloatBuffer b:buffers){
+            b = null;
+        }
     }
 }
