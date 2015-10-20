@@ -13,6 +13,8 @@ import com.opengg.core.world.entities.EntityFactory;
  * @author ethachu19
  */
 public class CollisionDetection extends EntityFactory{
+    private final int MAX = 1;
+    private final int MIN = 0;
     
     public static int areColliding(Entity collide, Entity collidee)
     {
@@ -22,10 +24,12 @@ public class CollisionDetection extends EntityFactory{
             return -1;
         }
         
-         if (collide.boundingBox[1].x < collidee.boundingBox[0].x || 
-             collide.boundingBox[1].y < collidee.boundingBox[0].y || 
-             collide.boundingBox[0].x > collidee.boundingBox[1].x || 
-             collide.boundingBox[0].y > collidee.boundingBox[1].y) 
+         if (collide.boundingBox[MAX].x < collidee.boundingBox[MIN].x || 
+             collide.boundingBox[MAX].y < collidee.boundingBox[MIN].y ||
+             collide.boundingBox[MAX].z < collidee.boundingBox[MIN].z ||
+             collide.boundingBox[MIN].x > collidee.boundingBox[MAX].x || 
+             collide.boundingBox[MIN].y > collidee.boundingBox[MAX].y ||
+             collide.boundingBox[MIN].z > collidee.boundingBox[MAX].z) 
             {
                 return 0;
             }
