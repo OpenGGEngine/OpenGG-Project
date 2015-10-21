@@ -95,7 +95,19 @@ public class ObjectBuffers {
         elements.flip();
         return elements;
     }
-    
+    public static FloatBuffer getSquareUI(float x1, float x2, float y1, float y2, float z1 ,float transparency){
+        FloatBuffer sq = BufferUtils.createFloatBuffer(6*12);
+        
+        sq.put(x1).put(y1).put(z1).put(1).put(0).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(0).put(0);
+        sq.put(x1).put(y2).put(z1).put(0).put(1).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(0).put(1);
+        sq.put(x2).put(y1).put(z1).put(0).put(0).put(1).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(1).put(0);
+        sq.put(x2).put(y1).put(z1).put(0).put(1).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(1).put(0);
+        sq.put(x2).put(y2).put(z1).put(0).put(0).put(1).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(1).put(1);
+        sq.put(x1).put(y2).put(z1).put(1).put(0).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(0).put(1);
+        
+        sq.flip();
+        return sq;
+    }
     public static FloatBuffer getSquare(float x1, float z1, float x2, float y, float z2, float transparency){
         FloatBuffer sq = BufferUtils.createFloatBuffer(6*12);
         

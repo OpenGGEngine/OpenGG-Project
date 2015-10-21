@@ -5,6 +5,7 @@
  */
 package com.opengg.core.render.texture;
 
+import static com.opengg.core.util.GlobalUtil.print;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
@@ -12,40 +13,105 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import org.lwjgl.BufferUtils;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.*;
-import static org.lwjgl.opengl.GL30.glGenerateMipmap;
+import static org.lwjgl.opengl.GL14.GL_DEPTH_COMPONENT32;
+import static org.lwjgl.opengl.GL20.glDrawBuffers;
+import static org.lwjgl.opengl.GL30.*;
+import static org.lwjgl.opengl.GL32.glFramebufferTexture;
+
 
 /**
  *
  * @author Javier
  */
 public class Texture {
+    private int fb;
+    private int texture;
+    private int depthbuffer;
+    int width;
+    int height;
+    
     public Texture(){
         
     }
     
     public void useTexture(){
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+        glBindTexture(GL_TEXTURE_2D, texture);
     }
     
-    int width;
-    int height;
+    public void useDepthTexture(){
+        glBindTexture(GL_TEXTURE_2D, depthbuffer);       
+    }
     
     ByteBuffer buffer;
-    public int loadTexture(String path){
-        int texture = glGenTextures();
+    
+    public int setupTexToBuffer(){
+        fb = glGenFramebuffers();
+        glBindFramebuffer(GL_FRAMEBUFFER, fb);
+        glDrawBuffers(GL_COLOR_ATTACHMENT0);
+        
+        
+        texture = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, texture);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+        glTexImage2D(GL_TEXTURE_2D, 0,GL_RGB, 256, 256, 0,GL_RGB, 
+                GL_UNSIGNED_BYTE, (ByteBuffer) null);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glGenerateMipmap(GL_TEXTURE_2D);
+        glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texture, 0);
+        
 
+        depthbuffer = glGenTextures();
+        glBindTexture(GL_TEXTURE_2D, depthbuffer);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, 256, 256, 0, GL_DEPTH_COMPONENT, 
+                GL_FLOAT, (ByteBuffer) null);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        
+        glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthbuffer, 0);
+        
+
+        try{
+            if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE){
+                print("test");
+                throw new Exception("Buffer failed to generate!");
+                
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        } 
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);    
+        return texture;
+    }
+    
+    public void startTexRender(){
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glBindFramebuffer(GL_FRAMEBUFFER, fb);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glViewport(0,0,256,256); 
+    }
+    
+    public void endTexRender(){
+        glFinish();
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glViewport(0,0,1280,1024);
+    }
+    
+    public int loadTexture(String path){
+        
+        texture = glGenTextures();
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glGenerateMipmap(GL_TEXTURE_2D);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        
+        
         InputStream in;
         try {
             in = new FileInputStream(path);
@@ -83,6 +149,8 @@ public class Texture {
 
             /* Do not forget to flip the buffer! */
             buffer.flip();
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+            glBindTexture(GL_TEXTURE_2D, 0);
             
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Texture.class.getName()).severe("File not found!");
@@ -95,3 +163,4 @@ public class Texture {
         return buffer;
     }
 }
+

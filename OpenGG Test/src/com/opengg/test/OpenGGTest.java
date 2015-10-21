@@ -40,18 +40,11 @@ public class OpenGGTest implements KeyboardListener{
     static long window;
     Window win = new Window();
     boolean draw = true;
-    int vertAmount;
-    int triangleAmount;
-    int squares = 4;
     private Shader vertexTex;
     private Shader fragmentTex;
     private int rotm;
-    
-    {
-        vertAmount = squares * 6;
-        triangleAmount = vertAmount / 3;
-    }
-    
+    private float ratio;
+
     public float xrot;
     public float rot1=0;
     public float xm = 0, ym=0, zm=0;
@@ -81,6 +74,7 @@ public class OpenGGTest implements KeyboardListener{
     
     DrawnObject test3;
     DrawnObject test4;
+    DrawnObject test5;
     DrawnObject base2;
     
     float speed = 0.2f;
@@ -125,6 +119,7 @@ public class OpenGGTest implements KeyboardListener{
         vbo = new VertexBufferObject();
         vbo.bind(GL_ARRAY_BUFFER);
         
+        t1.setupTexToBuffer();
         t2.loadTexture("C:/res/trump.png");
         t2.useTexture();   
         
@@ -134,7 +129,7 @@ public class OpenGGTest implements KeyboardListener{
         AudioHandler.play();
         try {
             URL path = OpenGGTest.class.getResource("res/awp3.obj");
-            URL path2 = OpenGGTest.class.getResource("res/cessna.obj");
+            URL path2 = OpenGGTest.class.getResource("res/flashbang.obj");
             m = new OBJParser().parse(path);
             m2 = new OBJParser().parse(path2);
         } catch (IOException ex) {
@@ -142,14 +137,14 @@ public class OpenGGTest implements KeyboardListener{
         }
         URL verts = OpenGGTest.class.getResource("res/sh1.vert");
         URL frags = OpenGGTest.class.getResource("res/sh1.frag");
-        InputStream s = OpenGGTest.class.getResource("res/h.jpg").openStream();
+        InputStream s = OpenGGTest.class.getResource("res/trump.png").openStream();
         
         test = ObjectBuffers.genBuffer(m, 1f, 0.2f);
         test2 = ObjectBuffers.genBuffer(m2, 1f, 1f);
         test3 = new DrawnObject(test,vbo);
         test4 = new DrawnObject(test2,vbo); 
-        test2 = null;
-        test = null;
+        test2 = ObjectBuffers.getSquareUI(1, 2, 1, 2, -1, 0.8f);
+        test5 = new DrawnObject(test2,vbo);
         test3.removeBuffer();
         test4.removeBuffer();
         Terrain base = new Terrain(0,0,t1);
@@ -162,12 +157,10 @@ public class OpenGGTest implements KeyboardListener{
         program = new ShaderProgram();
         program.attachShader(vertexTex);   
         program.attachShader(fragmentTex);  
-        program.bindFragmentDataLocation(0, "fragColor");
         program.link();
         program.use();
         program.checkStatus();
   
-        //specifyVertexAttributes(program2, false);
         specifyVertexAttributes(program, true);
 
         /* Set shader variables */
@@ -185,7 +178,7 @@ public class OpenGGTest implements KeyboardListener{
         lightpos = program.getUniformLocation("lightpos");
         program.setUniform(lightpos, new Vector3f(200,50,-10));
         
-        float ratio = win.getRatio();
+        ratio = win.getRatio();
         
         program.use();
         ViewUtil.setPerspective(80, ratio, 0.3f, 3000f, program);     
@@ -195,6 +188,11 @@ public class OpenGGTest implements KeyboardListener{
 
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
+        
+        glEnable(GL_TEXTURE_2D);  
+        
+//        glEnable(GL_CULL_FACE);
+//        glCullFace(GL_BACK);
     }
     
     
@@ -226,18 +224,37 @@ public class OpenGGTest implements KeyboardListener{
     }
     
     public void render() {
-        
         rot = new Vector3f(0,-xrot,0);      
         pos = MovementLoader.processMovement(pos, rot);
         rot = new Vector3f(-xrot,0,0);  
-        AudioHandler.setListenerPos(pos);
         c.setPos(pos);
         c.setRot(rot);
         c.use();
         program.checkStatus();
         program.setUniform(uniModel, Matrix4f.translate(0, 0, 0));
+        program.setUniform(lightpos, new Vector3f(200,50,-10));
+        ViewUtil.setPerspective(90, 1, 0.5f, 2000f, program); 
+        
+        t1.startTexRender();
+        t2.useTexture();
         test3.draw();
         test4.draw();
+        base2.draw();
+        t1.endTexRender();
+                
+        ViewUtil.setPerspective(90, ratio, 0.3f, 2000f, program);  
+        test3.draw();
+        test4.draw();
+        base2.draw();
+        
+        ViewUtil.setOrtho(-3, 3, -3, 3, 0.2f, 100, program);
+        program.setUniform(lightpos, new Vector3f(0,50,0));
+        c.setPos(new Vector3f(0,0,0));
+        c.setRot(new Vector3f(0,0,0));
+        c.use();
+        //t1.useDepthTexture();
+        
+        test5.draw();
     }
     
     public void update(float delta) {       

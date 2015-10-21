@@ -5,23 +5,15 @@
  */
 package com.opengg.core.render;
 
-import com.opengg.core.render.buffer.ObjectBuffers;
-import static com.opengg.core.util.GlobalUtil.print;
-import static com.opengg.core.util.GlobalUtil.print;
-import static com.opengg.core.util.GlobalUtil.print;
-import static com.opengg.core.util.GlobalUtil.print;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import org.lwjgl.BufferUtils;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
-import static org.lwjgl.opengl.GL11.glDrawArrays;
 import static org.lwjgl.opengl.GL11.glDrawElements;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
-import static org.lwjgl.opengl.GL15.glBufferData;
-import static org.lwjgl.opengl.GL15.glBufferData;
 import static org.lwjgl.opengl.GL15.glBufferData;
 
 /**

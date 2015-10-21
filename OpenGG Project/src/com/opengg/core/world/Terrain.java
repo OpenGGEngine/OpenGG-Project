@@ -9,7 +9,6 @@ import com.opengg.core.Vector3f;
 import com.opengg.core.io.ImageProcessor;
 import com.opengg.core.render.buffer.ObjectBuffers;
 import com.opengg.core.render.texture.Texture;
-import static com.opengg.core.util.GlobalUtil.print;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -71,10 +70,10 @@ public class Terrain {
 
                 Vector3f normal4 = calculateNormal(i, j++, image);
                 
-                float u = (i)/VERTEX_COUNT-1;
-                float v = (j)/VERTEX_COUNT-1;
-                float u2 = (i+1)/VERTEX_COUNT-1;
-                float v2 = (j+1)/VERTEX_COUNT-1;             
+                float u = (i)/VERTEX_COUNT;
+                float v = (image.getWidth()-j)/VERTEX_COUNT;
+                float u2 = ((i+1))/VERTEX_COUNT;
+                float v2 = (image.getWidth()-(j+1))/VERTEX_COUNT;             
                 
                 buffers.add(ObjectBuffers.getSquareTerrain(x1, z1, x2, z2, y, y1, y2, y3, 1, u, v, u2, v2, normal, normal2, normal3, normal4));
             }
@@ -93,18 +92,20 @@ public class Terrain {
     }
 
     private float getHeight(int x, int z, BufferedImage image) {
+        float height = 0;
         if (x < 0 || x > image.getWidth() || z < 0 || z > image.getHeight()) {
             return 0;
         }
-        float height = 0;
-       if(x == image.getWidth()){
-           x--;
-       }
-       if(z == image.getHeight()){
-           z--;
-       }
+        try{
             height = image.getRGB(x, z);
-       
+        }catch(Exception e){
+            if(x == image.getWidth()){
+                x--;
+            }
+            if(z == image.getHeight()){
+                z--;
+            }
+        }
         return (float) (((height/100000)*(0.001*size)));
     }
 
@@ -124,4 +125,5 @@ public class Terrain {
             b = null;
         }
     }
+    
 }

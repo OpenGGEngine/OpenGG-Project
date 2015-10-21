@@ -142,8 +142,8 @@ public class Window {
             return true;
         }
     }
-    public void update(){
-     glClearColor(0.0f, 0.0f, 1.0f, 0.0f);
+    public void setColor(float r, float g, float b){
+     glClearColor(r/255, b/255, g/255, 0);
     }
     public Vector2f getResolution(){
         return new Vector2f(WIDTH, HEIGHT);

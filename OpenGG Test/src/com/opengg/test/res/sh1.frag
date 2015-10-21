@@ -1,4 +1,6 @@
 #version 330 core
+layout(location = 0) out vec4 color;
+layout(location = 1) out vec3 color2;
 
 in vec4 vertexColor;
 in vec2 textureCoord;
@@ -50,8 +52,7 @@ void main() {
 		diffuse * lightcol * lightpower * cosTheta / ((distance*distance)/lightdistance) +
 		// Specular : reflective highlight, like a mirror
 		specular * lightcol * lightpower * pow(cosAlpha,5) / ((distance*distance)/lightdistance)), vertexColor.a);
-		
-		
+	color = fragColor;
 };
 
 
