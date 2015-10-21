@@ -238,7 +238,6 @@ public class OpenGGTest implements KeyboardListener{
         program.setUniform(uniModel, Matrix4f.translate(0, 0, 0));
         test3.draw();
         test4.draw();
-        base2.draw();
     }
     
     public void update(float delta) {       
