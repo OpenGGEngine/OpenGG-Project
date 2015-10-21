@@ -97,11 +97,14 @@ public class Terrain {
             return 0;
         }
         float height = 0;
-        try{
+       if(x == image.getWidth()){
+           x--;
+       }
+       if(z == image.getHeight()){
+           z--;
+       }
             height = image.getRGB(x, z);
-        }catch(Exception e){
-            return 0;
-        }
+       
         return (float) (((height/100000)*(0.001*size)));
     }
 
