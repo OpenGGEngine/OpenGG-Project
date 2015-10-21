@@ -135,7 +135,7 @@ public class OpenGGTest implements KeyboardListener{
         try {
             URL path = OpenGGTest.class.getResource("res/awp3.obj");
             URL path2 = OpenGGTest.class.getResource("res/cessna.obj");
-           m = new OBJParser().parse(path);
+            m = new OBJParser().parse(path);
             m2 = new OBJParser().parse(path2);
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -171,8 +171,6 @@ public class OpenGGTest implements KeyboardListener{
         specifyVertexAttributes(program, true);
 
         /* Set shader variables */
-        view = new Matrix4f();
-        
         program.use();
         uniModel = program.getUniformLocation("model");
         
@@ -239,8 +237,8 @@ public class OpenGGTest implements KeyboardListener{
         program.checkStatus();
         program.setUniform(uniModel, Matrix4f.translate(0, 0, 0));
         test3.draw();
-        //base2.draw();
-        //program.setUniform(uniModel, Matrix4f.translate(0, 0, 0)); 
+        test4.draw();
+        base2.draw();
     }
     
     public void update(float delta) {       

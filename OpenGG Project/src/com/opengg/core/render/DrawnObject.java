@@ -5,10 +5,24 @@
  */
 package com.opengg.core.render;
 
+import com.opengg.core.render.buffer.ObjectBuffers;
+import static com.opengg.core.util.GlobalUtil.print;
+import static com.opengg.core.util.GlobalUtil.print;
+import static com.opengg.core.util.GlobalUtil.print;
+import static com.opengg.core.util.GlobalUtil.print;
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+import org.lwjgl.BufferUtils;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
+import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
 import static org.lwjgl.opengl.GL11.glDrawArrays;
+import static org.lwjgl.opengl.GL11.glDrawElements;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
+import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
+import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
+import static org.lwjgl.opengl.GL15.glBufferData;
+import static org.lwjgl.opengl.GL15.glBufferData;
+import static org.lwjgl.opengl.GL15.glBufferData;
 
 /**
  *
@@ -16,19 +30,58 @@ import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
  */
 public class DrawnObject {
     VertexBufferObject vbo;
-    int offset;
+    long offset;
     FloatBuffer b;
+    IntBuffer ind;
     int limit;
+    int vertLimit;
+    long vertOffset;
+    
+    static{
+        DrawnObjectHandler.setup();
+    }
+    
     public DrawnObject(FloatBuffer b, VertexBufferObject vbo2){
         limit = b.limit();
         offset = DrawnObjectHandler.getOffset();
+        vertLimit = limit/12;
+        vertOffset = offset/12;
+        
+        ind = BufferUtils.createIntBuffer(vertLimit);
+        for(long i = vertOffset; i < vertLimit + vertOffset; i++){
+            ind.put((int) i);
+        }
+        ind.flip();
+        
         this.b = b;
         vbo = vbo2;
-        vbo.uploadSubData(GL_ARRAY_BUFFER, offset * 8, b);
+        vbo.uploadSubData(GL_ARRAY_BUFFER, offset*4, b);
+        DrawnObjectHandler.addToOffset(limit);
+    }
+    
+    
+    public DrawnObject(FloatBuffer b, VertexBufferObject vbo2, IntBuffer index){
+        ind = BufferUtils.createIntBuffer(vertLimit);
+        limit = b.limit();
+        offset = DrawnObjectHandler.getOffset();
+        vertLimit = limit/12;
+        vertOffset = offset/12;
+        
+        for(int i = 0; i < index.limit(); i++){
+            ind.put((int) (index.get(i)+vertOffset));
+        }
+        ind.flip();
+        
+        this.b = b;
+        vbo = vbo2;
+        vbo.uploadSubData(GL_ARRAY_BUFFER, offset*4, b);
         DrawnObjectHandler.addToOffset(limit);
     }
     public void draw(){
-            glDrawArrays(GL_TRIANGLES, offset * 8, limit/8);
+
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, ind, GL_STATIC_DRAW);
+        glDrawElements(GL_TRIANGLES, ind.limit(), GL_UNSIGNED_INT, 0);
+
         
     }
     public void removeBuffer(){

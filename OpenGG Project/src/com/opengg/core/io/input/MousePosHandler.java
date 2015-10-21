@@ -20,7 +20,6 @@ public class MousePosHandler extends GLFWCursorPosCallback{
     public void invoke(long window, double xpos, double ypos) {
         x = xpos;
         y = ypos;
-        System.out.println(x);
     }  
     
     public static double getX(long w){

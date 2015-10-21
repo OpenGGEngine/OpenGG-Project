@@ -13,8 +13,8 @@ import com.opengg.core.world.entities.EntityFactory;
  * @author ethachu19
  */
 public class CollisionDetection extends EntityFactory{
-    private final int MAX = 1;
-    private final int MIN = 0;
+    private static final int MAX = 1;
+    private static final int MIN = 0;
     
     public static int areColliding(Entity collide, Entity collidee)
     {
