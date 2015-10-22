@@ -31,22 +31,15 @@ void main() {
 	float yrotm = rot.y;
 	
 	lightposition = lightpos;
-	
-	mat4 rotX = mat4(1f,0,0,0,0,cos(xrotm),-sin(xrotm),0,0,sin(xrotm),cos(xrotm),0,0,0,0,1f);
-	mat4 rotY = mat4(cos(yrotm),0,sin(yrotm),0,0,1,0,0,-sin(yrotm),0,cos(yrotm),0,0,0,0,1);
-	mat4 rotZ = mat4(cos(zrotm), -sin(zrotm),0,0,sin(zrotm),cos(zrotm),0,0,0,0,1,0,0,0,0,1);
-	mat4 finRotPosMatrix = rotZ*rotY*rotX;
-	vec3 finRotPos = vec3(0,0,0);
-	//finRotPos = finRotPos * finRotPosMatrix;
 
-	gl_Position = mvp * (finRotPosMatrix*vec4(position, 1.0));
-	pos = (finRotPosMatrix*vec4(position, 1.0));
+	gl_Position = mvp * vec4(position, 1.0);
+	pos = vec4(position, 1.0);
 	
-	vec3 posCameraspace = ( view * model * vec4(finRotPosMatrix*vec4(position, 1.0))).xyz;
+	vec3 posCameraspace = ( view * model * vec4(position, 1.0)).xyz;
 	eyedir = vec3(0,0,0) - posCameraspace;
 	
 	vec3 lightposCamera = ( view * vec4(lightpos,1)).xyz;
 	lightdir = lightposCamera + eyedir;
 	
-	norm = ( view * model * vec4(normal,0)).xyz;
+	norm = ( model * view *  vec4(normal,0)).xyz;
 };

@@ -1,4 +1,6 @@
 #version 330 core
+layout(location = 0) out vec4 color;
+layout(location = 1) out vec3 color2;
 
 in vec4 vertexColor;
 in vec2 textureCoord;
@@ -13,11 +15,11 @@ uniform sampler2D texImage;
 void main() {
 	
 	vec3 lightcol = vec3(1,1,1);
-	float lightpower = 300f;
+	float lightpower = 1000f;
 	
-	float lightdistance = 1.6;
+	float lightdistance = 4;
 	
-	float amb = 0.5;
+	float amb = 0.2;
 	
 	vec3 diffuse = texture2D(texImage, textureCoord).rgb;
 	
@@ -50,8 +52,7 @@ void main() {
 		diffuse * lightcol * lightpower * cosTheta / ((distance*distance)/lightdistance) +
 		// Specular : reflective highlight, like a mirror
 		specular * lightcol * lightpower * pow(cosAlpha,5) / ((distance*distance)/lightdistance)), vertexColor.a);
-		
-		
+	color = fragColor;
 };
 
 

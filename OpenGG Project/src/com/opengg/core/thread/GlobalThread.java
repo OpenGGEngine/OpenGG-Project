@@ -6,7 +6,7 @@
 
 package com.opengg.core.thread;
 
-import com.opengg.core.physics.MainLoop;
+import com.opengg.core.world.physics.MainLoop;
 
 /**
  *

@@ -187,7 +187,6 @@ public class Matrix4f {
         Matrix4f perspective = new Matrix4f();
 
         float f = (float) (1f / Math.tan(Math.toRadians(fovy) / 2f));
-
         perspective.m00 = f / aspect;
         perspective.m11 = f;
         perspective.m22 = (far + near) / (near - far);

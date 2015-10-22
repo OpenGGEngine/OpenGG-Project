@@ -8,7 +8,7 @@ package com.opengg.core.world;
 
 import com.opengg.core.Matrix4f;
 import com.opengg.core.Vector3f;
-import com.opengg.core.shader.ShaderProgram;
+import com.opengg.core.render.shader.ShaderProgram;
 
 /**
  *
@@ -23,7 +23,6 @@ public class Camera {
         this.s = s;
         this.pos = pos;
         this.rot = rot;
-        int i = 1;
         uniView = s.getUniformLocation("view");
     }
     public void use(){
