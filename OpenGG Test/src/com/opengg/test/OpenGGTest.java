@@ -123,10 +123,10 @@ public class OpenGGTest implements KeyboardListener{
         t2.loadTexture("C:/res/trump.png");
         t2.useTexture();   
         
-        AudioHandler.init((int)window);
-        AudioHandler.setSoundBuffer(OpenGGTest.class.getResource("res/maw.wav"));
-        AudioHandler.shouldLoop(true);
-        AudioHandler.play();
+//        AudioHandler.init(1);
+//        AudioHandler.setSoundBuffer(OpenGGTest.class.getResource("res/maw.wav"));
+//        AudioHandler.shouldLoop(true);
+//        AudioHandler.play();
         try {
             URL path = OpenGGTest.class.getResource("res/awp3.obj");
             URL path2 = OpenGGTest.class.getResource("res/flashbang.obj");
@@ -143,7 +143,7 @@ public class OpenGGTest implements KeyboardListener{
         test2 = ObjectBuffers.genBuffer(m2, 1f, 1f);
         test3 = new DrawnObject(test,vbo);
         test4 = new DrawnObject(test2,vbo); 
-        test2 = ObjectBuffers.getSquareUI(1, 2, 1, 2, -1, 0.8f);
+        test2 = ObjectBuffers.getSquareUI(1, 3, 1, 3, -1, 1f);
         test5 = new DrawnObject(test2,vbo);
         test3.removeBuffer();
         test4.removeBuffer();
@@ -218,7 +218,7 @@ public class OpenGGTest implements KeyboardListener{
     
     public void exit() {   
         program.delete();
-        AudioHandler.destroy();
+        //AudioHandler.destroy();
         vao.delete();
         vbo.delete();
     }
@@ -227,9 +227,7 @@ public class OpenGGTest implements KeyboardListener{
         rot = new Vector3f(0,-xrot,0);      
         pos = MovementLoader.processMovement(pos, rot);
         rot = new Vector3f(-xrot,0,0);  
-        c.setPos(pos);
-        c.setRot(rot);
-        c.use();
+        
         program.checkStatus();
         program.setUniform(uniModel, Matrix4f.translate(0, 0, 0));
         program.setUniform(lightpos, new Vector3f(200,50,-10));
@@ -242,18 +240,21 @@ public class OpenGGTest implements KeyboardListener{
         base2.draw();
         t1.endTexRender();
                 
+        c.setPos(pos);
+        c.setRot(rot);
+        c.use();
+        
         ViewUtil.setPerspective(90, ratio, 0.3f, 2000f, program);  
         test3.draw();
         test4.draw();
         base2.draw();
         
-        ViewUtil.setOrtho(-3, 3, -3, 3, 0.2f, 100, program);
+        ViewUtil.setOrtho(-3, 3, -3, 3, 0.2f, 5, program);
         program.setUniform(lightpos, new Vector3f(0,50,0));
         c.setPos(new Vector3f(0,0,0));
         c.setRot(new Vector3f(0,0,0));
         c.use();
-        //t1.useDepthTexture();
-        
+        t1.useTexture();
         test5.draw();
     }
     
