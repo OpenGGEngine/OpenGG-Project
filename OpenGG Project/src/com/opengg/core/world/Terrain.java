@@ -105,6 +105,7 @@ public class Terrain {
             if(z == image.getHeight()){
                 z--;
             }
+             height = image.getRGB(x, z);
         }
         return (float) (((height/100000)*(0.001*size)));
     }
