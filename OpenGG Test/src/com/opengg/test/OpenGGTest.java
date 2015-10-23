@@ -72,8 +72,8 @@ public class OpenGGTest implements KeyboardListener{
     Texture blank = new Texture();
     Texture blank2 = new Texture();
     
-    DrawnObject test3;
-    DrawnObject test4;
+    DrawnObject awp;
+    DrawnObject flashbang;
     DrawnObject test5;
     DrawnObject base2;
     
@@ -141,12 +141,12 @@ public class OpenGGTest implements KeyboardListener{
         
         test = ObjectBuffers.genBuffer(m, 1f, 0.2f);
         test2 = ObjectBuffers.genBuffer(m2, 1f, 1f);
-        test3 = new DrawnObject(test,vbo);
-        test4 = new DrawnObject(test2,vbo); 
+        awp = new DrawnObject(test,vbo);
+        flashbang = new DrawnObject(test2,vbo); 
         test2 = ObjectBuffers.getSquareUI(1, 3, 1, 3, -1, 1f);
         test5 = new DrawnObject(test2,vbo);
-        test3.removeBuffer();
-        test4.removeBuffer();
+        awp.removeBuffer();
+        flashbang.removeBuffer();
         Terrain base = new Terrain(0,0,t1);
         base2 = new DrawnObject(base.generateTerrain(s),vbo);
         base.removeBuffer();
@@ -235,8 +235,8 @@ public class OpenGGTest implements KeyboardListener{
         
         t1.startTexRender();
         t2.useTexture();
-        test3.draw();
-        test4.draw();
+        awp.draw();
+        flashbang.draw();
         base2.draw();
         t1.endTexRender();
                 
@@ -245,8 +245,8 @@ public class OpenGGTest implements KeyboardListener{
         c.use();
         
         ViewUtil.setPerspective(90, ratio, 0.3f, 2000f, program);  
-        test3.draw();
-        test4.draw();
+        awp.draw();
+        flashbang.draw();
         base2.draw();
         
         ViewUtil.setOrtho(-3, 3, -3, 3, 0.2f, 5, program);
