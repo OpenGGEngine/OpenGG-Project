@@ -46,8 +46,6 @@ void main() {
 	
 	float cosAlpha = clamp( dot( E,R ), 0,1 );
 	
-	
-	
 	fragColor = 
 		// Ambient : simulates indirect lighting
 		vec4((ambient +

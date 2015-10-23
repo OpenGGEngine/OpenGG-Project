@@ -19,6 +19,7 @@ uniform mat4 view;
 uniform mat4 projection;
 uniform vec3 rot;
 uniform vec3 lightpos;
+uniform float divAmount;
 
 void main() {
     vertexColor = color;
@@ -26,20 +27,24 @@ void main() {
 	
     mat4 mvp = projection * view * model;
 	
-	float zrotm = rot.z;
-	float xrotm = rot.x;
-	float yrotm = rot.y;
-	
-	lightposition = lightpos;
+    //vec3 position2 = vec3(1,1,1);
 
-	gl_Position = mvp * vec4(position, 1.0);
-	pos = vec4(position, 1.0);
-	
-	vec3 posCameraspace = ( view * model * vec4(position, 1.0)).xyz;
-	eyedir = vec3(0,0,0) - posCameraspace;
-	
-	vec3 lightposCamera = ( view * vec4(lightpos,1)).xyz;
-	lightdir = lightposCamera + eyedir;
-	
-	norm = ( model * view *  vec4(normal,0)).xyz;
+/*
+    position.x = position.x/divAmount;
+    position.y = position.y/divAmount;
+    position.z = position.z/divAmount;
+*/
+    
+    lightposition = lightpos;
+
+    gl_Position = mvp * vec4(position, 1.0);
+    pos = vec4(position, 1.0);
+
+    vec3 posCameraspace = ( view * model * vec4(position, 1.0)).xyz;
+    eyedir = vec3(0,0,0) - posCameraspace;
+
+    vec3 lightposCamera = ( view * vec4(lightpos,1)).xyz;
+    lightdir = lightposCamera + eyedir;
+
+    norm = ( model * view *  vec4(normal,0)).xyz;
 };
