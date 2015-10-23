@@ -123,10 +123,10 @@ public class OpenGGTest implements KeyboardListener{
         t2.loadTexture("C:/res/trump.png");
         t2.useTexture();   
         
-//        AudioHandler.init(1);
-//        AudioHandler.setSoundBuffer(OpenGGTest.class.getResource("res/maw.wav"));
-//        AudioHandler.shouldLoop(true);
-//        AudioHandler.play();
+        AudioHandler.init(1);
+        AudioHandler.setSoundBuffer(OpenGGTest.class.getResource("res/maw.wav"));
+        AudioHandler.shouldLoop(true);
+        AudioHandler.play();
         try {
             URL path = OpenGGTest.class.getResource("res/awp3.obj");
             URL path2 = OpenGGTest.class.getResource("res/flashbang.obj");
