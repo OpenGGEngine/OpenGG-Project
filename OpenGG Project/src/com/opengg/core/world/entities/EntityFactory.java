@@ -6,7 +6,7 @@
 package com.opengg.core.world.entities;
 
 import com.opengg.core.Vector3f;
-import com.opengg.core.world.entities.Entity.EntityType;
+import com.opengg.core.world.entities.EntityEnums.EntityType;
 import com.opengg.core.io.objloader.parser.OBJModel;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +32,7 @@ public abstract class EntityFactory {
      * 
      * @param tag What type of entity
      * @param m Model to be bound to Entity
-     * @return Error
+     * @return New Entity
      */
     public static Entity generateEntity(EntityType tag, OBJModel m) {
         if(entityCount > 44)
@@ -53,11 +53,11 @@ public abstract class EntityFactory {
      * @param volume Volume of Entity
      * @return New Entity
      */
-    public static Entity generateEntity(EntityType tag, float x, float y, float z, Vector3f f, float mass, float volume) {
+    public static Entity generateEntity(EntityType tag, float x, float y, float z, Vector3f f, float mass, float volume, OBJModel model) {
         if(entityCount > 44)
         {return null;}
         entityCount++;
-        return new Entity(x,y,z,f,mass,volume,tag);
+        return new Entity(x,y,z,f,mass,volume,tag,model);
     }
     
     /**

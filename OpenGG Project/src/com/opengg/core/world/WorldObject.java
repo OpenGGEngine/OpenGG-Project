@@ -7,9 +7,11 @@
 package com.opengg.core.world;
 
 import com.opengg.core.Vector3f;
+import com.opengg.core.io.objloader.parser.OBJModel;
 import com.opengg.core.world.entities.Entity;
 import com.opengg.core.world.entities.EntityFactory;
 import com.opengg.core.render.DrawnObject;
+import com.opengg.core.world.entities.EntityEnums.EntityType;
 
 /**
  *
@@ -20,15 +22,15 @@ public class WorldObject {
     private Vector3f rot;
     private Entity e;
     private DrawnObject d;
-    public WorldObject(Vector3f pos, Vector3f rot){
+    public WorldObject(Vector3f pos, Vector3f rot, OBJModel model){
         this.pos = pos;
         this.rot = rot;
-        e = EntityFactory.generateEntity(Entity.EntityType.Static, pos.x, pos.y, pos.z, rot, 10, 2);
+        e = EntityFactory.generateEntity(EntityType.Static, pos.x, pos.y, pos.z, rot, 10, 2, model);
     }
     public WorldObject(){
         pos = new Vector3f(0,0,0);
         rot = new Vector3f(0,0,0);
-        e = EntityFactory.generateEntity(Entity.EntityType.Static, pos.x, pos.y, pos.z, rot, 10, 2);
+        e = EntityFactory.generateEntity(EntityType.Static, pos.x, pos.y, pos.z, rot, 10, 2, new OBJModel());
     }
     public WorldObject(Vector3f pos, Vector3f rot, Entity e){
         this.pos = pos;

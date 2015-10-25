@@ -16,6 +16,7 @@ public class Time {
     
     public Time(){
         lastTime = currentTime;
+        lastTime = System.currentTimeMillis();
     }
     public float getDeltaMs(){
         currentTime = System.currentTimeMillis();
