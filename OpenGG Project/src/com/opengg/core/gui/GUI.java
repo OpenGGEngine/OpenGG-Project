@@ -8,8 +8,8 @@ package com.opengg.core.gui;
 
 import com.opengg.core.Vector2f;
 import com.opengg.core.Vector3f;
+import com.opengg.core.render.shader.ShaderHandler;
 import com.opengg.core.render.shader.ShaderProgram;
-import com.opengg.core.render.window.ViewUtil;
 import com.opengg.core.world.Camera;
 
 /**
@@ -18,21 +18,17 @@ import com.opengg.core.world.Camera;
  */
 public class GUI {
     Camera c;
-    ShaderProgram sp;
     Vector2f low,high;
-    int lightpos;
-    public void setupGUI(ShaderProgram sp, Vector2f lowBound, Vector2f highBound){
-        this.sp = sp;
+    public void setupGUI(Vector2f lowBound, Vector2f highBound){
         low = lowBound;
         high = highBound;
-        lightpos = this.sp.getUniformLocation("lightpos");
-        c = new Camera(sp,new Vector3f(0,0,0), new Vector3f(0,0,0));
+        c = new Camera(new Vector3f(0,0,0), new Vector3f(0,0,0));
     }
     public void startGUI(){
-        ViewUtil.setOrtho(low.x, high.x, low.y, high.y, 0.2f, 10, sp);      
-        sp.setUniform(lightpos, new Vector3f(0,50,0));
+        ShaderHandler.setOrtho(low.x, high.x, low.y, high.y, 0.2f, 10);      
+        ShaderHandler.setLightPos(new Vector3f(0,50,0));
         c.setPos(new Vector3f(0,0,0));
         c.setRot(new Vector3f(0,0,0));
-        c.use();
+        ShaderHandler.setView(c);
     }
 }
