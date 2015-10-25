@@ -5,6 +5,9 @@
  */
 package com.opengg.core.util;
 
+import com.opengg.core.Vector3f;
+import com.opengg.core.world.physics.ForceManipulation;
+
 /**
  *
  * @author Javier
@@ -24,5 +27,8 @@ public class GlobalUtil {
     }
     public static void print(double s){
         System.out.println(s);
+    }
+    public static void setWind(Vector3f wind){
+        ForceManipulation.setWind(wind);
     }
 }

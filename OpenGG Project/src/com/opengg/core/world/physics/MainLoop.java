@@ -7,9 +7,7 @@ package com.opengg.core.world.physics;
 
 import com.opengg.core.Vector3f;
 import com.opengg.core.world.entities.Entity;
-import static com.opengg.core.world.entities.Entity.Collide.*;
-import static com.opengg.core.world.entities.Entity.UpdateForce.*;
-import static com.opengg.core.world.entities.Entity.UpdateXYZ.*;
+import com.opengg.core.world.entities.EntityEnums.*;
 import com.opengg.core.world.entities.EntityFactory;
 
 /**
@@ -24,38 +22,28 @@ public class MainLoop extends EntityFactory{
         {
             for(Entity collide: EntityList)
             {
-                if(collide.updatePosition == Movable)
-                {
+                if(collide.updatePosition == UpdateXYZ.Movable)
                     collide.updateXYZ();
-                }
-                if(collide.updateForce == Realistic)
-                {
+                if(collide.updateForce == UpdateForce.Realistic)
                     collide.forceCalculator.calculateForces();
-                }
             }
             for (Entity collide : EntityList) {
-                if(collide.collision != Collidable)
-                {
+                if(collide.collision != Collide.Collidable)
                     continue;
-                }
                 for(Entity collidee: EntityList)
                 {
-                    if(collide.equals(collidee) || collidee.collision == Uncollidable)
-                    {
+                    if(collide.equals(collidee) || collidee.collision == Collide.Uncollidable)
                         continue;
-                    }
-                    if(CollisionDetection.areColliding(collide, collidee) == 1)
+                    if(CollisionDetection.areColliding(collide, collidee))
                     {
-                        if(collidee.updatePosition == Immovable)
+                        if(collidee.updatePosition == UpdateXYZ.Immovable)
                         {
                             collide.collisionResponse(new Vector3f(-collide.forceCalculator.force.x*2, collide.forceCalculator.force.y, -collide.forceCalculator.force.z*2));
                             continue;
                         }
                         collide.collisionResponse(collidee.forceCalculator.force);
-                        if(collidee.collision == Collidable)
-                        {
+                        if(collidee.collision == Collide.Collidable)
                             collidee.collisionResponse(collide.forceCalculator.force);
-                        }
                     }
                 }
             }

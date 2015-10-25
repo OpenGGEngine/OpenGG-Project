@@ -15,8 +15,9 @@ public class Time {
     float lastTime;
     
     public Time(){
-        lastTime = currentTime;
+        lastTime = currentTime = System.currentTimeMillis();
     }
+    
     public float getDeltaMs(){
         currentTime = System.currentTimeMillis();
         timeStep = currentTime - lastTime;

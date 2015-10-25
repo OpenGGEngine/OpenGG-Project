@@ -8,11 +8,8 @@ package com.opengg.core.world.entities;
 import com.opengg.core.Vector2f;
 import com.opengg.core.Vector3f;
 import com.opengg.core.util.Time;
-import static com.opengg.core.world.entities.Entity.EntityType.*;
-import static com.opengg.core.world.entities.Entity.Collide.*;
-import static com.opengg.core.world.entities.Entity.UpdateXYZ.*;
-import static com.opengg.core.world.entities.Entity.UpdateForce.*;
 import com.opengg.core.io.objloader.parser.OBJModel;
+import com.opengg.core.world.entities.EntityEnums.*;
 import com.opengg.core.world.physics.ForceManipulation;
 
 /**
@@ -20,25 +17,6 @@ import com.opengg.core.world.physics.ForceManipulation;
  * @author ethachu19
  */
 public class Entity {
-
-    public enum EntityType {
-        /* Update Movement, Force Update, No Collsion Response*/ Static,
-        /* Update Movement, Force Update, Collision Detection*/ Physics,
-        /* Update Movement, No force update, No Collision*/ Particle,
-        /* User Defined*/ Other
-    }
-
-    public enum Collide {
-        Collidable, Uncollidable, NoResponse
-    }
-
-    public enum UpdateXYZ {
-        Movable, Immovable
-    }
-
-    public enum UpdateForce {
-        Realistic, Unrealistic
-    }
     
     /* tags */
     public UpdateForce updateForce;
@@ -98,7 +76,7 @@ public class Entity {
         this.volume = 60f;
         this.mass = 40f;
         setTags(type);
-        this.model = model;
+        bindModel(model);
         
         EntityFactory.EntityList.add(this);
     }
@@ -113,8 +91,9 @@ public class Entity {
      * @param mass Mass of Entity
      * @param volume Volume of Entity
      * @param type Type of entity
+     * @param model Model to be bound to entity
      */
-    public Entity(float x, float y, float z, Vector3f f, float mass, float volume, EntityType type){
+    public Entity(float x, float y, float z, Vector3f f, float mass, float volume, EntityType type, OBJModel model){
         forceCalculator = new ForceManipulation(this);
         setXYZ(x, y, z);
         setForce(f);
@@ -122,6 +101,7 @@ public class Entity {
         this.volume = volume;
         this.mass = mass;
         setTags(type);
+        bindModel(model);
         
         EntityFactory.EntityList.add(this);
     }
@@ -142,6 +122,7 @@ public class Entity {
         this.collision = v.collision;
         this.updatePosition = v.updatePosition;
         this.updateForce = v.updateForce;
+        bindModel(v.model);
         
         EntityFactory.EntityList.add(this);
     }
@@ -167,10 +148,8 @@ public class Entity {
     public boolean setTags(UpdateForce updateForce)
     {
         this.updateForce = updateForce;
-        if(this.updateForce == Realistic && this.updatePosition != Movable)
-        {
-            updatePosition = Movable;
-        }
+        if(this.updateForce == UpdateForce.Realistic && this.updatePosition != UpdateXYZ.Movable)
+            updatePosition = UpdateXYZ.Movable;
         return true;
     }
     
@@ -183,9 +162,9 @@ public class Entity {
     public boolean setTags(UpdateXYZ updatePosition)
     {
         this.updatePosition = updatePosition;
-        if(this.updatePosition == Immovable)
+        if(this.updatePosition == UpdateXYZ.Immovable)
         {
-            this.updateForce = Unrealistic;
+            this.updateForce = UpdateForce.Unrealistic;
         }
         return true;
     }
@@ -201,9 +180,9 @@ public class Entity {
     public boolean setTags(Collide collision, UpdateForce updateForce, UpdateXYZ updatePosition) {
         this.collision = collision;
         this.updatePosition = updatePosition;
-        if(this.updatePosition == Immovable)
+        if(this.updatePosition == UpdateXYZ.Immovable)
         {
-            this.updateForce = Unrealistic;
+            this.updateForce = UpdateForce.Unrealistic;
             return this.updateForce == updateForce;
         }
         this.updateForce = updateForce;
@@ -219,25 +198,52 @@ public class Entity {
     public final void setTags(EntityType type) {
         switch (type) {
             case Static:
-                updatePosition = Movable;
-                updateForce = Realistic;
-                collision = NoResponse;
+                updatePosition = UpdateXYZ.Movable;
+                updateForce = UpdateForce.Realistic;
+                collision = Collide.NoResponse;
                 break;
 
             case Physics:
-                updatePosition = Movable;
-                updateForce = Realistic;
-                collision = Collidable;
+                updatePosition = UpdateXYZ.Movable;
+                updateForce = UpdateForce.Realistic;
+                collision = Collide.Collidable;
                 break;
 
             case Particle:
-                updatePosition = Movable;
-                updateForce = Unrealistic;
-                collision = Uncollidable;
+                updatePosition = UpdateXYZ.Movable;
+                updateForce = UpdateForce.Unrealistic;
+                collision = Collide.Uncollidable;
                 break;
         }
     }
-
+    
+    /**
+     * Binds model to entity
+     * 
+     * @param model Model to be bound
+     */
+    public final void bindModel(OBJModel model)
+    {
+        this.model = model;
+        Vector3f max = new Vector3f(model.getVertices().get(1).x, model.getVertices().get(1).y, model.getVertices().get(1).z);
+        Vector3f min = new Vector3f();
+        for(Vector3f vertice: this.model.getVertices())
+        {
+            if(vertice.x > max.x)
+                max.x = vertice.x;
+            else if(vertice.x < min.x)
+                min.x = vertice.x;
+            if(vertice.y > max.y)
+                max.y = vertice.y;
+            else if(vertice.y < max.y)
+                min.y = vertice.y;
+            if(vertice.z > max.z)
+                max.z = vertice.z;
+            else if(vertice.z < min.z)
+                min.z = vertice.z;
+        }
+    }
+    
     /**
      * Sets the Entity's XYZ Coordinates to something
      *
@@ -282,7 +288,7 @@ public class Entity {
     }
 
     /**
-     * Updates XYZ based on velocity and acceleration and calculates new values for all of them
+     * Updates XYZ based on velocity varlet and calculates new values for all of them
      */
     public void updateXYZ() {
         timeStep = time.getDeltaSec();
