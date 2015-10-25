@@ -27,9 +27,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.lwjgl.BufferUtils;
+import com.opengg.core.render.texture.Font;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;
@@ -48,11 +51,11 @@ public class OpenGGTest implements KeyboardListener{
     public float xrot;
     public float rot1=0;
     public float xm = 0, ym=0, zm=0;
-    
+    int quads;
     Vector3f rot = new Vector3f(0,0,0);
     Vector3f pos = new Vector3f(0,0,0);
     
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, Exception {
         new OpenGGTest();
     }
     
@@ -82,7 +85,7 @@ public class OpenGGTest implements KeyboardListener{
     OBJModel m;
     OBJModel m2;
     
-    public OpenGGTest() throws IOException{
+    public OpenGGTest() throws IOException, Exception{
         Window w = new Window();
         KeyboardEventHandler.addToPool(this);
         
@@ -110,9 +113,13 @@ public class OpenGGTest implements KeyboardListener{
     
     Matrix4f view;
     
-    public void setup() throws FileNotFoundException, IOException{
+    public void setup() throws FileNotFoundException, IOException, Exception{
+        String text = "hi";
         MovementLoader.setup(window,80);
-        
+        Font font = new Font("C:/res/fonty.ttf",10);
+        //font.drawText(text, 0, 0);
+        ByteBuffer i = font.asByteBuffer();
+       
         vao = new VertexArrayObject();
         vao.bind();
         
@@ -256,6 +263,8 @@ public class OpenGGTest implements KeyboardListener{
         c.use();
         t1.useTexture();
         test5.draw();
+        glColor3f(169f / 255f, 183f / 255f, 198f / 255f);
+        glDrawArrays(GL_QUADS, 0, quads * 4);
     }
     
     public void update(float delta) {       
