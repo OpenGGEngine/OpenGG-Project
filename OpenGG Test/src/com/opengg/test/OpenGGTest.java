@@ -1,10 +1,8 @@
 package com.opengg.test;
-import com.opengg.core.Matrix4f;
 import com.opengg.core.Vector2f;
 import com.opengg.core.Vector3f;
 import com.opengg.core.audio.AudioHandler;
 import com.opengg.core.gui.GUI;
-import com.opengg.core.io.FileStringLoader;
 import com.opengg.core.io.input.KeyboardEventHandler;
 import com.opengg.core.io.input.KeyboardListener;
 import com.opengg.core.io.objloader.parser.OBJModel;
@@ -14,14 +12,12 @@ import com.opengg.core.render.DrawnObject;
 import com.opengg.core.render.VertexArrayObject;
 import com.opengg.core.render.VertexBufferObject;
 import com.opengg.core.render.buffer.ObjectBuffers;
-import com.opengg.core.render.shader.Shader;
-import com.opengg.core.render.shader.ShaderProgram;
+import com.opengg.core.render.shader.ShaderHandler;
 import com.opengg.core.render.shader.premade.ObjectShader;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.window.DisplayMode;
 import static com.opengg.core.render.window.RenderUtil.endFrame;
 import static com.opengg.core.render.window.RenderUtil.startFrame;
-import com.opengg.core.render.window.ViewUtil;
 import com.opengg.core.render.window.Window;
 import com.opengg.core.world.Camera;
 import com.opengg.core.world.Terrain;
@@ -39,14 +35,11 @@ import com.opengg.core.render.texture.Font;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;
-import static org.lwjgl.opengl.GL20.*;
 public class OpenGGTest implements KeyboardListener{
  
     static long window;
     Window win = new Window();
     boolean draw = true;
-    private Shader vertexTex;
-    private Shader fragmentTex;
     private int rotm;
     private float ratio;
 
@@ -64,10 +57,7 @@ public class OpenGGTest implements KeyboardListener{
     private VertexArrayObject vao;
     private VertexBufferObject vbo;
     
-    Shader vertexShader, fragmentShader;
-    
     ObjectShader sh;
-    private int uniModel, lightpos, div;
     Camera c;
     GUI g = new GUI();
     Texture t1 = new Texture();
@@ -112,14 +102,12 @@ public class OpenGGTest implements KeyboardListener{
     FloatBuffer test2;
     FloatBuffer test;
     
-    Matrix4f view;
     
     public void setup() throws FileNotFoundException, IOException, Exception{
         String text = "hi";
         MovementLoader.setup(window,80);
 
         
-        sh.setup(win);
         
 
         vao = new VertexArrayObject();
@@ -132,10 +120,10 @@ public class OpenGGTest implements KeyboardListener{
         t2.loadTexture("C:/res/trump.png");
         t2.useTexture();   
         
-//        AudioHandler.init(1);
-//        AudioHandler.setSoundBuffer(OpenGGTest.class.getResource("res/maw.wav"));
-//        AudioHandler.shouldLoop(true);
-//        AudioHandler.play();
+        AudioHandler.init(1);
+        AudioHandler.setSoundBuffer(OpenGGTest.class.getResource("res/maw.wav"));
+        AudioHandler.shouldLoop(true);
+        AudioHandler.play();
         try {
             URL path = OpenGGTest.class.getResource("res/models/awp3.obj");
             URL path2 = OpenGGTest.class.getResource("res/models/flashbang.obj");
@@ -146,6 +134,20 @@ public class OpenGGTest implements KeyboardListener{
         }
         
         InputStream s = OpenGGTest.class.getResource("res/trump.png").openStream();
+        
+        URL verts = OpenGGTest.class.getResource("res/sh1.vert");
+        URL frags = OpenGGTest.class.getResource("res/sh1.frag");
+        
+        sh = new ObjectShader();
+        sh.setup(win, verts, frags);
+        
+        c = new Camera(pos,rot);
+        c.setPos(pos);
+        c.setRot(rot);
+        
+        ShaderHandler.addShader(sh);
+        
+        g.setupGUI(new Vector2f(-3,-3), new Vector2f(3,3));
         
         test = ObjectBuffers.genBuffer(m, 1f, 0.2f);
         test2 = ObjectBuffers.genBuffer(m2, 1f, 1f);
@@ -167,15 +169,8 @@ public class OpenGGTest implements KeyboardListener{
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
         
-        glEnable(GL_TEXTURE_2D);  
-        
-//        glEnable(GL_CULL_FACE);
-//        glCullFace(GL_BACK);
+       glEnable(GL_TEXTURE_2D);
     }
-    
-    
-    
-    
     public void exit() {   
         //AudioHandler.destroy();
         vao.delete();
@@ -185,17 +180,15 @@ public class OpenGGTest implements KeyboardListener{
     public void render() {
         rot = new Vector3f(0,-xrot,0);      
         pos = MovementLoader.processMovement(pos, rot);
-        rot = new Vector3f(-xrot,0,0); 
         
+        rot = new Vector3f(-xrot,0,0); 
         c.setPos(new Vector3f(5,0,30));
         c.setRot(new Vector3f(170,0,0));
-        c.use();
-        
-        ViewUtil.setOrtho(-10, 10, -10, 10, 0.3f, 50, sh.getProgram());
-        
+        ShaderHandler.setView(c);
+        ShaderHandler.setOrtho(-10, 10, -10, 10, 0.3f, 50);
+
         t1.startTexRender();
         t2.useTexture();
-        //program.setUniform(div, 20f);
         test3.draw();
         test4.draw();
         base2.draw();
@@ -203,9 +196,7 @@ public class OpenGGTest implements KeyboardListener{
                 
         c.setPos(pos);
         c.setRot(rot);
-        c.use();
-        //program.setUniform(div, 1f);
-        ViewUtil.setPerspective(90, ratio, 0.3f, 2000f, sh.getProgram());  
+        ShaderHandler.setPerspective(90, ratio, 0.3f, 2000f);  
         test3.draw();
         test4.draw();
         base2.draw();
