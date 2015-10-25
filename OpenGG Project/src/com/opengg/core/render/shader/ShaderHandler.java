@@ -19,8 +19,15 @@ import java.util.List;
 public class ShaderHandler {
     static List<DefaultDrawnShader> shaders = new ArrayList<>();
     
+    static DefaultDrawnShader currentShader;
+    
     public static void addShader(DefaultDrawnShader s){
         shaders.add(s);
+    }
+    
+    public static void setCurrentShader(DefaultDrawnShader s){
+        currentShader = s;
+        s.use();
     }
     
     public static void setView(Camera c){
@@ -28,24 +35,36 @@ public class ShaderHandler {
         Vector3f rot = c.getRot();       
         Matrix4f posm = Matrix4f.translate(pos.x, pos.y, pos.z);
         Matrix4f rotm = Matrix4f.rotate(rot.x,0,1,0);
+        
         for(DefaultDrawnShader shader : shaders){
             shader.setView(rotm.multiply(posm));
         }
+        
+        currentShader.use();
     }
     public static void setPerspective(float fov, float aspect, float znear, float zfar){
         for(DefaultDrawnShader shader : shaders){
             shader.setProjection(fov, aspect, znear, zfar);
         }
+        currentShader.use();
     }
     public static void setOrtho(float left, float right, float bottom, float top, float near, float far){
         for(DefaultDrawnShader shader : shaders){
             shader.setOrtho(left, right, bottom, top, near, far);
         }
+        currentShader.use();
+    }
+    public static void setFrustum(float left, float right, float bottom, float top, float near, float far){
+        for(DefaultDrawnShader shader : shaders){
+            shader.setFrustum(left, right, bottom, top, near, far);
+        }
+        currentShader.use();
     }
     public static void setLightPos(Vector3f lightpos){
         for(DefaultDrawnShader shader : shaders){
             shader.setLightPos(lightpos);
         }
+        currentShader.use();
     }
     
 }

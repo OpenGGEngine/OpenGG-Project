@@ -155,28 +155,6 @@ public class ShaderProgram {
         glUniform3fv(location, value.getBuffer());
     }
 
-    /**
-     * Sets the uniform variable for specified location.
-     *
-     * @param location Uniform location
-     * @param value Value to set
-     */
-   
-
-    /**
-     * Sets the uniform variable for specified location.
-     *
-     * @param location Uniform location
-     * @param value Value to set
-     */
-    
-
-    /**
-     * Sets the uniform variable for specified location.
-     *
-     * @param location Uniform location
-     * @param value Value to set
-     */
     public void setUniform(int location, Matrix4f value) {
         glUniformMatrix4fv(location, false, value.getBuffer());
     }

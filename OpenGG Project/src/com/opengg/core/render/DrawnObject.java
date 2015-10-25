@@ -8,6 +8,8 @@ package com.opengg.core.render;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import org.lwjgl.BufferUtils;
+import static org.lwjgl.opengl.GL11.GL_LINES;
+import static org.lwjgl.opengl.GL11.GL_POINTS;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
 import static org.lwjgl.opengl.GL11.glDrawElements;
@@ -32,6 +34,7 @@ public class DrawnObject {
     static{
         DrawnObjectHandler.setup();
     }
+    private IntBuffer lineInd;
     
     public DrawnObject(FloatBuffer b, VertexBufferObject vbo2){
         limit = b.limit();
@@ -44,6 +47,17 @@ public class DrawnObject {
             ind.put((int) i);
         }
         ind.flip();
+        
+        lineInd = BufferUtils.createIntBuffer(vertLimit*2);
+        for(long i = vertOffset; i < vertLimit + vertOffset; i+=3){
+            lineInd.put((int) i);
+            lineInd.put((int) i+1);
+            lineInd.put((int) i+1);
+            lineInd.put((int) i+2);
+            lineInd.put((int) i+2);
+            lineInd.put((int) i);
+        }
+        lineInd.flip();
         
         this.b = b;
         vbo = vbo2;
@@ -70,11 +84,16 @@ public class DrawnObject {
         DrawnObjectHandler.addToOffset(limit);
     }
     public void draw(){
-
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, ind, GL_STATIC_DRAW);
-        glDrawElements(GL_TRIANGLES, ind.limit(), GL_UNSIGNED_INT, 0);
-
-        
+        glDrawElements(GL_TRIANGLES, ind.limit(), GL_UNSIGNED_INT, 0);       
+    }
+    public void drawPoints(){
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, ind, GL_STATIC_DRAW);
+        glDrawElements(GL_POINTS, ind.limit(), GL_UNSIGNED_INT, 0);    
+    }
+    public void drawLines(){
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, lineInd, GL_STATIC_DRAW);
+        glDrawElements(GL_LINES, ind.limit(), GL_UNSIGNED_INT, 0);    
     }
     public void removeBuffer(){
         b = null;

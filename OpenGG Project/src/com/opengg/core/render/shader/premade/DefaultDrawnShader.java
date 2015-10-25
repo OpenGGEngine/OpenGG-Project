@@ -20,5 +20,6 @@ public interface DefaultDrawnShader {
     public void setModel(Matrix4f model);
     public void setProjection(float fov, float aspect, float znear, float zfar);
     public void setOrtho(float left, float right, float bottom, float top, float near, float far);
+    public void setFrustum(float left, float right, float bottom, float top, float near, float far);
     public void setView(Matrix4f view);
 }

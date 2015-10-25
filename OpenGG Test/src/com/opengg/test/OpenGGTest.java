@@ -13,6 +13,7 @@ import com.opengg.core.render.VertexArrayObject;
 import com.opengg.core.render.VertexBufferObject;
 import com.opengg.core.render.buffer.ObjectBuffers;
 import com.opengg.core.render.shader.ShaderHandler;
+import com.opengg.core.render.shader.premade.DepthShader;
 import com.opengg.core.render.shader.premade.ObjectShader;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.window.DisplayMode;
@@ -25,13 +26,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.net.URLDecoder;
-import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.lwjgl.BufferUtils;
-import com.opengg.core.render.texture.Font;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;
@@ -40,7 +37,6 @@ public class OpenGGTest implements KeyboardListener{
     static long window;
     Window win = new Window();
     boolean draw = true;
-    private int rotm;
     private float ratio;
 
     public float xrot;
@@ -62,19 +58,16 @@ public class OpenGGTest implements KeyboardListener{
     GUI g = new GUI();
     Texture t1 = new Texture();
     Texture t2 = new Texture();
-    Texture blank = new Texture();
-    Texture blank2 = new Texture();
     
-    DrawnObject test3;
-    DrawnObject test4;
-    DrawnObject test5;
-    DrawnObject base2;
+    DrawnObject test3,test4,test5,base2;
     
     float speed = 0.2f;
     
     OBJModel m;
     OBJModel m2;
     private DrawnObject test6;
+    private DepthShader dsh;
+    private ObjectShader sh2;
     
     public OpenGGTest() throws IOException, Exception{
         Window w = new Window();
@@ -83,7 +76,7 @@ public class OpenGGTest implements KeyboardListener{
         try {
             window = w.init(1280,1024, "Test", DisplayMode.WINDOWED);
         } catch (Exception ex) {
-            Logger.getLogger(OpenGGTest.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
         }
         
         setup();
@@ -98,17 +91,10 @@ public class OpenGGTest implements KeyboardListener{
         exit();
     }   
     
-    FloatBuffer base;
-    FloatBuffer test2;
-    FloatBuffer test;
-    
-    
-    public void setup() throws FileNotFoundException, IOException, Exception{
-        String text = "hi";
-        MovementLoader.setup(window,80);
+    FloatBuffer base,test2,test;
 
-        
-        
+    public void setup() throws FileNotFoundException, IOException, Exception{
+        MovementLoader.setup(window,80);
 
         vao = new VertexArrayObject();
         vao.bind();
@@ -133,19 +119,32 @@ public class OpenGGTest implements KeyboardListener{
             ex.printStackTrace();
         }
         
-        InputStream s = OpenGGTest.class.getResource("res/trump.png").openStream();
+        InputStream s = OpenGGTest.class.getResource("res/tex1.png").openStream();
         
-        URL verts = OpenGGTest.class.getResource("res/sh1.vert");
-        URL frags = OpenGGTest.class.getResource("res/sh1.frag");
+        URL verts = OpenGGTest.class.getResource("res/shaders/sh1.vert");
+        URL frags = OpenGGTest.class.getResource("res/shaders/sh1.frag");
+        URL dverts = OpenGGTest.class.getResource("res/depth.vert");
+        URL dfrags = OpenGGTest.class.getResource("res/depth.frag");
+        URL verts2 = OpenGGTest.class.getResource("res/shaders/sh2.vert");
+        URL frags2 = OpenGGTest.class.getResource("res/shaders/sh2.frag");
+        
+        dsh = new DepthShader();
+        dsh.setup(win, dverts, dfrags);
         
         sh = new ObjectShader();
         sh.setup(win, verts, frags);
+
+        sh2 = new ObjectShader();
+        sh2.setup(win, verts2, frags2);    
         
         c = new Camera(pos,rot);
         c.setPos(pos);
         c.setRot(rot);
         
+        ShaderHandler.addShader(dsh);
         ShaderHandler.addShader(sh);
+        ShaderHandler.addShader(sh2);
+        ShaderHandler.setCurrentShader(sh);
         
         g.setupGUI(new Vector2f(-3,-3), new Vector2f(3,3));
         
@@ -162,17 +161,20 @@ public class OpenGGTest implements KeyboardListener{
         Terrain base = new Terrain(0,0,t1);
         base2 = new DrawnObject(base.generateTerrain(s),vbo);
         base.removeBuffer();
-
+        
+        ratio = win.getRatio();
+        
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
         
-       glEnable(GL_TEXTURE_2D);
+        glEnable(GL_TEXTURE_2D);
     }
     public void exit() {   
-        //AudioHandler.destroy();
+        
+        AudioHandler.destroy();
         vao.delete();
         vbo.delete();
     }
@@ -182,20 +184,25 @@ public class OpenGGTest implements KeyboardListener{
         pos = MovementLoader.processMovement(pos, rot);
         
         rot = new Vector3f(-xrot,0,0); 
-        c.setPos(new Vector3f(5,0,30));
-        c.setRot(new Vector3f(170,0,0));
+        
+        c.setPos(new Vector3f(0,0,0));
+        c.setRot(new Vector3f(0,0,0));
+        
+        ShaderHandler.setLightPos(new Vector3f(30,40,50));
         ShaderHandler.setView(c);
         ShaderHandler.setOrtho(-10, 10, -10, 10, 0.3f, 50);
-
+        
+        ShaderHandler.setCurrentShader(sh2);
         t1.startTexRender();
         t2.useTexture();
         test3.draw();
         test4.draw();
         base2.draw();
         t1.endTexRender();
-                
+        ShaderHandler.setCurrentShader(sh);
         c.setPos(pos);
         c.setRot(rot);
+        ShaderHandler.setView(c);
         ShaderHandler.setPerspective(90, ratio, 0.3f, 2000f);  
         test3.draw();
         test4.draw();
@@ -203,10 +210,9 @@ public class OpenGGTest implements KeyboardListener{
         
         g.startGUI();
         
-        t1.useDepthTexture();
+        t1.useTexture();
         test5.draw();
 
-        
         t2.useTexture();
         test6.draw();
 

@@ -1,4 +1,5 @@
 #version 330 core
+
 layout(location = 0) out vec4 color;
 layout(location = 1) out vec3 color2;
 
@@ -11,15 +12,16 @@ in vec3 norm;
 in vec3 lightposition;
 
 out vec4 fragColor;
+
+uniform float lightdistance;
+uniform float lightpower;
 uniform sampler2D texImage;
 void main() {
 	
 	vec3 lightcol = vec3(1,1,1);
-	float lightpower = 1000f;
 	
         vec4 vertcolor = vertexColor;
         
-	float lightdistance = 4;
 	
 	float amb = 0.2;
 	
@@ -30,7 +32,7 @@ void main() {
                 vertcolor.a = 0;
 	}
 	vec3 ambient = vec3(amb,amb,amb) * diffuse;
-	vec3 specular = vec3(0.2,0.2,0.2);
+	vec3 specular = vec3(0.5,0.5,0.5);
 	
 	float distance = length( lightposition - vec3(pos.x,pos.y,pos.z) );
 	

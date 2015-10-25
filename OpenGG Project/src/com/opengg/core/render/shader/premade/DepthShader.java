@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.opengg.core.render.shader.premade;
 
 import com.opengg.core.Matrix4f;
@@ -23,7 +22,8 @@ import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
  *
  * @author Javier
  */
-public class ObjectShader implements DefaultDrawnShader{
+public class DepthShader implements DefaultDrawnShader{
+
     ShaderProgram program;
     private Shader fragmentTex;
     private Shader vertexTex;
@@ -65,27 +65,13 @@ public class ObjectShader implements DefaultDrawnShader{
         int uniTex = program.getUniformLocation("texImage"); 
         program.setUniform(uniTex, 0);
         
-        lightpos = program.getUniformLocation("lightpos"); 
-        program.setUniform(lightpos, new Vector3f(200,50,-10));
-        
         div = program.getUniformLocation("divAmount"); 
         program.setUniform(div, 1f);
         
         ratio = win.getRatio();
         
-        rotm = program.getUniformLocation("rot");    
-        program.setUniform(rotm, new Vector3f(0,0,0));  
-
-        
         uniView = program.getUniformLocation("view"); 
         program.setUniform(uniView, new Matrix4f());
-        
-        lightdistance = program.getUniformLocation("lightdistance"); 
-        program.setUniform(lightdistance, 2.5f);
-        
-        lightpower = program.getUniformLocation("lightpower"); 
-        program.setUniform(lightpower, 500f);
-        
         program.checkStatus();
         
         program.use();
@@ -113,10 +99,10 @@ public class ObjectShader implements DefaultDrawnShader{
 
     }
     @Override
-    public void setLightPos(Vector3f pos){
-        program.use();
-        program.setUniform(lightpos, pos);
+    public void setLightPos(Vector3f pos) {
+        
     }
+
     @Override
     public void setModel(Matrix4f model){
         program.use();
@@ -152,4 +138,5 @@ public class ObjectShader implements DefaultDrawnShader{
     public void use(){
         program.use();
     }
+    
 }
