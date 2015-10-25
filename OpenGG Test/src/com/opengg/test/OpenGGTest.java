@@ -137,8 +137,8 @@ public class OpenGGTest implements KeyboardListener{
 //        AudioHandler.shouldLoop(true);
 //        AudioHandler.play();
         try {
-            URL path = OpenGGTest.class.getResource("res/awp3.obj");
-            URL path2 = OpenGGTest.class.getResource("res/flashbang.obj");
+            URL path = OpenGGTest.class.getResource("res/models/awp3.obj");
+            URL path2 = OpenGGTest.class.getResource("res/models/flashbang.obj");
             m = new OBJParser().parse(path);
             m2 = new OBJParser().parse(path2);
         } catch (IOException ex) {
