@@ -5,6 +5,7 @@
  */
 package com.opengg.core.render.texture;
 
+import com.opengg.core.util.GlobalInfo;
 import static com.opengg.core.util.GlobalUtil.print;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
@@ -98,7 +99,28 @@ public class Texture {
     public void endTexRender(){
         glFinish();
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        glViewport(0,0,1280,1024);
+        glViewport(0,0,GlobalInfo.winHeight,GlobalInfo.winWidth);
+    }
+    
+    public int loadFromBuffer(ByteBuffer b, int fwidth, int fheight){
+        
+        texture = glGenTextures();
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glGenerateMipmap(GL_TEXTURE_2D);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        
+        buffer = b;
+        
+        width = fwidth;
+        height = fheight;
+        
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, fwidth, fheight, 0, GL_RGBA, GL_UNSIGNED_BYTE, b);
+        glBindTexture(GL_TEXTURE_2D, 0);
+        
+        return texture;
     }
     
     public int loadTexture(String path){
@@ -147,7 +169,6 @@ public class Texture {
                 }
             }
 
-            /* Do not forget to flip the buffer! */
             buffer.flip();
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
             glBindTexture(GL_TEXTURE_2D, 0);

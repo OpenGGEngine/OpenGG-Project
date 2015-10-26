@@ -5,7 +5,6 @@ import java.io.File;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
-import org.lwjgl.opengl.GL11;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -50,7 +49,7 @@ public class Font {
     
     //Constructors
     public Font(String path, float size) throws Exception {
-        this.font = java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT, new File(path)).deriveFont(size);
+        this.font = new java.awt.Font("Times New Roman", java.awt.Font.PLAIN, 11);
         
         //Generate buffered image
         GraphicsConfiguration gc = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
@@ -69,40 +68,6 @@ public class Font {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     }
-    
-    //Functions
-    public void drawText(String text, int x, int y) {
-        glBindTexture(GL_TEXTURE_2D, this.fontTextureId);
-        GL11.glBegin(GL_QUADS);
-        
-        int xTmp = x;
-        for (char c : text.toCharArray()) {
-            float width = getCharWidth(c);
-            float height = getCharHeight();
-            float cw = 1f / getFontImageWidth() * width;
-            float ch = 1f / getFontImageHeight() * height;
-            float cx = 1f / getFontImageWidth() * getCharX(c);
-            float cy = 1f / getFontImageHeight() * getCharY(c);
- 
-            glTexCoord2f(cx, cy);
-            glVertex3f(xTmp, y, 0);
- 
-            glTexCoord2f(cx + cw, cy);
-            glVertex3f(xTmp + width, y, 0);
- 
-            glTexCoord2f(cx + cw, cy + ch);
-            glVertex3f(xTmp + width, y + height, 0);
- 
-            glTexCoord2f(cx, cy + ch);
-            glVertex3f(xTmp, y + height, 0);
- 
-            xTmp += width;
-        }
-        
-       GL11.glEnd();
-    }
-    
-    //Conversions
     
     public ByteBuffer asByteBuffer() {
  

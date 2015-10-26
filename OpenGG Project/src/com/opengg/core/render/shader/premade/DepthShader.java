@@ -22,7 +22,7 @@ import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
  *
  * @author Javier
  */
-public class DepthShader implements DefaultDrawnShader{
+public class DepthShader implements ShaderEnabled{
 
     ShaderProgram program;
     private Shader fragmentTex;

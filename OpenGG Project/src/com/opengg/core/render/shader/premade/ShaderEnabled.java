@@ -13,7 +13,7 @@ import com.opengg.core.render.shader.ShaderProgram;
  *
  * @author Javier
  */
-public interface DefaultDrawnShader {
+public interface ShaderEnabled {
     public ShaderProgram getProgram();
     public void use();
     public void setLightPos(Vector3f pos);

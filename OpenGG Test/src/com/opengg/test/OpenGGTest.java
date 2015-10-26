@@ -16,6 +16,7 @@ import com.opengg.core.render.shader.ShaderHandler;
 import com.opengg.core.render.shader.premade.DepthShader;
 import com.opengg.core.render.shader.premade.GUIShader;
 import com.opengg.core.render.shader.premade.ObjectShader;
+import com.opengg.core.render.texture.Font;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.window.DisplayMode;
 import static com.opengg.core.render.window.RenderUtil.endFrame;
@@ -67,6 +68,7 @@ public class OpenGGTest implements KeyboardListener{
     private DrawnObject test6;
     private DepthShader dsh;
     private GUIShader gsh;
+    private Font f;
     
     public OpenGGTest() throws IOException, Exception{
         Window w = new Window();
@@ -102,7 +104,9 @@ public class OpenGGTest implements KeyboardListener{
         vbo.bind(GL_ARRAY_BUFFER);
         
         t1.setupTexToBuffer();
-        t2.loadTexture("C:/res/trump.png");
+        //t2.loadTexture("C:/res/trump.png");
+        f = new Font("aids", 69696969);
+        t2.loadFromBuffer(f.asByteBuffer(), (int)f.getFontImageWidth(), (int)f.getFontImageHeight());
         t2.useTexture();   
         
         AudioHandler.init(1);
@@ -118,13 +122,13 @@ public class OpenGGTest implements KeyboardListener{
             ex.printStackTrace();
         }
         
-        InputStream s = OpenGGTest.class.getResource("res/tex1.png").openStream();
+        InputStream s = OpenGGTest.class.getResource("res/trump.png").openStream();
         
         URL verts = OpenGGTest.class.getResource("res/shaders/sh1.vert");
         URL frags = OpenGGTest.class.getResource("res/shaders/sh1.frag");
         
-        URL dverts = OpenGGTest.class.getResource("res/depth.vert");
-        URL dfrags = OpenGGTest.class.getResource("res/depth.frag");
+        URL dverts = OpenGGTest.class.getResource("res/shaders/depth.vert");
+        URL dfrags = OpenGGTest.class.getResource("res/shaders/depth.frag");
         
         URL verts2 = OpenGGTest.class.getResource("res/shaders/gui.vert");
         URL frags2 = OpenGGTest.class.getResource("res/shaders/gui.frag");
@@ -167,6 +171,8 @@ public class OpenGGTest implements KeyboardListener{
         ratio = win.getRatio();
         
         ShaderHandler.checkForErrors();
+        
+        
         
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
