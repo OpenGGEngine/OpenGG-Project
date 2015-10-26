@@ -152,4 +152,9 @@ public class ObjectShader implements DefaultDrawnShader{
     public void use(){
         program.use();
     }
+    @Override
+    public void checkError(){
+        program.use();
+        program.checkStatus();
+    }
 }

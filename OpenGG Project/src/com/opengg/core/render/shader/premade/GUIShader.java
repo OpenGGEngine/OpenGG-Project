@@ -22,8 +22,7 @@ import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
  *
  * @author Javier
  */
-public class DepthShader implements DefaultDrawnShader{
-
+public class GUIShader implements DefaultDrawnShader{
     ShaderProgram program;
     private Shader fragmentTex;
     private Shader vertexTex;
@@ -56,24 +55,41 @@ public class DepthShader implements DefaultDrawnShader{
         program.checkStatus();
         
         specifyVertexAttributes(program, true);
-        
+
+        /* Set shader variables */
+        program.use(); 
         uniModel = program.getUniformLocation("model"); 
         program.setUniform(uniModel, new Matrix4f());
         
         int uniTex = program.getUniformLocation("texImage"); 
         program.setUniform(uniTex, 0);
         
+        lightpos = program.getUniformLocation("lightpos"); 
+        program.setUniform(lightpos, new Vector3f(200,50,-10));
+        
         div = program.getUniformLocation("divAmount"); 
         program.setUniform(div, 1f);
         
         ratio = win.getRatio();
         
+        rotm = program.getUniformLocation("rot");    
+        program.setUniform(rotm, new Vector3f(0,0,0));  
+
+        
         uniView = program.getUniformLocation("view"); 
         program.setUniform(uniView, new Matrix4f());
-
-        ViewUtil.setPerspective(80, ratio, 0.3f, 3000f, program);   
+        
+        lightdistance = program.getUniformLocation("lightdistance"); 
+        program.setUniform(lightdistance, 2.5f);
+        
+        lightpower = program.getUniformLocation("lightpower"); 
+        program.setUniform(lightpower, 500f);
         
         program.checkStatus();
+        
+        program.use();
+
+        ViewUtil.setPerspective(80, ratio, 0.3f, 3000f, program);    
     }
     
     private void specifyVertexAttributes(ShaderProgram programv, boolean textured) {
@@ -96,10 +112,10 @@ public class DepthShader implements DefaultDrawnShader{
 
     }
     @Override
-    public void setLightPos(Vector3f pos) {
-        
+    public void setLightPos(Vector3f pos){
+        program.use();
+        program.setUniform(lightpos, pos);
     }
-
     @Override
     public void setModel(Matrix4f model){
         program.use();
@@ -140,5 +156,4 @@ public class DepthShader implements DefaultDrawnShader{
         program.use();
         program.checkStatus();
     }
-    
 }

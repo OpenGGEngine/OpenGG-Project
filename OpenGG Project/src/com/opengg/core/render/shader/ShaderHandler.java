@@ -66,5 +66,11 @@ public class ShaderHandler {
         }
         currentShader.use();
     }
+    public static void checkForErrors(){
+        for(DefaultDrawnShader shader : shaders){
+            shader.checkError();
+        }
+        currentShader.use();
+    }
     
 }

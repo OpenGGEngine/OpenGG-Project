@@ -22,4 +22,5 @@ public interface DefaultDrawnShader {
     public void setOrtho(float left, float right, float bottom, float top, float near, float far);
     public void setFrustum(float left, float right, float bottom, float top, float near, float far);
     public void setView(Matrix4f view);
+    public void checkError();
 }

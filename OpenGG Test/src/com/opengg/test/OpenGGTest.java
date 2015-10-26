@@ -14,6 +14,7 @@ import com.opengg.core.render.VertexBufferObject;
 import com.opengg.core.render.buffer.ObjectBuffers;
 import com.opengg.core.render.shader.ShaderHandler;
 import com.opengg.core.render.shader.premade.DepthShader;
+import com.opengg.core.render.shader.premade.GUIShader;
 import com.opengg.core.render.shader.premade.ObjectShader;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.window.DisplayMode;
@@ -27,8 +28,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.FloatBuffer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;
@@ -67,7 +66,7 @@ public class OpenGGTest implements KeyboardListener{
     OBJModel m2;
     private DrawnObject test6;
     private DepthShader dsh;
-    private ObjectShader sh2;
+    private GUIShader gsh;
     
     public OpenGGTest() throws IOException, Exception{
         Window w = new Window();
@@ -109,7 +108,7 @@ public class OpenGGTest implements KeyboardListener{
         AudioHandler.init(1);
         AudioHandler.setSoundBuffer(OpenGGTest.class.getResource("res/maw.wav"));
         AudioHandler.shouldLoop(true);
-        AudioHandler.play();
+        //AudioHandler.play();
         try {
             URL path = OpenGGTest.class.getResource("res/models/awp3.obj");
             URL path2 = OpenGGTest.class.getResource("res/models/flashbang.obj");
@@ -123,27 +122,30 @@ public class OpenGGTest implements KeyboardListener{
         
         URL verts = OpenGGTest.class.getResource("res/shaders/sh1.vert");
         URL frags = OpenGGTest.class.getResource("res/shaders/sh1.frag");
+        
         URL dverts = OpenGGTest.class.getResource("res/depth.vert");
         URL dfrags = OpenGGTest.class.getResource("res/depth.frag");
-        URL verts2 = OpenGGTest.class.getResource("res/shaders/sh2.vert");
-        URL frags2 = OpenGGTest.class.getResource("res/shaders/sh2.frag");
+        
+        URL verts2 = OpenGGTest.class.getResource("res/shaders/gui.vert");
+        URL frags2 = OpenGGTest.class.getResource("res/shaders/gui.frag");
         
         dsh = new DepthShader();
         dsh.setup(win, dverts, dfrags);
         
+        gsh = new GUIShader();
+        gsh.setup(win, verts2, frags2);
+        
         sh = new ObjectShader();
         sh.setup(win, verts, frags);
 
-        sh2 = new ObjectShader();
-        sh2.setup(win, verts2, frags2);    
-        
         c = new Camera(pos,rot);
         c.setPos(pos);
         c.setRot(rot);
         
         ShaderHandler.addShader(dsh);
+        ShaderHandler.addShader(gsh);
         ShaderHandler.addShader(sh);
-        ShaderHandler.addShader(sh2);
+        
         ShaderHandler.setCurrentShader(sh);
         
         g.setupGUI(new Vector2f(-3,-3), new Vector2f(3,3));
@@ -163,6 +165,8 @@ public class OpenGGTest implements KeyboardListener{
         base.removeBuffer();
         
         ratio = win.getRatio();
+        
+        ShaderHandler.checkForErrors();
         
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -192,23 +196,24 @@ public class OpenGGTest implements KeyboardListener{
         ShaderHandler.setView(c);
         ShaderHandler.setOrtho(-10, 10, -10, 10, 0.3f, 50);
         
-        ShaderHandler.setCurrentShader(sh2);
+        ShaderHandler.setCurrentShader(sh);
         t1.startTexRender();
         t2.useTexture();
         test3.draw();
         test4.draw();
         base2.draw();
         t1.endTexRender();
-        ShaderHandler.setCurrentShader(sh);
+        
         c.setPos(pos);
         c.setRot(rot);
         ShaderHandler.setView(c);
         ShaderHandler.setPerspective(90, ratio, 0.3f, 2000f);  
         test3.draw();
         test4.draw();
-        base2.draw();
+        base2.draw();   
         
         g.startGUI();
+        ShaderHandler.setCurrentShader(gsh);
         
         t1.useTexture();
         test5.draw();

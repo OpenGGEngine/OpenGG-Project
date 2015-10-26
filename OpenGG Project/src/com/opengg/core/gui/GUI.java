@@ -26,7 +26,6 @@ public class GUI {
     }
     public void startGUI(){
         ShaderHandler.setOrtho(low.x, high.x, low.y, high.y, 0.2f, 10);      
-        ShaderHandler.setLightPos(new Vector3f(0,50,0));
         c.setPos(new Vector3f(0,0,0));
         c.setRot(new Vector3f(0,0,0));
         ShaderHandler.setView(c);
