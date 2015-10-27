@@ -59,7 +59,7 @@ public class OpenGGTest implements KeyboardListener{
     Texture t1 = new Texture();
     Texture t2 = new Texture();
     
-    DrawnObject test3,test4,test5,base2;
+    DrawnObject awp3,flashbang,test5,base2;
     
     float speed = 0.2f;
     
@@ -122,7 +122,7 @@ public class OpenGGTest implements KeyboardListener{
             ex.printStackTrace();
         }
         
-        InputStream s = OpenGGTest.class.getResource("res/trump.png").openStream();
+        InputStream heightmap = OpenGGTest.class.getResource("res/heightmap.png").openStream();
         
         URL verts = OpenGGTest.class.getResource("res/shaders/sh1.vert");
         URL frags = OpenGGTest.class.getResource("res/shaders/sh1.frag");
@@ -156,16 +156,16 @@ public class OpenGGTest implements KeyboardListener{
         
         test = ObjectBuffers.genBuffer(m, 1f, 0.2f);
         test2 = ObjectBuffers.genBuffer(m2, 1f, 1f);
-        test3 = new DrawnObject(test,vbo);
-        test4 = new DrawnObject(test2,vbo); 
+        awp3 = new DrawnObject(test,vbo);
+        flashbang = new DrawnObject(test2,vbo); 
         test2 = ObjectBuffers.getSquareUI(1, 3, 1, 3, -1, 1f);
         test5 = new DrawnObject(test2,vbo);
         test2 = ObjectBuffers.getSquareUI(-3, -1, -3,- 1, -1, 1f);
         test6 = new DrawnObject(test2,vbo);
-        test3.removeBuffer();
-        test4.removeBuffer();
+        awp3.removeBuffer();
+        flashbang.removeBuffer();
         Terrain base = new Terrain(0,0,t1);
-        base2 = new DrawnObject(base.generateTerrain(s),vbo);
+        base2 = new DrawnObject(base.generateTerrain(heightmap),vbo);
         base.removeBuffer();
         
         ratio = win.getRatio();
@@ -205,8 +205,8 @@ public class OpenGGTest implements KeyboardListener{
         ShaderHandler.setCurrentShader(sh);
         t1.startTexRender();
         t2.useTexture();
-        test3.draw();
-        test4.draw();
+        awp3.draw();
+        flashbang.draw();
         base2.draw();
         t1.endTexRender();
         
@@ -214,8 +214,8 @@ public class OpenGGTest implements KeyboardListener{
         c.setRot(rot);
         ShaderHandler.setView(c);
         ShaderHandler.setPerspective(90, ratio, 0.3f, 2000f);  
-        test3.draw();
-        test4.draw();
+        awp3.draw();
+        flashbang.draw();
         base2.draw();   
         
         g.startGUI();
