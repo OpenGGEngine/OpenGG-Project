@@ -12,11 +12,9 @@ public class Font {
    
    //Lets define them characters shall we
    private final Map<Integer,String> CHARS = new HashMap<Integer,String>() {{
-        put(0, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
-        put(1, "abcdefghijklmnopqrstuvwxyz");
-        put(2, "0123456789");
-        put(3, "ÄÖÜäöüß");
-        put(4, " $+-*/=%\"'#@&_(),.;:?!\\|<>[]§`^~");
+       
+     
+        
     }};
    
    //Variables
@@ -44,13 +42,14 @@ public class Font {
         return fontMetrics.charWidth(c);
     }
     public float getCharHeight() {
+        System.out.println(fontMetrics.getMaxAscent() + fontMetrics.getMaxDescent());
         return (float) (fontMetrics.getMaxAscent() + fontMetrics.getMaxDescent());
     }
     
     //Constructors
-    public Font(String path, float size) throws Exception {
-        this.font = new java.awt.Font("Times New Roman", java.awt.Font.PLAIN, 11);
-        
+    public Font(String path,String text, float size) throws Exception {
+        this.font = new java.awt.Font("Arial", java.awt.Font.PLAIN, 11);
+         CHARS.put(0, text);
         //Generate buffered image
         GraphicsConfiguration gc = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
         Graphics2D graphics = gc.createCompatibleImage(1, 1, Transparency.TRANSLUCENT).createGraphics();
@@ -83,6 +82,40 @@ public class Font {
         imageGraphics.setColor(java.awt.Color.WHITE);
         CHARS.keySet().stream().forEach(i -> imageGraphics.drawString(CHARS.get(i), 0, fontMetrics.getMaxAscent() + (this.getCharHeight() * i)));
         
+        //Generate texture data
+        int[] pixels = new int[bufferedImage.getWidth() * bufferedImage.getHeight()];
+        bufferedImage.getRGB(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight(), pixels, 0, bufferedImage.getWidth());
+        byteBuffer = ByteBuffer.allocateDirect((bufferedImage.getWidth() * bufferedImage.getHeight() * 4));
+ 
+        for (int y = 0; y < bufferedImage.getHeight(); y++) {
+            for (int x = 0; x < bufferedImage.getWidth(); x++) {
+                int pixel = pixels[y * bufferedImage.getWidth() + x];
+                byteBuffer.put((byte) ((pixel >> 16) & 0xFF));   // Red component
+                byteBuffer.put((byte) ((pixel >> 8) & 0xFF));    // Green component
+                byteBuffer.put((byte) (pixel & 0xFF));           // Blue component
+                byteBuffer.put((byte) ((pixel >> 24) & 0xFF));   // Alpha component. Only for RGBA
+            }
+        }
+        
+        byteBuffer.flip();
+ 
+        return byteBuffer;
+    }
+    public ByteBuffer displayCertainCharacters(int index) {
+ 
+        ByteBuffer byteBuffer;
+      
+        //Draw the characters on our image
+        Graphics2D imageGraphics = (Graphics2D) bufferedImage.getGraphics();
+        imageGraphics.setFont(font);
+        imageGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+        imageGraphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+ 
+        // draw every CHAR by line...
+        imageGraphics.setColor(java.awt.Color.WHITE);
+        for(int i = 0;i < index;i++){
+        imageGraphics.drawString(CHARS.get(i), 0, fontMetrics.getMaxAscent() + (this.getCharHeight() * i));
+        }
         //Generate texture data
         int[] pixels = new int[bufferedImage.getWidth() * bufferedImage.getHeight()];
         bufferedImage.getRGB(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight(), pixels, 0, bufferedImage.getWidth());
