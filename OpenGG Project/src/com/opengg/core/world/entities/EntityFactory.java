@@ -34,11 +34,11 @@ public abstract class EntityFactory {
      * @param m Model to be bound to Entity
      * @return New Entity
      */
-    public static Entity generateEntity(EntityType tag, OBJModel m) {
+    public static Entity generateEntity(EntityType tag, OBJModel m, float heightofGround) {
         if(entityCount > 44)
         {return null;}
         entityCount++;
-        return new Entity(m, tag);
+        return new Entity(m, tag, heightofGround);
     }
     
     /**
@@ -53,11 +53,11 @@ public abstract class EntityFactory {
      * @param volume Volume of Entity
      * @return New Entity
      */
-    public static Entity generateEntity(EntityType tag, float x, float y, float z, Vector3f f, float mass, float volume, OBJModel model) {
+    public static Entity generateEntity(EntityType tag, float x, float y, float z, float heightofGround, Vector3f f, float mass, float volume, OBJModel model) {
         if(entityCount > 44)
         {return null;}
         entityCount++;
-        return new Entity(x,y,z,f,mass,volume,tag,model);
+        return new Entity(x,y,z,heightofGround,f,mass,volume,tag,model);
     }
     
     /**

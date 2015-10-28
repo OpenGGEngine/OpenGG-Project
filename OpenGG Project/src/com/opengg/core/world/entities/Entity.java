@@ -42,6 +42,7 @@ public class Entity {
     private float length = 5f;
     /* Max - 1, Min - 0 */
     public Vector3f[] boundingBox = new Vector3f[2];
+    private float heightofGround;
     /*
     
      *---x---* 1
@@ -68,13 +69,15 @@ public class Entity {
      *
      * @param model Model to be bound to Entity
      * @param type Type of Entity
+     * @param heightofGround Height of Ground
      */
-    public Entity(OBJModel model, EntityType type){
+    public Entity(OBJModel model, EntityType type, float heightofGround){
         forceCalculator = new ForceManipulation(new Vector3f(0,0,0), new Vector3f(0,0,0), this);
         setXYZ(0f, 0f, 0f);
         this.ground = true;
         this.volume = 60f;
         this.mass = 40f;
+        this.heightofGround = heightofGround;
         setTags(type);
         bindModel(model);
         
@@ -87,14 +90,17 @@ public class Entity {
      * @param x X coordinate
      * @param y Y coordinate
      * @param z Z coordinate
+     * @param heightofGround Height of Ground
      * @param f Force vector
      * @param mass Mass of Entity
      * @param volume Volume of Entity
      * @param type Type of entity
+     * @param model Model to be bound to entity     
      */
-    public Entity(float x, float y, float z, Vector3f f, float mass, float volume, EntityType type, OBJModel model){
+    public Entity(float x, float y, float z, float heightofGround, Vector3f f, float mass, float volume, EntityType type, OBJModel model){
         forceCalculator = new ForceManipulation(this);
         setXYZ(x, y, z);
+        this.heightofGround = heightofGround;
         setForce(f);
         this.ground = (pos.y < 60);
         this.volume = volume;
@@ -113,6 +119,7 @@ public class Entity {
     public Entity(Entity v){
         forceCalculator = new ForceManipulation(v.forceCalculator.airResistance, v.forceCalculator.force, this);
         setXYZ(v.pos.x, v.pos.y, v.pos.z);
+        this.heightofGround = v.heightofGround;
         setVelocity(v.velocity);
         this.ground = (pos.y < 60);
         this.volume = v.volume;
@@ -269,23 +276,23 @@ public class Entity {
     public final void bindModel(OBJModel model)
     {
         this.model = model;
-        Vector3f max = new Vector3f(model.getVertices().get(1).x, model.getVertices().get(1).y, model.getVertices().get(1).z);
-        Vector3f min = new Vector3f();
-        for(Vector3f vertice: this.model.getVertices())
-        {
-            if(vertice.x > max.x)
-                max.x = vertice.x;
-            else if(vertice.x < min.x)
-                min.x = vertice.x;
-            if(vertice.y > max.y)
-                max.y = vertice.y;
-            else if(vertice.y < max.y)
-                min.y = vertice.y;
-            if(vertice.z > max.z)
-                max.z = vertice.z;
-            else if(vertice.z < min.z)
-                min.z = vertice.z;
-        }
+//        Vector3f max = new Vector3f(model.getVertices().get(1).x, model.getVertices().get(1).y, model.getVertices().get(1).z);
+//        Vector3f min = new Vector3f();
+//        for(Vector3f vertice: this.model.getVertices())
+//        {
+//            if(vertice.x > max.x)
+//                max.x = vertice.x;
+//            else if(vertice.x < min.x)
+//                min.x = vertice.x;
+//            if(vertice.y > max.y)
+//                max.y = vertice.y;
+//            else if(vertice.y < max.y)
+//                min.y = vertice.y;
+//            if(vertice.z > max.z)
+//                max.z = vertice.z;
+//            else if(vertice.z < min.z)
+//                min.z = vertice.z;
+//        }
     }
 
     /**

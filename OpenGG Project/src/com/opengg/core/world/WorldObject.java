@@ -22,15 +22,18 @@ public class WorldObject {
     private Vector3f rot;
     private Entity e;
     private DrawnObject d;
-    public WorldObject(Vector3f pos, Vector3f rot, OBJModel model){
+    private float floor;
+    public WorldObject(Vector3f pos, Vector3f rot, OBJModel model, float floor){
         this.pos = pos;
         this.rot = rot;
-        e = EntityFactory.generateEntity(EntityType.Static, pos.x, pos.y, pos.z, rot, 10, 2, model);
+        this.floor = floor;
+        e = EntityFactory.generateEntity(EntityType.Static, pos.x, pos.y, pos.z, floor, rot, 10, 2, model);
     }
     public WorldObject(){
         pos = new Vector3f(0,0,0);
         rot = new Vector3f(0,0,0);
-        e = EntityFactory.generateEntity(EntityType.Static, pos.x, pos.y, pos.z, rot, 10, 2, new OBJModel());
+        floor = -1;
+        e = EntityFactory.generateEntity(EntityType.Static, pos.x, pos.y, pos.z, floor, rot, 10, 2, new OBJModel());
     }
     public WorldObject(Vector3f pos, Vector3f rot, Entity e){
         this.pos = pos;
