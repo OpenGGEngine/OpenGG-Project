@@ -48,7 +48,7 @@ public class Font {
     
     //Constructors
     public Font(String path,String text, float size) throws Exception {
-        this.font = new java.awt.Font("Arial", java.awt.Font.PLAIN, 11);
+        this.font = new java.awt.Font("Arial", java.awt.Font.PLAIN, (int) size);
          CHARS.put(0, text);
         //Generate buffered image
         GraphicsConfiguration gc = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
@@ -75,8 +75,8 @@ public class Font {
         //Draw the characters on our image
         Graphics2D imageGraphics = (Graphics2D) bufferedImage.getGraphics();
         imageGraphics.setFont(font);
-        imageGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
-        imageGraphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        imageGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        imageGraphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
  
         // draw every CHAR by line...
         imageGraphics.setColor(java.awt.Color.WHITE);

@@ -12,6 +12,7 @@ import com.opengg.core.render.DrawnObject;
 import com.opengg.core.render.VertexArrayObject;
 import com.opengg.core.render.VertexBufferObject;
 import com.opengg.core.render.buffer.ObjectBuffers;
+import static com.opengg.core.render.gl.GLOptions.enable;
 import com.opengg.core.render.shader.ShaderHandler;
 import com.opengg.core.render.shader.premade.DepthShader;
 import com.opengg.core.render.shader.premade.GUIShader;
@@ -69,6 +70,7 @@ public class OpenGGTest implements KeyboardListener{
     private DepthShader dsh;
     private GUIShader gsh;
     private Font f;
+    private Texture t3 = new Texture();
     
     public OpenGGTest() throws IOException, Exception{
         Window w = new Window();
@@ -104,8 +106,8 @@ public class OpenGGTest implements KeyboardListener{
         vbo.bind(GL_ARRAY_BUFFER);
         
         t1.setupTexToBuffer();
-        //t2.loadTexture("C:/res/trump.png");
-        f = new Font("aids", 69696969);
+        t3.loadTexture("C:/res/trump.png");
+        f = new Font("aids", "thanks dad", 11);
         t2.loadFromBuffer(f.asByteBuffer(), (int)f.getFontImageWidth(), (int)f.getFontImageHeight());
         t2.useTexture();   
         
@@ -156,12 +158,16 @@ public class OpenGGTest implements KeyboardListener{
         
         test = ObjectBuffers.genBuffer(m, 1f, 0.2f);
         test2 = ObjectBuffers.genBuffer(m2, 1f, 1f);
+        
         awp3 = new DrawnObject(test,vbo);
         flashbang = new DrawnObject(test2,vbo); 
-        test2 = ObjectBuffers.getSquareUI(1, 3, 1, 3, -1, 1f);
+        
+        test2 = ObjectBuffers.getSquareUI(1, 3, 1, 3, -1, 1f, false);
         test5 = new DrawnObject(test2,vbo);
-        test2 = ObjectBuffers.getSquareUI(-3, -1, -3,- 1, -1, 1f);
+        
+        test2 = ObjectBuffers.getSquareUI(-3, -1, -3,- 1, -1, 1f, true);
         test6 = new DrawnObject(test2,vbo);
+        
         awp3.removeBuffer();
         flashbang.removeBuffer();
         Terrain base = new Terrain(0,0,t1);
@@ -173,14 +179,13 @@ public class OpenGGTest implements KeyboardListener{
         ShaderHandler.checkForErrors();
         
         
-        
-        glEnable(GL_BLEND);
+        enable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        glEnable(GL_DEPTH_TEST);
+        enable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
         
-        glEnable(GL_TEXTURE_2D);
+        enable(GL_TEXTURE_2D);
     }
     public void exit() {   
         
@@ -195,16 +200,16 @@ public class OpenGGTest implements KeyboardListener{
         
         rot = new Vector3f(-xrot,0,0); 
         
-        c.setPos(new Vector3f(0,0,0));
-        c.setRot(new Vector3f(0,0,0));
+        c.setPos(new Vector3f(10,0,0));
+        c.setRot(new Vector3f(30,0,0));
         
         ShaderHandler.setLightPos(new Vector3f(30,40,50));
         ShaderHandler.setView(c);
-        ShaderHandler.setOrtho(-10, 10, -10, 10, 0.3f, 50);
+        ShaderHandler.setOrtho(-10, 10, -10, 10, 0.3f, 40);
         
         ShaderHandler.setCurrentShader(sh);
         t1.startTexRender();
-        t2.useTexture();
+        t3.useTexture();
         awp3.draw();
         flashbang.draw();
         base2.draw();
@@ -221,12 +226,12 @@ public class OpenGGTest implements KeyboardListener{
         g.startGUI();
         ShaderHandler.setCurrentShader(gsh);
         
-        t1.useTexture();
+        t1.useDepthTexture();
         test5.draw();
 
         t2.useTexture();
         test6.draw();
-
+        
     }
     
     public void update(float delta) {       

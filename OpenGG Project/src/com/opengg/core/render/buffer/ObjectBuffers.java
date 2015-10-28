@@ -95,15 +95,25 @@ public class ObjectBuffers {
         elements.flip();
         return elements;
     }
-    public static FloatBuffer getSquareUI(float x1, float x2, float y1, float y2, float z1 ,float transparency){
+    public static FloatBuffer getSquareUI(float x1, float x2, float y1, float y2, float z1 ,float transparency, boolean flippedTex){
         FloatBuffer sq = BufferUtils.createFloatBuffer(6*12);
         
-        sq.put(x1).put(y1).put(z1).put(1).put(0).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(0).put(0);
-        sq.put(x1).put(y2).put(z1).put(0).put(1).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(0).put(1);
-        sq.put(x2).put(y1).put(z1).put(0).put(0).put(1).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(1).put(0);
-        sq.put(x2).put(y1).put(z1).put(0).put(1).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(1).put(0);
-        sq.put(x2).put(y2).put(z1).put(0).put(0).put(1).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(1).put(1);
-        sq.put(x1).put(y2).put(z1).put(1).put(0).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(0).put(1);
+        int i, i2;
+        if(flippedTex){
+            i = 1;
+            i2 = 0;
+            
+        }else{
+            i = 0;
+            i2 = 1;
+        }
+        
+        sq.put(x1).put(y1).put(z1).put(1).put(0).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(0).put(i);
+        sq.put(x1).put(y2).put(z1).put(0).put(1).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(0).put(i2);
+        sq.put(x2).put(y1).put(z1).put(0).put(0).put(1).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(1).put(i);
+        sq.put(x2).put(y1).put(z1).put(0).put(1).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(1).put(i);
+        sq.put(x2).put(y2).put(z1).put(0).put(0).put(1).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(1).put(i2);
+        sq.put(x1).put(y2).put(z1).put(1).put(0).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(0).put(i2);
         
         sq.flip();
         return sq;
@@ -121,15 +131,24 @@ public class ObjectBuffers {
         sq.flip();
         return sq;
     }
-    public static FloatBuffer getSquare(float x1, float z1, float x2, float y1,float y2, float y3, float y4, float z2, float transparency){
+    public static FloatBuffer getSquare(float x1, float z1, float x2, float y1,float y2, float y3, float y4, float z2, float transparency,boolean flippedTex){
         FloatBuffer sq = BufferUtils.createFloatBuffer(6*12);
+        int i, i2;
+        if(flippedTex){
+            i = 1;
+            i2 = 0;
+            
+        }else{
+            i = 0;
+            i2 = 1;
+        }
         
-        sq.put(x1).put(y1).put(z1).put(1).put(0).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(1).put(0);
-        sq.put(x1).put(y2).put(z2).put(0).put(1).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(1).put(1);
-        sq.put(x2).put(y3).put(z1).put(0).put(0).put(1).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(0).put(0);
-        sq.put(x2).put(y3).put(z1).put(0).put(1).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(0).put(0);
-        sq.put(x2).put(y4).put(z2).put(0).put(0).put(1).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(0).put(1);
-        sq.put(x1).put(y2).put(z2).put(1).put(0).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(1).put(1);
+        sq.put(x1).put(y1).put(z1).put(1).put(0).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(1).put(i);
+        sq.put(x1).put(y2).put(z2).put(0).put(1).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(1).put(i2);
+        sq.put(x2).put(y3).put(z1).put(0).put(0).put(1).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(0).put(i);
+        sq.put(x2).put(y3).put(z1).put(0).put(1).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(0).put(i);
+        sq.put(x2).put(y4).put(z2).put(0).put(0).put(1).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(0).put(i2);
+        sq.put(x1).put(y2).put(z2).put(1).put(0).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(1).put(i2);
         
         sq.flip();
         return sq;
