@@ -17,6 +17,7 @@ import com.opengg.core.render.shader.ShaderHandler;
 import com.opengg.core.render.shader.premade.DepthShader;
 import com.opengg.core.render.shader.premade.GUIShader;
 import com.opengg.core.render.shader.premade.ObjectShader;
+import com.opengg.core.render.shader.premade.SkyboxShader;
 import com.opengg.core.render.texture.Font;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.window.DisplayMode;
@@ -71,6 +72,7 @@ public class OpenGGTest implements KeyboardListener{
     private GUIShader gsh;
     private Font f;
     private Texture t3 = new Texture();
+    private SkyboxShader sk;
     
     public OpenGGTest() throws IOException, Exception{
         Window w = new Window();
@@ -135,6 +137,9 @@ public class OpenGGTest implements KeyboardListener{
         URL verts2 = OpenGGTest.class.getResource("res/shaders/gui.vert");
         URL frags2 = OpenGGTest.class.getResource("res/shaders/gui.frag");
         
+        URL verts3 = OpenGGTest.class.getResource("res/shaders/sky.vert");
+        URL frags3 = OpenGGTest.class.getResource("res/shaders/sky.frag");
+        
         dsh = new DepthShader();
         dsh.setup(win, dverts, dfrags);
         
@@ -143,7 +148,10 @@ public class OpenGGTest implements KeyboardListener{
         
         sh = new ObjectShader();
         sh.setup(win, verts, frags);
-
+        
+        sk = new SkyboxShader();
+        sk.setup(win, verts3, frags3);
+        
         c = new Camera(pos,rot);
         c.setPos(pos);
         c.setRot(rot);
@@ -183,7 +191,7 @@ public class OpenGGTest implements KeyboardListener{
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         enable(GL_DEPTH_TEST);
-        glDepthFunc(GL_LESS);
+        glDepthFunc(GL_LEQUAL);
         
         enable(GL_TEXTURE_2D);
     }

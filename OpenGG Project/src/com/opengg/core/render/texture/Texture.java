@@ -51,6 +51,8 @@ public class Texture {
     ByteBuffer buffer;
     
     public int setupTexToBuffer(){
+        glActiveTexture(GL_TEXTURE0);
+
         fb = glGenFramebuffers();
         glBindFramebuffer(GL_FRAMEBUFFER, fb);
         glDrawBuffers(GL_COLOR_ATTACHMENT0);
@@ -103,6 +105,7 @@ public class Texture {
     }
     
     public int loadFromBuffer(ByteBuffer b, int fwidth, int fheight){
+        glActiveTexture(GL_TEXTURE0);
         
         texture = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, texture);
@@ -124,7 +127,7 @@ public class Texture {
     }
     
     public int loadTexture(String path){
-        
+        glActiveTexture(GL_TEXTURE0);
         texture = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, texture);
         glGenerateMipmap(GL_TEXTURE_2D);
