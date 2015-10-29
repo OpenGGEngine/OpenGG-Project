@@ -61,7 +61,7 @@ public class OpenGGTest implements KeyboardListener{
     Texture t1 = new Texture();
     Texture t2 = new Texture();
     
-    DrawnObject awp3,flashbang,test5,base2;
+    DrawnObject awp3,flashbang,test5,base2,sky;
     
     float speed = 0.2f;
     
@@ -146,12 +146,13 @@ public class OpenGGTest implements KeyboardListener{
         gsh = new GUIShader();
         gsh.setup(win, verts2, frags2);
         
-        sh = new ObjectShader();
-        sh.setup(win, verts, frags);
-        
         sk = new SkyboxShader();
         sk.setup(win, verts3, frags3);
         
+        sh = new ObjectShader();
+        sh.setup(win, verts, frags);
+        
+
         c = new Camera(pos,rot);
         c.setPos(pos);
         c.setRot(rot);
@@ -175,6 +176,9 @@ public class OpenGGTest implements KeyboardListener{
         
         test2 = ObjectBuffers.getSquareUI(-3, -1, -3,- 1, -1, 1f, true);
         test6 = new DrawnObject(test2,vbo);
+        
+        test2 = ObjectBuffers.genSkyCube();
+        sky = new DrawnObject(test2, vbo);
         
         awp3.removeBuffer();
         flashbang.removeBuffer();

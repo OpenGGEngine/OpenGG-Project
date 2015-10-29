@@ -176,4 +176,38 @@ public class ObjectBuffers {
         f.flip();
         return f;
     }
+    public static FloatBuffer genSkyCube(){
+        FloatBuffer sq = BufferUtils.createFloatBuffer(6*6*3);
+        
+        sq.put(-100).put(100).put(100);
+        sq.put(-100).put(-100).put(100);
+        sq.put(100).put(-100).put(100);
+        sq.put(100).put(-100).put(100);
+        sq.put(100).put(100).put(100);
+        sq.put(-100).put(100).put(100);
+        
+        sq.put(-100).put(100).put(-100);
+        sq.put(-100).put(-100).put(-100);
+        sq.put(100).put(-100).put(-100);
+        sq.put(100).put(-100).put(-100);
+        sq.put(100).put(100).put(-100);
+        sq.put(-100).put(100).put(-100);
+        
+        sq.put(-100).put(-100).put(100);
+        sq.put(-100).put(-100).put(-100);
+        sq.put(-100).put(100).put(-100);
+        sq.put(-100).put(100).put(-100);
+        sq.put(-100).put(100).put(100);
+        sq.put(-100).put(-100).put(100);
+        
+        sq.put(100).put(-100).put(100);
+        sq.put(100).put(-100).put(-100);
+        sq.put(100).put(100).put(-100);
+        sq.put(100).put(100).put(-100);
+        sq.put(100).put(100).put(100);
+        sq.put(100).put(-100).put(100);
+        
+        sq.flip();
+        return sq;
+    }
 }

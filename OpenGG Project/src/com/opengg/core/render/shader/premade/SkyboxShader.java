@@ -65,6 +65,8 @@ public class SkyboxShader implements ShaderEnabled{
         int uniTex = program.getUniformLocation("skyTex"); 
         program.setUniform(uniTex, 1);
         
+        int skyboxSize = program.getUniformLocation("skyboxSize");
+        program.setUniform(skyboxSize, 10f);
         
         ratio = win.getRatio();
            
@@ -82,19 +84,7 @@ public class SkyboxShader implements ShaderEnabled{
         programv.use();
         int posAttrib = programv.getAttributeLocation("position");
         programv.enableVertexAttribute(posAttrib);
-        programv.pointVertexAttribute(posAttrib, 3, 12 * Float.BYTES, 0);
-
-        int colAttrib = programv.getAttributeLocation("color");
-        programv.enableVertexAttribute(colAttrib);
-        programv.pointVertexAttribute(colAttrib, 4, 12 * Float.BYTES, 3 * Float.BYTES);
-        
-        int normAttrib = programv.getAttributeLocation("normal"); 
-        programv.enableVertexAttribute(normAttrib);
-        programv.pointVertexAttribute(normAttrib, 3, 12 * Float.BYTES, 7 * Float.BYTES);
-        
-        int texAttrib = programv.getAttributeLocation("texcoord"); 
-        programv.enableVertexAttribute(texAttrib);
-        programv.pointVertexAttribute(texAttrib, 2, 12 * Float.BYTES, 10 * Float.BYTES);
+        programv.pointVertexAttribute(posAttrib, 3, 3 * Float.BYTES, 0);
 
     }
     @Override
