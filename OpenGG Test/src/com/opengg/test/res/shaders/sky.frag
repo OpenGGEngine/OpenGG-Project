@@ -12,19 +12,10 @@ uniform float lightdistance;
 uniform float lightpower;
 uniform samplerCube skyTex;
 void main() {	
-    
-    vec4 vertcolor = vertexColor;
-    
+
     vec3 npos = normalize(pos);
     
-    vec4 color = textureCube(skyTex, pos);
-
-/*
-    if(texture2D(texImage,textureCoord).a == 0){
-            color = vertcolor;
-            color.a = 0;
-    }
-*/
+    vec4 color = texture(skyTex, npos);
 
     fragColor = color;
     color = fragColor;

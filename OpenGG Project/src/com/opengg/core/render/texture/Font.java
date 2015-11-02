@@ -42,7 +42,7 @@ public class Font {
         return fontMetrics.charWidth(c);
     }
     public float getCharHeight() {
-        System.out.println(fontMetrics.getMaxAscent() + fontMetrics.getMaxDescent());
+        //System.out.println(fontMetrics.getMaxAscent() + fontMetrics.getMaxDescent());
         return (float) (fontMetrics.getMaxAscent() + fontMetrics.getMaxDescent());
     }
     

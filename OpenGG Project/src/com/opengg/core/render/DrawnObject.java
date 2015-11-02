@@ -36,11 +36,11 @@ public class DrawnObject {
     }
     private IntBuffer lineInd;
     
-    public DrawnObject(FloatBuffer b, VertexBufferObject vbo2){
+    public DrawnObject(FloatBuffer b, VertexBufferObject vbo2, int vertSize){
         limit = b.limit();
         offset = DrawnObjectHandler.getOffset();
-        vertLimit = limit/12;
-        vertOffset = offset/12;
+        vertLimit = limit/vertSize;
+        vertOffset = offset/vertSize;
         
         ind = BufferUtils.createIntBuffer(vertLimit);
         for(long i = vertOffset; i < vertLimit + vertOffset; i++){

@@ -63,10 +63,10 @@ public class SkyboxShader implements ShaderEnabled{
         program.setUniform(uniModel, new Matrix4f());
         
         int uniTex = program.getUniformLocation("skyTex"); 
-        program.setUniform(uniTex, 1);
+        program.setUniform(uniTex, 0);
         
         int skyboxSize = program.getUniformLocation("skyboxSize");
-        program.setUniform(skyboxSize, 10f);
+        program.setUniform(skyboxSize, 1f);
         
         ratio = win.getRatio();
            

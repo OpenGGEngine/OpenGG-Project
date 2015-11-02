@@ -6,7 +6,6 @@
 package com.opengg.core.render.texture;
 
 import com.opengg.core.util.GlobalInfo;
-import static com.opengg.core.util.GlobalUtil.print;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
@@ -41,10 +40,12 @@ public class Texture {
     }
     
     public void useTexture(){
+        glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture);
     }
     
     public void useDepthTexture(){
+        glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, depthbuffer);       
     }
     
@@ -79,7 +80,6 @@ public class Texture {
 
         try{
             if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE){
-                print("test");
                 throw new Exception("Buffer failed to generate!");
                 
             }

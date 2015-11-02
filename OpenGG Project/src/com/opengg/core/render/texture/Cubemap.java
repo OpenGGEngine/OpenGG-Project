@@ -37,13 +37,20 @@ public class Cubemap {
     int width;
     int height;
     ByteBuffer[] buffer = new ByteBuffer[6];
+    
+    public void use(){
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
+        //glActiveTexture(GL_TEXTURE0);
+    }
+    
     public int loadTexture(String path){
  
         InputStream in;
         
         try {
             
-            glActiveTexture(GL_TEXTURE1);
+            glActiveTexture(GL_TEXTURE0);
             in = new FileInputStream(path);
             BufferedImage image = ImageIO.read(in);
             
@@ -80,6 +87,7 @@ public class Cubemap {
 
                 buffer[i].flip();
             }
+            
             texture = glGenTextures();
 
             glBindTexture(GL_TEXTURE_CUBE_MAP, texture);	// Make it a cubemap
@@ -97,7 +105,7 @@ public class Cubemap {
             glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
             
             
-            
+            glActiveTexture(GL_TEXTURE0);
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Texture.class.getName()).severe("File not found!");
         }  catch (Exception e){

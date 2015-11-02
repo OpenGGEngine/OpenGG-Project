@@ -18,12 +18,14 @@ import com.opengg.core.render.shader.premade.DepthShader;
 import com.opengg.core.render.shader.premade.GUIShader;
 import com.opengg.core.render.shader.premade.ObjectShader;
 import com.opengg.core.render.shader.premade.SkyboxShader;
+import com.opengg.core.render.texture.Cubemap;
 import com.opengg.core.render.texture.Font;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.window.DisplayMode;
 import static com.opengg.core.render.window.RenderUtil.endFrame;
 import static com.opengg.core.render.window.RenderUtil.startFrame;
 import com.opengg.core.render.window.Window;
+import static com.opengg.core.util.GlobalUtil.print;
 import com.opengg.core.world.Camera;
 import com.opengg.core.world.Terrain;
 import java.io.FileNotFoundException;
@@ -33,6 +35,7 @@ import java.net.URL;
 import java.nio.FloatBuffer;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP;
 import static org.lwjgl.opengl.GL15.*;
 public class OpenGGTest implements KeyboardListener{
  
@@ -72,6 +75,7 @@ public class OpenGGTest implements KeyboardListener{
     private GUIShader gsh;
     private Font f;
     private Texture t3 = new Texture();
+    private Cubemap cb = new Cubemap();
     private SkyboxShader sk;
     
     public OpenGGTest() throws IOException, Exception{
@@ -103,16 +107,17 @@ public class OpenGGTest implements KeyboardListener{
 
         vao = new VertexArrayObject();
         vao.bind();
-        
+        print("1");
         vbo = new VertexBufferObject();
         vbo.bind(GL_ARRAY_BUFFER);
         
         t1.setupTexToBuffer();
         t3.loadTexture("C:/res/trump.png");
         f = new Font("aids", "thanks dad", 11);
+        print("2");
         t2.loadFromBuffer(f.asByteBuffer(), (int)f.getFontImageWidth(), (int)f.getFontImageHeight());
         t2.useTexture();   
-        
+        cb.loadTexture("C:/res/trump.png");
         AudioHandler.init(1);
         AudioHandler.setSoundBuffer(OpenGGTest.class.getResource("res/maw.wav"));
         AudioHandler.shouldLoop(true);
@@ -159,6 +164,7 @@ public class OpenGGTest implements KeyboardListener{
         
         ShaderHandler.addShader(dsh);
         ShaderHandler.addShader(gsh);
+        ShaderHandler.addShader(sk);
         ShaderHandler.addShader(sh);
         
         ShaderHandler.setCurrentShader(sh);
@@ -168,24 +174,24 @@ public class OpenGGTest implements KeyboardListener{
         test = ObjectBuffers.genBuffer(m, 1f, 0.2f);
         test2 = ObjectBuffers.genBuffer(m2, 1f, 1f);
         
-        awp3 = new DrawnObject(test,vbo);
-        flashbang = new DrawnObject(test2,vbo); 
+        awp3 = new DrawnObject(test,vbo,12);
+        flashbang = new DrawnObject(test2,vbo,12); 
         
         test2 = ObjectBuffers.getSquareUI(1, 3, 1, 3, -1, 1f, false);
-        test5 = new DrawnObject(test2,vbo);
+        test5 = new DrawnObject(test2,vbo,12);
         
         test2 = ObjectBuffers.getSquareUI(-3, -1, -3,- 1, -1, 1f, true);
-        test6 = new DrawnObject(test2,vbo);
+        test6 = new DrawnObject(test2,vbo,12);
         
         test2 = ObjectBuffers.genSkyCube();
-        sky = new DrawnObject(test2, vbo);
-        
+        sky = new DrawnObject(test2, vbo,12);
+ 
         awp3.removeBuffer();
         flashbang.removeBuffer();
         Terrain base = new Terrain(0,0,t1);
-        base2 = new DrawnObject(base.generateTerrain(heightmap),vbo);
+        base2 = new DrawnObject(base.generateTerrain(heightmap),vbo,12);
         base.removeBuffer();
-        
+
         ratio = win.getRatio();
         
         ShaderHandler.checkForErrors();
@@ -198,6 +204,8 @@ public class OpenGGTest implements KeyboardListener{
         glDepthFunc(GL_LEQUAL);
         
         enable(GL_TEXTURE_2D);
+        
+        enable(GL_TEXTURE_CUBE_MAP);
     }
     public void exit() {   
         
@@ -235,14 +243,18 @@ public class OpenGGTest implements KeyboardListener{
         flashbang.draw();
         base2.draw();   
         
-        g.startGUI();
-        ShaderHandler.setCurrentShader(gsh);
+//        cb.use();
+//        ShaderHandler.setCurrentShader(sk);
+//        sky.draw();
         
-        t1.useDepthTexture();
-        test5.draw();
-
-        t2.useTexture();
-        test6.draw();
+//        g.startGUI();
+//        ShaderHandler.setCurrentShader(gsh);
+//        
+//        t1.useDepthTexture();
+//        test5.draw(); 
+//
+//        t2.useTexture();
+//        test6.draw();
         
     }
     
