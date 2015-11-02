@@ -9,9 +9,9 @@ package com.opengg.core.world;
 import com.opengg.core.Vector3f;
 import com.opengg.core.io.objloader.parser.OBJModel;
 import com.opengg.core.world.entities.Entity;
-import com.opengg.core.world.entities.EntityFactory;
 import com.opengg.core.render.DrawnObject;
-import com.opengg.core.world.entities.EntityEnums.EntityType;
+import com.opengg.core.world.entities.Entity.EntityType;
+import java.rmi.activation.ActivationException;
 
 /**
  *
@@ -27,24 +27,40 @@ public class WorldObject {
         this.pos = pos;
         this.rot = rot;
         this.floor = floor;
-        e = EntityFactory.generateEntity(EntityType.Static, pos.x, pos.y, pos.z, floor, rot, 10, 2, model);
+        try {
+            e = new Entity(EntityType.Static, pos.x, pos.y, pos.z, floor, rot, 10, 2, model);
+        } catch (ActivationException ex) {
+            e = null;
+        }
     }
     public WorldObject(){
         pos = new Vector3f(0,0,0);
         rot = new Vector3f(0,0,0);
         floor = -1;
-        e = EntityFactory.generateEntity(EntityType.Static, pos.x, pos.y, pos.z, floor, rot, 10, 2, new OBJModel());
+        try {
+            e = new Entity(EntityType.Static, pos.x, pos.y, pos.z, floor, rot, 10, 2, new OBJModel());
+        } catch (ActivationException ex) {
+            e = null;
+        }
     }
     public WorldObject(Vector3f pos, Vector3f rot, Entity e){
         this.pos = pos;
         this.rot = rot;
-        this.e = EntityFactory.generateEntity(e);
+        try {
+            this.e = new Entity(e);
+        } catch (ActivationException ex) {
+            e = null;
+        }
         this.e.setXYZ(pos.x, pos.y, pos.z);
         this.e.setForce(rot);
     }
     public WorldObject(Entity e){
         pos = new Vector3f(0,0,0);
         rot = new Vector3f(0,0,0);
-        this.e = EntityFactory.generateEntity(e);
+        try {
+            this.e = new Entity(e);
+        } catch (ActivationException ex) {
+            e = null;
+        }
     }
 }

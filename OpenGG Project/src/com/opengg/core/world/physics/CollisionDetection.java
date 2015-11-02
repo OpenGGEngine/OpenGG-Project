@@ -6,13 +6,12 @@
 package com.opengg.core.world.physics;
 
 import com.opengg.core.world.entities.Entity;
-import com.opengg.core.world.entities.EntityFactory;
 
 /**
  *
  * @author ethachu19
  */
-public class CollisionDetection extends EntityFactory{
+public class CollisionDetection{
     private static final int MAX = 1;
     private static final int MIN = 0;
     

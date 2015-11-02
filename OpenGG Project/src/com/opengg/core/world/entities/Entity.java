@@ -9,14 +9,45 @@ import com.opengg.core.Vector2f;
 import com.opengg.core.Vector3f;
 import com.opengg.core.util.Time;
 import com.opengg.core.io.objloader.parser.OBJModel;
-import com.opengg.core.world.entities.EntityEnums.*;
 import com.opengg.core.world.physics.ForceManipulation;
+import java.rmi.activation.ActivationException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
  * @author ethachu19
  */
 public class Entity {
+    
+    public enum EntityType {
+        /* Update Movement, Force Update, No Collsion Response*/ Static,
+        /* Update Movement, Force Update, Collision Detection*/ Physics,
+        /* Update Movement, No force update, No Collision*/ Particle,
+        /* User Defined*/ Other
+    }
+
+    public enum Collide {
+        Collidable, Uncollidable, NoResponse
+    }
+
+    public enum UpdateXYZ {
+        Movable, Immovable
+    }
+
+    public enum UpdateForce {
+        Realistic, Unrealistic
+    }
+    
+    /**
+     * Number of Entities currently loaded.
+     */
+    public static int entityCount = 0;
+    
+    /**
+     * List of currently loaded entities
+     */
+    public static final List<Entity> EntityList = new ArrayList<>();
     
     /* tags */
     public UpdateForce updateForce;
@@ -70,8 +101,11 @@ public class Entity {
      * @param model Model to be bound to Entity
      * @param type Type of Entity
      * @param heightofGround Height of Ground
+     * @throws java.rmi.activation.ActivationException
      */
-    public Entity(OBJModel model, EntityType type, float heightofGround){
+    public Entity(OBJModel model, EntityType type, float heightofGround) throws ActivationException{
+        if(entityCount >= 44)
+            throw new ActivationException("Too many entities");
         forceCalculator = new ForceManipulation(new Vector3f(0,0,0), new Vector3f(0,0,0), this);
         setXYZ(0f, 0f, 0f);
         this.ground = true;
@@ -81,7 +115,8 @@ public class Entity {
         setTags(type);
         bindModel(model);
         
-        EntityFactory.EntityList.add(this);
+        EntityList.add(this);
+        entityCount++;
     }
 
     /**
@@ -96,8 +131,11 @@ public class Entity {
      * @param volume Volume of Entity
      * @param type Type of entity
      * @param model Model to be bound to entity     
+     * @throws java.rmi.activation.ActivationException     
      */
-    public Entity(float x, float y, float z, float heightofGround, Vector3f f, float mass, float volume, EntityType type, OBJModel model){
+    public Entity(EntityType type, float x, float y, float z, float heightofGround, Vector3f f, float mass, float volume, OBJModel model) throws ActivationException{
+        if(entityCount >= 44)
+            throw new ActivationException("Too many entities");
         forceCalculator = new ForceManipulation(this);
         setXYZ(x, y, z);
         this.heightofGround = heightofGround;
@@ -108,15 +146,19 @@ public class Entity {
         setTags(type);
         bindModel(model);
         
-        EntityFactory.EntityList.add(this);
+        EntityList.add(this);
+        entityCount++;
     }
 
     /**
      * Creates a new entity based off another.
      *
      * @param v Entity to be copied
+     * @throws java.rmi.activation.ActivationException
      */
-    public Entity(Entity v){
+    public Entity(Entity v) throws ActivationException{
+        if(entityCount >= 44)
+            throw new ActivationException("Too many entities");
         forceCalculator = new ForceManipulation(v.forceCalculator.airResistance, v.forceCalculator.force, this);
         setXYZ(v.pos.x, v.pos.y, v.pos.z);
         this.heightofGround = v.heightofGround;
@@ -130,7 +172,8 @@ public class Entity {
         this.updateForce = v.updateForce;
         bindModel(v.model);
         
-        EntityFactory.EntityList.add(this);
+        EntityList.add(this);
+        entityCount++;
     }
     
     /**

@@ -41,24 +41,24 @@ public class ForceManipulation {
      */
     public final void calculateForces() {
         if (!update.ground) {
-            if(force.x != Math.abs(force.x))
+            if(force.x < 0)
                 force.x = force.x + airResistance.x + ForceManipulation.wind.x;
             else 
                 force.x = force.x - airResistance.x + ForceManipulation.wind.x;
-            if(force.y != Math.abs(force.y))
+            if(force.y < 0)
                 force.y = force.y + airResistance.y - gravity + ForceManipulation.wind.y;
             else 
                 force.y = force.y - airResistance.y - gravity + ForceManipulation.wind.y;
-            if(force.z != Math.abs(force.z))
+            if(force.z < 0)
                 force.z = force.z + airResistance.x + ForceManipulation.wind.z;
             else 
                 force.z = force.z - airResistance.x + ForceManipulation.wind.z;
         } else {
-            if(force.x != Math.abs(force.x))
+            if(force.x < 0)
                 force.x = force.x + airResistance.x + ForceManipulation.wind.x;
             else 
                 force.x = force.x - airResistance.x + ForceManipulation.wind.x;
-            if(force.z != Math.abs(force.z))
+            if(force.z < 0)
                 force.z = force.z + airResistance.x + ForceManipulation.wind.z;
             else 
                 force.z = force.z - airResistance.x + ForceManipulation.wind.z;
