@@ -9,6 +9,7 @@ import com.opengg.core.Vector2f;
 import com.opengg.core.Vector3f;
 import com.opengg.core.util.Time;
 import com.opengg.core.io.objloader.parser.OBJModel;
+import com.opengg.core.world.World;
 import com.opengg.core.world.physics.ForceManipulation;
 import java.rmi.activation.ActivationException;
 import java.util.ArrayList;
@@ -56,13 +57,12 @@ public class Entity {
     
     /* Native to Entity*/
     public Vector3f pos = new Vector3f();
-    public float volume;
     public boolean ground;
     public float mass;
     
     /* Physics*/
-    public Vector3f velocity = new Vector3f(0,0,0);
-    public Vector2f direction = new Vector2f(0,0);
+    public Vector3f velocity = new Vector3f();
+    public Vector3f direction = new Vector3f();
     private final Time time = new Time();
     public Vector3f acceleration = new Vector3f(0,0,0);
     public Vector3f lastAcceleration = new Vector3f(0,0,0);
@@ -73,7 +73,7 @@ public class Entity {
     private float length = 5f;
     /* Max - 1, Min - 0 */
     public Vector3f[] boundingBox = new Vector3f[2];
-    private float heightofGround;
+    public World currentWorld = null;
     /*
     
      *---x---* 1
@@ -99,20 +99,17 @@ public class Entity {
      * Makes default Entity
      *
      * @param model Model to be bound to Entity
-     * @param type Type of Entity
-     * @param heightofGround Height of Ground
      * @throws java.rmi.activation.ActivationException
      */
-    public Entity(OBJModel model, EntityType type, float heightofGround) throws ActivationException{
+    public Entity(OBJModel model, World current) throws ActivationException{
         if(entityCount >= 44)
             throw new ActivationException("Too many entities");
         forceCalculator = new ForceManipulation(new Vector3f(0,0,0), new Vector3f(0,0,0), this);
         setXYZ(0f, 0f, 0f);
         this.ground = true;
-        this.volume = 60f;
         this.mass = 40f;
-        this.heightofGround = heightofGround;
-        setTags(type);
+        this.currentWorld = current;
+        setTags(EntityType.Physics);
         bindModel(model);
         
         EntityList.add(this);
@@ -122,26 +119,20 @@ public class Entity {
     /**
      * Creates an entity based off of 5 parameters.
      *
-     * @param x X coordinate
-     * @param y Y coordinate
-     * @param z Z coordinate
-     * @param heightofGround Height of Ground
      * @param f Force vector
      * @param mass Mass of Entity
-     * @param volume Volume of Entity
      * @param type Type of entity
      * @param model Model to be bound to entity     
      * @throws java.rmi.activation.ActivationException     
      */
-    public Entity(EntityType type, float x, float y, float z, float heightofGround, Vector3f f, float mass, float volume, OBJModel model) throws ActivationException{
+    public Entity(EntityType type, Vector3f position, Vector3f f, float mass, OBJModel model, World current) throws ActivationException{
         if(entityCount >= 44)
             throw new ActivationException("Too many entities");
+        this.currentWorld = current;
         forceCalculator = new ForceManipulation(this);
-        setXYZ(x, y, z);
-        this.heightofGround = heightofGround;
+        setXYZ(position);
         setForce(f);
         this.ground = (pos.y < 60);
-        this.volume = volume;
         this.mass = mass;
         setTags(type);
         bindModel(model);
@@ -159,14 +150,12 @@ public class Entity {
     public Entity(Entity v) throws ActivationException{
         if(entityCount >= 44)
             throw new ActivationException("Too many entities");
+        this.currentWorld = v.currentWorld;
         forceCalculator = new ForceManipulation(v.forceCalculator.airResistance, v.forceCalculator.force, this);
         setXYZ(v.pos.x, v.pos.y, v.pos.z);
-        this.heightofGround = v.heightofGround;
         setVelocity(v.velocity);
         this.ground = (pos.y < 60);
-        this.volume = v.volume;
         this.mass = v.mass;
-        
         this.collision = v.collision;
         this.updatePosition = v.updatePosition;
         this.updateForce = v.updateForce;
@@ -287,6 +276,19 @@ public class Entity {
         boundingBox[1].y = y;
         boundingBox[1].x = x + width/2;
         boundingBox[1].z = z - length/2;
+        ground = (currentWorld.floorLev <= this.pos.y);
+    }
+    
+    public final void setXYZ(Vector3f v){
+        this.pos = v;
+        boundingBox[0].y = pos.y + height;
+        boundingBox[0].x = pos.x - width/2;
+        boundingBox[0].z = pos.z + length/2;
+        
+        boundingBox[1].y = pos.y;
+        boundingBox[1].x = pos.x + width/2;
+        boundingBox[1].z = pos.z - length/2;
+        ground = (currentWorld.floorLev <= this.pos.y);
     }
 
     /**
@@ -309,6 +311,10 @@ public class Entity {
         this.velocity.x = v.x;
         this.velocity.y = v.y;
         this.velocity.z = v.z;
+    }
+    
+    public final void setRotation(Vector3f v){
+        this.direction = v;
     }
     
     /**
@@ -353,7 +359,7 @@ public class Entity {
             y.y += velocity.y * timeStep + (0.5 * lastAcceleration.y * timeStep * timeStep);
         for(Vector3f z: boundingBox)
             z.z += velocity.z * timeStep + (0.5 * lastAcceleration.z * timeStep * timeStep);
-        ground = (pos.y < 60);
+        ground = (pos.y <= currentWorld.floorLev);
         acceleration.x = forceCalculator.force.x / mass;
         acceleration.y = forceCalculator.force.y / mass;
         acceleration.z = forceCalculator.force.z / mass;
@@ -369,11 +375,14 @@ public class Entity {
      * @return Error
      */
     public boolean collisionResponse(Vector3f force) {
-        
         this.forceCalculator.force.x += force.x;
         this.forceCalculator.force.y += force.y;
         this.forceCalculator.force.z += force.z;
         return true;
+    }
+    
+    public void changeWorld(World next){
+        currentWorld = next;
     }
 
 }
