@@ -21,8 +21,12 @@ import static org.lwjgl.opengl.GL11.GL_RGB;
 import static org.lwjgl.opengl.GL11.GL_RGBA;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_S;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_T;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE;
 import static org.lwjgl.opengl.GL11.glBindTexture;
+import static org.lwjgl.opengl.GL11.glGenTextures;
+import static org.lwjgl.opengl.GL11.glGenTextures;
 import static org.lwjgl.opengl.GL11.glGenTextures;
 import static org.lwjgl.opengl.GL11.glTexImage2D;
 import static org.lwjgl.opengl.GL11.glTexParameteri;
@@ -39,9 +43,9 @@ public class Cubemap {
     ByteBuffer[] buffer = new ByteBuffer[6];
     
     public void use(){
-        glActiveTexture(GL_TEXTURE0);
+        glActiveTexture(GL_TEXTURE2);
         glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
-        //glActiveTexture(GL_TEXTURE0);
+        glActiveTexture(GL_TEXTURE0);
     }
     
     public int loadTexture(String path){
@@ -50,7 +54,7 @@ public class Cubemap {
         
         try {
             
-            glActiveTexture(GL_TEXTURE0);
+            glActiveTexture(GL_TEXTURE2);
             in = new FileInputStream(path);
             BufferedImage image = ImageIO.read(in);
             
@@ -62,12 +66,14 @@ public class Cubemap {
             width = image.getWidth();
             height = image.getHeight();
 
-            int[] pixels = new int[width * height];
-            image.getRGB(0, 0, width, height, pixels, 0, width);
+            
             for(int i = 0; i < buffer.length; i++){
                 buffer[i] = BufferUtils.createByteBuffer(width * height * 4);
-                for (int y = 0; y < height; y++) {
-                    for (int x = 0; x < width; x++) {
+                int[] pixels = new int[width * height];
+                image.getRGB(0, 0, width, height, pixels, 0, width);
+                for (int y = height-1; y > 0; y--) {
+                    for(int x = 0; x < width; x++){
+                    //for (int x = width-1; x > 0; x--) {
                         /* Pixel as RGBA: 0xAARRGGBB */
                         int pixel = pixels[y * width + x];
 
@@ -92,17 +98,20 @@ public class Cubemap {
 
             glBindTexture(GL_TEXTURE_CUBE_MAP, texture);	// Make it a cubemap
 
-            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, GL_RGBA, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, buffer[0]); // postive x
-            glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, GL_RGBA, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, buffer[1]); // negative x
-            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, GL_RGBA, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, buffer[2]); // postive y
-            glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, GL_RGBA, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, buffer[3]); // negative y
-            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, GL_RGBA, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, buffer[4]); // positive z
-            glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, GL_RGBA, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, buffer[5]); // negative z
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer[0]); // postive x
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer[1]); // negative x
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer[2]); // postive y
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer[3]); // negative y
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer[4]); // positive z
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer[5]); // negative z
 
             glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);	// Set far filtering mode
             glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+            glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
             
-            glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+            
+            //glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
             
             
             glActiveTexture(GL_TEXTURE0);

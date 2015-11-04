@@ -135,44 +135,49 @@ public class Texture {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        
-        
-        InputStream in;
-        try {
-            in = new FileInputStream(path);
-            BufferedImage image = ImageIO.read(in);
+        try{
             
-            AffineTransform transform = AffineTransform.getScaleInstance(1f, -1f);
-            transform.translate(0, -image.getHeight());
-            AffineTransformOp operation = new AffineTransformOp(transform, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
-            image = operation.filter(image, null);
+            //buffer = TexBufferGen.genTex(path);
             
-            width = image.getWidth();
-            height = image.getHeight();
+            InputStream in;
+        ByteBuffer buffer;
 
-            int[] pixels = new int[width * height];
-            image.getRGB(0, 0, width, height, pixels, 0, width);
-            buffer = BufferUtils.createByteBuffer(width * height * 4);
-            for (int y = 0; y < height; y++) {
-                for (int x = 0; x < width; x++) {
-                    /* Pixel as RGBA: 0xAARRGGBB */
-                    int pixel = pixels[y * width + x];
+        in = new FileInputStream(path);
+        BufferedImage image = ImageIO.read(in);
 
-                    /* Red component 0xAARRGGBB >> (4 * 4) = 0x0000AARR */
-                    buffer.put((byte) ((pixel >> 16) & 0xFF));
+        AffineTransform transform = AffineTransform.getScaleInstance(1f, -1f);
+        transform.translate(0, -image.getHeight());
+        AffineTransformOp operation = new AffineTransformOp(transform, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+        image = operation.filter(image, null);
 
-                    /* Green component 0xAARRGGBB >> (2 * 4) = 0x00AARRGG */
-                    buffer.put((byte) ((pixel >> 8) & 0xFF));
+        int width = image.getWidth();
+        int height = image.getHeight();
+        
+        int[] pixels = new int[width * height];
+        image.getRGB(0, 0, width, height, pixels, 0, width);
+        buffer = BufferUtils.createByteBuffer(width * height * 4);
+        for (int y = height-1; y > 0; y--) {
+            for(int x = 0; x < width; x++){
+            //for (int x = width-1; x > 0; x--) {
+                /* Pixel as RGBA: 0xAARRGGBB */
+                int pixel = pixels[y * width + x];
 
-                    /* Blue component 0xAARRGGBB >> 0 = 0xAARRGGBB */
-                    buffer.put((byte) (pixel & 0xFF));
+                /* Red component 0xAARRGGBB >> (4 * 4) = 0x0000AARR */
+                buffer.put((byte) ((pixel >> 16) & 0xFF));
 
-                    /* Alpha component 0xAARRGGBB >> (6 * 4) = 0x000000AA */
-                    buffer.put((byte) ((pixel >> 24) & 0xFF));
-                }
+                /* Green component 0xAARRGGBB >> (2 * 4) = 0x00AARRGG */
+                buffer.put((byte) ((pixel >> 8) & 0xFF));
+
+                /* Blue component 0xAARRGGBB >> 0 = 0xAARRGGBB */
+                buffer.put((byte) (pixel & 0xFF));
+
+                /* Alpha component 0xAARRGGBB >> (6 * 4) = 0x000000AA */
+                buffer.put((byte) ((pixel >> 24) & 0xFF));
             }
+        }
 
-            buffer.flip();
+        buffer.flip();
+            
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
             glBindTexture(GL_TEXTURE_2D, 0);
             
