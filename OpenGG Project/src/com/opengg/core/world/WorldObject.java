@@ -12,7 +12,6 @@ import com.opengg.core.world.entities.*;
 import com.opengg.core.render.DrawnObject;
 import com.opengg.core.world.entities.Entity.EntityType;
 import com.opengg.core.world.entities.EntityTypes;
-import java.rmi.activation.ActivationException;
 
 /**
  *
@@ -28,50 +27,40 @@ public class WorldObject {
         this.pos = pos;
         this.rot = rot;
         this.thisWorld = thisWorld;
-        try {
-            e = EntityFactory.getEntity(EntityTypes.DEFAULT,EntityType.Static, pos, new Vector3f(), 10, model, thisWorld);
-            e.setRotation(rot);
-        } catch (ActivationException ex) {
-            e = null;
-        }
+        e = EntityFactory.getEntity(EntityTypes.DEFAULT,EntityType.Static, pos, new Vector3f(), 10, model, thisWorld);
+        e.setRotation(rot);
     }
     public WorldObject(){
         pos = new Vector3f(0,0,0);
         rot = new Vector3f(0,0,0);
         thisWorld = new World(new Camera(pos, rot));
-        try {
-            e = EntityFactory.getEntity(EntityTypes.DEFAULT, EntityType.Static, pos, new Vector3f(), 10, new OBJModel(), thisWorld);
-            e.setXYZ(pos);
-            e.setRotation(rot);
-        } catch (ActivationException ex) {
-            e = null;
-        }
+        e = EntityFactory.getEntity(EntityTypes.DEFAULT, EntityType.Static, pos, new Vector3f(), 10, new OBJModel(), thisWorld);
+        e.setXYZ(pos);
+        e.setRotation(rot);
         this.thisWorld.addObject(this);
     }
     public WorldObject(Vector3f pos, Vector3f rot, Entity e){
         this.pos = pos;
         this.rot = rot;
         this.thisWorld = e.currentWorld;
-        try {
-            this.e = EntityFactory.getEntity(EntityTypes.DEFAULT,e);
-            this.e.setXYZ(pos);
-            this.e.setRotation(rot);
-        } catch (ActivationException ex) {
-            this.e = null;
-        }
+        this.e = EntityFactory.getEntity(EntityTypes.DEFAULT,e);
+        this.e.setXYZ(pos);
+        this.e.setRotation(rot);
     }
     public WorldObject(Entity e){
         pos = new Vector3f(0,0,0);
         rot = new Vector3f(e.direction);
         this.thisWorld = e.currentWorld;
-        try {
-            this.e = EntityFactory.getEntity(EntityTypes.DEFAULT,e);;
-            this.e.setXYZ(pos);
-            this.e.setRotation(rot);
-        } catch (ActivationException ex) {
-            e = null;
-        }
+        this.e = EntityFactory.getEntity(EntityTypes.DEFAULT,e);
+        this.e.setXYZ(pos);
+        this.e.setRotation(rot);
     }
+    
+    /**
+     * Changes current World of WorldObject
+     * 
+     * @param next 
+     */
     
     public void switchWorld(World next){
         thisWorld.removeObject(this);

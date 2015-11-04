@@ -64,6 +64,11 @@ public class ForceManipulation {
         }
     }
     
+    /**
+     * Changes Wind Force/Speed
+     * 
+     * @param wind Wind Vector
+     */
     public static final void setWind(Vector3f wind){
         ForceManipulation.wind.x = wind.x;
         ForceManipulation.wind.y = wind.y;

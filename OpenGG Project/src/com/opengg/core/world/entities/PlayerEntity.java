@@ -31,7 +31,7 @@ public class PlayerEntity extends Entity{
      *
      * @param model Model to be bound to Entity
      */
-    public PlayerEntity(OBJModel model, World current) throws ActivationException{
+    public PlayerEntity(OBJModel model, World current){
         super(model, current);
     }
 
@@ -43,7 +43,7 @@ public class PlayerEntity extends Entity{
      * @param type Type of entity
      * @param model Model to be bound to entity
      */
-    public PlayerEntity(EntityType type, Vector3f position, Vector3f f, float mass, OBJModel model, World current) throws ActivationException{
+    public PlayerEntity(EntityType type, Vector3f position, Vector3f f, float mass, OBJModel model, World current){
         super(type,position, f, mass, model, current);
     }
 
@@ -52,7 +52,7 @@ public class PlayerEntity extends Entity{
      *
      * @param v Entity to be copied
      */
-    public PlayerEntity(Entity v) throws ActivationException{
+    public PlayerEntity(Entity v){
         super(v);
     }
 }

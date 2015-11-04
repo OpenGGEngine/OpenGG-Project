@@ -5,15 +5,12 @@
  */
 package com.opengg.core.world.entities;
 
-import com.opengg.core.Vector2f;
 import com.opengg.core.Vector3f;
 import com.opengg.core.util.Time;
 import com.opengg.core.io.objloader.parser.OBJModel;
 import com.opengg.core.world.World;
+import static com.opengg.core.world.entities.EntityFactory.EntityList;
 import com.opengg.core.world.physics.ForceManipulation;
-import java.rmi.activation.ActivationException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
@@ -40,16 +37,6 @@ public class Entity {
         Realistic, Unrealistic
     }
     
-    /**
-     * Number of Entities currently loaded.
-     */
-    public static int entityCount = 0;
-    
-    /**
-     * List of currently loaded entities
-     */
-    public static final List<Entity> EntityList = new ArrayList<>();
-    
     /* tags */
     public UpdateForce updateForce;
     public UpdateXYZ updatePosition;
@@ -59,6 +46,7 @@ public class Entity {
     public Vector3f pos = new Vector3f();
     public boolean ground;
     public float mass;
+    public World currentWorld = null;
     
     /* Physics*/
     public Vector3f velocity = new Vector3f();
@@ -73,7 +61,6 @@ public class Entity {
     private float length = 5f;
     /* Max - 1, Min - 0 */
     public Vector3f[] boundingBox = new Vector3f[2];
-    public World currentWorld = null;
     /*
     
      *---x---* 1
@@ -99,11 +86,9 @@ public class Entity {
      * Makes default Entity
      *
      * @param model Model to be bound to Entity
-     * @throws java.rmi.activation.ActivationException
+     * @param current Current World
      */
-    public Entity(OBJModel model, World current) throws ActivationException{
-        if(entityCount >= 44)
-            throw new ActivationException("Too many entities");
+    public Entity(OBJModel model, World current){
         forceCalculator = new ForceManipulation(new Vector3f(0,0,0), new Vector3f(0,0,0), this);
         setXYZ(0f, 0f, 0f);
         this.ground = true;
@@ -113,21 +98,19 @@ public class Entity {
         bindModel(model);
         
         EntityList.add(this);
-        entityCount++;
     }
 
     /**
      * Creates an entity based off of 5 parameters.
      *
      * @param f Force vector
+     * @param position Current Position
      * @param mass Mass of Entity
      * @param type Type of entity
      * @param model Model to be bound to entity     
-     * @throws java.rmi.activation.ActivationException     
+     * @param current Current World
      */
-    public Entity(EntityType type, Vector3f position, Vector3f f, float mass, OBJModel model, World current) throws ActivationException{
-        if(entityCount >= 44)
-            throw new ActivationException("Too many entities");
+    public Entity(EntityType type, Vector3f position, Vector3f f, float mass, OBJModel model, World current){
         this.currentWorld = current;
         forceCalculator = new ForceManipulation(this);
         setXYZ(position);
@@ -138,18 +121,14 @@ public class Entity {
         bindModel(model);
         
         EntityList.add(this);
-        entityCount++;
     }
 
     /**
      * Creates a new entity based off another.
      *
      * @param v Entity to be copied
-     * @throws java.rmi.activation.ActivationException
      */
-    public Entity(Entity v) throws ActivationException{
-        if(entityCount >= 44)
-            throw new ActivationException("Too many entities");
+    public Entity(Entity v){
         this.currentWorld = v.currentWorld;
         forceCalculator = new ForceManipulation(v.forceCalculator.airResistance, v.forceCalculator.force, this);
         setXYZ(v.pos.x, v.pos.y, v.pos.z);
@@ -162,7 +141,6 @@ public class Entity {
         bindModel(v.model);
         
         EntityList.add(this);
-        entityCount++;
     }
     
     /**
@@ -171,8 +149,7 @@ public class Entity {
      * @param collision Tag for Collision Detection
      * @return True
      */
-    public boolean setTags(Collide collision)     
-    {
+    public boolean setTags(Collide collision){
         this.collision = collision;
         return true;
     }
@@ -183,8 +160,7 @@ public class Entity {
      * @param updateForce Tag for realistic force calculation
      * @return True
      */
-    public boolean setTags(UpdateForce updateForce)
-    {
+    public boolean setTags(UpdateForce updateForce){
         this.updateForce = updateForce;
         if(this.updateForce == UpdateForce.Realistic && this.updatePosition != UpdateXYZ.Movable)
         {
@@ -199,8 +175,7 @@ public class Entity {
      * @param updatePosition Tag for movable entity
      * @return True
      */
-    public boolean setTags(UpdateXYZ updatePosition)
-    {
+    public boolean setTags(UpdateXYZ updatePosition){
         this.updatePosition = updatePosition;
         if(this.updatePosition == UpdateXYZ.Immovable)
         {
@@ -381,8 +356,12 @@ public class Entity {
         return true;
     }
     
-    public void changeWorld(World next){
+    /**
+     * Changes current world of Entity
+     * 
+     * @param next The target world
+     */
+    public final void changeWorld(World next){
         currentWorld = next;
     }
-
 }

@@ -8,28 +8,31 @@ package com.opengg.core.world.physics;
 import com.opengg.core.Vector3f;
 import com.opengg.core.world.entities.Entity;
 import static com.opengg.core.world.entities.Entity.*;
+import com.opengg.core.world.entities.EntityFactory;
 
 /**
  *
  * @author ethachu19
  */
-public class MainLoop{
+public class MainLoop extends EntityFactory{
 
     public static void process()
     {
         while(true)// put in some condition? Idk
         {
-            for(Entity collide: Entity.EntityList)
-            {
+            if(EntityList.size() > entityCap)
+                for(int i = 0; EntityList.size() > entityCap; ++i)
+                    EntityFactory.destroyEntity(i);
+            for(Entity collide: EntityList){
                 if(collide.updatePosition == UpdateXYZ.Movable)
                     collide.updateXYZ();
                 if(collide.updateForce == UpdateForce.Realistic)
                     collide.forceCalculator.calculateForces();
             }
-            for (Entity collide : Entity.EntityList) {
+            for (Entity collide : EntityList){
                 if(collide.collision != Collide.Collidable)
                     continue;
-                for(Entity collidee: Entity.EntityList)
+                for(Entity collidee: EntityList)
                 {
                     if(collide.equals(collidee) || collidee.collision == Collide.Uncollidable)
                         continue;
