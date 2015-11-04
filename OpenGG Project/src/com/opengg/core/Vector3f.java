@@ -5,7 +5,6 @@
  */
 package com.opengg.core;
 import java.nio.FloatBuffer;
-import java.util.List;
 import org.lwjgl.BufferUtils;
 /**
  *

@@ -8,6 +8,7 @@ package com.opengg.core.world.entities;
 import com.opengg.core.Vector3f;
 import com.opengg.core.io.objloader.parser.OBJModel;
 import com.opengg.core.world.Camera;
+import com.opengg.core.world.World;
 import java.rmi.activation.ActivationException;
 
 /**
@@ -16,7 +17,7 @@ import java.rmi.activation.ActivationException;
  */
 public class PlayerEntity extends Entity{
     
-    public Camera playerCam = new Camera(new Vector3f(), new Vector3f());
+    public Camera playerCam = new Camera(pos, direction);
     
     /**
      * Default Constructor
@@ -29,28 +30,21 @@ public class PlayerEntity extends Entity{
      * Makes default Player
      *
      * @param model Model to be bound to Entity
-     * @param type Type of Entity
-     * @param heightofGround Height of Ground
      */
-    public PlayerEntity(OBJModel model, EntityType type, float heightofGround) throws ActivationException{
-        super(model, type, heightofGround);
+    public PlayerEntity(OBJModel model, World current) throws ActivationException{
+        super(model, current);
     }
 
     /**
      * Creates an player based off of 5 parameters.
      *
-     * @param x X coordinate
-     * @param y Y coordinate
-     * @param z Z coordinate
-     * @param heightofGround
      * @param f Force vector
      * @param mass Mass of Entity
-     * @param volume Volume of Entity
      * @param type Type of entity
      * @param model Model to be bound to entity
      */
-    public PlayerEntity(float x, float y, float z, float heightofGround, Vector3f f, float mass, float volume, EntityType type, OBJModel model) throws ActivationException{
-        super(type,x, y, z, heightofGround, f, mass, volume, model);
+    public PlayerEntity(EntityType type, Vector3f position, Vector3f f, float mass, OBJModel model, World current) throws ActivationException{
+        super(type,position, f, mass, model, current);
     }
 
     /**

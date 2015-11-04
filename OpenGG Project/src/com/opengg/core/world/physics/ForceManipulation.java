@@ -31,8 +31,7 @@ public class ForceManipulation {
         update = v;
     }
     
-    public ForceManipulation(Entity v)
-    {
+    public ForceManipulation(Entity v){
         update = v;
     }
     
@@ -65,8 +64,7 @@ public class ForceManipulation {
         }
     }
     
-    public static final void setWind(Vector3f wind)
-    {
+    public static final void setWind(Vector3f wind){
         ForceManipulation.wind.x = wind.x;
         ForceManipulation.wind.y = wind.y;
         ForceManipulation.wind.z = wind.z;
