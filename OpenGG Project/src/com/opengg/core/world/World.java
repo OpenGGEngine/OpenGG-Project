@@ -17,7 +17,7 @@ public class World {
     private List<WorldObject> objs = new ArrayList<>();
     private List<Camera> cams = new ArrayList<>();
     private Camera mainCam;
-    private float floorLev = -1;
+    public float floorLev = -1;
     
     
     public void setFloor(float floor){
@@ -38,6 +38,9 @@ public class World {
     }
     public void removeObject(int i){
         objs.remove(i);
+    }
+    public void removeObject(WorldObject w){
+        objs.remove(w);
     }
     public void removeCamera(int i){
         cams.remove(i);

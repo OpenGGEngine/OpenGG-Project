@@ -21,9 +21,8 @@ public class WorldManager {
         worlds.add(w);
         return w;
     }
-    public static World getWorld(int world){
-        int i = world;
-        return worlds.get(i);
+    public static World getWorld(final int world){
+        return worlds.get(world);
     }
     
 }

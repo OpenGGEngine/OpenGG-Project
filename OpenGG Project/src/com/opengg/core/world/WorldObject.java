@@ -8,9 +8,10 @@ package com.opengg.core.world;
 
 import com.opengg.core.Vector3f;
 import com.opengg.core.io.objloader.parser.OBJModel;
-import com.opengg.core.world.entities.Entity;
+import com.opengg.core.world.entities.*;
 import com.opengg.core.render.DrawnObject;
 import com.opengg.core.world.entities.Entity.EntityType;
+import com.opengg.core.world.entities.EntityTypes;
 import java.rmi.activation.ActivationException;
 
 /**
@@ -22,13 +23,14 @@ public class WorldObject {
     private Vector3f rot;
     private Entity e;
     private DrawnObject d;
-    private float floor;
-    public WorldObject(Vector3f pos, Vector3f rot, OBJModel model, float floor){
+    private World thisWorld;
+    public WorldObject(Vector3f pos, Vector3f rot, OBJModel model, World thisWorld){
         this.pos = pos;
         this.rot = rot;
-        this.floor = floor;
+        this.thisWorld = thisWorld;
         try {
-            e = new Entity(EntityType.Static, pos.x, pos.y, pos.z, floor, rot, 10, 2, model);
+            e = EntityFactory.getEntity(EntityTypes.DEFAULT,EntityType.Static, pos, new Vector3f(), 10, model, thisWorld);
+            e.setRotation(rot);
         } catch (ActivationException ex) {
             e = null;
         }
@@ -36,31 +38,45 @@ public class WorldObject {
     public WorldObject(){
         pos = new Vector3f(0,0,0);
         rot = new Vector3f(0,0,0);
-        floor = -1;
+        thisWorld = new World(new Camera(pos, rot));
         try {
-            e = new Entity(EntityType.Static, pos.x, pos.y, pos.z, floor, rot, 10, 2, new OBJModel());
+            e = EntityFactory.getEntity(EntityTypes.DEFAULT, EntityType.Static, pos, new Vector3f(), 10, new OBJModel(), thisWorld);
+            e.setXYZ(pos);
+            e.setRotation(rot);
         } catch (ActivationException ex) {
             e = null;
         }
+        this.thisWorld.addObject(this);
     }
     public WorldObject(Vector3f pos, Vector3f rot, Entity e){
         this.pos = pos;
         this.rot = rot;
+        this.thisWorld = e.currentWorld;
         try {
-            this.e = new Entity(e);
+            this.e = EntityFactory.getEntity(EntityTypes.DEFAULT,e);
+            this.e.setXYZ(pos);
+            this.e.setRotation(rot);
         } catch (ActivationException ex) {
-            e = null;
+            this.e = null;
         }
-        this.e.setXYZ(pos.x, pos.y, pos.z);
-        this.e.setForce(rot);
     }
     public WorldObject(Entity e){
         pos = new Vector3f(0,0,0);
-        rot = new Vector3f(0,0,0);
+        rot = new Vector3f(e.direction);
+        this.thisWorld = e.currentWorld;
         try {
-            this.e = new Entity(e);
+            this.e = EntityFactory.getEntity(EntityTypes.DEFAULT,e);;
+            this.e.setXYZ(pos);
+            this.e.setRotation(rot);
         } catch (ActivationException ex) {
             e = null;
         }
+    }
+    
+    public void switchWorld(World next){
+        thisWorld.removeObject(this);
+        next.addObject(this);
+        thisWorld = next;
+        e.changeWorld(next);
     }
 }
