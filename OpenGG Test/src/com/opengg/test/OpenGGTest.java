@@ -107,17 +107,17 @@ public class OpenGGTest implements KeyboardListener{
 
         vao = new VertexArrayObject();
         vao.bind();
-        print("1");
         vbo = new VertexBufferObject();
         vbo.bind(GL_ARRAY_BUFFER);
         
         t1.setupTexToBuffer();
         t3.loadTexture("C:/res/trump.png");
         f = new Font("aids", "thanks dad", 11);
-        print("2");
+        
         t2.loadFromBuffer(f.asByteBuffer(), (int)f.getFontImageWidth(), (int)f.getFontImageHeight());
         t2.useTexture();   
         cb.loadTexture("C:/res/trump.png");
+        
         AudioHandler.init(1);
         AudioHandler.setSoundBuffer(OpenGGTest.class.getResource("res/maw.wav"));
         AudioHandler.shouldLoop(true);
@@ -142,8 +142,8 @@ public class OpenGGTest implements KeyboardListener{
         URL verts2 = OpenGGTest.class.getResource("res/shaders/gui.vert");
         URL frags2 = OpenGGTest.class.getResource("res/shaders/gui.frag");
         
-        URL verts3 = OpenGGTest.class.getResource("res/shaders/sky.vert");
-        URL frags3 = OpenGGTest.class.getResource("res/shaders/sky.frag");
+        URL verts3 = OpenGGTest.class.getResource("res/skybox/sky.vert");
+        URL frags3 = OpenGGTest.class.getResource("res/skybox/sky.frag");
         
         dsh = new DepthShader();
         dsh.setup(win, dverts, dfrags);
@@ -196,7 +196,6 @@ public class OpenGGTest implements KeyboardListener{
         
         ShaderHandler.checkForErrors();
         
-        
         enable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -243,18 +242,18 @@ public class OpenGGTest implements KeyboardListener{
         flashbang.draw();
         base2.draw();   
         
-//        cb.use();
-//        ShaderHandler.setCurrentShader(sk);
-//        sky.draw();
+        cb.use();
+        ShaderHandler.setCurrentShader(sk);
+        sky.draw();
         
-//        g.startGUI();
-//        ShaderHandler.setCurrentShader(gsh);
-//        
-//        t1.useDepthTexture();
-//        test5.draw(); 
-//
-//        t2.useTexture();
-//        test6.draw();
+        g.startGUI();
+        ShaderHandler.setCurrentShader(gsh);
+        
+        t1.useDepthTexture();
+        test5.draw(); 
+
+        t2.useTexture();
+        test6.draw();
         
     }
     
