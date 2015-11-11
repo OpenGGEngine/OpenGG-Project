@@ -17,5 +17,5 @@ void main() {
     vcolor = color;
     mat4 mvp = projection * view * model;
     gl_Position = mvp * vec4(position, 1.0);
-    pos = gl_Position;
+    //pos = gl_Position;
 };

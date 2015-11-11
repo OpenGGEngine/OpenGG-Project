@@ -56,7 +56,12 @@ public class Vector3f {
         return (float) Math.sqrt(Math.pow((this.x - v.x), 2)+Math.pow((this.y - v.y), 2)+Math.pow((this.z - v.z), 2));  
        
     }
-
+    
+    public static float getDistance(Vector3f v1, Vector3f v2){
+        return (float) Math.sqrt(Math.pow((v2.x - v1.x), 2)+Math.pow((v2.y - v1.y), 2)+Math.pow((v2.z - v1.z), 2));  
+       
+    }
+    
     public float length() {
         return (float) Math.sqrt(lengthSquared()); 
     }

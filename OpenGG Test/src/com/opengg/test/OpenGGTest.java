@@ -1,4 +1,5 @@
 package com.opengg.test;
+import com.opengg.core.Matrix4f;
 import com.opengg.core.Vector2f;
 import com.opengg.core.Vector3f;
 import com.opengg.core.audio.AudioHandler;
@@ -111,19 +112,19 @@ public class OpenGGTest implements KeyboardListener{
         vbo.bind(GL_ARRAY_BUFFER);
         
         t1.setupTexToBuffer();
-        t3.loadTexture("C:/res/trump.png");
+        t3.loadTexture("C:/res/deer.png",true);
         f = new Font("aids", "thanks dad", 11);
         
         t2.loadFromBuffer(f.asByteBuffer(), (int)f.getFontImageWidth(), (int)f.getFontImageHeight());
         t2.useTexture();   
-        cb.loadTexture("C:/res/trump.png");
+        cb.loadTexture("C:/res/skybox/majestic");
         
         AudioHandler.init(1);
         AudioHandler.setSoundBuffer(OpenGGTest.class.getResource("res/maw.wav"));
         AudioHandler.shouldLoop(true);
         //AudioHandler.play();
         try {
-            URL path = OpenGGTest.class.getResource("res/models/awp3.obj");
+            URL path = OpenGGTest.class.getResource("res/models/deer.obj");
             URL path2 = OpenGGTest.class.getResource("res/models/flashbang.obj");
             m = new OBJParser().parse(path);
             m2 = new OBJParser().parse(path2);
@@ -171,7 +172,7 @@ public class OpenGGTest implements KeyboardListener{
         
         g.setupGUI(new Vector2f(-3,-3), new Vector2f(3,3));
         
-        test = ObjectBuffers.genBuffer(m, 1f, 0.2f);
+        test = ObjectBuffers.genBuffer(m, 1f, 1f);
         test2 = ObjectBuffers.genBuffer(m2, 1f, 1f);
         
         awp3 = new DrawnObject(test,vbo,12);
@@ -219,12 +220,13 @@ public class OpenGGTest implements KeyboardListener{
         
         rot = new Vector3f(-xrot,0,0); 
         
-        c.setPos(new Vector3f(10,0,0));
-        c.setRot(new Vector3f(30,0,0));
+//        c.setPos(new Vector3f(10,0,0));
+//        c.setRot(new Vector3f(30,0,0));
         
         ShaderHandler.setLightPos(new Vector3f(30,40,50));
         ShaderHandler.setView(c);
-        ShaderHandler.setOrtho(-10, 10, -10, 10, 0.3f, 40);
+        ShaderHandler.setOrtho(-10, 10, -10, 10, 0.3f, 50);
+        //ShaderHandler.setPerspective(90, ratio, 0.3f, 1000f); 
         
         ShaderHandler.setCurrentShader(sh);
         t1.startTexRender();
@@ -234,14 +236,17 @@ public class OpenGGTest implements KeyboardListener{
         base2.draw();
         t1.endTexRender();
         
+        //ShaderHandler.setCurrentShader(sh);
         c.setPos(pos);
         c.setRot(rot);
+        
         ShaderHandler.setView(c);
         ShaderHandler.setPerspective(90, ratio, 0.3f, 2000f);  
+        
         awp3.draw();
         flashbang.draw();
         base2.draw();   
-        
+
         cb.use();
         ShaderHandler.setCurrentShader(sk);
         sky.draw();

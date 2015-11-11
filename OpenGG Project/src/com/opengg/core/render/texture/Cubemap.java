@@ -16,20 +16,7 @@ import java.nio.ByteBuffer;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import org.lwjgl.BufferUtils;
-import static org.lwjgl.opengl.GL11.GL_LINEAR;
-import static org.lwjgl.opengl.GL11.GL_RGB;
-import static org.lwjgl.opengl.GL11.GL_RGBA;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_S;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_T;
-import static org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE;
-import static org.lwjgl.opengl.GL11.glBindTexture;
-import static org.lwjgl.opengl.GL11.glGenTextures;
-import static org.lwjgl.opengl.GL11.glGenTextures;
-import static org.lwjgl.opengl.GL11.glGenTextures;
-import static org.lwjgl.opengl.GL11.glTexImage2D;
-import static org.lwjgl.opengl.GL11.glTexParameteri;
+import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.*;
 
 /**
@@ -52,22 +39,30 @@ public class Cubemap {
  
         InputStream in;
         
+        String[] endings = new String[6];
+        endings[0] = "_ft.png";
+        endings[1] = "_bk.png";
+        endings[2] = "_up.png";
+        endings[3] = "_dn.png";
+        endings[4] = "_rt.png";
+        endings[5] = "_lf.png";
+        
         try {
             
-            glActiveTexture(GL_TEXTURE2);
-            in = new FileInputStream(path);
-            BufferedImage image = ImageIO.read(in);
-            
-            AffineTransform transform = AffineTransform.getScaleInstance(1f, -1f);
-            transform.translate(0, -image.getHeight());
-            AffineTransformOp operation = new AffineTransformOp(transform, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
-            image = operation.filter(image, null);
-            
-            width = image.getWidth();
-            height = image.getHeight();
-
-            
             for(int i = 0; i < buffer.length; i++){
+                
+                glActiveTexture(GL_TEXTURE2);
+                in = new FileInputStream(path + endings[i]);
+                BufferedImage image = ImageIO.read(in);
+
+                AffineTransform transform = AffineTransform.getScaleInstance(1f, -1f);
+                transform.translate(0, -image.getHeight());
+                AffineTransformOp operation = new AffineTransformOp(transform, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+                image = operation.filter(image, null);
+
+                width = image.getWidth();
+                height = image.getHeight();
+                
                 buffer[i] = BufferUtils.createByteBuffer(width * height * 4);
                 int[] pixels = new int[width * height];
                 image.getRGB(0, 0, width, height, pixels, 0, width);
@@ -109,10 +104,6 @@ public class Cubemap {
             glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
             glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-            
-            
-            //glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-            
             
             glActiveTexture(GL_TEXTURE0);
         } catch (FileNotFoundException ex) {

@@ -126,7 +126,7 @@ public class Texture {
         return texture;
     }
     
-    public int loadTexture(String path){
+    public int loadTexture(String path, boolean flipped){
         glActiveTexture(GL_TEXTURE0);
         texture = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, texture);
@@ -156,12 +156,16 @@ public class Texture {
         int[] pixels = new int[width * height];
         image.getRGB(0, 0, width, height, pixels, 0, width);
         buffer = BufferUtils.createByteBuffer(width * height * 4);
-        for (int y = height-1; y > 0; y--) {
+        for (int y = 0; y < height; y++) {
             for(int x = 0; x < width; x++){
             //for (int x = width-1; x > 0; x--) {
                 /* Pixel as RGBA: 0xAARRGGBB */
-                int pixel = pixels[y * width + x];
-
+                int pixel;
+                if(flipped){
+                    pixel = pixels[y * width + x];
+                }else{
+                    pixel = pixels[height- y * width + x];
+                }
                 /* Red component 0xAARRGGBB >> (4 * 4) = 0x0000AARR */
                 buffer.put((byte) ((pixel >> 16) & 0xFF));
 
@@ -177,7 +181,7 @@ public class Texture {
         }
 
         buffer.flip();
-            
+            //buffer = TexBufferGen.genTex(path);
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
             glBindTexture(GL_TEXTURE_2D, 0);
             

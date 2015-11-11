@@ -179,33 +179,49 @@ public class ObjectBuffers {
     public static FloatBuffer genSkyCube(){
         FloatBuffer sq = BufferUtils.createFloatBuffer(6*6*12);
         
-        sq.put(-100).put(100).put(100).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);
-        sq.put(-100).put(-100).put(100).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
-        sq.put(100).put(-100).put(100).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
-        sq.put(100).put(-100).put(100).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
-        sq.put(100).put(100).put(100).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
-        sq.put(-100).put(100).put(100).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(-1000).put(1000).put(1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);
+        sq.put(-1000).put(-1000).put(1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(1000).put(-1000).put(1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(1000).put(-1000).put(1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(1000).put(1000).put(1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(-1000).put(1000).put(1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
         
-        sq.put(-100).put(100).put(-100).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
-        sq.put(-100).put(-100).put(-100).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
-        sq.put(100).put(-100).put(-100).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
-        sq.put(100).put(-100).put(-100).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
-        sq.put(100).put(100).put(-100).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
-        sq.put(-100).put(100).put(-100).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(-1000).put(1000).put(-1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(-1000).put(-1000).put(-1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(1000).put(-1000).put(-1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(1000).put(-1000).put(-1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(1000).put(1000).put(-1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(-1000).put(1000).put(-1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
         
-        sq.put(-100).put(-100).put(100).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
-        sq.put(-100).put(-100).put(-100).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
-        sq.put(-100).put(100).put(-100).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
-        sq.put(-100).put(100).put(-100).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
-        sq.put(-100).put(100).put(100).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
-        sq.put(-100).put(-100).put(100).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
         
-        sq.put(100).put(-100).put(100).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
-        sq.put(100).put(-100).put(-100).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
-        sq.put(100).put(100).put(-100).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
-        sq.put(100).put(100).put(-100).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
-        sq.put(100).put(100).put(100).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
-        sq.put(100).put(-100).put(100).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(-1000).put(-1000).put(1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(-1000).put(-1000).put(-1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(-1000).put(1000).put(-1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(-1000).put(1000).put(-1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(-1000).put(1000).put(1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(-1000).put(-1000).put(1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        
+        sq.put(1000).put(-1000).put(1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(1000).put(-1000).put(-10000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(1000).put(1000).put(-1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(1000).put(1000).put(-1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(1000).put(1000).put(1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(1000).put(-1000).put(1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        
+        
+        sq.put(-1000).put(1000).put(1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(-1000).put(1000).put(-1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(1000).put(1000).put(-1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(1000).put(1000).put(-1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(1000).put(1000).put(1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(-1000).put(1000).put(1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        
+        sq.put(-1000).put(-1000).put(1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(-1000).put(-1000).put(-1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(1000).put(-1000).put(-1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(1000).put(-1000).put(-1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(1000).put(-1000).put(1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(-1000).put(-1000).put(1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
         
         sq.flip();
         return sq;
