@@ -17,10 +17,9 @@ public class ForceManipulation {
     public Vector3f force = new Vector3f(0,0,0);
     private static Vector3f wind = new Vector3f(0,0,0);
     private final static float gravity = 9.8f;
-    Entity update;
+    final Entity update;
     
-    public ForceManipulation(Vector3f aR, Vector3f f, Entity v)
-    {
+    public ForceManipulation(Vector3f aR, Vector3f f, Entity v){
         this.airResistance.x = aR.x;
         this.airResistance.y = aR.y;
         this.airResistance.z = aR.z;

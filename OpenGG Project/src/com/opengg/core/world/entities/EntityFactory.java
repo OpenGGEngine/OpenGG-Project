@@ -79,7 +79,7 @@ public class EntityFactory {
      * 
      * @param type Type of Entity
      * @param world Current World
-     * @return
+     * @return new Entity
      */
     public static final Entity getEntity(EntityTypes type, World world){
         if(entityCount >= entityCap)
@@ -100,10 +100,8 @@ public class EntityFactory {
      * @return Error
      */
     public static final boolean destroyEntity(Entity des){
-        if(!EntityList.remove(des))
-            return false;
         des = null;
-        return true;
+        return EntityList.remove(des);
     }
     
     /**

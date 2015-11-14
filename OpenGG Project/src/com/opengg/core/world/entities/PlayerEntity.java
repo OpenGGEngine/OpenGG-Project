@@ -9,7 +9,6 @@ import com.opengg.core.Vector3f;
 import com.opengg.core.io.objloader.parser.OBJModel;
 import com.opengg.core.world.Camera;
 import com.opengg.core.world.World;
-import java.rmi.activation.ActivationException;
 
 /**
  *
@@ -24,27 +23,33 @@ public class PlayerEntity extends Entity{
      */
     public PlayerEntity() {
         super();
+        
     }
 
     /**
      * Makes default Player
      *
      * @param model Model to be bound to Entity
+     * @param current
      */
     public PlayerEntity(OBJModel model, World current){
         super(model, current);
+        current.addCamera(playerCam);
     }
 
     /**
      * Creates an player based off of 5 parameters.
      *
      * @param f Force vector
+     * @param position
      * @param mass Mass of Entity
      * @param type Type of entity
      * @param model Model to be bound to entity
+     * @param current
      */
     public PlayerEntity(EntityType type, Vector3f position, Vector3f f, float mass, OBJModel model, World current){
         super(type,position, f, mass, model, current);
+        current.addCamera(playerCam);
     }
 
     /**
@@ -54,5 +59,13 @@ public class PlayerEntity extends Entity{
      */
     public PlayerEntity(Entity v){
         super(v);
+        currentWorld.addCamera(playerCam);
+    }
+    
+    @Override
+    public void changeWorld(World next){
+        currentWorld.removeCamera(playerCam);
+        currentWorld = next;
+        next.addCamera(playerCam);
     }
 }

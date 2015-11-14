@@ -33,7 +33,7 @@ public class WorldObject {
     public WorldObject(){
         pos = new Vector3f(0,0,0);
         rot = new Vector3f(0,0,0);
-        thisWorld = new World(new Camera(pos, rot));
+        thisWorld = WorldManager.getDefaultWorld();
         e = EntityFactory.getEntity(EntityTypes.DEFAULT, EntityType.Static, pos, new Vector3f(), 10, new OBJModel(), thisWorld);
         e.setXYZ(pos);
         e.setRotation(rot);
@@ -59,7 +59,7 @@ public class WorldObject {
     /**
      * Changes current World of WorldObject
      * 
-     * @param next 
+     * @param next Next World
      */
     
     public void switchWorld(World next){

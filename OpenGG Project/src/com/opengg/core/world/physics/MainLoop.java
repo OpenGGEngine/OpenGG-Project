@@ -16,10 +16,8 @@ import com.opengg.core.world.entities.EntityFactory;
  */
 public class MainLoop extends EntityFactory{
 
-    public static void process()
-    {
-        while(true)// put in some condition? Idk
-        {
+    public static void process(){
+        while(true){
             if(EntityList.size() > entityCap)
                 for(int i = 0; EntityList.size() > entityCap; ++i)
                     EntityFactory.destroyEntity(i);
@@ -32,14 +30,11 @@ public class MainLoop extends EntityFactory{
             for (Entity collide : EntityList){
                 if(collide.collision != Collide.Collidable)
                     continue;
-                for(Entity collidee: EntityList)
-                {
+                for(Entity collidee: EntityList){
                     if(collide.equals(collidee) || collidee.collision == Collide.Uncollidable)
                         continue;
-                    if(CollisionDetection.areColliding(collide, collidee))
-                    {
-                        if(collidee.updatePosition == UpdateXYZ.Immovable)
-                        {
+                    if(CollisionDetection.areColliding(collide, collidee)){
+                        if(collidee.updatePosition == UpdateXYZ.Immovable){
                             collide.collisionResponse(new Vector3f(-collide.forceCalculator.force.x*2, collide.forceCalculator.force.y, -collide.forceCalculator.force.z*2));
                             continue;
                         }

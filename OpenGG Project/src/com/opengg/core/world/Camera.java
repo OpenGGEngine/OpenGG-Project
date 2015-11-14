@@ -19,7 +19,6 @@ public class Camera {
     public Camera(Vector3f pos, Vector3f rot){
         this.pos = pos;
         this.rot = rot;
-        
     }
     public void setPos(Vector3f posi){
         pos = posi;

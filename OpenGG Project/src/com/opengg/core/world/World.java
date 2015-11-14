@@ -6,6 +6,7 @@
 
 package com.opengg.core.world;
 
+import com.opengg.core.Vector3f;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +20,14 @@ public class World {
     private Camera mainCam;
     public float floorLev = -1;
     
-    
+    public World(){
+        mainCam = new Camera(new Vector3f(), new Vector3f());
+        cams.add(mainCam);
+    }
+    public World(Camera c){
+        cams.add(c);
+        mainCam = c;
+    }
     public void setFloor(float floor){
         floorLev = floor;
     }
@@ -28,10 +36,6 @@ public class World {
     }
     public void addCamera(Camera c){
         cams.add(c);
-    }
-    public World(Camera c){
-        cams.add(c);
-        mainCam = c;
     }
     public void setMainCam(int i){
         mainCam = cams.get(i);
@@ -45,5 +49,10 @@ public class World {
     public void removeCamera(int i){
         cams.remove(i);
     }
-    
+    public void removeCamera(Camera des){
+        cams.remove(des);
+    }
+    public List getObjects(){
+        return objs;
+    }
 }

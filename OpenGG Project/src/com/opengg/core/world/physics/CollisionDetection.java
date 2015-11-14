@@ -15,8 +15,7 @@ public class CollisionDetection{
     private static final int MAX = 1;
     private static final int MIN = 0;
     
-    public static boolean areColliding(Entity collide, Entity collidee)
-    {
+    public static boolean areColliding(Entity collide, Entity collidee){
         //Possible error checking
         if(collide == null || collidee == null)
             return false;
