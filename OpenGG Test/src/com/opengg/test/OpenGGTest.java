@@ -26,7 +26,6 @@ import com.opengg.core.render.window.DisplayMode;
 import static com.opengg.core.render.window.RenderUtil.endFrame;
 import static com.opengg.core.render.window.RenderUtil.startFrame;
 import com.opengg.core.render.window.Window;
-import static com.opengg.core.util.GlobalUtil.print;
 import com.opengg.core.world.Camera;
 import com.opengg.core.world.Terrain;
 import java.io.FileNotFoundException;
@@ -45,8 +44,8 @@ public class OpenGGTest implements KeyboardListener{
     boolean draw = true;
     private float ratio;
 
-    public float xrot;
-    public float rot1=0;
+    public float xrot, yrot;
+    public float rot1=0, rot2 = 0;
     public float xm = 0, ym=0, zm=0;
     int quads;
     Vector3f rot = new Vector3f(0,0,0);
@@ -113,19 +112,20 @@ public class OpenGGTest implements KeyboardListener{
         
         t1.setupTexToBuffer();
         t3.loadTexture("C:/res/deer.png",true);
-        f = new Font("aids", "thanks dad", 11);
+        f = new Font("", "thanks dad", 11);
         
         t2.loadFromBuffer(f.asByteBuffer(), (int)f.getFontImageWidth(), (int)f.getFontImageHeight());
-        t2.useTexture();   
+        t2.useTexture(0);   
         cb.loadTexture("C:/res/skybox/majestic");
         
         AudioHandler.init(1);
         AudioHandler.setSoundBuffer(OpenGGTest.class.getResource("res/maw.wav"));
         AudioHandler.shouldLoop(true);
         //AudioHandler.play();
+        
         try {
             URL path = OpenGGTest.class.getResource("res/models/deer.obj");
-            URL path2 = OpenGGTest.class.getResource("res/models/flashbang.obj");
+            URL path2 = OpenGGTest.class.getResource("res/models/level.obj");
             m = new OBJParser().parse(path);
             m2 = new OBJParser().parse(path2);
         } catch (IOException ex) {
@@ -195,6 +195,8 @@ public class OpenGGTest implements KeyboardListener{
 
         ratio = win.getRatio();
         
+        ShaderHandler.setModel(new Matrix4f());
+        
         ShaderHandler.checkForErrors();
         
         enable(GL_BLEND);
@@ -215,28 +217,31 @@ public class OpenGGTest implements KeyboardListener{
     }
     
     public void render() {
-        rot = new Vector3f(0,-xrot,0);      
-        pos = MovementLoader.processMovement(pos, rot);
+        rot = new Vector3f(-yrot,-xrot,0);      
+        pos = MovementLoader.processMovement(pos, rot); 
         
-        rot = new Vector3f(-xrot,0,0); 
-        
-//        c.setPos(new Vector3f(10,0,0));
-//        c.setRot(new Vector3f(30,0,0));
-        
+        c.setPos(new Vector3f(15,-40,-10));
+        c.setRot(new Vector3f(60,50,0));
+
         ShaderHandler.setLightPos(new Vector3f(30,40,50));
         ShaderHandler.setView(c);
-        ShaderHandler.setOrtho(-10, 10, -10, 10, 0.3f, 50);
+        ShaderHandler.setOrtho(-10, 10, -10, 10, 0.3f, 80);
+        sh.setShadowLightMatrix(ShaderHandler.getMVP());
         //ShaderHandler.setPerspective(90, ratio, 0.3f, 1000f); 
         
         ShaderHandler.setCurrentShader(sh);
         t1.startTexRender();
-        t3.useTexture();
+        t3.useTexture(0);
         awp3.draw();
-        flashbang.draw();
-        base2.draw();
+//        ShaderHandler.setModel(Matrix4f.translate(0, -10, 0));
+//        flashbang.draw();
+        
+        base2.setModel(Matrix4f.translate(-50, 0, -100));
+        base2.draw();   
+        
         t1.endTexRender();
         
-        //ShaderHandler.setCurrentShader(sh);
+        t1.useDepthTexture(2);
         c.setPos(pos);
         c.setRot(rot);
         
@@ -244,7 +249,11 @@ public class OpenGGTest implements KeyboardListener{
         ShaderHandler.setPerspective(90, ratio, 0.3f, 2000f);  
         
         awp3.draw();
-        flashbang.draw();
+//        ShaderHandler.setModel(Matrix4f.translate(0, -12, 0));
+//        flashbang.draw();
+        
+        base2.setModel(Matrix4f.translate(-50, 0, -100));
+        t1.useDepthTexture(0);
         base2.draw();   
 
         cb.use();
@@ -254,16 +263,13 @@ public class OpenGGTest implements KeyboardListener{
         g.startGUI();
         ShaderHandler.setCurrentShader(gsh);
         
-        t1.useDepthTexture();
+        t1.useDepthTexture(0);
         test5.draw(); 
-
-        t2.useTexture();
-        test6.draw();
-        
     }
     
     public void update(float delta) {       
         xrot += rot1*5;
+        yrot += rot2*5;
     }
 
     @Override
@@ -275,6 +281,14 @@ public class OpenGGTest implements KeyboardListener{
         }
         if(key == GLFW_KEY_E){
             rot1 -= 0.3;
+            
+        }
+        if(key == GLFW_KEY_R){
+            rot2 += 0.3;
+            
+        }
+        if(key == GLFW_KEY_F){
+            rot2 -= 0.3;
             
         }
 
@@ -291,6 +305,13 @@ public class OpenGGTest implements KeyboardListener{
             rot1 += 0.3;
             
         }
-
+        if(key == GLFW_KEY_R){
+            rot2 -= 0.3;
+            
+        }
+        if(key == GLFW_KEY_F){
+            rot2 += 0.3;
+            
+        }
     }
 }

@@ -34,25 +34,26 @@ public class Texture {
     private int depthbuffer;
     int width;
     int height;
-    
+    //int loc;
+     
     public Texture(){
-        
+        //this.loc = loc;
     }
     
-    public void useTexture(){
-        glActiveTexture(GL_TEXTURE0);
+    public void useTexture(int loc){
+        glActiveTexture(GL_TEXTURE0 + loc);
         glBindTexture(GL_TEXTURE_2D, texture);
     }
     
-    public void useDepthTexture(){
-        glActiveTexture(GL_TEXTURE0);
+    public void useDepthTexture(int loc){
+        glActiveTexture(GL_TEXTURE0 + loc);
         glBindTexture(GL_TEXTURE_2D, depthbuffer);       
     }
     
     ByteBuffer buffer;
     
     public int setupTexToBuffer(){
-        glActiveTexture(GL_TEXTURE0);
+        //glActiveTexture(GL_TEXTURE0 + loc);
 
         fb = glGenFramebuffers();
         glBindFramebuffer(GL_FRAMEBUFFER, fb);
@@ -61,7 +62,7 @@ public class Texture {
         
         texture = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, texture);
-        glTexImage2D(GL_TEXTURE_2D, 0,GL_RGB, 256, 256, 0,GL_RGB, 
+        glTexImage2D(GL_TEXTURE_2D, 0,GL_RGB, 512, 512, 0,GL_RGB, 
                 GL_UNSIGNED_BYTE, (ByteBuffer) null);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -70,7 +71,7 @@ public class Texture {
 
         depthbuffer = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, depthbuffer);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, 256, 256, 0, GL_DEPTH_COMPONENT, 
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, 512, 512, 0, GL_DEPTH_COMPONENT, 
                 GL_FLOAT, (ByteBuffer) null);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -92,10 +93,11 @@ public class Texture {
     }
     
     public void startTexRender(){
+        //glActiveTexture(GL_TEXTURE0 + loc);
         glBindTexture(GL_TEXTURE_2D, 0);
         glBindFramebuffer(GL_FRAMEBUFFER, fb);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glViewport(0,0,256,256); 
+        glViewport(0,0,512,512); 
     }
     
     public void endTexRender(){
@@ -105,7 +107,7 @@ public class Texture {
     }
     
     public int loadFromBuffer(ByteBuffer b, int fwidth, int fheight){
-        glActiveTexture(GL_TEXTURE0);
+        //glActiveTexture(GL_TEXTURE0 + loc);
         
         texture = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, texture);

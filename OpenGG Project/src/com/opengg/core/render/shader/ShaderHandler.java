@@ -20,6 +20,8 @@ public class ShaderHandler {
     static List<ShaderEnabled> shaders = new ArrayList<>();
     
     static ShaderEnabled currentShader;
+    static Matrix4f model = new Matrix4f(), view = new Matrix4f(), proj = new Matrix4f();
+    
     
     public static void addShader(ShaderEnabled s){
         shaders.add(s);
@@ -34,7 +36,11 @@ public class ShaderHandler {
         Vector3f pos = c.getPos();
         Vector3f rot = c.getRot();       
         Matrix4f posm = Matrix4f.translate(pos.x, pos.y, pos.z);
-        Matrix4f rotm = Matrix4f.rotate(rot.x,0,1,0);
+        
+        
+        Matrix4f rotm = Matrix4f.rotate(rot.x,1,0,0).multiply(Matrix4f.rotate(rot.y,0,1,0).multiply(Matrix4f.rotate(rot.z,0,0,1)));
+        
+        view = rotm.multiply(posm);
         
         for(ShaderEnabled shader : shaders){
             shader.setView(rotm.multiply(posm));
@@ -43,12 +49,14 @@ public class ShaderHandler {
         currentShader.use();
     }
     public static void setPerspective(float fov, float aspect, float znear, float zfar){
+        proj = Matrix4f.perspective(fov, aspect, znear, zfar);
         for(ShaderEnabled shader : shaders){
             shader.setProjection(fov, aspect, znear, zfar);
         }
         currentShader.use();
     }
     public static void setOrtho(float left, float right, float bottom, float top, float near, float far){
+        proj = Matrix4f.orthographic(left, right, bottom, top, near, far);
         for(ShaderEnabled shader : shaders){
             shader.setOrtho(left, right, bottom, top, near, far);
         }
@@ -72,5 +80,14 @@ public class ShaderHandler {
         }
         currentShader.use();
     }
-    
+    public static void setModel(Matrix4f modell){
+        model = modell;
+        for(ShaderEnabled shader : shaders){
+            shader.setModel(modell);
+        }
+        currentShader.use();
+    }
+    public static Matrix4f getMVP(){
+        return proj.multiply(view).multiply(model);
+    }
 }

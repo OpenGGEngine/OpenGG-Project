@@ -35,6 +35,7 @@ public class ObjectShader implements ShaderEnabled{
     private int uniView;
     private int lightdistance;
     private int lightpower;
+    private int shadow;
     public void setup(Window win, URL vert, URL frag) throws UnsupportedEncodingException{
         vertexTex= new Shader(GL_VERTEX_SHADER, 
                 FileStringLoader.loadStringSequence(
@@ -59,11 +60,15 @@ public class ObjectShader implements ShaderEnabled{
 
         /* Set shader variables */
         program.use(); 
+        
         uniModel = program.getUniformLocation("model"); 
         program.setUniform(uniModel, new Matrix4f());
         
         int uniTex = program.getUniformLocation("texImage"); 
         program.setUniform(uniTex, 0);
+        
+        int uniShadow = program.getUniformLocation("shadeImage"); 
+        program.setUniform(uniShadow, 2);
         
         lightpos = program.getUniformLocation("lightpos"); 
         program.setUniform(lightpos, new Vector3f(200,50,-10));
@@ -76,15 +81,17 @@ public class ObjectShader implements ShaderEnabled{
         rotm = program.getUniformLocation("rot");    
         program.setUniform(rotm, new Vector3f(0,0,0));  
 
-        
         uniView = program.getUniformLocation("view"); 
         program.setUniform(uniView, new Matrix4f());
         
+        shadow = program.getUniformLocation("shmvp"); 
+        //program.setUniform(shadow, new Matrix4f());
+        
         lightdistance = program.getUniformLocation("lightdistance"); 
-        program.setUniform(lightdistance, 2.5f);
+        program.setUniform(lightdistance, 5f);
         
         lightpower = program.getUniformLocation("lightpower"); 
-        program.setUniform(lightpower, 500f);
+        program.setUniform(lightpower, 600f);
         
         program.checkStatus();
         
@@ -156,5 +163,10 @@ public class ObjectShader implements ShaderEnabled{
     public void checkError(){
         program.use();
         program.checkStatus();
+    }
+    
+    public void setShadowLightMatrix(Matrix4f m){
+        program.use();
+        program.setUniform(shadow, m);
     }
 }

@@ -13,15 +13,27 @@ out vec3 eyedir;
 out vec4 pos;
 out vec3 norm;
 out vec3 lightposition;
+out vec3 shadowpos;
 
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 uniform vec3 rot;
 uniform vec3 lightpos;
+uniform mat4 shmvp;
 uniform float divAmount;
 
+
+
+
 void main() {
+    mat4 biasMatrix = mat4(
+    0.5f, 0.0, 0.0, 0.0,
+    0.0, 0.5f, 0.0, 0.0,
+    0.0, 0.0, 0.5f, 0.0,
+    0.5f, 0.5f, 0.5f, 1.0
+    );
+    
     vertexColor = color;
     textureCoord = texcoord;
 	
@@ -35,6 +47,8 @@ void main() {
     position.z = position.z/divAmount;
 */
     
+    shadowpos = (biasMatrix * shmvp * vec4(position, 1)).xyz;
+    
     lightposition = lightpos;
 
     gl_Position = mvp * vec4(position, 1.0);
@@ -47,4 +61,6 @@ void main() {
     lightdir = lightposCamera + eyedir;
 
     norm = ( model * view *  vec4(normal,0)).xyz;
+    
+    
 };

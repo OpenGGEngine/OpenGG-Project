@@ -5,6 +5,9 @@
  */
 package com.opengg.core.render;
 
+import com.opengg.core.Matrix4f;
+import com.opengg.core.Vector3f;
+import com.opengg.core.render.shader.ShaderHandler;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import org.lwjgl.BufferUtils;
@@ -13,9 +16,11 @@ import static org.lwjgl.opengl.GL11.GL_POINTS;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
 import static org.lwjgl.opengl.GL11.glDrawElements;
+import static org.lwjgl.opengl.GL11.glDrawElements;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
+import static org.lwjgl.opengl.GL15.glBufferData;
 import static org.lwjgl.opengl.GL15.glBufferData;
 
 /**
@@ -30,6 +35,8 @@ public class DrawnObject {
     int limit;
     int vertLimit;
     long vertOffset;
+    
+    Matrix4f model = Matrix4f.translate(0, 0, 0);
     
     static{
         DrawnObjectHandler.setup();
@@ -84,9 +91,15 @@ public class DrawnObject {
         DrawnObjectHandler.addToOffset(limit);
     }
     public void draw(){
+        ShaderHandler.setModel(model);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, ind, GL_STATIC_DRAW);
         glDrawElements(GL_TRIANGLES, ind.limit(), GL_UNSIGNED_INT, 0);       
     }
+    
+    public void setModel(Matrix4f model){
+        this.model = model;
+    }
+    
     public void drawPoints(){
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, ind, GL_STATIC_DRAW);
         glDrawElements(GL_POINTS, ind.limit(), GL_UNSIGNED_INT, 0);    
