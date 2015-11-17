@@ -116,7 +116,7 @@ public class OpenGGTest implements KeyboardListener{
         vbo = new VertexBufferObject();
         vbo.bind(GL_ARRAY_BUFFER);
         
-        t1.setupTexToBuffer();
+        t1.setupTexToBuffer(512);
         t3.loadTexture("C:/res/deer.png",true);
         f = new Font("", "thanks dad", 11);
         

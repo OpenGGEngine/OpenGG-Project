@@ -13,7 +13,7 @@ out vec3 eyedir;
 out vec4 pos;
 out vec3 norm;
 out vec3 lightposition;
-out vec3 shadowpos;
+out vec4 shadowpos;
 
 uniform mat4 model;
 uniform mat4 view;
@@ -47,7 +47,7 @@ void main() {
     position.z = position.z/divAmount;
 */
     
-    shadowpos = (biasMatrix * shmvp * vec4(position, 1)).xyz;
+    shadowpos = (biasMatrix * shmvp * vec4(position, 1));
     
     lightposition = lightpos;
 
