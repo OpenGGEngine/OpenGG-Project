@@ -9,6 +9,7 @@ import com.opengg.core.Vector3f;
 import com.opengg.core.util.Time;
 import com.opengg.core.io.objloader.parser.OBJModel;
 import com.opengg.core.world.World;
+import com.opengg.core.world.WorldManager;
 import static com.opengg.core.world.entities.EntityFactory.EntityList;
 import com.opengg.core.world.physics.ForceManipulation;
 
@@ -66,7 +67,7 @@ public class Entity {
     public Vector3f[] boundingBox = new Vector3f[2];
     /*
     
-     *---x---* 1
+     0---x---* 
      | bottom|
      z       |
      |       |
@@ -76,7 +77,7 @@ public class Entity {
      |  top  |
      z       |
      |       |
-     0 *-------* 
+     *-------* 1
     
      */
     public OBJModel model;
@@ -89,14 +90,13 @@ public class Entity {
      * Makes default Entity
      *
      * @param model Model to be bound to Entity
-     * @param current Current World
      */
-    public Entity(OBJModel model, World current) {
+    public Entity(OBJModel model) {
         forceCalculator = new ForceManipulation(new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), this);
         setXYZ(0f, 0f, 0f);
         this.ground = true;
         this.mass = 40f;
-        this.currentWorld = current;
+        this.currentWorld = WorldManager.getDefaultWorld();
         setTags(EntityType.Physics);
         bindModel(model);
 
@@ -243,13 +243,13 @@ public class Entity {
         this.pos.y = y;
         this.pos.z = z;
 
-        boundingBox[0].y = y + height;
+        boundingBox[0].y = y;
         boundingBox[0].x = x - width / 2;
-        boundingBox[0].z = z + length / 2;
+        boundingBox[0].z = z - length / 2;
 
-        boundingBox[1].y = y;
+        boundingBox[1].y = y + height;
         boundingBox[1].x = x + width / 2;
-        boundingBox[1].z = z - length / 2;
+        boundingBox[1].z = z + length / 2;
         ground = (currentWorld.floorLev <= this.pos.y);
     }
 

@@ -78,18 +78,17 @@ public class EntityFactory {
      * Generates an entity with the parameters given
      * 
      * @param type Type of Entity
-     * @param world Current World
      * @return new Entity
      */
-    public static final Entity getEntity(EntityTypes type, World world){
+    public static final Entity getEntity(EntityTypes type){
         if(entityCount >= entityCap)
             return null;
         ++entityCount;
         switch(type){
             case PLAYER:
-                return new PlayerEntity(new OBJModel(), world);
+                return new PlayerEntity(new OBJModel());
             default:
-                return new Entity(new OBJModel(), world);
+                return new Entity(new OBJModel());
         }
     }
     

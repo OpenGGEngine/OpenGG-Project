@@ -30,11 +30,10 @@ public class PlayerEntity extends Entity{
      * Makes default Player
      *
      * @param model Model to be bound to Entity
-     * @param current
      */
-    public PlayerEntity(OBJModel model, World current){
-        super(model, current);
-        current.addCamera(playerCam);
+    public PlayerEntity(OBJModel model){
+        super(model);
+        currentWorld.addCamera(playerCam);
     }
 
     /**
