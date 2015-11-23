@@ -39,4 +39,7 @@ public class WorldManager {
             return false;
         return worlds.remove(world);
     }
+    public static boolean isEmpty(){
+        return worlds.isEmpty();
+    }
 }

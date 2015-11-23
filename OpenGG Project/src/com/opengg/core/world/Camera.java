@@ -16,6 +16,10 @@ public class Camera {
     Vector3f pos;
     Vector3f rot;
     int uniView;
+    public Camera(){
+        this.pos = new Vector3f();
+        this.rot = new Vector3f();
+    }
     public Camera(Vector3f pos, Vector3f rot){
         this.pos = pos;
         this.rot = rot;

@@ -30,7 +30,7 @@ public class EntityFactory {
     /**
      * Amount of Entities
      */
-    public static int entityCap = 44;
+    protected static int entityCap = 44;
     /**
      * Generates an entity with parameters given
      * 
@@ -86,11 +86,24 @@ public class EntityFactory {
         ++entityCount;
         switch(type){
             case PLAYER:
-                return new PlayerEntity(new OBJModel());
+                return new PlayerEntity();
             default:
-                return new Entity(new OBJModel());
+                return new Entity();
         }
     }
+    
+    /**
+     * Generates a default entity
+     * 
+     * @return new Entity
+     */
+    public static final Entity getEntity(){
+        if(entityCount >= entityCap)
+            return null;
+        ++entityCount;
+        return new Entity();
+    }
+    
     
     /**
      * Destroys entity given

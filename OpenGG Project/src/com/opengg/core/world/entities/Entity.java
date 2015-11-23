@@ -8,6 +8,7 @@ package com.opengg.core.world.entities;
 import com.opengg.core.Vector3f;
 import com.opengg.core.util.Time;
 import com.opengg.core.io.objloader.parser.OBJModel;
+import com.opengg.core.world.Camera;
 import com.opengg.core.world.World;
 import com.opengg.core.world.WorldManager;
 import static com.opengg.core.world.entities.EntityFactory.EntityList;
@@ -64,7 +65,7 @@ public class Entity {
     private float width = 5f;
     private float length = 5f;
     /* Max - 1, Min - 0 */
-    public Vector3f[] boundingBox = new Vector3f[2];
+    public Vector3f[] boundingBox = {new Vector3f(), new Vector3f()};
     /*
     
      0---x---* 
@@ -82,23 +83,20 @@ public class Entity {
      */
     public OBJModel model;
 
-    public Entity() {
-
-    }
-
     /**
      * Makes default Entity
      *
-     * @param model Model to be bound to Entity
      */
-    public Entity(OBJModel model) {
-        forceCalculator = new ForceManipulation(new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), this);
+    public Entity() {
+        forceCalculator = new ForceManipulation(new Vector3f(), new Vector3f(), this);
+        if(WorldManager.isEmpty())
+            WorldManager.getWorld(new Camera());
+        this.currentWorld = WorldManager.getDefaultWorld();
         setXYZ(0f, 0f, 0f);
         this.ground = true;
         this.mass = 40f;
-        this.currentWorld = WorldManager.getDefaultWorld();
         setTags(EntityType.Physics);
-        bindModel(model);
+        bindModel(new OBJModel());
 
         EntityList.add(this);
     }

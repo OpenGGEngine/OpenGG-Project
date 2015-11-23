@@ -16,23 +16,15 @@ import com.opengg.core.world.World;
  */
 public class PlayerEntity extends Entity{
     
-    public Camera playerCam = new Camera(pos, direction);
-    
-    /**
-     * Default Constructor
-     */
-    public PlayerEntity() {
-        super();
-        
-    }
+    public Camera playerCam;
 
     /**
      * Makes default Player
      *
-     * @param model Model to be bound to Entity
      */
-    public PlayerEntity(OBJModel model){
-        super(model);
+    public PlayerEntity(){
+        super();
+        playerCam = new Camera(pos, direction);
         currentWorld.addCamera(playerCam);
     }
 
@@ -48,6 +40,7 @@ public class PlayerEntity extends Entity{
      */
     public PlayerEntity(EntityType type, Vector3f position, Vector3f f, float mass, OBJModel model, World current){
         super(type,position, f, mass, model, current);
+        playerCam = new Camera(pos, direction);
         current.addCamera(playerCam);
     }
 
@@ -58,6 +51,7 @@ public class PlayerEntity extends Entity{
      */
     public PlayerEntity(Entity v){
         super(v);
+        playerCam = new Camera(pos, direction);
         currentWorld.addCamera(playerCam);
     }
     

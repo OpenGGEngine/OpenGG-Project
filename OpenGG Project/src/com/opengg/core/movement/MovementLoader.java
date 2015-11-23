@@ -111,7 +111,7 @@ public class MovementLoader {
             
 
             if(moveFaster){
-                walkingSpeed = baseSpeed * 4;
+                walkingSpeed = baseSpeed * 7;
             }else{
                 walkingSpeed = baseSpeed;
             }
