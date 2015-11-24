@@ -70,7 +70,20 @@ public class Vector3f {
     public float length() {
         return (float) Math.sqrt(lengthSquared());
     }
-
+    
+    public Vector3f add(Vector3f v){
+        return new Vector3f(this.x + v.x,this.y+v.y,this.z+v.z);
+        
+    }
+    public Vector3f addVectors(Vector3f... v){
+        Vector3f sum = new Vector3f();
+        for(Vector3f n :v){
+            sum.add(n);
+        }
+        return sum;
+        
+    }
+    
     public Vector3f normalize() {
         return divide(length());
     }
