@@ -16,7 +16,7 @@ public class ForceManipulation {
     public Vector3f airResistance = new Vector3f(1.5f,1.5f,1.5f);
     public Vector3f force = new Vector3f(0,0,0);
     private static Vector3f wind = new Vector3f(0,0,0);
-    private final static float gravity = 9.8f;
+    private final static float gravity = 1f;
     final Entity update;
     
     public ForceManipulation(Vector3f aR, Vector3f f, Entity v){
@@ -45,7 +45,7 @@ public class ForceManipulation {
                 force.x = force.x - airResistance.x + ForceManipulation.wind.x;
             if(force.y < 0)
                 force.y = force.y + airResistance.y - gravity + ForceManipulation.wind.y;
-            else 
+            else
                 force.y = force.y - airResistance.y - gravity + ForceManipulation.wind.y;
             if(force.z < 0)
                 force.z = force.z + airResistance.x + ForceManipulation.wind.z;
@@ -60,6 +60,7 @@ public class ForceManipulation {
                 force.z = force.z + airResistance.x + ForceManipulation.wind.z;
             else 
                 force.z = force.z - airResistance.x + ForceManipulation.wind.z;
+            force.y = 0;
         }
     }
     

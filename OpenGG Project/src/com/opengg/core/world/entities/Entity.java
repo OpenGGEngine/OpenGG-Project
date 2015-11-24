@@ -323,6 +323,15 @@ public class Entity {
     public void updateXYZ() {
         timeStep = time.getDeltaSec();
 //        print(timeStep);
+        ground = (pos.y <= currentWorld.floorLev);
+//        System.out.println(ground);
+        if (ground){
+            pos.y = currentWorld.floorLev;
+            forceCalculator.force.y = 0;
+            velocity.y = 0;
+            acceleration.y = 0;
+            lastAcceleration.y = 0;
+        }
         lastAcceleration = acceleration;
         pos.x += velocity.x * timeStep + (0.5 * lastAcceleration.x * timeStep * timeStep);
         pos.y += velocity.y * timeStep + (0.5 * lastAcceleration.y * timeStep * timeStep);
@@ -333,7 +342,6 @@ public class Entity {
             y.y += velocity.y * timeStep + (0.5 * lastAcceleration.y * timeStep * timeStep);
         for (Vector3f z : boundingBox)
             z.z += velocity.z * timeStep + (0.5 * lastAcceleration.z * timeStep * timeStep);
-        ground = (pos.y <= currentWorld.floorLev);
         acceleration.x = forceCalculator.force.x / mass;
         acceleration.y = forceCalculator.force.y / mass;
         acceleration.z = forceCalculator.force.z / mass;
