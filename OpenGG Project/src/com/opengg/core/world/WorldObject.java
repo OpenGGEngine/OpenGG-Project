@@ -6,6 +6,7 @@
 
 package com.opengg.core.world;
 
+import com.opengg.core.Matrix4f;
 import com.opengg.core.Vector3f;
 import com.opengg.core.io.objloader.parser.OBJModel;
 import com.opengg.core.world.entities.*;
@@ -55,6 +56,37 @@ public class WorldObject {
         this.e.setXYZ(pos);
         this.e.setRotation(rot);
     }
+    public WorldObject(DrawnObject d){
+        pos = new Vector3f(0,0,0);
+        rot = new Vector3f(0,0,0);
+        thisWorld = WorldManager.getDefaultWorld();
+        e = EntityFactory.getEntity(EntityTypes.DEFAULT, EntityType.Static, pos, new Vector3f(), 10, new OBJModel(), thisWorld);
+        e.setXYZ(pos);
+        e.setRotation(rot);
+        this.thisWorld.addObject(this);
+        this.d = d;
+    }
+    
+    /**
+     * Changes position of Entity and DrawnObject
+     * 
+     * @param p New Position
+     */
+    
+    public void setPos(Vector3f p){
+        e.setXYZ(p);
+        d.setModel(Matrix4f.translate(p.x, p.y, p.z));
+    }
+    
+    /**
+     * Changes rotation of Entity and DrawnObject
+     * 
+     * @param p New Rotation
+     */
+    
+    public void setRot(Vector3f p){
+        e.setRotation(p);
+    }
     
     /**
      * Changes current World of WorldObject
@@ -67,5 +99,8 @@ public class WorldObject {
         next.addObject(this);
         thisWorld = next;
         e.changeWorld(next);
+    }
+    public DrawnObject getDrawnObject(){
+        return d;
     }
 }

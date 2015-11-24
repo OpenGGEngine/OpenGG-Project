@@ -6,6 +6,8 @@
 
 package com.opengg.core.util;
 
+import com.opengg.core.render.VertexBufferObject;
+
 /**
  *
  * @author Javier
@@ -13,4 +15,5 @@ package com.opengg.core.util;
 public class GlobalInfo {
     public static int winWidth, winHeight;
     public static long window;
+    public static VertexBufferObject b;
 }

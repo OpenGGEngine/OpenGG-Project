@@ -91,7 +91,7 @@ public class ObjectShader implements ShaderEnabled{
         program.setUniform(lightdistance, 5f);
         
         lightpower = program.getUniformLocation("lightpower"); 
-        program.setUniform(lightpower, 600f);
+        program.setUniform(lightpower, 200f);
         
         program.checkStatus();
         

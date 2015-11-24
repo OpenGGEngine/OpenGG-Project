@@ -63,6 +63,7 @@ public class ShaderHandler {
         currentShader.use();
     }
     public static void setFrustum(float left, float right, float bottom, float top, float near, float far){
+        proj = Matrix4f.frustum(left, right, bottom, top, near, far);
         for(ShaderEnabled shader : shaders){
             shader.setFrustum(left, right, bottom, top, near, far);
         }
