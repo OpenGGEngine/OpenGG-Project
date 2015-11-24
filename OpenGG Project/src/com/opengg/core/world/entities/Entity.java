@@ -8,6 +8,7 @@ package com.opengg.core.world.entities;
 import com.opengg.core.Vector3f;
 import com.opengg.core.util.Time;
 import com.opengg.core.io.objloader.parser.OBJModel;
+import static com.opengg.core.util.GlobalUtil.print;
 import com.opengg.core.world.Camera;
 import com.opengg.core.world.World;
 import com.opengg.core.world.WorldManager;
@@ -321,6 +322,7 @@ public class Entity {
      */
     public void updateXYZ() {
         timeStep = time.getDeltaSec();
+//        print(timeStep);
         lastAcceleration = acceleration;
         pos.x += velocity.x * timeStep + (0.5 * lastAcceleration.x * timeStep * timeStep);
         pos.y += velocity.y * timeStep + (0.5 * lastAcceleration.y * timeStep * timeStep);

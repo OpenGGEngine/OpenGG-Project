@@ -5,21 +5,23 @@
  */
 package com.opengg.core.util;
 
+import static com.opengg.core.util.GlobalUtil.print;
+
 /**
  *
  * @author Javier
  */
 public class Time {
-    float currentTime;
-    float timeStep;
-    float lastTime;
+    long currentTime = 0;
+    float timeStep = 0f;
+    long lastTime = 0;
     
     public Time(){
-        lastTime = currentTime;
         lastTime = System.currentTimeMillis();
     }
     public float getDeltaMs(){
         currentTime = System.currentTimeMillis();
+//        print(lastTime + " " + currentTime);
         timeStep = currentTime - lastTime;
         lastTime = currentTime;
         return timeStep;
