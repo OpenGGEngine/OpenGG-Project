@@ -11,7 +11,7 @@ import com.opengg.core.io.objloader.parser.OBJModel;
 import com.opengg.core.world.Camera;
 import com.opengg.core.world.World;
 import com.opengg.core.world.WorldManager;
-import static com.opengg.core.world.entities.EntityFactory.EntityList;
+import static com.opengg.core.world.entities.EntityFactory.AddStack;
 import com.opengg.core.world.physics.ForceManipulation;
 
 /**
@@ -98,7 +98,7 @@ public class Entity {
         setTags(EntityType.Physics);
         bindModel(new OBJModel());
 
-        EntityList.add(this);
+        AddStack.add(this);
     }
 
     /**
@@ -121,7 +121,7 @@ public class Entity {
         setTags(type);
         bindModel(model);
 
-        EntityList.add(this);
+        AddStack.add(this);
     }
 
     /**
@@ -141,7 +141,7 @@ public class Entity {
         this.updateForce = v.updateForce;
         bindModel(v.model);
 
-        EntityList.add(this);
+        AddStack.add(this);
     }
 
     /**

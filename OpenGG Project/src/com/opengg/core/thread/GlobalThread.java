@@ -26,6 +26,7 @@ public class GlobalThread implements Runnable{
     }
     
     public void kill(){
+        MainLoop.killProcess();
         notDead = false;
     }
     

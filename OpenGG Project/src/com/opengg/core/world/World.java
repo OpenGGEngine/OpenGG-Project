@@ -7,6 +7,7 @@
 package com.opengg.core.world;
 
 import com.opengg.core.Vector3f;
+import com.opengg.core.render.shader.premade.SkyboxShader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +18,7 @@ import java.util.List;
 public class World {
     private List<WorldObject> objs = new ArrayList<>();
     private List<Camera> cams = new ArrayList<>();
+    private SkyboxShader skybox = new SkyboxShader();
     private Camera mainCam;
     public float floorLev = -1;
     

@@ -15,9 +15,11 @@ import com.opengg.core.world.entities.EntityFactory;
  * @author ethachu19
  */
 public class MainLoop extends EntityFactory{
-
+    private static boolean shouldClose = false;
+    
     public static void process(){
-        while(true){
+        
+        while(!shouldClose){
             if(EntityList.size() > entityCap)
                 for(int i = 0; EntityList.size() > entityCap; ++i)
                     EntityFactory.destroyEntity(i);
@@ -44,6 +46,13 @@ public class MainLoop extends EntityFactory{
                     }
                 }
             }
+            for (int i = 0; i < AddStack.size(); i++)
+                    EntityList.add(AddStack.get(i));
+            AddStack.clear();
         }
+    }
+    
+    public static void killProcess(){
+        MainLoop.shouldClose = true;
     }
 }
