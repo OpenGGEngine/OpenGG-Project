@@ -7,10 +7,6 @@ import com.opengg.core.audio.AudioHandler;
 import com.opengg.core.gui.GUI;
 import com.opengg.core.io.input.KeyboardEventHandler;
 import com.opengg.core.io.input.KeyboardListener;
-import com.opengg.core.io.objloader.parser.IMTLParser;
-import com.opengg.core.io.objloader.parser.MTLLibrary;
-import com.opengg.core.io.objloader.parser.MTLMaterial;
-import com.opengg.core.io.objloader.parser.MTLParser;
 import com.opengg.core.io.objloader.parser.OBJModel;
 import com.opengg.core.io.objloader.parser.OBJParser;
 import com.opengg.core.movement.MovementLoader;
@@ -31,22 +27,23 @@ import com.opengg.core.render.window.DisplayMode;
 import static com.opengg.core.render.window.RenderUtil.endFrame;
 import static com.opengg.core.render.window.RenderUtil.startFrame;
 import com.opengg.core.render.window.Window;
+import com.opengg.core.util.GlobalInfo;
 import static com.opengg.core.util.GlobalUtil.print;
 import com.opengg.core.world.Camera;
 import com.opengg.core.world.Terrain;
-import com.opengg.core.world.entities.EntityFactory;
-import static com.opengg.core.world.entities.EntityFactory.EntityList;
+import com.opengg.core.world.World;
+import com.opengg.core.world.WorldManager;
+import com.opengg.core.world.WorldObject;
 import com.opengg.core.world.physics.MainLoop;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.FloatBuffer;
-import java.text.MessageFormat;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP;
 import static org.lwjgl.opengl.GL15.*;
+import static org.lwjgl.opengl.GL32.GL_TEXTURE_CUBE_MAP_SEAMLESS;
 
 public class OpenGGTest implements KeyboardListener {
 
@@ -61,7 +58,9 @@ public class OpenGGTest implements KeyboardListener {
     int quads;
     Vector3f rot = new Vector3f(0, 0, 0);
     Vector3f pos = new Vector3f(0, 0, 0);
-
+    
+    World w;
+    
     public static void main(String[] args) throws IOException, Exception {
         new OpenGGTest();
     }
@@ -88,19 +87,21 @@ public class OpenGGTest implements KeyboardListener {
     private Texture t3 = new Texture();
     private Cubemap cb = new Cubemap();
     private SkyboxShader sk;
-
+    
+    WorldObject w1, w2;
+    
     public OpenGGTest() throws IOException, Exception {
         Window w = new Window();
         KeyboardEventHandler.addToPool(this);
 
-//        new Thread(() -> {
-//            MainLoop.process();
-//        }).start();
+        new Thread(() -> {
+            MainLoop.process();
+        }).start();
 //        
 //        for(int i = 0; i < 20; i++, EntityFactory.getEntity());
         
         try {
-            window = w.init(960, 640, "Test", DisplayMode.WINDOWED);
+            window = w.init(1280, 1024, "Test", DisplayMode.WINDOWED);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -115,7 +116,7 @@ public class OpenGGTest implements KeyboardListener {
             endFrame(window);
         }
         
-//        MainLoop.killProcess();
+        MainLoop.killProcess();
         exit();
     }
 
@@ -144,24 +145,10 @@ public class OpenGGTest implements KeyboardListener {
 
         try {
             URL path = OpenGGTest.class.getResource("res/models/deer.obj");
-            URL path2 = OpenGGTest.class.getResource("res/models/level.obj");
+            URL path2 = OpenGGTest.class.getResource("res/models/flashbang.obj");
             m = new OBJParser().parse(path);
             m2 = new OBJParser().parse(path2);
-            final IMTLParser parser = new MTLParser();
-            final MTLLibrary library = parser.parse(OpenGGTest.class.getResource("res/mariomtl.mtl").openStream());
-            MTLMaterial material = library.getMaterial("Material.029_359289F2_c.bmp");
-            System.out.println(MessageFormat.format("Material with name ``{0}``.", material.getName()));
-            print("Ambient Color rgb: " + material.getAmbientColor().r + "," + material.getAmbientColor().b + "," + material.getAmbientColor().g);
-            print("Ambient texture: " + material.getAmbientTexture());
-            print("Transmission Color rgb: " + material.getTransmissionColor().r + "," + material.getTransmissionColor().b + "," + material.getTransmissionColor().g);
-            print("Specular texture: " + material.getSpecularTexture());
-            print("Specular exponent: " + material.getSpecularExponent());
-            print("Specular exponent texture: " + material.getSpecularExponentTexture());
-            print("Specular rgb: " + material.getSpecularColor().r + "," + material.getSpecularColor().b + "," + material.getSpecularColor().g);
-            print("Diffuse texture: " + material.getDiffuseTexture());
-            print("Diffuse Color rgb: " + material.getDiffuseColor().r + "," + material.getDiffuseColor().b + "," + material.getDiffuseColor().g);
-            print("Dissolve: " + material.getDissolve());
-            print("Dissolve texture: " + material.getDissolveTexture());
+            
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -200,7 +187,9 @@ public class OpenGGTest implements KeyboardListener {
         ShaderHandler.addShader(gsh);
         ShaderHandler.addShader(sk);
         ShaderHandler.addShader(sh);
-
+        
+        GlobalInfo.main = sh;
+        
         ShaderHandler.setCurrentShader(sh);
 
         g.setupGUI(new Vector2f(-3, -3), new Vector2f(3, 3));
@@ -219,7 +208,14 @@ public class OpenGGTest implements KeyboardListener {
 
         test2 = ObjectBuffers.genSkyCube();
         sky = new DrawnObject(test2, vbo, 12);
-
+        
+        w = WorldManager.getDefaultWorld();
+        
+        w.floorLev = 0;
+        w.addObject(w1 = new WorldObject(awp3));
+        w.addObject(w2 = new WorldObject(flashbang));
+        w1.setPos(new Vector3f(0,30,0));
+        
         awp3.removeBuffer();
         flashbang.removeBuffer();
         Terrain base = new Terrain(0, 0, t1);
@@ -227,9 +223,10 @@ public class OpenGGTest implements KeyboardListener {
         base.removeBuffer();
 
         ratio = win.getRatio();
-
+        
+        base2.setModel(Matrix4f.translate(-50, 0, -100));
+        
         ShaderHandler.setModel(new Matrix4f());
-
         ShaderHandler.checkForErrors();
 
         enable(GL_BLEND);
@@ -240,7 +237,7 @@ public class OpenGGTest implements KeyboardListener {
 
         enable(GL_TEXTURE_2D);
 
-        enable(GL_TEXTURE_CUBE_MAP);
+        enable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
     }
 
     public void exit() {
@@ -260,17 +257,22 @@ public class OpenGGTest implements KeyboardListener {
         ShaderHandler.setLightPos(new Vector3f(30, 40, 50));
         ShaderHandler.setView(c);
         ShaderHandler.setOrtho(-10, 10, -10, 10, 0.3f, 80);
+        
+        ShaderHandler.setPerspective(90, ratio, 4, 100f); 
         sh.setShadowLightMatrix(ShaderHandler.getMVP());
-        //ShaderHandler.setPerspective(90, ratio, 0.3f, 1000f); 
-
+        
         ShaderHandler.setCurrentShader(sh);
         t1.startTexRender();
         t3.useTexture(0);
+        
+        awp3.saveShadowMVP();
         awp3.draw();
-//        ShaderHandler.setModel(Matrix4f.translate(0, -10, 0));
-//        flashbang.draw();
+        
+        flashbang.saveShadowMVP();
+        flashbang.draw();
 
         base2.setModel(Matrix4f.translate(-50, 0, -100));
+        base2.saveShadowMVP();
         base2.draw();
 
         t1.endTexRender();
@@ -282,13 +284,12 @@ public class OpenGGTest implements KeyboardListener {
         ShaderHandler.setView(c);
         ShaderHandler.setPerspective(90, ratio, 0.3f, 2000f);
 
-        awp3.draw();
+        awp3.drawShaded();
 //        ShaderHandler.setModel(Matrix4f.translate(0, -12, 0));
-//        flashbang.draw();
-
-        base2.setModel(Matrix4f.translate(-50, 0, -100));
+        flashbang.drawShaded();
+     
         t1.useDepthTexture(0);
-        base2.draw();
+        base2.drawShaded();
 
         cb.use();
         ShaderHandler.setCurrentShader(sk);
@@ -304,6 +305,9 @@ public class OpenGGTest implements KeyboardListener {
     public void update(float delta) {
         xrot += rot1 * 5;
         yrot += rot2 * 5;
+        
+        awp3.setModel(Matrix4f.translate(w1.getEntity().pos));
+        
     }
 
     @Override

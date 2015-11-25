@@ -18,7 +18,7 @@ uniform mat4 shmvp;
 uniform float lightdistance;
 uniform float lightpower;
 uniform sampler2D texImage;
-uniform sampler2DShadow shadeImage;
+uniform sampler2D shadeImage;
 
 vec2 randdisk[16] = vec2[]( 
    vec2( -0.94201624, -0.39906216 ), 
@@ -39,6 +39,12 @@ vec2 randdisk[16] = vec2[](
    vec2( 0.14383161, -0.14100790 ) 
 );
 
+float random(vec3 seed, int i){
+	vec4 seed4 = vec4(seed,i);
+	float dot_product = dot(seed4, vec4(12.9898,78.233,45.164,94.673));
+	return fract(sin(dot_product) * 43758.5453);
+}
+
 void main() {
     float vis = 1;
 
@@ -48,28 +54,22 @@ void main() {
 
     vec4 vertcolor = vertexColor;
 
-    float bias = 0.005;
+    float spec = 0.1;
 
     float amb = 0.3;
 
     vec3 diffuse = texture(texImage, textureCoord).rgb;
 
-/*
     if(texture2D(shadeImage,textureCoord).a == 0){
             diffuse = vertcolor.rgb;
             vertcolor.a = 0;
     }
-*/   
+    
+    int samples = 8;
+    
     vec3 ambient = vec3(amb,amb,amb) * diffuse;
-    if(!(shadp.x < 0 || shadp.y < 0 || shadp.x > 1 || shadp.y > 1)){
-        for(int i = 0; i < 16; i++){
-            int index = i;
-
-            vis -= 0.05 * (1- texture( shadeImage, vec3(shadp.xy  - randdisk[i]/700, (shadp.z - bias)/shadp.w)));
-
-        }
-}
-    vec3 specular = vec3(0.5,0.5,0.5);
+    
+    vec3 specular = vec3(spec,spec,spec);
 
     float distance = length( lightposition - vec3(pos.x,pos.y,pos.z) );
 
@@ -84,7 +84,23 @@ void main() {
     vec3 R = reflect(-l,n);
 
     float cosAlpha = clamp( dot( E,R ), 0,1 );
+    
+    float bias = 0.005*tan(acos(cosTheta));
+    
 
+    
+    //if ( textureProj( shadeImage, shadp.xyw ).z  <  (shadp.z-bias)/shadp.w ){
+    if(!(shadp.x < 0 || shadp.y < 0 || shadp.x > 1 || shadp.y > 1)){
+        for(int i = 0; i < samples; i++){
+            int index = int(16.0*random(pos.xyy, i))%16;
+            if(texture(shadeImage, shadp.xy - randdisk[index]/1100 ).r < (shadp.z - bias)){
+                vis -= 0.12;
+            }else{
+
+            }
+        }
+    }
+    
     fragColor = 
             // Ambient : simulates indirect lighting
             vec4((ambient +

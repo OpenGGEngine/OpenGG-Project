@@ -110,6 +110,17 @@ public class Matrix4f {
  
  
         return translation; 
+    }
+    public static Matrix4f translate(Vector3f p) { 
+         Matrix4f translation = new Matrix4f(); 
+
+ 
+        translation.m03 = p.x; 
+        translation.m13 = p.y; 
+        translation.m23 = p.z; 
+ 
+ 
+        return translation; 
      } 
     
     public Matrix4f add(Matrix4f other) { 

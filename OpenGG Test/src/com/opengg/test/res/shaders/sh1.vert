@@ -26,14 +26,7 @@ uniform float divAmount;
 
 
 
-void main() {
-    mat4 biasMatrix = mat4(
-    0.5f, 0.0, 0.0, 0.0,
-    0.0, 0.5f, 0.0, 0.0,
-    0.0, 0.0, 0.5f, 0.0,
-    0.5f, 0.5f, 0.5f, 1.0
-    );
-    
+void main() {   
     vertexColor = color;
     textureCoord = texcoord;
 	
@@ -47,7 +40,13 @@ void main() {
     position.z = position.z/divAmount;
 */
     
-    shadowpos = (biasMatrix * shmvp * vec4(position, 1));
+    shadowpos = (shmvp * vec4(position, 1));
+    
+    shadowpos = vec4(shadowpos.xyz/shadowpos.w, 1);
+    
+    shadowpos.x = 0.5 * shadowpos.x + 0.5;
+    shadowpos.y = 0.5 * shadowpos.y + 0.5;
+    shadowpos.z = 0.5 * shadowpos.z + 0.5;
     
     lightposition = lightpos;
 

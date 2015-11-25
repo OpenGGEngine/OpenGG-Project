@@ -8,6 +8,7 @@ package com.opengg.core.render;
 import com.opengg.core.Matrix4f;
 import com.opengg.core.Vector3f;
 import com.opengg.core.render.shader.ShaderHandler;
+import com.opengg.core.util.GlobalInfo;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import org.lwjgl.BufferUtils;
@@ -37,6 +38,7 @@ public class DrawnObject {
     long vertOffset;
     
     Matrix4f model = Matrix4f.translate(0, 0, 0);
+    Matrix4f shadeModel = new Matrix4f();
     
     static{
         DrawnObjectHandler.setup();
@@ -91,9 +93,28 @@ public class DrawnObject {
         DrawnObjectHandler.addToOffset(limit);
     }
     public void draw(){
+        
         ShaderHandler.setModel(model);
+
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, ind, GL_STATIC_DRAW);
         glDrawElements(GL_TRIANGLES, ind.limit(), GL_UNSIGNED_INT, 0);       
+    }
+    
+    public void drawShaded(){
+        
+        ShaderHandler.setModel(model);
+        GlobalInfo.main.setShadowLightMatrix(shadeModel);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, ind, GL_STATIC_DRAW);
+        glDrawElements(GL_TRIANGLES, ind.limit(), GL_UNSIGNED_INT, 0);       
+    }
+    
+    public void saveShadowMVP(){
+        ShaderHandler.setModel(model);
+        shadeModel = (ShaderHandler.getMVP());
+    }
+    
+    public void setShaderMatrix(Matrix4f m){
+        shadeModel = m;
     }
     
     public void setModel(Matrix4f model){

@@ -10,6 +10,8 @@ import static com.opengg.core.util.GlobalUtil.print;
 import com.opengg.core.world.entities.Entity;
 import static com.opengg.core.world.entities.Entity.*;
 import com.opengg.core.world.entities.EntityFactory;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -51,6 +53,11 @@ public class MainLoop extends EntityFactory{
             for (int i = 0; i < AddStack.size(); i++)
                     EntityList.add(AddStack.get(i));
             AddStack.clear();
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(MainLoop.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
     

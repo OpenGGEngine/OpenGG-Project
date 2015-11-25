@@ -60,7 +60,7 @@ public class WorldObject {
         pos = new Vector3f(0,0,0);
         rot = new Vector3f(0,0,0);
         thisWorld = WorldManager.getDefaultWorld();
-        e = EntityFactory.getEntity(EntityTypes.DEFAULT, EntityType.Static, pos, new Vector3f(), 10, new OBJModel(), thisWorld);
+        e = EntityFactory.getEntity(EntityTypes.DEFAULT, EntityType.Physics, pos, new Vector3f(), 10, new OBJModel(), thisWorld);
         e.setXYZ(pos);
         e.setRotation(rot);
         this.thisWorld.addObject(this);
@@ -100,7 +100,21 @@ public class WorldObject {
         thisWorld = next;
         e.changeWorld(next);
     }
+    
+    /**
+     * Returns the DrawnObject associated with this WorldObject
+     * @return DrawnObject associated with this
+     */
     public DrawnObject getDrawnObject(){
         return d;
+    }
+    
+    /**
+     * Gets Entity linked to this object
+     * 
+     * @param e Linked Entity
+     */
+    public Entity getEntity(){
+        return e;
     }
 }
