@@ -7,7 +7,9 @@ package com.opengg.core.render.buffer;
 
 import com.opengg.core.Vector3f;
 import com.opengg.core.io.objloader.parser.OBJFace;
+import com.opengg.core.io.objloader.parser.OBJMesh;
 import com.opengg.core.io.objloader.parser.OBJModel;
+import static com.opengg.core.util.GlobalUtil.print;
 import java.nio.FloatBuffer;
 import java.util.List;
 import java.util.Random;
@@ -21,6 +23,11 @@ public class ObjectBuffers {
     public static FloatBuffer genBuffer(OBJModel m, float transparency, float scale){
         
         List<OBJFace> f = m.getObjects().get(0).getMeshes().get(0).getFaces();
+        print("The material file is "+ m.getMaterialLibraries());
+        
+        for(OBJMesh ms :m.getObjects().get(0).getMeshes()){
+            print(ms.getMaterialName());
+        }
        
         FloatBuffer elements = BufferUtils.createFloatBuffer(m.getVertices().size() * 78);
         for (OBJFace fa : f){
