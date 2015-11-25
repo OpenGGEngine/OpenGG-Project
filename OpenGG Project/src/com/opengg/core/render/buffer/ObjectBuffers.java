@@ -7,7 +7,9 @@ package com.opengg.core.render.buffer;
 
 import com.opengg.core.Vector3f;
 import com.opengg.core.io.objloader.parser.OBJFace;
+import com.opengg.core.io.objloader.parser.OBJMesh;
 import com.opengg.core.io.objloader.parser.OBJModel;
+import static com.opengg.core.util.GlobalUtil.print;
 import java.nio.FloatBuffer;
 import java.util.List;
 import java.util.Random;
@@ -21,6 +23,11 @@ public class ObjectBuffers {
     public static FloatBuffer genBuffer(OBJModel m, float transparency, float scale){
         
         List<OBJFace> f = m.getObjects().get(0).getMeshes().get(0).getFaces();
+        print("The material file is "+ m.getMaterialLibraries());
+        
+        for(OBJMesh ms :m.getObjects().get(0).getMeshes()){
+            print(ms.getMaterialName());
+        }
        
         FloatBuffer elements = BufferUtils.createFloatBuffer(m.getVertices().size() * 78);
         for (OBJFace fa : f){
@@ -95,15 +102,25 @@ public class ObjectBuffers {
         elements.flip();
         return elements;
     }
-    public static FloatBuffer getSquareUI(float x1, float x2, float y1, float y2, float z1 ,float transparency){
+    public static FloatBuffer getSquareUI(float x1, float x2, float y1, float y2, float z1 ,float transparency, boolean flippedTex){
         FloatBuffer sq = BufferUtils.createFloatBuffer(6*12);
         
-        sq.put(x1).put(y1).put(z1).put(1).put(0).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(0).put(0);
-        sq.put(x1).put(y2).put(z1).put(0).put(1).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(0).put(1);
-        sq.put(x2).put(y1).put(z1).put(0).put(0).put(1).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(1).put(0);
-        sq.put(x2).put(y1).put(z1).put(0).put(1).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(1).put(0);
-        sq.put(x2).put(y2).put(z1).put(0).put(0).put(1).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(1).put(1);
-        sq.put(x1).put(y2).put(z1).put(1).put(0).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(0).put(1);
+        int i, i2;
+        if(flippedTex){
+            i = 1;
+            i2 = 0;
+            
+        }else{
+            i = 0;
+            i2 = 1;
+        }
+        
+        sq.put(x1).put(y1).put(z1).put(1).put(0).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(0).put(i);
+        sq.put(x1).put(y2).put(z1).put(0).put(1).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(0).put(i2);
+        sq.put(x2).put(y1).put(z1).put(0).put(0).put(1).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(1).put(i);
+        sq.put(x2).put(y1).put(z1).put(0).put(1).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(1).put(i);
+        sq.put(x2).put(y2).put(z1).put(0).put(0).put(1).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(1).put(i2);
+        sq.put(x1).put(y2).put(z1).put(1).put(0).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(0).put(i2);
         
         sq.flip();
         return sq;
@@ -121,15 +138,24 @@ public class ObjectBuffers {
         sq.flip();
         return sq;
     }
-    public static FloatBuffer getSquare(float x1, float z1, float x2, float y1,float y2, float y3, float y4, float z2, float transparency){
+    public static FloatBuffer getSquare(float x1, float z1, float x2, float y1,float y2, float y3, float y4, float z2, float transparency,boolean flippedTex){
         FloatBuffer sq = BufferUtils.createFloatBuffer(6*12);
+        int i, i2;
+        if(flippedTex){
+            i = 1;
+            i2 = 0;
+            
+        }else{
+            i = 0;
+            i2 = 1;
+        }
         
-        sq.put(x1).put(y1).put(z1).put(1).put(0).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(1).put(0);
-        sq.put(x1).put(y2).put(z2).put(0).put(1).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(1).put(1);
-        sq.put(x2).put(y3).put(z1).put(0).put(0).put(1).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(0).put(0);
-        sq.put(x2).put(y3).put(z1).put(0).put(1).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(0).put(0);
-        sq.put(x2).put(y4).put(z2).put(0).put(0).put(1).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(0).put(1);
-        sq.put(x1).put(y2).put(z2).put(1).put(0).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(1).put(1);
+        sq.put(x1).put(y1).put(z1).put(1).put(0).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(1).put(i);
+        sq.put(x1).put(y2).put(z2).put(0).put(1).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(1).put(i2);
+        sq.put(x2).put(y3).put(z1).put(0).put(0).put(1).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(0).put(i);
+        sq.put(x2).put(y3).put(z1).put(0).put(1).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(0).put(i);
+        sq.put(x2).put(y4).put(z2).put(0).put(0).put(1).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(0).put(i2);
+        sq.put(x1).put(y2).put(z2).put(1).put(0).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(1).put(i2);
         
         sq.flip();
         return sq;
@@ -156,5 +182,55 @@ public class ObjectBuffers {
         }
         f.flip();
         return f;
+    }
+    public static FloatBuffer genSkyCube(){
+        FloatBuffer sq = BufferUtils.createFloatBuffer(6*6*12);
+        
+        sq.put(-1000).put(1000).put(1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);
+        sq.put(-1000).put(-1000).put(1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(1000).put(-1000).put(1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(1000).put(-1000).put(1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(1000).put(1000).put(1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(-1000).put(1000).put(1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        
+        sq.put(-1000).put(1000).put(-1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(-1000).put(-1000).put(-1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(1000).put(-1000).put(-1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(1000).put(-1000).put(-1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(1000).put(1000).put(-1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(-1000).put(1000).put(-1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        
+        
+        sq.put(-1000).put(-1000).put(1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(-1000).put(-1000).put(-1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(-1000).put(1000).put(-1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(-1000).put(1000).put(-1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(-1000).put(1000).put(1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(-1000).put(-1000).put(1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        
+        sq.put(1000).put(-1000).put(1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(1000).put(-1000).put(-10000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(1000).put(1000).put(-1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(1000).put(1000).put(-1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(1000).put(1000).put(1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(1000).put(-1000).put(1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        
+        
+        sq.put(-1000).put(1000).put(1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(-1000).put(1000).put(-1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(1000).put(1000).put(-1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(1000).put(1000).put(-1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(1000).put(1000).put(1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(-1000).put(1000).put(1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        
+        sq.put(-1000).put(-1000).put(1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(-1000).put(-1000).put(-1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(1000).put(-1000).put(-1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(1000).put(-1000).put(-1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(1000).put(-1000).put(1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(-1000).put(-1000).put(1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        
+        sq.flip();
+        return sq;
     }
 }

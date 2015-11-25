@@ -6,17 +6,17 @@
 package com.opengg.core.world.entities;
 
 import com.opengg.core.Vector3f;
-import com.opengg.core.world.entities.Entity.EntityType;
 import com.opengg.core.io.objloader.parser.OBJModel;
+import com.opengg.core.world.World;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  *
- * @author Ethan
+ * @author ethachu19
  */
-public abstract class EntityFactory {
-
+public class EntityFactory {
+    
     /**
      * Number of Entities currently loaded.
      */
@@ -26,66 +26,105 @@ public abstract class EntityFactory {
      * List of currently loaded entities
      */
     public static final List<Entity> EntityList = new ArrayList<>();
-    
+    public static final List<Entity> AddStack = new ArrayList<>();
     /**
-     * Generates a entity with the parameters given
-     * 
-     * @param tag What type of entity
-     * @param m Model to be bound to Entity
-     * @return Error
+     * Amount of Entities
      */
-    public static Entity generateEntity(EntityType tag, OBJModel m) {
-        if(entityCount > 44)
-        {return null;}
-        entityCount++;
-        return new Entity(m, tag);
-    }
-    
+    protected static int entityCap = 44;
     /**
-     * Generates a entity with the parameters given
+     * Generates an entity with parameters given
      * 
-     * @param tag EntityType
-     * @param x X Coordinate of Entity
-     * @param y Y Coordinate of Entity
-     * @param z Z Coordinate of Entity
-     * @param f f Force Vector
-     * @param mass Mass of Entity
-     * @param volume Volume of Entity
-     * @return New Entity
+     * @param et Type of Entity
+     * @param e Entity to be copied
+     * @return new Entity 
      */
-    public static Entity generateEntity(EntityType tag, float x, float y, float z, Vector3f f, float mass, float volume) {
-        if(entityCount > 44)
-        {return null;}
-        entityCount++;
-        return new Entity(x,y,z,f,mass,volume,tag);
-    }
-    
-    /**
-     * Generates a entity with the parameters given
-     * 
-     * @param v Entity to be copied
-     * @return New Entity
-     */
-    public static Entity generateEntity(Entity v) {
-        if(entityCount > 44)
-        {return null;}
-        entityCount++;
-        return new Entity(v);
-    }
-    
-    /**
-     * Destroys the entity given
-     * 
-     * @param en
-     * @return Error
-     */
-    public static boolean destroyEntity(Entity en) {
-        entityCount--;
-        if (!EntityList.remove(en)) {
-            return false;
+    public static final Entity getEntity(EntityTypes et, Entity e){
+        if(entityCount >= entityCap)
+            return null;
+        ++entityCount;
+        switch(et){
+            case PLAYER:
+                return new PlayerEntity(e);
+            default:
+                return new Entity(e);
         }
-        en.forceCalculator = null;
-        en = null;
-        return true;
+    }
+    
+    /**
+     * Generates an entity with parameters given
+     * 
+     * @param et Type of Entity
+     * @param type Type of Entity(For Tags)
+     * @param pos Position of Entity
+     * @param f Force Vector
+     * @param mass Mass of Entity
+     * @param model Model to be bound to Entity
+     * @param thisWorld CurrentWorld of Entity
+     * @return new Entity
+     */
+    public static final Entity getEntity(EntityTypes et, Entity.EntityType type,Vector3f pos, Vector3f f, float mass,OBJModel model, World thisWorld){
+        if(entityCount >= entityCap)
+            return null;
+        ++entityCount;
+        switch(et){
+            case PLAYER:
+                return new PlayerEntity(type,pos,f,mass,model,thisWorld);
+            default:
+                return new Entity(type,pos,f,mass,model,thisWorld);
+        }
+    }
+    
+    /**
+     * Generates an entity with the parameters given
+     * 
+     * @param type Type of Entity
+     * @return new Entity
+     */
+    public static final Entity getEntity(EntityTypes type){
+        if(entityCount >= entityCap)
+            return null;
+        ++entityCount;
+        switch(type){
+            case PLAYER:
+                return new PlayerEntity();
+            default:
+                return new Entity();
+        }
+    }
+    
+    /**
+     * Generates a default entity
+     * 
+     * @return new Entity
+     */
+    public static final Entity getEntity(){
+        if(entityCount >= entityCap)
+            return null;
+        ++entityCount;
+        return new Entity();
+    }
+    
+    
+    /**
+     * Destroys entity given
+     * 
+     * @param des Entity to be destroyed
+     * @return Error
+     */
+    public static final boolean destroyEntity(Entity des){
+        des = null;
+        return EntityList.remove(des);
+    }
+    
+    /**
+     * Destroys entity given
+     * 
+     * @param i Index of entity to be destroyed
+     * @return Error
+     */
+    public static final boolean destroyEntity(int i){
+        Entity des = EntityList.get(i);
+        des = null;
+        return EntityList.remove(des);
     }
 }

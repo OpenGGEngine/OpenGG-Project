@@ -6,23 +6,19 @@
 package com.opengg.core.world.physics;
 
 import com.opengg.core.world.entities.Entity;
-import com.opengg.core.world.entities.EntityFactory;
 
 /**
  *
  * @author ethachu19
  */
-public class CollisionDetection extends EntityFactory{
+public class CollisionDetection{
     private static final int MAX = 1;
     private static final int MIN = 0;
     
-    public static int areColliding(Entity collide, Entity collidee)
-    {
+    public static boolean areColliding(Entity collide, Entity collidee){
         //Possible error checking
         if(collide == null || collidee == null)
-        {
-            return -1;
-        }
+            return false;
         
          if (collide.boundingBox[MAX].x < collidee.boundingBox[MIN].x || 
              collide.boundingBox[MAX].y < collidee.boundingBox[MIN].y ||
@@ -31,13 +27,13 @@ public class CollisionDetection extends EntityFactory{
              collide.boundingBox[MIN].y > collidee.boundingBox[MAX].y ||
              collide.boundingBox[MIN].z > collidee.boundingBox[MAX].z) 
             {
-                return 0;
+                return false;
             }
         
         
          
          
-        return 1;
+        return true;
     }
     
 }

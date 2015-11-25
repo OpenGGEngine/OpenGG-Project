@@ -75,22 +75,7 @@ public class Matrix4f {
         return buffer;
     }
     
-    public static Matrix4f orthographic(float left, float right, float bottom, float top, float near, float far) {
-        Matrix4f ortho = new Matrix4f();
-
-        float tx = -(right + left) / (right - left);
-        float ty = -(top + bottom) / (top - bottom);
-        float tz = -(far + near) / (far - near);
-
-        ortho.m00 = 2f / (right - left);
-        ortho.m11 = 2f / (top - bottom);
-        ortho.m22 = -2f / (far - near);
-        ortho.m03 = tx;
-        ortho.m13 = ty;
-        ortho.m23 = tz;
-
-        return ortho;
-    }
+    
 
     public static Matrix4f rotate(float angle, float x, float y, float z) { 
          Matrix4f rotation = new Matrix4f(); 
@@ -228,5 +213,21 @@ public class Matrix4f {
         frustum.m33 = 0f;
 
         return frustum;
+    }
+     public static Matrix4f orthographic(float left, float right, float bottom, float top, float near, float far) {
+        Matrix4f ortho = new Matrix4f();
+
+        float tx = -(right + left) / (right - left);
+        float ty = -(top + bottom) / (top - bottom);
+        float tz = -(far + near) / (far - near);
+
+        ortho.m00 = 2f / (right - left);
+        ortho.m11 = 2f / (top - bottom);
+        ortho.m22 = -2f / (far - near);
+        ortho.m03 = tx;
+        ortho.m13 = ty;
+        ortho.m23 = tz;
+
+        return ortho;
     }
 }

@@ -5,7 +5,7 @@
  */
 package com.opengg.core.render.texture;
 
-import static com.opengg.core.util.GlobalUtil.print;
+import com.opengg.core.util.GlobalInfo;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
@@ -34,22 +34,27 @@ public class Texture {
     private int depthbuffer;
     int width;
     int height;
-    
+    int rendsize;
+     
     public Texture(){
-        
+        //this.loc = loc;
     }
     
-    public void useTexture(){
+    public void useTexture(int loc){
+        glActiveTexture(GL_TEXTURE0 + loc);
         glBindTexture(GL_TEXTURE_2D, texture);
     }
     
-    public void useDepthTexture(){
+    public void useDepthTexture(int loc){
+        glActiveTexture(GL_TEXTURE0 + loc);
         glBindTexture(GL_TEXTURE_2D, depthbuffer);       
     }
     
     ByteBuffer buffer;
     
-    public int setupTexToBuffer(){
+    public int setupTexToBuffer(int size){
+        //glActiveTexture(GL_TEXTURE0 + loc);
+        rendsize = size;
         fb = glGenFramebuffers();
         glBindFramebuffer(GL_FRAMEBUFFER, fb);
         glDrawBuffers(GL_COLOR_ATTACHMENT0);
@@ -57,7 +62,7 @@ public class Texture {
         
         texture = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, texture);
-        glTexImage2D(GL_TEXTURE_2D, 0,GL_RGB, 256, 256, 0,GL_RGB, 
+        glTexImage2D(GL_TEXTURE_2D, 0,GL_RGB, size, size, 0,GL_RGB, 
                 GL_UNSIGNED_BYTE, (ByteBuffer) null);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -66,7 +71,7 @@ public class Texture {
 
         depthbuffer = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, depthbuffer);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, 256, 256, 0, GL_DEPTH_COMPONENT, 
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, size, size, 0, GL_DEPTH_COMPONENT, 
                 GL_FLOAT, (ByteBuffer) null);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -76,7 +81,6 @@ public class Texture {
 
         try{
             if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE){
-                print("test");
                 throw new Exception("Buffer failed to generate!");
                 
             }
@@ -89,19 +93,21 @@ public class Texture {
     }
     
     public void startTexRender(){
+        //glActiveTexture(GL_TEXTURE0 + loc);
         glBindTexture(GL_TEXTURE_2D, 0);
         glBindFramebuffer(GL_FRAMEBUFFER, fb);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glViewport(0,0,256,256); 
+        glViewport(0,0,rendsize, rendsize); 
     }
     
     public void endTexRender(){
         glFinish();
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        glViewport(0,0,1280,1024);
+        glViewport(0,0,GlobalInfo.winHeight,GlobalInfo.winWidth);
     }
     
-    public int loadTexture(String path){
+    public int loadFromBuffer(ByteBuffer b, int fwidth, int fheight){
+        //glActiveTexture(GL_TEXTURE0 + loc);
         
         texture = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, texture);
@@ -111,44 +117,73 @@ public class Texture {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         
+        buffer = b;
         
-        InputStream in;
-        try {
-            in = new FileInputStream(path);
-            BufferedImage image = ImageIO.read(in);
+        width = fwidth;
+        height = fheight;
+        
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, fwidth, fheight, 0, GL_RGBA, GL_UNSIGNED_BYTE, b);
+        glBindTexture(GL_TEXTURE_2D, 0);
+        
+        return texture;
+    }
+    
+    public int loadTexture(String path, boolean flipped){
+        glActiveTexture(GL_TEXTURE0);
+        texture = glGenTextures();
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glGenerateMipmap(GL_TEXTURE_2D);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        try{
             
-            AffineTransform transform = AffineTransform.getScaleInstance(1f, -1f);
-            transform.translate(0, -image.getHeight());
-            AffineTransformOp operation = new AffineTransformOp(transform, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
-            image = operation.filter(image, null);
+            //buffer = TexBufferGen.genTex(path);
             
-            width = image.getWidth();
-            height = image.getHeight();
+            InputStream in;
+        ByteBuffer buffer;
 
-            int[] pixels = new int[width * height];
-            image.getRGB(0, 0, width, height, pixels, 0, width);
-            buffer = BufferUtils.createByteBuffer(width * height * 4);
-            for (int y = 0; y < height; y++) {
-                for (int x = 0; x < width; x++) {
-                    /* Pixel as RGBA: 0xAARRGGBB */
-                    int pixel = pixels[y * width + x];
+        in = new FileInputStream(path);
+        BufferedImage image = ImageIO.read(in);
 
-                    /* Red component 0xAARRGGBB >> (4 * 4) = 0x0000AARR */
-                    buffer.put((byte) ((pixel >> 16) & 0xFF));
+        AffineTransform transform = AffineTransform.getScaleInstance(1f, -1f);
+        transform.translate(0, -image.getHeight());
+        AffineTransformOp operation = new AffineTransformOp(transform, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+        image = operation.filter(image, null);
 
-                    /* Green component 0xAARRGGBB >> (2 * 4) = 0x00AARRGG */
-                    buffer.put((byte) ((pixel >> 8) & 0xFF));
-
-                    /* Blue component 0xAARRGGBB >> 0 = 0xAARRGGBB */
-                    buffer.put((byte) (pixel & 0xFF));
-
-                    /* Alpha component 0xAARRGGBB >> (6 * 4) = 0x000000AA */
-                    buffer.put((byte) ((pixel >> 24) & 0xFF));
+        int width = image.getWidth();
+        int height = image.getHeight();
+        
+        int[] pixels = new int[width * height];
+        image.getRGB(0, 0, width, height, pixels, 0, width);
+        buffer = BufferUtils.createByteBuffer(width * height * 4);
+        for (int y = 0; y < height; y++) {
+            for(int x = 0; x < width; x++){
+            //for (int x = width-1; x > 0; x--) {
+                /* Pixel as RGBA: 0xAARRGGBB */
+                int pixel;
+                if(flipped){
+                    pixel = pixels[y * width + x];
+                }else{
+                    pixel = pixels[height- y * width + x];
                 }
-            }
+                /* Red component 0xAARRGGBB >> (4 * 4) = 0x0000AARR */
+                buffer.put((byte) ((pixel >> 16) & 0xFF));
 
-            /* Do not forget to flip the buffer! */
-            buffer.flip();
+                /* Green component 0xAARRGGBB >> (2 * 4) = 0x00AARRGG */
+                buffer.put((byte) ((pixel >> 8) & 0xFF));
+
+                /* Blue component 0xAARRGGBB >> 0 = 0xAARRGGBB */
+                buffer.put((byte) (pixel & 0xFF));
+
+                /* Alpha component 0xAARRGGBB >> (6 * 4) = 0x000000AA */
+                buffer.put((byte) ((pixel >> 24) & 0xFF));
+            }
+        }
+
+        buffer.flip();
+            //buffer = TexBufferGen.genTex(path);
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
             glBindTexture(GL_TEXTURE_2D, 0);
             

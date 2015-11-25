@@ -6,29 +6,23 @@
 
 package com.opengg.core.world;
 
-import com.opengg.core.Matrix4f;
 import com.opengg.core.Vector3f;
-import com.opengg.core.render.shader.ShaderProgram;
 
 /**
  *
  * @author Javier
  */
 public class Camera {
-    ShaderProgram s;
     Vector3f pos;
     Vector3f rot;
     int uniView;
-    public Camera(ShaderProgram s, Vector3f pos, Vector3f rot){
-        this.s = s;
+    public Camera(){
+        this.pos = new Vector3f();
+        this.rot = new Vector3f();
+    }
+    public Camera(Vector3f pos, Vector3f rot){
         this.pos = pos;
         this.rot = rot;
-        uniView = s.getUniformLocation("view");
-    }
-    public void use(){
-        Matrix4f posm = Matrix4f.translate(pos.x, pos.y, pos.z);
-        Matrix4f rotm = Matrix4f.rotate(rot.x,0,1,0);
-        s.setUniform(uniView, rotm.multiply(posm));  
     }
     public void setPos(Vector3f posi){
         pos = posi;

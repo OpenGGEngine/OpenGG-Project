@@ -5,6 +5,7 @@ import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 
 import com.opengg.core.io.input.KeyBoardHandler;
+import com.opengg.core.util.GlobalInfo;
 
 import java.nio.ByteBuffer;
  
@@ -103,6 +104,9 @@ public class Window {
         // Make the window visible
         glfwShowWindow(window);
         GL.createCapabilities();
+        GlobalInfo.winWidth = HEIGHT;
+        GlobalInfo.winHeight = WIDTH;
+        
         return window;
     }
     

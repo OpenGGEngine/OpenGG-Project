@@ -7,7 +7,6 @@
 package com.opengg.core.world;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
@@ -21,9 +20,26 @@ public class WorldManager {
         worlds.add(w);
         return w;
     }
-    public static World getWorld(int world){
-        int i = world;
-        return worlds.get(i);
+    public static World getWorld(final int world){
+        return worlds.get(world);
     }
-    
+    public static World getDefaultWorld(){
+        if (worlds.isEmpty())
+            worlds.add(new World());
+        return worlds.get(0);
+    }
+    public static boolean deleteWorld(final int world){
+        if(!worlds.get(world).getObjects().isEmpty())
+            return false;
+        worlds.remove(world);
+        return true;
+    }
+    public static boolean deleteWorld(World world){
+        if(!world.getObjects().isEmpty())
+            return false;
+        return worlds.remove(world);
+    }
+    public static boolean isEmpty(){
+        return worlds.isEmpty();
+    }
 }

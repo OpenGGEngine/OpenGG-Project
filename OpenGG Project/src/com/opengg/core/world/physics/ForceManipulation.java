@@ -16,11 +16,10 @@ public class ForceManipulation {
     public Vector3f airResistance = new Vector3f(1.5f,1.5f,1.5f);
     public Vector3f force = new Vector3f(0,0,0);
     private static Vector3f wind = new Vector3f(0,0,0);
-    private final static float gravity = 9.8f;
-    Entity update;
+    private final static float gravity = 1f;
+    final Entity update;
     
-    public ForceManipulation(Vector3f aR, Vector3f f, Entity v)
-    {
+    public ForceManipulation(Vector3f aR, Vector3f f, Entity v){
         this.airResistance.x = aR.x;
         this.airResistance.y = aR.y;
         this.airResistance.z = aR.z;
@@ -31,8 +30,7 @@ public class ForceManipulation {
         update = v;
     }
     
-    public ForceManipulation(Entity v)
-    {
+    public ForceManipulation(Entity v){
         update = v;
     }
     
@@ -41,17 +39,37 @@ public class ForceManipulation {
      */
     public final void calculateForces() {
         if (!update.ground) {
-            force.x = force.x - airResistance.x + ForceManipulation.wind.x;
-            force.z = force.y - airResistance.z + ForceManipulation.wind.z;
-            force.y = force.y - gravity - airResistance.y + ForceManipulation.wind.y;
+            if(force.x < 0)
+                force.x = force.x + airResistance.x + ForceManipulation.wind.x;
+            else 
+                force.x = force.x - airResistance.x + ForceManipulation.wind.x;
+            if(force.y < 0)
+                force.y = force.y + airResistance.y - gravity + ForceManipulation.wind.y;
+            else
+                force.y = force.y - airResistance.y - gravity + ForceManipulation.wind.y;
+            if(force.z < 0)
+                force.z = force.z + airResistance.x + ForceManipulation.wind.z;
+            else 
+                force.z = force.z - airResistance.x + ForceManipulation.wind.z;
         } else {
-            force.x = force.x + airResistance.x;
-            force.z = force.y + airResistance.y;
+            if(force.x < 0)
+                force.x = force.x + airResistance.x + ForceManipulation.wind.x;
+            else 
+                force.x = force.x - airResistance.x + ForceManipulation.wind.x;
+            if(force.z < 0)
+                force.z = force.z + airResistance.x + ForceManipulation.wind.z;
+            else 
+                force.z = force.z - airResistance.x + ForceManipulation.wind.z;
+            force.y = 0;
         }
     }
     
-    public static final void setWind(Vector3f wind)
-    {
+    /**
+     * Changes Wind Force/Speed
+     * 
+     * @param wind Wind Vector
+     */
+    public static final void setWind(Vector3f wind){
         ForceManipulation.wind.x = wind.x;
         ForceManipulation.wind.y = wind.y;
         ForceManipulation.wind.z = wind.z;

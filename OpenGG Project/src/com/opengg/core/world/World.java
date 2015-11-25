@@ -6,6 +6,8 @@
 
 package com.opengg.core.world;
 
+import com.opengg.core.Vector3f;
+import com.opengg.core.render.shader.premade.SkyboxShader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,10 +18,18 @@ import java.util.List;
 public class World {
     private List<WorldObject> objs = new ArrayList<>();
     private List<Camera> cams = new ArrayList<>();
+    private SkyboxShader skybox = new SkyboxShader();
     private Camera mainCam;
-    private float floorLev = -1;
+    public float floorLev = -1;
     
-    
+    public World(){
+        mainCam = new Camera(new Vector3f(), new Vector3f());
+        cams.add(mainCam);
+    }
+    public World(Camera c){
+        cams.add(c);
+        mainCam = c;
+    }
     public void setFloor(float floor){
         floorLev = floor;
     }
@@ -29,18 +39,22 @@ public class World {
     public void addCamera(Camera c){
         cams.add(c);
     }
-    public World(Camera c){
-        cams.add(c);
-        mainCam = c;
-    }
     public void setMainCam(int i){
         mainCam = cams.get(i);
     }
     public void removeObject(int i){
         objs.remove(i);
     }
+    public void removeObject(WorldObject w){
+        objs.remove(w);
+    }
     public void removeCamera(int i){
         cams.remove(i);
     }
-    
+    public void removeCamera(Camera des){
+        cams.remove(des);
+    }
+    public List getObjects(){
+        return objs;
+    }
 }
