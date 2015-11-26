@@ -11,6 +11,7 @@ import com.opengg.core.io.objloader.parser.OBJModel;
 import com.opengg.core.io.objloader.parser.OBJParser;
 import com.opengg.core.movement.MovementLoader;
 import com.opengg.core.render.DrawnObject;
+import com.opengg.core.render.DrawnObjectGroup;
 import com.opengg.core.render.VertexArrayObject;
 import com.opengg.core.render.VertexBufferObject;
 import com.opengg.core.render.buffer.ObjectBuffers;
@@ -74,12 +75,12 @@ public class OpenGGTest implements KeyboardListener {
     Texture t2 = new Texture();
 
     DrawnObject awp3, flashbang, test5, base2, sky;
+    DrawnObjectGroup test6;
 
     float speed = 0.2f;
 
     OBJModel m;
     OBJModel m2;
-    private DrawnObject test6;
     private DepthShader dsh;
     private GUIShader gsh;
     private Font f;
@@ -126,6 +127,7 @@ public class OpenGGTest implements KeyboardListener {
         vao.bind();
         vbo = new VertexBufferObject();
         vbo.bind(GL_ARRAY_BUFFER);
+        GlobalInfo.b = vbo;
 
         t1.setupTexToBuffer(512);
         t3.loadTexture("C:/res/deer.png", true);
@@ -194,17 +196,16 @@ public class OpenGGTest implements KeyboardListener {
         test = ObjectBuffers.genBuffer(m, 1f, 0.2f);
         test2 = ObjectBuffers.genBuffer(m2, 1f, 1f);
 
-        awp3 = new DrawnObject(test, vbo, 12);
-        flashbang = new DrawnObject(test2, vbo, 12);
+        awp3 = new DrawnObject(test, 12);
+        flashbang = new DrawnObject(test2, 12);
 
         test2 = ObjectBuffers.getSquareUI(1, 3, 1, 3, -1, 1f, false);
-        test5 = new DrawnObject(test2, vbo, 12);
+        test5 = new DrawnObject(test2, 12);
 
-        test2 = ObjectBuffers.getSquareUI(-3, -1, -3, - 1, -1, 1f, true);
-        test6 = new DrawnObject(test2, vbo, 12);
+        test6 = new DrawnObjectGroup(OpenGGTest.class.getResource("res/models/derp.obj"), 1);
 
         test2 = ObjectBuffers.genSkyCube();
-        sky = new DrawnObject(test2, vbo, 12);
+        sky = new DrawnObject(test2, 12);
         
         w = WorldManager.getDefaultWorld();
         
@@ -217,7 +218,7 @@ public class OpenGGTest implements KeyboardListener {
         awp3.removeBuffer();
         flashbang.removeBuffer();
         Terrain base = new Terrain(0, 0, t1);
-        base2 = new DrawnObject(base.generateTerrain(heightmap), vbo, 12);
+        base2 = new DrawnObject(base.generateTerrain(heightmap), 12);
         base.removeBuffer();
 
         ratio = win.getRatio();
@@ -286,6 +287,8 @@ public class OpenGGTest implements KeyboardListener {
 
         flashbang.drawShaded();
      
+        test6.draw();
+        
         t1.useDepthTexture(0);
         base2.drawShaded();
 

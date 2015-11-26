@@ -45,7 +45,7 @@ public class DrawnObject {
     }
     private IntBuffer lineInd;
     
-    public DrawnObject(FloatBuffer b, VertexBufferObject vbo2, int vertSize){
+    public DrawnObject(FloatBuffer b, int vertSize){
         limit = b.limit();
         offset = DrawnObjectHandler.getOffset();
         vertLimit = limit/vertSize;
@@ -69,7 +69,7 @@ public class DrawnObject {
         lineInd.flip();
         
         this.b = b;
-        vbo = vbo2;
+        vbo = GlobalInfo.b;
         vbo.uploadSubData(GL_ARRAY_BUFFER, offset*4, b);
         DrawnObjectHandler.addToOffset(limit);
     }
