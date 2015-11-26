@@ -10,6 +10,7 @@ import com.opengg.core.render.shader.ShaderHandler;
 import com.opengg.core.util.GlobalInfo;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.List;
 import org.lwjgl.BufferUtils;
 import static org.lwjgl.opengl.GL11.GL_LINES;
 import static org.lwjgl.opengl.GL11.GL_POINTS;
@@ -73,6 +74,37 @@ public class DrawnObject {
         DrawnObjectHandler.addToOffset(limit);
     }
     
+    public DrawnObject(List<FloatBuffer> buffers, VertexBufferObject vbo2, int vertSize){
+        for(FloatBuffer b: buffers){
+        
+        limit = b.limit();
+        offset = DrawnObjectHandler.getOffset();
+        vertLimit = limit/vertSize;
+        vertOffset = offset/vertSize;
+        
+        ind = BufferUtils.createIntBuffer(vertLimit);
+        for(long i = vertOffset; i < vertLimit + vertOffset; i++){
+            ind.put((int) i);
+        }
+        ind.flip();
+        
+        lineInd = BufferUtils.createIntBuffer(vertLimit*2);
+        for(long i = vertOffset; i < vertLimit + vertOffset; i+=3){
+            lineInd.put((int) i);
+            lineInd.put((int) i+1);
+            lineInd.put((int) i+1);
+            lineInd.put((int) i+2);
+            lineInd.put((int) i+2);
+            lineInd.put((int) i);
+        }
+        lineInd.flip();
+        
+        this.b = b;
+        vbo = vbo2;
+        vbo.uploadSubData(GL_ARRAY_BUFFER, offset*4, b);
+        DrawnObjectHandler.addToOffset(limit);
+        }
+    }
     
     public DrawnObject(FloatBuffer b, VertexBufferObject vbo2, IntBuffer index){
         ind = BufferUtils.createIntBuffer(vertLimit);
@@ -91,6 +123,7 @@ public class DrawnObject {
         vbo.uploadSubData(GL_ARRAY_BUFFER, offset*4, b);
         DrawnObjectHandler.addToOffset(limit);
     }
+    
     public void draw(){
         
         ShaderHandler.setModel(model);
