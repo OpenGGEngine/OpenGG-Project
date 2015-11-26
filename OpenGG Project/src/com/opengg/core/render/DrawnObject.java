@@ -6,7 +6,6 @@
 package com.opengg.core.render;
 
 import com.opengg.core.Matrix4f;
-import com.opengg.core.Vector3f;
 import com.opengg.core.render.shader.ShaderHandler;
 import com.opengg.core.util.GlobalInfo;
 import java.nio.FloatBuffer;
@@ -17,11 +16,9 @@ import static org.lwjgl.opengl.GL11.GL_POINTS;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
 import static org.lwjgl.opengl.GL11.glDrawElements;
-import static org.lwjgl.opengl.GL11.glDrawElements;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
-import static org.lwjgl.opengl.GL15.glBufferData;
 import static org.lwjgl.opengl.GL15.glBufferData;
 
 /**
@@ -39,6 +36,8 @@ public class DrawnObject {
     
     Matrix4f model = Matrix4f.translate(0, 0, 0);
     Matrix4f shadeModel = new Matrix4f();
+    
+    
     
     static{
         DrawnObjectHandler.setup();
