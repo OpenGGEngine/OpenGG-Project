@@ -13,10 +13,10 @@ import com.opengg.core.world.entities.Entity;
  * @author ethachu19
  */
 public class ForceManipulation {
-    public Vector3f airResistance = new Vector3f(1.5f,1.5f,1.5f);
+    public Vector3f airResistance = new Vector3f();//Vector3f(1.5f,1.5f,1.5f);
     public Vector3f force = new Vector3f(0,0,0);
     private static Vector3f wind = new Vector3f(0,0,0);
-    private final static float gravity = 1f;
+    private final static float gravity = 0.5f;
     final Entity update;
     
     public ForceManipulation(Vector3f aR, Vector3f f, Entity v){

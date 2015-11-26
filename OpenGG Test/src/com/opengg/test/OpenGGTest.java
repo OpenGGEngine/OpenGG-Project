@@ -28,7 +28,6 @@ import static com.opengg.core.render.window.RenderUtil.endFrame;
 import static com.opengg.core.render.window.RenderUtil.startFrame;
 import com.opengg.core.render.window.Window;
 import com.opengg.core.util.GlobalInfo;
-import static com.opengg.core.util.GlobalUtil.print;
 import com.opengg.core.world.Camera;
 import com.opengg.core.world.Terrain;
 import com.opengg.core.world.World;
@@ -57,7 +56,7 @@ public class OpenGGTest implements KeyboardListener {
     public float xm = 0, ym = 0, zm = 0;
     int quads;
     Vector3f rot = new Vector3f(0, 0, 0);
-    Vector3f pos = new Vector3f(0, 0, 0);
+    Vector3f pos = new Vector3f(0, -10, -30);
     
     World w;
     
@@ -97,9 +96,7 @@ public class OpenGGTest implements KeyboardListener {
         new Thread(() -> {
             MainLoop.process();
         }).start();
-//        
-//        for(int i = 0; i < 20; i++, EntityFactory.getEntity());
-        
+ 
         try {
             window = w.init(1280, 1024, "Test", DisplayMode.WINDOWED);
         } catch (Exception ex) {
@@ -194,7 +191,7 @@ public class OpenGGTest implements KeyboardListener {
 
         g.setupGUI(new Vector2f(-3, -3), new Vector2f(3, 3));
 
-        test = ObjectBuffers.genBuffer(m, 1f, 1f);
+        test = ObjectBuffers.genBuffer(m, 1f, 0.2f);
         test2 = ObjectBuffers.genBuffer(m2, 1f, 1f);
 
         awp3 = new DrawnObject(test, vbo, 12);
@@ -211,10 +208,11 @@ public class OpenGGTest implements KeyboardListener {
         
         w = WorldManager.getDefaultWorld();
         
-        w.floorLev = 0;
+        w.floorLev = -10;
         w.addObject(w1 = new WorldObject(awp3));
         w.addObject(w2 = new WorldObject(flashbang));
         w1.setPos(new Vector3f(0,30,0));
+        w2.setPos(new Vector3f(0,0,0));
         
         awp3.removeBuffer();
         flashbang.removeBuffer();
@@ -285,7 +283,7 @@ public class OpenGGTest implements KeyboardListener {
         ShaderHandler.setPerspective(90, ratio, 0.3f, 2000f);
 
         awp3.drawShaded();
-//        ShaderHandler.setModel(Matrix4f.translate(0, -12, 0));
+
         flashbang.drawShaded();
      
         t1.useDepthTexture(0);
@@ -307,7 +305,7 @@ public class OpenGGTest implements KeyboardListener {
         yrot += rot2 * 5;
         
         awp3.setModel(Matrix4f.translate(w1.getEntity().pos));
-        
+        flashbang.setModel(Matrix4f.translate(w2.getEntity().pos));
     }
 
     @Override
