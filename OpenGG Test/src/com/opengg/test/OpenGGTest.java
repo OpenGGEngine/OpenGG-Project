@@ -202,7 +202,7 @@ public class OpenGGTest implements KeyboardListener {
         test2 = ObjectBuffers.getSquareUI(1, 3, 1, 3, -1, 1f, false);
         test5 = new DrawnObject(test2, 12);
 
-        test6 = new DrawnObjectGroup(OpenGGTest.class.getResource("res/models/derp.obj"), 1);
+        test6 = new DrawnObjectGroup(OpenGGTest.class.getResource("res/models/jabufish.obj"), 1);
 
         test2 = ObjectBuffers.genSkyCube();
         sky = new DrawnObject(test2, 12);
