@@ -45,7 +45,7 @@ public class DrawnObjectGroup {
             
             for(OBJMesh ms : msh){
                 materials.add(library.getMaterial(ms.getMaterialName()));
-                objs.add(new DrawnObject(ObjectBuffers.genBuffer(m, ms, 1, scale), 12));
+                objs.add(new DrawnObject(ObjectBuffers.genBuffer(m, ms, 1, 0.08f), 12));
             }
         } catch (IOException ex) {
             Logger.getLogger(DrawnObjectGroup.class.getName()).log(Level.SEVERE, null, ex);
