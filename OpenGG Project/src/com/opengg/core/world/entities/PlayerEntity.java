@@ -7,8 +7,10 @@ package com.opengg.core.world.entities;
 
 import com.opengg.core.Vector3f;
 import com.opengg.core.io.objloader.parser.OBJModel;
+import static com.opengg.core.util.GlobalUtil.print;
 import com.opengg.core.world.Camera;
 import com.opengg.core.world.World;
+import com.opengg.core.world.entities.resources.EntitySupportEnums.EntityType;
 
 /**
  *
@@ -57,7 +59,9 @@ public class PlayerEntity extends Entity{
     
     @Override
     public void changeWorld(World next){
-        currentWorld.removeCamera(playerCam);
+        try{
+            currentWorld.removeCamera(playerCam);
+        } catch (NullPointerException e) { print ("CurrentWorld of Player is null");}
         currentWorld = next;
         next.addCamera(playerCam);
     }

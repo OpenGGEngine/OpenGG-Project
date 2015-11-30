@@ -11,7 +11,7 @@ import com.opengg.core.Vector3f;
 import com.opengg.core.io.objloader.parser.OBJModel;
 import com.opengg.core.world.entities.*;
 import com.opengg.core.render.DrawnObject;
-import com.opengg.core.world.entities.Entity.EntityType;
+import com.opengg.core.world.entities.resources.EntitySupportEnums.EntityType;
 import com.opengg.core.world.entities.EntityTypes;
 
 /**

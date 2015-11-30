@@ -8,6 +8,7 @@ package com.opengg.core.world.entities;
 import com.opengg.core.Vector3f;
 import com.opengg.core.io.objloader.parser.OBJModel;
 import com.opengg.core.world.World;
+import com.opengg.core.world.entities.resources.EntitySupportEnums.EntityType;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,7 +63,7 @@ public class EntityFactory {
      * @param thisWorld CurrentWorld of Entity
      * @return new Entity
      */
-    public static final Entity getEntity(EntityTypes et, Entity.EntityType type,Vector3f pos, Vector3f f, float mass,OBJModel model, World thisWorld){
+    public static final Entity getEntity(EntityTypes et, EntityType type,Vector3f pos, Vector3f f, float mass,OBJModel model, World thisWorld){
         if(entityCount >= entityCap)
             return null;
         ++entityCount;

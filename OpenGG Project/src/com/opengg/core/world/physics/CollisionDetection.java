@@ -5,6 +5,7 @@
  */
 package com.opengg.core.world.physics;
 
+import static com.opengg.core.util.GlobalUtil.print;
 import com.opengg.core.world.entities.Entity;
 
 /**
@@ -27,6 +28,7 @@ public class CollisionDetection{
              collide.boundingBox[MIN].y > collidee.boundingBox[MAX].y ||
              collide.boundingBox[MIN].z > collidee.boundingBox[MAX].z) 
             {
+//                print("Not Colliding");
                 return false;
             }
         

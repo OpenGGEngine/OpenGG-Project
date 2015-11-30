@@ -8,8 +8,8 @@ package com.opengg.core.world.physics;
 import com.opengg.core.Vector3f;
 import static com.opengg.core.util.GlobalUtil.print;
 import com.opengg.core.world.entities.Entity;
-import static com.opengg.core.world.entities.Entity.*;
 import com.opengg.core.world.entities.EntityFactory;
+import com.opengg.core.world.entities.resources.EntitySupportEnums.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -30,8 +30,6 @@ public class MainLoop extends EntityFactory{
             for(Entity collide: EntityList){
                 if(collide.updatePosition == UpdateXYZ.Movable)
                     collide.updateXYZ();
-                if(collide.updateForce == UpdateForce.Realistic)
-                    collide.forceCalculator.calculateForces();
             }
             for (Entity collide : EntityList){
                 if(collide.collision != Collide.Collidable)
@@ -40,13 +38,16 @@ public class MainLoop extends EntityFactory{
                     if(collide.equals(collidee) || collidee.collision == Collide.Uncollidable)
                         continue;
                     if(CollisionDetection.areColliding(collide, collidee)){
+                         print("HAHA!");
                         if(collidee.updatePosition == UpdateXYZ.Immovable){
-                            collide.collisionResponse(new Vector3f(-collide.forceCalculator.force.x*2, collide.forceCalculator.force.y, -collide.forceCalculator.force.z*2));
-                            continue;
+                           
+                            print(-collide.physics.force.x*3/2 + " " + -collide.physics.force.y*3/2 + " " + -collide.physics.force.z*3/2);
+                            collide.collisionResponse(new Vector3f(-collide.physics.force.x*3/2 , -collide.physics.force.y*3/2 , -collide.physics.force.z*3/2));
+                            break;
                         }
-                        collide.collisionResponse(collidee.forceCalculator.force);
+                        collide.collisionResponse(collidee.physics.force);
                         if(collidee.collision == Collide.Collidable)
-                            collidee.collisionResponse(collide.forceCalculator.force);
+                            collidee.collisionResponse(collide.physics.force);
                     }
                 }
             }

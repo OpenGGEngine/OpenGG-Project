@@ -71,18 +71,35 @@ public class Vector3f {
         return (float) Math.sqrt(lengthSquared());
     }
     
-    public Vector3f add(Vector3f v){
+    public Vector3f inverse() {
+        return new Vector3f(this.x * -1, this.y * -1, this.z * -1);
+    }
+    
+    public Vector3f reciprocal(){
+        return new Vector3f(1/this.x, 1/this.y, 1/this.z);
+    }
+    
+    private Vector3f addVectors(Vector3f v){
         return new Vector3f(this.x + v.x,this.y+v.y,this.z+v.z);
-        
     }
-    public Vector3f addVectors(Vector3f... v){
-        Vector3f sum = new Vector3f();
-        for(Vector3f n :v){
-            sum.add(n);
-        }
+    public Vector3f add(Vector3f... v){
+        Vector3f sum = new Vector3f(this);
+        for(Vector3f n :v)
+            sum = sum.addVectors(n);
         return sum;
-        
     }
+    
+    public Vector3f subtract(Vector3f... v){
+        Vector3f sum = new Vector3f(this);
+        for(Vector3f n :v)
+            sum = sum.addVectors(n.inverse());
+        return sum;
+    }
+    
+    public Vector3f add(float f){
+        return new Vector3f(this.x + f, this.y + f, this.z + f);
+    }
+    
     
     public Vector3f normalize() {
         return divide(length());
@@ -92,12 +109,17 @@ public class Vector3f {
         return x * x + y * y + z * z;
     }
 
-    private Vector3f divide(float scalar) {
-        return scale(1f / scalar);
+    public Vector3f divide(float scalar) {
+        if (scalar == 0) throw new ArithmeticException("Divide by 0");
+        return multiply(1f / scalar);
     }
 
-    private Vector3f scale(float scalar) {
+    public Vector3f multiply(float scalar) {
         return new Vector3f(x * scalar, y * scalar, z * scalar);
+    }
+    
+    public Vector3f multiply(Vector3f v) {
+        return new Vector3f(x * v.x, y * v.y, z * v.z);
     }
 
     public FloatBuffer getBuffer() {
@@ -123,5 +145,18 @@ public class Vector3f {
     public float getAzimuth() {
         return (float) Math.toDegrees(Math.atan2(z, x));
     }
-
+    
+    public Vector3f closertoZero(float f){
+        float signX = x < 0 ? -1 : 1;
+        float signY = y < 0 ? -1 : 1;
+        float signZ = z < 0 ? -1 : 1;
+        return new Vector3f((Math.abs(x) - f)*signX, (Math.abs(y) - f)*signY, (Math.abs(z) - f)*signZ);
+    }
+    
+    public Vector3f closertoZero(Vector3f v){
+        float signX = x < 0 ? -1 : 1;
+        float signY = y < 0 ? -1 : 1;
+        float signZ = z < 0 ? -1 : 1;
+        return new Vector3f((Math.abs(x) - v.x) * signX, (Math.abs(y) - v.y) * signY, (Math.abs(z) - v.z) * signZ);
+    }
 }

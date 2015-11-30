@@ -13,16 +13,16 @@ import org.lwjgl.BufferUtils;
  * @author Javier
  */
 public class Matrix4f {
+
     public float m00, m01, m02, m03;
     public float m10, m11, m12, m13;
     public float m20, m21, m22, m23;
     public float m30, m31, m32, m33;
-    
+
     /**
      * Default Matrix, generates only 0.
      */
-    
-    public Matrix4f(){
+    public Matrix4f() {
         m00 = 1;
         m10 = 0;
         m20 = 0;
@@ -40,13 +40,14 @@ public class Matrix4f {
         m23 = 0;
         m33 = 1;
     }
+
     /**
      * Creates a matrix with predefined values.
      */
-    public Matrix4f(float l00, float l01, float l02,float l03,
-                    float l10, float l11, float l12,float l13,
-                    float l20, float l21, float l22,float l23,
-                    float l30, float l31, float l32,float l33){
+    public Matrix4f(float l00, float l01, float l02, float l03,
+            float l10, float l11, float l12, float l13,
+            float l20, float l21, float l22, float l23,
+            float l30, float l31, float l32, float l33) {
         m00 = l00;
         m10 = l01;
         m20 = l02;
@@ -64,7 +65,7 @@ public class Matrix4f {
         m23 = l32;
         m33 = l33;
     }
-    
+
     public FloatBuffer getBuffer() {
         FloatBuffer buffer = BufferUtils.createFloatBuffer(16);
         buffer.put(m00).put(m10).put(m20).put(m30);
@@ -74,20 +75,18 @@ public class Matrix4f {
         buffer.flip();
         return buffer;
     }
-    
-    
 
-    public static Matrix4f rotate(float angle, float x, float y, float z) { 
-         Matrix4f rotation = new Matrix4f(); 
-         float c = (float) Math.cos(Math.toRadians(angle)); 
-         float s = (float) Math.sin(Math.toRadians(angle)); 
-         Vector3f vec = new Vector3f(x, y, z); 
-         if (vec.length() != 1f) { 
-             vec = vec.normalize(); 
-             x = vec.x; 
-             y = vec.y; 
-             z = vec.z; 
-         } 
+    public static Matrix4f rotate(float angle, float x, float y, float z) {
+        Matrix4f rotation = new Matrix4f();
+        float c = (float) Math.cos(Math.toRadians(angle));
+        float s = (float) Math.sin(Math.toRadians(angle));
+        Vector3f vec = new Vector3f(x, y, z);
+        if (vec.length() != 1f) {
+            vec = vec.normalize();
+            x = vec.x;
+            y = vec.y;
+            z = vec.z;
+        }
         rotation.m00 = x * x * (1f - c) + c;
         rotation.m10 = y * x * (1f - c) + z * s;
         rotation.m20 = x * z * (1f - c) - y * s;
@@ -97,62 +96,55 @@ public class Matrix4f {
         rotation.m02 = x * z * (1f - c) + y * s;
         rotation.m12 = y * z * (1f - c) - x * s;
         rotation.m22 = z * z * (1f - c) + c;
-         return rotation;
+        return rotation;
     }
-    
-    public static Matrix4f translate(float x, float y, float z) { 
-         Matrix4f translation = new Matrix4f(); 
 
- 
-        translation.m03 = x; 
-        translation.m13 = y; 
-        translation.m23 = z; 
- 
- 
-        return translation; 
+    public static Matrix4f translate(float x, float y, float z) {
+        Matrix4f translation = new Matrix4f();
+
+        translation.m03 = x;
+        translation.m13 = y;
+        translation.m23 = z;
+
+        return translation;
     }
-    public static Matrix4f translate(Vector3f p) { 
-         Matrix4f translation = new Matrix4f(); 
 
- 
-        translation.m03 = p.x; 
-        translation.m13 = p.y; 
-        translation.m23 = p.z; 
- 
- 
-        return translation; 
-     } 
-    
-    public Matrix4f add(Matrix4f other) { 
-        Matrix4f result = new Matrix4f(); 
+    public static Matrix4f translate(Vector3f p) {
+        Matrix4f translation = new Matrix4f();
 
-        result.m00 = this.m00 + other.m00; 
-        result.m10 = this.m10 + other.m10; 
-        result.m20 = this.m20 + other.m20; 
-        result.m30 = this.m30 + other.m30; 
+        translation.m03 = p.x;
+        translation.m13 = p.y;
+        translation.m23 = p.z;
 
- 
-        result.m01 = this.m01 + other.m01; 
-        result.m11 = this.m11 + other.m11; 
-        result.m21 = this.m21 + other.m21; 
-        result.m31 = this.m31 + other.m31; 
+        return translation;
+    }
 
- 
-        result.m02 = this.m02 + other.m02; 
-        result.m12 = this.m12 + other.m12; 
-        result.m22 = this.m22 + other.m22; 
-        result.m32 = this.m32 + other.m32; 
- 
- 
-        result.m03 = this.m03 + other.m03; 
-        result.m13 = this.m13 + other.m13; 
-        result.m23 = this.m23 + other.m23; 
-        result.m33 = this.m33 + other.m33; 
+    public Matrix4f add(Matrix4f other) {
+        Matrix4f result = new Matrix4f();
 
- 
-        return result; 
-    } 
-    
+        result.m00 = this.m00 + other.m00;
+        result.m10 = this.m10 + other.m10;
+        result.m20 = this.m20 + other.m20;
+        result.m30 = this.m30 + other.m30;
+
+        result.m01 = this.m01 + other.m01;
+        result.m11 = this.m11 + other.m11;
+        result.m21 = this.m21 + other.m21;
+        result.m31 = this.m31 + other.m31;
+
+        result.m02 = this.m02 + other.m02;
+        result.m12 = this.m12 + other.m12;
+        result.m22 = this.m22 + other.m22;
+        result.m32 = this.m32 + other.m32;
+
+        result.m03 = this.m03 + other.m03;
+        result.m13 = this.m13 + other.m13;
+        result.m23 = this.m23 + other.m23;
+        result.m33 = this.m33 + other.m33;
+
+        return result;
+    }
+
     public Matrix4f multiply(Matrix4f other) {
         Matrix4f result = new Matrix4f();
 
@@ -178,8 +170,8 @@ public class Matrix4f {
 
         return result;
     }
-    
-     public static Matrix4f perspective(float fovy, float aspect, float near, float far) {
+
+    public static Matrix4f perspective(float fovy, float aspect, float near, float far) {
         Matrix4f perspective = new Matrix4f();
 
         float f = (float) (1f / Math.tan(Math.toRadians(fovy) / 2f));
@@ -192,9 +184,8 @@ public class Matrix4f {
 
         return perspective;
     }
-     
-     
-     public static Matrix4f scale(float x, float y, float z) {
+
+    public static Matrix4f scale(float x, float y, float z) {
         Matrix4f scaling = new Matrix4f();
 
         scaling.m00 = x;
@@ -206,7 +197,8 @@ public class Matrix4f {
 //    public Matrix4f(Matrix4f old){
 //        
 //    }
-     public static Matrix4f frustum(float left, float right, float bottom, float top, float near, float far) {
+
+    public static Matrix4f frustum(float left, float right, float bottom, float top, float near, float far) {
         Matrix4f frustum = new Matrix4f();
 
         float a = (right + left) / (right - left);
@@ -225,7 +217,8 @@ public class Matrix4f {
 
         return frustum;
     }
-     public static Matrix4f orthographic(float left, float right, float bottom, float top, float near, float far) {
+
+    public static Matrix4f orthographic(float left, float right, float bottom, float top, float near, float far) {
         Matrix4f ortho = new Matrix4f();
 
         float tx = -(right + left) / (right - left);
@@ -241,4 +234,14 @@ public class Matrix4f {
 
         return ortho;
     }
+
+    public float access(int x, int y) {
+        float[][] arr = {{m00, m01, m02, m03},
+                         {m10, m11, m12, m13},
+                         {m20, m21, m22, m23},
+                         {m30, m31, m32, m33}};
+
+        return arr[x][y];
+    }
 }
+
