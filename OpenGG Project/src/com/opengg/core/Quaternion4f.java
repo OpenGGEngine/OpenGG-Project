@@ -10,8 +10,16 @@ package com.opengg.core;
  * @author ethachu19
  */
 public class Quaternion4f {
-
+    
+    /**
+     * Angle/Scalar
+     */
     public float w;
+    
+    /**
+     * Angle Vector/Axis of Rotation
+     * @see Vector3f
+     */
     public Vector3f axis = new Vector3f();
 
     public Quaternion4f() {
@@ -26,13 +34,8 @@ public class Quaternion4f {
     }
 
     public Quaternion4f(float angle, Vector3f axis) {
-        float a = angle * 0.5f;
-        float s = (float) Math.sin(a);
-        float c = (float) Math.cos(a);
-        w = c;
-        this.axis.x = axis.x * s;
-        this.axis.y = axis.y * s;
-        this.axis.z = axis.z * s;
+        rotateAroundVector(angle);
+        this.axis = new Vector3f(axis);
     }
 
     public Quaternion4f(Matrix4f matrix) {
