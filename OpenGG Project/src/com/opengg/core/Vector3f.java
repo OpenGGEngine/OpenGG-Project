@@ -159,4 +159,8 @@ public class Vector3f {
         float signZ = z < 0 ? -1 : 1;
         return new Vector3f((Math.abs(x) - v.x) * signX, (Math.abs(y) - v.y) * signY, (Math.abs(z) - v.z) * signZ);
     }
+    
+    public void zero(){
+        this.x = this.y = this.z = 0;
+    }
 }

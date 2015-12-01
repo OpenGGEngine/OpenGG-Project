@@ -266,8 +266,4 @@ public class Entity {
         currentWorld = next;
     }
     
-    /**
-     * Calculates forces currently acting on objects
-     */
-    
 }

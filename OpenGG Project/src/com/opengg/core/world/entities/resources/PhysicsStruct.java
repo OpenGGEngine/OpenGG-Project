@@ -42,7 +42,6 @@ public class PhysicsStruct {
     }
     
     public final boolean stop(int index){
-        if (index > 2 || index < 0) return false;
         switch (index){
             case 0:
                 force.x = 0;
@@ -58,6 +57,11 @@ public class PhysicsStruct {
                 force.z = 0;
                 velocity.z = 0;
                 acceleration.z = 0;
+                break;
+            default:
+                force.zero();
+                velocity.zero();
+                acceleration.zero();
                 break;
         }
         return true;
