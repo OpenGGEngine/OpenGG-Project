@@ -66,6 +66,27 @@ public class Matrix4f {
         m33 = l33;
     }
 
+    public Matrix4f(float m11, float m12, float m13,
+            float m21, float m22, float m23,
+            float m31, float m32, float m33) {
+        this.m00 = m11;
+        this.m01 = m12;
+        this.m02 = m13;
+        this.m03 = 0;
+        this.m10 = m21;
+        this.m11 = m22;
+        this.m12 = m23;
+        this.m13 = 0;
+        this.m20 = m31;
+        this.m21 = m32;
+        this.m22 = m33;
+        this.m23 = 0;
+        this.m30 = 0;
+        this.m31 = 0;
+        this.m32 = 0;
+        this.m33 = 1;
+    }
+
     public FloatBuffer getBuffer() {
         FloatBuffer buffer = BufferUtils.createFloatBuffer(16);
         buffer.put(m00).put(m10).put(m20).put(m30);
@@ -237,11 +258,10 @@ public class Matrix4f {
 
     public float access(int x, int y) {
         float[][] arr = {{m00, m01, m02, m03},
-                         {m10, m11, m12, m13},
-                         {m20, m21, m22, m23},
-                         {m30, m31, m32, m33}};
+        {m10, m11, m12, m13},
+        {m20, m21, m22, m23},
+        {m30, m31, m32, m33}};
 
         return arr[x][y];
     }
 }
-
