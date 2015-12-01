@@ -133,17 +133,34 @@ public class Vector3f {
         float inclination = getInclination();
         float azimuth = getAzimuth();
 
-        this.x = (float) (radi * Math.cos(inclination) * Math.cos(azimuth));
-        this.y = (float) (radi * Math.cos(inclination) * Math.sin(azimuth));
-        this.x = (float) (radi * Math.cos(inclination));
+        this.x = (float) (radi * Math.sin(Math.toRadians(inclination)) * Math.cos(Math.toRadians(azimuth)));
+        this.y = (float) (radi * Math.sin(Math.toRadians(inclination)) * Math.sin(Math.toRadians(azimuth)));
+        this.x = (float) (radi * Math.cos(Math.toRadians(inclination)));
     }
 
     public float getInclination() {
-        return (float) Math.toDegrees(Math.acos(y / length()));
+        return (float) Math.toDegrees(Math.acos(z / length()));
     }
 
     public float getAzimuth() {
-        return (float) Math.toDegrees(Math.atan2(z, x));
+        return (float) Math.toDegrees(Math.atan2(y, x));
+    }
+    
+    public void setInclination(float deg){
+        float length = length();
+        float azimuth = getAzimuth();
+        
+        x = (float) (length * Math.sin(Math.toRadians(deg)) * Math.cos(Math.toRadians(azimuth)));
+        y = (float) (length * Math.sin(Math.toRadians(deg)) * Math.sin(Math.toRadians(azimuth)));
+        z = (float) (length * Math.cos(Math.toRadians(deg)));
+    }
+    
+    public void setAzimuth(float deg){
+        float length = length();
+        float inclination = getInclination();
+        
+        x = (float) (length * Math.sin(Math.toRadians(inclination)) * Math.cos(Math.toRadians(deg)));
+        y = (float) (length * Math.sin(Math.toRadians(inclination)) * Math.sin(Math.toRadians(deg)));
     }
     
     public Vector3f closertoZero(float f){
