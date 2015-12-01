@@ -100,24 +100,21 @@ public class Quaternion4f {
     public float length() {
         return (float) Math.sqrt(w * w + x * x + y * y + z * z);
     }
+    
+    public void normalize(){
+        float magnitude = length();
+        w /= magnitude;
+        x /= magnitude;
+        y /= magnitude;
+        z /= magnitude;
+    }
 
     public Matrix4f convertMatrix() {
-        float fTx = 2.0f * x;
-        float fTy = 2.0f * y;
-        float fTz = 2.0f * z;
-        float fTwx = fTx * w;
-        float fTwy = fTy * w;
-        float fTwz = fTz * w;
-        float fTxx = fTx * x;
-        float fTxy = fTy * x;
-        float fTxz = fTz * x;
-        float fTyy = fTy * y;
-        float fTyz = fTz * y;
-        float fTzz = fTz * z;
-
-        return new Matrix4f(1.0f - (fTyy + fTzz), fTxy - fTwz, fTxz + fTwy,
-                fTxy + fTwz, 1.0f - (fTxx + fTzz), fTyz - fTwx,
-                fTxz - fTwy, fTyz + fTwx, 1.0f - (fTxx + fTyy));
+        this.normalize();
+        return new Matrix4f(
+	1.0f - 2.0f*y*y - 2.0f*z*z, 2.0f*x*y - 2.0f*z*w, 2.0f*x*z + 2.0f*y*w,
+	2.0f*x*y + 2.0f*z*w, 1.0f - 2.0f*x*x - 2.0f*z*z, 2.0f*y*z - 2.0f*x*w,
+	2.0f*x*z - 2.0f*y*w, 2.0f*y*z + 2.0f*x*w, 1.0f - 2.0f*x*x - 2.0f*y*y);
     }
 
     public Vector3f angleVector() {
