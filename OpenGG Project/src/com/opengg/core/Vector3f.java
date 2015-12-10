@@ -5,6 +5,7 @@
  */
 package com.opengg.core;
 
+import java.io.Serializable;
 import java.nio.FloatBuffer;
 import org.lwjgl.BufferUtils;
 
@@ -12,7 +13,7 @@ import org.lwjgl.BufferUtils;
  *
  * @author Javier
  */
-public class Vector3f {
+public class Vector3f implements Serializable{
 
     public float x;
     public float y;
@@ -179,5 +180,10 @@ public class Vector3f {
     
     public void zero(){
         this.x = this.y = this.z = 0;
+    }
+    
+    @Override
+    public String toString(){
+        return "" + x + ", " + y + ", " + z;
     }
 }
