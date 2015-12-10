@@ -7,12 +7,13 @@ package com.opengg.core.world.entities.resources;
 
 import com.opengg.core.Vector3f;
 import com.opengg.core.world.World;
+import java.io.Serializable;
 
 /**
  *
  * @author ethachu19
  */
-public class PhysicsStruct {
+public class PhysicsStruct implements Serializable{
     
     public static Vector3f wind = new Vector3f();
     
