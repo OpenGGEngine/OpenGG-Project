@@ -16,7 +16,7 @@ import com.opengg.core.render.shader.ShaderProgram;
 public interface ShaderEnabled {
     public ShaderProgram getProgram();
     public void use();
-    public void setLightPos(Vector3f pos);
+    default public void setLightPos(Vector3f pos){}
     public void setModel(Matrix4f model);
     public void setProjection(float fov, float aspect, float znear, float zfar);
     public void setOrtho(float left, float right, float bottom, float top, float near, float far);

@@ -41,13 +41,13 @@ public class MainLoop extends EntityBuilder{
                          print("HAHA!");
                         if(collidee.updatePosition == UpdateXYZ.Immovable){
                            
-                            print(-collide.physics.force.x*3/2 + " " + -collide.physics.force.y*3/2 + " " + -collide.physics.force.z*3/2);
-                            collide.collisionResponse(new Vector3f(-collide.physics.force.x*3/2 , -collide.physics.force.y*3/2 , -collide.physics.force.z*3/2));
+                            print(-collide.force.x*3/2 + " " + -collide.force.y*3/2 + " " + -collide.force.z*3/2);
+                            collide.collisionResponse(new Vector3f(-collide.force.x*3/2 , -collide.force.y*3/2 , -collide.force.z*3/2));
                             break;
                         }
-                        collide.collisionResponse(collidee.physics.force);
+                        collide.collisionResponse(collidee.force);
                         if(collidee.collision == Collide.Collidable)
-                            collidee.collisionResponse(collide.physics.force);
+                            collidee.collisionResponse(collide.force);
                     }
                 }
             }

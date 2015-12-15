@@ -7,35 +7,43 @@ package com.opengg.core.world.entities;
 
 import com.opengg.core.Quaternion4f;
 import com.opengg.core.Vector3f;
-import com.opengg.core.util.Time;
 import com.opengg.core.io.objloader.parser.OBJModel;
-import static com.opengg.core.util.GlobalUtil.print;
+import com.opengg.core.util.Time;
 import com.opengg.core.world.Camera;
 import com.opengg.core.world.World;
 import com.opengg.core.world.WorldManager;
-import static com.opengg.core.world.entities.EntityBuilder.AddStack;
-import com.opengg.core.world.entities.resources.EntitySupportEnums.*;
-import com.opengg.core.world.entities.resources.PhysicsStruct;
+import static com.opengg.core.world.entities.EntityFactory.AddStack;
+import com.opengg.core.world.entities.resources.EntityFrame;
+import com.opengg.core.world.entities.resources.EntitySupportEnums.Collide;
+import com.opengg.core.world.entities.resources.EntitySupportEnums.EntityType;
+import com.opengg.core.world.entities.resources.EntitySupportEnums.UpdateForce;
+import com.opengg.core.world.entities.resources.EntitySupportEnums.UpdateXYZ;
+import static com.opengg.core.world.physics.resources.PhysicsStruct.gravityVector;
+import static com.opengg.core.world.physics.resources.PhysicsStruct.wind;
+import java.io.Serializable;
 
 /**
  *
  * @author ethachu19
  */
-public class Entity{
+public class Entity implements Serializable{
 
     /* tags */
     public UpdateForce updateForce;
     public UpdateXYZ updatePosition;
     public Collide collision;
-
-    /* Native to Entity*/
+    public float mass;
     public Vector3f pos = new Vector3f();
+    public Vector3f force = new Vector3f();
+    public Vector3f airResistance = new Vector3f();
+    public Vector3f velocity = new Vector3f();
+    public Vector3f acceleration = new Vector3f();
     public boolean ground;
     public World currentWorld = null;
 
     /* Physics*/
-    public PhysicsStruct physics;
-    public Quaternion4f rot = new Quaternion4f();
+    public EntityFrame ef;
+    public Vector3f direction = new Vector3f();
     private final Time time = new Time();
     private float height = 5f, width = 5f, length = 5f;
     /* Max - 1, Min - 0 */
@@ -67,8 +75,7 @@ public class Entity{
         this.currentWorld = WorldManager.getDefaultWorld();
         setXYZ(0f, 0f, 0f);
         this.ground = true;
-        physics = new PhysicsStruct(currentWorld, 40f);
-        setTags(PhysicsType.Physics);
+        setTags(EntityType.Physics);
         bindModel(new OBJModel());
         
         AddStack.add(this);
@@ -89,12 +96,11 @@ public class Entity{
         if (f == null) f = new Vector3f();
         this.currentWorld = current;
         setXYZ(position);
-        physics = new PhysicsStruct(currentWorld, mass);
         setForce(f);
         this.ground = (pos.y < 60);
         setTags(type);
         bindModel(model);
-
+        this.mass = mass;
         AddStack.add(this);
     }
 
@@ -106,8 +112,8 @@ public class Entity{
     public Entity(Entity v) {
         this.currentWorld = v.currentWorld;
         setXYZ(v.pos.x, v.pos.y, v.pos.z);
-        physics = new PhysicsStruct(currentWorld, v.physics.mass);
-        setVelocity(new Vector3f(v.physics.velocity));
+        this.mass = v.mass;
+        setVelocity(new Vector3f(v.velocity));
         this.ground = (pos.y <= 60);
         this.collision = v.collision;
         this.updatePosition = v.updatePosition;
@@ -183,7 +189,7 @@ public class Entity{
      * @param f Force vector
      */
     public final void setForce(Vector3f f) {
-        this.physics.force = new Vector3f(f);
+        this.force = new Vector3f(f);
     }
 
     /**
@@ -192,7 +198,7 @@ public class Entity{
      * @param v Vector for velocity
      */
     public final void setVelocity(Vector3f v) {
-        this.physics.velocity = new Vector3f(v);
+        this.velocity = new Vector3f(v);
     }
 
     public final void setRotation(Quaternion4f q) {
@@ -236,13 +242,13 @@ public class Entity{
 //        System.out.println(ground);s
         if (ground){
             pos.y = currentWorld.floorLev;
-            physics.stop(1);
+            stop(1);
         }
-        Vector3f deltaMovement = physics.velocity.multiply(timeStep).add(physics.acceleration.multiply(0.5f * timeStep * timeStep));
+        Vector3f deltaMovement = velocity.multiply(timeStep).add(acceleration.multiply(0.5f * timeStep * timeStep));
         pos = pos.add(deltaMovement);
         updateBoundingBox();
         if (updateForce == UpdateForce.Realistic)
-            physics.update(timeStep);
+            update(timeStep);
     }
 
     /**
@@ -252,9 +258,9 @@ public class Entity{
      * @return Error
      */
     public boolean collisionResponse(Vector3f force) {
-        this.physics.force = physics.force.add(force);
-        this.physics.acceleration = new Vector3f();
-        this.physics.velocity = physics.velocity.multiply(-1/2);
+        this.force = force.add(force);
+        this.acceleration = new Vector3f();
+        this.velocity = velocity.multiply(-1/2);
         return true;
     }
 
@@ -265,6 +271,44 @@ public class Entity{
      */
     public void changeWorld(World next) {
         currentWorld = next;
+        gravityVector.y = next.gravity;
     }
     
+    
+    public final void update(float timeStep) {
+        Vector3f lastAcceleration = new Vector3f(acceleration);
+        acceleration = force.divide(mass);
+        velocity = velocity.add(lastAcceleration.add(acceleration).divide(2f).multiply(timeStep));
+        force = force.closertoZero(airResistance).add(wind).subtract(gravityVector);
+    }
+    
+    public final boolean stop(int index){
+        switch (index){
+            case 0:
+                force.x = 0;
+                velocity.x = 0;
+                acceleration.x = 0;
+                break;
+            case 1:
+                force.y = 0;
+                velocity.y = 0;
+                acceleration.y = 0;
+                break;
+            case 2:
+                force.z = 0;
+                velocity.z = 0;
+                acceleration.z = 0;
+                break;
+            default:
+                force.zero();
+                velocity.zero();
+                acceleration.zero();
+                break;
+        }
+        return true;
+    }
+    
+    public final void changeWind(Vector3f w){
+        wind = new Vector3f(w);
+    }
 }

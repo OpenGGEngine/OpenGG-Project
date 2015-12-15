@@ -97,6 +97,14 @@ public class Matrix4f {
         return buffer;
     }
 
+    public static Matrix4f rotateQuat(float angle, float x, float y, float z) {
+        Matrix4f f = new Matrix4f();
+        Quaternion4f q = new Quaternion4f(f);
+        q.axis = new Vector3f(x,y,z);
+        q.rotateAroundVector(angle);
+        return q.convertMatrix();
+    }
+    
     public static Matrix4f rotate(float angle, float x, float y, float z) {
         Matrix4f rotation = new Matrix4f();
         float c = (float) Math.cos(Math.toRadians(angle));
@@ -120,6 +128,7 @@ public class Matrix4f {
         return rotation;
     }
 
+    
     public static Matrix4f translate(float x, float y, float z) {
         Matrix4f translation = new Matrix4f();
 
