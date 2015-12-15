@@ -32,6 +32,11 @@ public class Quaternion4f {
         this.axis.y = y;
         this.axis.z = z;
     }
+    
+    public Quaternion4f(Quaternion4f q){
+        this.w = q.w;
+        this.axis = new Vector3f(q.axis);
+    }
 
     public Quaternion4f(float angle, Vector3f axis) {
         rotateAroundVector(angle);
@@ -125,7 +130,7 @@ public class Quaternion4f {
         return 2.0f * (float) Math.toDegrees(Math.acos(w));
     }
     
-    public void rotateAroundVector(float degrees){
+    public final void rotateAroundVector(float degrees){
         if (degrees < 0)
             degrees += 360;
         float difference = angle()-degrees;

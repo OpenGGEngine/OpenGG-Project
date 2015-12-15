@@ -7,11 +7,12 @@
 package com.opengg.core.world;
 
 import com.opengg.core.Matrix4f;
+import com.opengg.core.Quaternion4f;
 import com.opengg.core.Vector3f;
 import com.opengg.core.io.objloader.parser.OBJModel;
 import com.opengg.core.world.entities.*;
 import com.opengg.core.render.DrawnObject;
-import com.opengg.core.world.entities.resources.EntitySupportEnums.EntityType;
+import com.opengg.core.world.entities.resources.EntitySupportEnums.PhysicsType;
 import com.opengg.core.world.entities.EntityTypes;
 
 /**
@@ -20,47 +21,47 @@ import com.opengg.core.world.entities.EntityTypes;
  */
 public class WorldObject {
     private Vector3f pos;
-    private Vector3f rot;
+    private Quaternion4f rot;
     private Entity e;
     private DrawnObject d;
     private World thisWorld;
-    public WorldObject(Vector3f pos, Vector3f rot, OBJModel model, World thisWorld){
+    public WorldObject(Vector3f pos, Quaternion4f rot, OBJModel model, World thisWorld){
         this.pos = pos;
         this.rot = rot;
         this.thisWorld = thisWorld;
-        e = EntityFactory.getEntity(EntityTypes.DEFAULT,EntityType.Static, pos, new Vector3f(), 10, model, thisWorld);
+        e = new EntityBuilder().physicsType(PhysicsType.Static).position(pos).model(model).world(thisWorld).build();
         e.setRotation(rot);
     }
     public WorldObject(){
         pos = new Vector3f(0,0,0);
-        rot = new Vector3f(0,0,0);
+        rot = new Quaternion4f();
         thisWorld = WorldManager.getDefaultWorld();
-        e = EntityFactory.getEntity(EntityTypes.DEFAULT, EntityType.Static, pos, new Vector3f(), 10, new OBJModel(), thisWorld);
+        e = new EntityBuilder().position(pos).build();
         e.setXYZ(pos);
         e.setRotation(rot);
         this.thisWorld.addObject(this);
     }
-    public WorldObject(Vector3f pos, Vector3f rot, Entity e){
+    public WorldObject(Vector3f pos, Quaternion4f rot, Entity e){
         this.pos = pos;
         this.rot = rot;
         this.thisWorld = e.currentWorld;
-        this.e = EntityFactory.getEntity(EntityTypes.DEFAULT,e);
+        this.e = new EntityBuilder(e).entityType(EntityTypes.DEFAULT).build();
         this.e.setXYZ(pos);
         this.e.setRotation(rot);
     }
     public WorldObject(Entity e){
         pos = new Vector3f(0,0,0);
-        rot = new Vector3f(e.direction);
+        rot = new Quaternion4f(e.rot);
         this.thisWorld = e.currentWorld;
-        this.e = EntityFactory.getEntity(EntityTypes.DEFAULT,e);
+        this.e = new EntityBuilder(e).entityType(EntityTypes.DEFAULT).build();
         this.e.setXYZ(pos);
         this.e.setRotation(rot);
     }
     public WorldObject(DrawnObject d){
         pos = new Vector3f(0,0,0);
-        rot = new Vector3f(0,0,0);
+        rot = new Quaternion4f();
         thisWorld = WorldManager.getDefaultWorld();
-        e = EntityFactory.getEntity(EntityTypes.DEFAULT, EntityType.Physics, pos, new Vector3f(), 10, new OBJModel(), thisWorld);
+        e = new EntityBuilder().physicsType(PhysicsType.Static).position(pos).world(thisWorld).build();
         e.setXYZ(pos);
         e.setRotation(rot);
         this.thisWorld.addObject(this);
@@ -84,7 +85,7 @@ public class WorldObject {
      * @param p New Rotation
      */
     
-    public void setRot(Vector3f p){
+    public void setRot(Quaternion4f p){
         e.setRotation(p);
     }
     
@@ -112,7 +113,6 @@ public class WorldObject {
     /**
      * Gets Entity linked to this object
      * 
-     * @param e Linked Entity
      */
     public Entity getEntity(){
         return e;

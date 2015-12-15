@@ -10,7 +10,7 @@ package com.opengg.core.world.entities.resources;
  * @author ethachu19
  */
 public class EntitySupportEnums {
-    public enum EntityType {
+    public enum PhysicsType {
         /* Update Movement, Force Update, No Collsion Response*/ Static,
         /* Update Movement, Force Update, Collision Detection*/ Physics,
         /* Update Movement, No force update, No Collision*/ Particle,
