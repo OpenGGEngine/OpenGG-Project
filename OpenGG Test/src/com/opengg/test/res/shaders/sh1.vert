@@ -14,6 +14,7 @@ out vec4 pos;
 out vec3 norm;
 out vec3 lightposition;
 out vec4 shadowpos;
+out float visibility;
 
 uniform mat4 model;
 uniform mat4 view;
@@ -24,7 +25,8 @@ uniform mat4 shmvp;
 uniform float divAmount;
 
 
-
+const float density =0.00137;
+const float gradient = 2.32;
 
 void main() {   
     vertexColor = color;
@@ -39,11 +41,19 @@ void main() {
     position.y = position.y/divAmount;
     position.z = position.z/divAmount;
 */
-    
+    vec4 worldPosition = model * vec4(position,1.0);
+    vec4 positionRelativeToCam = view * worldPosition;
+   
     shadowpos = (shmvp * vec4(position, 1));
     
     shadowpos = vec4(shadowpos.xyz/shadowpos.w, 1);
+
+    float distance = length(positionRelativeToCam.xyz);
+   
+    visibility = exp(-pow((distance*density),gradient));
+    visibility = clamp(visibility,0.0,1.0);
     
+  
     shadowpos.x = 0.5 * shadowpos.x + 0.5;
     shadowpos.y = 0.5 * shadowpos.y + 0.5;
     shadowpos.z = 0.5 * shadowpos.z + 0.5;

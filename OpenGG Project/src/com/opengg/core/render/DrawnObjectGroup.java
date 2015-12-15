@@ -35,7 +35,9 @@ public class DrawnObjectGroup {
     List<DrawnObject> objs = new ArrayList<>();
     List<MTLMaterial> materials = new ArrayList<>();
     List<Texture> textures = new ArrayList<>();
-     
+    List<Texture> temptex = new ArrayList<>();
+     List<MTLMaterial> tempmat= new ArrayList<>();
+     List<DrawnObject> tempobjs = new ArrayList<>();
     //The list of materials are in order so the nth value in list objs
     //corresponds to the nth value in list materials
     public DrawnObjectGroup(URL u, float scale){
@@ -57,18 +59,28 @@ public class DrawnObjectGroup {
             
                 
                
-                materials.add(library.getMaterial(ms.getMaterialName()));
+               
                 
                 
                 nointernet.loadTexture("C:/res/"+library.getMaterial(ms.getMaterialName()).getDiffuseTexture(), true);
-                objs.add(new DrawnObject(ObjectBuffers.genBuffer(m, ms, 1, scale), 12));
-                textures.add(nointernet);
-             
+                if(library.getMaterial((ms.getMaterialName())).getDiffuseTexture().substring((library.getMaterial(ms.getMaterialName()).getDiffuseTexture().length() - 4)).equals(".png")){
+                    temptex.add(nointernet);
+                    tempmat.add(library.getMaterial(ms.getMaterialName()));
+                    tempobjs.add(new DrawnObject(ObjectBuffers.genBuffer(m, ms, 1, scale), 12));
+                
+                }else{
+                    materials.add(library.getMaterial(ms.getMaterialName()));
+                    objs.add(new DrawnObject(ObjectBuffers.genBuffer(m, ms, 1, scale), 12));
+                    textures.add(nointernet);
+                }
                 
             }
         } catch (IOException ex) {
             Logger.getLogger(DrawnObjectGroup.class.getName()).log(Level.SEVERE, null, ex);
         }
+        objs.addAll(tempobjs);
+        textures.addAll(temptex);
+        materials.addAll(tempmat);
         
         
     }
@@ -82,7 +94,6 @@ public class DrawnObjectGroup {
            
             d.draw();
         
-                
            
           
         }   
@@ -93,7 +104,7 @@ public class DrawnObjectGroup {
         for(DrawnObject d : objs){
             
             textures.get(counter).useTexture(0);
-            d.drawShaded();
+                d.drawShaded();
              counter++;
              
         }      

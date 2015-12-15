@@ -8,6 +8,7 @@ package com.opengg.core.render;
 import com.opengg.core.Matrix4f;
 import com.opengg.core.render.shader.ShaderHandler;
 import com.opengg.core.util.GlobalInfo;
+import static com.opengg.core.util.GlobalUtil.print;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.List;
@@ -127,7 +128,7 @@ public class DrawnObject {
     public void draw(){
         
         ShaderHandler.setModel(model);
-
+        ShaderHandler.currentShader.use();
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, ind, GL_STATIC_DRAW);
         glDrawElements(GL_TRIANGLES, ind.limit(), GL_UNSIGNED_INT, 0);       
     }

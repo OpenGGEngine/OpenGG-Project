@@ -9,6 +9,7 @@ package com.opengg.core.render.shader;
 import com.opengg.core.Matrix4f;
 import com.opengg.core.Vector2f;
 import com.opengg.core.Vector3f;
+import static com.opengg.core.util.GlobalUtil.print;
 
 
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
@@ -164,6 +165,7 @@ public class ShaderProgram {
      */
     public void use() {
         glUseProgram(id);
+        
     }
 
     /**

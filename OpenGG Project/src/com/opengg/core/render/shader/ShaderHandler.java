@@ -19,7 +19,10 @@ import java.util.List;
 public class ShaderHandler {
     static List<ShaderEnabled> shaders = new ArrayList<>();
     
-    static ShaderEnabled currentShader;
+    /**
+     *
+     */
+    public static ShaderEnabled currentShader;
     static Matrix4f model = new Matrix4f(), view = new Matrix4f(), proj = new Matrix4f();
     
     

@@ -13,6 +13,7 @@ import com.opengg.core.render.shader.Shader;
 import com.opengg.core.render.shader.ShaderProgram;
 import com.opengg.core.render.window.ViewUtil;
 import com.opengg.core.render.window.Window;
+import static com.opengg.core.util.GlobalUtil.print;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -36,6 +37,8 @@ public class ObjectShader implements ShaderEnabled{
     private int lightdistance;
     private int lightpower;
     private int shadow;
+    private int skycolor;
+    
     public void setup(Window win, URL vert, URL frag) throws UnsupportedEncodingException{
         vertexTex= new Shader(GL_VERTEX_SHADER, 
                 FileStringLoader.loadStringSequence(
@@ -67,6 +70,9 @@ public class ObjectShader implements ShaderEnabled{
         int uniTex = program.getUniformLocation("texImage"); 
         program.setUniform(uniTex, 0);
         
+        int uniskycolor = program.getUniformLocation("skycolor"); 
+        program.setUniform(uniskycolor, new Vector3f(0.5f,0.5f,0.5f));
+        print(uniskycolor);
         int uniShadow = program.getUniformLocation("shadeImage"); 
         program.setUniform(uniShadow, 2);
         

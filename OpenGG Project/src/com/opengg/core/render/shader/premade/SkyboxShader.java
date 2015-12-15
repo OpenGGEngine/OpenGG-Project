@@ -13,6 +13,7 @@ import com.opengg.core.render.shader.Shader;
 import com.opengg.core.render.shader.ShaderProgram;
 import com.opengg.core.render.window.ViewUtil;
 import com.opengg.core.render.window.Window;
+import com.opengg.core.util.Time;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -35,6 +36,9 @@ public class SkyboxShader implements ShaderEnabled{
     private int uniView;
     private int lightdistance;
     private int lightpower;
+    private float rotation;
+    private final float rotatespeed = 1f;
+            
     public void setup(Window win, URL vert, URL frag) throws UnsupportedEncodingException{
         vertexTex= new Shader(GL_VERTEX_SHADER, 
                 FileStringLoader.loadStringSequence(
@@ -106,11 +110,19 @@ public class SkyboxShader implements ShaderEnabled{
     @Override
     public void setModel(Matrix4f model){
         program.use();
+         
         program.setUniform(uniModel, model);
     }
     @Override
     public void setView(Matrix4f view){
         program.use();
+        
+         view.m03 = 0;
+        view.m13 = 175;
+        view.m23 = 0;
+       
+        //Matrix4f.rotate(rotation, 0, 1, 0);
+      
         program.setUniform(uniView, view);
     }
     

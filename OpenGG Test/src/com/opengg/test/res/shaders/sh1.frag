@@ -11,6 +11,7 @@ in vec4 pos;
 in vec3 norm;
 in vec3 lightposition;
 in vec4 shadowpos;
+in float visibility;
 
 out vec4 fragColor;
 
@@ -19,6 +20,7 @@ uniform float lightdistance;
 uniform float lightpower;
 uniform sampler2D texImage;
 uniform sampler2D shadeImage;
+uniform vec3 skycolor;
 
 vec2 randdisk[16] = vec2[]( 
    vec2( -0.94201624, -0.39906216 ), 
@@ -59,7 +61,7 @@ void main() {
     float amb = 0.3;
 
     vec3 diffuse = texture(texImage, textureCoord).rgb;
-
+    float trans = texture(texImage, textureCoord).a;
     if(texture2D(shadeImage,textureCoord).a == 0){
             diffuse = vertcolor.rgb;
             vertcolor.a = 0;
@@ -76,7 +78,7 @@ void main() {
     vec3 n = normalize( norm );
     // Direction of the light (from the fragment to the light)
     vec3 l = normalize( lightdir );
-
+    
     float cosTheta = clamp( dot( n,l ), 0,1 );
 
     vec3 E = normalize(eyedir);
@@ -107,9 +109,13 @@ void main() {
             // Diffuse : "color" of the object
             vis * diffuse * lightcol * lightpower * cosTheta / ((distance*distance)/lightdistance) +
             // Specular : reflective highlight, like a mirror
-            vis * specular * lightcol * lightpower * pow(cosAlpha,5) / ((distance*distance)/lightdistance)), vertcolor.a);
+            vis * specular * lightcol * lightpower * pow(cosAlpha,5) / ((distance*distance)/lightdistance)), trans);
     color = fragColor;
 
+    //color = mix(vec4(0.5,0.5,0.5,1), vec4(fragColor.xyz, (fragColor.a - (1-visibility))),visibility);
+    color = mix(vec4(0.53,0.53,0.53,fragColor.a), fragColor,visibility);
+    //color = vec4(0.5,0.5,0.5,0.5);
+    
 };
 
 

@@ -351,52 +351,53 @@ public class ObjectBuffers {
         f.flip();
         return f;
     }
+    @SuppressWarnings("empty-statement")
     public static FloatBuffer genSkyCube(){
         FloatBuffer sq = BufferUtils.createFloatBuffer(6*6*12);
         
-        sq.put(-1000).put(1000).put(1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);
-        sq.put(-1000).put(-1000).put(1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
-        sq.put(1000).put(-1000).put(1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
-        sq.put(1000).put(-1000).put(1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
-        sq.put(1000).put(1000).put(1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
-        sq.put(-1000).put(1000).put(1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(-1500f).put(1500f).put(1500f).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);
+        sq.put(-1500f).put(-1500f).put(1500f).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(1500f).put(-1500f).put(1500f).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(1500f).put(-1500f).put(1500f).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(1500f).put(1500f).put(1500f).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(-1500f).put(1500f).put(1500f).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
         
-        sq.put(-1000).put(1000).put(-1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
-        sq.put(-1000).put(-1000).put(-1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
-        sq.put(1000).put(-1000).put(-1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
-        sq.put(1000).put(-1000).put(-1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
-        sq.put(1000).put(1000).put(-1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
-        sq.put(-1000).put(1000).put(-1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
-        
-        
-        sq.put(-1000).put(-1000).put(1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
-        sq.put(-1000).put(-1000).put(-1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
-        sq.put(-1000).put(1000).put(-1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
-        sq.put(-1000).put(1000).put(-1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
-        sq.put(-1000).put(1000).put(1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
-        sq.put(-1000).put(-1000).put(1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
-        
-        sq.put(1000).put(-1000).put(1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
-        sq.put(1000).put(-1000).put(-10000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
-        sq.put(1000).put(1000).put(-1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
-        sq.put(1000).put(1000).put(-1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
-        sq.put(1000).put(1000).put(1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
-        sq.put(1000).put(-1000).put(1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(-1500f).put(1500f).put(-1500f).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(-1500f).put(-1500f).put(-1500f).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(1500f).put(-1500f).put(-1500f).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(1500f).put(-1500f).put(-1500f).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(1500f).put(1500f).put(-1500f).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(-1500f).put(1500f).put(-1500f).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
         
         
-        sq.put(-1000).put(1000).put(1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
-        sq.put(-1000).put(1000).put(-1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
-        sq.put(1000).put(1000).put(-1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
-        sq.put(1000).put(1000).put(-1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
-        sq.put(1000).put(1000).put(1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
-        sq.put(-1000).put(1000).put(1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(-1500f).put(-1500f).put(1500f).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(-1500f).put(-1500f).put(-1500f).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(-1500f).put(1500f).put(-1500f).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(-1500f).put(1500f).put(-1500f).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(-1500f).put(1500f).put(1500f).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(-1500f).put(-1500f).put(1500f).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
         
-        sq.put(-1000).put(-1000).put(1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
-        sq.put(-1000).put(-1000).put(-1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
-        sq.put(1000).put(-1000).put(-1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
-        sq.put(1000).put(-1000).put(-1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
-        sq.put(1000).put(-1000).put(1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
-        sq.put(-1000).put(-1000).put(1000).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(1500f).put(-1500f).put(1500f).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(1500f).put(-1500f).put(-1500f).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(1500f).put(1500f).put(-1500f).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(1500f).put(1500f).put(-1500f).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(1500f).put(1500f).put(1500f).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(1500f).put(-1500f).put(1500f).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        
+        
+        sq.put(-1500f).put(1500f).put(1500f).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(-1500f).put(1500f).put(-1500f).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(1500f).put(1500f).put(-1500f).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(1500f).put(1500f).put(-1500f).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(1500f).put(1500f).put(1500f).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(-1500f).put(1500f).put(1500f).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        
+        sq.put(-1500f).put(-1500f).put(1500f).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(-1500f).put(-1500f).put(-1500f).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(1500f).put(-1500f).put(-1500f).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(1500f).put(-1500f).put(-1500f).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(1500f).put(-1500f).put(1500f).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
+        sq.put(-1500f).put(-1500f).put(1500f).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;
         
         sq.flip();
         return sq;
