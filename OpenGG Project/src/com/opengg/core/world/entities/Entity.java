@@ -5,6 +5,7 @@
  */
 package com.opengg.core.world.entities;
 
+import com.opengg.core.Quaternion4f;
 import com.opengg.core.Vector3f;
 import com.opengg.core.util.Time;
 import com.opengg.core.io.objloader.parser.OBJModel;
@@ -12,7 +13,7 @@ import static com.opengg.core.util.GlobalUtil.print;
 import com.opengg.core.world.Camera;
 import com.opengg.core.world.World;
 import com.opengg.core.world.WorldManager;
-import static com.opengg.core.world.entities.EntityFactory.AddStack;
+import static com.opengg.core.world.entities.EntityBuilder.AddStack;
 import com.opengg.core.world.entities.resources.EntitySupportEnums.*;
 import com.opengg.core.world.entities.resources.PhysicsStruct;
 
@@ -20,7 +21,7 @@ import com.opengg.core.world.entities.resources.PhysicsStruct;
  *
  * @author ethachu19
  */
-public class Entity {
+public class Entity{
 
     /* tags */
     public UpdateForce updateForce;
@@ -34,7 +35,7 @@ public class Entity {
 
     /* Physics*/
     public PhysicsStruct physics;
-    public Vector3f direction = new Vector3f();
+    public Quaternion4f rot = new Quaternion4f();
     private final Time time = new Time();
     private float height = 5f, width = 5f, length = 5f;
     /* Max - 1, Min - 0 */
@@ -67,7 +68,7 @@ public class Entity {
         setXYZ(0f, 0f, 0f);
         this.ground = true;
         physics = new PhysicsStruct(currentWorld, 40f);
-        setTags(EntityType.Physics);
+        setTags(PhysicsType.Physics);
         bindModel(new OBJModel());
         
         AddStack.add(this);
@@ -83,7 +84,7 @@ public class Entity {
      * @param model Model to be bound to entity
      * @param current Current World
      */
-    public Entity(EntityType type, Vector3f position, Vector3f f, float mass, OBJModel model, World current) {
+    public Entity(PhysicsType type, Vector3f position, Vector3f f, float mass, OBJModel model, World current) {
         if (position == null) position = new Vector3f();
         if (f == null) f = new Vector3f();
         this.currentWorld = current;
@@ -121,7 +122,7 @@ public class Entity {
      *
      * @param type Type of entity to be set
      */
-    public final void setTags(EntityType type) {
+    public final void setTags(PhysicsType type) {
         switch (type) {
             case Static:
                 updatePosition = UpdateXYZ.Immovable;
@@ -194,8 +195,8 @@ public class Entity {
         this.physics.velocity = new Vector3f(v);
     }
 
-    public final void setRotation(Vector3f v) {
-        this.direction = v;
+    public final void setRotation(Quaternion4f q) {
+        this.rot = q;
     }
 
     /**
