@@ -202,7 +202,7 @@ public class OpenGGTest implements KeyboardListener {
         test2 = ObjectBuffers.getSquareUI(1, 3, 1, 3, -1, 1f, false);
         test5 = new DrawnObject(test2, 12);
 
-        test6 = new DrawnObjectGroup(OpenGGTest.class.getResource("res/models/jabufish.obj"), 1);
+        test6 = new DrawnObjectGroup(OpenGGTest.class.getResource("res/models/mariolevel.obj"), 1);
 
         test2 = ObjectBuffers.genSkyCube();
         sky = new DrawnObject(test2, 12);
@@ -282,19 +282,21 @@ public class OpenGGTest implements KeyboardListener {
 
         ShaderHandler.setView(c);
         ShaderHandler.setPerspective(90, ratio, 0.3f, 2000f);
-
+ cb.use();
+        ShaderHandler.setCurrentShader(sk);
+        sky.draw();
+        ShaderHandler.setCurrentShader(sh);
         awp3.drawShaded();
 
         flashbang.drawShaded();
-     
-        test6.draw();
+        
+      
+        test6.drawShaded();
         
         t1.useDepthTexture(0);
         base2.drawShaded();
 
-        cb.use();
-        ShaderHandler.setCurrentShader(sk);
-        sky.draw();
+       
 
         g.startGUI();
         ShaderHandler.setCurrentShader(gsh);
