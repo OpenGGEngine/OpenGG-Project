@@ -56,6 +56,8 @@ public class Window {
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+        glfwWindowHint(GLFW_SAMPLES, 4);
+        
         
         vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());   
         mode = new GLFWvidmode(glfwGetVideoMode(glfwGetPrimaryMonitor()));
@@ -155,5 +157,9 @@ public class Window {
     public float getRatio(){
         return(WIDTH/HEIGHT);
     }
+    public void setSamples(int samples){
+        glfwWindowHint(GLFW_SAMPLES, samples);
+    }
+            
     
 }

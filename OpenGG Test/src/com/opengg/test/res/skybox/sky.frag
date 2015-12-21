@@ -30,7 +30,7 @@ void main() {
 	fragColor = diffuse;
         
 	color = fragColor;
-         color = mix(vec4(0.53,0.53,0.53,1),fragColor,factor);
+         //color = mix(vec4(0.53,0.53,0.53,1),fragColor,factor);
 };
 
 

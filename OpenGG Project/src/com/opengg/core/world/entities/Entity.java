@@ -12,10 +12,10 @@ import com.opengg.core.util.Time;
 import com.opengg.core.world.Camera;
 import com.opengg.core.world.World;
 import com.opengg.core.world.WorldManager;
-import static com.opengg.core.world.entities.EntityFactory.AddStack;
+import static com.opengg.core.world.entities.EntityBuilder.AddStack;
 import com.opengg.core.world.entities.resources.EntityFrame;
 import com.opengg.core.world.entities.resources.EntitySupportEnums.Collide;
-import com.opengg.core.world.entities.resources.EntitySupportEnums.EntityType;
+import com.opengg.core.world.entities.resources.EntitySupportEnums.PhysicsType;
 import com.opengg.core.world.entities.resources.EntitySupportEnums.UpdateForce;
 import com.opengg.core.world.entities.resources.EntitySupportEnums.UpdateXYZ;
 import static com.opengg.core.world.physics.resources.PhysicsStruct.gravityVector;
@@ -40,7 +40,7 @@ public class Entity implements Serializable{
     public Vector3f acceleration = new Vector3f();
     public boolean ground;
     public World currentWorld = null;
-
+    public Quaternion4f rot = new Quaternion4f();
     /* Physics*/
     public EntityFrame ef;
     public Vector3f direction = new Vector3f();
@@ -75,7 +75,7 @@ public class Entity implements Serializable{
         this.currentWorld = WorldManager.getDefaultWorld();
         setXYZ(0f, 0f, 0f);
         this.ground = true;
-        setTags(EntityType.Physics);
+        setTags(PhysicsType.Physics);
         bindModel(new OBJModel());
         
         AddStack.add(this);

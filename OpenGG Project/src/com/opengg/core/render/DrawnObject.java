@@ -6,7 +6,7 @@
 package com.opengg.core.render;
 
 import com.opengg.core.Matrix4f;
-import com.opengg.core.render.shader.ShaderHandler;
+import com.opengg.core.util.GlobalInfo;
 import com.opengg.core.util.GlobalInfo;
 import static com.opengg.core.util.GlobalUtil.print;
 import java.nio.FloatBuffer;
@@ -127,23 +127,22 @@ public class DrawnObject {
     
     public void draw(){
         
-        ShaderHandler.setModel(model);
-        ShaderHandler.currentShader.use();
+        GlobalInfo.main.setModel(model);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, ind, GL_STATIC_DRAW);
         glDrawElements(GL_TRIANGLES, ind.limit(), GL_UNSIGNED_INT, 0);       
     }
     
     public void drawShaded(){
         
-        ShaderHandler.setModel(model);
+        GlobalInfo.main.setModel(model);
         GlobalInfo.main.setShadowLightMatrix(shadeModel);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, ind, GL_STATIC_DRAW);
         glDrawElements(GL_TRIANGLES, ind.limit(), GL_UNSIGNED_INT, 0);       
     }
     
     public void saveShadowMVP(){
-        ShaderHandler.setModel(model);
-        shadeModel = (ShaderHandler.getMVP());
+        GlobalInfo.main.setModel(model);
+        shadeModel = (GlobalInfo.main.getMVP());
     }
     
     public void setShaderMatrix(Matrix4f m){

@@ -12,10 +12,16 @@ import com.opengg.core.world.Camera;
 import java.util.ArrayList;
 import java.util.List;
 
+
+
 /**
- *
  * @author Javier
+ * Replaced with ShaderController single shader system
+ *
+ * @deprecated use ShaderController instead.  
  */
+
+@Deprecated
 public class ShaderHandler {
     static List<ShaderEnabled> shaders = new ArrayList<>();
     

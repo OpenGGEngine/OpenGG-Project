@@ -7,6 +7,7 @@
 package com.opengg.core.util;
 
 import com.opengg.core.render.VertexBufferObject;
+import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.shader.premade.ObjectShader;
 
 /**
@@ -17,5 +18,5 @@ public class GlobalInfo {
     public static int winWidth, winHeight;
     public static long window;
     public static VertexBufferObject b;
-    public static ObjectShader main;
+    public static ShaderController main;
 }

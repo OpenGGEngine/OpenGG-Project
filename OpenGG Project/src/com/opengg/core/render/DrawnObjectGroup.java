@@ -47,7 +47,7 @@ public class DrawnObjectGroup {
         try {
             OBJModel m = new OBJParser().parse(u);
             
-            final InputStream in = new FileInputStream("C:/res/"+m.getMaterialLibraries().get(0));
+            final InputStream in = new FileInputStream("C:/res/ghost/"+m.getMaterialLibraries().get(0));
             final IMTLParser parser = new MTLParser();
             print(m.getMaterialLibraries().get(0));
             final MTLLibrary library = parser.parse(in);
@@ -56,13 +56,8 @@ public class DrawnObjectGroup {
            print(msh.size());
             for(OBJMesh ms : msh){
                 Texture nointernet = new Texture();
-            
-                
-               
-               
-                
-                
-                nointernet.loadTexture("C:/res/"+library.getMaterial(ms.getMaterialName()).getDiffuseTexture(), true);
+
+                nointernet.loadTexture("C:/res/ghost/"+library.getMaterial(ms.getMaterialName()).getDiffuseTexture(), true);
                 if(library.getMaterial((ms.getMaterialName())).getDiffuseTexture().substring((library.getMaterial(ms.getMaterialName()).getDiffuseTexture().length() - 4)).equals(".png")){
                     temptex.add(nointernet);
                     tempmat.add(library.getMaterial(ms.getMaterialName()));
@@ -87,15 +82,9 @@ public class DrawnObjectGroup {
     public void draw(){
         
         for(DrawnObject d : objs){
-            
-            
-            
-        
-           
+
             d.draw();
-        
-           
-          
+
         }   
     }
     

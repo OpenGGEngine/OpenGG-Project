@@ -8,8 +8,10 @@ package com.opengg.core.gui;
 
 import com.opengg.core.Vector2f;
 import com.opengg.core.Vector3f;
+import com.opengg.core.render.shader.Mode;
 import com.opengg.core.render.shader.ShaderHandler;
 import com.opengg.core.render.shader.ShaderProgram;
+import com.opengg.core.util.GlobalInfo;
 import com.opengg.core.world.Camera;
 
 /**
@@ -25,9 +27,10 @@ public class GUI {
         c = new Camera(new Vector3f(0,0,0), new Vector3f(0,0,0));
     }
     public void startGUI(){
-        ShaderHandler.setOrtho(low.x, high.x, low.y, high.y, 0.2f, 10);      
+        GlobalInfo.main.setOrtho(low.x, high.x, low.y, high.y, 0.2f, 10);      
         c.setPos(new Vector3f(0,0,0));
         c.setRot(new Vector3f(0,0,0));
-        ShaderHandler.setView(c);
+        GlobalInfo.main.setView(c);
+        GlobalInfo.main.setMode(Mode.GUI);
     }
 }

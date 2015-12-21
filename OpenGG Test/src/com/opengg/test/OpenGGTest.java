@@ -16,11 +16,8 @@ import com.opengg.core.render.VertexArrayObject;
 import com.opengg.core.render.VertexBufferObject;
 import com.opengg.core.render.buffer.ObjectBuffers;
 import static com.opengg.core.render.gl.GLOptions.enable;
-import com.opengg.core.render.shader.ShaderHandler;
-import com.opengg.core.render.shader.premade.DepthShader;
-import com.opengg.core.render.shader.premade.GUIShader;
-import com.opengg.core.render.shader.premade.ObjectShader;
-import com.opengg.core.render.shader.premade.SkyboxShader;
+import com.opengg.core.render.shader.Mode;
+import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.texture.Cubemap;
 import com.opengg.core.render.texture.Font;
 import com.opengg.core.render.texture.Texture;
@@ -68,7 +65,6 @@ public class OpenGGTest implements KeyboardListener {
     private VertexArrayObject vao;
     private VertexBufferObject vbo;
 
-    ObjectShader sh;
     Camera c;
     GUI g = new GUI();
     Texture t1 = new Texture();
@@ -81,12 +77,10 @@ public class OpenGGTest implements KeyboardListener {
 
     OBJModel m;
     OBJModel m2;
-    private DepthShader dsh;
-    private GUIShader gsh;
     private Font f;
     private Texture t3 = new Texture();
     private Cubemap cb = new Cubemap();
-    private SkyboxShader sk;
+    private ShaderController s = new ShaderController();
     
     WorldObject w1, w2;
     
@@ -129,7 +123,7 @@ public class OpenGGTest implements KeyboardListener {
         vbo.bind(GL_ARRAY_BUFFER);
         GlobalInfo.b = vbo;
 
-        t1.setupTexToBuffer(512);
+        t1.setupTexToBuffer(2048);
         t3.loadTexture("C:/res/deer.png", true);
         f = new Font("", "thanks dad", 11);
 
@@ -154,42 +148,16 @@ public class OpenGGTest implements KeyboardListener {
 
         InputStream heightmap = OpenGGTest.class.getResource("res/heightmap.png").openStream();
 
-        URL verts = OpenGGTest.class.getResource("res/shaders/sh1.vert");
-        URL frags = OpenGGTest.class.getResource("res/shaders/sh1.frag");
+        URL verts = OpenGGTest.class.getResource("res/shaders/shader.vert");
+        URL frags = OpenGGTest.class.getResource("res/shaders/shader.frag");
 
-        URL dverts = OpenGGTest.class.getResource("res/shaders/depth.vert");
-        URL dfrags = OpenGGTest.class.getResource("res/shaders/depth.frag");
-
-        URL verts2 = OpenGGTest.class.getResource("res/shaders/gui.vert");
-        URL frags2 = OpenGGTest.class.getResource("res/shaders/gui.frag");
-
-        URL verts3 = OpenGGTest.class.getResource("res/skybox/sky.vert");
-        URL frags3 = OpenGGTest.class.getResource("res/skybox/sky.frag");
-
-        dsh = new DepthShader();
-        dsh.setup(win, dverts, dfrags);
-
-        gsh = new GUIShader();
-        gsh.setup(win, verts2, frags2);
-
-        sk = new SkyboxShader();
-        sk.setup(win, verts3, frags3);
-
-        sh = new ObjectShader();
-        sh.setup(win, verts, frags);
-
+        
+        s.setup(win, verts, frags);
+        GlobalInfo.main = s;
+        
         c = new Camera(pos, rot);
         c.setPos(pos);
         c.setRot(rot);
-
-        ShaderHandler.addShader(dsh);
-        ShaderHandler.addShader(gsh);
-        ShaderHandler.addShader(sk);
-        ShaderHandler.addShader(sh);
-        
-        GlobalInfo.main = sh;
-        
-        ShaderHandler.setCurrentShader(sh);
 
         g.setupGUI(new Vector2f(-3, -3), new Vector2f(3, 3));
 
@@ -202,7 +170,7 @@ public class OpenGGTest implements KeyboardListener {
         test2 = ObjectBuffers.getSquareUI(1, 3, 1, 3, -1, 1f, false);
         test5 = new DrawnObject(test2, 12);
 
-        test6 = new DrawnObjectGroup(OpenGGTest.class.getResource("res/models/mariolevel.obj"), 1);
+        //test6 = new DrawnObjectGroup(OpenGGTest.class.getResource("res/models/Mansion.obj"), 1);
 
         test2 = ObjectBuffers.genSkyCube();
         sky = new DrawnObject(test2, 12);
@@ -224,9 +192,7 @@ public class OpenGGTest implements KeyboardListener {
         ratio = win.getRatio();
         
         base2.setModel(Matrix4f.translate(-50, 0, -100));
-        
-        ShaderHandler.setModel(new Matrix4f());
-        ShaderHandler.checkForErrors();
+
 
         enable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -253,14 +219,12 @@ public class OpenGGTest implements KeyboardListener {
         c.setPos(new Vector3f(15, -40, -10));
         c.setRot(new Vector3f(60, 50, 0));
 
-        ShaderHandler.setLightPos(new Vector3f(30, 40, 50));
-        ShaderHandler.setView(c);
-        ShaderHandler.setOrtho(-10, 10, -10, 10, 0.3f, 80);
+        s.setLightPos(new Vector3f(30, 40, 50));
+        s.setView(c);
+
+        s.setPerspective(90, ratio, 4, 300f); 
         
-        ShaderHandler.setPerspective(90, ratio, 4, 100f); 
-        sh.setShadowLightMatrix(ShaderHandler.getMVP());
-        
-        ShaderHandler.setCurrentShader(sh);
+        s.setMode(Mode.OBJECT);
         t1.startTexRender();
         t3.useTexture(0);
         
@@ -280,26 +244,23 @@ public class OpenGGTest implements KeyboardListener {
         c.setPos(pos);
         c.setRot(rot);
 
-        ShaderHandler.setView(c);
-        ShaderHandler.setPerspective(90, ratio, 0.3f, 2000f);
- cb.use();
-        ShaderHandler.setCurrentShader(sk);
+        s.setView(c);
+        s.setPerspective(90, ratio, 0.3f, 2000f);
+        
+        s.setMode(Mode.SKYBOX);
+        
+        cb.use();
         sky.draw();
-        ShaderHandler.setCurrentShader(sh);
+        
+        s.setMode(Mode.OBJECT);
         awp3.drawShaded();
 
         flashbang.drawShaded();
-        
-      
-        test6.drawShaded();
-        
+
         t1.useDepthTexture(0);
         base2.drawShaded();
 
-       
-
         g.startGUI();
-        ShaderHandler.setCurrentShader(gsh);
 
         t1.useDepthTexture(0);
         test5.draw();
