@@ -270,8 +270,8 @@ public class OpenGGTest implements KeyboardListener {
         xrot += rot1 * 5;
         yrot += rot2 * 5;
         
-        awp3.setModel(Matrix4f.translate(w1.getEntity().pos));
-        flashbang.setModel(Matrix4f.translate(w2.getEntity().pos));
+        awp3.setModel(Matrix4f.translate(w1.getEntity().current.pos));
+        flashbang.setModel(Matrix4f.translate(w2.getEntity().current.pos));
     }
 
     @Override
