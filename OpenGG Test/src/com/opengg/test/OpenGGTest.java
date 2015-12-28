@@ -93,7 +93,7 @@ public class OpenGGTest implements KeyboardListener {
         }).start();
  
         try {
-            window = w.init(1280, 1024, "Test", DisplayMode.WINDOWED);
+            window = w.init(960, 640, "Test", DisplayMode.WINDOWED);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -108,7 +108,6 @@ public class OpenGGTest implements KeyboardListener {
             endFrame(window);
         }
         
-        MainLoop.killProcess();
         exit();
     }
 
@@ -206,7 +205,7 @@ public class OpenGGTest implements KeyboardListener {
     }
 
     public void exit() {
-
+        MainLoop.killProcess();
         AudioHandler.destroy();
         vao.delete();
         vbo.delete();
