@@ -101,6 +101,14 @@ public class Vector3f implements Serializable{
         return new Vector3f(this.x + f, this.y + f, this.z + f);
     }
     
+    public void addEquals(Vector3f ...v) {
+        for(Vector3f n :v)
+        {
+            this.x += n.x;
+            this.y += n.y;
+            this.z += n.z;
+        }
+    }
     
     public Vector3f normalize() {
         return divide(length());
@@ -113,6 +121,10 @@ public class Vector3f implements Serializable{
     public Vector3f divide(float scalar) {
         if (scalar == 0) throw new ArithmeticException("Divide by 0");
         return multiply(1f / scalar);
+    }
+    
+    public Vector3f divide(Matrix4f m) {
+        return m.inverse().multiply(this);
     }
 
     public Vector3f multiply(float scalar) {
@@ -135,16 +147,16 @@ public class Vector3f implements Serializable{
         float azimuth = getAzimuth();
 
         this.x = (float) (radi * Math.sin(Math.toRadians(inclination)) * Math.cos(Math.toRadians(azimuth)));
-        this.y = (float) (radi * Math.sin(Math.toRadians(inclination)) * Math.sin(Math.toRadians(azimuth)));
-        this.x = (float) (radi * Math.cos(Math.toRadians(inclination)));
+        this.z = (float) (radi * Math.sin(Math.toRadians(inclination)) * Math.sin(Math.toRadians(azimuth)));
+        this.y = (float) (radi * Math.cos(Math.toRadians(inclination)));
     }
 
     public float getInclination() {
-        return (float) Math.toDegrees(Math.acos(z / length()));
+        return (float) Math.toDegrees(Math.acos(y / length()));
     }
 
     public float getAzimuth() {
-        return (float) Math.toDegrees(Math.atan2(y, x));
+        return (float) Math.toDegrees(Math.atan2(z, x));
     }
     
     public void setInclination(float deg){
@@ -161,21 +173,27 @@ public class Vector3f implements Serializable{
         float inclination = getInclination();
         
         x = (float) (length * Math.sin(Math.toRadians(inclination)) * Math.cos(Math.toRadians(deg)));
-        y = (float) (length * Math.sin(Math.toRadians(inclination)) * Math.sin(Math.toRadians(deg)));
+        z = (float) (length * Math.sin(Math.toRadians(inclination)) * Math.sin(Math.toRadians(deg)));
     }
     
     public Vector3f closertoZero(float f){
         float signX = x < 0 ? -1 : 1;
         float signY = y < 0 ? -1 : 1;
         float signZ = z < 0 ? -1 : 1;
-        return new Vector3f((Math.abs(x) - f)*signX, (Math.abs(y) - f)*signY, (Math.abs(z) - f)*signZ);
+        this.x = (Math.abs(x) - f)*signX;
+        this.y = (Math.abs(y) - f)*signY;
+        this.z = (Math.abs(z) - f)*signZ;
+        return this;
     }
     
     public Vector3f closertoZero(Vector3f v){
         float signX = x < 0 ? -1 : 1;
         float signY = y < 0 ? -1 : 1;
         float signZ = z < 0 ? -1 : 1;
-        return new Vector3f((Math.abs(x) - v.x) * signX, (Math.abs(y) - v.y) * signY, (Math.abs(z) - v.z) * signZ);
+        this.x = (Math.abs(x) - v.x)*signX;
+        this.y = (Math.abs(y) - v.y)*signY;
+        this.z = (Math.abs(z) - v.z)*signZ;
+        return this;
     }
     
     public void zero(){
@@ -184,6 +202,6 @@ public class Vector3f implements Serializable{
     
     @Override
     public String toString(){
-        return "" + x + ", " + y + ", " + z;
+        return x + ", " + y + ", " + z;
     }
 }

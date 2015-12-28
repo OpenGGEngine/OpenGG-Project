@@ -10,14 +10,15 @@ package com.opengg.core;
  * @author ethachu19
  */
 public class Quaternion4f {
-    
+
     /**
      * Angle/Scalar
      */
     public float w;
-    
+
     /**
      * Angle Vector/Axis of Rotation
+     *
      * @see Vector3f
      */
     public Vector3f axis = new Vector3f();
@@ -32,8 +33,8 @@ public class Quaternion4f {
         this.axis.y = y;
         this.axis.z = z;
     }
-    
-    public Quaternion4f(Quaternion4f q){
+
+    public Quaternion4f(Quaternion4f q) {
         this.w = q.w;
         this.axis = new Vector3f(q.axis);
     }
@@ -80,6 +81,13 @@ public class Quaternion4f {
         return new Quaternion4f(this.w + q.w, this.axis.x + q.axis.x, this.axis.y + q.axis.y, this.axis.z + q.axis.z);
     }
 
+    public void addEquals(final Quaternion4f q) {
+        this.w += q.w;
+        this.axis.x += q.axis.x;
+        this.axis.y += q.axis.y;
+        this.axis.z += q.axis.z;
+    }
+
     public Quaternion4f subtract(final Quaternion4f q) {
         return new Quaternion4f(this.w - q.w, this.axis.x - q.axis.x, this.axis.y - q.axis.y, this.axis.z - q.axis.z);
     }
@@ -109,8 +117,8 @@ public class Quaternion4f {
     public float length() {
         return (float) Math.sqrt(w * w + axis.x * axis.x + axis.y * axis.y + axis.z * axis.z);
     }
-    
-    public void normalize(){
+
+    public void normalize() {
         float magnitude = length();
         w /= magnitude;
         axis.x /= magnitude;
@@ -121,21 +129,45 @@ public class Quaternion4f {
     public Matrix4f convertMatrix() {
         this.normalize();
         return new Matrix4f(
-	1.0f - 2.0f*axis.y*axis.y - 2.0f*axis.z*axis.z, 2.0f*axis.x*axis.y - 2.0f*axis.z*w, 2.0f*axis.x*axis.z + 2.0f*axis.y*w,
-	2.0f*axis.x*axis.y + 2.0f*axis.z*w, 1.0f - 2.0f*axis.x*axis.x - 2.0f*axis.z*axis.z, 2.0f*axis.y*axis.z - 2.0f*axis.x*w,
-	2.0f*axis.x*axis.z - 2.0f*axis.y*w, 2.0f*axis.y*axis.z + 2.0f*axis.x*w, 1.0f - 2.0f*axis.x*axis.x - 2.0f*axis.y*axis.y);
+                1.0f - 2.0f * axis.y * axis.y - 2.0f * axis.z * axis.z, 2.0f * axis.x * axis.y - 2.0f * axis.z * w, 2.0f * axis.x * axis.z + 2.0f * axis.y * w,
+                2.0f * axis.x * axis.y + 2.0f * axis.z * w, 1.0f - 2.0f * axis.x * axis.x - 2.0f * axis.z * axis.z, 2.0f * axis.y * axis.z - 2.0f * axis.x * w,
+                2.0f * axis.x * axis.z - 2.0f * axis.y * w, 2.0f * axis.y * axis.z + 2.0f * axis.x * w, 1.0f - 2.0f * axis.x * axis.x - 2.0f * axis.y * axis.y);
     }
-    
+
     public float angle() {
         return 2.0f * (float) Math.toDegrees(Math.acos(w));
     }
-    
-    public final void rotateAroundVector(float degrees){
-        if (degrees < 0)
+
+    public final void rotateAroundVector(float degrees) {
+        if (degrees < 0) {
             degrees += 360;
-        float difference = angle()-degrees;
-        w = (float) Math.cos(Math.toRadians((degrees - difference)/2));
+        }
+        float difference = angle() - degrees;
+        w = (float) Math.cos(Math.toRadians((degrees - difference) / 2));
     }
-    
-    
+
+    public static final Quaternion4f slerp(final Quaternion4f a, final Quaternion4f b, float t) {
+        if (!(t >= 0 && t <= 1)) {
+            throw new ArithmeticException("t not in range");
+        }
+        float flip = 1;
+
+        float cosine = a.w * b.w + a.axis.x * b.axis.x + a.axis.y * b.axis.y + a.axis.z * b.axis.z;
+
+        if (cosine < 0) {
+            cosine = -cosine;
+            flip = -1;
+        }
+
+        if ((1 - cosine) == 0) {
+            return a.multiply(1 - t).add(b.multiply(t * flip));
+        }
+
+        float theta = (float) Math.acos(cosine);
+        float sine = (float) Math.sin(theta);
+        float beta = (float) Math.sin((1 - t) * theta) / sine;
+        float alpha = (float) Math.sin(t * theta) / sine * flip;
+
+        return a.multiply(beta).add(b.multiply(alpha));
+    }
 }
