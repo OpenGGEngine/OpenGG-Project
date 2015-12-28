@@ -17,8 +17,9 @@ import java.io.Serializable;
  * @author ethachu19
  */
 public class PhysicsState implements Serializable {
+
     public EntitySupportEnums.UpdateForce updateForce;
-    
+
     public Vector3f pos = new Vector3f();
     public Quaternion4f rot = new Quaternion4f();
 
@@ -39,7 +40,7 @@ public class PhysicsState implements Serializable {
         switchWorld(currentWorld);
         this.mass = mass;
     }
-    
+
     public PhysicsState(PhysicsState past) {
         pos = new Vector3f(past.pos);
         rot = new Quaternion4f(past.rot);
@@ -55,7 +56,7 @@ public class PhysicsState implements Serializable {
         angularMomentum = new Vector3f(past.angularMomentum);
         momentum = new Vector3f(momentum);
     }
-    
+
     public final void recalculate() {
         velocity = momentum.divide(mass);
         angularVelocity = angularMomentum.divide(inertiaTensor);
@@ -82,7 +83,7 @@ public class PhysicsState implements Serializable {
     }
 
     private static PhysicsState interpolate(final PhysicsState a, final PhysicsState b, float alpha) {
-        PhysicsState state = b;
+        PhysicsState state = new PhysicsState(b);
         state.pos = a.pos.multiply(1 - alpha).add(b.pos.multiply(alpha));
         state.momentum = a.momentum.multiply(1 - alpha).add(b.momentum.multiply(alpha));
         state.rot = Quaternion4f.slerp(a.rot, b.rot, alpha);
@@ -90,11 +91,12 @@ public class PhysicsState implements Serializable {
         state.recalculate();
         return state;
     }
-    
-    @SuppressWarnings("all")
+
     public static void forces(final PhysicsState state, float t, Vector3f force, Vector3f torque) {
-        if (state.updateForce == EntitySupportEnums.UpdateForce.Unrealistic)
+        if (state.updateForce == EntitySupportEnums.UpdateForce.Unrealistic) {
+            print ("FORCE SLEEEPENS");
             return;
+        }
         force.closertoZero(state.airResistance.multiply(0.5f)).add(state.currentWorld.wind).subtract(state.currentWorld.gravityVector);
         torque.closertoZero(state.airResistance.multiply(0.2f));
         torque.subtract(state.angularVelocity.multiply(0.2f));

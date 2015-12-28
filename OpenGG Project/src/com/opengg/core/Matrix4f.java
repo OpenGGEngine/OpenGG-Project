@@ -266,10 +266,10 @@ public class Matrix4f {
         result.m02 = m01*m12 - m02*m11;
         result.m10 = m12*m20 - m10*m22;
         result.m11 = m00*m22 - m02*m20;
-        result.m12 = m02*m10 - m12*m21;
-        result.m20 = m11*m22 - m12*m21;
-        result.m21 = m11*m22 - m12*m21;
-        result.m22 = m11*m22 - m12*m21;
+        result.m12 = m02*m10 - m00*m12;
+        result.m20 = m10*m21 - m11*m20;
+        result.m21 = m01*m20 - m00*m21;
+        result.m22 = m00*m11 - m01*m10;
         result = result.scale(1f/det);
         return result;
     }
