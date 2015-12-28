@@ -44,15 +44,15 @@ public class WorldObject {
     public WorldObject(Vector3f pos, Quaternion4f rot, Entity e){
         this.pos = pos;
         this.rot = rot;
-        this.thisWorld = e.currentWorld;
+        this.thisWorld = e.current.currentWorld;
         this.e = new EntityBuilder(e).entityType(EntityTypes.DEFAULT).build();
         this.e.setXYZ(pos);
         this.e.setRotation(rot);
     }
     public WorldObject(Entity e){
         pos = new Vector3f(0,0,0);
-        rot = new Quaternion4f(e.rot);
-        this.thisWorld = e.currentWorld;
+        rot = new Quaternion4f(e.current.rot);
+        this.thisWorld = e.current.currentWorld;
         this.e = new EntityBuilder(e).entityType(EntityTypes.DEFAULT).build();
         this.e.setXYZ(pos);
         this.e.setRotation(rot);

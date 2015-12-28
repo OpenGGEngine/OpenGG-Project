@@ -8,17 +8,18 @@ package com.opengg.core.world.entities;
 import com.opengg.core.Quaternion4f;
 import com.opengg.core.Vector3f;
 import com.opengg.core.io.objloader.parser.OBJModel;
-import com.opengg.core.util.Time;
+import static com.opengg.core.util.GlobalUtil.print;
 import com.opengg.core.world.Camera;
 import com.opengg.core.world.World;
 import com.opengg.core.world.WorldManager;
 import static com.opengg.core.world.entities.EntityBuilder.AddStack;
 import com.opengg.core.world.entities.resources.EntityFrame;
+import com.opengg.core.world.entities.resources.EntitySupportEnums;
 import com.opengg.core.world.entities.resources.EntitySupportEnums.Collide;
 import com.opengg.core.world.entities.resources.EntitySupportEnums.PhysicsType;
 import com.opengg.core.world.entities.resources.EntitySupportEnums.UpdateForce;
 import com.opengg.core.world.entities.resources.EntitySupportEnums.UpdateXYZ;
-import static com.opengg.core.world.physics.resources.PhysicsStruct.gravityVector;
+import com.opengg.core.world.entities.resources.PhysicsState;
 import static com.opengg.core.world.physics.resources.PhysicsStruct.wind;
 import java.io.Serializable;
 
@@ -26,26 +27,23 @@ import java.io.Serializable;
  *
  * @author ethachu19
  */
-public class Entity implements Serializable{
+public class Entity implements Serializable {
 
     /* tags */
-    public UpdateForce updateForce;
     public UpdateXYZ updatePosition;
     public Collide collision;
-    public float mass;
-    public Vector3f pos = new Vector3f();
-    public Vector3f force = new Vector3f();
-    public Vector3f airResistance = new Vector3f();
-    public Vector3f velocity = new Vector3f();
-    public Vector3f acceleration = new Vector3f();
     public boolean ground;
-    public World currentWorld = null;
-    public Quaternion4f rot = new Quaternion4f();
+    public short id;
+
     /* Physics*/
     public EntityFrame ef;
-    public Vector3f direction = new Vector3f();
-    private final Time time = new Time();
-    private float height = 5f, width = 5f, length = 5f;
+    /**
+     * Only to be used for smooth rendering with interpolate
+     *
+     * @see interpolate
+     */
+    public PhysicsState previous;
+    public PhysicsState current;
     /* Max - 1, Min - 0 */
     public Vector3f[] boundingBox = {new Vector3f(), new Vector3f()};
     /*
@@ -70,14 +68,14 @@ public class Entity implements Serializable{
      *
      */
     public Entity() {
-        if(WorldManager.isEmpty())
+        if (WorldManager.isEmpty()) {
             WorldManager.getWorld(new Camera());
-        this.currentWorld = WorldManager.getDefaultWorld();
+        }
+        current = new PhysicsState(WorldManager.getDefaultWorld(), 10f);
         setXYZ(0f, 0f, 0f);
-        this.ground = true;
         setTags(PhysicsType.Physics);
         bindModel(new OBJModel());
-        
+
         AddStack.add(this);
     }
 
@@ -92,15 +90,17 @@ public class Entity implements Serializable{
      * @param current Current World
      */
     public Entity(PhysicsType type, Vector3f position, Vector3f f, float mass, OBJModel model, World current) {
-        if (position == null) position = new Vector3f();
-        if (f == null) f = new Vector3f();
-        this.currentWorld = current;
+        if (position == null) {
+            position = new Vector3f();
+        }
+        if (f == null) {
+            f = new Vector3f();
+        }
+        this.current = new PhysicsState(current, mass);
         setXYZ(position);
         setForce(f);
-        this.ground = (pos.y < 60);
         setTags(type);
         bindModel(model);
-        this.mass = mass;
         AddStack.add(this);
     }
 
@@ -110,14 +110,10 @@ public class Entity implements Serializable{
      * @param v Entity to be copied
      */
     public Entity(Entity v) {
-        this.currentWorld = v.currentWorld;
-        setXYZ(v.pos.x, v.pos.y, v.pos.z);
-        this.mass = v.mass;
-        setVelocity(new Vector3f(v.velocity));
-        this.ground = (pos.y <= 60);
+        this.current = new PhysicsState(v.current);
         this.collision = v.collision;
         this.updatePosition = v.updatePosition;
-        this.updateForce = v.updateForce;
+        this.current.updateForce = v.current.updateForce;
         bindModel(v.model);
 
         AddStack.add(this);
@@ -132,34 +128,34 @@ public class Entity implements Serializable{
         switch (type) {
             case Static:
                 updatePosition = UpdateXYZ.Immovable;
-                updateForce = UpdateForce.Realistic;
+                current.updateForce = UpdateForce.Realistic;
                 collision = Collide.NoResponse;
                 break;
 
             case Physics:
                 updatePosition = UpdateXYZ.Movable;
-                updateForce = UpdateForce.Realistic;
+                current.updateForce = UpdateForce.Realistic;
                 collision = Collide.Collidable;
                 break;
 
             case Particle:
                 updatePosition = UpdateXYZ.Movable;
-                updateForce = UpdateForce.Unrealistic;
+                current.updateForce = UpdateForce.Unrealistic;
                 collision = Collide.Uncollidable;
                 break;
         }
     }
 
-    public final void updateBoundingBox(){
-        boundingBox[0].y = pos.y;
-        boundingBox[0].x = pos.x - width / 2;
-        boundingBox[0].z = pos.z - length / 2;
+    public final void updateBoundingBox() {
+        boundingBox[0].y = current.pos.y;
+        boundingBox[0].x = current.pos.x - current.width / 2;
+        boundingBox[0].z = current.pos.z - current.length / 2;
 
-        boundingBox[1].y = pos.y + height;
-        boundingBox[1].x = pos.x + width / 2;
-        boundingBox[1].z = pos.z + length / 2;
+        boundingBox[1].y = current.pos.y + current.height;
+        boundingBox[1].x = current.pos.x + current.width / 2;
+        boundingBox[1].z = current.pos.z + current.length / 2;
     }
-    
+
     /**
      * Sets the Entity's XYZ Coordinates to something
      *
@@ -168,19 +164,17 @@ public class Entity implements Serializable{
      * @param z Z to be set
      */
     public final void setXYZ(float x, float y, float z) {
-        this.pos.x = x;
-        this.pos.y = y;
-        this.pos.z = z;
+        this.current.pos.x = x;
+        this.current.pos.y = y;
+        this.current.pos.z = z;
 
         updateBoundingBox();
-        ground = (currentWorld.floorLev <= this.pos.y);
     }
 
     public final void setXYZ(Vector3f v) {
-        this.pos = v;
-        
+        this.current.pos = v;
+
         updateBoundingBox();
-        ground = (currentWorld.floorLev <= this.pos.y);
     }
 
     /**
@@ -189,7 +183,7 @@ public class Entity implements Serializable{
      * @param f Force vector
      */
     public final void setForce(Vector3f f) {
-        this.force = new Vector3f(f);
+        this.current.momentum = new Vector3f(f);
     }
 
     /**
@@ -198,11 +192,11 @@ public class Entity implements Serializable{
      * @param v Vector for velocity
      */
     public final void setVelocity(Vector3f v) {
-        this.velocity = new Vector3f(v);
+        this.current.velocity = new Vector3f(v);
     }
 
     public final void setRotation(Quaternion4f q) {
-        this.rot = q;
+        this.current.rot = q;
     }
 
     /**
@@ -232,35 +226,13 @@ public class Entity implements Serializable{
     }
 
     /**
-     * Updates XYZ based on velocity and acceleration and calculates new values
-     * for all of them
-     */
-    public void updateXYZ() {
-        final float timeStep = time.getDeltaSec();
-//        print(timeStep);
-        ground = (pos.y <= currentWorld.floorLev);
-//        System.out.println(ground);s
-        if (ground){
-            pos.y = currentWorld.floorLev;
-            stop(1);
-        }
-        Vector3f deltaMovement = velocity.multiply(timeStep).add(acceleration.multiply(0.5f * timeStep * timeStep));
-        pos = pos.add(deltaMovement);
-        updateBoundingBox();
-        if (updateForce == UpdateForce.Realistic)
-            update(timeStep);
-    }
-
-    /**
      * The collision response when collision with another entity is detected
      *
      * @param force Force for how much it should react
      * @return Error
      */
     public boolean collisionResponse(Vector3f force) {
-        this.force = force.add(force);
-        this.acceleration = new Vector3f();
-        this.velocity = velocity.multiply(-1/2);
+
         return true;
     }
 
@@ -270,45 +242,19 @@ public class Entity implements Serializable{
      * @param next The target world
      */
     public void changeWorld(World next) {
-        currentWorld = next;
-        gravityVector.y = next.gravity;
+        current.switchWorld(next);
     }
-    
-    
-    public final void update(float timeStep) {
-        Vector3f lastAcceleration = new Vector3f(acceleration);
-        acceleration = force.divide(mass);
-        velocity = velocity.add(lastAcceleration.add(acceleration).divide(2f).multiply(timeStep));
-        force = force.closertoZero(airResistance).add(wind).subtract(gravityVector);
-    }
-    
-    public final boolean stop(int index){
-        switch (index){
-            case 0:
-                force.x = 0;
-                velocity.x = 0;
-                acceleration.x = 0;
-                break;
-            case 1:
-                force.y = 0;
-                velocity.y = 0;
-                acceleration.y = 0;
-                break;
-            case 2:
-                force.z = 0;
-                velocity.z = 0;
-                acceleration.z = 0;
-                break;
-            default:
-                force.zero();
-                velocity.zero();
-                acceleration.zero();
-                break;
-        }
-        return true;
-    }
-    
-    public final void changeWind(Vector3f w){
+
+    public final void changeWind(Vector3f w) {
         wind = new Vector3f(w);
+    }
+
+    public void update(float t, float dt) {
+        if (this.updatePosition == EntitySupportEnums.UpdateXYZ.Immovable)
+            return;
+        previous = new PhysicsState(current);
+        current.integrate(current, t, dt);
+        print (current.momentum.toString());
+        updateBoundingBox();
     }
 }

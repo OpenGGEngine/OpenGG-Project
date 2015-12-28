@@ -27,8 +27,8 @@ public class PlayerEntity extends Entity{
      */
     public PlayerEntity(){
         super();
-        playerCam = new Camera(pos, direction);
-        currentWorld.addCamera(playerCam);
+        playerCam = new Camera(current.pos, direction);
+        current.currentWorld.addCamera(playerCam);
     }
 
     /**
@@ -43,7 +43,7 @@ public class PlayerEntity extends Entity{
      */
     public PlayerEntity(PhysicsType type, Vector3f position, Vector3f f, float mass, OBJModel model, World current){
         super(type,position, f, mass, model, current);
-        playerCam = new Camera(pos, direction);
+        playerCam = new Camera(this.current.pos, direction);
         current.addCamera(playerCam);
     }
 
@@ -54,16 +54,16 @@ public class PlayerEntity extends Entity{
      */
     public PlayerEntity(Entity v){
         super(v);
-        playerCam = new Camera(pos, direction);
-        currentWorld.addCamera(playerCam);
+        playerCam = new Camera(current.pos, direction);
+        current.currentWorld.addCamera(playerCam);
     }
     
     @Override
     public void changeWorld(World next){
         try{
-            currentWorld.removeCamera(playerCam);
+            current.currentWorld.removeCamera(playerCam);
         } catch (NullPointerException e) { print ("CurrentWorld of Player is null");}
-        currentWorld = next;
+        current.currentWorld = next;
         next.addCamera(playerCam);
     }
 }

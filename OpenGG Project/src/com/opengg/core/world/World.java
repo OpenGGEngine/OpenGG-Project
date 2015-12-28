@@ -21,7 +21,8 @@ public class World {
     private SkyboxShader skybox = new SkyboxShader();
     private Camera mainCam;
     public float floorLev = -1;
-    public float gravity = 2f;
+    public Vector3f gravityVector = new Vector3f(0,2f,0);
+    public Vector3f wind = new Vector3f();
     
     public World(){
         mainCam = new Camera(new Vector3f(), new Vector3f());
