@@ -185,7 +185,8 @@ public class OpenGGTest implements KeyboardListener {
         awp3.removeBuffer();
         flashbang.removeBuffer();
         Terrain base = new Terrain(0, 0, t1);
-        base2 = new DrawnObject(base.generateTerrain(heightmap), 12);
+        base.generateTerrain(heightmap);
+        base2 = new DrawnObject(base.elementals, vbo,base.indices);
         base.removeBuffer();
 
         ratio = win.getRatio();
