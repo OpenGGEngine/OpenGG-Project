@@ -21,7 +21,7 @@ import org.lwjgl.BufferUtils;
  * @author Javier
  */
 public class ObjectBuffers {
-    public static FloatBuffer genBuffer(OBJModel m, float transparency, float scale){
+    public static FloatBuffer genBuffer(OBJModel m, float transparency, float scale, Vector3f poffset){
         
         List<OBJFace> f = m.getObjects().get(0).getMeshes().get(0).getFaces();
         print("The material file is "+ m.getMaterialLibraries());
@@ -41,15 +41,15 @@ public class ObjectBuffers {
 //                continue;
 //            }
             
-            float x1 = m.getVertices().get(i1).x*scale;
-            float y1 = m.getVertices().get(i1).y*scale;
-            float z1 = m.getVertices().get(i1).z*scale;
-            float x2 = m.getVertices().get(i2).x*scale;
-            float y2 = m.getVertices().get(i2).y*scale;
-            float z2 = m.getVertices().get(i2).z*scale;
-            float x3 = m.getVertices().get(i3).x*scale;
-            float y3 = m.getVertices().get(i3).y*scale;
-            float z3 = m.getVertices().get(i3).z*scale;
+            float x1 = (m.getVertices().get(i1).x + poffset.x)*scale;
+            float y1 = (m.getVertices().get(i1).y + poffset.y)*scale;
+            float z1 = (m.getVertices().get(i1).z + poffset.z)*scale;
+            float x2 = (m.getVertices().get(i2).x + poffset.x)*scale;
+            float y2 = (m.getVertices().get(i2).y + poffset.y)*scale;
+            float z2 = (m.getVertices().get(i2).z + poffset.z)*scale;
+            float x3 = (m.getVertices().get(i3).x + poffset.x)*scale;
+            float y3 = (m.getVertices().get(i3).y + poffset.y)*scale;
+            float z3 = (m.getVertices().get(i3).z + poffset.z)*scale;
             
             int ni1 = 0, ni2 = 0, ni3 = 0;
             float xn = 0.1f, yn = 0.1f, zn = 0.1f;
