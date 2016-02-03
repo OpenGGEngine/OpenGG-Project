@@ -17,8 +17,8 @@ import static org.lwjgl.opengl.GL11.glClearColor;
  * @author Javier
  */
 public class RenderUtil {
-    public static void endFrame(long window){
-        glfwSwapBuffers(window);
+    public static void endFrame(Window window){
+        window.endFrame();
         glfwPollEvents();
     }
     public static void startFrame(){

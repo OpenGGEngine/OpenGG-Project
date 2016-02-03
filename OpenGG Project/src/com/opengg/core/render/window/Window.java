@@ -1,17 +1,12 @@
 package com.opengg.core.render.window;
 import com.opengg.core.Vector2f;
-import org.lwjgl.Sys;
-import org.lwjgl.glfw.*;
-import org.lwjgl.opengl.*;
-
 import com.opengg.core.io.input.KeyBoardHandler;
 import com.opengg.core.util.GlobalInfo;
-
 import java.nio.ByteBuffer;
- 
 
-import static org.lwjgl.glfw.Callbacks.*;
+import org.lwjgl.glfw.*;
 import static org.lwjgl.glfw.GLFW.*;
+import org.lwjgl.opengl.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
@@ -23,21 +18,20 @@ public class Window {
     int HEIGHT = 300;
     
     public static long window;
-    
-    GLFWvidmode mode; 
+
+    GLFWVidMode mode; 
     ByteBuffer vidmode;
-    private GLFWErrorCallback errorCallback;
-    private GLFWKeyCallback   keyCallback;
-    // The GLFW error callback: this tells GLFW what to do if things go wrong
+    GLFWErrorCallback errorCallback;
+    GLFWKeyCallback   keyCallback;
+
     public void Window() {
        System.out.println("Window inited");
     }
     
     
     public long init(int w, int h, String name, DisplayMode m) throws Exception{
-        // Setup an error callback. The default implementation
-        // will print the error message in System.err.
-        glfwSetErrorCallback(errorCallback = errorCallbackPrint(System.err));
+        
+        glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
         HEIGHT = h;
         WIDTH = w;
         
@@ -59,15 +53,16 @@ public class Window {
         glfwWindowHint(GLFW_SAMPLES, 4);
         
         
-        vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());   
-        mode = new GLFWvidmode(glfwGetVideoMode(glfwGetPrimaryMonitor()));
+        mode = glfwGetVideoMode(glfwGetPrimaryMonitor());   
+        //mode = new GLFWVidMode(glfwGetVideoMode(glfwGetPrimaryMonitor()));
         if(m == DisplayMode.FULLSCREEN_WINDOWED){
-            glfwWindowHint(GLFW_RED_BITS, mode.getRedBits());
-            glfwWindowHint(GLFW_GREEN_BITS, mode.getGreenBits());
-            glfwWindowHint(GLFW_BLUE_BITS, mode.getBlueBits());
-            glfwWindowHint(GLFW_REFRESH_RATE, mode.getRefreshRate());
+            glfwWindowHint(GLFW_RED_BITS, mode.redBits());
+            glfwWindowHint(GLFW_GREEN_BITS, mode.greenBits());
+            glfwWindowHint(GLFW_BLUE_BITS, mode.blueBits());
+            glfwWindowHint(GLFW_REFRESH_RATE, mode.refreshRate());
+
             
-            window = glfwCreateWindow(mode.getWidth(), mode.getHeight(), name, NULL, NULL);
+            window = glfwCreateWindow(mode.width(), mode.height(), name, NULL, NULL);
             
             glfwSetWindowPos(
                 window,
@@ -81,8 +76,8 @@ public class Window {
             window = glfwCreateWindow(WIDTH, HEIGHT, name, NULL, NULL);
             glfwSetWindowPos(
                 window,
-                (GLFWvidmode.width(vidmode) - WIDTH) / 2,
-                (GLFWvidmode.height(vidmode) - HEIGHT) / 2
+                (mode.width() - WIDTH) / 2,
+                (mode.height() - HEIGHT) / 2
             );
         }
         if ( window == NULL )
@@ -105,10 +100,12 @@ public class Window {
         
         // Make the window visible
         glfwShowWindow(window);
+        
+        
         GL.createCapabilities();
         GlobalInfo.winWidth = HEIGHT;
         GlobalInfo.winHeight = WIDTH;
-        
+        GlobalInfo.window = window;
         return window;
     }
     
@@ -119,14 +116,14 @@ public class Window {
         
         glfwSetWindowPos(
             window,
-            (GLFWvidmode.width(vidmode) - WIDTH) / 2,
-            (GLFWvidmode.height(vidmode) - HEIGHT) / 2
+            (mode.width() - WIDTH) / 2,
+            (mode.height() - HEIGHT) / 2
         );
                
     }
     
     public void fullscreen(){
-        glfwSetWindowSize(window, mode.getWidth(), mode.getHeight());
+        glfwSetWindowSize(window, mode.width(), mode.height());
         glfwSetWindowPos(
             window,
             0,
@@ -148,6 +145,13 @@ public class Window {
             return true;
         }
     }
+     public boolean shouldClose(){
+        if(glfwWindowShouldClose(GlobalInfo.window) == GL_FALSE){
+            return false;
+        }else{
+            return true;
+        }
+    }
     public void setColor(float r, float g, float b){
      glClearColor(r/255, b/255, g/255, 0);
     }
@@ -161,5 +165,8 @@ public class Window {
         glfwWindowHint(GLFW_SAMPLES, samples);
     }
             
+    public void endFrame(){
+        glfwSwapBuffers(GlobalInfo.window);
+    }
     
 }
