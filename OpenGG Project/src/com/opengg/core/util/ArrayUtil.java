@@ -10,7 +10,7 @@ package com.opengg.core.util;
  *
  * @author Javier
  */
-public class Array {
+public class ArrayUtil {
 
     public static void putInt(int value, byte[] array, int offset) {
         array[offset] = (byte) (0xff & (value >> 24));
