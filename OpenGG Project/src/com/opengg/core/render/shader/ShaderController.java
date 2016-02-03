@@ -10,8 +10,6 @@ import com.opengg.core.Matrix4f;
 import com.opengg.core.Vector3f;
 import com.opengg.core.io.FileStringLoader;
 import com.opengg.core.render.window.ViewUtil;
-import com.opengg.core.render.window.Window;
-import static com.opengg.core.util.GlobalUtil.print;
 import com.opengg.core.world.Camera;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
@@ -31,7 +29,7 @@ public class ShaderController {
     float ratio;
     Matrix4f model= new Matrix4f(), view= new Matrix4f(), proj = new Matrix4f();
     
-    public void setup(Window win, URL vert, URL frag) throws UnsupportedEncodingException{
+    public void setup(URL vert, URL frag) throws UnsupportedEncodingException{
         vertexTex= new Shader(GL_VERTEX_SHADER, 
                 FileStringLoader.loadStringSequence(
                         URLDecoder.decode(
@@ -77,7 +75,7 @@ public class ShaderController {
         div = program.getUniformLocation("divAmount"); 
         program.setUniform(div, 1f);
         
-        ratio = win.getRatio();
+
         
         rotm = program.getUniformLocation("rot");    
         program.setUniform(rotm, new Vector3f(0,0,0));  
@@ -99,7 +97,7 @@ public class ShaderController {
         
         program.checkStatus();
         
-        ViewUtil.setPerspective(80, ratio, 0.3f, 3000f, program);    
+        ViewUtil.setPerspective(80, 1280/720, 0.3f, 3000f, program);    
     }
     
     private void specifyVertexAttributes(ShaderProgram programv, boolean textured) {
@@ -172,6 +170,9 @@ public class ShaderController {
             case SKYBOX:
                 program.setUniform(mode, (int) 3);
                 break;
+            case POS_ONLY:
+                program.setUniform(mode, (int) 4);
+                break;
         }
     }
     
@@ -197,6 +198,7 @@ public class ShaderController {
         
         setView(view);
     }
+    
     public Matrix4f getMVP(){
         return proj.multiply(view).multiply(model);
     }

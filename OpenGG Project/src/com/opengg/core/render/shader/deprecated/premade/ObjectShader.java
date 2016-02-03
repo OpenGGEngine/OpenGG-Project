@@ -3,7 +3,8 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.opengg.core.render.shader.premade;
+
+package com.opengg.core.render.shader.deprecated.premade;
 
 import com.opengg.core.Matrix4f;
 import com.opengg.core.Vector3f;
@@ -12,6 +13,7 @@ import com.opengg.core.render.shader.Shader;
 import com.opengg.core.render.shader.ShaderProgram;
 import com.opengg.core.render.window.ViewUtil;
 import com.opengg.core.render.window.Window;
+import static com.opengg.core.util.GlobalUtil.print;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -22,19 +24,14 @@ import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
  *
  * @author Javier
  */
-public class DepthShader implements ShaderEnabled{
-
+public class ObjectShader implements ShaderEnabled{
     ShaderProgram program;
     private Shader fragmentTex;
     private Shader vertexTex;
-    private int uniModel;
-    private int rotm;
-    private int lightpos;
+    private int uniModel,rotm,lightpos,div,uniView,lightdistance,lightpower,shadow,skycolor,mode;
+    
     private float ratio;
-    private int div;
-    private int uniView;
-    private int lightdistance;
-    private int lightpower;
+    
     public void setup(Window win, URL vert, URL frag) throws UnsupportedEncodingException{
         vertexTex= new Shader(GL_VERTEX_SHADER, 
                 FileStringLoader.loadStringSequence(
@@ -56,6 +53,9 @@ public class DepthShader implements ShaderEnabled{
         program.checkStatus();
         
         specifyVertexAttributes(program, true);
+
+        /* Set shader variables */
+        program.use(); 
         
         uniModel = program.getUniformLocation("model"); 
         program.setUniform(uniModel, new Matrix4f());
@@ -63,17 +63,43 @@ public class DepthShader implements ShaderEnabled{
         int uniTex = program.getUniformLocation("texImage"); 
         program.setUniform(uniTex, 0);
         
+        int uniskycolor = program.getUniformLocation("skycolor"); 
+        program.setUniform(uniskycolor, new Vector3f(0.5f,0.5f,0.5f));
+        print(uniskycolor);
+        int uniShadow = program.getUniformLocation("shadeImage"); 
+        program.setUniform(uniShadow, 2);
+        
+        lightpos = program.getUniformLocation("lightpos"); 
+        program.setUniform(lightpos, new Vector3f(200,50,-10));
+        
         div = program.getUniformLocation("divAmount"); 
         program.setUniform(div, 1f);
         
         ratio = win.getRatio();
         
+        rotm = program.getUniformLocation("rot");    
+        program.setUniform(rotm, new Vector3f(0,0,0));  
+
         uniView = program.getUniformLocation("view"); 
         program.setUniform(uniView, new Matrix4f());
-
-        ViewUtil.setPerspective(80, ratio, 0.3f, 3000f, program);   
+        
+        shadow = program.getUniformLocation("shmvp"); 
+        //program.setUniform(shadow, new Matrix4f());
+        
+        lightdistance = program.getUniformLocation("lightdistance"); 
+        program.setUniform(lightdistance, 5f);
+        
+        lightpower = program.getUniformLocation("lightpower"); 
+        program.setUniform(lightpower, 200f);
+        
+        mode = program.getUniformLocation("mode"); 
+        program.setUniform(mode, (int) 0);
         
         program.checkStatus();
+        
+        program.use();
+
+        ViewUtil.setPerspective(80, ratio, 0.3f, 3000f, program);    
     }
     
     private void specifyVertexAttributes(ShaderProgram programv, boolean textured) {
@@ -96,10 +122,10 @@ public class DepthShader implements ShaderEnabled{
 
     }
     @Override
-    public void setLightPos(Vector3f pos) {
-        
+    public void setLightPos(Vector3f pos){
+        program.use();
+        program.setUniform(lightpos, pos);
     }
-
     @Override
     public void setModel(Matrix4f model){
         program.use();
@@ -141,4 +167,8 @@ public class DepthShader implements ShaderEnabled{
         program.checkStatus();
     }
     
+    public void setShadowLightMatrix(Matrix4f m){
+        program.use();
+        program.setUniform(shadow, m);
+    }
 }

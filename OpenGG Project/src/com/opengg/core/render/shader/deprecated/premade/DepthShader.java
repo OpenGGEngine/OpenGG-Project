@@ -3,8 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
-package com.opengg.core.render.shader.premade;
+package com.opengg.core.render.shader.deprecated.premade;
 
 import com.opengg.core.Matrix4f;
 import com.opengg.core.Vector3f;
@@ -13,7 +12,6 @@ import com.opengg.core.render.shader.Shader;
 import com.opengg.core.render.shader.ShaderProgram;
 import com.opengg.core.render.window.ViewUtil;
 import com.opengg.core.render.window.Window;
-import com.opengg.core.util.Time;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -24,7 +22,8 @@ import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
  *
  * @author Javier
  */
-public class SkyboxShader implements ShaderEnabled{
+public class DepthShader implements ShaderEnabled{
+
     ShaderProgram program;
     private Shader fragmentTex;
     private Shader vertexTex;
@@ -36,9 +35,6 @@ public class SkyboxShader implements ShaderEnabled{
     private int uniView;
     private int lightdistance;
     private int lightpower;
-    private float rotation;
-    private final float rotatespeed = 1f;
-            
     public void setup(Window win, URL vert, URL frag) throws UnsupportedEncodingException{
         vertexTex= new Shader(GL_VERTEX_SHADER, 
                 FileStringLoader.loadStringSequence(
@@ -60,28 +56,24 @@ public class SkyboxShader implements ShaderEnabled{
         program.checkStatus();
         
         specifyVertexAttributes(program, true);
-
-        /* Set shader variables */
-        program.use(); 
+        
         uniModel = program.getUniformLocation("model"); 
         program.setUniform(uniModel, new Matrix4f());
         
-        int uniTex = program.getUniformLocation("skyTex"); 
-        program.setUniform(uniTex, 2);
+        int uniTex = program.getUniformLocation("texImage"); 
+        program.setUniform(uniTex, 0);
         
-        int skyboxSize = program.getUniformLocation("skyboxSize");
-        program.setUniform(skyboxSize, 1f);
+        div = program.getUniformLocation("divAmount"); 
+        program.setUniform(div, 1f);
         
         ratio = win.getRatio();
-           
+        
         uniView = program.getUniformLocation("view"); 
-        program.setUniform(uniView, new Matrix4f());       
+        program.setUniform(uniView, new Matrix4f());
+
+        ViewUtil.setPerspective(80, ratio, 0.3f, 3000f, program);   
         
         program.checkStatus();
-        
-        program.use();
-
-        ViewUtil.setPerspective(80, ratio, 0.3f, 3000f, program);    
     }
     
     private void specifyVertexAttributes(ShaderProgram programv, boolean textured) {
@@ -104,25 +96,18 @@ public class SkyboxShader implements ShaderEnabled{
 
     }
     @Override
-    public void setLightPos(Vector3f pos){
+    public void setLightPos(Vector3f pos) {
         
     }
+
     @Override
     public void setModel(Matrix4f model){
         program.use();
-         
         program.setUniform(uniModel, model);
     }
     @Override
     public void setView(Matrix4f view){
         program.use();
-        
-         view.m03 = 0;
-        view.m13 = 175;
-        view.m23 = 0;
-       
-        //Matrix4f.rotate(rotation, 0, 1, 0);
-      
         program.setUniform(uniView, view);
     }
     
@@ -147,7 +132,7 @@ public class SkyboxShader implements ShaderEnabled{
         return program;
     }
     @Override
-    public void use(){//specifyVertexAttributes(program, true);
+    public void use(){
         program.use();
     }
     @Override
@@ -155,4 +140,5 @@ public class SkyboxShader implements ShaderEnabled{
         program.use();
         program.checkStatus();
     }
+    
 }

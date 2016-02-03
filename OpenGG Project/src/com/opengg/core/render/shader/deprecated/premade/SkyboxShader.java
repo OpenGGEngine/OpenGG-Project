@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package com.opengg.core.render.shader.premade;
+package com.opengg.core.render.shader.deprecated.premade;
 
 import com.opengg.core.Matrix4f;
 import com.opengg.core.Vector3f;
@@ -13,7 +13,7 @@ import com.opengg.core.render.shader.Shader;
 import com.opengg.core.render.shader.ShaderProgram;
 import com.opengg.core.render.window.ViewUtil;
 import com.opengg.core.render.window.Window;
-import static com.opengg.core.util.GlobalUtil.print;
+import com.opengg.core.util.Time;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -24,14 +24,21 @@ import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
  *
  * @author Javier
  */
-public class ObjectShader implements ShaderEnabled{
+public class SkyboxShader implements ShaderEnabled{
     ShaderProgram program;
     private Shader fragmentTex;
     private Shader vertexTex;
-    private int uniModel,rotm,lightpos,div,uniView,lightdistance,lightpower,shadow,skycolor,mode;
-    
+    private int uniModel;
+    private int rotm;
+    private int lightpos;
     private float ratio;
-    
+    private int div;
+    private int uniView;
+    private int lightdistance;
+    private int lightpower;
+    private float rotation;
+    private final float rotatespeed = 1f;
+            
     public void setup(Window win, URL vert, URL frag) throws UnsupportedEncodingException{
         vertexTex= new Shader(GL_VERTEX_SHADER, 
                 FileStringLoader.loadStringSequence(
@@ -56,44 +63,19 @@ public class ObjectShader implements ShaderEnabled{
 
         /* Set shader variables */
         program.use(); 
-        
         uniModel = program.getUniformLocation("model"); 
         program.setUniform(uniModel, new Matrix4f());
         
-        int uniTex = program.getUniformLocation("texImage"); 
-        program.setUniform(uniTex, 0);
+        int uniTex = program.getUniformLocation("skyTex"); 
+        program.setUniform(uniTex, 2);
         
-        int uniskycolor = program.getUniformLocation("skycolor"); 
-        program.setUniform(uniskycolor, new Vector3f(0.5f,0.5f,0.5f));
-        print(uniskycolor);
-        int uniShadow = program.getUniformLocation("shadeImage"); 
-        program.setUniform(uniShadow, 2);
-        
-        lightpos = program.getUniformLocation("lightpos"); 
-        program.setUniform(lightpos, new Vector3f(200,50,-10));
-        
-        div = program.getUniformLocation("divAmount"); 
-        program.setUniform(div, 1f);
+        int skyboxSize = program.getUniformLocation("skyboxSize");
+        program.setUniform(skyboxSize, 1f);
         
         ratio = win.getRatio();
-        
-        rotm = program.getUniformLocation("rot");    
-        program.setUniform(rotm, new Vector3f(0,0,0));  
-
+           
         uniView = program.getUniformLocation("view"); 
-        program.setUniform(uniView, new Matrix4f());
-        
-        shadow = program.getUniformLocation("shmvp"); 
-        //program.setUniform(shadow, new Matrix4f());
-        
-        lightdistance = program.getUniformLocation("lightdistance"); 
-        program.setUniform(lightdistance, 5f);
-        
-        lightpower = program.getUniformLocation("lightpower"); 
-        program.setUniform(lightpower, 200f);
-        
-        mode = program.getUniformLocation("mode"); 
-        program.setUniform(mode, (int) 0);
+        program.setUniform(uniView, new Matrix4f());       
         
         program.checkStatus();
         
@@ -123,17 +105,24 @@ public class ObjectShader implements ShaderEnabled{
     }
     @Override
     public void setLightPos(Vector3f pos){
-        program.use();
-        program.setUniform(lightpos, pos);
+        
     }
     @Override
     public void setModel(Matrix4f model){
         program.use();
+         
         program.setUniform(uniModel, model);
     }
     @Override
     public void setView(Matrix4f view){
         program.use();
+        
+         view.m03 = 0;
+        view.m13 = 175;
+        view.m23 = 0;
+       
+        //Matrix4f.rotate(rotation, 0, 1, 0);
+      
         program.setUniform(uniView, view);
     }
     
@@ -158,17 +147,12 @@ public class ObjectShader implements ShaderEnabled{
         return program;
     }
     @Override
-    public void use(){
+    public void use(){//specifyVertexAttributes(program, true);
         program.use();
     }
     @Override
     public void checkError(){
         program.use();
         program.checkStatus();
-    }
-    
-    public void setShadowLightMatrix(Matrix4f m){
-        program.use();
-        program.setUniform(shadow, m);
     }
 }

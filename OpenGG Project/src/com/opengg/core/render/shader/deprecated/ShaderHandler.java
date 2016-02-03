@@ -3,11 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.opengg.core.render.shader;
+package com.opengg.core.render.shader.deprecated;
 
 import com.opengg.core.Matrix4f;
 import com.opengg.core.Vector3f;
-import com.opengg.core.render.shader.premade.ShaderEnabled;
+import com.opengg.core.render.shader.deprecated.premade.ShaderEnabled;
 import com.opengg.core.world.Camera;
 import java.util.ArrayList;
 import java.util.List;
