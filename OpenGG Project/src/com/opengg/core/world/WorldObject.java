@@ -10,10 +10,11 @@ import com.opengg.core.Matrix4f;
 import com.opengg.core.Quaternion4f;
 import com.opengg.core.Vector3f;
 import com.opengg.core.io.objloader.parser.OBJModel;
+import com.opengg.core.render.drawn.Drawable;
+import com.opengg.core.render.drawn.DrawnObject;
 import com.opengg.core.world.entities.*;
-import com.opengg.core.render.DrawnObject;
-import com.opengg.core.world.entities.resources.EntitySupportEnums.PhysicsType;
 import com.opengg.core.world.entities.EntityTypes;
+import com.opengg.core.world.entities.resources.EntitySupportEnums.PhysicsType;
 
 /**
  *
@@ -23,7 +24,7 @@ public class WorldObject {
     private Vector3f pos;
     private Quaternion4f rot;
     private Entity e;
-    private DrawnObject d;
+    private Drawable d;
     private World thisWorld;
     public WorldObject(Vector3f pos, Quaternion4f rot, OBJModel model, World thisWorld){
         this.pos = pos;
@@ -45,6 +46,7 @@ public class WorldObject {
         this.pos = pos;
         this.rot = rot;
         this.thisWorld = e.current.currentWorld;
+
         this.e = new EntityBuilder(e).entityType(EntityTypes.DEFAULT).build();
         this.e.setXYZ(pos);
         this.e.setRotation(rot);
@@ -52,6 +54,7 @@ public class WorldObject {
     public WorldObject(Entity e){
         pos = new Vector3f(0,0,0);
         rot = new Quaternion4f(e.current.rot);
+
         this.thisWorld = e.current.currentWorld;
         this.e = new EntityBuilder(e).entityType(EntityTypes.DEFAULT).build();
         this.e.setXYZ(pos);
@@ -76,7 +79,7 @@ public class WorldObject {
     
     public void setPos(Vector3f p){
         e.setXYZ(p);
-        d.setModel(Matrix4f.translate(p.x, p.y, p.z));
+        d.setMatrix(Matrix4f.translate(p.x, p.y, p.z));
     }
     
     /**
@@ -106,7 +109,7 @@ public class WorldObject {
      * Returns the DrawnObject associated with this WorldObject
      * @return DrawnObject associated with this
      */
-    public DrawnObject getDrawnObject(){
+    public Drawable getDrawnObject(){
         return d;
     }
     
