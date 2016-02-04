@@ -24,7 +24,7 @@ import org.lwjgl.BufferUtils;
 public class ObjectBuffers {
     public static FloatBuffer genBuffer(OBJModel m, float transparency, float scale, Vector3f poffset){
         
-        List<OBJFace> f = m.getObjects().get(0).getMeshes().get(0).getFaces();
+        List<OBJFace> f = new ArrayList<>();
       
         print("The material file is "+ m.getMaterialLibraries());
         m.getObjects().stream().forEach((obj) -> {
@@ -95,7 +95,7 @@ public class ObjectBuffers {
             elements.put(x1).put(y1).put(z1).put(colorr).put(colorg).put(colorb).put(transparency).put(xn).put(yn).put(zn).put(u).put(v);
             float colorg2 = random.nextFloat() % 10;
             float colorr2 = random.nextFloat() % 10;
-            float colorb2 = random.nextFloat() % 10; 
+            float colorb2 = random.nextFloat() % 10;  
             elements.put(x2).put(y2).put(z2).put(colorr2).put(colorg2).put(colorb2).put(transparency).put(xn2).put(yn2).put(zn2).put(u2).put(v2);
             float colorg3 = random.nextFloat() % 10;
             float colorr3 = random.nextFloat() % 10;
