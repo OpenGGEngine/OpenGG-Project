@@ -5,10 +5,9 @@
  */
 package com.opengg.core.world.entities.resources;
 
-import com.opengg.core.Matrix4f;
+import com.opengg.core.Matrix3f;
 import com.opengg.core.Quaternion4f;
 import com.opengg.core.Vector3f;
-import static com.opengg.core.util.GlobalUtil.print;
 import com.opengg.core.world.World;
 import java.io.Serializable;
 
@@ -28,7 +27,7 @@ public class PhysicsState implements Serializable {
 
     public Vector3f velocity = new Vector3f();
     public Vector3f angularVelocity = new Vector3f();
-    public Matrix4f inertiaTensor = new Matrix4f();
+    public Matrix3f inertiaTensor = new Matrix3f();
     public Quaternion4f spin = new Quaternion4f();
 
     public Vector3f airResistance = new Vector3f();
@@ -93,12 +92,15 @@ public class PhysicsState implements Serializable {
     }
 
     public static void forces(final PhysicsState state, float t, Vector3f force, Vector3f torque) {
-        if (state.updateForce == EntitySupportEnums.UpdateForce.Unrealistic) {
-            print ("FORCE SLEEEPENS");
-            return;
-        }
-        force.closertoZero(state.airResistance.multiply(0.5f)).add(state.currentWorld.wind).subtract(state.currentWorld.gravityVector);
-        torque.closertoZero(state.airResistance.multiply(0.2f));
+//        if (state.updateForce == EntitySupportEnums.UpdateForce.Unrealistic) {
+//            print ("FORCE SLEEEPENS");
+//            return;
+//        }
+//        force.closertoZero(state.airResistance.multiply(0.5f)).add(state.currentWorld.wind).subtract(state.currentWorld.gravityVector);
+//        torque.closertoZero(state.airResistance.multiply(0.2f));
+//        torque.subtract(state.angularVelocity.multiply(0.2f));
+        force.add((float) Math.sin(t));
+        torque.add((float) Math.sin(t));
         torque.subtract(state.angularVelocity.multiply(0.2f));
     }
 

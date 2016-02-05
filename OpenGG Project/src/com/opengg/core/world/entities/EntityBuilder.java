@@ -27,7 +27,7 @@ public class EntityBuilder {
     /**
      * List of currently loaded entities
      */
-    public static final List<Entity> EntityList = new ArrayList<>();
+    protected static final List<Entity> EntityList = new ArrayList<>();
     public static final List<Entity> AddStack = new ArrayList<>();
     /**
      * Amount of Entities

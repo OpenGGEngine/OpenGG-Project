@@ -5,11 +5,7 @@
  */
 package com.opengg.core;
 
-import static com.opengg.core.util.GlobalUtil.print;
-import java.lang.reflect.Field;
 import java.nio.FloatBuffer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.lwjgl.BufferUtils;
 
 /**
@@ -220,57 +216,6 @@ public class Matrix4f {
         result.m23 = this.m20 * other.m03 + this.m21 * other.m13 + this.m22 * other.m23 + this.m23 * other.m33;
         result.m33 = this.m30 * other.m03 + this.m31 * other.m13 + this.m32 * other.m23 + this.m33 * other.m33;
 
-        return result;
-    }
-
-    public Vector3f multiply(Vector3f v) {
-        Vector3f result = new Vector3f();
-        result.x = m00*v.x + m01* v.y + m02 * v.z;
-        result.y = m10*v.x + m11* v.y + m12 * v.z;
-        result.z = m20*v.x + m21* v.y + m22 * v.z;
-        return result;
-    }
-    
-    public Matrix4f scale(float scalar) {
-        Matrix4f result = new Matrix4f();
-        result.m00 = m00*scalar;
-        result.m01 = m01*scalar;
-        result.m02 = m02*scalar;
-        result.m03 = m03*scalar;
-        result.m10 = m10*scalar;
-        result.m11 = m11*scalar;
-        result.m12 = m12*scalar;
-        result.m13 = m13*scalar;
-        result.m20 = m20*scalar;
-        result.m21 = m21*scalar;
-        result.m22 = m22*scalar;
-        result.m23 = m23*scalar;
-        result.m30 = m30*scalar;
-        result.m31 = m31*scalar;
-        result.m32 = m32*scalar;
-        result.m33 = m33*scalar;
-        return result;
-    }
-    
-    public float determinant() {
-        return (m11*m22 - m12*m21) + -1*(m10*m22 - m20*m12) + (m10*m21 - m11*m20);
-    }
-    
-    public Matrix4f inverse() {
-        Matrix4f result = new Matrix4f();
-        float det = determinant();
-        if (det == 0)
-            throw new ArithmeticException("Determinant of matrix cannot be zero");
-        result.m00 = m11*m22 - m12*m21;
-        result.m01 = m21*m02 - m01*m22;
-        result.m02 = m01*m12 - m02*m11;
-        result.m10 = m12*m20 - m10*m22;
-        result.m11 = m00*m22 - m02*m20;
-        result.m12 = m02*m10 - m00*m12;
-        result.m20 = m10*m21 - m11*m20;
-        result.m21 = m01*m20 - m00*m21;
-        result.m22 = m00*m11 - m01*m10;
-        result = result.scale(1f/det);
         return result;
     }
     

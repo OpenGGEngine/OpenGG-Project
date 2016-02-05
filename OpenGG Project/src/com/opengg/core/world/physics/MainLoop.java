@@ -5,7 +5,6 @@
  */
 package com.opengg.core.world.physics;
 
-import com.opengg.core.Vector3f;
 import static com.opengg.core.util.GlobalUtil.print;
 import com.opengg.core.world.entities.Entity;
 import com.opengg.core.world.entities.EntityBuilder;

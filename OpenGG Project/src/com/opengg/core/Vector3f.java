@@ -123,7 +123,7 @@ public class Vector3f implements Serializable{
         return multiply(1f / scalar);
     }
     
-    public Vector3f divide(Matrix4f m) {
+    public Vector3f divide(Matrix3f m) {
         return m.inverse().multiply(this);
     }
 
