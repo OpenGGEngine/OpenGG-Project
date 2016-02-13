@@ -7,6 +7,7 @@ package com.opengg.core.render.drawn;
 
 import com.opengg.core.Matrix4f;
 import com.opengg.core.render.VertexBufferObject;
+import com.opengg.core.render.texture.Texture;
 import com.opengg.core.util.GlobalInfo;
 import com.opengg.core.util.GlobalInfo;
 import static com.opengg.core.util.GlobalUtil.print;
@@ -33,6 +34,8 @@ public class DrawnObject implements Drawable {
     long offset;
     FloatBuffer b;
     IntBuffer ind;
+    
+    
     int limit;
     int vertLimit;
     long vertOffset;
@@ -47,7 +50,9 @@ public class DrawnObject implements Drawable {
     }
     private IntBuffer lineInd;
     
+   
     public DrawnObject(FloatBuffer b, int vertSize){
+       
         limit = b.limit();
         offset = DrawnObjectHandler.getOffset();
         vertLimit = limit/vertSize;
@@ -77,6 +82,7 @@ public class DrawnObject implements Drawable {
     }
     
     public DrawnObject(List<FloatBuffer> buffers, VertexBufferObject vbo2, int vertSize){
+      
         for(FloatBuffer b: buffers){
         
         limit = b.limit();
@@ -109,7 +115,8 @@ public class DrawnObject implements Drawable {
     }
     
     public DrawnObject(FloatBuffer b, VertexBufferObject vbo2, IntBuffer index){
-        ind = BufferUtils.createIntBuffer(vertLimit);
+        
+        ind = BufferUtils.createIntBuffer(index.capacity());
         limit = b.limit();
         offset = DrawnObjectHandler.getOffset();
         vertLimit = limit/12;
@@ -126,6 +133,7 @@ public class DrawnObject implements Drawable {
         DrawnObjectHandler.addToOffset(limit);
     }
     
+    @Override
     public void drawShaded(){
         
         GlobalInfo.main.setModel(model);
@@ -134,6 +142,7 @@ public class DrawnObject implements Drawable {
         glDrawElements(GL_TRIANGLES, ind.limit(), GL_UNSIGNED_INT, 0);       
     }
     
+    @Override
     public void saveShadowMVP(){
         GlobalInfo.main.setModel(model);
         shadeModel = (GlobalInfo.main.getMVP());

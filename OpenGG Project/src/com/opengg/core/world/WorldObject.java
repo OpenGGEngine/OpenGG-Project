@@ -9,12 +9,18 @@ package com.opengg.core.world;
 import com.opengg.core.Matrix4f;
 import com.opengg.core.Quaternion4f;
 import com.opengg.core.Vector3f;
+import com.opengg.core.components.Component;
+import com.opengg.core.components.ModelRenderComponent;
 import com.opengg.core.io.objloader.parser.OBJModel;
 import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.render.drawn.DrawnObject;
+import com.opengg.core.render.drawn.DrawnObjectGroup;
+import com.opengg.core.render.texture.Texture;
 import com.opengg.core.world.entities.*;
 import com.opengg.core.world.entities.EntityTypes;
 import com.opengg.core.world.entities.resources.EntitySupportEnums.PhysicsType;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -26,6 +32,7 @@ public class WorldObject {
     private Entity e;
     private Drawable d;
     private World thisWorld;
+    private List<Component> components = new ArrayList();
     public WorldObject(Vector3f pos, Quaternion4f rot, OBJModel model, World thisWorld){
         this.pos = pos;
         this.rot = rot;
@@ -67,8 +74,26 @@ public class WorldObject {
         e = new EntityBuilder().physicsType(PhysicsType.Static).position(pos).world(thisWorld).build();
         e.setXYZ(pos);
         e.setRotation(rot);
+        ModelRenderComponent a = new ModelRenderComponent(d);
+        a.setTexture(Texture.blank);
+        
         this.thisWorld.addObject(this);
-        this.d = d;
+       
+    }
+    public void attach(Component c){
+        components.add(c);
+    }
+    public WorldObject(DrawnObjectGroup d){
+        pos = new Vector3f(0,0,0);
+        rot = new Quaternion4f();
+        thisWorld = WorldManager.getDefaultWorld();
+        e = new EntityBuilder().physicsType(PhysicsType.Static).position(pos).world(thisWorld).build();
+        e.setXYZ(pos);
+        e.setRotation(rot);
+        this.thisWorld.addObject(this);
+        ModelRenderComponent m = new ModelRenderComponent(d);
+        m.isDrawnObjectGroup = true;
+        components.add(m);
     }
     
     /**
@@ -79,7 +104,7 @@ public class WorldObject {
     
     public void setPos(Vector3f p){
         e.setXYZ(p);
-        d.setMatrix(Matrix4f.translate(p.x, p.y, p.z));
+        //.setMatrix(Matrix4f.translate(p.x, p.y, p.z));
     }
     
     /**
@@ -112,7 +137,11 @@ public class WorldObject {
     public Drawable getDrawnObject(){
         return d;
     }
-    
+    public void render(){
+        components.stream().forEach((c) -> {
+            c.render();
+        });
+    }
     /**
      * Gets Entity linked to this object
      * 

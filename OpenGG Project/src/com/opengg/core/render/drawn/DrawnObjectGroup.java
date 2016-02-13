@@ -46,7 +46,7 @@ public class DrawnObjectGroup implements Drawable{
         try {
             OBJModel m = new OBJParser().parse(u);
             
-            final InputStream in = new FileInputStream("C:/res/ghost/"+m.getMaterialLibraries().get(0));
+            final InputStream in = new FileInputStream("C:/res/"+m.getMaterialLibraries().get(0));
             final IMTLParser parser = new MTLParser();
             print(m.getMaterialLibraries().get(0));
             final MTLLibrary library = parser.parse(in);
@@ -55,8 +55,8 @@ public class DrawnObjectGroup implements Drawable{
            print(msh.size());
             for(OBJMesh ms : msh){
                 Texture nointernet = new Texture();
-            System.out.println("C:/res/ghost/"+library.getMaterial(ms.getMaterialName()).getDiffuseTexture());
-                nointernet.loadTexture("C:/res/ghost/"+library.getMaterial(ms.getMaterialName()).getDiffuseTexture(), true);
+            System.out.println("C:/res/"+library.getMaterial(ms.getMaterialName()).getDiffuseTexture());
+                nointernet.loadTexture("C:/res/"+library.getMaterial(ms.getMaterialName()).getDiffuseTexture(), true);
                 
                 if(library.getMaterial((ms.getMaterialName())).getDiffuseTexture().substring((library.getMaterial(ms.getMaterialName()).getDiffuseTexture().length() - 4)).equals(".png")){
                     temptex.add(nointernet);
@@ -75,6 +75,7 @@ public class DrawnObjectGroup implements Drawable{
         }
         objs.addAll(tempobjs);
         textures.addAll(temptex);
+        temptex.clear();
         materials.addAll(tempmat);
         
         
