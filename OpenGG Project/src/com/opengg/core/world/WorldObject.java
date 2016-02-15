@@ -120,4 +120,8 @@ public class WorldObject {
     public Entity getEntity(){
         return e;
     }
+    
+    public void attach(){
+        
+    }
 }
