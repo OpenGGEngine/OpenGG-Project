@@ -9,6 +9,7 @@ import com.opengg.core.Vector3f;
 import com.opengg.core.io.ImageProcessor;
 import com.opengg.core.render.buffer.ObjectBuffers;
 import com.opengg.core.render.texture.Texture;
+import static com.opengg.core.util.GlobalUtil.print;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -48,6 +49,7 @@ public class Terrain {
         ImageProcessor s = new ImageProcessor();
         image = ImageIO.read(heightmap);       
         int VERTEX_COUNT = image.getHeight();
+        print(VERTEX_COUNT);
         indices = IntBuffer.allocate(6*((VERTEX_COUNT)*(VERTEX_COUNT)));
         //indices = BufferUtils.createIntBuffer(6*((VERTEX_COUNT)*(VERTEX_COUNT))*2);
        
@@ -69,8 +71,9 @@ public class Terrain {
 
              
                 
-                float u = (i)/(VERTEX_COUNT);
-                float v = (j)/(VERTEX_COUNT);
+                float u = (i)/(float)(VERTEX_COUNT-1);
+                float v = (j)/(float)(VERTEX_COUNT-1);
+               
                 ud.put(x1).put(y).put(z1).put(0).put(0).put(0).put(0).put(normal.x).put(normal.y).put(normal.z).put(u).put(v);  
             }
                 
@@ -108,11 +111,11 @@ public class Terrain {
         //indices = BufferUtils.createIntBuffer(6*((VERTEX_COUNT)*(VERTEX_COUNT))*2);
        
         
-        size = 1700;
-        FloatBuffer ud = BufferUtils.createFloatBuffer((156*156)*12);
+        size = 1000;
+        FloatBuffer ud = BufferUtils.createFloatBuffer((VERTEX_COUNT*VERTEX_COUNT)*12);
                
-        for (int i = 0; i < 156; i+=1) {
-            for (int j = 0; j < 156; j+=1) {
+        for (int i = 0; i < VERTEX_COUNT; i+=1) {
+            for (int j = 0; j < VERTEX_COUNT; j+=1) {
                 
                 float x1 = (j/(float)(VERTEX_COUNT-1))*size;
                 float y = getHeight(i, j, generator) ; 
@@ -125,8 +128,10 @@ public class Terrain {
 
              
                 
-                float u = (j)/(VERTEX_COUNT-1);
-                float v = (i)/(VERTEX_COUNT-1);
+                float u = (j)/(float)(VERTEX_COUNT-1);
+                
+                float v = (i)/(float)(VERTEX_COUNT-1);
+                
                 ud.put(x1).put(y).put(z1).put(0).put(0).put(0).put(0).put(normal.x).put(normal.y).put(normal.z).put(u).put(v);  
             }
                 
@@ -199,9 +204,8 @@ public class Terrain {
         //return new Vector3f(0,0.1f,0);
     }
     public void removeBuffer(){
-        for(FloatBuffer b:buffers){
-            b = null;
-        }
+      elementals.clear();
+      indices.clear();
     }
     
 }
