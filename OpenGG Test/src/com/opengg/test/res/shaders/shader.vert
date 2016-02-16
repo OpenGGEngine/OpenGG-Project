@@ -31,18 +31,20 @@ const float gradient = 2.32;
 void main() {   
     vertexColor = color;
     textureCoord = texcoord;
-	
-    mat4 mvp = projection * view * model;
+    pos = vec4(position, 1.0);
+    vec4 worldPosition = model * pos;
+    vec4 positionRelativeToCam = view * worldPosition;
+    //mat4 mvp = projection * view * model;
 	
     //vec3 position2 = vec3(1,1,1);
     
-    gl_Position = mvp * vec4(position, 1.0);
-    pos = vec4(position, 1.0);
+    gl_Position = projection * positionRelativeToCam;
     
-    vec4 worldPosition = model * vec4(position,1.0);
-    vec4 positionRelativeToCam = view * worldPosition;
+    
    
-    shadowpos = (shmvp * vec4(position, 1));
+    
+   
+    shadowpos = (shmvp * pos);
     
     shadowpos = vec4(shadowpos.xyz/shadowpos.w, 1);
 
@@ -58,7 +60,7 @@ void main() {
     
     lightposition = lightpos;
 
-    vec3 posCameraspace = ( view * model * vec4(position, 1.0)).xyz;
+    vec3 posCameraspace = ( positionRelativeToCam).xyz;
     eyedir = vec3(0,0,0) - posCameraspace;
 
     vec3 lightposCamera = ( view * vec4(lightpos,1)).xyz;
