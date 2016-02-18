@@ -11,6 +11,6 @@ import java.util.ArrayList;
  *
  * @author ethachu19
  */
-public class AdvancedArrayList extends ArrayList{
+public class AdvancedArrayList<X> extends ArrayList<X>{
     
 }
