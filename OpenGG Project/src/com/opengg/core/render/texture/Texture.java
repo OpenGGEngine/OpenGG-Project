@@ -32,6 +32,7 @@ public class Texture {
     private int fb;
     private int texture;
     private int depthbuffer;
+    public static Texture blank;
     int width;
     int height;
     int rendsize;

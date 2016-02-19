@@ -75,7 +75,7 @@ public class WorldObject {
         e.setXYZ(pos);
         e.setRotation(rot);
         ModelRenderComponent a = new ModelRenderComponent(d);
-        a.setTexture(Texture.blank);
+        
         
         this.thisWorld.addObject(this);
        
@@ -92,7 +92,6 @@ public class WorldObject {
         e.setRotation(rot);
         this.thisWorld.addObject(this);
         ModelRenderComponent m = new ModelRenderComponent(d);
-        m.isDrawnObjectGroup = true;
         components.add(m);
     }
     
