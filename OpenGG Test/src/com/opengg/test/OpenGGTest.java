@@ -151,7 +151,7 @@ public class OpenGGTest implements KeyboardListener {
             ex.printStackTrace();
         }
         
-        InputStream heightmap = OpenGGTest.class.getResource("res/usa.jpg").openStream();
+        InputStream heightmap = OpenGGTest.class.getResource("res/heightmap.png").openStream();
         
         URL verts = OpenGGTest.class.getResource("res/shaders/shader.vert");
         URL frags = OpenGGTest.class.getResource("res/shaders/shader.frag");
@@ -171,21 +171,29 @@ public class OpenGGTest implements KeyboardListener {
         
         w.floorLev = -10;
         DrawnObject d = new DrawnObject(ObjectBuffers.genBuffer(m, 1f, 0.2f, new Vector3f()), 12);
+        d.setTexture(t3);
         awp3 = new WorldObject();
         flashbang = new WorldObject();
         drawnobjectgroup = new WorldObject();
         ModelRenderComponent a,b,e;
         a = new ModelRenderComponent(d);
-        a.setTexture(t3);
+        d.destroy();
+        
         awp3.attach(a);
         w.addObject(awp3);
-        b = new ModelRenderComponent(new DrawnObject(ObjectBuffers.genBuffer(m2, 1f, 1f, new Vector3f()), 12));
-        b.setTexture(t3);
+        DrawnObject s = new DrawnObject(ObjectBuffers.genBuffer(m2, 1f, 1f, new Vector3f()), 1);
+        s.setTexture(t3);
+        b = new ModelRenderComponent(s);
+       
         flashbang.attach(b);
+       
         w.addObject(flashbang);
         e = new ModelRenderComponent(new DrawnObjectGroup(OpenGGTest.class.getResource("res/models/moon.obj"), 0.1f));
         drawnobjectgroup.attach(e);
         w.addObject(drawnobjectgroup);
+        drawnobjectgroup.setRot(new Vector3f(0,100,100));
+        drawnobjectgroup.setPos(new Vector3f(0,1600,1));
+      
         testsky = new DrawnObject(ObjectBuffers.genSkyCube(), 12);
        // w.setSkybox(sky = new WorldObject(testsky));
         awp3.setPos(new Vector3f(0, 30, 0));
@@ -196,7 +204,7 @@ public class OpenGGTest implements KeyboardListener {
         Terrain base = new Terrain(0, 0, t1);
         base.generateTerrain(heightmap);
         base2 = new DrawnObject(base.elementals, vbo, base.indices);
-       
+        base2.setTexture(t3);
         
         base.removeBuffer();
         
@@ -221,6 +229,7 @@ public class OpenGGTest implements KeyboardListener {
     }
     
     public void render() {
+        
         rot = new Vector3f(-yrot, -xrot, 0);
         pos = MovementLoader.processMovement(pos, rot);
         
@@ -229,7 +238,7 @@ public class OpenGGTest implements KeyboardListener {
         
         s.setLightPos(new Vector3f(30, 40, 50));
         s.setView(c);
-        print(c.getPos().x);
+        
         
         s.setPerspective(90, ratio, 4, 300f);
         
@@ -242,7 +251,7 @@ public class OpenGGTest implements KeyboardListener {
         
         flashbang.render();
         
-        print(c.getDistanceFromCam(flashbang.getEntity().current.pos));
+       
         flashbang.render();
         base2.saveShadowMVP();
        
@@ -310,6 +319,7 @@ public class OpenGGTest implements KeyboardListener {
         }
         if (key == GLFW_KEY_R) {
             rot2 += 0.3;
+           
             
         }
         if (key == GLFW_KEY_F) {
