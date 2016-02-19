@@ -6,6 +6,7 @@
 package com.opengg.core.render.drawn;
 
 import com.opengg.core.Matrix4f;
+import com.opengg.core.io.objloader.parser.MTLMaterial;
 import com.opengg.core.render.VertexBufferObject;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.util.GlobalInfo;
@@ -34,7 +35,13 @@ public class DrawnObject implements Drawable {
     long offset;
     FloatBuffer b;
     IntBuffer ind;
-    
+    Texture normalmap;
+    Texture specularmap;
+    MTLMaterial m = new MTLMaterial();
+    Texture tex = Texture.blank;
+    boolean hasNormalMap = false;
+    boolean hasSpecularMap = false;
+   
     
     int limit;
     int vertLimit;
@@ -49,8 +56,22 @@ public class DrawnObject implements Drawable {
         DrawnObjectHandler.setup();
     }
     private IntBuffer lineInd;
-    
-   
+    public void setMaterial(MTLMaterial m){
+        this.m = m;
+    }
+    public void setTexture(Texture d){
+        this.tex = d;
+    }
+    public void setNormalMap(Texture d){
+        this.normalmap = d;
+        this.hasNormalMap = true;
+        
+    }
+    public void setSpecularMap(Texture d){
+        this.normalmap = d;
+        this.hasNormalMap = true;
+        
+    }
     public DrawnObject(FloatBuffer b, int vertSize){
        
         limit = b.limit();
@@ -135,7 +156,7 @@ public class DrawnObject implements Drawable {
     
     @Override
     public void drawShaded(){
-        
+        tex.useTexture(0);
         GlobalInfo.main.setModel(model);
         GlobalInfo.main.setShadowLightMatrix(shadeModel);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, ind, GL_STATIC_DRAW);
@@ -152,6 +173,7 @@ public class DrawnObject implements Drawable {
         shadeModel = m;
     }
     
+    @Override
     public void setMatrix(Matrix4f model){
         this.model = model;
     }
