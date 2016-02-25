@@ -12,7 +12,7 @@ import com.opengg.core.io.FileStringLoader;
 import com.opengg.core.render.shader.Shader;
 import com.opengg.core.render.shader.ShaderProgram;
 import com.opengg.core.render.window.ViewUtil;
-import com.opengg.core.render.window.Window;
+import com.opengg.core.render.window.GLFWWindow;
 import static com.opengg.core.util.GlobalUtil.print;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
@@ -32,7 +32,7 @@ public class ObjectShader implements ShaderEnabled{
     
     private float ratio;
     
-    public void setup(Window win, URL vert, URL frag) throws UnsupportedEncodingException{
+    public void setup(GLFWWindow win, URL vert, URL frag) throws UnsupportedEncodingException{
         vertexTex= new Shader(GL_VERTEX_SHADER, 
                 FileStringLoader.loadStringSequence(
                         URLDecoder.decode(

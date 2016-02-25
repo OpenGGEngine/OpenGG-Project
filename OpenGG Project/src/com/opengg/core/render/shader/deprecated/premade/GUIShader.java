@@ -11,7 +11,7 @@ import com.opengg.core.io.FileStringLoader;
 import com.opengg.core.render.shader.Shader;
 import com.opengg.core.render.shader.ShaderProgram;
 import com.opengg.core.render.window.ViewUtil;
-import com.opengg.core.render.window.Window;
+import com.opengg.core.render.window.GLFWWindow;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -34,7 +34,7 @@ public class GUIShader implements ShaderEnabled{
     private int uniView;
     private int lightdistance;
     private int lightpower;
-    public void setup(Window win, URL vert, URL frag) throws UnsupportedEncodingException{
+    public void setup(GLFWWindow win, URL vert, URL frag) throws UnsupportedEncodingException{
         vertexTex= new Shader(GL_VERTEX_SHADER, 
                 FileStringLoader.loadStringSequence(
                         URLDecoder.decode(

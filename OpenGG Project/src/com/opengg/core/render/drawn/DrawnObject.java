@@ -137,12 +137,11 @@ public class DrawnObject implements Drawable {
     
     public DrawnObject(FloatBuffer b, VertexBufferObject vbo2, IntBuffer index){
         
-        ind = BufferUtils.createIntBuffer(index.capacity());
         limit = b.limit();
         offset = DrawnObjectHandler.getOffset();
         vertLimit = limit/12;
         vertOffset = offset/12;
-        
+        ind = BufferUtils.createIntBuffer(index.capacity());
         for(int i = 0; i < index.limit(); i++){
             ind.put((int) (index.get(i)+vertOffset));
         }

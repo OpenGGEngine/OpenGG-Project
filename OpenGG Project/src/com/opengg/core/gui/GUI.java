@@ -9,8 +9,6 @@ package com.opengg.core.gui;
 import com.opengg.core.Vector2f;
 import com.opengg.core.Vector3f;
 import com.opengg.core.render.shader.Mode;
-import com.opengg.core.render.shader.ShaderHandler;
-import com.opengg.core.render.shader.ShaderProgram;
 import com.opengg.core.util.GlobalInfo;
 import com.opengg.core.world.Camera;
 

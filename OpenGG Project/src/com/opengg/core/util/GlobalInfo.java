@@ -8,14 +8,14 @@ package com.opengg.core.util;
 
 import com.opengg.core.render.VertexBufferObject;
 import com.opengg.core.render.shader.ShaderController;
+import com.opengg.core.render.window.Window;
 
 /**
  *
  * @author Javier
  */
 public class GlobalInfo {
-    public static int winWidth, winHeight;
-    public static long window;
+    public static Window window;
     public static VertexBufferObject b;
     public static ShaderController main;
 }

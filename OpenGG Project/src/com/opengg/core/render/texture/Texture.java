@@ -104,7 +104,7 @@ public class Texture {
     public void endTexRender(){
         glFinish();
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        glViewport(0,0,GlobalInfo.winHeight,GlobalInfo.winWidth);
+        glViewport(0,0,GlobalInfo.window.getWidth(),GlobalInfo.window.getHeight());
     }
     
     public int loadFromBuffer(ByteBuffer b, int fwidth, int fheight){
