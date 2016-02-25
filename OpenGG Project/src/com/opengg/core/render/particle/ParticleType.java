@@ -3,26 +3,28 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.opengg.core.components;
+package com.opengg.core.render.particle;
 
 import com.opengg.core.Vector3f;
+import com.opengg.core.components.Component;
 import java.util.ArrayList;
 import java.util.List;
-import particle.Particle;
+import com.opengg.core.render.particle.Particle;
+import java.util.LinkedList;
 
 /**
  *
  * @author Warren
  */
-public class ParticleSystemComponent implements Component{
-    List<Particle> particles = new ArrayList<>();
+public class ParticleType implements Component{
+    List<Particle> particles = new LinkedList<>();
     private Vector3f offset = new Vector3f();
     private float pps;
     private float speed;
     private float gravityComplient;
     private float lifeLength;
     
-    public ParticleSystemComponent(float pps, float speed, float gravityComplient, float lifeLength) {
+    public ParticleType(float pps, float speed, float gravityComplient, float lifeLength) {
         this.pps = pps;
         this.speed = speed;
         this.gravityComplient = gravityComplient;

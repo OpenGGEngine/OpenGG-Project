@@ -39,8 +39,9 @@ public class ModelRenderComponent implements Component{
 
     @Override
     public void render() {
+        Matrix4f m = Matrix4f.translate(this.offset.x, this.offset.y, this.offset.z);
         
-        
+        g.setMatrix(m);
         g.drawShaded();
         
         

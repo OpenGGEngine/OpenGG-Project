@@ -6,6 +6,7 @@
 
 package com.opengg.core.render.drawn;
 
+import com.opengg.core.AdvancedArrayList;
 import com.opengg.core.Matrix4f;
 import com.opengg.core.io.objloader.parser.IMTLParser;
 import com.opengg.core.io.objloader.parser.MTLLibrary;
