@@ -42,7 +42,7 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL32.GL_TEXTURE_CUBE_MAP_SEAMLESS;
 
-public class OpenGGTest implements KeyboardListener {
+public final class OpenGGTest implements KeyboardListener {
 
     static long window;
     GLFWWindow win;
@@ -59,7 +59,7 @@ public class OpenGGTest implements KeyboardListener {
     World w;
     
     public static void main(String[] args) throws IOException, Exception {
-        new OpenGGTest();
+        OpenGGTest openGGTest = new OpenGGTest();
     }
 
     private VertexArrayObject vao;
@@ -94,7 +94,6 @@ public class OpenGGTest implements KeyboardListener {
         try {
             win = new GLFWWindow(1280, 960, "Test", DisplayMode.WINDOWED);
         } catch (Exception ex) {
-            ex.printStackTrace();
         }
 
         setup();
@@ -141,7 +140,6 @@ public class OpenGGTest implements KeyboardListener {
             m2 = new OBJParser().parse(path2);
             
         } catch (IOException ex) {
-            ex.printStackTrace();
         }
 
         InputStream heightmap = OpenGGTest.class.getResource("res/heightmap.png").openStream();
@@ -183,10 +181,10 @@ public class OpenGGTest implements KeyboardListener {
         
         awp3.removeBuffer();
         flashbang.removeBuffer();
-        Terrain base = new Terrain(0, 0, t1);
-        base.generateTerrain(heightmap);
-        base2 = new DrawnObject(base.elementals, vbo,base.indices);
-        base.removeBuffer();
+        Terrain terrain = new Terrain(0, 0, t1);
+        terrain.generateTerrain(heightmap);
+        base2 = new DrawnObject(terrain.elementals, vbo,terrain.indices);
+        terrain.removeBuffer();
 
         ratio = win.getRatio();
         
@@ -269,8 +267,6 @@ public class OpenGGTest implements KeyboardListener {
         xrot += rot1 * 5;
         yrot += rot2 * 5;
         
-        awp3.setMatrix(Matrix4f.translate(w1.getEntity().current.pos));
-        flashbang.setMatrix(Matrix4f.translate(w2.getEntity().current.pos));
     }
 
     @Override
