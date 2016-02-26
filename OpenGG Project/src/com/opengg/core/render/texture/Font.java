@@ -1,7 +1,6 @@
 package com.opengg.core.render.texture;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;

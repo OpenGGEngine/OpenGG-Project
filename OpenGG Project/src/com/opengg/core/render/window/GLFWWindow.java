@@ -20,8 +20,7 @@ public class GLFWWindow implements Window {
     
     public static long window;
 
-    GLFWVidMode mode; 
-    ByteBuffer vidmode;
+    GLFWVidMode mode;
     GLFWErrorCallback errorCallback;
     GLFWKeyCallback   keyCallback;
 
@@ -133,19 +132,11 @@ public class GLFWWindow implements Window {
         errorCallback.release();
     }
     public boolean shouldClose(long wind){
-        if(glfwWindowShouldClose(wind) == GL_FALSE){
-            return false;
-        }else{
-            return true;
-        }
+        return glfwWindowShouldClose(wind) != GL_FALSE;
     }
     @Override
      public boolean shouldClose(){
-        if(glfwWindowShouldClose(GlobalInfo.window.getID()) == GL_FALSE){
-            return false;
-        }else{
-            return true;
-        }
+        return glfwWindowShouldClose(GlobalInfo.window.getID()) != GL_FALSE;
     }
      
     public void setColor(float r, float g, float b){
@@ -154,7 +145,7 @@ public class GLFWWindow implements Window {
     
     @Override
     public float getRatio(){
-        return(WIDTH/HEIGHT);
+        return((float)WIDTH/HEIGHT);
     }
     public void setSamples(int samples){
         glfwWindowHint(GLFW_SAMPLES, samples);
@@ -165,6 +156,7 @@ public class GLFWWindow implements Window {
         glfwSwapBuffers(GlobalInfo.window.getID());
     }
     
+    @Override
     public long getID(){
         return window;
     }

@@ -10,8 +10,6 @@ import com.opengg.core.io.objloader.parser.MTLMaterial;
 import com.opengg.core.render.VertexBufferObject;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.util.GlobalInfo;
-import com.opengg.core.util.GlobalInfo;
-import static com.opengg.core.util.GlobalUtil.print;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.List;

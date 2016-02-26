@@ -11,6 +11,7 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.logging.Logger;
@@ -86,7 +87,7 @@ public class Texture {
                 
             }
         }catch(Exception e){
-            e.printStackTrace();
+          
         } 
         glBindTexture(GL_TEXTURE_2D, 0);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);    
@@ -129,7 +130,7 @@ public class Texture {
         return texture;
     }
     
-    public int loadTexture(String path, boolean flipped){
+    public int loadTexture(String path, boolean flipped) throws IOException{
         glActiveTexture(GL_TEXTURE0);
         texture = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, texture);
@@ -142,8 +143,8 @@ public class Texture {
             
             //buffer = TexBufferGen.genTex(path);
             
-            InputStream in;
-        ByteBuffer buffer;
+        InputStream in;
+        ByteBuffer databuffer;
 
         in = new FileInputStream(path);
         BufferedImage image = ImageIO.read(in);
@@ -153,45 +154,45 @@ public class Texture {
         AffineTransformOp operation = new AffineTransformOp(transform, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
         image = operation.filter(image, null);
 
-        int width = image.getWidth();
-        int height = image.getHeight();
+        int w = image.getWidth();
+        int h = image.getHeight();
         
-        int[] pixels = new int[width * height];
-        image.getRGB(0, 0, width, height, pixels, 0, width);
-        buffer = BufferUtils.createByteBuffer(width * height * 4);
-        for (int y = 0; y < height; y++) {
-            for(int x = 0; x < width; x++){
+        int[] pixels = new int[w * h];
+        image.getRGB(0, 0, w, h, pixels, 0, w);
+        databuffer = BufferUtils.createByteBuffer(w * h * 4);
+        for (int y = 0; y < h; y++) {
+            for(int x = 0; x < w; x++){
             //for (int x = width-1; x > 0; x--) {
                 /* Pixel as RGBA: 0xAARRGGBB */
                 int pixel;
                 if(flipped){
-                    pixel = pixels[y * width + x];
+                    pixel = pixels[y * w + x];
                 }else{
-                    pixel = pixels[height- y * width + x];
+                    pixel = pixels[h- y * w + x];
                 }
                 /* Red component 0xAARRGGBB >> (4 * 4) = 0x0000AARR */
-                buffer.put((byte) ((pixel >> 16) & 0xFF));
+                databuffer.put((byte) ((pixel >> 16) & 0xFF));
 
                 /* Green component 0xAARRGGBB >> (2 * 4) = 0x00AARRGG */
-                buffer.put((byte) ((pixel >> 8) & 0xFF));
+                databuffer.put((byte) ((pixel >> 8) & 0xFF));
 
                 /* Blue component 0xAARRGGBB >> 0 = 0xAARRGGBB */
-                buffer.put((byte) (pixel & 0xFF));
+                databuffer.put((byte) (pixel & 0xFF));
 
                 /* Alpha component 0xAARRGGBB >> (6 * 4) = 0x000000AA */
-                buffer.put((byte) ((pixel >> 24) & 0xFF));
+                databuffer.put((byte) ((pixel >> 24) & 0xFF));
             }
         }
 
-        buffer.flip();
+        databuffer.flip();
             //buffer = TexBufferGen.genTex(path);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, databuffer);
             glBindTexture(GL_TEXTURE_2D, 0);
             
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Texture.class.getName()).severe("File not found!");
-        }  catch (Exception e){
-            e.printStackTrace();
+        }  catch (RuntimeException e){
+            throw e;
         }
         return texture;
     }

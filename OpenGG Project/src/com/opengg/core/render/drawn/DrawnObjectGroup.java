@@ -6,19 +6,16 @@
 
 package com.opengg.core.render.drawn;
 
-import com.opengg.core.AdvancedArrayList;
 import com.opengg.core.Matrix4f;
 import com.opengg.core.io.objloader.parser.IMTLParser;
 import com.opengg.core.io.objloader.parser.MTLLibrary;
 import com.opengg.core.io.objloader.parser.MTLMaterial;
 import com.opengg.core.io.objloader.parser.MTLParser;
-import com.opengg.core.io.objloader.parser.OBJMesh;
 import com.opengg.core.io.objloader.parser.OBJModel;
-import com.opengg.core.io.objloader.parser.OBJObject;
 import com.opengg.core.io.objloader.parser.OBJParser;
 import com.opengg.core.render.buffer.ObjectBuffers;
 import com.opengg.core.render.texture.Texture;
-import static com.opengg.core.util.GlobalUtil.print;
+import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,14 +32,13 @@ import java.util.logging.Logger;
 public class DrawnObjectGroup implements Drawable{
     List<DrawnObject> objs = new ArrayList<>();
   
-    //The list of materials are in order so the nth value in list objs
-    //corresponds to the nth value in list materials
+  
     public DrawnObjectGroup(URL u, float scale){  
         try {
             OBJModel m = new OBJParser().parse(u);
             
             final MTLLibrary library;
-            try (InputStream in = new FileInputStream("C:/res/"+m.getMaterialLibraries().get(0))) {
+            try (InputStream in = new BufferedInputStream(new FileInputStream("C:/res/"+m.getMaterialLibraries().get(0)))) {
                 final IMTLParser parser = new MTLParser();
                
                 library = parser.parse(in);
@@ -55,12 +51,20 @@ public class DrawnObjectGroup implements Drawable{
                     d.setMaterial(material);
                     if(material.getDiffuseTexture() != null){
                         Texture nointernet = new Texture();
-                        nointernet.loadTexture("C:/res/"+ material.getDiffuseTexture(), true);
+                        try {
+                            nointernet.loadTexture("C:/res/"+ material.getDiffuseTexture(), true);
+                        } catch (IOException ex) {
+                            Logger.getLogger(DrawnObjectGroup.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                         d.setTexture(nointernet);
                     }
                     if(material.getSpecularTexture() != null){
                         Texture nointernet = new Texture();
-                        nointernet.loadTexture("C:/res/"+ material.getSpecularTexture(), true);
+                        try {
+                            nointernet.loadTexture("C:/res/"+ material.getSpecularTexture(), true);
+                        } catch (IOException ex) {
+                            Logger.getLogger(DrawnObjectGroup.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                         d.setSpecularMap(nointernet);
                     }
                     return d;
@@ -69,7 +73,7 @@ public class DrawnObjectGroup implements Drawable{
                 });
             });
         } catch (IOException ex) {
-            Logger.getLogger(DrawnObjectGroup.class.getName()).log(Level.SEVERE, null, ex);
+             Logger.getLogger(DrawnObjectGroup.class.getName()).log(Level.SEVERE, null, ex);
         }
    
         
