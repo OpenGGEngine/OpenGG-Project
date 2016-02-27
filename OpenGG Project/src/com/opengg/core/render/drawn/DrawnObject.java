@@ -32,15 +32,7 @@ public class DrawnObject implements Drawable {
     VertexBufferObject vbo;
     long offset;
     FloatBuffer b;
-    IntBuffer ind;
-    Texture normalmap;
-    Texture specularmap;
-    MTLMaterial m = new MTLMaterial();
-    Texture tex = Texture.blank;
-    boolean hasNormalMap = false;
-    boolean hasSpecularMap = false;
-   
-    
+    IntBuffer ind;  
     int limit;
     int vertLimit;
     long vertOffset;
@@ -54,22 +46,9 @@ public class DrawnObject implements Drawable {
         DrawnObjectHandler.setup();
     }
     private IntBuffer lineInd;
-    public void setMaterial(MTLMaterial m){
-        this.m = m;
-    }
-    public void setTexture(Texture d){
-        this.tex = d;
-    }
-    public void setNormalMap(Texture d){
-        this.normalmap = d;
-        this.hasNormalMap = true;
-        
-    }
-    public void setSpecularMap(Texture d){
-        this.normalmap = d;
-        this.hasNormalMap = true;
-        
-    }
+   
+    
+    
     public DrawnObject(FloatBuffer b, int vertSize){
        
         limit = b.limit();
@@ -153,7 +132,7 @@ public class DrawnObject implements Drawable {
     
     @Override
     public void drawShaded(){
-        tex.useTexture(0);
+        
         GlobalInfo.main.setModel(model);
         GlobalInfo.main.setShadowLightMatrix(shadeModel);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, ind, GL_STATIC_DRAW);
@@ -185,7 +164,8 @@ public class DrawnObject implements Drawable {
     }
         
     @Override
-    public void draw(){    
+    public void draw(){  
+        
         GlobalInfo.main.setModel(model);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, ind, GL_STATIC_DRAW);
         glDrawElements(GL_TRIANGLES, ind.limit(), GL_UNSIGNED_INT, 0);       
