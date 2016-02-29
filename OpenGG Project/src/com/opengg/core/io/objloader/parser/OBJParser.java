@@ -47,7 +47,7 @@ public class OBJParser implements IOBJParser {
                 File f = new File(path);
                 
 		
-		return parse(new BufferedReader(new FileReader(f)));
+		return parse(new BufferedReader(new BufferedReader(new FileReader(f))));
 	}
 
 	@Override

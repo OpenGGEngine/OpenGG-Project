@@ -136,9 +136,7 @@ void main() {
     }else if(mode == 1){
         color = shadify();
     }else if(mode == 2){
-        vec4 tex = getTex();
-        ambient = vec3(amb,amb,amb) * tex.rgb;
-        color = vec4(ambient, tex.a);
+        color = getTex();
     }else{
         color = getCube();
     }

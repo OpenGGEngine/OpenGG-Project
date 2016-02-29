@@ -42,7 +42,7 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL32.GL_TEXTURE_CUBE_MAP_SEAMLESS;
 
-public final class OpenGGTest implements KeyboardListener {
+public class OpenGGTest implements KeyboardListener {
 
     static long window;
     GLFWWindow win;
@@ -59,7 +59,7 @@ public final class OpenGGTest implements KeyboardListener {
     World w;
     
     public static void main(String[] args) throws IOException, Exception {
-        OpenGGTest openGGTest = new OpenGGTest();
+        new OpenGGTest();
     }
 
     private VertexArrayObject vao;
@@ -94,10 +94,11 @@ public final class OpenGGTest implements KeyboardListener {
         try {
             win = new GLFWWindow(1280, 960, "Test", DisplayMode.WINDOWED);
         } catch (Exception ex) {
+            ex.printStackTrace();
         }
 
         setup();
-        while (!win.shouldClose(win.getID())) {
+        while (!win.shouldClose()) {
 
             startFrame();
 
@@ -140,15 +141,16 @@ public final class OpenGGTest implements KeyboardListener {
             m2 = new OBJParser().parse(path2);
             
         } catch (IOException ex) {
+            ex.printStackTrace();
         }
 
         InputStream heightmap = OpenGGTest.class.getResource("res/heightmap.png").openStream();
 
         URL verts = OpenGGTest.class.getResource("res/shaders/shader.vert");
         URL frags = OpenGGTest.class.getResource("res/shaders/shader.frag");
-
+        URL geoms = OpenGGTest.class.getResource("res/shaders/shader.geom");
         
-        s.setup(verts, frags);
+        s.setup(verts, frags, geoms);
         GlobalInfo.main = s;
         
         c = new Camera(pos, rot);
@@ -181,10 +183,10 @@ public final class OpenGGTest implements KeyboardListener {
         
         awp3.removeBuffer();
         flashbang.removeBuffer();
-        Terrain terrain = new Terrain(0, 0, t1);
-        terrain.generateTerrain(heightmap);
-        base2 = new DrawnObject(terrain.elementals, vbo,terrain.indices);
-        terrain.removeBuffer();
+        Terrain base = new Terrain(0, 0, t1);
+        base.generateTerrain(heightmap);
+        base2 = new DrawnObject(base.elementals, vbo,base.indices);
+        base.removeBuffer();
 
         ratio = win.getRatio();
         
@@ -200,6 +202,10 @@ public final class OpenGGTest implements KeyboardListener {
         enable(GL_TEXTURE_2D);
 
         enable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+        
+        enable(GL_LINE_SMOOTH);
+        
+        glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
     }
 
     public void exit() {
@@ -213,10 +219,11 @@ public final class OpenGGTest implements KeyboardListener {
         rot = new Vector3f(-yrot, -xrot, 0);
         pos = MovementLoader.processMovement(pos, rot);
 
+    
         c.setPos(new Vector3f(15, -40, -10));
         c.setRot(new Vector3f(60, 50, 0));
 
-        s.setLightPos(new Vector3f(30, 40, 50));
+        s.setLightPos(new Vector3f(30, 10, 50));
         s.setView(c);
 
         s.setPerspective(90, ratio, 4, 300f); 
@@ -243,13 +250,9 @@ public final class OpenGGTest implements KeyboardListener {
 
         s.setView(c);
         s.setPerspective(90, ratio, 0.3f, 2000f);
-        
-        s.setMode(Mode.SKYBOX);
-        
-        cb.use();
-        sky.draw();
-        
+
         s.setMode(Mode.OBJECT);
+        t3.useTexture(0);
         awp3.drawShaded();
 
         flashbang.drawShaded();
@@ -261,12 +264,18 @@ public final class OpenGGTest implements KeyboardListener {
 
         t1.useDepthTexture(0);
         test5.draw();
+        
+        s.setMode(Mode.SKYBOX);
+        cb.use();
+        sky.draw();
     }
 
     public void update(float delta) {
         xrot += rot1 * 5;
         yrot += rot2 * 5;
         
+        awp3.setMatrix(Matrix4f.translate(w1.getEntity().current.pos));
+        flashbang.setMatrix(Matrix4f.translate(w2.getEntity().current.pos));
     }
 
     @Override

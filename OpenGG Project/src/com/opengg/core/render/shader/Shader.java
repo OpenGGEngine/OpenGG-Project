@@ -14,7 +14,7 @@ import static org.lwjgl.opengl.GL20.*;
 /**
  * This class represents a shader.
  *
- * @author Heiko Brumme
+ * @author Ajew
  */
 public class Shader {
 
@@ -24,9 +24,7 @@ public class Shader {
     private final int id;
 
     /**
-     * Creates a shader with specified type and source and compiles it. The type
-     * in the tutorial should be either <code>GL_VERTEX_SHADER</code> or
-     * <code>GL_FRAGMENT_SHADER</code>.
+     * Creates a shader with specified type and source and compiles it. 
      *
      * @param type Type of the shader
      * @param source Source of the shader
@@ -45,6 +43,9 @@ public class Shader {
     private void checkStatus() {
         int status = glGetShaderi(id, GL_COMPILE_STATUS);
         if (status != GL_TRUE) {
+            int e = glGetShaderi(id, GL_INFO_LOG_LENGTH);
+            String s = glGetShaderInfoLog(id,e);
+            System.out.println(s);
             throw new RuntimeException(glGetShaderInfoLog(id));
         }
     }

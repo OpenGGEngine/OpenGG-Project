@@ -9,10 +9,8 @@ package com.opengg.core.render.texture;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
-import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.logging.Logger;
@@ -40,7 +38,7 @@ public class Cubemap {
         glActiveTexture(GL_TEXTURE0);
     }
     
-    public int loadTexture(String path) throws IOException{
+    public int loadTexture(String path){
  
         InputStream in;
         
@@ -57,7 +55,7 @@ public class Cubemap {
             for(int i = 0; i < buffer.length; i++){
                 
                 glActiveTexture(GL_TEXTURE2);
-                in = new BufferedInputStream(new FileInputStream(path + endings[i]));
+                in = new FileInputStream(path + endings[i]);
                 BufferedImage image = ImageIO.read(in);
 
                 AffineTransform transform = AffineTransform.getScaleInstance(1f, -1f);
@@ -116,8 +114,8 @@ public class Cubemap {
             
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Texture.class.getName()).severe("File not found!");
-        }  catch (RuntimeException e){
-           throw e;
+        }  catch (Exception e){
+            e.printStackTrace();
         }
         return texture;
     }

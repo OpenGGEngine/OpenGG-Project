@@ -11,15 +11,11 @@ import com.opengg.core.io.objloader.parser.IMTLParser;
 import com.opengg.core.io.objloader.parser.MTLLibrary;
 import com.opengg.core.io.objloader.parser.MTLMaterial;
 import com.opengg.core.io.objloader.parser.MTLParser;
-import com.opengg.core.io.objloader.parser.OBJMesh;
 import com.opengg.core.io.objloader.parser.OBJModel;
-import com.opengg.core.io.objloader.parser.OBJObject;
 import com.opengg.core.io.objloader.parser.OBJParser;
 import com.opengg.core.render.buffer.ObjectBuffers;
 import com.opengg.core.render.texture.Texture;
-import java.io.BufferedInputStream;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -30,60 +26,46 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author Javier mostly Warren
+ * @author Javier
  */
-public class DrawnObjectGroup implements Drawable {
-    List<TexturedDrawnObject> objs = new ArrayList<>();
-    
+public class DrawnObjectGroup implements Drawable{
+    List<MatDrawnObject> objs = new ArrayList<>();
   
+    //The list of materials are in order so the nth value in list objs
+    //corresponds to the nth value in list materials
     public DrawnObjectGroup(URL u, float scale){  
         try {
             OBJModel m = new OBJParser().parse(u);
-            boolean doeslibraryexist = true;
-            MTLLibrary library = new MTLLibrary();
-            try (InputStream in = new BufferedInputStream(new FileInputStream("C:/res/"+m.getMaterialLibraries().get(0)))) {
+            
+            final MTLLibrary library;
+            try (InputStream in = new FileInputStream("C:/res/"+m.getMaterialLibraries().get(0))) {
                 final IMTLParser parser = new MTLParser();
+               
                 library = parser.parse(in);
-            }catch(FileNotFoundException e){
-                doeslibraryexist = false;
-                System.out.println("Material File Not Found For " + "C:/res/" + m.getMaterialLibraries().get(0));
             }
             
-            for(OBJObject object: m.getObjects()){
-                for(OBJMesh ms: object.getMeshes()){
-                    MTLMaterial material;
-                    if(!doeslibraryexist){
-                        material = new MTLMaterial();
-                    }else{
-                        material = library.getMaterial(ms.getMaterialName());
-                    }
-                    TexturedDrawnObject d = new TexturedDrawnObject(ObjectBuffers.genBuffer(m,ms,1,scale),12);
+            m.getObjects().stream().forEach((o) -> {
+                o.getMeshes().stream().map((ms) -> {
+                    MTLMaterial material = library.getMaterial(ms.getMaterialName());
+                    MatDrawnObject d = new MatDrawnObject(ObjectBuffers.genBuffer(m,ms,1,scale),12);
                     d.setMaterial(material);
                     if(material.getDiffuseTexture() != null){
                         Texture nointernet = new Texture();
-                        try {
-                            nointernet.loadTexture("C:/res/"+ material.getDiffuseTexture(), true);
-                        } catch (IOException ex) {
-                            Logger.getLogger(DrawnObjectGroup.class.getName()).log(Level.SEVERE, null, ex);
-                        }
+                        nointernet.loadTexture("C:/res/"+ material.getDiffuseTexture(), true);
                         d.setTexture(nointernet);
                     }
                     if(material.getSpecularTexture() != null){
                         Texture nointernet = new Texture();
-                        try {
-                            nointernet.loadTexture("C:/res/"+ material.getSpecularTexture(), true);
-                        } catch (IOException ex) {
-                            Logger.getLogger(DrawnObjectGroup.class.getName()).log(Level.SEVERE, null, ex);
-                        }
+                        nointernet.loadTexture("C:/res/"+ material.getSpecularTexture(), true);
                         d.setSpecularMap(nointernet);
                     }
-                
+                    return d;
+                }).forEach((d) -> {
                     objs.add(d);
-               
-                }
-            }
+                });
+            });
         } catch (IOException ex) {
-             Logger.getLogger(DrawnObjectGroup.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DrawnObjectGroup.class.getName()).log(Level.SEVERE, null, ex);
         }
    
         

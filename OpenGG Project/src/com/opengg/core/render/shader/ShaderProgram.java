@@ -189,6 +189,9 @@ public class ShaderProgram {
     public void checkStatus() {
         int status = glGetProgrami(id, GL_LINK_STATUS);
         if (status != GL_TRUE) {
+            int e = glGetProgrami(id, GL_INFO_LOG_LENGTH);
+            String s = glGetProgramInfoLog(id,e);
+            System.out.println(s);
             throw new RuntimeException(glGetProgramInfoLog(id));
         }
     }

@@ -16,6 +16,7 @@ import java.net.URL;
 import java.net.URLDecoder;
 import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
 import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
+import static org.lwjgl.opengl.GL32.GL_GEOMETRY_SHADER;
 
 /**
  *
@@ -25,26 +26,31 @@ public class ShaderController {
     ShaderProgram program;
     private Shader fragmentTex;
     private Shader vertexTex;
+    private Shader geomTex;
     private int uniModel,rotm,lightpos,div,uniView,lightdistance,lightpower,shadow,skycolor,mode;
     float ratio;
     Matrix4f model= new Matrix4f(), view= new Matrix4f(), proj = new Matrix4f();
     
-    public void setup(URL vert, URL frag) throws UnsupportedEncodingException{
+    public void setup(URL vert, URL frag, URL geom) throws UnsupportedEncodingException{
         vertexTex= new Shader(GL_VERTEX_SHADER, 
                 FileStringLoader.loadStringSequence(
                         URLDecoder.decode(
                                 vert.getFile(), "UTF-8"))); 
+         
+        
+        geomTex = new Shader(GL_GEOMETRY_SHADER, 
+                FileStringLoader.loadStringSequence(
+                        URLDecoder.decode(
+                                geom.getFile(), "UTF-8"))); 
         fragmentTex = new Shader(GL_FRAGMENT_SHADER, 
                 FileStringLoader.loadStringSequence(
                         URLDecoder.decode(
-                                frag.getFile(), "UTF-8"))); 
-        
-        
+                                frag.getFile(), "UTF-8")));
         program = new ShaderProgram();
         
         program.attachShader(vertexTex);   
-        program.attachShader(fragmentTex);  
-        
+        program.attachShader(geomTex);
+        program.attachShader(fragmentTex); 
         program.link();
         program.use();
         program.checkStatus();

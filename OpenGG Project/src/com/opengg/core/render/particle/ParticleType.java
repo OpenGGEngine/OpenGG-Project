@@ -50,9 +50,6 @@ public class ParticleType implements Component{
         });
     }
 
-    @Override
-    public void render() {
-        
-    }
+
     
 }

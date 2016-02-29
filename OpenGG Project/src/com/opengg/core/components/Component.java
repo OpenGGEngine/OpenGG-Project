@@ -11,5 +11,4 @@ package com.opengg.core.components;
  */
 public interface Component {
     public void update();
-    public void render();
 }

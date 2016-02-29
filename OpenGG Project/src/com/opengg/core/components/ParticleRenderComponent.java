@@ -22,7 +22,7 @@ public class ParticleRenderComponent implements Component {
         });
     }
 
-    @Override
+
     public void render() {
         
     }
