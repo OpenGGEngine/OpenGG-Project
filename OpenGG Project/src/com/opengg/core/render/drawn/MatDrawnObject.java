@@ -21,7 +21,7 @@ import java.util.List;
 public class MatDrawnObject implements Drawable {
     DrawnObject d;
     MTLMaterial m;
-    Texture tex = Texture.blank;
+    Texture tex = new Texture();
     private Texture normalmap;
     private boolean hasNormalMap;
     
@@ -72,6 +72,7 @@ public class MatDrawnObject implements Drawable {
 
     @Override
     public void drawShaded() {
+        tex.useTexture(0);
         d.drawShaded();
     }
 

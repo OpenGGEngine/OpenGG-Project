@@ -54,7 +54,7 @@ public class Terrain {
         //indices = BufferUtils.createIntBuffer(6*((VERTEX_COUNT)*(VERTEX_COUNT))*2);
        
         
-        size = 540;
+        size = 1;
         FloatBuffer ud = BufferUtils.createFloatBuffer((image.getWidth()*image.getHeight())*12);
                
         for (int i = 0; i < image.getWidth(); i+=1) {

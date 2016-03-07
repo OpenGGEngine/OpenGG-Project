@@ -30,6 +30,8 @@ public class ShaderController {
     private int uniModel,rotm,lightpos,div,uniView,lightdistance,lightpower,shadow,skycolor,mode;
     float ratio;
     Matrix4f model= new Matrix4f(), view= new Matrix4f(), proj = new Matrix4f();
+    private int uvy;
+    private int uvx;
     
     public void setup(URL vert, URL frag, URL geom) throws UnsupportedEncodingException{
         vertexTex= new Shader(GL_VERTEX_SHADER, 
@@ -78,10 +80,15 @@ public class ShaderController {
         lightpos = program.getUniformLocation("lightpos"); 
         program.setUniform(lightpos, new Vector3f(200,50,-10));
         
+        
         div = program.getUniformLocation("divAmount"); 
         program.setUniform(div, 1f);
         
-
+        uvx = program.getUniformLocation("uvmultx"); 
+        program.setUniform(uvx, (float)1f);
+        
+        uvy = program.getUniformLocation("uvmulty"); 
+        program.setUniform(uvy, (float)1f);
         
         rotm = program.getUniformLocation("rot");    
         program.setUniform(rotm, new Vector3f(0,0,0));  
@@ -93,7 +100,7 @@ public class ShaderController {
         //program.setUniform(shadow, new Matrix4f());
         
         lightdistance = program.getUniformLocation("lightdistance"); 
-        program.setUniform(lightdistance, 5f);
+        program.setUniform(lightdistance, 8f);
         
         lightpower = program.getUniformLocation("lightpower"); 
         program.setUniform(lightpower, 200f);
@@ -207,5 +214,12 @@ public class ShaderController {
     
     public Matrix4f getMVP(){
         return proj.multiply(view).multiply(model);
+    }
+    
+    public void setUVMultX(float f){
+        program.setUniform(uvx, (float)f);
+    }
+    public void setUVMultY(float f){
+        program.setUniform(uvy, (float)f);
     }
 }
