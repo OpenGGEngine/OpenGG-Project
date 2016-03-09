@@ -27,6 +27,7 @@ import java.io.Serializable;
  *
  * @author ethachu19
  */
+@Deprecated
 public class Entity implements Serializable {
 
     /* tags */

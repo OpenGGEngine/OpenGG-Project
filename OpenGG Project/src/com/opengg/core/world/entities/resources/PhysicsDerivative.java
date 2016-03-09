@@ -12,6 +12,7 @@ import com.opengg.core.Vector3f;
  *
  * @author ethachu19
  */
+@Deprecated
 public class PhysicsDerivative {
 
     Vector3f velocity = new Vector3f();

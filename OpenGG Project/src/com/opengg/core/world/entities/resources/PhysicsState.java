@@ -15,8 +15,9 @@ import java.io.Serializable;
  *
  * @author ethachu19
  */
+@Deprecated
 public class PhysicsState implements Serializable {
-
+    
     public EntitySupportEnums.UpdateForce updateForce;
 
     public Vector3f pos = new Vector3f();
