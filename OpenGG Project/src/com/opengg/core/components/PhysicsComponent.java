@@ -13,7 +13,7 @@ import com.opengg.core.world.WorldObject;
  *
  * @author ethachu19
  */
-public class PhysicsComponent implements Component{
+public class PhysicsComponent implements Updatable{
     
     public Vector3f pos;
     public Quaternion4f rot;

@@ -7,6 +7,7 @@ package com.opengg.core.render.particle;
 
 import com.opengg.core.Vector3f;
 import com.opengg.core.components.Component;
+import com.opengg.core.components.Updatable;
 import java.util.ArrayList;
 import java.util.List;
 import com.opengg.core.render.particle.Particle;
@@ -16,7 +17,7 @@ import java.util.LinkedList;
  *
  * @author Warren
  */
-public class ParticleType implements Component{
+public class ParticleType implements Updatable{
     List<Particle> particles = new LinkedList<>();
     private Vector3f offset = new Vector3f();
     private float pps;
@@ -40,7 +41,7 @@ public class ParticleType implements Component{
         particles.add(new Particle(new Vector3f(center), velocity, new Vector3f(0,gravityComplient,0), lifeLength,1f));
     }
     @Override
-    public void update() {
+    public void update(float delta) {
         emitParticle(offset);
         particles.stream().forEach((p) -> {
             boolean stayingAlive = p.update();

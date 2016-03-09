@@ -14,7 +14,7 @@ import java.net.URL;
  *
  * @author Javier
  */
-public class AudioComponent implements Component, Triggerable {
+public class AudioComponent implements Updatable, Triggerable {
     
     AudioSource so;
     
@@ -24,7 +24,7 @@ public class AudioComponent implements Component, Triggerable {
     }
     
     @Override
-    public void update() {
+    public void update(float delta) {
         
     }
 

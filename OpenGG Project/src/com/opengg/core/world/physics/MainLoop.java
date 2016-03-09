@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 /**
  *
  * @author ethachu19
+ * @deprecated
  */
 public class MainLoop extends EntityBuilder {
 
@@ -48,18 +49,6 @@ public class MainLoop extends EntityBuilder {
                 for (Entity collidee : EntityList) {
                     if (collide.equals(collidee) || collidee.collision == Collide.Uncollidable) {
                         continue;
-                    }
-                    if (CollisionDetection.areColliding(collide, collidee)) {
-                        print("HAHA!");
-                        if (collidee.updatePosition == UpdateXYZ.Immovable) {
-//                           
-//                            print(-collide.force.x*3/2 + " " + -collide.force.y*3/2 + " " + -collide.force.z*3/2);
-//                            collide.collisionResponse(new Vector3f(-collide.force.x*3/2 , -collide.force.y*3/2 , -collide.force.z*3/2));
-//                            break;
-                        }
-//                        collide.collisionResponse(collidee.force);
-                        if (collidee.collision == Collide.Collidable);
-//                            collidee.collisionResponse(collide.force);
                     }
                 }
             }
