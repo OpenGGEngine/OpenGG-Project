@@ -120,7 +120,7 @@ public class Matrix4f {
         Matrix4f f = new Matrix4f();
         Quaternion4f q = new Quaternion4f(f);
         q.axis = new Vector3f(x, y, z);
-        q.rotateAroundVector(angle);
+        q.addDegrees(angle);
         return q.convertMatrix();
     }
 

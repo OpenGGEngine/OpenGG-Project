@@ -101,4 +101,16 @@ public class Matrix3f {
         result = result.scale(1f/det);
         return result;
     }
+    
+    public float[][] getArr() {
+        float[][] arr = {{m00, m01, m02},
+        {m10, m11, m12},
+        {m20, m21, m22}};
+
+        return arr;
+    }
+    
+    public float access(int x, int y) {
+        return getArr()[x][y];
+    }
 }

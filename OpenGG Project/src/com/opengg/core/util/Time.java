@@ -12,9 +12,9 @@ import static com.opengg.core.util.GlobalUtil.print;
  * @author Javier
  */
 public class Time {
-     long currentTime = 0;
-     float timeStep = 0f;
-     long lastTime = 0;
+    long currentTime = 0;
+    float timeStep = 0f;
+    long lastTime = 0;
     
     public Time(){
         lastTime = System.currentTimeMillis();
