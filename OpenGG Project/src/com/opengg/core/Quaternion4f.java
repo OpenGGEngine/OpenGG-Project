@@ -5,6 +5,8 @@
  */
 package com.opengg.core;
 
+import com.opengg.core.util.DashMath;
+
 /**
  *
  * @author ethachu19
@@ -40,7 +42,7 @@ public class Quaternion4f {
     }
 
     public Quaternion4f(float angle, Vector3f axis) {
-        rotateAroundVector(angle);
+        setAngle(angle);
         this.axis = new Vector3f(axis);
     }
 
@@ -138,12 +140,25 @@ public class Quaternion4f {
         return 2.0f * (float) Math.toDegrees(Math.acos(w));
     }
 
-    public final void rotateAroundVector(float degrees) {
-        if (degrees < 0) {
+    public final void addDegrees(float degrees) {
+        float res = angle() + degrees;
+        while (res > 360) {
+            res -= 360;
+        }
+        while (res < 0) {
+            res += 360;
+        }
+        w = (float) DashMath.cos2(Math.toRadians((res) / 2));
+    }
+    
+    public final void setAngle(float degrees) {
+        while (degrees > 360) {
+            degrees -= 360;
+        }
+        while (degrees < 0) {
             degrees += 360;
         }
-        float difference = angle() - degrees;
-        w = (float) Math.cos(Math.toRadians((degrees - difference) / 2));
+        w = (float) DashMath.cos2(Math.toRadians((degrees) / 2));
     }
 
     public static final Quaternion4f slerp(final Quaternion4f a, final Quaternion4f b, float t) {
