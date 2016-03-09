@@ -13,16 +13,17 @@ import java.util.List;
  *
  * @author Warren
  */
-public class ParticleRenderComponent implements Component {
+public class ParticleRenderComponent implements Updatable, Renderable{
     List<ParticleType> particles = new ArrayList<>();
     @Override
-    public void update() {
+    public void update(float delta) {
         particles.stream().forEach((p) -> {
-            p.update();
+            p.update(delta);
         });
     }
 
 
+    @Override
     public void render() {
         
     }

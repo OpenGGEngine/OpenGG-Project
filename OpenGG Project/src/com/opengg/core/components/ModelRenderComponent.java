@@ -16,7 +16,7 @@ import com.opengg.core.world.WorldObject;
  *
  * @author Warren
  */
-public class ModelRenderComponent implements Component{
+public class ModelRenderComponent implements Renderable{
     Drawable g;
     private Vector3f offset = new Vector3f(0,0,0);
     private Vector3f rotationoffset = new Vector3f(0,0,0);
@@ -32,12 +32,8 @@ public class ModelRenderComponent implements Component{
     public void setRotOffset(Vector3f rot){
         this.rotationoffset = rot;
     }
+
     @Override
-    public void update() {
-       
-    }
-
-
     public void render() {
         Matrix4f m = Matrix4f.translate(this.offset.x, this.offset.y, this.offset.z);
         

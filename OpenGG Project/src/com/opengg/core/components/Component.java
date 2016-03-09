@@ -10,5 +10,4 @@ package com.opengg.core.components;
  * @author Warren
  */
 public interface Component {
-    public void update();
 }
