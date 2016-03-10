@@ -9,45 +9,39 @@ package com.opengg.core.world;
 import com.opengg.core.Quaternion4f;
 import com.opengg.core.Vector3f;
 import com.opengg.core.components.Component;
+import com.opengg.core.components.ComponentHolder;
 import com.opengg.core.components.ModelRenderComponent;
 import com.opengg.core.io.objloader.parser.OBJModel;
 import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.render.drawn.DrawnObject;
 import com.opengg.core.render.drawn.DrawnObjectGroup;
-import com.opengg.core.world.entities.*;
-import com.opengg.core.world.entities.EntityTypes;
-import com.opengg.core.world.entities.resources.EntitySupportEnums.PhysicsType;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
  * @author Javier
  */
-public class WorldObject implements Component {
+public class WorldObject extends ComponentHolder implements Component {
     public Vector3f pos;
     public Quaternion4f rot;
     private Drawable d;
     private World thisWorld;
     public float mass;
-    private List<Component> components = new ArrayList();
+    
     public WorldObject(Vector3f pos, Quaternion4f rot, OBJModel model, World thisWorld){
+        super();
         this.pos = pos;
         this.rot = rot;
         this.thisWorld = thisWorld;
     }
     public WorldObject(){
+        super();
         pos = new Vector3f(0,0,0);
         rot = new Quaternion4f();
         thisWorld = WorldManager.getDefaultWorld();
         this.thisWorld.addObject(this);
     }
-    public WorldObject(Vector3f pos, Quaternion4f rot, Entity e){
-        this.pos = pos;
-        this.rot = rot;
-        this.thisWorld = e.current.currentWorld;
-    }
     public WorldObject(DrawnObject d){
+        super();
         pos = new Vector3f(0,0,0);
         rot = new Quaternion4f();
         thisWorld = WorldManager.getDefaultWorld();
@@ -57,8 +51,9 @@ public class WorldObject implements Component {
         this.thisWorld.addObject(this);
        
     }
+    @Override
     public void attach(Component c){
-        components.add(c);
+        super.attach(c);
     }
     public WorldObject(DrawnObjectGroup d){
         pos = new Vector3f(0,0,0);
@@ -66,7 +61,7 @@ public class WorldObject implements Component {
         thisWorld = WorldManager.getDefaultWorld();
         this.thisWorld.addObject(this);
         ModelRenderComponent m = new ModelRenderComponent(d);
-        components.add(m);
+        super.attach(m);
     }
     
     /**
@@ -88,12 +83,8 @@ public class WorldObject implements Component {
     public Drawable getDrawnObject(){
         return d;
     }
-    
-    public void attach(){
-        
-    }
-
-    public void update(float delta) {
-        
+    @Override
+    public void render(){
+        super.render();
     }
 }

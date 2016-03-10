@@ -12,27 +12,26 @@ import java.util.ArrayList;
  * @author ethachu19
  */
 public abstract class ComponentHolder {
-    public static ArrayList<ComponentHolder> allComponent = new ArrayList<>();
-    private ArrayList<Component> components = new ArrayList<>();
+    //public static ArrayList<ComponentHolder> allComponent = new ArrayList<>();
+    private ArrayList<Updatable> updateable = new ArrayList<>();
+    private ArrayList<Renderable> renderable = new ArrayList<>();
     
-    public ComponentHolder() {
-        allComponent.add(this);
+    public void attach(Component c) {
+        if (c instanceof Updatable)
+                updateable.add((Updatable) c);
+        if (c instanceof Renderable)
+                renderable.add((Renderable) c);
     }
     
-    public void add(Component c) {
-        components.add(c);
+    public void update(float delta){
+        for(Updatable c: updateable){
+            c.update(delta);
+        }
     }
     
-    public ArrayList<Component> getComponents() {
-        return components;
-    }
-    
-    public void runAll(float delta) {
-        for (Component c: components) {
-            if (c instanceof Updatable)
-                ((Updatable) c).update(delta);
-            if (c instanceof Renderable)
-                ((Renderable) c).render();
+    public void render(){
+        for(Renderable c: renderable){
+            c.render();
         }
     }
     
