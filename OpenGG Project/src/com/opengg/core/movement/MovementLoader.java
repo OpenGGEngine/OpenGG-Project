@@ -17,7 +17,7 @@ public class MovementLoader {
 
     private static int mouseX, mouseY, mouseDX, mouseDY;
     private static long window;
-    private static int baseSpeed = 30;
+    private static int baseSpeed = 10;
     private static int walkingSpeed = 30;
     private static int mouseSpeed = 2;
 

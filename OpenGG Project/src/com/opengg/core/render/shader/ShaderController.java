@@ -186,6 +186,9 @@ public class ShaderController {
             case POS_ONLY:
                 program.setUniform(mode, (int) 4);
                 break;
+            case PP:
+                program.setUniform(mode, (int) 5);
+                break;
         }
     }
     

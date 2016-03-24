@@ -18,9 +18,12 @@ out vec4 fragColor;
 uniform mat4 shmvp;
 uniform float lightdistance;
 uniform float lightpower;
+uniform float uvmultx;
+uniform float uvmulty;
 uniform sampler2D texImage;
 uniform sampler2D shadeImage;
 uniform samplerCube cubemap;
+uniform vec3 lightpos;
 uniform int mode;
 
 float amb = 0.3;
@@ -89,14 +92,12 @@ vec4 shadify(){
             diffuse = vertcolor.rgb;
             vertcolor.a = 0;
     }
-    
-    
-    
+
     ambient = vec3(amb,amb,amb) * diffuse;
     
     specular = vec3(spec,spec,spec);
 
-    float distance = length( lightposition - vec3(pos.x,pos.y,pos.z) );
+    float distance = length( lightpos - vec3(pos.x,pos.y,pos.z) );
 
     vec3 n = normalize( norm );
     // Direction of the light (from the fragment to the light)
@@ -111,14 +112,13 @@ vec4 shadify(){
     float cosAlpha = clamp( dot( E,R ), 0,1 );
     
     
-    
     fragColor = 
             // Ambient : simulates indirect lighting
             vec4((ambient +
             // Diffuse : "color" of the object
             vis * diffuse * lightcol * lightpower * cosTheta / ((distance*distance)/lightdistance) +
             // Specular : reflective highlight, like a mirror
-            vis * specular * lightcol * lightpower * pow(cosAlpha,5) / ((distance*distance)/lightdistance)), trans);
+            //vis * specular * lightcol * lightpower * pow(cosAlpha,5) / ((distance*distance)/lightdistance)), trans);
     return fragColor;
 }
 

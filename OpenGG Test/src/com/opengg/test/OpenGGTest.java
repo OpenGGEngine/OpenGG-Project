@@ -4,17 +4,18 @@ import com.opengg.core.Matrix4f;
 import com.opengg.core.Vector2f;
 import com.opengg.core.Vector3f;
 import com.opengg.core.audio.AudioHandler;
+import com.opengg.core.audio.AudioSource;
 import com.opengg.core.gui.GUI;
 import com.opengg.core.io.input.KeyboardEventHandler;
 import com.opengg.core.io.input.KeyboardListener;
 import com.opengg.core.io.objloader.parser.OBJModel;
 import com.opengg.core.io.objloader.parser.OBJParser;
 import com.opengg.core.movement.MovementLoader;
-import com.opengg.core.render.drawn.DrawnObject;
-import com.opengg.core.render.drawn.DrawnObjectGroup;
 import com.opengg.core.render.VertexArrayObject;
 import com.opengg.core.render.VertexBufferObject;
 import com.opengg.core.render.buffer.ObjectBuffers;
+import com.opengg.core.render.drawn.DrawnObject;
+import com.opengg.core.render.drawn.DrawnObjectGroup;
 import static com.opengg.core.render.gl.GLOptions.enable;
 import com.opengg.core.render.shader.Mode;
 import com.opengg.core.render.shader.ShaderController;
@@ -22,9 +23,9 @@ import com.opengg.core.render.texture.Cubemap;
 import com.opengg.core.render.texture.Font;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.window.DisplayMode;
+import com.opengg.core.render.window.GLFWWindow;
 import static com.opengg.core.render.window.RenderUtil.endFrame;
 import static com.opengg.core.render.window.RenderUtil.startFrame;
-import com.opengg.core.render.window.GLFWWindow;
 import com.opengg.core.util.GlobalInfo;
 import com.opengg.core.world.Camera;
 import com.opengg.core.world.Terrain;
@@ -83,6 +84,7 @@ public class OpenGGTest implements KeyboardListener {
     private ShaderController s = new ShaderController();
     
     WorldObject w1, w2;
+    private AudioSource so,so2,so3;
     
     public OpenGGTest() throws IOException, Exception {
         KeyboardEventHandler.addToPool(this);
@@ -130,13 +132,18 @@ public class OpenGGTest implements KeyboardListener {
         cb.loadTexture("C:/res/skybox/majestic");
 
         AudioHandler.init(1);
-        AudioHandler.setSoundBuffer(OpenGGTest.class.getResource("res/maw.wav"));
-        AudioHandler.shouldLoop(true);
-        //AudioHandler.play();
+        int s1 = AudioHandler.loadSound(OpenGGTest.class.getResource("res/maw.wav"));
+        so = new AudioSource(s1);
+            
+        int s12 = AudioHandler.loadSound(OpenGGTest.class.getResource("res/mgs.wav"));
+        so2 = new AudioSource(s12);
+        
+        int s13 = AudioHandler.loadSound(OpenGGTest.class.getResource("res/stal.wav"));
+        so3 = new AudioSource(s13);
 
         try {
             URL path = OpenGGTest.class.getResource("res/models/deer.obj");
-            URL path2 = OpenGGTest.class.getResource("res/models/flashbang.obj");
+            URL path2 = OpenGGTest.class.getResource("res/models/awp3.obj");
             m = new OBJParser().parse(path);
             m2 = new OBJParser().parse(path2);
             
@@ -187,7 +194,7 @@ public class OpenGGTest implements KeyboardListener {
         base.generateTerrain(heightmap);
         base2 = new DrawnObject(base.elementals, vbo,base.indices);
         base.removeBuffer();
-
+        
         ratio = win.getRatio();
         
         base2.setMatrix(Matrix4f.translate(-50, 0, -100));
@@ -203,9 +210,9 @@ public class OpenGGTest implements KeyboardListener {
 
         enable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
         
-        enable(GL_LINE_SMOOTH);
+        //enable(GL_LINE_SMOOTH);
         
-        glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+        glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
     }
 
     public void exit() {
@@ -218,12 +225,13 @@ public class OpenGGTest implements KeyboardListener {
     public void render() {
         rot = new Vector3f(-yrot, -xrot, 0);
         pos = MovementLoader.processMovement(pos, rot);
-
+        
+        AudioHandler.setListenerPos(pos);
     
         c.setPos(new Vector3f(15, -40, -10));
         c.setRot(new Vector3f(60, 50, 0));
 
-        s.setLightPos(new Vector3f(30, 10, 50));
+        s.setLightPos(new Vector3f(0, 30, 0));
         s.setView(c);
 
         s.setPerspective(90, ratio, 4, 300f); 
@@ -251,7 +259,7 @@ public class OpenGGTest implements KeyboardListener {
         s.setView(c);
         s.setPerspective(90, ratio, 0.3f, 2000f);
 
-        s.setMode(Mode.OBJECT);
+        s.setMode(Mode.GUI);
         t3.useTexture(0);
         awp3.drawShaded();
 
@@ -268,6 +276,7 @@ public class OpenGGTest implements KeyboardListener {
         s.setMode(Mode.SKYBOX);
         cb.use();
         sky.draw();
+        
     }
 
     public void update(float delta) {
@@ -296,6 +305,13 @@ public class OpenGGTest implements KeyboardListener {
         if (key == GLFW_KEY_F) {
             rot2 -= 0.3;
 
+        }
+        if (key == GLFW_KEY_P) {
+            if(so2.isPaused()){
+                so2.play();
+            }else{
+                so2.pause();
+            }
         }
 
     }

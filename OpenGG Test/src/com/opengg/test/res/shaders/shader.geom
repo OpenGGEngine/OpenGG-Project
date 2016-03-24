@@ -1,7 +1,7 @@
 #version 330 core
 
 layout(triangles) in;
-layout(triangle_strip, max_vertices=6) out;
+layout(triangle_strip, max_vertices=3) out;
 
 in vec4 vertexColors[];
 in vec2 textureCoords[];
@@ -28,43 +28,46 @@ const float density =0.00137;
 const float gradient = 2.32;
 
 void genPhong(int vertNum){
-        shadowpos = (shmvp * vec4(poss[vertNum], 1.0f));
+        
+    shadowpos = (shmvp * vec4(poss[vertNum], 1.0f));
     
-        shadowpos = vec4(shadowpos.xyz/shadowpos.w, 1.0f);
-        
-        vec4 worldPosition = model * vec4(poss[vertNum], 1.0f);
-        vec4 positionRelativeToCam = view * worldPosition;
-        
-        float distance = length(positionRelativeToCam.xyz);
+    shadowpos = vec4(shadowpos.xyz/shadowpos.w, 1.0f);
 
-        visibility = exp(-pow((distance*density),gradient));
-        visibility = clamp(visibility,0.0,1.0);
+    shadowpos.x = 0.5 * shadowpos.x + 0.5;
+    shadowpos.y = 0.5 * shadowpos.y + 0.5;
+    shadowpos.z = 0.5 * shadowpos.z + 0.5;
+    
+    
+    vec4 worldPosition = model * vec4(poss[vertNum], 1.0f);
+    vec4 positionRelativeToCam = view * worldPosition;
+    
+    vec3 posCameraspace = ( positionRelativeToCam).xyz;
+    eyedir = vec3(0,0,0) - posCameraspace;
+    
 
+    vec3 lightposCamera = ( view * vec4(lightpos,1.0f)).xyz;
+    lightdir = lightposCamera + eyedir;
 
-        shadowpos.x = 0.5 * shadowpos.x + 0.5;
-        shadowpos.y = 0.5 * shadowpos.y + 0.5;
-        shadowpos.z = 0.5 * shadowpos.z + 0.5;
+    norm = ( view * model *  vec4(norms[vertNum],1.0f)).xyz;
+    
+    
+    float distance = length(positionRelativeToCam.xyz);
 
-        lightposition = lightpos;
+    visibility = exp(-pow((distance*density),gradient));
+    visibility = clamp(visibility,0.0,1.0);
 
-        vec3 posCameraspace = ( positionRelativeToCam).xyz;
-        eyedir = vec3(0,0,0) - posCameraspace;
-
-        vec3 lightposCamera = ( view * vec4(lightpos,1.0f)).xyz;
-        lightdir = lightposCamera + eyedir;
-
-        norm = ( model * view *  vec4(norms[vertNum],1.0f)).xyz;
+    lightposition = lightpos;
 
 }
 
 void main(){
     for(int i = 0; i < gl_in.length(); i++){
-        if(mode != 2){
+        if(mode != 2){     
             genPhong(i);
         }
         vertexColor = vertexColors[i];
         textureCoord = textureCoords[i];
-        pos = vec4(poss[i], 1);
+        //pos = vec4(poss[i], 1.0f);
         gl_Position = gl_in[i].gl_Position;
         EmitVertex();
     }
