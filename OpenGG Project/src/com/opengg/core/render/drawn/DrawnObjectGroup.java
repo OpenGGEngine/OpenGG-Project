@@ -35,10 +35,15 @@ public class DrawnObjectGroup implements Drawable{
     //corresponds to the nth value in list materials
     public DrawnObjectGroup(URL u, float scale){  
         try {
+            
+            
+            
+           
             OBJModel m = new OBJParser().parse(u);
             
             final MTLLibrary library;
-            try (InputStream in = new FileInputStream("C:/res/"+m.getMaterialLibraries().get(0))) {
+            
+            try (InputStream in = new FileInputStream("C:/res/" + u.getFile().substring(u.getFile().lastIndexOf("/")).replace(".obj", "") + "/"+m.getMaterialLibraries().get(0))) {
                 final IMTLParser parser = new MTLParser();
                
                 library = parser.parse(in);

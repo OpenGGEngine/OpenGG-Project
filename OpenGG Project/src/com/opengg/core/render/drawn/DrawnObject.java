@@ -81,6 +81,9 @@ public class DrawnObject implements Drawable {
         vbo.uploadSubData(GL_ARRAY_BUFFER, offset*4, b);
         DrawnObjectHandler.addToOffset(limit);
     }
+    public DrawnObject(FloatBuffer b){
+        this(b, 12);
+    }
     
     public DrawnObject(List<FloatBuffer> buffers, VertexBufferObject vbo2, int vertSize){
       
