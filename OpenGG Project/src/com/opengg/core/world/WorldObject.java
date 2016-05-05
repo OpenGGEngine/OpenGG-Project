@@ -6,6 +6,7 @@
 
 package com.opengg.core.world;
 
+import com.opengg.core.engine.WorldManager;
 import com.opengg.core.Quaternion4f;
 import com.opengg.core.Vector3f;
 import com.opengg.core.components.Component;

@@ -11,7 +11,7 @@ import com.opengg.core.io.objloader.parser.OBJModel;
 import static com.opengg.core.util.GlobalUtil.print;
 import com.opengg.core.world.Camera;
 import com.opengg.core.world.World;
-import com.opengg.core.world.WorldManager;
+import com.opengg.core.engine.WorldManager;
 import static com.opengg.core.world.entities.EntityBuilder.AddStack;
 import com.opengg.core.world.entities.resources.EntityFrame;
 import com.opengg.core.world.entities.resources.EntitySupportEnums;
