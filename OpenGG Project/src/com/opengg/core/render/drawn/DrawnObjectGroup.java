@@ -37,13 +37,13 @@ public class DrawnObjectGroup implements Drawable{
         try {
             
             
-            
+            String fname = u.getFile().substring(u.getFile().lastIndexOf("/")).replace(".obj", "");
            
             OBJModel m = new OBJParser().parse(u);
             
             final MTLLibrary library;
             
-            try (InputStream in = new FileInputStream("C:/res/" + u.getFile().substring(u.getFile().lastIndexOf("/")).replace(".obj", "") + "/"+m.getMaterialLibraries().get(0))) {
+            try (InputStream in = new FileInputStream("C:/res/" + fname + "/"+m.getMaterialLibraries().get(0))) {
                 final IMTLParser parser = new MTLParser();
                
                 library = parser.parse(in);
@@ -56,12 +56,12 @@ public class DrawnObjectGroup implements Drawable{
                     d.setMaterial(material);
                     if(material.getDiffuseTexture() != null){
                         Texture nointernet = new Texture();
-                        nointernet.loadTexture("C:/res/"+ material.getDiffuseTexture(), true);
+                        nointernet.loadTexture("C:/res/"+ fname + "/" + material.getDiffuseTexture(), true);
                         d.setTexture(nointernet);
                     }
                     if(material.getSpecularTexture() != null){
                         Texture nointernet = new Texture();
-                        nointernet.loadTexture("C:/res/"+ material.getSpecularTexture(), true);
+                        nointernet.loadTexture("C:/res/" + fname + "/ "+ material.getSpecularTexture(), true);
                         d.setSpecularMap(nointernet);
                     }
                     return d;
@@ -70,7 +70,7 @@ public class DrawnObjectGroup implements Drawable{
                 });
             });
         } catch (IOException ex) {
-            Logger.getLogger(DrawnObjectGroup.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DrawnObjectGroup.class.getName()).log(Level.SEVERE, "w", ex);
         }
    
         

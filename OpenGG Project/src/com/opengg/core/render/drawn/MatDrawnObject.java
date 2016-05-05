@@ -57,6 +57,7 @@ public class MatDrawnObject implements Drawable {
     }
     @Override
     public void draw() {
+        tex.useTexture(0);
         d.draw();
     }
 
