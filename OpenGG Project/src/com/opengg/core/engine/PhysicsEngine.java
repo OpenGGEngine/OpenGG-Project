@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.opengg.core.world.physics;
+package com.opengg.core.engine;
 
 import static com.opengg.core.util.GlobalUtil.print;
 import com.opengg.core.world.entities.Entity;
@@ -17,7 +17,7 @@ import java.util.logging.Logger;
  * @author ethachu19
  * @deprecated
  */
-public class MainLoop extends EntityBuilder {
+public class PhysicsEngine extends EntityBuilder {
 
     private static boolean shouldClose = false;
     private static long currentTime, newTime;
@@ -59,12 +59,12 @@ public class MainLoop extends EntityBuilder {
             try {
                 Thread.sleep(1);
             } catch (InterruptedException ex) {
-                Logger.getLogger(MainLoop.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(PhysicsEngine.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
 
     public static void killProcess() {
-        MainLoop.shouldClose = true;
+        PhysicsEngine.shouldClose = true;
     }
 }

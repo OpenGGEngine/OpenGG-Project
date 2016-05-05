@@ -4,8 +4,10 @@
  * and open the template in the editor.
  */
 
-package com.opengg.core.world;
+package com.opengg.core.engine;
 
+import com.opengg.core.world.Camera;
+import com.opengg.core.world.World;
 import java.util.ArrayList;
 
 /**
