@@ -7,7 +7,7 @@
 package com.opengg.core.render.drawn;
 
 import com.opengg.core.Matrix4f;
-import com.opengg.core.io.objloader.parser.MTLMaterial;
+import com.opengg.core.io.newobjloader.Material;
 import com.opengg.core.render.VertexBufferObject;
 import com.opengg.core.render.texture.Texture;
 import java.nio.FloatBuffer;
@@ -20,7 +20,11 @@ import java.util.List;
  */
 public class MatDrawnObject implements Drawable {
     DrawnObject d;
-    MTLMaterial m;
+
+    public void setM(Material m) {
+        this.m = m;
+    }
+    Material m;
     Texture tex = new Texture();
     private Texture normalmap;
     private boolean hasNormalMap;
@@ -37,9 +41,7 @@ public class MatDrawnObject implements Drawable {
         d = new DrawnObject(b,vbo2,index);
     }
     
-    public void setMaterial(MTLMaterial m){
-        this.m = m;
-    }
+
     public void setTexture(Texture d){
         this.tex = d;
     }

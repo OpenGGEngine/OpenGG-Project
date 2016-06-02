@@ -3,10 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.opengg.core.render.drawn;
 
 import com.opengg.core.Matrix4f;
+import com.opengg.core.io.newobjloader.Face;
+import com.opengg.core.io.newobjloader.FaceVertex;
+import com.opengg.core.io.newobjloader.Material;
+import com.opengg.core.io.newobjloader.Model;
+import com.opengg.core.io.newobjloader.Parser;
 import com.opengg.core.io.objloader.parser.IMTLParser;
 import com.opengg.core.io.objloader.parser.MTLLibrary;
 import com.opengg.core.io.objloader.parser.MTLMaterial;
@@ -15,111 +19,245 @@ import com.opengg.core.io.objloader.parser.OBJModel;
 import com.opengg.core.io.objloader.parser.OBJParser;
 import com.opengg.core.render.buffer.ObjectBuffers;
 import com.opengg.core.render.texture.Texture;
+import com.opengg.core.util.GlobalInfo;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.lwjgl.BufferUtils;
 
 /**
  *
  * @author Javier
  */
-public class DrawnObjectGroup implements Drawable{
+public class DrawnObjectGroup implements Drawable {
+
     List<MatDrawnObject> objs = new ArrayList<>();
-  
+
     //The list of materials are in order so the nth value in list objs
     //corresponds to the nth value in list materials
-    public DrawnObjectGroup(URL u, float scale){  
+    
+
+    public DrawnObjectGroup(Parser p, URL u, float scale) {
+        Model model = new Model();
         try {
-            
-            
-            String fname = u.getFile().substring(u.getFile().lastIndexOf("/")).replace(".obj", "");
-           
-            OBJModel m = new OBJParser().parse(u);
-            
-            final MTLLibrary library;
-            
-            try (InputStream in = new FileInputStream("C:/res/" + fname + "/"+m.getMaterialLibraries().get(0))) {
-                final IMTLParser parser = new MTLParser();
+
+            model = p.parseModel(URLDecoder.decode(u.getFile(), "UTF-8"));
+        } catch (IOException ex) {
+            Logger.getLogger(DrawnObjectGroup.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        ArrayList<ArrayList<Face>> facesByTextureList = new ArrayList<>();
+        Material currentMaterial = null;
+        ArrayList<Face> currentFaceList = new ArrayList<>();
+        for (Face face : model.faces) {
+            if (face.material != currentMaterial) {
+                if (!currentFaceList.isEmpty()) {
+                    
+                    facesByTextureList.add(currentFaceList);
+                }
                
-                library = parser.parse(in);
+                currentMaterial = face.material;
+                currentFaceList = new ArrayList<>();
+            }
+            currentFaceList.add(face);
+        }
+        if (!currentFaceList.isEmpty()) {
+            
+            facesByTextureList.add(currentFaceList);
+        }
+        for(ArrayList<Face> m: facesByTextureList){
+            currentFaceList = splitQuads(currentFaceList);
+            MatDrawnObject obj = makeadamnvbo(currentFaceList);
+            Material material;
+            if(m.get(0).material != null){
+                material = m.get(0).material;
+            }else{
+                material = new Material(UUID.randomUUID().toString());
+            }
+            obj.setM(material);
+            System.out.println(material.name);
+            if (material.mapKdFilename == null) {
+            } else {
+                System.out.println(material.mapKdFilename);
+                Texture nointernet = new Texture();
+                nointernet.loadTexture("C:/res/" + material.mapKdFilename, true);
+                obj.setTexture(nointernet);
+            }
+            objs.add(obj);
+        }
+    
+        
+    }
+    public MatDrawnObject makeadamnvbo(ArrayList<Face> triangles){
+        HashMap<FaceVertex, Integer> indexMap = new HashMap<>();
+        int nextVertexIndex = 0;
+        ArrayList<FaceVertex> faceVertexList = new ArrayList<>();
+        for (Face face : triangles) {
+            for (FaceVertex vertex : face.vertices) {
+                if (!indexMap.containsKey(vertex)) {
+                    indexMap.put(vertex, nextVertexIndex++);
+                    faceVertexList.add(vertex);
+                }
+            }
+        }
+        int verticeAttributesCount = nextVertexIndex;
+        int indicesCount = triangles.size() * 3;
+
+        int numMIssingNormals = 0;
+        int numMissingUV = 0;
+        FloatBuffer verticeAttributes = BufferUtils.createFloatBuffer(faceVertexList.size() * 78);
+       
+      
+        for (FaceVertex vertex : faceVertexList) {
+            verticeAttributes.put(vertex.v.x);
+            verticeAttributes.put(vertex.v.y);
+            verticeAttributes.put(vertex.v.z);
+            verticeAttributes.put(1);
+            verticeAttributes.put(0.4f);
+            verticeAttributes.put(24);
+            verticeAttributes.put(1);
+            if (vertex.n == null) {
+                // @TODO: What's a reasonable default normal?  Maybe add code later to calculate normals if not present in .obj file.
+                verticeAttributes.put(1.0f);
+                verticeAttributes.put(1.0f);
+                verticeAttributes.put(1.0f);
+                numMIssingNormals++;
+            } else {
+                verticeAttributes.put(vertex.n.x);
+                verticeAttributes.put(vertex.n.y);
+                verticeAttributes.put(vertex.n.z);
+            }
+            // @TODO: What's a reasonable default texture coord?  
+            if (vertex.t == null) {
+//                verticeAttributes.put(0.5f);
+//                verticeAttributes.put(0.5f);
+                    verticeAttributes.put((float)Math.random());
+                    verticeAttributes.put((float)Math.random());
+                numMissingUV++;
+            } else {
+                verticeAttributes.put(vertex.t.x);
+                verticeAttributes.put(vertex.t.y);
             }
             
-            m.getObjects().stream().forEach((o) -> {
-                o.getMeshes().stream().map((ms) -> {
-                    MTLMaterial material = library.getMaterial(ms.getMaterialName());
-                    MatDrawnObject d = new MatDrawnObject(ObjectBuffers.genBuffer(m,ms,1,scale),12);
-                    d.setMaterial(material);
-                    if(material.getDiffuseTexture() != null){
-                        Texture nointernet = new Texture();
-                        nointernet.loadTexture("C:/res/"+ fname + "/" + material.getDiffuseTexture(), true);
-                        d.setTexture(nointernet);
-                    }
-                    if(material.getSpecularTexture() != null){
-                        Texture nointernet = new Texture();
-                        nointernet.loadTexture("C:/res/" + fname + "/ "+ material.getSpecularTexture(), true);
-                        d.setSpecularMap(nointernet);
-                    }
-                    return d;
-                }).forEach((d) -> {
-                    objs.add(d);
-                });
-            });
-        } catch (IOException ex) {
-            Logger.getLogger(DrawnObjectGroup.class.getName()).log(Level.SEVERE, "w", ex);
         }
-   
-        
-        
+        verticeAttributes.flip();
+
+       
+
+        IntBuffer indices = BufferUtils.createIntBuffer(indicesCount);    // indices into the vertices, to specify triangles.
+       
+        for (Face face : triangles) {
+            for (FaceVertex vertex : face.vertices) {
+                int index = indexMap.get(vertex);
+                indices.put(index);
+            }
+        }
+        indices.flip();
+        return new MatDrawnObject(verticeAttributes,GlobalInfo.b,indices);
     }
-    
-    
+    public static ArrayList<Face> splitQuads(ArrayList<Face> faceList) {
+        ArrayList<Face> triangleList = new ArrayList<>();
+        int countTriangles = 0;
+        int countQuads = 0;
+        int countNGons = 0;
+        for (Face face : faceList) {
+            if (face.vertices.size() == 3) {
+                countTriangles++;
+                triangleList.add(face);
+            } else if (face.vertices.size() == 4) {
+                countQuads++;
+                FaceVertex v1 = face.vertices.get(0);
+                FaceVertex v2 = face.vertices.get(1);
+                FaceVertex v3 = face.vertices.get(2);
+                FaceVertex v4 = face.vertices.get(3);
+                Face f1 = new Face();
+                f1.map = face.map;
+                f1.material = face.material;
+                f1.add(v1);
+                f1.add(v2);
+                f1.add(v3);
+                triangleList.add(f1);
+                Face f2 = new Face();
+                f2.map = face.map;
+                f2.material = face.material;
+                f2.add(v1);
+                f2.add(v3);
+                f2.add(v4);
+                triangleList.add(f2);
+            } else {
+                countNGons++;
+            }
+        }
+        int texturedCount = 0;
+        int normalCount = 0;
+        for (Face face : triangleList) {
+            if ((face.vertices.get(0).n != null)
+                    && (face.vertices.get(1).n != null)
+                    && (face.vertices.get(2).n != null)) {
+                normalCount++;
+            }
+            if ((face.vertices.get(0).t != null)
+                    && (face.vertices.get(1).t != null)
+                    && (face.vertices.get(2).t != null)) {
+                texturedCount++;
+            }
+        }
+
+        return triangleList;
+    }
+
     @Override
-    public void drawShaded(){
-         
+    public void drawShaded() {
+
         objs.stream().forEach((d) -> {
             d.drawShaded();
-        });      
+        });
     }
-    
+
     @Override
-    public void saveShadowMVP(){
+    public void saveShadowMVP() {
         objs.stream().forEach((d) -> {
             d.saveShadowMVP();
-        }); 
+        });
     }
-    
-    public void setShaderMatrix(Matrix4f m){
+
+    public void setShaderMatrix(Matrix4f m) {
         objs.stream().forEach((d) -> {
             d.setShaderMatrix(m);
-        }); 
+        });
     }
-    
+
     @Override
-    public void draw(){
+    public void draw() {
         objs.stream().forEach((d) -> {
             d.draw();
-        });   
+        });
     }
-    
+
     @Override
     public void drawPoints() {
         objs.stream().forEach((d) -> {
             d.drawPoints();
-        }); 
+        });
     }
-    
+
     @Override
-    public void setMatrix(Matrix4f model){
+    public void setMatrix(Matrix4f model) {
         objs.stream().forEach((d) -> {
             d.setMatrix(model);
-        }); 
+        });
     }
-    
+
     @Override
     public Matrix4f getMatrix() {
         return new Matrix4f();
@@ -129,7 +267,7 @@ public class DrawnObjectGroup implements Drawable{
     public void destroy() {
         objs.stream().forEach((d) -> {
             d.destroy();
-        }); 
+        });
     }
 
 }
