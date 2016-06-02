@@ -5,6 +5,8 @@ import com.opengg.core.Vector2f;
 import com.opengg.core.Vector3f;
 import com.opengg.core.audio.AudioHandler;
 import com.opengg.core.audio.AudioSource;
+import com.opengg.core.components.ModelRenderComponent;
+import com.opengg.core.components.PhysicsComponent;
 import com.opengg.core.gui.GUI;
 import com.opengg.core.io.input.KeyboardEventHandler;
 import com.opengg.core.io.input.KeyboardListener;
@@ -30,9 +32,9 @@ import com.opengg.core.util.GlobalInfo;
 import com.opengg.core.world.Camera;
 import com.opengg.core.world.Terrain;
 import com.opengg.core.world.World;
-import com.opengg.core.world.WorldManager;
+import com.opengg.core.engine.WorldManager;
+import com.opengg.core.io.newobjloader.Parser;
 import com.opengg.core.world.WorldObject;
-import com.opengg.core.world.physics.MainLoop;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -56,6 +58,8 @@ public class OpenGGTest implements KeyboardListener {
     int quads;
     Vector3f rot = new Vector3f(0, 0, 0);
     Vector3f pos = new Vector3f(0, -10, -30);
+    WorldObject terrain;
+    WorldObject drawnobject;
     
     World w;
     
@@ -89,10 +93,7 @@ public class OpenGGTest implements KeyboardListener {
     public OpenGGTest() throws IOException, Exception {
         KeyboardEventHandler.addToPool(this);
 
-        new Thread(() -> {
-            MainLoop.process();
-        }).start();
- 
+   
         try {
             win = new GLFWWindow(1280, 960, "Test", DisplayMode.WINDOWED);
         } catch (Exception ex) {
@@ -123,7 +124,7 @@ public class OpenGGTest implements KeyboardListener {
         vbo.bind(GL_ARRAY_BUFFER);
         GlobalInfo.b = vbo;
 
-        t1.setupTexToBuffer(2048);
+        t1.setupTexToBuffer(win.getWidth(),win.getHeight());
         t3.loadTexture("C:/res/deer.png", true);
         f = new Font("", "thanks dad", 11);
 
@@ -141,15 +142,10 @@ public class OpenGGTest implements KeyboardListener {
         int s13 = AudioHandler.loadSound(OpenGGTest.class.getResource("res/stal.wav"));
         so3 = new AudioSource(s13);
 
-        try {
-            URL path = OpenGGTest.class.getResource("res/models/deer.obj");
-            URL path2 = OpenGGTest.class.getResource("res/models/awp3.obj");
-            m = new OBJParser().parse(path);
-            m2 = new OBJParser().parse(path2);
-            
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
+        URL path = OpenGGTest.class.getResource("res/models/deer.obj");
+        URL path2 = OpenGGTest.class.getResource("res/models/awp3.obj");
+        m = new OBJParser().parse(path);
+        m2 = new OBJParser().parse(path2);
 
         InputStream heightmap = OpenGGTest.class.getResource("res/heightmap.png").openStream();
 
@@ -174,19 +170,22 @@ public class OpenGGTest implements KeyboardListener {
 
         test2 = ObjectBuffers.getSquareUI(1, 3, 1, 3, -1, 1f, false);
         test5 = new DrawnObject(test2, 12);
-
-        //test6 = new DrawnObjectGroup(OpenGGTest.class.getResource("res/models/Mansion.obj"), 1);
+        Parser p = new Parser();
+        test6 = new DrawnObjectGroup(p,OpenGGTest.class.getResource("res/models/jabufish.obj"), 1f);
 
         test2 = ObjectBuffers.genSkyCube();
         sky = new DrawnObject(test2, 12);
         
         w = WorldManager.getDefaultWorld();
-        
+        drawnobject = new WorldObject();
+        ModelRenderComponent m2 = new ModelRenderComponent(test6);
+        m2.setOffset(new Vector3f());
+        drawnobject.attach(m2);
+        drawnobject.pos = new Vector3f(0,0,0);
         w.floorLev = -10;
         w.addObject(w1 = new WorldObject(awp3));
         w.addObject(w2 = new WorldObject(flashbang));
-        w1.setPos(new Vector3f(0,30,0));
-        w2.setPos(new Vector3f(0,0,0));
+         
         
         awp3.removeBuffer();
         flashbang.removeBuffer();
@@ -194,7 +193,19 @@ public class OpenGGTest implements KeyboardListener {
         base.generateTerrain(heightmap);
         base2 = new DrawnObject(base.elementals, vbo,base.indices);
         base.removeBuffer();
+        ModelRenderComponent m = new ModelRenderComponent(base2);
+        ModelRenderComponent l = new ModelRenderComponent(awp3);
+        m.setScale(new Vector3f(10,20,20));
+        l.setOffset(new Vector3f(10,30,0));
         
+        
+        terrain = new WorldObject();
+        terrain.attach(l);
+        terrain.attach(m);
+        PhysicsComponent bad = new PhysicsComponent(terrain);
+        bad.force = new Vector3f(1,1,0);
+        terrain.attach(bad);
+        terrain.pos = new Vector3f(0,0,0);
         ratio = win.getRatio();
         
         base2.setMatrix(Matrix4f.translate(-50, 0, -100));
@@ -216,7 +227,7 @@ public class OpenGGTest implements KeyboardListener {
     }
 
     public void exit() {
-        MainLoop.killProcess();
+       
         AudioHandler.destroy();
         vao.delete();
         vbo.delete();
@@ -246,10 +257,11 @@ public class OpenGGTest implements KeyboardListener {
         flashbang.saveShadowMVP();
         flashbang.draw();
 
-        base2.setMatrix(Matrix4f.translate(-50, 0, -100));
-        base2.saveShadowMVP();
-        base2.draw();
-
+//        base2.setMatrix(Matrix4f.translate(-50, 0, -100));
+//        base2.saveShadowMVP();
+//        base2.draw();
+//        
+        terrain.render();
         t1.endTexRender();
 
         t1.useDepthTexture(2);
@@ -259,32 +271,31 @@ public class OpenGGTest implements KeyboardListener {
         s.setView(c);
         s.setPerspective(90, ratio, 0.3f, 2000f);
 
-        s.setMode(Mode.GUI);
+        
         t3.useTexture(0);
         awp3.drawShaded();
-
         flashbang.drawShaded();
-
+        terrain.render();
+        drawnobject.render();
         t1.useDepthTexture(0);
         base2.drawShaded();
-
-        g.startGUI();
-
-        t1.useDepthTexture(0);
-        test5.draw();
-        
         s.setMode(Mode.SKYBOX);
         cb.use();
         sky.draw();
+        s.setMode(Mode.GUI);
+        g.startGUI();
+        t1.useDepthTexture(0);
+        test5.draw();
+        
+       
         
     }
 
     public void update(float delta) {
         xrot += rot1 * 5;
         yrot += rot2 * 5;
-        
-        awp3.setMatrix(Matrix4f.translate(w1.getEntity().current.pos));
-        flashbang.setMatrix(Matrix4f.translate(w2.getEntity().current.pos));
+        terrain.update(delta);
+      
     }
 
     @Override
