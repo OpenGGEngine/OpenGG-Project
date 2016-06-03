@@ -38,17 +38,16 @@ void genPhong(int vertNum){
     shadowpos.z = 0.5 * shadowpos.z + 0.5;
     
     
-    vec4 worldPosition = model * vec4(poss[vertNum], 1.0f);
-    vec4 positionRelativeToCam = view * worldPosition;
+    vec3 worldPosition = (model * vec4(poss[vertNum], 1.0f)).xyz;
+    vec3 positionRelativeToCam = (view * model * vec4(poss[vertNum], 1.0f)).xyz;
     
-    vec3 posCameraspace = ( positionRelativeToCam).xyz;
+    vec3 posCameraspace = ( positionRelativeToCam);
     eyedir = vec3(0,0,0) - posCameraspace;
     
-
     vec3 lightposCamera = ( view * vec4(lightpos,1.0f)).xyz;
     lightdir = lightposCamera + eyedir;
 
-    norm = ( view * model *  vec4(norms[vertNum],1.0f)).xyz;
+    norm = ( view * model *  vec4(norms[vertNum],0.0f)).xyz;
     
     
     float distance = length(positionRelativeToCam.xyz);
@@ -62,13 +61,15 @@ void genPhong(int vertNum){
 
 void main(){
     for(int i = 0; i < gl_in.length(); i++){
-        if(mode != 2){     
+        vec4 temppos = gl_in[i].gl_Position;
+        
+        if(mode != 2 && mode != 5){     
             genPhong(i);
         }
         vertexColor = vertexColors[i];
         textureCoord = textureCoords[i];
         //pos = vec4(poss[i], 1.0f);
-        gl_Position = gl_in[i].gl_Position;
+        gl_Position = temppos;
         EmitVertex();
     }
     

@@ -25,7 +25,8 @@ uniform sampler2D shadeImage;
 uniform samplerCube cubemap;
 uniform vec3 lightpos;
 uniform int mode;
-
+vec2 camerarange = vec2(1280, 960);
+vec2 screensize = vec2(1280, 960);
 float amb = 0.3;
 
 vec2 randdisk[16] = vec2[]( 
@@ -48,7 +49,7 @@ vec2 randdisk[16] = vec2[](
 );
 
 float bias = 0.005;
-float vis = 1;
+float vis = 0.5f;
 
 vec3 ambient = vec3(0.1,0.1,0.1);
 vec3 diffuse = vec3(1,1,1);
@@ -82,7 +83,7 @@ vec4 shadify(){
 
     float spec = 0.1;
 
-    vec4 tempdif = texture(texImage, textureCoord);;
+    vec4 tempdif = texture(texImage, textureCoord * vec2(uvmultx, uvmulty));
     
     diffuse = tempdif.rgb;
     
@@ -118,18 +119,125 @@ vec4 shadify(){
             // Diffuse : "color" of the object
             vis * diffuse * lightcol * lightpower * cosTheta / ((distance*distance)/lightdistance) +
             // Specular : reflective highlight, like a mirror
-            //vis * specular * lightcol * lightpower * pow(cosAlpha,5) / ((distance*distance)/lightdistance)), trans);
+            vis * specular * lightcol * lightpower * pow(cosAlpha,5) / ((distance*distance)/lightdistance)), trans);
     return fragColor;
 }
 
 vec4 getTex(){
-    return texture(texImage, textureCoord);
+    return texture(texImage, textureCoord * vec2(uvmultx, uvmulty));
 }
 vec4 getCube(){
     return texture(cubemap, normalize(pos.xyz));
 }
+vec4 genWaveEffect(){
+    vec2 texcoord = textureCoord;
+    texcoord.x += sin(texcoord.y * 4*2*3.14159) / 10;
+    return texture(texImage, vec2(texcoord.x, sin(texcoord.y)));
+}
+float readDepth( in vec2 coord ) {
+	return (2.0 * camerarange.x) / (camerarange.y + camerarange.x - texture2D( shadeImage, coord ).x * (camerarange.y - camerarange.x));	
+}
+ 
+float compareDepths( in float depth1, in float depth2 ) {
+	float aoCap = 1.0;
+	float aoMultiplier=100000.0;
+	float depthTolerance=0.000;
+	float aorange = 100.0;// units in space the AO effect extends to (this gets divided by the camera far range
+	float diff = sqrt( clamp(1.0-(depth1-depth2) / ((camerarange.y-camerarange.x)),0.0,1.0) );
+	float ao = min(aoCap,max(0.0,depth1-depth2-depthTolerance) * aoMultiplier) * diff;
+	return 1-ao;
+}
+ 
+vec4 ssao()
+{	
+	float depth = readDepth( textureCoord );
+	float d;
+ 
+	float pw = 1.0 / screensize.x;
+	float ph = 1.0 / screensize.y;
+ 
+	float aoCap = 1.0;
+ 
+	float ao = 0.0;
+ 
+	float aoMultiplier=10000.0;
+ 
+	float depthTolerance = 0.0001;
+ 
+	float aoscale=1.0;
+ 
+	d=readDepth( vec2(textureCoord.x+pw,textureCoord.y+ph));
+	ao+=compareDepths(depth,d)/aoscale;
+ 
+	d=readDepth( vec2(textureCoord.x-pw,textureCoord.y+ph));
+	ao+=compareDepths(depth,d)/aoscale;
+ 
+	d=readDepth( vec2(textureCoord.x+pw,textureCoord.y-ph));
+	ao+=compareDepths(depth,d)/aoscale;
+ 
+	d=readDepth( vec2(textureCoord.x-pw,textureCoord.y-ph));
+	ao+=compareDepths(depth,d)/aoscale;
+ 
+	pw*=2.0;
+	ph*=2.0;
+	aoMultiplier/=2.0;
+	aoscale*=1.2;
+ 
+	d=readDepth( vec2(textureCoord.x+pw,textureCoord.y+ph));
+	ao+=compareDepths(depth,d)/aoscale;
+ 
+	d=readDepth( vec2(textureCoord.x-pw,textureCoord.y+ph));
+	ao+=compareDepths(depth,d)/aoscale;
+ 
+	d=readDepth( vec2(textureCoord.x+pw,textureCoord.y-ph));
+	ao+=compareDepths(depth,d)/aoscale;
+ 
+	d=readDepth( vec2(textureCoord.x-pw,textureCoord.y-ph));
+	ao+=compareDepths(depth,d)/aoscale;
+ 
+	pw*=2.0;
+	ph*=2.0;
+	aoMultiplier/=2.0;
+	aoscale*=1.2;
+ 
+	d=readDepth( vec2(textureCoord.x+pw,textureCoord.y+ph));
+	ao+=compareDepths(depth,d)/aoscale;
+ 
+	d=readDepth( vec2(textureCoord.x-pw,textureCoord.y+ph));
+	ao+=compareDepths(depth,d)/aoscale;
+ 
+	d=readDepth( vec2(textureCoord.x+pw,textureCoord.y-ph));
+	ao+=compareDepths(depth,d)/aoscale;
+ 
+	d=readDepth( vec2(textureCoord.x-pw,textureCoord.y-ph));
+	ao+=compareDepths(depth,d)/aoscale;
+ 
+	pw*=2.0;
+	ph*=2.0;
+	aoMultiplier/=2.0;
+	aoscale*=1.2;
+ 
+	d=readDepth( vec2(textureCoord.x+pw,textureCoord.y+ph));
+	ao+=compareDepths(depth,d)/aoscale;
+ 
+	d=readDepth( vec2(textureCoord.x-pw,textureCoord.y+ph));
+	ao+=compareDepths(depth,d)/aoscale;
+ 
+	d=readDepth( vec2(textureCoord.x+pw,textureCoord.y-ph));
+	ao+=compareDepths(depth,d)/aoscale;
+ 
+	d=readDepth( vec2(textureCoord.x-pw,textureCoord.y-ph));
+	ao+=compareDepths(depth,d)/aoscale;
+        
+	ao/=16.0;
+        ao = clamp(ao, 0, .5);
+	return vec4(1-ao) * texture2D(texImage,textureCoord) * 2;
+}
 
-void main() {
+void processPP(){
+    color = ssao();
+}
+void main() {   
     if(mode == 0){
         lightify();
         color = shadify();
@@ -137,13 +245,12 @@ void main() {
         color = shadify();
     }else if(mode == 2){
         color = getTex();
+    }else if(mode == 5){
+        processPP();
     }else{
         color = getCube();
-    }
-    
-    
+    }    
 };
-
 
 
 
