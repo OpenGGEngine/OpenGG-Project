@@ -240,8 +240,6 @@ public class OpenGGTest implements KeyboardListener {
         flashbang.saveShadowMVP();
         flashbang.draw();
 
-
-        terrain.render();
         t1.endTexRender();
 
         t1.useDepthTexture(2);
@@ -250,15 +248,13 @@ public class OpenGGTest implements KeyboardListener {
 
         s.setView(c);
         s.setPerspective(90, ratio, 0.3f, 2000f);
-
+        test6.drawShaded();
         
         t3.useTexture(0);
         awp3.drawShaded();
         flashbang.drawShaded();
-        terrain.render();
         //drawnobject.render();
         t1.useDepthTexture(0);
-        base2.drawShaded();
         s.setMode(Mode.SKYBOX);
         cb.use();
         sky.draw();
