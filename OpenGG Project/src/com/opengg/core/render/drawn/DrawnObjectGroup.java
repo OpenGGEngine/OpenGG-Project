@@ -37,15 +37,15 @@ public class DrawnObjectGroup implements Drawable {
     //corresponds to the nth value in list materials
     
 
-    public DrawnObjectGroup(Parser p, URL u, float scale) {
+    public DrawnObjectGroup(Parser p, String s, float scale) {
         Model model = new Model();
-        String name = model.objFilename;
         try {
-
-            model = p.parseModel(URLDecoder.decode(u.getFile(), "UTF-8"));
+            model = p.parseModel(s);
         } catch (IOException ex) {
             Logger.getLogger(DrawnObjectGroup.class.getName()).log(Level.SEVERE, null, ex);
         }
+        String temp2 = model.objFilename.substring(model.objFilename.lastIndexOf("/"), model.objFilename.length()-4);
+        String name = temp2;        
         //ArrayList<ArrayList<Face>> facesByTextureList = new ArrayList<>();
         HashMap<String,ArrayList<Face>> facesByTextureList= new HashMap<>();
         

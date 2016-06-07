@@ -237,7 +237,7 @@ public class MovementLoader {
     }
 
     public static void delete() {
-        keyCallback.release();
+        keyCallback.free();
     }
 
 }

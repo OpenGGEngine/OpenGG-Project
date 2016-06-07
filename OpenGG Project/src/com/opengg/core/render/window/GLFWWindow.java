@@ -31,7 +31,7 @@ public class GLFWWindow implements Window {
         WIDTH = w;
 
         // Initialize GLFW. Most GLFW functions will not work before doing this.
-        if ( glfwInit() != GL11.GL_TRUE )
+        if ( glfwInit() != true )
             throw new IllegalStateException("Unable to initialize GLFW");
 
         // Configure our window
@@ -95,8 +95,8 @@ public class GLFWWindow implements Window {
 
         // Make the window visible
         glfwShowWindow(window);
-
-
+        
+        
         GL.createCapabilities();
 
         GlobalInfo.window = this;
@@ -130,10 +130,10 @@ public class GLFWWindow implements Window {
         
         glfwTerminate();
         
-        errorCallback.release();
+        errorCallback.free();
     }
     public boolean shouldClose(long wind){
-        if(glfwWindowShouldClose(wind) == GL_FALSE){
+        if(glfwWindowShouldClose(wind) == true){
             return false;
         }else{
             return true;
@@ -141,11 +141,7 @@ public class GLFWWindow implements Window {
     }
     @Override
      public boolean shouldClose(){
-        if(glfwWindowShouldClose(GlobalInfo.window.getID()) == GL_FALSE){
-            return false;
-        }else{
-            return true;
-        }
+        return glfwWindowShouldClose(GlobalInfo.window.getID());
     }
      
     public void setColor(float r, float g, float b){

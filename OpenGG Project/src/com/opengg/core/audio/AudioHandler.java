@@ -9,15 +9,18 @@ import com.opengg.core.Vector3f;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import org.lwjgl.openal.AL;
 import org.lwjgl.openal.AL10;
 import static org.lwjgl.openal.AL10.AL_POSITION;
 import static org.lwjgl.openal.AL10.AL_VELOCITY;
 import static org.lwjgl.openal.AL10.alDeleteBuffers;
 import static org.lwjgl.openal.AL10.alGenBuffers;
 import static org.lwjgl.openal.AL10.alListener3f;
+import org.lwjgl.openal.AL;
+import org.lwjgl.openal.ALC;
 import org.lwjgl.openal.ALCCapabilities;
-import org.lwjgl.openal.ALContext;
-import org.lwjgl.openal.ALDevice;
+import org.lwjgl.openal.ALCapabilities;
+
 
 /**
  *
@@ -28,13 +31,8 @@ public class AudioHandler {
     public static List<Integer> bufferids = new ArrayList<>();
 
     public static void init(int windowid) {
-        ALContext context = ALContext.create();
-        ALDevice device = context.getDevice();
-
-        context.makeCurrent();
-        ALCCapabilities capabilities = device.getCapabilities();
-        if (!capabilities.OpenALC10)
-            throw new RuntimeException("OpenAL Context Creation failed");
+        ALCCapabilities cap = ALC.createCapabilities(windowid);
+        AL.createCapabilities(cap);
         AL10.alEnable(windowid);
     }
     
