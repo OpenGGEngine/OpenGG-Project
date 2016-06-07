@@ -6,6 +6,7 @@
 package com.opengg.core.render.drawn;
 
 import com.opengg.core.Matrix4f;
+import com.opengg.core.io.newobjloader.Material;
 import com.opengg.core.io.objloader.parser.MTLMaterial;
 import com.opengg.core.render.VertexBufferObject;
 import com.opengg.core.render.texture.Texture;
@@ -34,18 +35,14 @@ public class DrawnObject implements Drawable {
     VertexBufferObject vbo;
     long offset;
     FloatBuffer b;
-    IntBuffer ind;
-
-   
-    
+    IntBuffer ind; 
+    boolean hasmat;
     int limit;
     int vertLimit;
     long vertOffset;
     
     Matrix4f model = Matrix4f.translate(0, 0, 0);
     Matrix4f shadeModel = new Matrix4f();
-    
-    
     
     static{
         DrawnObjectHandler.setup();
@@ -140,6 +137,7 @@ public class DrawnObject implements Drawable {
     public void drawShaded(){
         GlobalInfo.main.setModel(model);
         GlobalInfo.main.setShadowLightMatrix(shadeModel);
+        if (!hasmat) GlobalInfo.main.passMaterial(Material.defaultmaterial,false,false);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, ind, GL_STATIC_DRAW);
         glDrawElements(GL_TRIANGLES, ind.limit(), GL_UNSIGNED_INT, 0);       
     }
@@ -159,6 +157,7 @@ public class DrawnObject implements Drawable {
         this.model = model;
     }
     
+    @Override
     public void drawPoints(){
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, ind, GL_STATIC_DRAW);
         glDrawElements(GL_POINTS, ind.limit(), GL_UNSIGNED_INT, 0);    

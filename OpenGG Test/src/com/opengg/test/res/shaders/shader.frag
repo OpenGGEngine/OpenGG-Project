@@ -15,6 +15,15 @@ in float visibility;
 
 out vec4 fragColor;
 
+struct Material
+{
+    bool hasnormmap;
+    bool hasspecmap;
+    vec3 ks;
+    vec3 ka;
+    vec3 kd;
+    float specexponent;
+};
 uniform mat4 shmvp;
 uniform float lightdistance;
 uniform float lightpower;
@@ -22,8 +31,11 @@ uniform float uvmultx;
 uniform float uvmulty;
 uniform sampler2D texImage;
 uniform sampler2D shadeImage;
+uniform sampler2D specImage;
+uniform sampler2D normImage;
 uniform samplerCube cubemap;
 uniform vec3 lightpos;
+uniform Material material;
 uniform int mode;
 vec2 camerarange = vec2(1280, 960);
 vec2 screensize = vec2(1280, 960);
@@ -51,9 +63,8 @@ vec2 randdisk[16] = vec2[](
 float bias = 0.005;
 float vis = 0.5f;
 
-vec3 ambient = vec3(0.1,0.1,0.1);
+
 vec3 diffuse = vec3(1,1,1);
-vec3 specular = vec3(0,0,0);
 
 float random(vec3 seed, int i){
 	vec4 seed4 = vec4(seed,i);
@@ -62,13 +73,13 @@ float random(vec3 seed, int i){
 }
 
 void lightify(){
-    vec4 shadp = shadowpos;
+
     int samples = 8;
-    //if ( textureProj( shadeImage, shadp.xyw ).z  <  (shadp.z-bias)/shadp.w ){
-    if(!(shadp.x < 0 || shadp.y < 0 || shadp.x > 1 || shadp.y > 1)){
+    //if ( textureProj( shadeImage, shadp.xyw ).z  <  (shadowpos.z-bias)/shadowpos.w ){
+    if(!(shadowpos.x < 0 || shadowpos.y < 0 || shadowpos.x > 1 || shadowpos.y > 1)){
         for(int i = 0; i < samples; i++){
             int index = int(16.0*random(pos.xyy, i))%16;
-            if(texture(shadeImage, shadp.xy - randdisk[index]/1100 ).r < (shadp.z - bias)/shadp.w){
+            if(texture(shadeImage, shadowpos.xy - randdisk[index]/1100 ).r < (shadowpos.z - bias)/shadowpos.w){
                 vis -= 0.12;
             }else{
 
@@ -78,27 +89,41 @@ void lightify(){
 }
 
 vec4 shadify(){
+    
     vec3 lightcol = vec3(1,1,1);
     vec4 vertcolor = vertexColor;
-
-    float spec = 0.1;
-
-    vec4 tempdif = texture(texImage, textureCoord * vec2(uvmultx, uvmulty));
+    vec4 tempdif;
+    
+    tempdif = texture(texImage, textureCoord * vec2(uvmultx, uvmulty));
+    
+    
     
     diffuse = tempdif.rgb;
     
     float trans = tempdif.a;
     
     if(texture2D(shadeImage,textureCoord).a == 0){
+            
             diffuse = vertcolor.rgb;
             vertcolor.a = 0;
     }
 
-    ambient = vec3(amb,amb,amb) * diffuse;
+    vec3 ambient = material.ka * diffuse;
     
-    specular = vec3(spec,spec,spec);
+    vec3 specular = material.ks; 
+    
+    float expo  = material.specexponent;
+    if(material.hasspecmap){
+        specular = texture(specImage, textureCoord * vec2(uvmultx, uvmulty)).xyz ;
+    }
 
-    float distance = length( lightpos - vec3(pos.x,pos.y,pos.z) );
+    float distance = length( lightpos - pos.xyz );
+
+    vec3 normal = norm;
+
+    if(material.hasnormmap){
+        normal = texture(normImage, textureCoord * vec2(uvmultx, uvmulty)).xyz;
+    }
 
     vec3 n = normalize( norm );
     // Direction of the light (from the fragment to the light)
@@ -119,7 +144,7 @@ vec4 shadify(){
             // Diffuse : "color" of the object
             vis * diffuse * lightcol * lightpower * cosTheta / ((distance*distance)/lightdistance) +
             // Specular : reflective highlight, like a mirror
-            vis * specular * lightcol * lightpower * pow(cosAlpha,5) / ((distance*distance)/lightdistance)), trans);
+            vis * specular * expo * lightpower * pow(cosAlpha,5) / ((distance*distance)/lightdistance)), trans);
     return fragColor;
 }
 
@@ -131,7 +156,7 @@ vec4 getCube(){
 }
 vec4 genWaveEffect(){
     vec2 texcoord = textureCoord;
-    texcoord.x += sin(texcoord.y * 4*2*3.14159) / 10;
+    texcoord.x += sin(texcoord.y * 4*2*3.14159) * 0.10;
     return texture(texImage, vec2(texcoord.x, sin(texcoord.y)));
 }
 float readDepth( in vec2 coord ) {

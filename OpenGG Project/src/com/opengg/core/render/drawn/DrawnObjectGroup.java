@@ -11,19 +11,9 @@ import com.opengg.core.io.newobjloader.FaceVertex;
 import com.opengg.core.io.newobjloader.Material;
 import com.opengg.core.io.newobjloader.Model;
 import com.opengg.core.io.newobjloader.Parser;
-import com.opengg.core.io.objloader.parser.IMTLParser;
-import com.opengg.core.io.objloader.parser.MTLLibrary;
-import com.opengg.core.io.objloader.parser.MTLMaterial;
-import com.opengg.core.io.objloader.parser.MTLParser;
-import com.opengg.core.io.objloader.parser.OBJModel;
-import com.opengg.core.io.objloader.parser.OBJParser;
-import com.opengg.core.render.buffer.ObjectBuffers;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.util.GlobalInfo;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.FloatBuffer;
@@ -31,7 +21,6 @@ import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.lwjgl.BufferUtils;
@@ -56,42 +45,51 @@ public class DrawnObjectGroup implements Drawable {
         } catch (IOException ex) {
             Logger.getLogger(DrawnObjectGroup.class.getName()).log(Level.SEVERE, null, ex);
         }
-        ArrayList<ArrayList<Face>> facesByTextureList = new ArrayList<>();
-        Material currentMaterial = null;
-        ArrayList<Face> currentFaceList = new ArrayList<>();
+        //ArrayList<ArrayList<Face>> facesByTextureList = new ArrayList<>();
+        HashMap<String,ArrayList<Face>> facesByTextureList= new HashMap<>();
+        
+       // ArrayList<Face> currentFaceList = new ArrayList<>();
+        
         for (Face face : model.faces) {
-            if (face.material != currentMaterial) {
-                if (!currentFaceList.isEmpty()) {
-                    
-                    facesByTextureList.add(currentFaceList);
-                }
-               
-                currentMaterial = face.material;
-                currentFaceList = new ArrayList<>();
-            }
-            currentFaceList.add(face);
-        }
-        if (!currentFaceList.isEmpty()) {
             
-            facesByTextureList.add(currentFaceList);
+            if(face.material == null){
+                face.material = Material.defaultmaterial;
+                
+            }
+            
+            if(facesByTextureList.containsKey(face.material.toString())){
+                
+                ArrayList<Face> temp = facesByTextureList.get(face.material.toString());
+                temp.add(face);
+                facesByTextureList.replace(face.material.toString(), temp);
+            }else{
+                ArrayList<Face> temp = new ArrayList<>();
+                temp.add(face);
+                facesByTextureList.put(face.material.toString(), temp);
+            }
+            
         }
-        for(ArrayList<Face> m: facesByTextureList){
+       for (String key : facesByTextureList.keySet()) {
+            System.out.println(key);
+            ArrayList<Face> currentFaceList = facesByTextureList.get(key);
             currentFaceList = splitQuads(currentFaceList);
             MatDrawnObject obj = makeadamnvbo(currentFaceList);
-            Material material;
-            if(m.get(0).material != null){
-                material = m.get(0).material;
-            }else{
-                material = new Material(UUID.randomUUID().toString());
-            }
+            Material material = currentFaceList.get(0).material;
+            
             obj.setM(material);
-            System.out.println(material.name);
+            
             if (material.mapKdFilename == null) {
             } else {
                 System.out.println(material.mapKdFilename);
                 Texture nointernet = new Texture();
-                nointernet.loadTexture("C:/res/" + material.mapKdFilename, true);
+                nointernet.loadTexture("C:/res/musictrack/" + material.mapKdFilename, true);
                 obj.setTexture(nointernet);
+            }
+            if(material.mapNsFilename !=null){
+                //System.out.println("LQWINEVKUYRQUYRQIEUKYRLQUKYERLQUERYKUQWEYROIUQYWEBIUYWEURYWEOIRUVQYWIURYWOEILJKHRKJFHS \n\n\n\n\n");
+                Texture nointernet = new Texture();
+                nointernet.loadTexture("C:/res/musictrack/" + material.mapNsFilename, true);
+                obj.setSpecularMap(nointernet);
             }
             objs.add(obj);
         }
@@ -220,6 +218,7 @@ public class DrawnObjectGroup implements Drawable {
     public void drawShaded() {
 
         objs.stream().forEach((d) -> {
+            
             d.drawShaded();
         });
     }

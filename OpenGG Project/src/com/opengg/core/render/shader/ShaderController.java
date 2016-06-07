@@ -9,6 +9,7 @@ package com.opengg.core.render.shader;
 import com.opengg.core.Matrix4f;
 import com.opengg.core.Vector3f;
 import com.opengg.core.io.FileStringLoader;
+import com.opengg.core.io.newobjloader.Material;
 import com.opengg.core.render.window.ViewUtil;
 import com.opengg.core.world.Camera;
 import java.io.UnsupportedEncodingException;
@@ -27,11 +28,12 @@ public class ShaderController {
     private Shader fragmentTex;
     private Shader vertexTex;
     private Shader geomTex;
-    private int uniModel,rotm,lightpos,div,uniView,lightdistance,lightpower,shadow,skycolor,mode;
+    private int uniModel,rotm,lightpos,div,uniView,lightdistance,lightpower,shadow,skycolor,mode,specularexponent,specularexponents,specularcolor,hasspec;
     float ratio;
     Matrix4f model= new Matrix4f(), view= new Matrix4f(), proj = new Matrix4f();
     private int uvy;
     private int uvx;
+    private int hasnorm;
     
     public void setup(URL vert, URL frag, URL geom) throws UnsupportedEncodingException{
         vertexTex= new Shader(GL_VERTEX_SHADER, 
@@ -77,6 +79,12 @@ public class ShaderController {
         int uniCube = program.getUniformLocation("cubemap"); 
         program.setUniform(uniCube, 2);
         
+        int uniNorm = program.getUniformLocation("normImage");
+        program.setUniform(uniNorm, 3);
+        
+        int uniSpec = program.getUniformLocation("specImage"); 
+        program.setUniform(uniSpec, 4);
+        
         lightpos = program.getUniformLocation("lightpos"); 
         program.setUniform(lightpos, new Vector3f(200,50,-10));
         
@@ -107,6 +115,21 @@ public class ShaderController {
         
         mode = program.getUniformLocation("mode"); 
         program.setUniform(mode, (int) 0);
+        
+        specularexponent = program.getUniformLocation("material.specexponent");
+        program.setUniform(specularexponent, 0);
+        
+        specularexponents = program.getUniformLocation("material.ka");
+        program.setUniform(specularexponents, 1f);
+        
+        specularcolor = program.getUniformLocation("material.ks");
+        program.setUniform(specularcolor, new Vector3f());
+        
+        hasspec = program.getUniformLocation("material.hasspecmap");
+        program.setUniform(hasspec, false);
+        
+        hasnorm = program.getUniformLocation("material.hasnormmap");
+        program.setUniform(hasnorm, false);
         
         program.checkStatus();
         
@@ -203,14 +226,10 @@ public class ShaderController {
     }
     
     public void setView(Camera c){
-        Vector3f pos = c.getPos();
+       
         Vector3f rot = c.getRot();       
-        Matrix4f posm = Matrix4f.translate(pos.x, pos.y, pos.z);
-        
-        
-        Matrix4f rotm = Matrix4f.rotate(rot.x,1,0,0).multiply(Matrix4f.rotate(rot.y,0,1,0).multiply(Matrix4f.rotate(rot.z,0,0,1)));
-        
-        view = rotm.multiply(posm);
+  
+        view = Matrix4f.rotate(rot.x,1,0,0).multiply(Matrix4f.rotate(rot.y,0,1,0).multiply(Matrix4f.rotate(rot.z,0,0,1))).multiply(Matrix4f.translate(c.getPos()));
         
         setView(view);
     }
@@ -224,5 +243,12 @@ public class ShaderController {
     }
     public void setUVMultY(float f){
         program.setUniform(uvy, (float)f);
+    }
+    public void passMaterial(Material m,boolean specmap, boolean normmap){
+        program.setUniform(specularexponent, (float) m.nsExponent);
+        program.setUniform(specularexponents, new Vector3f((float)m.ka.rx,(float)m.ka.gy,(float)m.ka.bz));
+        program.setUniform(specularcolor, new Vector3f((float)m.ks.rx,(float)m.ks.gy,(float)m.ks.bz));
+        program.setUniform(hasspec, specmap);
+        program.setUniform(hasnorm, normmap);
     }
 }

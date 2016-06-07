@@ -10,6 +10,7 @@ import com.opengg.core.Matrix4f;
 import com.opengg.core.io.newobjloader.Material;
 import com.opengg.core.render.VertexBufferObject;
 import com.opengg.core.render.texture.Texture;
+import com.opengg.core.util.GlobalInfo;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.List;
@@ -23,11 +24,14 @@ public class MatDrawnObject implements Drawable {
 
     public void setM(Material m) {
         this.m = m;
+        d.hasmat = true;
     }
     Material m;
-    Texture tex = new Texture();
+    Texture tex;
     private Texture normalmap;
     private boolean hasNormalMap;
+    private Texture specmap;
+    private boolean hasSpecMap = false;
     
     public MatDrawnObject(FloatBuffer b, int vertsize){
         d = new DrawnObject(b,vertsize);
@@ -51,15 +55,18 @@ public class MatDrawnObject implements Drawable {
         
     }
     public void setSpecularMap(Texture d){
-        this.normalmap = d;
-        this.hasNormalMap = true;   
+        this.specmap = d;
+        this.hasSpecMap = true;   
     }
     public void setShaderMatrix(Matrix4f m){
         d.setShaderMatrix(m);
     }
     @Override
     public void draw() {
-        tex.useTexture(0);
+        if(tex != null)tex.useTexture(0);
+        if(hasSpecMap) specmap.useTexture(4);   
+        if(hasNormalMap) normalmap.useTexture(3);
+        GlobalInfo.main.passMaterial(m,hasSpecMap, hasNormalMap);
         d.draw();
     }
 
@@ -75,7 +82,9 @@ public class MatDrawnObject implements Drawable {
 
     @Override
     public void drawShaded() {
-        tex.useTexture(0);
+        if(tex != null)tex.useTexture(0);
+        if(hasSpecMap) specmap.useTexture(4);   
+        GlobalInfo.main.passMaterial(m,hasSpecMap, hasNormalMap);
         d.drawShaded();
     }
 
