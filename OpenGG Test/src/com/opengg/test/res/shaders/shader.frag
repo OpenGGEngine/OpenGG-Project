@@ -87,7 +87,9 @@ void lightify(){
         }
     }
 }
-
+vec4 getTex(sampler2D tname){
+    return texture(tname, textureCoord * vec2(uvmultx, uvmulty));
+}
 vec4 shadify(){
     
     vec3 lightcol = vec3(1,1,1);
@@ -114,7 +116,7 @@ vec4 shadify(){
     
     float expo  = material.specexponent;
     if(material.hasspecmap){
-        specular = texture(specImage, textureCoord * vec2(uvmultx, uvmulty)).xyz ;
+        expo = getTex(specImage).g ;
     }
 
     float distance = length( lightpos - pos.xyz );
@@ -122,7 +124,7 @@ vec4 shadify(){
     vec3 normal = norm;
 
     if(material.hasnormmap){
-        normal = texture(normImage, textureCoord * vec2(uvmultx, uvmulty)).xyz;
+        normal = getTex(normImage).rgb;
     }
 
     vec3 n = normalize( norm );
@@ -146,10 +148,6 @@ vec4 shadify(){
             // Specular : reflective highlight, like a mirror
             vis * specular * expo * lightpower * pow(cosAlpha,5) / ((distance*distance)/lightdistance)), trans);
     return fragColor;
-}
-
-vec4 getTex(){
-    return texture(texImage, textureCoord * vec2(uvmultx, uvmulty));
 }
 vec4 getCube(){
     return texture(cubemap, normalize(pos.xyz));
@@ -269,7 +267,7 @@ void main() {
     }else if(mode == 1){
         color = shadify();
     }else if(mode == 2){
-        color = getTex();
+        color = getTex(texImage);
     }else if(mode == 5){
         processPP();
     }else{

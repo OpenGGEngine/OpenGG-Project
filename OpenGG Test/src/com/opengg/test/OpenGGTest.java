@@ -164,28 +164,22 @@ public class OpenGGTest implements KeyboardListener {
 
         test = ObjectBuffers.genBuffer(m, 1f, 0.2f, new Vector3f());
         test2 = ObjectBuffers.genBuffer(m2, 1f, 1f, new Vector3f());
-
+        Parser p = new Parser();
+        test6 = new DrawnObjectGroup(p,,1f);
         awp3 = new DrawnObject(test, 12);
         flashbang = new DrawnObject(test2, 12);
 
         test2 = ObjectBuffers.getSquareUI(1, 3, 1, 3, -1, 1f, false);
         test5 = new DrawnObject(test2, 12);
-        Parser p = new Parser();
-        test6 = new DrawnObjectGroup(p,OpenGGTest.class.getResource("res/models/jabufish.obj"), 1f);
 
         test2 = ObjectBuffers.genSkyCube();
         sky = new DrawnObject(test2, 12);
         
         w = WorldManager.getDefaultWorld();
-        drawnobject = new WorldObject();
-        ModelRenderComponent m2 = new ModelRenderComponent(test6);
-        m2.setOffset(new Vector3f());
-        drawnobject.attach(m2);
-        drawnobject.pos = new Vector3f(0,0,0);
         w.floorLev = -10;
         w.addObject(w1 = new WorldObject(awp3));
         w.addObject(w2 = new WorldObject(flashbang));
-         
+        
         
         awp3.removeBuffer();
         flashbang.removeBuffer();
@@ -195,10 +189,9 @@ public class OpenGGTest implements KeyboardListener {
         base.removeBuffer();
         ModelRenderComponent m = new ModelRenderComponent(base2);
         ModelRenderComponent l = new ModelRenderComponent(awp3);
-        m.setScale(new Vector3f(10,20,20));
+        //m.setScale(new Vector3f(10,20,20));
         l.setOffset(new Vector3f(10,30,0));
-        
-        
+
         terrain = new WorldObject();
         terrain.attach(l);
         terrain.attach(m);
@@ -242,7 +235,7 @@ public class OpenGGTest implements KeyboardListener {
         c.setPos(new Vector3f(15, -40, -10));
         c.setRot(new Vector3f(60, 50, 0));
 
-        s.setLightPos(new Vector3f(0, 30, 0));
+        s.setLightPos(new Vector3f(15, 15, 5));
         s.setView(c);
 
         s.setPerspective(90, ratio, 4, 300f); 
@@ -276,7 +269,7 @@ public class OpenGGTest implements KeyboardListener {
         awp3.drawShaded();
         flashbang.drawShaded();
         terrain.render();
-        drawnobject.render();
+        //drawnobject.render();
         t1.useDepthTexture(0);
         base2.drawShaded();
         s.setMode(Mode.SKYBOX);
@@ -285,16 +278,13 @@ public class OpenGGTest implements KeyboardListener {
         s.setMode(Mode.GUI);
         g.startGUI();
         t1.useDepthTexture(0);
-        test5.draw();
-        
-       
-        
+        test5.draw();  
     }
 
     public void update(float delta) {
         xrot += rot1 * 5;
         yrot += rot2 * 5;
-        terrain.update(delta);
+        //terrain.update(delta);
       
     }
 

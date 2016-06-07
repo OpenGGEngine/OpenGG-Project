@@ -13,9 +13,9 @@ public class Material {
     
     public static Material defaultmaterial = new Material("default");
     public String name;
-    public ReflectivityTransmiss ka = new ReflectivityTransmiss(0,0,0);
+    public ReflectivityTransmiss ka = new ReflectivityTransmiss(0.1f,0.1f,0.1f);
     public ReflectivityTransmiss kd = new ReflectivityTransmiss();
-    public ReflectivityTransmiss ks = new ReflectivityTransmiss(0,0,0);
+    public ReflectivityTransmiss ks = new ReflectivityTransmiss(1,1,1);
     public ReflectivityTransmiss tf = new ReflectivityTransmiss();
     public int illumModel = 0;
     public boolean dHalo = false;

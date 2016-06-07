@@ -20,10 +20,14 @@ import java.nio.ByteBuffer;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.EXTTextureFilterAnisotropic;
+import org.lwjgl.opengl.GL;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.*;
 import static org.lwjgl.opengl.GL14.GL_DEPTH_COMPONENT32;
 import static org.lwjgl.opengl.GL14.GL_TEXTURE_LOD_BIAS;
+import static org.lwjgl.opengl.GL20.glDrawBuffers;
+import static org.lwjgl.opengl.GL20.glDrawBuffers;
 import static org.lwjgl.opengl.GL20.glDrawBuffers;
 import static org.lwjgl.opengl.GL20.glDrawBuffers;
 import static org.lwjgl.opengl.GL20.glDrawBuffers;
@@ -242,7 +246,14 @@ public class Texture {
     public ByteBuffer getData(){
         return buffer;
     }
-    
+    public void setAnisotropy(int level){
+        if(GL.getCapabilities().GL_EXT_texture_filter_anisotropic){
+            System.out.println("Passed");
+            float lev = Math.min(level, glGetFloat(EXTTextureFilterAnisotropic.GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT));
+            glTexParameterf(GL_TEXTURE_2D, EXTTextureFilterAnisotropic.GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, lev);
+        }
+        
+    }
     private int offset;
     
     private BufferedImage loadtga(String filename) throws IOException{

@@ -41,7 +41,7 @@ public class WorldObject extends ComponentHolder implements Component {
         thisWorld = WorldManager.getDefaultWorld();
         this.thisWorld.addObject(this);
     }
-    public WorldObject(DrawnObject d){
+    public WorldObject(Drawable d){
         super();
         pos = new Vector3f(0,0,0);
         rot = new Quaternion4f();
@@ -55,14 +55,6 @@ public class WorldObject extends ComponentHolder implements Component {
     @Override
     public void attach(Component c){
         super.attach(c);
-    }
-    public WorldObject(DrawnObjectGroup d){
-        pos = new Vector3f(0,0,0);
-        rot = new Quaternion4f();
-        thisWorld = WorldManager.getDefaultWorld();
-        this.thisWorld.addObject(this);
-        ModelRenderComponent m = new ModelRenderComponent(d);
-        super.attach(m);
     }
     
     /**

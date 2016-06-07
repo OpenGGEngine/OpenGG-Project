@@ -10,6 +10,12 @@ package com.opengg.core.io.newobjloader;
  * @author Warren
  */
 public class ReflectivityTransmiss {
+    public ReflectivityTransmiss(float r, float g, float b){
+        rx = r;
+        gy = g;
+        bz= b;
+    }
+    public ReflectivityTransmiss(){};
     public boolean isRGB = false;
     public boolean isXYZ = false;
     public double rx;

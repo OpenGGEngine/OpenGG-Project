@@ -39,6 +39,7 @@ public class DrawnObjectGroup implements Drawable {
 
     public DrawnObjectGroup(Parser p, URL u, float scale) {
         Model model = new Model();
+        String name = model.objFilename;
         try {
 
             model = p.parseModel(URLDecoder.decode(u.getFile(), "UTF-8"));
@@ -82,13 +83,13 @@ public class DrawnObjectGroup implements Drawable {
             } else {
                 System.out.println(material.mapKdFilename);
                 Texture nointernet = new Texture();
-                nointernet.loadTexture("C:/res/musictrack/" + material.mapKdFilename, true);
+                nointernet.loadTexture("C:/res/"+name+"/" + material.mapKdFilename, true);
                 obj.setTexture(nointernet);
             }
             if(material.mapNsFilename !=null){
                 //System.out.println("LQWINEVKUYRQUYRQIEUKYRLQUKYERLQUERYKUQWEYROIUQYWEBIUYWEURYWEOIRUVQYWIURYWOEILJKHRKJFHS \n\n\n\n\n");
                 Texture nointernet = new Texture();
-                nointernet.loadTexture("C:/res/musictrack/" + material.mapNsFilename, true);
+                nointernet.loadTexture("C:/res/"+name+"/" + material.mapNsFilename, true);
                 obj.setSpecularMap(nointernet);
             }
             objs.add(obj);
