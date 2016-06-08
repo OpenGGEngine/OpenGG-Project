@@ -92,6 +92,12 @@ public class DrawnObjectGroup implements Drawable {
                 nointernet.loadTexture("C:/res/"+name+"/" + material.mapNsFilename, true);
                 obj.setSpecularMap(nointernet);
             }
+            if(material.bumpFilename !=null){
+                //System.out.println("LQWINEVKUYRQUYRQIEUKYRLQUKYERLQUERYKUQWEYROIUQYWEBIUYWEURYWEOIRUVQYWIURYWOEILJKHRKJFHS \n\n\n\n\n");
+                Texture nointernet = new Texture();
+                nointernet.loadTexture("C:/res/"+name+"/" + material.bumpFilename, true);
+                obj.setNormalMap(nointernet);
+            }
             objs.add(obj);
         }
     

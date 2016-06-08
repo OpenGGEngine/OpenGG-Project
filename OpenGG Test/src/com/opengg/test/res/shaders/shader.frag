@@ -116,7 +116,7 @@ vec4 shadify(){
     
     float expo  = material.specexponent;
     if(material.hasspecmap){
-        expo = getTex(specImage).g ;
+        expo = getTex(specImage).g *255.0 ;
     }
 
     float distance = length( lightpos - pos.xyz );
@@ -124,10 +124,10 @@ vec4 shadify(){
     vec3 normal = norm;
 
     if(material.hasnormmap){
-        normal = getTex(normImage).rgb;
+        normal = getTex(normImage).rgb*2-1;
     }
 
-    vec3 n = normalize( norm );
+    vec3 n = normalize( normal );
     // Direction of the light (from the fragment to the light)
     vec3 l = normalize( lightdir );
     
