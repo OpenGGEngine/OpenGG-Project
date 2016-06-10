@@ -24,9 +24,16 @@ struct Material
     vec3 kd;
     float specexponent;
 };
+struct Light
+{
+    float lightdistance;
+    float lightpower;
+    vec3 lightpos;
+    vec3 color;
+};
 uniform mat4 shmvp;
-uniform float lightdistance;
-uniform float lightpower;
+uniform mat4 view;
+uniform mat4 model;
 uniform float uvmultx;
 uniform float uvmulty;
 uniform sampler2D texImage;
@@ -34,12 +41,11 @@ uniform sampler2D shadeImage;
 uniform sampler2D specImage;
 uniform sampler2D normImage;
 uniform samplerCube cubemap;
-uniform vec3 lightpos;
 uniform Material material;
+uniform Light light;
 uniform int mode;
 vec2 camerarange = vec2(1280, 960);
 vec2 screensize = vec2(1280, 960);
-float amb = 0.3;
 
 vec2 randdisk[16] = vec2[]( 
    vec2( -0.94201624, -0.39906216 ), 
@@ -92,14 +98,11 @@ vec4 getTex(sampler2D tname){
 }
 vec4 shadify(){
     
-    vec3 lightcol = vec3(1,1,1);
     vec4 vertcolor = vertexColor;
     vec4 tempdif;
     
     tempdif = texture(texImage, textureCoord * vec2(uvmultx, uvmulty));
-    
-    
-    
+
     diffuse = tempdif.rgb;
     
     float trans = tempdif.a;
@@ -112,19 +115,24 @@ vec4 shadify(){
 
     vec3 ambient = material.ka * diffuse;
     
-    vec3 specular = material.ks; 
+    vec3 specular = vec3(1,1,1) * (diffuse / 8); 
     
     float expo  = material.specexponent;
+    
     if(material.hasspecmap){
-        expo = getTex(specImage).g *255.0 ;
+        specular = specular * getTex(specImage).rgb;
     }
+    
+    specular = clamp(specular, 0, 1);
+    
+    float distance = length( light.lightpos - pos.xyz );
 
-    float distance = length( lightpos - pos.xyz );
-
-    vec3 normal = norm;
-
+    vec3 normal = ( view * model *  vec4(norm,0.0f)).xyz;
+    
     if(material.hasnormmap){
-        normal = getTex(normImage).rgb*2-1;
+        vec4 source =  getTex(normImage) * 2 - 1;
+        source.w = 0.0f;
+        normal = ( view * model * source).xyz;
     }
 
     vec3 n = normalize( normal );
@@ -144,9 +152,10 @@ vec4 shadify(){
             // Ambient : simulates indirect lighting
             vec4((ambient +
             // Diffuse : "color" of the object
-            vis * diffuse * lightcol * lightpower * cosTheta / ((distance*distance)/lightdistance) +
+            vis * diffuse * light.color * light.lightpower * cosTheta / ((distance*distance)/light.lightdistance) +
             // Specular : reflective highlight, like a mirror
-            vis * specular * expo * lightpower * pow(cosAlpha,5) / ((distance*distance)/lightdistance)), trans);
+            vis * specular * expo * light.lightpower * pow(cosAlpha,5) / ((distance*distance)/light.lightdistance)), trans);
+    
     return fragColor;
 }
 vec4 getCube(){
@@ -245,7 +254,7 @@ vec4 ssao()
  
 	d=readDepth( vec2(textureCoord.x-pw,textureCoord.y+ph));
 	ao+=compareDepths(depth,d)/aoscale;
- 
+        
 	d=readDepth( vec2(textureCoord.x+pw,textureCoord.y-ph));
 	ao+=compareDepths(depth,d)/aoscale;
  
@@ -258,7 +267,9 @@ vec4 ssao()
 }
 
 void processPP(){
+    
     color = ssao();
+    //color = getTex(texImage);
 }
 void main() {   
     if(mode == 0){

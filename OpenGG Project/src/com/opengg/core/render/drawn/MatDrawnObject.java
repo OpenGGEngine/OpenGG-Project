@@ -29,7 +29,7 @@ public class MatDrawnObject implements Drawable {
     Material m;
     Texture tex;
     private Texture normalmap;
-    private boolean hasNormalMap;
+    private boolean hasNormalMap = false;
     private Texture specmap;
     private boolean hasSpecMap = false;
     
@@ -84,6 +84,7 @@ public class MatDrawnObject implements Drawable {
     public void drawShaded() {
         if(tex != null)tex.useTexture(0);
         if(hasSpecMap) specmap.useTexture(4);   
+        if(hasNormalMap) normalmap.useTexture(3);
         GlobalInfo.main.passMaterial(m,hasSpecMap, hasNormalMap);
         d.drawShaded();
     }

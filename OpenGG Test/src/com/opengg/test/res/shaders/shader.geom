@@ -14,12 +14,19 @@ out vec3 lightdir;
 out vec3 eyedir;
 out vec4 pos;
 out vec3 norm;
-out vec3 lightposition;
 out vec4 shadowpos;
 out float visibility;
 
+struct Light
+{
+    float lightdistance;
+    float lightpower;
+    vec3 lightpos;
+    vec3 color;
+};
+
 uniform int mode;
-uniform vec3 lightpos;
+uniform Light light;
 uniform mat4 shmvp;
 uniform mat4 model;
 uniform mat4 view;
@@ -44,18 +51,16 @@ void genPhong(int vertNum){
     vec3 posCameraspace = ( positionRelativeToCam);
     eyedir = vec3(0,0,0) - posCameraspace;
     
-    vec3 lightposCamera = ( view * vec4(lightpos,1.0f)).xyz;
+    vec3 lightposCamera = ( view * vec4(light.lightpos,1.0f)).xyz;
     lightdir = lightposCamera + eyedir;
 
-    norm = ( view * model *  vec4(norms[vertNum],0.0f)).xyz;
+    norm = norms[vertNum];
     
     
     float distance = length(positionRelativeToCam.xyz);
 
     visibility = exp(-pow((distance*density),gradient));
     visibility = clamp(visibility,0.0,1.0);
-
-    lightposition = lightpos;
 
 }
 

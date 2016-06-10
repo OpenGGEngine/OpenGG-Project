@@ -34,6 +34,7 @@ public class ShaderController {
     private int uvy;
     private int uvx;
     private int hasnorm;
+    private int lightcolor;
     
     public void setup(URL vert, URL frag, URL geom) throws UnsupportedEncodingException{
         vertexTex= new Shader(GL_VERTEX_SHADER, 
@@ -85,7 +86,7 @@ public class ShaderController {
         int uniSpec = program.getUniformLocation("specImage"); 
         program.setUniform(uniSpec, 4);
         
-        lightpos = program.getUniformLocation("lightpos"); 
+        lightpos = program.getUniformLocation("light.lightpos"); 
         program.setUniform(lightpos, new Vector3f(200,50,-10));
         
         
@@ -107,11 +108,14 @@ public class ShaderController {
         shadow = program.getUniformLocation("shmvp"); 
         //program.setUniform(shadow, new Matrix4f());
         
-        lightdistance = program.getUniformLocation("lightdistance"); 
-        program.setUniform(lightdistance, 8f);
+        lightdistance = program.getUniformLocation("light.lightdistance"); 
+        program.setUniform(lightdistance, 60f);
         
-        lightpower = program.getUniformLocation("lightpower"); 
-        program.setUniform(lightpower, 200f);
+        lightpower = program.getUniformLocation("light.lightpower"); 
+        program.setUniform(lightpower, 300f);
+        
+        lightcolor = program.getUniformLocation("light.color"); 
+        program.setUniform(lightcolor, new Vector3f(1,1,1));
         
         mode = program.getUniformLocation("mode"); 
         program.setUniform(mode, (int) 0);

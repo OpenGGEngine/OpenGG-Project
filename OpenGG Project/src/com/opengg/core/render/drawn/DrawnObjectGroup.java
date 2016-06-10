@@ -95,8 +95,10 @@ public class DrawnObjectGroup implements Drawable {
             if(material.bumpFilename !=null){
                 //System.out.println("LQWINEVKUYRQUYRQIEUKYRLQUKYERLQUERYKUQWEYROIUQYWEBIUYWEURYWEOIRUVQYWIURYWOEILJKHRKJFHS \n\n\n\n\n");
                 Texture nointernet = new Texture();
+                System.out.println(material.bumpFilename);
                 nointernet.loadTexture("C:/res/"+name+"/" + material.bumpFilename, true);
                 obj.setNormalMap(nointernet);
+                //obj.setTexture(nointernet);
             }
             objs.add(obj);
         }

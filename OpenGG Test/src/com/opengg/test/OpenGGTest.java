@@ -75,6 +75,7 @@ public class OpenGGTest implements KeyboardListener {
     GUI g = new GUI();
     Texture t1 = new Texture();
     Texture t2 = new Texture();
+    Texture ppbf = new Texture();
 
     DrawnObject awp3, flashbang, test5, base2, sky;
     DrawnObjectGroup test6;
@@ -90,6 +91,7 @@ public class OpenGGTest implements KeyboardListener {
     
     WorldObject w1, w2;
     private AudioSource so,so2,so3;
+    private DrawnObject ppsht;
     
     public OpenGGTest() throws IOException, Exception {
         KeyboardEventHandler.addToPool(this);
@@ -103,7 +105,6 @@ public class OpenGGTest implements KeyboardListener {
 
         setup();
         while (!win.shouldClose()) {
-            System.out.println("Gay");
             startFrame();
 
             update(1);
@@ -125,7 +126,8 @@ public class OpenGGTest implements KeyboardListener {
         vbo.bind(GL_ARRAY_BUFFER);
         GlobalInfo.b = vbo;
 
-        t1.setupTexToBuffer(win.getWidth(),win.getHeight());
+        t1.setupTexToBuffer(2000,2000);
+        ppbf.setupTexToBuffer(win.getWidth(), win.getHeight());
         t3.loadTexture("C:/res/deer.png", true);
         f = new Font("", "thanks dad", 11);
 
@@ -170,7 +172,7 @@ public class OpenGGTest implements KeyboardListener {
 
         test2 = ObjectBuffers.getSquareUI(1, 3, 1, 3, -1, 1f, false);
         test5 = new DrawnObject(test2, 12);
-
+        ppsht = new DrawnObject(ObjectBuffers.getSquareUI(-1, 1, -1, 1, .6f, 1, false),12);
         test2 = ObjectBuffers.genSkyCube();
         sky = new DrawnObject(test2, 12);
         
@@ -225,43 +227,54 @@ public class OpenGGTest implements KeyboardListener {
         c.setPos(new Vector3f(15, -40, -10));
         c.setRot(new Vector3f(60, 50, 0));
 
-        s.setLightPos(new Vector3f(15, 15, 5));
+        s.setLightPos(new Vector3f(40, 80, 40));
         s.setView(c);
-
-        s.setPerspective(90, ratio, 4, 300f); 
+        ppbf.startTexRender();
         
+        s.setPerspective(90, ratio, 4, 300f);      
+        s.setMode(Mode.POS_ONLY);
+//        t1.startTexRender();
+//        t3.useTexture(0);
+//        
+//        awp3.saveShadowMVP();
+//        awp3.draw();
+//        
+//        flashbang.saveShadowMVP();
+//        flashbang.draw();
+//        
+//        t1.endTexRender();
+//        t1.useDepthTexture(2);
         s.setMode(Mode.OBJECT);
-        t1.startTexRender();
-        t3.useTexture(0);
         
-        awp3.saveShadowMVP();
-        awp3.draw();
-        
-        flashbang.saveShadowMVP();
-        flashbang.draw();
-
-        t1.endTexRender();
-
-        t1.useDepthTexture(2);
         c.setPos(pos);
         c.setRot(rot);
 
         s.setView(c);
-        s.setPerspective(90, ratio, 0.3f, 2000f);
-        test6.drawShaded();
+        s.setPerspective(90, ratio, 0.3f, 2500f);
         
+        test6.drawShaded();
         t3.useTexture(0);
         awp3.drawShaded();
         flashbang.drawShaded();
         //drawnobject.render();
+        
         t1.useDepthTexture(0);
         s.setMode(Mode.SKYBOX);
         cb.use();
         sky.draw();
+        
         s.setMode(Mode.GUI);
         g.startGUI();
         t1.useDepthTexture(0);
-        test5.draw();  
+//        test5.draw();  
+        
+        ppbf.endTexRender();
+        s.setMode(Mode.PP);
+        s.setOrtho(-1, 1, -1, 1, -1, 1);
+        s.setView(new Camera());
+        ppbf.useTexture(0);
+        ppbf.useDepthTexture(1);
+        ppsht.draw();
     }
 
     public void update(float delta) {

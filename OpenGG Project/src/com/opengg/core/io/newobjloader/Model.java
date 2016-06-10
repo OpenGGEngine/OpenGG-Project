@@ -451,13 +451,13 @@ public class Model implements ModelMaterialDefinitions{
     public void setD(boolean halo, float factor) {
         currentMaterialBeingParsed.dHalo = halo;
         currentMaterialBeingParsed.dFactor = factor;
-        log.log(INFO, "got a setD call!");
+        //log.log(INFO, "got a setD call!");
     }
 
     @Override
     public void setNs(float exponent) {
         currentMaterialBeingParsed.nsExponent = exponent;
-        log.log(INFO, "got a setNs call!");
+        //log.log(INFO, "got a setNs call!");
     }
 
     @Override
