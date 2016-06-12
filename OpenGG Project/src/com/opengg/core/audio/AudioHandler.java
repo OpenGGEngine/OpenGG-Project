@@ -7,6 +7,8 @@ package com.opengg.core.audio;
 
 import com.opengg.core.Vector3f;
 import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import org.lwjgl.openal.AL;
@@ -16,10 +18,12 @@ import static org.lwjgl.openal.AL10.AL_VELOCITY;
 import static org.lwjgl.openal.AL10.alDeleteBuffers;
 import static org.lwjgl.openal.AL10.alGenBuffers;
 import static org.lwjgl.openal.AL10.alListener3f;
-import org.lwjgl.openal.AL;
+
 import org.lwjgl.openal.ALC;
+import org.lwjgl.openal.ALC10;
+import static org.lwjgl.openal.ALC10.alcMakeContextCurrent;
+import static org.lwjgl.openal.ALC10.alcOpenDevice;
 import org.lwjgl.openal.ALCCapabilities;
-import org.lwjgl.openal.ALCapabilities;
 
 
 /**
@@ -27,13 +31,17 @@ import org.lwjgl.openal.ALCapabilities;
  * @author Javier
  */
 public class AudioHandler {
-
+    static long device;
+    static long context;
     public static List<Integer> bufferids = new ArrayList<>();
 
     public static void init(int windowid) {
-        ALCCapabilities cap = ALC.createCapabilities(windowid);
-        AL.createCapabilities(cap);
-        AL10.alEnable(windowid);
+        device = alcOpenDevice((ByteBuffer)null);
+        ALCCapabilities caps = ALC.createCapabilities(device);
+        
+        context = ALC10.alcCreateContext(device, (IntBuffer)null);
+        alcMakeContextCurrent(context);
+        AL.createCapabilities(caps);
     }
     
     public static void setListenerPos(Vector3f pos){

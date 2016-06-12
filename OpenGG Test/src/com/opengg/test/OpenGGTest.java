@@ -13,7 +13,6 @@ import com.opengg.core.io.objloader.parser.OBJModel;
 import com.opengg.core.io.objloader.parser.OBJParser;
 import com.opengg.core.movement.MovementLoader;
 import com.opengg.core.render.VertexArrayObject;
-import com.opengg.core.render.VertexBufferObject;
 import com.opengg.core.render.buffer.ObjectBuffers;
 import com.opengg.core.render.drawn.DrawnObject;
 import com.opengg.core.render.drawn.DrawnObjectGroup;
@@ -27,16 +26,17 @@ import com.opengg.core.render.window.DisplayMode;
 import com.opengg.core.render.window.GLFWWindow;
 import static com.opengg.core.render.window.RenderUtil.endFrame;
 import static com.opengg.core.render.window.RenderUtil.startFrame;
-import com.opengg.core.util.GlobalInfo;
 import com.opengg.core.world.Camera;
 import com.opengg.core.world.World;
 import com.opengg.core.engine.WorldManager;
 import com.opengg.core.model.OBJ;
+import com.opengg.core.render.drawn.InstancedDrawnObject;
 import com.opengg.core.world.WorldObject;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.FloatBuffer;
+import org.lwjgl.BufferUtils;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL32.GL_TEXTURE_CUBE_MAP_SEAMLESS;
@@ -69,8 +69,8 @@ public class OpenGGTest implements KeyboardListener {
     Texture t1 = new Texture();
     Texture t2 = new Texture();
     Texture ppbf = new Texture();
-
-    DrawnObject flashbang, test5, base2, sky;
+    InstancedDrawnObject flashbang;
+    DrawnObject test5, base2, sky;
     DrawnObjectGroup test6, awp3;
 
     OBJModel m;
@@ -116,15 +116,15 @@ public class OpenGGTest implements KeyboardListener {
         vao.bind();
         
 
-//        AudioHandler.init(1);
-//        int s1 = AudioHandler.loadSound(OpenGGTest.class.getResource("res/maw.wav"));
-//        so = new AudioSource(s1);
-//            
-//        int s12 = AudioHandler.loadSound(OpenGGTest.class.getResource("res/mgs.wav"));
-//        so2 = new AudioSource(s12);
-//        
-//        int s13 = AudioHandler.loadSound(OpenGGTest.class.getResource("res/stal.wav"));
-//        so3 = new AudioSource(s13);
+        AudioHandler.init(1);
+        int s1 = AudioHandler.loadSound(OpenGGTest.class.getResource("res/maw.wav"));
+        so = new AudioSource(s1);
+            
+        int s12 = AudioHandler.loadSound(OpenGGTest.class.getResource("res/mgs.wav"));
+        so2 = new AudioSource(s12);
+        
+        int s13 = AudioHandler.loadSound(OpenGGTest.class.getResource("res/stal.wav"));
+        so3 = new AudioSource(s13);
 
         
 
@@ -158,11 +158,17 @@ public class OpenGGTest implements KeyboardListener {
         
         test = ObjectBuffers.genBuffer(m, 1f, 0.2f, new Vector3f());
         test2 = ObjectBuffers.genBuffer(m2, 1f, 1f, new Vector3f());
-        test6 = OBJ.getDrawableModel("C:/res/3DSMusicPark/3DSMusicPark.obj");
-        flashbang = new DrawnObject(test2, 12);
+        //test6 = OBJ.getDrawableModel("C:/res/3DSMusicPark/3DSMusicPark.obj");
+        
+        FloatBuffer b = BufferUtils.createFloatBuffer(12);
+        b.put(20).put(20).put(20).put(20).put(40).put(40)
+                .put(40).put(40).put(60).put(60).put(60).put(60);
+        b.flip();
+        
+        flashbang = new InstancedDrawnObject(test2, b);
 
         test2 = ObjectBuffers.getSquareUI(1, 3, 1, 3, -1, 1f, false);
-        test5 = new DrawnObject(test2, 12);
+        //test5 = new DrawnObject(test2, 12);
         ppsht = new DrawnObject(ObjectBuffers.getSquareUI(-1, 1, -1, 1, .6f, 1, false),12);
         test2 = ObjectBuffers.genSkyCube();
         sky = new DrawnObject(test2, 12);
@@ -233,9 +239,9 @@ public class OpenGGTest implements KeyboardListener {
         s.setView(c);
         s.setPerspective(90, ratio, 0.3f, 2500f);
         
-        test6.drawShaded();
+        //test6.drawShaded();
         t3.useTexture(0);
-        flashbang.drawShaded();
+        flashbang.draw();
         s.setMode(Mode.SKYBOX);
         cb.use(2);
         sky.draw();
@@ -280,7 +286,7 @@ public class OpenGGTest implements KeyboardListener {
             rot2 -= 0.3;
 
         }
-        if (key == GLFW_KEY_P && 1 == 2) {
+        if (key == GLFW_KEY_P) {
             if(so2.isPaused()){
                 so2.play();
             }else{
