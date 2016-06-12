@@ -15,7 +15,7 @@ import org.lwjgl.glfw.GLFWKeyCallback;
  */
 public class MovementLoader {
 
-    private static int mouseX, mouseY, mouseDX, mouseDY;
+    private static float mouseX, mouseY, mouseDX, mouseDY;
     private static long window;
     private static int baseSpeed = 10;
     private static int walkingSpeed = 30;
@@ -45,6 +45,7 @@ public class MovementLoader {
 
         mouseX = mouseY = mouseDX = mouseDY = 0;
 
+        
     }
 
     private static float getDelta() {
@@ -54,36 +55,32 @@ public class MovementLoader {
         return delta * 1000;
     }
 
-    public int getDX() {
-        // Return mouse delta x and set delta x to 0
-        return mouseDX | (mouseDX = 0);
-    }
+    public static Vector3f processRotation(float sens, boolean inv) {
 
-    public int getDY() {
-        // Return mouse delta y and set delta y to 0      
-        return mouseDY | (mouseDY = 0);
-    }
-
-    public static Vector3f processRotation(Vector3f rotation) {
-
-//            if (rotation.y + mouseDX >= 360) {
-//                rotation.y = rotation.y + mouseDX - 360;
-//            } else if (rotation.y + mouseDX < 0) {
-//                rotation.y = 360 - rotation.y + mouseDX;
-//            } else {
-//                rotation.y += mouseDX;
-//            }
-//            if (rotation.x - mouseDY >= maxLookDown && rotation.x - mouseDY <= maxLookUp) {
-//                rotation.x += -mouseDY;
-//            } else if (rotation.x - mouseDY < maxLookDown) {
-//                rotation.x = maxLookDown;
-//            } else if (rotation.x - mouseDY > maxLookUp) {
-//                rotation.x = maxLookUp;
-//            }
-        double x = MousePosHandler.getX(window);
-        double y = MousePosHandler.getY(window);
-
-        return rotation;
+        Vector3f r = new Vector3f();
+        
+        mouseDX += (float) ((float) mouseX - (MousePosHandler.getX()/4 * sens));
+        mouseDY += (float) ((float) mouseY - (MousePosHandler.getY()/4 * sens));
+             
+        
+        if(!(mouseY - mouseDY < -89 || mouseY - mouseDY > 89)){
+            mouseY = mouseY - mouseDY;
+            mouseDY = 0;
+        }else if(mouseY - mouseDY < -89){
+            mouseY = -89;
+        }else if(mouseY - mouseDY > 89){
+            mouseY = 89;
+        }
+        
+        mouseX = mouseX - mouseDX;
+        mouseDX = 0;
+        
+        //System.out.println(mouseX + " " + mouseY);
+        r.x = mouseY;
+        r.y = mouseX;
+        r.z = 0;
+        
+        return r;
     }
 
     public static Vector3f processMovement(Vector3f position, Vector3f rotation) {

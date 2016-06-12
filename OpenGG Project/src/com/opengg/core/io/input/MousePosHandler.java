@@ -22,11 +22,11 @@ public class MousePosHandler extends GLFWCursorPosCallback{
         y = ypos;
     }  
     
-    public static double getX(long w){
+    public static double getX(){
 
         return x;
     }
-    public static double getY(long w){
+    public static double getY(){
 
         return y;
     }

@@ -46,7 +46,6 @@ public class DrawnObject implements Drawable {
     static{
         DrawnObjectHandler.setup();
     }
-    private IntBuffer lineInd;
    
     public DrawnObject(FloatBuffer b, int vertSize){
        
@@ -64,7 +63,6 @@ public class DrawnObject implements Drawable {
         this.b = b;
         vbo = new VertexBufferObject();
         vbo.bind(GL_ARRAY_BUFFER);
-        GlobalInfo.main.defVertexAttributes();
         vbo.uploadData(GL_ARRAY_BUFFER, b, GL_STATIC_DRAW);
         removeBuffer();
     }
@@ -90,7 +88,6 @@ public class DrawnObject implements Drawable {
             this.b = b;
             vbo = new VertexBufferObject();
             vbo.bind(GL_ARRAY_BUFFER);
-            GlobalInfo.main.defVertexAttributes();
             vbo.uploadData(GL_ARRAY_BUFFER, b, GL_STATIC_DRAW);
         }
         removeBuffer();
@@ -111,7 +108,6 @@ public class DrawnObject implements Drawable {
         this.b = b;
         vbo = new VertexBufferObject();
         vbo.bind(GL_ARRAY_BUFFER);
-        GlobalInfo.main.defVertexAttributes();
         vbo.uploadData(GL_ARRAY_BUFFER, b, GL_STATIC_DRAW);
     }
     
@@ -134,13 +130,12 @@ public class DrawnObject implements Drawable {
     
     @Override
     public void drawPoints(){
+        vbo.bind(GL_ARRAY_BUFFER);    
+        GlobalInfo.main.defVertexAttributes();
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, ind, GL_STATIC_DRAW);
         glDrawElements(GL_POINTS, ind.limit(), GL_UNSIGNED_INT, 0);    
     }
-    public void drawLines(){
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, lineInd, GL_STATIC_DRAW);
-        glDrawElements(GL_LINES, ind.limit(), GL_UNSIGNED_INT, 0);    
-    }
+
         
     @Override
     public void draw(){    
@@ -149,7 +144,6 @@ public class DrawnObject implements Drawable {
         GlobalInfo.main.defVertexAttributes();
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, ind, GL_STATIC_DRAW);
         glDrawElements(GL_TRIANGLES, ind.limit(), GL_UNSIGNED_INT, 0);       
-        //glDrawArrays(GL_TRIANGLES, 0, ind.limit());
     }
     
     @Override
@@ -157,11 +151,11 @@ public class DrawnObject implements Drawable {
         GlobalInfo.main.setModel(model);
         GlobalInfo.main.setShadowLightMatrix(shadeModel);
         if (!hasmat) GlobalInfo.main.passMaterial(Material.defaultmaterial,false,false);
+        
         vbo.bind(GL_ARRAY_BUFFER);    
         GlobalInfo.main.defVertexAttributes();
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, ind, GL_STATIC_DRAW);
         glDrawElements(GL_TRIANGLES, ind.limit(), GL_UNSIGNED_INT, 0);
-        //glDrawArrays(GL_TRIANGLES, 0, ind.limit());
     }
     
     public void removeBuffer(){

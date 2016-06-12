@@ -64,7 +64,7 @@ public class ShaderController {
         program.use();
         program.checkStatus();
         
-       defVertexAttributes();
+       initVertexAttributes();
 
         /* Set shader variables */
          
@@ -144,7 +144,7 @@ public class ShaderController {
         ViewUtil.setPerspective(80, 1280/720, 0.3f, 3000f, program);    
     }
     
-    public void defVertexAttributes() {
+    public void initVertexAttributes() {
         //programv.use();
         posAttrib = program.getAttributeLocation("position");
         program.enableVertexAttribute(posAttrib);
@@ -159,6 +159,21 @@ public class ShaderController {
         program.pointVertexAttribute(normAttrib, 3, 12 * Float.BYTES, 7 * Float.BYTES);
         
         texAttrib = program.getAttributeLocation("texcoord"); 
+        program.enableVertexAttribute(texAttrib);
+        program.pointVertexAttribute(texAttrib, 2, 12 * Float.BYTES, 10 * Float.BYTES);
+
+    }
+    
+    public void defVertexAttributes(){
+        program.enableVertexAttribute(posAttrib);
+        program.pointVertexAttribute(posAttrib, 3, 12 * Float.BYTES, 0);
+
+        program.enableVertexAttribute(colAttrib);
+        program.pointVertexAttribute(colAttrib, 4, 12 * Float.BYTES, 3 * Float.BYTES);
+        
+        program.enableVertexAttribute(normAttrib);
+        program.pointVertexAttribute(normAttrib, 3, 12 * Float.BYTES, 7 * Float.BYTES);
+        
         program.enableVertexAttribute(texAttrib);
         program.pointVertexAttribute(texAttrib, 2, 12 * Float.BYTES, 10 * Float.BYTES);
 

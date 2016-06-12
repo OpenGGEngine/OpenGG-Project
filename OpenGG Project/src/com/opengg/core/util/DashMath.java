@@ -87,4 +87,9 @@ public class DashMath {
     public static double snap(float p, float grid) {
         return equal(grid, 0f) ? Math.floor((p + grid * 0.5) * grid) : p;
     }
+    public static float clamp(float f, float min, float max){
+        if(f < min) f = min;
+        if(f > max) f = max;
+        return f;
+    }
 }

@@ -1,5 +1,6 @@
 package com.opengg.core.render.window;
 import com.opengg.core.io.input.KeyBoardHandler;
+import com.opengg.core.io.input.MousePosHandler;
 import com.opengg.core.util.GlobalInfo;
 import java.nio.ByteBuffer;
 
@@ -24,6 +25,7 @@ public class GLFWWindow implements Window {
     ByteBuffer vidmode;
     GLFWErrorCallback errorCallback;
     GLFWKeyCallback   keyCallback;
+    GLFWCursorPosCallback mouseCallback;
 
     public GLFWWindow(int w, int h, String name, DisplayMode m) {
        glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
@@ -78,13 +80,8 @@ public class GLFWWindow implements Window {
         if ( window == NULL )
             throw new RuntimeException("Failed to create the GLFW window");
 
-        // Setup a key callback. It will be called every time a key is pressed, repeated or released.
         glfwSetKeyCallback(window, keyCallback = new KeyBoardHandler());
-
-        // Get the resolution of the primary monitor
-        //ByteBuffer vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-        // Center our window
-
+        glfwSetCursorPosCallback(window, mouseCallback = new MousePosHandler());
 
         // Make the OpenGL context current
         glfwMakeContextCurrent(window);
@@ -155,6 +152,15 @@ public class GLFWWindow implements Window {
     public void setSamples(int samples){
         glfwWindowHint(GLFW_SAMPLES, samples);
     }
+    
+    public void setCursorLock(boolean locked){
+        if(locked){
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+        }else{
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        }
+    } 
             
     @Override
     public void endFrame(){
