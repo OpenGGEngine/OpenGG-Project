@@ -16,6 +16,7 @@ import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL11.GL_TRUE;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.glBindFragDataLocation;
+import static org.lwjgl.opengl.GL33.glVertexAttribDivisor;
 
 /**
  * This class represents a shader program.
@@ -103,7 +104,15 @@ public class ShaderProgram {
     public void pointVertexAttribute(int location, int size, int stride, int offset) {
         glVertexAttribPointer(location, size, GL_FLOAT, false, stride, offset);
     }
-
+    /**
+     * Sets the vertex attribute divisor
+     * 
+     * @param location Location of attribute
+     * @param divisor Set to 0 if not instanced, 1 if instanced
+     */
+    public void setVertexAttribDivisor(int location, int divisor){
+        glVertexAttribDivisor(location, divisor);
+    }
     /**
      * Gets the location of an uniform variable with specified name.
      *

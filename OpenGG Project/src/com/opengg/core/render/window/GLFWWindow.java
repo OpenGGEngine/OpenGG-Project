@@ -3,7 +3,6 @@ import com.opengg.core.io.input.KeyBoardHandler;
 import com.opengg.core.io.input.MousePosHandler;
 import com.opengg.core.util.GlobalInfo;
 import java.nio.ByteBuffer;
-
 import org.lwjgl.glfw.*;
 import static org.lwjgl.glfw.GLFW.*;
 import org.lwjgl.opengl.*;
@@ -88,7 +87,7 @@ public class GLFWWindow implements Window {
         // Make the OpenGL context current
         glfwMakeContextCurrent(window);
         // Enable v-sync
-        glfwSwapInterval(0);
+        glfwSwapInterval(1);
 
         //glViewport(0, 0, WIDTH, HEIGHT);
 

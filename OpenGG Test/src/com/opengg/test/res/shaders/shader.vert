@@ -18,20 +18,23 @@ uniform vec3 rot;
 uniform vec3 lightpos;
 uniform mat4 shmvp;
 uniform int mode;
+uniform int inst;
 uniform float divAmount;
 
-void main() {   
+void main() {
+    if(inst == 1){
+        vertexColors = vec4(1,1,1,1);
+        textureCoords = texcoord;
+        poss = vec3(position.x + color.x, position.y + color.y, position.z + color.z);
+        norms = normal;
+        gl_Position = projection * view * model * vec4(poss, 1.0f);
+        return;
+    }
     vertexColors = color;
     textureCoords = texcoord;
     poss = vec3(position);
     norms = normal;
     
-    
-    //mat4 mvp = projection * view * model;
-	
-    //vec3 position2 = vec3(1,1,1);
-    
     gl_Position = projection * view * model * vec4(position, 1.0f);
-    //gl_Position = shmvp * vec4(position, 1.0f);
     
 };

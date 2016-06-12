@@ -40,6 +40,7 @@ public class ShaderController {
     private int colAttrib;
     private int normAttrib;
     private int texAttrib;
+    private int inst;
     
     public void setup(URL vert, URL frag, URL geom) throws UnsupportedEncodingException{
         vertexTex= new Shader(GL_VERTEX_SHADER, 
@@ -66,10 +67,15 @@ public class ShaderController {
         program.checkStatus();
         
        initVertexAttributes();
-
+        
+        
+        
         /* Set shader variables */
          
-        
+       inst = program.getUniformLocation("inst");
+       program.setUniform(inst, 0);
+         
+       
         uniModel = program.getUniformLocation("model"); 
         program.setUniform(uniModel, new Matrix4f());
         
@@ -153,20 +159,12 @@ public class ShaderController {
     public void initVertexAttributes() {
         //programv.use();
         posAttrib = program.getAttributeLocation("position");
-        program.enableVertexAttribute(posAttrib);
-        program.pointVertexAttribute(posAttrib, 3, 12 * Float.BYTES, 0);
 
         colAttrib = program.getAttributeLocation("color");
-        program.enableVertexAttribute(colAttrib);
-        program.pointVertexAttribute(colAttrib, 4, 12 * Float.BYTES, 3 * Float.BYTES);
         
         normAttrib = program.getAttributeLocation("normal"); 
-        program.enableVertexAttribute(normAttrib);
-        program.pointVertexAttribute(normAttrib, 3, 12 * Float.BYTES, 7 * Float.BYTES);
         
         texAttrib = program.getAttributeLocation("texcoord"); 
-        program.enableVertexAttribute(texAttrib);
-        program.pointVertexAttribute(texAttrib, 2, 12 * Float.BYTES, 10 * Float.BYTES);
 
     }
     
@@ -181,8 +179,27 @@ public class ShaderController {
         program.pointVertexAttribute(normAttrib, 3, 12 * Float.BYTES, 7 * Float.BYTES);
         
         program.enableVertexAttribute(texAttrib);
+        program.pointVertexAttribute(texAttrib, 2, 12 * Float.BYTES, 10 * Float.BYTES);      
+        program.setVertexAttribDivisor(colAttrib, 0);
+
+    }
+    
+    public void defInstancedVertexAttributes1(){
+        program.enableVertexAttribute(posAttrib);
+        program.pointVertexAttribute(posAttrib, 3, 12 * Float.BYTES, 0);
+
+        program.enableVertexAttribute(normAttrib);
+        program.pointVertexAttribute(normAttrib, 3, 12 * Float.BYTES, 7 * Float.BYTES);
+        
+        program.enableVertexAttribute(texAttrib);
         program.pointVertexAttribute(texAttrib, 2, 12 * Float.BYTES, 10 * Float.BYTES);
 
+    }
+    public void defInstancedVertexAttributes2(){
+
+        program.enableVertexAttribute(colAttrib);
+        program.pointVertexAttribute(colAttrib, 4, 3 * Float.BYTES, 0);
+        program.setVertexAttribDivisor(colAttrib, 1);
     }
     
     public void setLightPos(Vector3f pos){
@@ -272,6 +289,9 @@ public class ShaderController {
     }
     public void setUVMultY(float f){
         program.setUniform(uvy, (float)f);
+    }
+    public void setInstanced(boolean instanced){
+        program.setUniform(inst, instanced);
     }
     public void passMaterial(Material m,boolean specmap, boolean normmap){
         program.setUniform(specularexponent, (float) m.nsExponent);
