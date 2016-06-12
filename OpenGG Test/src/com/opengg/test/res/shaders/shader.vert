@@ -17,6 +17,7 @@ uniform mat4 projection;
 uniform vec3 rot;
 uniform vec3 lightpos;
 uniform mat4 shmvp;
+uniform int mode;
 uniform float divAmount;
 
 void main() {   
@@ -24,12 +25,13 @@ void main() {
     textureCoords = texcoord;
     poss = vec3(position);
     norms = normal;
-    vec4 worldPosition = model * vec4(position, 1.0f);
-    vec4 positionRelativeToCam = view * worldPosition;
+    
+    
     //mat4 mvp = projection * view * model;
 	
     //vec3 position2 = vec3(1,1,1);
     
-    gl_Position = projection * positionRelativeToCam;
+    gl_Position = projection * view * model * vec4(position, 1.0f);
+    //gl_Position = shmvp * vec4(position, 1.0f);
     
 };

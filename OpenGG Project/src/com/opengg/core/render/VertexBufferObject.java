@@ -43,7 +43,7 @@ public class VertexBufferObject {
      */
     public void bind(int target) {
         glBindBuffer(target, id);
-        uploadData(GL_ARRAY_BUFFER, ObjectBuffers.createDefaultBufferData(100000000), GL_STATIC_DRAW);
+        //uploadData(GL_ARRAY_BUFFER, ObjectBuffers.createDefaultBufferData(100000000), GL_STATIC_DRAW);
     }
 
     /**

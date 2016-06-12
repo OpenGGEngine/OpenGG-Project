@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.opengg.core;
+package com.opengg.core.io;
 
 /**
  *
@@ -18,7 +18,7 @@ import java.util.List;
 
 import static org.lwjgl.opengl.GL11.*;
 
-public class Model {
+public class OldModel {
 
     private final List<Vector3f> vertices = new ArrayList<Vector3f>();
     private final List<Vector2f> textureCoordinates = new ArrayList<Vector2f>();

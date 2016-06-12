@@ -34,6 +34,7 @@ import com.opengg.core.world.Terrain;
 import com.opengg.core.world.World;
 import com.opengg.core.engine.WorldManager;
 import com.opengg.core.io.newobjloader.Parser;
+import com.opengg.core.model.OBJ;
 import com.opengg.core.world.WorldObject;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -77,8 +78,8 @@ public class OpenGGTest implements KeyboardListener {
     Texture t2 = new Texture();
     Texture ppbf = new Texture();
 
-    DrawnObject awp3, flashbang, test5, base2, sky;
-    DrawnObjectGroup test6;
+    DrawnObject flashbang, test5, base2, sky;
+    DrawnObjectGroup test6, awp3;
 
     float speed = 0.2f;
 
@@ -122,10 +123,6 @@ public class OpenGGTest implements KeyboardListener {
 
         vao = new VertexArrayObject();
         vao.bind();
-        vbo = new VertexBufferObject();
-        vbo.bind(GL_ARRAY_BUFFER);
-        GlobalInfo.b = vbo;
-
         t1.setupTexToBuffer(2000,2000);
         ppbf.setupTexToBuffer(win.getWidth(), win.getHeight());
         t3.loadTexture("C:/res/deer.png", true);
@@ -165,9 +162,7 @@ public class OpenGGTest implements KeyboardListener {
 
         test = ObjectBuffers.genBuffer(m, 1f, 0.2f, new Vector3f());
         test2 = ObjectBuffers.genBuffer(m2, 1f, 1f, new Vector3f());
-        Parser p = new Parser();
-        test6 = new DrawnObjectGroup(p,"C:/res/3DSMusicPark/3DSMusicPark.obj",1f);
-        awp3 = new DrawnObject(test, 12);
+        test6 = OBJ.getDrawableModel("C:/res/3DSMusicPark/3DSMusicPark.obj");
         flashbang = new DrawnObject(test2, 12);
 
         test2 = ObjectBuffers.getSquareUI(1, 3, 1, 3, -1, 1f, false);
@@ -180,13 +175,11 @@ public class OpenGGTest implements KeyboardListener {
         w.floorLev = -10;
         w.addObject(w1 = new WorldObject(awp3));
         w.addObject(w2 = new WorldObject(flashbang));
-        
-        
-        awp3.removeBuffer();
+
         flashbang.removeBuffer();
         ModelRenderComponent m = new ModelRenderComponent(base2);
         ModelRenderComponent l = new ModelRenderComponent(awp3);
-        //m.setScale(new Vector3f(10,20,20));
+
         l.setOffset(new Vector3f(10,30,0));
 
         terrain = new WorldObject();
@@ -217,7 +210,6 @@ public class OpenGGTest implements KeyboardListener {
        
         AudioHandler.destroy();
         vao.delete();
-        vbo.delete();
     }
 
     public void render() {
@@ -233,17 +225,6 @@ public class OpenGGTest implements KeyboardListener {
         
         s.setPerspective(90, ratio, 4, 300f);      
         s.setMode(Mode.POS_ONLY);
-//        t1.startTexRender();
-//        t3.useTexture(0);
-//        
-//        awp3.saveShadowMVP();
-//        awp3.draw();
-//        
-//        flashbang.saveShadowMVP();
-//        flashbang.draw();
-//        
-//        t1.endTexRender();
-//        t1.useDepthTexture(2);
         s.setMode(Mode.OBJECT);
         
         c.setPos(pos);
@@ -254,20 +235,13 @@ public class OpenGGTest implements KeyboardListener {
         
         test6.drawShaded();
         t3.useTexture(0);
-        awp3.drawShaded();
         flashbang.drawShaded();
-        //drawnobject.render();
-        
-        t1.useDepthTexture(0);
         s.setMode(Mode.SKYBOX);
-        cb.use();
+        cb.use(2);
         sky.draw();
         
         s.setMode(Mode.GUI);
         g.startGUI();
-        t1.useDepthTexture(0);
-//        test5.draw();  
-        
         ppbf.endTexRender();
         s.setMode(Mode.PP);
         s.setOrtho(-1, 1, -1, 1, -1, 1);

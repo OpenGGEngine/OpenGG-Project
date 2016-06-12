@@ -3,7 +3,6 @@
 
 package com.opengg.core.io;
 
-import com.opengg.core.Model;
 import org.lwjgl.BufferUtils;
 import com.opengg.core.Vector2f;
 import com.opengg.core.Vector3f;
@@ -23,14 +22,14 @@ import static org.lwjgl.opengl.GL15.*;
  */
 public class ObjLoader {
 
-    public static int createDisplayList(Model m) {
+    public static int createDisplayList(OldModel m) {
         int displayList = glGenLists(1);
         glNewList(displayList, GL_COMPILE);
         {
             glMaterialf(GL_FRONT, GL_SHININESS, 120);
             glColor3f(0.4f, 0.27f, 0.17f);
             glBegin(GL_TRIANGLES);
-            for (Model.Face face : m.getFaces()) {
+            for (OldModel.Face face : m.getFaces()) {
                 if (face.hasNormals()) {
                     Vector3f n1 = m.getNormals().get(face.getNormalIndices()[0] - 1);
                     glNormal3f(n1.x, n1.y, n1.z);
@@ -64,13 +63,13 @@ public class ObjLoader {
         return new float[]{v.x, v.y, v.z};
     }
 
-    public static int[] createVBO(Model model) {
+    public static int[] createVBO(OldModel model) {
         int vboVertexHandle = glGenBuffers();
         int vboNormalHandle = glGenBuffers();
         // TODO: Implement materials with VBOs
         FloatBuffer vertices = reserveData(model.getFaces().size() * 9);
         FloatBuffer normals = reserveData(model.getFaces().size() * 9);
-        for (Model.Face face : model.getFaces()) {
+        for (OldModel.Face face : model.getFaces()) {
             vertices.put(asFloats(model.getVertices().get(face.getVertexIndices()[0] - 1)));
             vertices.put(asFloats(model.getVertices().get(face.getVertexIndices()[1] - 1)));
             vertices.put(asFloats(model.getVertices().get(face.getVertexIndices()[2] - 1)));
@@ -106,7 +105,7 @@ public class ObjLoader {
         return new Vector3f(x, y, z);
     }
 
-    private static Model.Face parseFace(boolean hasNormals, String line) {
+    private static OldModel.Face parseFace(boolean hasNormals, String line) {
         String[] faceIndices = line.split(" ");
         int[] vertexIndicesArray = {Integer.parseInt(faceIndices[1].split("/")[0]),
                 Integer.parseInt(faceIndices[2].split("/")[0]), Integer.parseInt(faceIndices[3].split("/")[0])};
@@ -115,16 +114,16 @@ public class ObjLoader {
             normalIndicesArray[0] = Integer.parseInt(faceIndices[1].split("/")[2]);
             normalIndicesArray[1] = Integer.parseInt(faceIndices[2].split("/")[2]);
             normalIndicesArray[2] = Integer.parseInt(faceIndices[3].split("/")[2]);
-            return new Model.Face(vertexIndicesArray, normalIndicesArray);
+            return new OldModel.Face(vertexIndicesArray, normalIndicesArray);
         } else {
-            return new Model.Face((vertexIndicesArray));
+            return new OldModel.Face((vertexIndicesArray));
         }
     }
 
-    public static Model loadModel(String path)throws IOException{
+    public static OldModel loadModel(String path)throws IOException{
         InputStream in;
         BufferedReader reader;
-        Model m = new Model();
+        OldModel m = new OldModel();
         //reader = new BufferedReader(new FileReader(path));
         try {
             in = new FileInputStream(path);
@@ -163,12 +162,12 @@ public class ObjLoader {
         return m;
     }
 
-    public static int createTexturedDisplayList(Model m) {
+    public static int createTexturedDisplayList(OldModel m) {
         int displayList = glGenLists(1);
         glNewList(displayList, GL_COMPILE);
         {
             glBegin(GL_TRIANGLES);
-            for (Model.Face face : m.getFaces()) {
+            for (OldModel.Face face : m.getFaces()) {
                 if (face.hasTextureCoordinates()) {
                     /*glMaterial(GL_FRONT, GL_DIFFUSE, BufferTools.asFlippedFloatBuffer(face.getMaterial()
                             .diffuseColour[0], face.getMaterial().diffuseColour[1],
@@ -216,12 +215,12 @@ public class ObjLoader {
         return displayList;
     }
 
-    public static Model loadTexturedModel(URL paths) throws IOException {
+    public static OldModel loadTexturedModel(URL paths) throws IOException {
         String path = URLDecoder.decode(paths.getFile(), "UTF-8");
         File f = new File(path);
         BufferedReader reader = new BufferedReader(new FileReader(f));
-        Model m = new Model();
-        Model.Material currentMaterial = new Model.Material();
+        OldModel m = new OldModel();
+        OldModel.Material currentMaterial = new OldModel.Material();
         String line;
         while ((line = reader.readLine()) != null) {
             if (line.startsWith("#")||line.startsWith("g")) {
@@ -232,7 +231,7 @@ public class ObjLoader {
                 File materialFile = new File(f.getParentFile().getAbsolutePath() + "/" + materialFileName);
                 BufferedReader materialFileReader = new BufferedReader(new FileReader(materialFile));
                 String materialLine;
-                Model.Material parseMaterial = new Model.Material();
+                OldModel.Material parseMaterial = new OldModel.Material();
                 String parseMaterialName = "";
                 while ((materialLine = materialFileReader.readLine()) != null) {
                     if (materialLine.startsWith("#")||materialLine.startsWith("g")) {
@@ -243,7 +242,7 @@ public class ObjLoader {
                             m.getMaterials().put(parseMaterialName, parseMaterial);
                         }
                         parseMaterialName = materialLine.split(" ")[1];
-                        parseMaterial = new Model.Material();
+                        parseMaterial = new OldModel.Material();
                     } else if (materialLine.startsWith("Ns ")) {
                         parseMaterial.specularCoefficient = Float.valueOf(materialLine.split(" ")[1]);
                     } else if (materialLine.startsWith("Ka ")) {
@@ -313,7 +312,7 @@ public class ObjLoader {
                 //                Vector3f normalIndices = new Vector3f(Float.valueOf(faceIndices[1].split("/")[2]),
                 //                        Float.valueOf(faceIndices[2].split("/")[2]),
                 // Float.valueOf(faceIndices[3].split("/")[2]));
-                m.getFaces().add(new Model.Face(vertexIndicesArray, normalIndicesArray,
+                m.getFaces().add(new OldModel.Face(vertexIndicesArray, normalIndicesArray,
                         textureCoordinateIndicesArray, currentMaterial));
             } else if (line.startsWith("s ")) {
                 boolean enableSmoothShading = !line.contains("off");

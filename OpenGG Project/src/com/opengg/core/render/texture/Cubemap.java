@@ -32,10 +32,9 @@ public class Cubemap {
     int height;
     ByteBuffer[] buffer = new ByteBuffer[6];
     
-    public void use(){
-        glActiveTexture(GL_TEXTURE2);
+    public void use(int loc){
+        glActiveTexture(GL_TEXTURE0 + loc);
         glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
-        glActiveTexture(GL_TEXTURE0);
     }
     
     public int loadTexture(String path){

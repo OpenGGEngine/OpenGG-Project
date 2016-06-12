@@ -19,8 +19,6 @@ import static org.lwjgl.opengl.GL30.glBindFragDataLocation;
 
 /**
  * This class represents a shader program.
- *
- * @author Heiko Brumme
  */
 public class ShaderProgram {
 

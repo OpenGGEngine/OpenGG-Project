@@ -7,12 +7,8 @@ package com.opengg.core.render.drawn;
 
 import com.opengg.core.Matrix4f;
 import com.opengg.core.io.newobjloader.Material;
-import com.opengg.core.io.objloader.parser.MTLMaterial;
 import com.opengg.core.render.VertexBufferObject;
-import com.opengg.core.render.texture.Texture;
 import com.opengg.core.util.GlobalInfo;
-import com.opengg.core.util.GlobalInfo;
-import static com.opengg.core.util.GlobalUtil.print;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.List;
@@ -21,7 +17,10 @@ import static org.lwjgl.opengl.GL11.GL_LINES;
 import static org.lwjgl.opengl.GL11.GL_POINTS;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
+import static org.lwjgl.opengl.GL11.GL_VERTEX_ARRAY;
+import static org.lwjgl.opengl.GL11.glDrawArrays;
 import static org.lwjgl.opengl.GL11.glDrawElements;
+import static org.lwjgl.opengl.GL11.glEnableClientState;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
@@ -57,26 +56,17 @@ public class DrawnObject implements Drawable {
         vertOffset = offset/vertSize;
         
         ind = BufferUtils.createIntBuffer(vertLimit);
-        for(long i = vertOffset; i < vertLimit + vertOffset; i++){
+        for(long i = vertOffset; i < vertLimit; i++){
             ind.put((int) i);
         }
         ind.flip();
         
-        lineInd = BufferUtils.createIntBuffer(vertLimit*2);
-        for(long i = vertOffset; i < vertLimit + vertOffset; i+=3){
-            lineInd.put((int) i);
-            lineInd.put((int) i+1);
-            lineInd.put((int) i+1);
-            lineInd.put((int) i+2);
-            lineInd.put((int) i+2);
-            lineInd.put((int) i);
-        }
-        lineInd.flip();
-        
         this.b = b;
-        vbo = GlobalInfo.b;
-        vbo.uploadSubData(GL_ARRAY_BUFFER, offset*4, b);
-        DrawnObjectHandler.addToOffset(limit);
+        vbo = new VertexBufferObject();
+        vbo.bind(GL_ARRAY_BUFFER);
+        GlobalInfo.main.defVertexAttributes();
+        vbo.uploadData(GL_ARRAY_BUFFER, b, GL_STATIC_DRAW);
+        removeBuffer();
     }
     public DrawnObject(FloatBuffer b){
         this(b, 12);
@@ -92,27 +82,18 @@ public class DrawnObject implements Drawable {
             vertOffset = offset/vertSize;
 
             ind = BufferUtils.createIntBuffer(vertLimit);
-            for(long i = vertOffset; i < vertLimit + vertOffset; i++){
+            for(long i = vertOffset; i < vertLimit; i++){
                 ind.put((int) i);
             }
             ind.flip();
 
-            lineInd = BufferUtils.createIntBuffer(vertLimit*2);
-            for(long i = vertOffset; i < vertLimit + vertOffset; i+=3){
-                lineInd.put((int) i);
-                lineInd.put((int) i+1);
-                lineInd.put((int) i+1);
-                lineInd.put((int) i+2);
-                lineInd.put((int) i+2);
-                lineInd.put((int) i);
-            }
-            lineInd.flip();
-
             this.b = b;
-            vbo = vbo2;
-            vbo.uploadSubData(GL_ARRAY_BUFFER, offset*4, b);
-            DrawnObjectHandler.addToOffset(limit);
+            vbo = new VertexBufferObject();
+            vbo.bind(GL_ARRAY_BUFFER);
+            GlobalInfo.main.defVertexAttributes();
+            vbo.uploadData(GL_ARRAY_BUFFER, b, GL_STATIC_DRAW);
         }
+        removeBuffer();
     }
     
     public DrawnObject(FloatBuffer b, VertexBufferObject vbo2, IntBuffer index){
@@ -123,24 +104,18 @@ public class DrawnObject implements Drawable {
         vertOffset = offset/12;
         ind = BufferUtils.createIntBuffer(index.capacity());
         for(int i = 0; i < index.limit(); i++){
-            ind.put((int) (index.get(i)+vertOffset));
+            ind.put((int) (index.get(i)));
         }
         ind.flip();
         
         this.b = b;
-        vbo = vbo2;
-        vbo.uploadSubData(GL_ARRAY_BUFFER, offset*4, b);
-        DrawnObjectHandler.addToOffset(limit);
+        vbo = new VertexBufferObject();
+        vbo.bind(GL_ARRAY_BUFFER);
+        GlobalInfo.main.defVertexAttributes();
+        vbo.uploadData(GL_ARRAY_BUFFER, b, GL_STATIC_DRAW);
     }
     
-    @Override
-    public void drawShaded(){
-        GlobalInfo.main.setModel(model);
-        GlobalInfo.main.setShadowLightMatrix(shadeModel);
-        if (!hasmat) GlobalInfo.main.passMaterial(Material.defaultmaterial,false,false);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, ind, GL_STATIC_DRAW);
-        glDrawElements(GL_TRIANGLES, ind.limit(), GL_UNSIGNED_INT, 0);       
-    }
+    
     
     @Override
     public void saveShadowMVP(){
@@ -169,9 +144,24 @@ public class DrawnObject implements Drawable {
         
     @Override
     public void draw(){    
-        GlobalInfo.main.setModel(model);
+        GlobalInfo.main.setModel(model);       
+        vbo.bind(GL_ARRAY_BUFFER);
+        GlobalInfo.main.defVertexAttributes();
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, ind, GL_STATIC_DRAW);
         glDrawElements(GL_TRIANGLES, ind.limit(), GL_UNSIGNED_INT, 0);       
+        //glDrawArrays(GL_TRIANGLES, 0, ind.limit());
+    }
+    
+    @Override
+    public void drawShaded(){
+        GlobalInfo.main.setModel(model);
+        GlobalInfo.main.setShadowLightMatrix(shadeModel);
+        if (!hasmat) GlobalInfo.main.passMaterial(Material.defaultmaterial,false,false);
+        vbo.bind(GL_ARRAY_BUFFER);    
+        GlobalInfo.main.defVertexAttributes();
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, ind, GL_STATIC_DRAW);
+        glDrawElements(GL_TRIANGLES, ind.limit(), GL_UNSIGNED_INT, 0);
+        //glDrawArrays(GL_TRIANGLES, 0, ind.limit());
     }
     
     public void removeBuffer(){

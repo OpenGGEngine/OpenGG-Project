@@ -161,9 +161,9 @@ vec4 shadify(){
 vec4 getCube(){
     return texture(cubemap, normalize(pos.xyz));
 }
-vec4 genWaveEffect(){
+vec4 getWaveEffect(){
     vec2 texcoord = textureCoord;
-    texcoord.x += sin(texcoord.y * 4*2*3.14159) * 0.10;
+    texcoord.x += sin(texcoord.y * 4*2*3.14159) * 0.04;
     return texture(texImage, vec2(texcoord.x, sin(texcoord.y)));
 }
 float readDepth( in vec2 coord ) {
@@ -269,7 +269,7 @@ vec4 ssao()
 void processPP(){
     
     color = ssao();
-    //color = getTex(texImage);
+    //color = getWaveEffect();
 }
 void main() {   
     if(mode == 0){

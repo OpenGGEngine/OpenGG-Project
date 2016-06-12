@@ -35,6 +35,10 @@ public class ShaderController {
     private int uvx;
     private int hasnorm;
     private int lightcolor;
+    private int posAttrib;
+    private int colAttrib;
+    private int normAttrib;
+    private int texAttrib;
     
     public void setup(URL vert, URL frag, URL geom) throws UnsupportedEncodingException{
         vertexTex= new Shader(GL_VERTEX_SHADER, 
@@ -60,7 +64,7 @@ public class ShaderController {
         program.use();
         program.checkStatus();
         
-        specifyVertexAttributes(program, true);
+       defVertexAttributes();
 
         /* Set shader variables */
          
@@ -140,23 +144,23 @@ public class ShaderController {
         ViewUtil.setPerspective(80, 1280/720, 0.3f, 3000f, program);    
     }
     
-    private void specifyVertexAttributes(ShaderProgram programv, boolean textured) {
+    public void defVertexAttributes() {
         //programv.use();
-        int posAttrib = programv.getAttributeLocation("position");
-        programv.enableVertexAttribute(posAttrib);
-        programv.pointVertexAttribute(posAttrib, 3, 12 * Float.BYTES, 0);
+        posAttrib = program.getAttributeLocation("position");
+        program.enableVertexAttribute(posAttrib);
+        program.pointVertexAttribute(posAttrib, 3, 12 * Float.BYTES, 0);
 
-        int colAttrib = programv.getAttributeLocation("color");
-        programv.enableVertexAttribute(colAttrib);
-        programv.pointVertexAttribute(colAttrib, 4, 12 * Float.BYTES, 3 * Float.BYTES);
+        colAttrib = program.getAttributeLocation("color");
+        program.enableVertexAttribute(colAttrib);
+        program.pointVertexAttribute(colAttrib, 4, 12 * Float.BYTES, 3 * Float.BYTES);
         
-        int normAttrib = programv.getAttributeLocation("normal"); 
-        programv.enableVertexAttribute(normAttrib);
-        programv.pointVertexAttribute(normAttrib, 3, 12 * Float.BYTES, 7 * Float.BYTES);
+        normAttrib = program.getAttributeLocation("normal"); 
+        program.enableVertexAttribute(normAttrib);
+        program.pointVertexAttribute(normAttrib, 3, 12 * Float.BYTES, 7 * Float.BYTES);
         
-        int texAttrib = programv.getAttributeLocation("texcoord"); 
-        programv.enableVertexAttribute(texAttrib);
-        programv.pointVertexAttribute(texAttrib, 2, 12 * Float.BYTES, 10 * Float.BYTES);
+        texAttrib = program.getAttributeLocation("texcoord"); 
+        program.enableVertexAttribute(texAttrib);
+        program.pointVertexAttribute(texAttrib, 2, 12 * Float.BYTES, 10 * Float.BYTES);
 
     }
     
