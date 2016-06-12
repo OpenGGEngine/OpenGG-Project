@@ -26,7 +26,7 @@ public class MatDrawnObject implements Drawable {
         this.m = m;
         d.hasmat = true;
     }
-    Material m;
+    Material m = Material.defaultmaterial;
     Texture tex;
     private Texture normalmap;
     private boolean hasNormalMap = false;

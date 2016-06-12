@@ -58,9 +58,11 @@ public class GLFWWindow implements Window {
             glfwWindowHint(GLFW_BLUE_BITS, mode.blueBits());
             glfwWindowHint(GLFW_REFRESH_RATE, mode.refreshRate());
 
-
             window = glfwCreateWindow(mode.width(), mode.height(), name, NULL, NULL);
-
+            
+            HEIGHT = mode.height();
+            WIDTH = mode.width();
+            
             glfwSetWindowPos(
                 window,
                 0,
@@ -86,7 +88,7 @@ public class GLFWWindow implements Window {
         // Make the OpenGL context current
         glfwMakeContextCurrent(window);
         // Enable v-sync
-        glfwSwapInterval(1);
+        glfwSwapInterval(0);
 
         //glViewport(0, 0, WIDTH, HEIGHT);
 

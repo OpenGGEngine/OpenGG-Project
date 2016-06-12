@@ -148,7 +148,7 @@ public class Parser {
         }
         bufferedReader.close();
 
-        log.log(INFO, "Loaded {0} lines", lineCount);
+        //log.log(INFO, "Loaded {0} lines", lineCount);
     }
 
     // @TODO: processVertex calls parseFloatList with params expecting
@@ -707,7 +707,7 @@ public class Parser {
         }
         bufferedReader.close();
 
-        log.log(INFO, "Parse.parseMtlFile: Loaded " + lineCount + " lines");
+        //log.log(INFO, "Parse.parseMtlFile: Loaded " + lineCount + " lines");
     }
 
     private void processNewmtl(String line) {

@@ -1,6 +1,5 @@
 package com.opengg.test;
 
-import com.opengg.core.Matrix4f;
 import com.opengg.core.Vector2f;
 import com.opengg.core.Vector3f;
 import com.opengg.core.audio.AudioHandler;
@@ -30,34 +29,28 @@ import static com.opengg.core.render.window.RenderUtil.endFrame;
 import static com.opengg.core.render.window.RenderUtil.startFrame;
 import com.opengg.core.util.GlobalInfo;
 import com.opengg.core.world.Camera;
-import com.opengg.core.world.Terrain;
 import com.opengg.core.world.World;
 import com.opengg.core.engine.WorldManager;
-import com.opengg.core.io.newobjloader.Parser;
 import com.opengg.core.model.OBJ;
 import com.opengg.core.world.WorldObject;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
 import java.net.URL;
 import java.nio.FloatBuffer;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL32.GL_TEXTURE_CUBE_MAP_SEAMLESS;
 
 public class OpenGGTest implements KeyboardListener {
 
     static long window;
     GLFWWindow win;
-    boolean draw = true;
     private float ratio;
-
+    private float sens = 0.25f;
+    private float sav;
     public float xrot, yrot;
+    public boolean lock = false;
     public float rot1 = 0, rot2 = 0;
-    public float xm = 0, ym = 0, zm = 0;
-    int quads;
     Vector3f rot = new Vector3f(0, 0, 0);
     Vector3f pos = new Vector3f(0, -10, -30);
     WorldObject terrain;
@@ -70,7 +63,6 @@ public class OpenGGTest implements KeyboardListener {
     }
 
     private VertexArrayObject vao;
-    private VertexBufferObject vbo;
 
     Camera c;
     GUI g = new GUI();
@@ -80,8 +72,6 @@ public class OpenGGTest implements KeyboardListener {
 
     DrawnObject flashbang, test5, base2, sky;
     DrawnObjectGroup test6, awp3;
-
-    float speed = 0.2f;
 
     OBJModel m;
     OBJModel m2;
@@ -99,7 +89,8 @@ public class OpenGGTest implements KeyboardListener {
 
    
         try {
-            win = new GLFWWindow(1280, 960, "Test", DisplayMode.WINDOWED);
+            win = new GLFWWindow(1280, 960, "Test", DisplayMode.FULLSCREEN_WINDOWED);
+            
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -123,14 +114,7 @@ public class OpenGGTest implements KeyboardListener {
 
         vao = new VertexArrayObject();
         vao.bind();
-        t1.setupTexToBuffer(2000,2000);
-        ppbf.setupTexToBuffer(win.getWidth(), win.getHeight());
-        t3.loadTexture("C:/res/deer.png", true);
-        f = new Font("", "thanks dad", 11);
-
-        t2.loadFromBuffer(f.asByteBuffer(), (int) f.getFontImageWidth(), (int) f.getFontImageHeight());
-        t2.useTexture(0);
-        cb.loadTexture("C:/res/skybox/majestic");
+        
 
 //        AudioHandler.init(1);
 //        int s1 = AudioHandler.loadSound(OpenGGTest.class.getResource("res/maw.wav"));
@@ -142,24 +126,36 @@ public class OpenGGTest implements KeyboardListener {
 //        int s13 = AudioHandler.loadSound(OpenGGTest.class.getResource("res/stal.wav"));
 //        so3 = new AudioSource(s13);
 
-        URL path = OpenGGTest.class.getResource("res/models/deer.obj");
-        URL path2 = OpenGGTest.class.getResource("res/models/awp3.obj");
-        m = new OBJParser().parse(path);
-        m2 = new OBJParser().parse(path2);
+        
 
         URL verts = OpenGGTest.class.getResource("res/shaders/shader.vert");
         URL frags = OpenGGTest.class.getResource("res/shaders/shader.frag");
         URL geoms = OpenGGTest.class.getResource("res/shaders/shader.geom");
         
         s.setup(verts, frags, geoms);
-        GlobalInfo.main = s;
         
         c = new Camera(pos, rot);
         c.setPos(pos);
         c.setRot(rot);
 
         g.setupGUI(new Vector2f(-3, -3), new Vector2f(3, 3));
+        
+        System.out.println("Shader/VAO Loading and Generation Complete");
+        
+        t1.setupTexToBuffer(2000,2000);
+        ppbf.setupTexToBuffer(win.getWidth(), win.getHeight());
+        t3.loadTexture("C:/res/deer.png", true);
+        f = new Font("", "thanks dad", 11);
 
+        t2.loadFromBuffer(f.asByteBuffer(), (int) f.getFontImageWidth(), (int) f.getFontImageHeight());
+        t2.useTexture(0);
+        cb.loadTexture("C:/res/skybox/majestic");
+        
+        URL path = OpenGGTest.class.getResource("res/models/deer.obj");
+        URL path2 = OpenGGTest.class.getResource("res/models/awp3.obj");
+        m = new OBJParser().parse(path);
+        m2 = new OBJParser().parse(path2);
+        
         test = ObjectBuffers.genBuffer(m, 1f, 0.2f, new Vector3f());
         test2 = ObjectBuffers.genBuffer(m2, 1f, 1f, new Vector3f());
         test6 = OBJ.getDrawableModel("C:/res/3DSMusicPark/3DSMusicPark.obj");
@@ -170,6 +166,8 @@ public class OpenGGTest implements KeyboardListener {
         ppsht = new DrawnObject(ObjectBuffers.getSquareUI(-1, 1, -1, 1, .6f, 1, false),12);
         test2 = ObjectBuffers.genSkyCube();
         sky = new DrawnObject(test2, 12);
+        
+        System.out.println("Model and Texture Loading Completed");
         
         w = WorldManager.getDefaultWorld();
         w.floorLev = -10;
@@ -200,10 +198,9 @@ public class OpenGGTest implements KeyboardListener {
         enable(GL_TEXTURE_2D);
 
         enable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
-        
-        //enable(GL_LINE_SMOOTH);
-        
+
         glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+        System.out.println("Setup Complete");
     }
 
     public void exit() {
@@ -213,7 +210,10 @@ public class OpenGGTest implements KeyboardListener {
     }
 
     public void render() {
-        rot = new Vector3f(-yrot, -xrot, 0);
+        rot = new Vector3f(yrot, xrot, 0);
+        if(lock){
+            rot = MovementLoader.processRotation(sens, false);
+        }
         pos = MovementLoader.processMovement(pos, rot);
         
         c.setPos(new Vector3f(15, -40, -10));
@@ -252,15 +252,18 @@ public class OpenGGTest implements KeyboardListener {
     }
 
     public void update(float delta) {
-        xrot += rot1 * 5;
-        yrot += rot2 * 5;
-        //terrain.update(delta);
-      
+
+        xrot -= rot1 * 7;
+        yrot -= rot2 * 7;
+
     }
 
     @Override
     public void keyPressed(int key) {
 
+        if (key == GLFW_KEY_M) {
+            win.setCursorLock(lock = !lock);
+        }
         if (key == GLFW_KEY_Q) {
             rot1 += 0.3;
 
@@ -277,7 +280,7 @@ public class OpenGGTest implements KeyboardListener {
             rot2 -= 0.3;
 
         }
-        if (key == GLFW_KEY_P) {
+        if (key == GLFW_KEY_P && 1 == 2) {
             if(so2.isPaused()){
                 so2.play();
             }else{
@@ -289,7 +292,6 @@ public class OpenGGTest implements KeyboardListener {
 
     @Override
     public void keyReleased(int key) {
-
         if (key == GLFW_KEY_Q) {
             rot1 -= 0.3;
 

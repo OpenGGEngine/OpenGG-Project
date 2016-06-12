@@ -11,6 +11,7 @@ import com.opengg.core.Vector3f;
 import com.opengg.core.io.FileStringLoader;
 import com.opengg.core.io.newobjloader.Material;
 import com.opengg.core.render.window.ViewUtil;
+import com.opengg.core.util.GlobalInfo;
 import com.opengg.core.world.Camera;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
@@ -28,7 +29,7 @@ public class ShaderController {
     private Shader fragmentTex;
     private Shader vertexTex;
     private Shader geomTex;
-    private int uniModel,rotm,lightpos,div,uniView,lightdistance,lightpower,shadow,skycolor,mode,specularexponent,specularexponents,specularcolor,hasspec;
+    public int uniModel,rotm,lightpos,div,uniView,lightdistance,lightpower,shadow,skycolor,mode,specularexponent,specularexponents,specularcolor,hasspec,uniProj;
     float ratio;
     Matrix4f model= new Matrix4f(), view= new Matrix4f(), proj = new Matrix4f();
     private int uvy;
@@ -71,6 +72,9 @@ public class ShaderController {
         
         uniModel = program.getUniformLocation("model"); 
         program.setUniform(uniModel, new Matrix4f());
+        
+        uniProj = program.getUniformLocation("projection"); 
+        program.setUniform(uniProj, new Matrix4f());
         
         int uniTex = program.getUniformLocation("texImage"); 
         program.setUniform(uniTex, 0);
@@ -140,6 +144,8 @@ public class ShaderController {
         program.setUniform(hasnorm, false);
         
         program.checkStatus();
+        
+        GlobalInfo.main = this;
         
         ViewUtil.setPerspective(80, 1280/720, 0.3f, 3000f, program);    
     }

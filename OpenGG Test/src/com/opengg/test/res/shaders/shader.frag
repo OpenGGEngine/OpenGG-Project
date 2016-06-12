@@ -188,11 +188,11 @@ vec4 ssao()
 	float pw = 1.0 / screensize.x;
 	float ph = 1.0 / screensize.y;
  
-	float aoCap = 1.0;
+	float aoCap = 1;
  
 	float ao = 0.0;
  
-	float aoMultiplier=10000.0;
+	float aoMultiplier=100000.0;
  
 	float depthTolerance = 0.0001;
  

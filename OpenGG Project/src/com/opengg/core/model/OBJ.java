@@ -39,11 +39,9 @@ public class OBJ {
             Logger.getLogger(DrawnObjectGroup.class.getName()).log(Level.SEVERE, null, ex);
         }
         String temp2 = model.objFilename.substring(model.objFilename.lastIndexOf("/"), model.objFilename.length()-4);
-        String name = temp2;        
-        //ArrayList<ArrayList<Face>> facesByTextureList = new ArrayList<>();
+        String name = temp2;               
         HashMap<String,ArrayList<Face>> facesByTextureList= new HashMap<>();
-        
-       // ArrayList<Face> currentFaceList = new ArrayList<>();
+
         
         for (Face face : model.faces) {
             
@@ -65,7 +63,6 @@ public class OBJ {
             
         }
        for (String key : facesByTextureList.keySet()) {
-            System.out.println(key);
             ArrayList<Face> currentFaceList = facesByTextureList.get(key);
             currentFaceList = splitQuads(currentFaceList);
             MatDrawnObject obj = makeadamnvbo(currentFaceList);
@@ -75,24 +72,19 @@ public class OBJ {
             
             if (material.mapKdFilename == null) {
             } else {
-                System.out.println(material.mapKdFilename);
                 Texture nointernet = new Texture();
                 nointernet.loadTexture("C:/res/"+name+"/" + material.mapKdFilename, true);
                 obj.setTexture(nointernet);
             }
-            if(material.mapNsFilename !=null){
-                //System.out.println("LQWINEVKUYRQUYRQIEUKYRLQUKYERLQUERYKUQWEYROIUQYWEBIUYWEURYWEOIRUVQYWIURYWOEILJKHRKJFHS \n\n\n\n\n");
+            if(material.mapNsFilename !=null){              
                 Texture nointernet = new Texture();
                 nointernet.loadTexture("C:/res/"+name+"/" + material.mapNsFilename, true);
                 obj.setSpecularMap(nointernet);
             }
             if(material.bumpFilename !=null){
-                //System.out.println("LQWINEVKUYRQUYRQIEUKYRLQUKYERLQUERYKUQWEYROIUQYWEBIUYWEURYWEOIRUVQYWIURYWOEILJKHRKJFHS \n\n\n\n\n");
                 Texture nointernet = new Texture();
-                System.out.println(material.bumpFilename);
                 nointernet.loadTexture("C:/res/"+name+"/" + material.bumpFilename, true);
                 obj.setNormalMap(nointernet);
-                //obj.setTexture(nointernet);
             }
             objs.add(obj);
         }
