@@ -22,9 +22,16 @@ public class AudioSource {
         this.bufferid = bufferid;
         audioid = alGenSources();
         alSourcei(audioid,AL_BUFFER,bufferid);
-        alSourcef(audioid,AL_GAIN,1);
-        alSourcef(audioid,AL_PITCH,1);
+        alSourcei(audioid,AL_SOURCE_RELATIVE,AL_FALSE);
+        //alSourcef(audioid,AL_GAIN,0);
+        alSourcef(audioid,AL_MIN_GAIN,0f);
+        alSourcef(audioid,AL_MAX_GAIN,1f);
         alSource3f(audioid,AL_POSITION,0,0,0);
+        alSource3f(audioid,AL_VELOCITY,0,0,0);
+        
+        int i = AL10.alGetError();
+        if(i != AL10.AL_NO_ERROR)
+            System.out.println("OpenAL Error in AudioSource Generation: " + i);
     }
     public void play(){
         isPaused = false;
@@ -33,6 +40,10 @@ public class AudioSource {
     public void pause(){
         isPaused = true;
         alSourcePause(audioid);
+    }
+    public void stop(){
+        isPaused = true;
+        alSourceStop(audioid);
     }
     public void setShouldLoop(boolean loop){
         if(loop){

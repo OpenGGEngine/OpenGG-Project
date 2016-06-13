@@ -47,8 +47,6 @@ public class ShaderController {
                 FileStringLoader.loadStringSequence(
                         URLDecoder.decode(
                                 vert.getFile(), "UTF-8"))); 
-         
-        
         geomTex = new Shader(GL_GEOMETRY_SHADER, 
                 FileStringLoader.loadStringSequence(
                         URLDecoder.decode(
@@ -66,16 +64,13 @@ public class ShaderController {
         program.use();
         program.checkStatus();
         
-       initVertexAttributes();
-        
-        
+       initVertexAttributes();        
         
         /* Set shader variables */
          
        inst = program.getUniformLocation("inst");
        program.setUniform(inst, 0);
          
-       
         uniModel = program.getUniformLocation("model"); 
         program.setUniform(uniModel, new Matrix4f());
         
@@ -294,7 +289,7 @@ public class ShaderController {
         program.setUniform(inst, instanced);
     }
     public void passMaterial(Material m,boolean specmap, boolean normmap){
-        program.setUniform(specularexponent, (float) m.nsExponent);
+        program.setUniform(specularexponent, /*(float) m.nsExponent*/1f);
         program.setUniform(specularexponents, new Vector3f((float)m.ka.rx,(float)m.ka.gy,(float)m.ka.bz));
         program.setUniform(specularcolor, new Vector3f((float)m.ks.rx,(float)m.ks.gy,(float)m.ks.bz));
         program.setUniform(hasspec, specmap);

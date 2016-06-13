@@ -3,6 +3,7 @@ package com.opengg.test;
 import com.opengg.core.Vector2f;
 import com.opengg.core.Vector3f;
 import com.opengg.core.audio.AudioHandler;
+import com.opengg.core.audio.AudioListener;
 import com.opengg.core.audio.AudioSource;
 import com.opengg.core.components.ModelRenderComponent;
 import com.opengg.core.components.PhysicsComponent;
@@ -82,6 +83,7 @@ public class OpenGGTest implements KeyboardListener {
     
     WorldObject w1, w2;
     private AudioSource so,so2,so3;
+    private AudioListener as;
     private DrawnObject ppsht;
     
     public OpenGGTest() throws IOException, Exception {
@@ -89,7 +91,7 @@ public class OpenGGTest implements KeyboardListener {
 
    
         try {
-            win = new GLFWWindow(1280, 960, "Test", DisplayMode.FULLSCREEN_WINDOWED);
+            win = new GLFWWindow(1280, 960, "Test", DisplayMode.WINDOWED);
             
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -117,16 +119,11 @@ public class OpenGGTest implements KeyboardListener {
         
 
         AudioHandler.init(1);
-        int s1 = AudioHandler.loadSound(OpenGGTest.class.getResource("res/maw.wav"));
-        so = new AudioSource(s1);
-            
-        int s12 = AudioHandler.loadSound(OpenGGTest.class.getResource("res/mgs.wav"));
-        so2 = new AudioSource(s12);
-        
-        int s13 = AudioHandler.loadSound(OpenGGTest.class.getResource("res/stal.wav"));
-        so3 = new AudioSource(s13);
+        so = AudioHandler.loadSound(OpenGGTest.class.getResource("res/maw.wav"));
 
+        so2 = AudioHandler.loadSound(OpenGGTest.class.getResource("res/mgs.wav"));
         
+        so3 = AudioHandler.loadSound(OpenGGTest.class.getResource("res/stal.wav"));
 
         URL verts = OpenGGTest.class.getResource("res/shaders/shader.vert");
         URL frags = OpenGGTest.class.getResource("res/shaders/shader.frag");
@@ -158,7 +155,7 @@ public class OpenGGTest implements KeyboardListener {
         
         test = ObjectBuffers.genBuffer(m, 1f, 0.2f, new Vector3f());
         test2 = ObjectBuffers.genBuffer(m2, 1f, 1f, new Vector3f());
-        //test6 = OBJ.getDrawableModel("C:/res/3DSMusicPark/3DSMusicPark.obj");
+        test6 = OBJ.getDrawableModel("C:/res/3DSMusicPark/3DSMusicPark.obj");
         
         FloatBuffer b = BufferUtils.createFloatBuffer(12);
         b.put(20).put(20).put(20).put(20).put(40).put(40)
@@ -195,6 +192,8 @@ public class OpenGGTest implements KeyboardListener {
         terrain.pos = new Vector3f(0,0,0);
         ratio = win.getRatio();
         
+        as = new AudioListener();
+        AudioHandler.setListener(as);
         enable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -222,6 +221,11 @@ public class OpenGGTest implements KeyboardListener {
         }
         pos = MovementLoader.processMovement(pos, rot);
         
+        as.setPos(pos);
+        as.setRot(rot);
+        AudioHandler.setListener(as);
+        
+        //glEnable(GL_CULL_FACE);
         c.setPos(new Vector3f(15, -40, -10));
         c.setRot(new Vector3f(60, 50, 0));
 
@@ -239,7 +243,7 @@ public class OpenGGTest implements KeyboardListener {
         s.setView(c);
         s.setPerspective(90, ratio, 0.3f, 2500f);
         
-        //test6.drawShaded();
+        test6.drawShaded();
         t3.useTexture(0);
         flashbang.draw();
         s.setMode(Mode.SKYBOX);
@@ -249,6 +253,7 @@ public class OpenGGTest implements KeyboardListener {
         s.setMode(Mode.GUI);
         g.startGUI();
         ppbf.endTexRender();
+        glDisable(GL_CULL_FACE);
         s.setMode(Mode.PP);
         s.setOrtho(-1, 1, -1, 1, -1, 1);
         s.setView(new Camera());

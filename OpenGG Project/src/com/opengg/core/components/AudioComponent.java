@@ -19,8 +19,7 @@ public class AudioComponent implements Updatable, Triggerable {
     AudioSource so;
     
     public void AudioComponent(URL u){
-        int s1 = AudioHandler.loadSound(u);
-        so = new AudioSource(s1);
+        so = AudioHandler.loadSound(u);
     }
     
     @Override

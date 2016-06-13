@@ -157,7 +157,6 @@ public class InstancedDrawnObject implements Drawable {
         GlobalInfo.main.defInstancedVertexAttributes2();
         
         GlobalInfo.main.setInstanced(true);
-        //glDrawElementsInstanced(GL_TRIANGLES, instnum, ind.limit(), GL_UNSIGNED_INT, 0);
         glDrawArraysInstanced(GL_TRIANGLES,0,ind.limit(), instnum);
         GlobalInfo.main.setInstanced(false);
     }

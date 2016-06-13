@@ -1,7 +1,9 @@
 #version 330 core
 
-layout(location = 0) out vec4 color;
-layout(location = 1) out vec3 color2;
+layout(location = 0) out vec4 fcolor;
+layout(location = 1) out vec4 fcolor2;
+layout(location = 2) out vec4 fcolor3;
+layout(location = 3) out vec4 fcolor4;
 
 in vec4 vertexColor;
 in vec2 textureCoord;
@@ -13,7 +15,6 @@ in vec3 lightposition;
 in vec4 shadowpos;
 in float visibility;
 
-out vec4 fragColor;
 
 struct Material
 {
@@ -115,12 +116,14 @@ vec4 shadify(){
 
     vec3 ambient = material.ka * diffuse;
     
-    vec3 specular = vec3(1,1,1) * (diffuse / 8); 
+    vec3 specular = vec3(1,1,1); 
     
     float expo  = material.specexponent;
     
     if(material.hasspecmap){
         specular = specular * getTex(specImage).rgb;
+    }else{
+        specular = specular * expo;
     }
     
     specular = clamp(specular, 0, 1);
@@ -134,6 +137,9 @@ vec4 shadify(){
         source.w = 0.0f;
         normal = ( view * model * source).xyz;
     }
+    fcolor2 = vec4(normal,1);
+    fcolor3 = vec4(specular,1);
+    fcolor4 = vec4(diffuse,1);
 
     vec3 n = normalize( normal );
     // Direction of the light (from the fragment to the light)
@@ -148,13 +154,13 @@ vec4 shadify(){
     float cosAlpha = clamp( dot( E,R ), 0,1 );
     
     
-    fragColor = 
+    vec4 fragColor = 
             // Ambient : simulates indirect lighting
             vec4((ambient +
             // Diffuse : "color" of the object
             vis * diffuse * light.color * light.lightpower * cosTheta / ((distance*distance)/light.lightdistance) +
             // Specular : reflective highlight, like a mirror
-            vis * specular * expo * light.lightpower * pow(cosAlpha,5) / ((distance*distance)/light.lightdistance)), trans);
+            vis * specular * light.lightpower * pow(cosAlpha,5) / ((distance*distance)/light.lightdistance)), trans);
     
     return fragColor;
 }
@@ -173,7 +179,7 @@ float readDepth( in vec2 coord ) {
 float compareDepths( in float depth1, in float depth2 ) {
 	float aoCap = 1.0;
 	float aoMultiplier=100000.0;
-	float depthTolerance=0.000;
+	float depthTolerance=0.00001;
 	float aorange = 100.0;// units in space the AO effect extends to (this gets divided by the camera far range
 	float diff = sqrt( clamp(1.0-(depth1-depth2) / ((camerarange.y-camerarange.x)),0.0,1.0) );
 	float ao = min(aoCap,max(0.0,depth1-depth2-depthTolerance) * aoMultiplier) * diff;
@@ -263,26 +269,27 @@ vec4 ssao()
         
 	ao/=16.0;
         ao = clamp(ao, 0, .5);
+        fcolor2 = vec4(1-ao,1-ao,1-ao,1);
 	return vec4(1-ao) * texture2D(texImage,textureCoord) * 2;
 }
 
 void processPP(){
     
-    color = ssao();
+    fcolor = ssao();
     //color = getWaveEffect();
 }
 void main() {   
     if(mode == 0){
         lightify();
-        color = shadify();
+        fcolor = shadify();
     }else if(mode == 1){
-        color = shadify();
+        fcolor = shadify();
     }else if(mode == 2){
-        color = getTex(texImage);
+        fcolor = getTex(texImage);
     }else if(mode == 5){
         processPP();
     }else{
-        color = getCube();
+        fcolor = getCube();
     }    
 };
 
