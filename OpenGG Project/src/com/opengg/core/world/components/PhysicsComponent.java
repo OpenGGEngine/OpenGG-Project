@@ -39,9 +39,7 @@ public class PhysicsComponent implements Updatable {
         acceleration = force.divide(mass);
         acceleration = (last.add(acceleration)).divide(2);
         
-        acceleration.y += w.gravityVector.x;
-        acceleration.y += w.gravityVector.y;
-        acceleration.y += w.gravityVector.z;
+        addGrav(acceleration,w);
         
         velocity.addEquals(acceleration.multiply(delta));
         System.out.println(velocity.y);
@@ -57,6 +55,12 @@ public class PhysicsComponent implements Updatable {
         force.x += 0;
         force.y += 0;
         force.z += 0;
+    }
+    
+    private void addGrav(Vector3f accel, World w){
+        accel.y += w.gravityVector.x;
+        accel.y += w.gravityVector.y;
+        accel.y += w.gravityVector.z;
     }
     
     public PhysicsComponent(){

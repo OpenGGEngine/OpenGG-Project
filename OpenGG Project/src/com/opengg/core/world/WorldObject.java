@@ -33,8 +33,7 @@ public class WorldObject extends ComponentHolder implements Positioned {
         this.pos = pos;
         this.rot = rot;
         this.thisWorld = thisWorld;
-    }
-    public WorldObject(){
+    }public WorldObject(){
         super();
         pos = new Vector3f(0,0,0);
         rot = new Quaternion4f();

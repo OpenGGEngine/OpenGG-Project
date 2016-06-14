@@ -88,6 +88,7 @@ public class OpenGGTest implements KeyboardListener {
     private AudioListener as;
     private DrawnObject ppsht;
     private WorldObject awps;
+    private PhysicsComponent bad;
     
     public OpenGGTest() throws IOException, Exception {
         KeyboardEventHandler.addToPool(this);
@@ -192,7 +193,7 @@ public class OpenGGTest implements KeyboardListener {
         awps.attach(l);
         terrain.attach(m);
         
-        PhysicsComponent bad = new PhysicsComponent(terrain);
+        bad = new PhysicsComponent(terrain);
         terrain.attach(bad);
         ratio = win.getRatio();
         
@@ -298,6 +299,10 @@ public class OpenGGTest implements KeyboardListener {
         }
         if (key == GLFW_KEY_F) {
             rot2 -= 0.3;
+
+        }
+        if (key == GLFW_KEY_G) {
+            bad.velocity = new Vector3f(0,20,0);
 
         }
         if (key == GLFW_KEY_P) {
