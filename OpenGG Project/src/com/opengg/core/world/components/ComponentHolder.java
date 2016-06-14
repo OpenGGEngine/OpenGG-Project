@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.opengg.core.components;
+package com.opengg.core.world.components;
 
 import java.util.ArrayList;
 
@@ -11,12 +11,14 @@ import java.util.ArrayList;
  *
  * @author ethachu19
  */
-public abstract class ComponentHolder {
+public abstract class ComponentHolder implements Component{
     //public static ArrayList<ComponentHolder> allComponent = new ArrayList<>();
-    private ArrayList<Updatable> updateable = new ArrayList<>();
-    private ArrayList<Renderable> renderable = new ArrayList<>();
+    protected ArrayList<Updatable> updateable = new ArrayList<>();
+    protected ArrayList<Renderable> renderable = new ArrayList<>();
+    protected ArrayList<Triggerable> triggerable = new ArrayList<>();
     
     public void attach(Component c) {
+        c.setParentInfo(this);
         if (c instanceof Updatable)
                 updateable.add((Updatable) c);
         if (c instanceof Renderable)
@@ -33,7 +35,5 @@ public abstract class ComponentHolder {
         for(Renderable c: renderable){
             c.render();
         }
-    }
-    
-                                                                                                                                                                           
+    }                                                                                                                                                                          
 }

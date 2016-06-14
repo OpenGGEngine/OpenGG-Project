@@ -19,7 +19,7 @@ public class World {
     private List<Camera> cams = new ArrayList<>();
     private Camera mainCam;
     public float floorLev = -1;
-    public Vector3f gravityVector = new Vector3f(0,2f,0);
+    public Vector3f gravityVector = new Vector3f(0,-9.81f,0);
     public Vector3f wind = new Vector3f();
     
     public World(){

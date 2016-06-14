@@ -3,12 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.opengg.core.components;
+
+package com.opengg.core.world.physics;
 
 /**
  *
- * @author ethachu19
+ * @author Javier
  */
-public interface Updatable extends Component{
-    public void update(float delta);
+public class PhysicsConstants {
+    public static float GRAVITY = -9.81f;
+    public static float BASE = -50;
 }

@@ -3,13 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
-package com.opengg.core.components;
+package com.opengg.core.world.components;
 
 /**
  *
- * @author Javier
+ * @author ethachu19
  */
-public interface Triggerable {
-    public void onTrigger();
+public interface Renderable extends Positioned{
+    public void render();
 }

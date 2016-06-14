@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package com.opengg.core.components;
+package com.opengg.core.world.components;
 
 import com.opengg.core.audio.AudioHandler;
 import com.opengg.core.audio.AudioSource;
@@ -17,6 +17,7 @@ import java.net.URL;
 public class AudioComponent implements Updatable, Triggerable {
     
     AudioSource so;
+    
     
     public void AudioComponent(URL u){
         so = AudioHandler.loadSound(u);
@@ -33,6 +34,11 @@ public class AudioComponent implements Updatable, Triggerable {
     }
     
     public void setSound(){
+        
+    }
+
+    @Override
+    public void setParentInfo(Component parent) {
         
     }
 }

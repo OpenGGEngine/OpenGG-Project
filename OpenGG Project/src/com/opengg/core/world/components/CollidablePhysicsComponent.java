@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.opengg.core.components;
+package com.opengg.core.world.components;
 
 import com.opengg.core.world.WorldObject;
 import com.opengg.core.world.physics.BoundingBox;

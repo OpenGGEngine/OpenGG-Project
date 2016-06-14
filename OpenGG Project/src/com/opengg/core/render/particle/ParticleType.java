@@ -6,11 +6,10 @@
 package com.opengg.core.render.particle;
 
 import com.opengg.core.Vector3f;
-import com.opengg.core.components.Component;
-import com.opengg.core.components.Updatable;
-import java.util.ArrayList;
+import com.opengg.core.world.components.Updatable;
 import java.util.List;
 import com.opengg.core.render.particle.Particle;
+import com.opengg.core.world.components.Component;
 import java.util.LinkedList;
 
 /**
@@ -49,6 +48,11 @@ public class ParticleType implements Updatable{
                 particles.remove(p);
             }
         });
+    }
+
+    @Override
+    public void setParentInfo(Component parent) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 

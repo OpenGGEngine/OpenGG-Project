@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.opengg.core.components;
+package com.opengg.core.world.components;
 
 /**
  *
  * @author ethachu19
  */
-public interface Renderable extends Component{
-    public void render();
+public interface Updatable extends Component{
+    public void update(float delta);
 }

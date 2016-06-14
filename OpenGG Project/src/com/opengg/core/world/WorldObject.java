@@ -6,25 +6,25 @@
 
 package com.opengg.core.world;
 
-import com.opengg.core.engine.WorldManager;
 import com.opengg.core.Quaternion4f;
 import com.opengg.core.Vector3f;
-import com.opengg.core.components.Component;
-import com.opengg.core.components.ComponentHolder;
-import com.opengg.core.components.ModelRenderComponent;
+import com.opengg.core.engine.WorldManager;
+import com.opengg.core.exceptions.InvalidParentException;
 import com.opengg.core.io.objloader.parser.OBJModel;
 import com.opengg.core.render.drawn.Drawable;
-import com.opengg.core.render.drawn.DrawnObject;
-import com.opengg.core.render.drawn.DrawnObjectGroup;
+import com.opengg.core.world.components.Component;
+import com.opengg.core.world.components.ComponentHolder;
+import com.opengg.core.world.components.ModelRenderComponent;
+import com.opengg.core.world.components.Positioned;
+import com.opengg.core.world.components.Renderable;
 
 /**
  *
  * @author Javier
  */
-public class WorldObject extends ComponentHolder implements Component {
+public class WorldObject extends ComponentHolder implements Positioned {
     public Vector3f pos;
     public Quaternion4f rot;
-    private Drawable d;
     private World thisWorld;
     public float mass;
     
@@ -73,11 +73,36 @@ public class WorldObject extends ComponentHolder implements Component {
      * Returns the DrawnObject associated with this WorldObject
      * @return DrawnObject associated with this
      */
-    public Drawable getDrawnObject(){
-        return d;
-    }
     @Override
     public void render(){
-        super.render();
+        for(Renderable r : renderable){
+            r.render();
+        }
+    }
+
+    @Override
+    public void setParentInfo(Component parent) {
+        throw new InvalidParentException("WorldObjects cannot have parents!");
+    }
+
+    @Override
+    public void setPosition(Vector3f pos) {
+        this.pos = pos;
+    }
+
+    @Override
+    public void setRotation(Vector3f rot) {
+        
+    }
+
+    @Override
+    public Vector3f getPosition() {
+        return pos;
+    }
+
+    @Override
+    public Vector3f getRotation() {
+        //return rot;
+        return new Vector3f();
     }
 }

@@ -9,6 +9,7 @@ package com.opengg.core.util;
 import com.opengg.core.render.VertexBufferObject;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.window.Window;
+import com.opengg.core.world.World;
 
 /**
  *
@@ -18,4 +19,5 @@ public class GlobalInfo {
     public static Window window;
     public static VertexBufferObject b;
     public static ShaderController main;
+    public static World curworld;
 }
