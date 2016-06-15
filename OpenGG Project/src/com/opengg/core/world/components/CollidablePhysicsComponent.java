@@ -24,7 +24,8 @@ public class CollidablePhysicsComponent extends PhysicsComponent{
     WorldObject obj;
 
     public CollidablePhysicsComponent(WorldObject obj, BoundingBox main, Collection<BoundingBox> all) {
-        super(obj);
+        super();
+        super.setParentInfo(obj);
         this.obj = obj;
         this.main = main;
         specifics.addAll(all);

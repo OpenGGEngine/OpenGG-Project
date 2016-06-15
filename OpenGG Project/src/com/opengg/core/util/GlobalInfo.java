@@ -6,6 +6,7 @@
 
 package com.opengg.core.util;
 
+import com.opengg.core.io.input.KeySet;
 import com.opengg.core.render.VertexBufferObject;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.window.Window;
@@ -20,4 +21,5 @@ public class GlobalInfo {
     public static VertexBufferObject b;
     public static ShaderController main;
     public static World curworld;
+    public static KeySet s;
 }

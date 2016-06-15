@@ -10,7 +10,6 @@ import com.opengg.core.Vector3f;
 import com.opengg.core.exceptions.InvalidParentException;
 import com.opengg.core.util.GlobalInfo;
 import com.opengg.core.world.World;
-import com.opengg.core.world.WorldObject;
 import static com.opengg.core.world.physics.PhysicsConstants.*;
 
 /**
@@ -67,12 +66,6 @@ public class PhysicsComponent implements Updatable {
         
     }
     
-    public PhysicsComponent(WorldObject obj) {
-        setParentInfo(obj);
-        pos = obj.getPosition();
-        
-    }
-
     public static PhysicsComponent interpolate(PhysicsComponent a, PhysicsComponent b, float alpha) {
         PhysicsComponent state = b;
         state.pos = a.pos.multiply(1 - alpha).add(b.pos.multiply(alpha));
@@ -88,6 +81,7 @@ public class PhysicsComponent implements Updatable {
     public void setParentInfo(Component parent) {
         if(parent instanceof Positioned){
             this.parent = (Positioned) parent;
+            pos = this.parent.getPosition();
             return;
         }
         throw new InvalidParentException("Cannot set an object with no position as having physics!");

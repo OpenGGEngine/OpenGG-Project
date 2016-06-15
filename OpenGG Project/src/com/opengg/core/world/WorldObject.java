@@ -23,7 +23,7 @@ import com.opengg.core.world.components.Renderable;
  * @author Javier
  */
 public class WorldObject extends ComponentHolder implements Positioned {
-    public Vector3f pos;
+    public Vector3f pos = new Vector3f();
     public Quaternion4f rot;
     private World thisWorld;
     public float mass;
