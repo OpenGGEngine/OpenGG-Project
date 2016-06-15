@@ -135,7 +135,27 @@ public class DrawnObject implements Drawable {
         glDrawElements(GL_POINTS, ind.limit(), GL_UNSIGNED_INT, 0);    
     }
 
+    public void setBuffer(FloatBuffer b, int vertSize){
+        limit = b.limit();
+        offset = DrawnObjectHandler.getOffset();
+        vertLimit = limit/vertSize;
+        vertOffset = offset/vertSize;
         
+        ind = BufferUtils.createIntBuffer(vertLimit);
+        for(long i = vertOffset; i < vertLimit; i++){
+            ind.put((int) i);
+        }
+        ind.flip();
+        
+        this.b = b;
+        vbo.bind(GL_ARRAY_BUFFER);
+        vbo.uploadData(GL_ARRAY_BUFFER, b, GL_STATIC_DRAW);
+        
+        evbo.bind(GL_ELEMENT_ARRAY_BUFFER);
+        evbo.uploadData(GL_ELEMENT_ARRAY_BUFFER, ind, GL_STATIC_DRAW);
+        removeBuffer();
+    }    
+    
     @Override
     public void draw(){    
         GlobalInfo.main.setModel(model);       

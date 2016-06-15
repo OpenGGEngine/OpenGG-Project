@@ -6,12 +6,11 @@
 package com.opengg.core.render.texture.text;
 
 import com.opengg.core.gui.GUIText;
-import com.opengg.core.render.drawn.DrawnObject;
-import com.opengg.core.render.drawn.TexturedDrawnObject;
+import com.opengg.core.io.newobjloader.Material;
+import com.opengg.core.render.drawn.MatDrawnObject;
 import java.io.File;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import org.lwjgl.BufferUtils;
 
@@ -28,10 +27,12 @@ public class TextVBOGenerator {
 		metaData = new GGFontFile(metaFile);
 	}
 
-	protected TexturedDrawnObject createTextData(GUIText text) {
+	protected MatDrawnObject createTextData(GUIText text) {
 		List<TextLine> lines = createStructure(text);
 		FloatBuffer data = createQuadVertices(text, lines);
-                TexturedDrawnObject t = new TexturedDrawnObject(data,1,text.font.texture);              
+                MatDrawnObject t = new MatDrawnObject(data, 12);     
+                t.setM(Material.defaultmaterial);
+                t.setTexture(text.font.texture);
 		return t;
 	}
 
@@ -159,12 +160,11 @@ public class TextVBOGenerator {
 	}
 
 	private static void addTexCoords(List<Float> texCoords, double x, double y, double maxX, double maxY) {
-             
-                double temp = y;
-                y = 1- x;
-                x = temp;
-                maxX +=x;
-                maxY += y;
+                
+                y = 1-y;
+            
+                maxX += x;
+                maxY = y - maxY;
                 System.out.println(x+","+y);
                 System.out.println(maxX+","+maxY);
                 System.out.println("------------------------");

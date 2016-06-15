@@ -7,6 +7,7 @@ import com.opengg.core.audio.AudioListener;
 import com.opengg.core.audio.AudioSource;
 import com.opengg.core.engine.WorldManager;
 import com.opengg.core.gui.GUI;
+import com.opengg.core.gui.GUIText;
 import com.opengg.core.io.input.KeyboardEventHandler;
 import com.opengg.core.io.input.KeyboardListener;
 import com.opengg.core.io.objloader.parser.OBJModel;
@@ -18,12 +19,14 @@ import com.opengg.core.render.buffer.ObjectBuffers;
 import com.opengg.core.render.drawn.DrawnObject;
 import com.opengg.core.render.drawn.DrawnObjectGroup;
 import com.opengg.core.render.drawn.InstancedDrawnObject;
+import com.opengg.core.render.drawn.MatDrawnObject;
 import static com.opengg.core.render.gl.GLOptions.enable;
 import com.opengg.core.render.shader.Mode;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.texture.Cubemap;
 import com.opengg.core.render.texture.Font;
 import com.opengg.core.render.texture.Texture;
+import com.opengg.core.render.texture.text.GGFont;
 import com.opengg.core.render.window.DisplayMode;
 import com.opengg.core.render.window.GLFWWindow;
 import static com.opengg.core.render.window.RenderUtil.endFrame;
@@ -35,6 +38,7 @@ import com.opengg.core.world.World;
 import com.opengg.core.world.WorldObject;
 import com.opengg.core.world.components.ModelRenderComponent;
 import com.opengg.core.world.components.PhysicsComponent;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
@@ -74,11 +78,12 @@ public class OpenGGTest implements KeyboardListener {
     Texture ppbf = new Texture();
     InstancedDrawnObject flashbang;
     DrawnObject test5, base2, sky;
-    DrawnObjectGroup test6, awp3;
+    DrawnObjectGroup test6;
+    MatDrawnObject awp3;
+    GGFont f;
 
     OBJModel m;
     OBJModel m2;
-    private Font f;
     private Texture t3 = new Texture();
     private Cubemap cb = new Cubemap();
     private ShaderController s = new ShaderController();
@@ -117,18 +122,10 @@ public class OpenGGTest implements KeyboardListener {
 
     public void setup() throws FileNotFoundException, IOException, Exception {
         MovementLoader.setup(window, 80);
-
+        
         vao = new VertexArrayObject();
         vao.bind();
         
-
-        AudioHandler.init(1);
-        so = AudioHandler.loadSound(OpenGGTest.class.getResource("res/maw.wav"));
-
-        so2 = AudioHandler.loadSound(OpenGGTest.class.getResource("res/mgs.wav"));
-        
-        so3 = AudioHandler.loadSound(OpenGGTest.class.getResource("res/stal.wav"));
-
         URL verts = OpenGGTest.class.getResource("res/shaders/shader.vert");
         URL frags = OpenGGTest.class.getResource("res/shaders/shader.frag");
         URL geoms = OpenGGTest.class.getResource("res/shaders/shader.geom");
@@ -143,12 +140,22 @@ public class OpenGGTest implements KeyboardListener {
         
         System.out.println("Shader/VAO Loading and Generation Complete");
         
+        AudioHandler.init(1);
+        so = AudioHandler.loadSound(OpenGGTest.class.getResource("res/maw.wav"));
+
+        so2 = AudioHandler.loadSound(OpenGGTest.class.getResource("res/mgs.wav"));
+        
+        so3 = AudioHandler.loadSound(OpenGGTest.class.getResource("res/stal.wav"));
+
+        
         t1.setupTexToBuffer(2000,2000);
         ppbf.setupTexToBuffer(win.getWidth(), win.getHeight());
         t3.loadTexture("C:/res/deer.png", true);
-        f = new Font("", "thanks dad", 11);
-
-        t2.loadFromBuffer(f.asByteBuffer(), (int) f.getFontImageWidth(), (int) f.getFontImageHeight());
+        t2.loadTexture("C:/res/test.png", true);
+        f = new GGFont(t2, new File("C:/res/test.fnt"));
+        GUIText g = new GUIText("Negros", f, 10f, new Vector2f(), 20, false);
+        awp3 = f.loadText(g);
+        
         t2.useTexture(0);
         cb.loadTexture("C:/res/skybox/majestic");
         
@@ -159,7 +166,7 @@ public class OpenGGTest implements KeyboardListener {
         
         test = ObjectBuffers.genBuffer(m, 1f, 0.2f, new Vector3f());
         test2 = ObjectBuffers.genBuffer(m2, 1f, 1f, new Vector3f());
-        test6 = OBJ.getDrawableModel("C:/res/3DSMusicPark/3DSMusicPark.obj");
+        //test6 = OBJ.getDrawableModel("C:/res/3DSMusicPark/3DSMusicPark.obj");
         
         FloatBuffer b = BufferUtils.createFloatBuffer(12);
         b.put(20).put(20).put(20).put(20).put(40).put(40)
@@ -181,8 +188,8 @@ public class OpenGGTest implements KeyboardListener {
         w.floorLev = -10;
         w.addObject(w1 = new WorldObject(awp3));
         w.addObject(w2 = new WorldObject(flashbang));
-
         flashbang.removeBuffer();
+        
         ModelRenderComponent m = new ModelRenderComponent(test6);
         ModelRenderComponent l = new ModelRenderComponent(flashbang);
 
@@ -191,14 +198,13 @@ public class OpenGGTest implements KeyboardListener {
         terrain = new WorldObject();
         awps = new WorldObject();
         awps.attach(l);
-        terrain.attach(m);
+        //terrain.attach(m);
         
-        bad = new PhysicsComponent(terrain);
-        terrain.attach(bad);
+        bad = new PhysicsComponent();
+        //terrain.attach(bad);
         ratio = win.getRatio();
         
         t = new Time();
-        
         
         as = new AudioListener();
         AudioHandler.setListener(as);
@@ -252,12 +258,17 @@ public class OpenGGTest implements KeyboardListener {
         s.setView(c);
         s.setPerspective(90, ratio, 0.3f, 2500f);
         
-        terrain.render();
+        //terrain.render();
         t3.useTexture(0);
         flashbang.draw();
+        
+        
         s.setMode(Mode.SKYBOX);
         cb.use(2);
         sky.draw();
+        
+        s.setMode(Mode.GUI);
+        awp3.draw();
         
         s.setMode(Mode.GUI);
         g.startGUI();
@@ -273,7 +284,7 @@ public class OpenGGTest implements KeyboardListener {
 
     public void update() {
         float delta = t.getDeltaSec();
-        terrain.update(delta);
+        //terrain.update(delta);
         xrot -= rot1 * 7;
         yrot -= rot2 * 7;
 

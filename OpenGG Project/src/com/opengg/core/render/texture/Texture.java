@@ -208,7 +208,7 @@ public class Texture {
                     if(flipped){
                         pixel = pixels[y * width + x];
                     }else{
-                        pixel = pixels[height- y * width + x];
+                        pixel = pixels[height - y  * width + x];
                     }
                     /* Red component 0xAARRGGBB >> (4 * 4) = 0x0000AARR */
                     buffer.put((byte) ((pixel >> 16) & 0xFF));
