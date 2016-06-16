@@ -45,12 +45,6 @@ public class TexturedDrawnObject implements Drawable{
     }
 
     @Override
-    public void drawShaded() {
-        tex.useTexture(0);
-        object.drawShaded();
-    }
-
-    @Override
     public void setMatrix(Matrix4f m) {
         object.setMatrix(m);
     }

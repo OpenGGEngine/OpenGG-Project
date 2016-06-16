@@ -31,12 +31,11 @@ public class GUI {
         low = lowBound;
         high = highBound;
     }
-    public static void startGUI(Camera c){
-        //GlobalInfo.main.setOrtho(low.x, high.x, low.y, high.y, 0.2f, 10);      
-        c.setPos(new Vector3f(0,0,0));
-        c.setRot(new Vector3f(0,0,0));
-        GlobalInfo.main.setView(c);
-        System.out.println(c.getPos());
+    public static void startGUIPos(){
+        GlobalInfo.main.setOrtho(-1, 1, -1, 1, -1, 1);
+        GlobalInfo.main.setView(new Camera());
+    }
+    public static void enableGUI(){
         GlobalInfo.main.setMode(Mode.GUI);
     }
     public void addItem(GUIItem item){

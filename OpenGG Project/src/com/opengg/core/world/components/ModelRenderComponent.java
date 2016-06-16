@@ -28,7 +28,7 @@ public class ModelRenderComponent extends ComponentHolder implements Renderable{
         Matrix4f m = Matrix4f.translate(w.getPosition().x + offset.x, w.getPosition().y + offset.y, w.getPosition().z + offset.z);
         
         g.setMatrix(m);
-        g.drawShaded();
+        g.draw();
         
         for(Renderable r : this.renderable){
             

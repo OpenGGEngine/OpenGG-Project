@@ -158,21 +158,12 @@ public class DrawnObject implements Drawable {
     
     @Override
     public void draw(){    
-        GlobalInfo.main.setModel(model);       
+        GlobalInfo.main.setModel(model);  
+        GlobalInfo.main.setShadowLightMatrix(shadeModel); 
         vbo.bind(GL_ARRAY_BUFFER);
         evbo.bind(GL_ELEMENT_ARRAY_BUFFER);
         GlobalInfo.main.defVertexAttributes();
         glDrawElements(GL_TRIANGLES, ind.limit(), GL_UNSIGNED_INT, 0);       
-    }
-    
-    @Override
-    public void drawShaded(){
-        GlobalInfo.main.setModel(model);
-        GlobalInfo.main.setShadowLightMatrix(shadeModel);        
-        vbo.bind(GL_ARRAY_BUFFER);    
-        evbo.bind(GL_ELEMENT_ARRAY_BUFFER);
-        GlobalInfo.main.defVertexAttributes();
-        glDrawElements(GL_TRIANGLES, ind.limit(), GL_UNSIGNED_INT, 0);
     }
     
     public void removeBuffer(){

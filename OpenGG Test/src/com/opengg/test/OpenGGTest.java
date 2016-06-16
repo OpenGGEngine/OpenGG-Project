@@ -72,7 +72,6 @@ public class OpenGGTest implements KeyboardListener {
     private VertexArrayObject vao;
 
     Camera c;
-    GUI g = new GUI();
     Texture t1 = new Texture();
     Texture t2 = new Texture();
     Texture ppbf = new Texture();
@@ -136,8 +135,6 @@ public class OpenGGTest implements KeyboardListener {
         c.setPos(pos);
         c.setRot(rot);
 
-        g.setupGUI(new Vector2f(-3, -3), new Vector2f(3, 3));
-        
         System.out.println("Shader/VAO Loading and Generation Complete");
         
         AudioHandler.init(1);
@@ -161,17 +158,17 @@ public class OpenGGTest implements KeyboardListener {
                 + " custodian of the stolen plans that can save her people and restore freedom to the galaxy...", f, 20f, new Vector2f(), 10, false);
         awp3 = f.loadText(g);
         
-        g = new GUIText("Turmoil has engulfed the Galactic Republic. The taxation of trade routes to outlying star systems is in dispute. \n" +
-                "\n" +
-                " Hoping to resolve the matter with a blockade of deadly battleships, "
-                + "the greedy Trade Federation has stopped all shipping to the small planet of Naboo. \n" +
-                "\n" +
-                " While the congress of the Republic endlessly debates this alarming chain of events,"
+        g = new GUIText("Turmoil has engulfed the Galactic Republic. The taxation of trade routes to outlying star systems is in dispute. \n" 
+                + "\n" 
+                + " Hoping to resolve the matter with a blockade of deadly battleships, "
+                + "the greedy Trade Federation has stopped all shipping to the small planet of Naboo. \n" 
+                + "\n" 
+                + " While the congress of the Republic endlessly debates this alarming chain of events,"
                 + " the Supreme Chancellor has secretly dispatched two Jedi Knights,"
-                + " the guardians of peace and justice in the galaxy, to settle the conflict...", f, 20f, new Vector2f(), 10, false);
+                + " the guardians of peace and justice in the galaxy, to settle the conflict...", f, 2f, new Vector2f(), 1, false);
         
         base2 = f.loadText(g);
-        base2.setMatrix(Matrix4f.translate(new Vector3f(25,0,0)));
+        base2.setMatrix(Matrix4f.translate(0,0,0).multiply(Matrix4f.scale(1f, 1f, 1)));
         
         t2.useTexture(0);
         cb.loadTexture("C:/res/skybox/majestic");
@@ -183,7 +180,7 @@ public class OpenGGTest implements KeyboardListener {
         
         test = ObjectBuffers.genBuffer(m, 1f, 0.2f, new Vector3f());
         test2 = ObjectBuffers.genBuffer(m2, 1f, 1f, new Vector3f());
-        //test6 = OBJ.getDrawableModel("C:/res/3DSMusicPark/3DSMusicPark.obj");
+        test6 = OBJ.getDrawableModel("C:/res/3DSMusicPark/3DSMusicPark.obj");
         
         FloatBuffer b = BufferUtils.createFloatBuffer(12);
         b.put(20).put(20).put(20).put(20).put(40).put(40)
@@ -192,9 +189,7 @@ public class OpenGGTest implements KeyboardListener {
         
         flashbang = new InstancedDrawnObject(test2, b);
 
-        test2 = ObjectBuffers.getSquareUI(1, 3, 1, 3, -1, 1f, false);
-        //test5 = new DrawnObject(test2, 12);
-        ppsht = new DrawnObject(ObjectBuffers.getSquareUI(-1, 1, -1, 1, .6f, 1, false),12);
+        ppsht = new DrawnObject(ObjectBuffers.getSquareUI(-1, 1, -1, 1, 1f, 1, false),12);
         test2 = ObjectBuffers.genSkyCube();
         sky = new DrawnObject(test2, 12);
         
@@ -207,7 +202,7 @@ public class OpenGGTest implements KeyboardListener {
         w.addObject(w2 = new WorldObject(flashbang));
         flashbang.removeBuffer();
         
-        //ModelRenderComponent m = new ModelRenderComponent(test6);
+        ModelRenderComponent m = new ModelRenderComponent(test6);
         ModelRenderComponent l = new ModelRenderComponent(flashbang);
 
         l.setPosition(new Vector3f(10,30,0));
@@ -215,7 +210,7 @@ public class OpenGGTest implements KeyboardListener {
         terrain = new WorldObject();
         awps = new WorldObject();
         awps.attach(l);
-        //terrain.attach(m);
+        terrain.attach(m);
         
         bad = new PhysicsComponent();
         terrain.attach(bad);
@@ -278,29 +273,41 @@ public class OpenGGTest implements KeyboardListener {
         cb.use(2);
         sky.draw();
         s.setMode(Mode.OBJECT);
-        //terrain.render();
+        terrain.render();
         t3.useTexture(0);
         flashbang.draw();
         s.setDistanceField(true);
         awp3.draw();
-        base2.draw();
-        s.setDistanceField(false);
-        
-        s.setMode(Mode.GUI);
-        g.startGUI();
         ppbf.endTexRender();
         glDisable(GL_CULL_FACE);
+        GUI.startGUIPos();
         s.setMode(Mode.PP);
-        s.setOrtho(-1, 1, -1, 1, -1, 1);
-        s.setView(new Camera());
         ppbf.useTexture(0);
         ppbf.useDepthTexture(1);
         ppsht.draw();
+        GUI.enableGUI();
+        base2.draw();
+        s.setDistanceField(false);
     }
-
+    
+    float i = 0;
+    boolean flipsd = false;
     public void update() {
         float delta = t.getDeltaSec();
-        //terrain.update(delta);
+        
+        if(i > 1){
+            flipsd = true;
+        }
+        if(i < -1){
+            flipsd = false;
+        }
+        if(flipsd){
+            i -= delta;
+        }else{
+            i += delta;
+        }
+        s.setTimeMod(i);
+        terrain.update(delta);
         xrot -= rot1 * 7;
         yrot -= rot2 * 7;
 

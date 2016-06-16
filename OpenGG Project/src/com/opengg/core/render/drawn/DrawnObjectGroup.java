@@ -26,15 +26,6 @@ public class DrawnObjectGroup implements Drawable {
     
 
     @Override
-    public void drawShaded() {
-
-        objs.stream().forEach((d) -> {
-            
-            d.drawShaded();
-        });
-    }
-
-    @Override
     public void saveShadowMVP() {
         objs.stream().forEach((d) -> {
             d.saveShadowMVP();

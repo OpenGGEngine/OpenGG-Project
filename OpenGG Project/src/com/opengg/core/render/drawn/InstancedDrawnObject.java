@@ -20,7 +20,6 @@ import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
 import static org.lwjgl.opengl.GL31.glDrawArraysInstanced;
-import static org.lwjgl.opengl.GL31.glDrawElementsInstanced;
 
 /**
  *
@@ -158,21 +157,6 @@ public class InstancedDrawnObject implements Drawable {
         
         GlobalInfo.main.setInstanced(true);
         glDrawArraysInstanced(GL_TRIANGLES,0,ind.limit(), instnum);
-        GlobalInfo.main.setInstanced(false);
-    }
-    
-    @Override
-    public void drawShaded(){
-        GlobalInfo.main.setModel(model);     
-        vbo.bind(GL_ARRAY_BUFFER);    
-        evbo.bind(GL_ELEMENT_ARRAY_BUFFER);
-        GlobalInfo.main.defInstancedVertexAttributes1();
-        
-        ivbo.bind(GL_ARRAY_BUFFER);
-        GlobalInfo.main.defInstancedVertexAttributes2();
-        
-        GlobalInfo.main.setInstanced(true);
-        glDrawElementsInstanced(GL_TRIANGLES, instnum, ind.limit(), GL_UNSIGNED_INT, evbo.getID());
         GlobalInfo.main.setInstanced(false);
     }
     

@@ -33,6 +33,7 @@ struct Light
     vec3 color;
 };
 
+uniform float time;
 uniform int text;
 uniform mat4 shmvp;
 uniform mat4 view;
@@ -99,7 +100,7 @@ void lightify(){
 vec4 getTex(sampler2D tname){
     if(text == 1){
         vec4 col = texture(tname, textureCoord);
-        float width = 0.3f;
+        float width = 0.4f;
         float edge = 0.2f;
         float dist = 1-col.a;
         float alpha = 1-smoothstep(width,width+edge,dist);
@@ -119,7 +120,7 @@ vec4 shadify(){
     
     float trans = tempdif.a;
     
-    if(trans < 0.1){
+    if(trans < 0.2){
         discard;
     }
     
@@ -184,7 +185,7 @@ vec4 getCube(){
 }
 vec4 getWaveEffect(){
     vec2 texcoord = textureCoord;
-    texcoord.x += sin(texcoord.y * 4*2*3.14159) * 0.04;
+    texcoord.x += cos(texcoord.y * 4*2*3.14159) * 0.04 * time;
     return texture(texImage, vec2(texcoord.x, sin(texcoord.y)));
 }
 float readDepth( in vec2 coord ) {
@@ -289,9 +290,8 @@ vec4 ssao()
 }
 
 void processPP(){
-    
     fcolor = ssao();
-    //color = getWaveEffect();
+    fcolor = getWaveEffect();
 }
 void main() {   
     if(mode == 0){

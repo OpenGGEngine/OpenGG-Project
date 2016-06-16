@@ -81,15 +81,6 @@ public class MatDrawnObject implements Drawable {
     }
 
     @Override
-    public void drawShaded() {
-        if(tex != null)tex.useTexture(0);
-        if(hasSpecMap) specmap.useTexture(4);   
-        if(hasNormalMap) normalmap.useTexture(3);
-        GlobalInfo.main.passMaterial(m,hasSpecMap, hasNormalMap);
-        d.drawShaded();
-    }
-
-    @Override
     public void setMatrix(Matrix4f m) {
         d.setMatrix(m);
     }

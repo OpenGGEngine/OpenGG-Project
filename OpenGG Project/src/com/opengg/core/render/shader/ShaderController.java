@@ -42,6 +42,7 @@ public class ShaderController {
     private int texAttrib;
     private int inst;
     private int text;
+    private int time;
     
     public void setup(URL vert, URL frag, URL geom) throws UnsupportedEncodingException{
         vertexTex= new Shader(GL_VERTEX_SHADER, 
@@ -133,6 +134,9 @@ public class ShaderController {
         mode = program.getUniformLocation("mode"); 
         program.setUniform(mode, (int) 0);
         
+        time = program.getUniformLocation("time"); 
+        program.setUniform(time, 0f);
+        
         specularexponent = program.getUniformLocation("material.specexponent");
         program.setUniform(specularexponent, 0);
         
@@ -209,6 +213,11 @@ public class ShaderController {
     public void setModel(Matrix4f model){
         
         program.setUniform(uniModel, model);
+    }
+    
+    public void setTimeMod(float mod){
+        
+        program.setUniform(time, mod);
     }
     
     public void setView(Matrix4f view){
