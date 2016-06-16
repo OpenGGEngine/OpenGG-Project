@@ -26,7 +26,13 @@ public class Word {
         public double fontSize;
 
         public void addCharacter(GGCharacter character) {
-            characters.add(character);
-            width += character.xAdvance * fontSize;
+            try{
+                characters.add(character);
+                width += 
+                        character.xAdvance 
+                        * fontSize;
+            }catch(NullPointerException e){
+                System.out.println("Null Pointer, " + character.sizeX);
+            }
         }
 }

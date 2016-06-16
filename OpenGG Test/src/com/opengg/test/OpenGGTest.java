@@ -153,7 +153,12 @@ public class OpenGGTest implements KeyboardListener {
         t3.loadTexture("C:/res/deer.png", true);
         t2.loadTexture("C:/res/test.png", true);
         f = new GGFont(t2, new File("C:/res/test.fnt"));
-        GUIText g = new GUIText("Negros", f, 10f, new Vector2f(), 20, false);
+        GUIText g = new GUIText("It is a period of civil war. Rebel spaceships, striking from a hidden base,"
+                + " have won their first victory against the evil Galactic Empire. During the battle,"
+                + " Rebel spies managed to steal secret plans to the Empires ultimate weapon, the DEATH STAR,"
+                + " an armored space station with enough power to destroy an entire planet. \n\n"
+                + " Pursued by the Empires sinister agents, Princess Leia races home aboard her starship,"
+                + " custodian of the stolen plans that can save her people and restore freedom to the galaxy...", f, 20f, new Vector2f(), 10, false);
         awp3 = f.loadText(g);
         
         t2.useTexture(0);
@@ -267,7 +272,7 @@ public class OpenGGTest implements KeyboardListener {
         cb.use(2);
         sky.draw();
         
-        s.setMode(Mode.GUI);
+        s.setMode(Mode.OBJECT);
         awp3.draw();
         
         s.setMode(Mode.GUI);

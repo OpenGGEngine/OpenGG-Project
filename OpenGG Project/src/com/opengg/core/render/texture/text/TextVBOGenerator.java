@@ -42,6 +42,12 @@ public class TextVBOGenerator {
 		TextLine currentLine = new TextLine(metaData.getSpaceWidth(), text.getFontSize(), text.getMaxLineSize());
 		Word currentWord = new Word(text.getFontSize());
 		for (char c : chars) {
+                    
+                        if(c == '\n'){
+                            lines.add(currentLine);
+                            currentLine = new TextLine(metaData.getSpaceWidth(), text.getFontSize(), text.getMaxLineSize());
+                        }
+                    
 			int ascii = (int) c;
 			if (ascii == SPACE_ASCII) {
 				boolean added = currentLine.addWord(currentWord);

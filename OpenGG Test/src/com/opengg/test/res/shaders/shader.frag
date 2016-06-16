@@ -108,6 +108,10 @@ vec4 shadify(){
     
     float trans = tempdif.a;
     
+    if(trans < 0.2){
+        discard;
+    }
+    
     if(texture2D(shadeImage,textureCoord).a == 0){
             
             diffuse = vertcolor.rgb;
