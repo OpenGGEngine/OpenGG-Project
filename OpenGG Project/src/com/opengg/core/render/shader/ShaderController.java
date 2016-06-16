@@ -41,6 +41,7 @@ public class ShaderController {
     private int normAttrib;
     private int texAttrib;
     private int inst;
+    private int text;
     
     public void setup(URL vert, URL frag, URL geom) throws UnsupportedEncodingException{
         vertexTex= new Shader(GL_VERTEX_SHADER, 
@@ -68,9 +69,12 @@ public class ShaderController {
         
         /* Set shader variables */
          
-       inst = program.getUniformLocation("inst");
-       program.setUniform(inst, 0);
-         
+        inst = program.getUniformLocation("inst");
+        program.setUniform(inst, 0);
+
+        text = program.getUniformLocation("text");
+        program.setUniform(text, false);
+       
         uniModel = program.getUniformLocation("model"); 
         program.setUniform(uniModel, new Matrix4f());
         

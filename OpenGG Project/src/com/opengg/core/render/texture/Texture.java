@@ -144,7 +144,7 @@ public class Texture {
     }
     
     public void endTexRender(){
-        glFinish();
+        glFlush();
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glViewport(0,0,GlobalInfo.window.getWidth(),GlobalInfo.window.getHeight());
     }

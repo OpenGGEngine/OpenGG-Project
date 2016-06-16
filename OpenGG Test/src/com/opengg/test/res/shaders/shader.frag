@@ -32,6 +32,8 @@ struct Light
     vec3 lightpos;
     vec3 color;
 };
+
+uniform int text;
 uniform mat4 shmvp;
 uniform mat4 view;
 uniform mat4 model;
@@ -95,6 +97,9 @@ void lightify(){
     }
 }
 vec4 getTex(sampler2D tname){
+    if(text == 1){
+        
+    }
     return texture(tname, textureCoord * vec2(uvmultx, uvmulty));
 }
 vec4 shadify(){
@@ -102,7 +107,7 @@ vec4 shadify(){
     vec4 vertcolor = vertexColor;
     vec4 tempdif;
     
-    tempdif = texture(texImage, textureCoord * vec2(uvmultx, uvmulty));
+    tempdif = getTex(texImage);
 
     diffuse = tempdif.rgb;
     

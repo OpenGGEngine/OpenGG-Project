@@ -1,5 +1,6 @@
 package com.opengg.test;
 
+import com.opengg.core.Matrix4f;
 import com.opengg.core.Vector2f;
 import com.opengg.core.Vector3f;
 import com.opengg.core.audio.AudioHandler;
@@ -24,7 +25,6 @@ import static com.opengg.core.render.gl.GLOptions.enable;
 import com.opengg.core.render.shader.Mode;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.texture.Cubemap;
-import com.opengg.core.render.texture.Font;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.texture.text.GGFont;
 import com.opengg.core.render.window.DisplayMode;
@@ -77,9 +77,9 @@ public class OpenGGTest implements KeyboardListener {
     Texture t2 = new Texture();
     Texture ppbf = new Texture();
     InstancedDrawnObject flashbang;
-    DrawnObject test5, base2, sky;
+    DrawnObject test5,sky;
     DrawnObjectGroup test6;
-    MatDrawnObject awp3;
+    MatDrawnObject awp3, base2;
     GGFont f;
 
     OBJModel m;
@@ -161,6 +161,18 @@ public class OpenGGTest implements KeyboardListener {
                 + " custodian of the stolen plans that can save her people and restore freedom to the galaxy...", f, 20f, new Vector2f(), 10, false);
         awp3 = f.loadText(g);
         
+        g = new GUIText("Turmoil has engulfed the Galactic Republic. The taxation of trade routes to outlying star systems is in dispute. \n" +
+                "\n" +
+                " Hoping to resolve the matter with a blockade of deadly battleships, "
+                + "the greedy Trade Federation has stopped all shipping to the small planet of Naboo. \n" +
+                "\n" +
+                " While the congress of the Republic endlessly debates this alarming chain of events,"
+                + " the Supreme Chancellor has secretly dispatched two Jedi Knights,"
+                + " the guardians of peace and justice in the galaxy, to settle the conflict...", f, 20f, new Vector2f(), 10, false);
+        
+        base2 = f.loadText(g);
+        base2.setMatrix(Matrix4f.translate(new Vector3f(25,0,0)));
+        
         t2.useTexture(0);
         cb.loadTexture("C:/res/skybox/majestic");
         
@@ -171,7 +183,7 @@ public class OpenGGTest implements KeyboardListener {
         
         test = ObjectBuffers.genBuffer(m, 1f, 0.2f, new Vector3f());
         test2 = ObjectBuffers.genBuffer(m2, 1f, 1f, new Vector3f());
-        //test6 = OBJ.getDrawableModel("C:/res/3DSMusicPark/3DSMusicPark.obj");
+        test6 = OBJ.getDrawableModel("C:/res/3DSMusicPark/3DSMusicPark.obj");
         
         FloatBuffer b = BufferUtils.createFloatBuffer(12);
         b.put(20).put(20).put(20).put(20).put(40).put(40)
@@ -203,10 +215,10 @@ public class OpenGGTest implements KeyboardListener {
         terrain = new WorldObject();
         awps = new WorldObject();
         awps.attach(l);
-        //terrain.attach(m);
+        terrain.attach(m);
         
         bad = new PhysicsComponent();
-        //terrain.attach(bad);
+        terrain.attach(bad);
         ratio = win.getRatio();
         
         t = new Time();
@@ -255,26 +267,23 @@ public class OpenGGTest implements KeyboardListener {
         
         s.setPerspective(90, ratio, 4, 300f);      
         s.setMode(Mode.POS_ONLY);
-        s.setMode(Mode.OBJECT);
-        
+
         c.setPos(pos);
         c.setRot(rot);
 
         s.setView(c);
         s.setPerspective(90, ratio, 0.3f, 2500f);
         
-        //terrain.render();
-        t3.useTexture(0);
-        flashbang.draw();
-        
-        
         s.setMode(Mode.SKYBOX);
         cb.use(2);
         sky.draw();
-        
         s.setMode(Mode.OBJECT);
+        terrain.render();
+        t3.useTexture(0);
+        flashbang.draw();
         awp3.draw();
-        
+        base2.draw();
+
         s.setMode(Mode.GUI);
         g.startGUI();
         ppbf.endTexRender();
@@ -289,7 +298,7 @@ public class OpenGGTest implements KeyboardListener {
 
     public void update() {
         float delta = t.getDeltaSec();
-        //terrain.update(delta);
+        terrain.update(delta);
         xrot -= rot1 * 7;
         yrot -= rot2 * 7;
 

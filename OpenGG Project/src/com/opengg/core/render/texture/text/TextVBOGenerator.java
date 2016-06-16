@@ -46,6 +46,7 @@ public class TextVBOGenerator {
                         if(c == '\n'){
                             lines.add(currentLine);
                             currentLine = new TextLine(metaData.getSpaceWidth(), text.getFontSize(), text.getMaxLineSize());
+                            continue;
                         }
                     
 			int ascii = (int) c;
