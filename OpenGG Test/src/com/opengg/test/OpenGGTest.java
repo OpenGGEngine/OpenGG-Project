@@ -183,7 +183,7 @@ public class OpenGGTest implements KeyboardListener {
         
         test = ObjectBuffers.genBuffer(m, 1f, 0.2f, new Vector3f());
         test2 = ObjectBuffers.genBuffer(m2, 1f, 1f, new Vector3f());
-        test6 = OBJ.getDrawableModel("C:/res/3DSMusicPark/3DSMusicPark.obj");
+        //test6 = OBJ.getDrawableModel("C:/res/3DSMusicPark/3DSMusicPark.obj");
         
         FloatBuffer b = BufferUtils.createFloatBuffer(12);
         b.put(20).put(20).put(20).put(20).put(40).put(40)
@@ -207,7 +207,7 @@ public class OpenGGTest implements KeyboardListener {
         w.addObject(w2 = new WorldObject(flashbang));
         flashbang.removeBuffer();
         
-        ModelRenderComponent m = new ModelRenderComponent(test6);
+        //ModelRenderComponent m = new ModelRenderComponent(test6);
         ModelRenderComponent l = new ModelRenderComponent(flashbang);
 
         l.setPosition(new Vector3f(10,30,0));
@@ -215,7 +215,7 @@ public class OpenGGTest implements KeyboardListener {
         terrain = new WorldObject();
         awps = new WorldObject();
         awps.attach(l);
-        terrain.attach(m);
+        //terrain.attach(m);
         
         bad = new PhysicsComponent();
         terrain.attach(bad);
@@ -278,12 +278,14 @@ public class OpenGGTest implements KeyboardListener {
         cb.use(2);
         sky.draw();
         s.setMode(Mode.OBJECT);
-        terrain.render();
+        //terrain.render();
         t3.useTexture(0);
         flashbang.draw();
+        s.setDistanceField(true);
         awp3.draw();
         base2.draw();
-
+        s.setDistanceField(false);
+        
         s.setMode(Mode.GUI);
         g.startGUI();
         ppbf.endTexRender();
@@ -298,7 +300,7 @@ public class OpenGGTest implements KeyboardListener {
 
     public void update() {
         float delta = t.getDeltaSec();
-        terrain.update(delta);
+        //terrain.update(delta);
         xrot -= rot1 * 7;
         yrot -= rot2 * 7;
 

@@ -98,7 +98,13 @@ void lightify(){
 }
 vec4 getTex(sampler2D tname){
     if(text == 1){
-        
+        vec4 col = texture(tname, textureCoord);
+        float width = 0.3f;
+        float edge = 0.2f;
+        float dist = 1-col.a;
+        float alpha = 1-smoothstep(width,width+edge,dist);
+        vec3 colr = col.rgb;
+        return vec4(colr, alpha);
     }
     return texture(tname, textureCoord * vec2(uvmultx, uvmulty));
 }
@@ -113,7 +119,7 @@ vec4 shadify(){
     
     float trans = tempdif.a;
     
-    if(trans < 0.2){
+    if(trans < 0.1){
         discard;
     }
     

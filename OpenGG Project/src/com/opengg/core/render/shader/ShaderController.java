@@ -216,6 +216,10 @@ public class ShaderController {
         program.setUniform(uniView, view);
     }
     
+    public void setDistanceField(boolean distfield){
+        
+        program.setUniform(text, distfield);
+    }
     
     public void setPerspective(float fov, float aspect, float znear, float zfar){
         
