@@ -29,7 +29,7 @@ public class ShaderController {
     private Shader fragmentTex;
     private Shader vertexTex;
     private Shader geomTex;
-    public int uniModel,rotm,lightpos,div,uniView,lightdistance,lightpower,shadow,skycolor,mode,specularexponent,specularexponents,specularcolor,hasspec,uniProj;
+    public int uniModel,rotm,lightpos,div,uniView,lightdistance,lightpower,shadow,skycolor,mode,specularexponent,specularexponents,specularcolor,hasspec,uniProj,billboard;
     float ratio;
     Matrix4f model= new Matrix4f(), view= new Matrix4f(), proj = new Matrix4f();
     private int uvy;
@@ -152,6 +152,8 @@ public class ShaderController {
         hasnorm = program.getUniformLocation("material.hasnormmap");
         program.setUniform(hasnorm, false);
         
+        billboard = program.getUniformLocation("billboard");
+        program.setUniform(billboard,1);
         program.checkStatus();
         
         GlobalInfo.main = this;
@@ -312,4 +314,5 @@ public class ShaderController {
         program.setUniform(hasspec, specmap);
         program.setUniform(hasnorm, normmap);
     }
+    public void setBillBoard(int yes){  program.setUniform(billboard,yes);}
 }
