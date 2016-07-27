@@ -7,8 +7,10 @@ package com.opengg.core.world.entities;
 
 import com.opengg.core.Vector3f;
 import com.opengg.core.io.objloader.parser.OBJModel;
+import static com.opengg.core.util.GlobalUtil.print;
 import com.opengg.core.world.Camera;
 import com.opengg.core.world.World;
+import com.opengg.core.world.entities.resources.EntitySupportEnums.PhysicsType;
 
 /**
  *
@@ -17,6 +19,7 @@ import com.opengg.core.world.World;
 public class PlayerEntity extends Entity{
     
     public Camera playerCam;
+    public Vector3f direction = new Vector3f();
 
     /**
      * Makes default Player
@@ -24,8 +27,8 @@ public class PlayerEntity extends Entity{
      */
     public PlayerEntity(){
         super();
-        playerCam = new Camera(pos, direction);
-        currentWorld.addCamera(playerCam);
+        playerCam = new Camera(current.pos, direction);
+        current.currentWorld.addCamera(playerCam);
     }
 
     /**
@@ -38,9 +41,9 @@ public class PlayerEntity extends Entity{
      * @param model Model to be bound to entity
      * @param current
      */
-    public PlayerEntity(EntityType type, Vector3f position, Vector3f f, float mass, OBJModel model, World current){
+    public PlayerEntity(PhysicsType type, Vector3f position, Vector3f f, float mass, OBJModel model, World current){
         super(type,position, f, mass, model, current);
-        playerCam = new Camera(pos, direction);
+        playerCam = new Camera(this.current.pos, direction);
         current.addCamera(playerCam);
     }
 
@@ -51,14 +54,16 @@ public class PlayerEntity extends Entity{
      */
     public PlayerEntity(Entity v){
         super(v);
-        playerCam = new Camera(pos, direction);
-        currentWorld.addCamera(playerCam);
+        playerCam = new Camera(current.pos, direction);
+        current.currentWorld.addCamera(playerCam);
     }
     
     @Override
     public void changeWorld(World next){
-        currentWorld.removeCamera(playerCam);
-        currentWorld = next;
+        try{
+            current.currentWorld.removeCamera(playerCam);
+        } catch (NullPointerException e) { print ("CurrentWorld of Player is null");}
+        current.currentWorld = next;
         next.addCamera(playerCam);
     }
 }

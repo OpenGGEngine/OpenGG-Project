@@ -7,6 +7,7 @@ package com.opengg.core.render.window;
 
 import com.opengg.core.Matrix4f;
 import com.opengg.core.render.shader.ShaderProgram;
+import com.opengg.core.util.GlobalInfo;
 import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
 
 /**
@@ -16,19 +17,19 @@ import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
 public class ViewUtil {
     public static void setPerspective(float fov, float aspect, float znear, float zfar, ShaderProgram program){
         Matrix4f projection = Matrix4f.perspective(fov, aspect, znear, zfar);
-        int uniProjection = program.getUniformLocation("projection");
+        int uniProjection = GlobalInfo.main.uniProj;
         program.setUniform(uniProjection, projection);
         glUniformMatrix4fv(uniProjection, false, projection.getBuffer());
     }
     public static void setOrtho(float left, float right, float bottom, float top, float near, float far, ShaderProgram program){
         Matrix4f projection = Matrix4f.orthographic(left, right, bottom, top, near, far);
-        int uniProjection = program.getUniformLocation("projection");
+        int uniProjection = GlobalInfo.main.uniProj;
         program.setUniform(uniProjection, projection);
         glUniformMatrix4fv(uniProjection, false, projection.getBuffer());
     }
     public static void setFrustum(float left, float right, float bottom, float top, float near, float far, ShaderProgram program){
         Matrix4f projection = Matrix4f.frustum(left, right, bottom, top, near, far);
-        int uniProjection = program.getUniformLocation("projection");
+        int uniProjection = GlobalInfo.main.uniProj;
         program.setUniform(uniProjection, projection);
         glUniformMatrix4fv(uniProjection, false, projection.getBuffer());
     }

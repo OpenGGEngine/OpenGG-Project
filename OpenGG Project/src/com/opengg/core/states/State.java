@@ -5,7 +5,7 @@
  */
 package com.opengg.core.states;
 
-import com.opengg.core.render.window.Window;
+import com.opengg.core.render.window.GLFWWindow;
 import java.io.IOException;
 
 /**
@@ -15,13 +15,13 @@ import java.io.IOException;
 public interface State {
     public String getName();
 	
-    public void init(Window window) throws IOException;
+    public void init(GLFWWindow window) throws IOException;
 	
-    public void render(Window window, int delta);
+    public void render(GLFWWindow window, int delta);
 	
-    public void update(Window window, int delta);
+    public void update(GLFWWindow window, int delta);
 	
-    public void enter(Window window);
+    public void enter(GLFWWindow window);
 
-    public void leave(Window window);
+    public void leave(GLFWWindow window);
 }

@@ -5,7 +5,7 @@
  */
 package com.opengg.core.states;
 
-import com.opengg.core.render.window.Window;
+import com.opengg.core.render.window.GLFWWindow;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,8 +24,8 @@ public class StateMachine {
         currentstate.enter(null);
     }
     public void loop(){
-        currentstate.update(new Window(), 2);
-        currentstate.render(new Window(), 2);
+        //currentstate.update(new GLFWWindow(), 2);
+        //currentstate.render(new GLFWWindow(), 2);
         
         
     }

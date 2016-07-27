@@ -19,7 +19,7 @@ public class Time {
     public Time(){
         lastTime = System.currentTimeMillis();
     }
-    public float getDeltaMs(){
+    public  float getDeltaMs(){
         currentTime = System.currentTimeMillis();
 //        print(lastTime + " " + currentTime);
         timeStep = currentTime - lastTime;
@@ -27,7 +27,7 @@ public class Time {
         return timeStep;
     }
     
-    public float getDeltaSec(){
+    public  float getDeltaSec(){
         return getDeltaMs() /1000f;
     }
 }

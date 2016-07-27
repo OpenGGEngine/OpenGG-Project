@@ -5,66 +5,46 @@
  */
 package com.opengg.core.world.entities;
 
+import com.opengg.core.Quaternion4f;
 import com.opengg.core.Vector3f;
-import com.opengg.core.util.Time;
 import com.opengg.core.io.objloader.parser.OBJModel;
 import static com.opengg.core.util.GlobalUtil.print;
 import com.opengg.core.world.Camera;
 import com.opengg.core.world.World;
-import com.opengg.core.world.WorldManager;
-import static com.opengg.core.world.entities.EntityFactory.AddStack;
-import com.opengg.core.world.physics.ForceManipulation;
+import com.opengg.core.engine.WorldManager;
+import static com.opengg.core.world.entities.EntityBuilder.AddStack;
+import com.opengg.core.world.entities.resources.EntityFrame;
+import com.opengg.core.world.entities.resources.EntitySupportEnums;
+import com.opengg.core.world.entities.resources.EntitySupportEnums.Collide;
+import com.opengg.core.world.entities.resources.EntitySupportEnums.PhysicsType;
+import com.opengg.core.world.entities.resources.EntitySupportEnums.UpdateForce;
+import com.opengg.core.world.entities.resources.EntitySupportEnums.UpdateXYZ;
+import com.opengg.core.world.entities.resources.PhysicsState;
+import static com.opengg.core.world.physics.resources.PhysicsStruct.wind;
+import java.io.Serializable;
 
 /**
  *
  * @author ethachu19
  */
-public class Entity {
-
-    public enum EntityType {
-        /* Update Movement, Force Update, No Collsion Response*/ Static,
-        /* Update Movement, Force Update, Collision Detection*/ Physics,
-        /* Update Movement, No force update, No Collision*/ Particle,
-        /* User Defined*/ Other
-    }
-
-    public enum Collide {
-
-        Collidable, Uncollidable, NoResponse
-    }
-
-    public enum UpdateXYZ {
-
-        Movable, Immovable
-    }
-
-    public enum UpdateForce {
-
-        Realistic, Unrealistic
-    }
+@Deprecated
+public class Entity implements Serializable {
 
     /* tags */
-    public UpdateForce updateForce;
     public UpdateXYZ updatePosition;
     public Collide collision;
-
-    /* Native to Entity*/
-    public Vector3f pos = new Vector3f();
     public boolean ground;
-    public float mass;
-    public World currentWorld = null;
+    public short id;
 
     /* Physics*/
-    public Vector3f velocity = new Vector3f();
-    public Vector3f direction = new Vector3f();
-    private final Time time = new Time();
-    public Vector3f acceleration = new Vector3f(0, 0, 0);
-    public Vector3f lastAcceleration = new Vector3f(0, 0, 0);
-    public ForceManipulation forceCalculator;
-    private float timeStep;
-    private float height = 5f;
-    private float width = 5f;
-    private float length = 5f;
+    public EntityFrame ef;
+    /**
+     * Only to be used for smooth rendering with interpolate
+     *
+     * @see interpolate
+     */
+    public PhysicsState previous;
+    public PhysicsState current;
     /* Max - 1, Min - 0 */
     public Vector3f[] boundingBox = {new Vector3f(), new Vector3f()};
     /*
@@ -89,14 +69,12 @@ public class Entity {
      *
      */
     public Entity() {
-        forceCalculator = new ForceManipulation(new Vector3f(), new Vector3f(), this);
-        if(WorldManager.isEmpty())
+        if (WorldManager.isEmpty()) {
             WorldManager.getWorld(new Camera());
-        this.currentWorld = WorldManager.getDefaultWorld();
+        }
+        current = new PhysicsState(WorldManager.getDefaultWorld(), 10f);
         setXYZ(0f, 0f, 0f);
-        this.ground = true;
-        this.mass = 40f;
-        setTags(EntityType.Physics);
+        setTags(PhysicsType.Physics);
         bindModel(new OBJModel());
 
         AddStack.add(this);
@@ -112,16 +90,18 @@ public class Entity {
      * @param model Model to be bound to entity
      * @param current Current World
      */
-    public Entity(EntityType type, Vector3f position, Vector3f f, float mass, OBJModel model, World current) {
-        this.currentWorld = current;
-        forceCalculator = new ForceManipulation(this);
+    public Entity(PhysicsType type, Vector3f position, Vector3f f, float mass, OBJModel model, World current) {
+        if (position == null) {
+            position = new Vector3f();
+        }
+        if (f == null) {
+            f = new Vector3f();
+        }
+        this.current = new PhysicsState(current, mass);
         setXYZ(position);
         setForce(f);
-        this.ground = (pos.y < 60);
-        this.mass = mass;
         setTags(type);
         bindModel(model);
-
         AddStack.add(this);
     }
 
@@ -131,76 +111,13 @@ public class Entity {
      * @param v Entity to be copied
      */
     public Entity(Entity v) {
-        this.currentWorld = v.currentWorld;
-        forceCalculator = new ForceManipulation(v.forceCalculator.airResistance, v.forceCalculator.force, this);
-        setXYZ(v.pos.x, v.pos.y, v.pos.z);
-        setVelocity(v.velocity);
-        this.ground = (pos.y < 60);
-        this.mass = v.mass;
+        this.current = new PhysicsState(v.current);
         this.collision = v.collision;
         this.updatePosition = v.updatePosition;
-        this.updateForce = v.updateForce;
+        this.current.updateForce = v.current.updateForce;
         bindModel(v.model);
 
         AddStack.add(this);
-    }
-
-    /**
-     * Sets the entity's tags
-     *
-     * @param collision Tag for Collision Detection
-     * @return True
-     */
-    public boolean setTags(Collide collision) {
-        this.collision = collision;
-        return true;
-    }
-
-    /**
-     * Sets the entity's tags
-     *
-     * @param updateForce Tag for realistic force calculation
-     * @return True
-     */
-    public boolean setTags(UpdateForce updateForce) {
-        this.updateForce = updateForce;
-        if (this.updateForce == UpdateForce.Realistic && this.updatePosition != UpdateXYZ.Movable) {
-            updatePosition = UpdateXYZ.Movable;
-        }
-        return true;
-    }
-
-    /**
-     * Sets the entity's tags
-     *
-     * @param updatePosition Tag for movable entity
-     * @return True
-     */
-    public boolean setTags(UpdateXYZ updatePosition) {
-        this.updatePosition = updatePosition;
-        if (this.updatePosition == UpdateXYZ.Immovable) {
-            this.updateForce = UpdateForce.Unrealistic;
-        }
-        return true;
-    }
-
-    /**
-     * Sets the entity's tags
-     *
-     * @param collision The tag for collision
-     * @param updateForce The tag for realistic movement
-     * @param updatePosition The tag for movement
-     * @return Error
-     */
-    public boolean setTags(Collide collision, UpdateForce updateForce, UpdateXYZ updatePosition) {
-        this.collision = collision;
-        this.updatePosition = updatePosition;
-        if (this.updatePosition == UpdateXYZ.Immovable) {
-            this.updateForce = UpdateForce.Unrealistic;
-            return this.updateForce == updateForce;
-        }
-        this.updateForce = updateForce;
-        return true;
     }
 
     /**
@@ -208,26 +125,36 @@ public class Entity {
      *
      * @param type Type of entity to be set
      */
-    public final void setTags(EntityType type) {
+    public final void setTags(PhysicsType type) {
         switch (type) {
             case Static:
-                updatePosition = UpdateXYZ.Movable;
-                updateForce = UpdateForce.Realistic;
+                updatePosition = UpdateXYZ.Immovable;
+                current.updateForce = UpdateForce.Realistic;
                 collision = Collide.NoResponse;
                 break;
 
             case Physics:
                 updatePosition = UpdateXYZ.Movable;
-                updateForce = UpdateForce.Realistic;
+                current.updateForce = UpdateForce.Realistic;
                 collision = Collide.Collidable;
                 break;
 
             case Particle:
                 updatePosition = UpdateXYZ.Movable;
-                updateForce = UpdateForce.Unrealistic;
+                current.updateForce = UpdateForce.Unrealistic;
                 collision = Collide.Uncollidable;
                 break;
         }
+    }
+
+    public final void updateBoundingBox() {
+        boundingBox[0].y = current.pos.y;
+        boundingBox[0].x = current.pos.x - current.width / 2;
+        boundingBox[0].z = current.pos.z - current.length / 2;
+
+        boundingBox[1].y = current.pos.y + current.height;
+        boundingBox[1].x = current.pos.x + current.width / 2;
+        boundingBox[1].z = current.pos.z + current.length / 2;
     }
 
     /**
@@ -238,30 +165,17 @@ public class Entity {
      * @param z Z to be set
      */
     public final void setXYZ(float x, float y, float z) {
-        this.pos.x = x;
-        this.pos.y = y;
-        this.pos.z = z;
+        this.current.pos.x = x;
+        this.current.pos.y = y;
+        this.current.pos.z = z;
 
-        boundingBox[0].y = y;
-        boundingBox[0].x = x - width / 2;
-        boundingBox[0].z = z - length / 2;
-
-        boundingBox[1].y = y + height;
-        boundingBox[1].x = x + width / 2;
-        boundingBox[1].z = z + length / 2;
-        ground = (currentWorld.floorLev <= this.pos.y);
+        updateBoundingBox();
     }
 
     public final void setXYZ(Vector3f v) {
-        this.pos = v;
-        boundingBox[0].y = pos.y + height;
-        boundingBox[0].x = pos.x - width / 2;
-        boundingBox[0].z = pos.z + length / 2;
+        this.current.pos = v;
 
-        boundingBox[1].y = pos.y;
-        boundingBox[1].x = pos.x + width / 2;
-        boundingBox[1].z = pos.z - length / 2;
-        ground = (currentWorld.floorLev <= this.pos.y);
+        updateBoundingBox();
     }
 
     /**
@@ -270,9 +184,7 @@ public class Entity {
      * @param f Force vector
      */
     public final void setForce(Vector3f f) {
-        this.forceCalculator.force.x = f.x;
-        this.forceCalculator.force.y = f.y;
-        this.forceCalculator.force.z = f.z;
+        this.current.momentum = new Vector3f(f);
     }
 
     /**
@@ -281,13 +193,11 @@ public class Entity {
      * @param v Vector for velocity
      */
     public final void setVelocity(Vector3f v) {
-        this.velocity.x = v.x;
-        this.velocity.y = v.y;
-        this.velocity.z = v.z;
+        this.current.velocity = new Vector3f(v);
     }
 
-    public final void setRotation(Vector3f v) {
-        this.direction = v;
+    public final void setRotation(Quaternion4f q) {
+        this.current.rot = q;
     }
 
     /**
@@ -317,49 +227,13 @@ public class Entity {
     }
 
     /**
-     * Updates XYZ based on velocity and acceleration and calculates new values
-     * for all of them
-     */
-    public void updateXYZ() {
-        timeStep = time.getDeltaSec();
-//        print(timeStep);
-        ground = (pos.y <= currentWorld.floorLev);
-//        System.out.println(ground);
-        if (ground){
-            pos.y = currentWorld.floorLev;
-            forceCalculator.force.y = 0;
-            velocity.y = 0;
-            acceleration.y = 0;
-            lastAcceleration.y = 0;
-        }
-        lastAcceleration = acceleration;
-        pos.x += velocity.x * timeStep + (0.5 * lastAcceleration.x * timeStep * timeStep);
-        pos.y += velocity.y * timeStep + (0.5 * lastAcceleration.y * timeStep * timeStep);
-        pos.z += velocity.z * timeStep + (0.5 * lastAcceleration.z * timeStep * timeStep);
-        for (Vector3f x : boundingBox)
-            x.x += velocity.x * timeStep + (0.5 * lastAcceleration.x * timeStep * timeStep);
-        for (Vector3f y : boundingBox)
-            y.y += velocity.y * timeStep + (0.5 * lastAcceleration.y * timeStep * timeStep);
-        for (Vector3f z : boundingBox)
-            z.z += velocity.z * timeStep + (0.5 * lastAcceleration.z * timeStep * timeStep);
-        acceleration.x = forceCalculator.force.x / mass;
-        acceleration.y = forceCalculator.force.y / mass;
-        acceleration.z = forceCalculator.force.z / mass;
-        velocity.x += (lastAcceleration.x + acceleration.x) / 2 * timeStep;
-        velocity.y += (lastAcceleration.y + acceleration.y) / 2 * timeStep;
-        velocity.z += (lastAcceleration.z + acceleration.z) / 2 * timeStep;
-    }
-
-    /**
      * The collision response when collision with another entity is detected
      *
      * @param force Force for how much it should react
      * @return Error
      */
     public boolean collisionResponse(Vector3f force) {
-        this.forceCalculator.force.x += force.x;
-        this.forceCalculator.force.y += force.y;
-        this.forceCalculator.force.z += force.z;
+
         return true;
     }
 
@@ -369,6 +243,19 @@ public class Entity {
      * @param next The target world
      */
     public void changeWorld(World next) {
-        currentWorld = next;
+        current.switchWorld(next);
+    }
+
+    public final void changeWind(Vector3f w) {
+        wind = new Vector3f(w);
+    }
+
+    public void update(float t, float dt) {
+        if (this.updatePosition == EntitySupportEnums.UpdateXYZ.Immovable)
+            return;
+        previous = new PhysicsState(current);
+        current.integrate(current, t, dt);
+        print (current.momentum.toString());
+        updateBoundingBox();
     }
 }

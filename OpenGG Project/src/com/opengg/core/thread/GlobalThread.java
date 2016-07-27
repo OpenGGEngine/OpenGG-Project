@@ -6,7 +6,7 @@
 
 package com.opengg.core.thread;
 
-import com.opengg.core.world.physics.MainLoop;
+import com.opengg.core.engine.PhysicsEngine;
 
 /**
  *
@@ -26,7 +26,7 @@ public class GlobalThread implements Runnable{
     }
     
     public void kill(){
-        MainLoop.killProcess();
+        PhysicsEngine.killProcess();
         notDead = false;
     }
     
@@ -46,7 +46,7 @@ public class GlobalThread implements Runnable{
                 g.update(1);
             }
 //            if(t == ThreadType.PHYSICS){
-//                MainLoop.process();
+//                PhysicsEngine.process();
 //            }
         }
     }

@@ -6,86 +6,54 @@
 
 package com.opengg.core.world;
 
-import com.opengg.core.Matrix4f;
+import com.opengg.core.Quaternion4f;
 import com.opengg.core.Vector3f;
+import com.opengg.core.engine.WorldManager;
+import com.opengg.core.exceptions.InvalidParentException;
 import com.opengg.core.io.objloader.parser.OBJModel;
-import com.opengg.core.world.entities.*;
-import com.opengg.core.render.DrawnObject;
-import com.opengg.core.world.entities.Entity.EntityType;
-import com.opengg.core.world.entities.EntityTypes;
+import com.opengg.core.render.drawn.Drawable;
+import com.opengg.core.world.components.Component;
+import com.opengg.core.world.components.ComponentHolder;
+import com.opengg.core.world.components.ModelRenderComponent;
+import com.opengg.core.world.components.Positioned;
+import com.opengg.core.world.components.Renderable;
 
 /**
  *
  * @author Javier
  */
-public class WorldObject {
-    private Vector3f pos;
-    private Vector3f rot;
-    private Entity e;
-    private DrawnObject d;
+public class WorldObject extends ComponentHolder implements Positioned {
+    public Vector3f pos = new Vector3f();
+    public Quaternion4f rot;
     private World thisWorld;
-    public WorldObject(Vector3f pos, Vector3f rot, OBJModel model, World thisWorld){
+    public float mass;
+    
+    public WorldObject(Vector3f pos, Quaternion4f rot, OBJModel model, World thisWorld){
+        super();
         this.pos = pos;
         this.rot = rot;
         this.thisWorld = thisWorld;
-        e = EntityFactory.getEntity(EntityTypes.DEFAULT,EntityType.Static, pos, new Vector3f(), 10, model, thisWorld);
-        e.setRotation(rot);
-    }
-    public WorldObject(){
+    }public WorldObject(){
+        super();
         pos = new Vector3f(0,0,0);
-        rot = new Vector3f(0,0,0);
+        rot = new Quaternion4f();
         thisWorld = WorldManager.getDefaultWorld();
-        e = EntityFactory.getEntity(EntityTypes.DEFAULT, EntityType.Static, pos, new Vector3f(), 10, new OBJModel(), thisWorld);
-        e.setXYZ(pos);
-        e.setRotation(rot);
         this.thisWorld.addObject(this);
     }
-    public WorldObject(Vector3f pos, Vector3f rot, Entity e){
-        this.pos = pos;
-        this.rot = rot;
-        this.thisWorld = e.currentWorld;
-        this.e = EntityFactory.getEntity(EntityTypes.DEFAULT,e);
-        this.e.setXYZ(pos);
-        this.e.setRotation(rot);
-    }
-    public WorldObject(Entity e){
+    public WorldObject(Drawable d){
+        super();
         pos = new Vector3f(0,0,0);
-        rot = new Vector3f(e.direction);
-        this.thisWorld = e.currentWorld;
-        this.e = EntityFactory.getEntity(EntityTypes.DEFAULT,e);
-        this.e.setXYZ(pos);
-        this.e.setRotation(rot);
-    }
-    public WorldObject(DrawnObject d){
-        pos = new Vector3f(0,0,0);
-        rot = new Vector3f(0,0,0);
+        rot = new Quaternion4f();
         thisWorld = WorldManager.getDefaultWorld();
-        e = EntityFactory.getEntity(EntityTypes.DEFAULT, EntityType.Static, pos, new Vector3f(), 10, new OBJModel(), thisWorld);
-        e.setXYZ(pos);
-        e.setRotation(rot);
+        ModelRenderComponent a = new ModelRenderComponent(d);
+        
+        
         this.thisWorld.addObject(this);
-        this.d = d;
+       
     }
-    
-    /**
-     * Changes position of Entity and DrawnObject
-     * 
-     * @param p New Position
-     */
-    
-    public void setPos(Vector3f p){
-        e.setXYZ(p);
-        d.setModel(Matrix4f.translate(p.x, p.y, p.z));
-    }
-    
-    /**
-     * Changes rotation of Entity and DrawnObject
-     * 
-     * @param p New Rotation
-     */
-    
-    public void setRot(Vector3f p){
-        e.setRotation(p);
+    @Override
+    public void attach(Component c){
+        super.attach(c);
     }
     
     /**
@@ -98,9 +66,42 @@ public class WorldObject {
         thisWorld.removeObject(this);
         next.addObject(this);
         thisWorld = next;
-        e.changeWorld(next);
     }
-    public DrawnObject getDrawnObject(){
-        return d;
+    
+    /**
+     * Returns the DrawnObject associated with this WorldObject
+     * @return DrawnObject associated with this
+     */
+    @Override
+    public void render(){
+        for(Renderable r : renderable){
+            r.render();
+        }
+    }
+
+    @Override
+    public void setParentInfo(Component parent) {
+        throw new InvalidParentException("WorldObjects cannot have parents!");
+    }
+
+    @Override
+    public void setPosition(Vector3f pos) {
+        this.pos = pos;
+    }
+
+    @Override
+    public void setRotation(Vector3f rot) {
+        
+    }
+
+    @Override
+    public Vector3f getPosition() {
+        return pos;
+    }
+
+    @Override
+    public Vector3f getRotation() {
+        //return rot;
+        return new Vector3f();
     }
 }

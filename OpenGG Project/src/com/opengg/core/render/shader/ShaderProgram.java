@@ -9,17 +9,17 @@ package com.opengg.core.render.shader;
 import com.opengg.core.Matrix4f;
 import com.opengg.core.Vector2f;
 import com.opengg.core.Vector3f;
+import static com.opengg.core.util.GlobalUtil.print;
 
 
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL11.GL_TRUE;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.glBindFragDataLocation;
+import static org.lwjgl.opengl.GL33.glVertexAttribDivisor;
 
 /**
  * This class represents a shader program.
- *
- * @author Heiko Brumme
  */
 public class ShaderProgram {
 
@@ -104,7 +104,15 @@ public class ShaderProgram {
     public void pointVertexAttribute(int location, int size, int stride, int offset) {
         glVertexAttribPointer(location, size, GL_FLOAT, false, stride, offset);
     }
-
+    /**
+     * Sets the vertex attribute divisor
+     * 
+     * @param location Location of attribute
+     * @param divisor Set to 0 if not instanced, 1 if instanced
+     */
+    public void setVertexAttribDivisor(int location, int divisor){
+        glVertexAttribDivisor(location, divisor);
+    }
     /**
      * Gets the location of an uniform variable with specified name.
      *
@@ -123,6 +131,21 @@ public class ShaderProgram {
      */
     public void setUniform(int location, int value) {
         glUniform1i(location, value);
+    }
+    
+    /**
+     * Sets the uniform variable for specified location.
+     *
+     * @param location Uniform location
+     * @param value Value to set
+     */
+    public void setUniform(int location, boolean value) {
+        if(value){
+            glUniform1i(location, 1);
+        }else{
+            glUniform1i(location, 0);
+        }
+        
     }
 
     /**
@@ -164,6 +187,7 @@ public class ShaderProgram {
      */
     public void use() {
         glUseProgram(id);
+        
     }
 
     /**
@@ -172,6 +196,9 @@ public class ShaderProgram {
     public void checkStatus() {
         int status = glGetProgrami(id, GL_LINK_STATUS);
         if (status != GL_TRUE) {
+            int e = glGetProgrami(id, GL_INFO_LOG_LENGTH);
+            String s = glGetProgramInfoLog(id,e);
+            System.out.println(s);
             throw new RuntimeException(glGetProgramInfoLog(id));
         }
     }

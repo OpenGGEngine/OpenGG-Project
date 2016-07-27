@@ -5,83 +5,65 @@
  */
 package com.opengg.core.audio;
 
-import com.opengg.core.Vector3f;
 import java.net.URL;
-import java.nio.FloatBuffer;
+import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
-import org.lwjgl.BufferUtils;
+import java.util.ArrayList;
+import java.util.List;
+import org.lwjgl.openal.AL;
 import org.lwjgl.openal.AL10;
+import static org.lwjgl.openal.AL10.AL_POSITION;
+import static org.lwjgl.openal.AL10.AL_VELOCITY;
+import static org.lwjgl.openal.AL10.alDeleteBuffers;
+import static org.lwjgl.openal.AL10.alGenBuffers;
+import static org.lwjgl.openal.AL10.alListener3f;
+import org.lwjgl.openal.ALC;
+import org.lwjgl.openal.ALC10;
+import static org.lwjgl.openal.ALC10.alcMakeContextCurrent;
+import static org.lwjgl.openal.ALC10.alcOpenDevice;
 import org.lwjgl.openal.ALCCapabilities;
-import org.lwjgl.openal.ALContext;
-import org.lwjgl.openal.ALDevice;
+
 
 /**
  *
  * @author Javier
  */
 public class AudioHandler {
-    static IntBuffer buffer = BufferUtils.createIntBuffer(1),source = BufferUtils.createIntBuffer(1);
-    FloatBuffer sourcePos = BufferUtils.createFloatBuffer(3).put(new float[] { 0.0f, 0.0f, 0.0f });
-    FloatBuffer sourceVel = BufferUtils.createFloatBuffer(3).put(new float[] { 0.0f, 0.0f, 0.0f });
-    FloatBuffer listenerPos = BufferUtils.createFloatBuffer(3).put(new float[] { 0.0f, 0.0f, 0.0f });
-    FloatBuffer listenerVel = BufferUtils.createFloatBuffer(3).put(new float[] { 0.0f, 0.0f, 0.0f });   
-    FloatBuffer listenerOri =
-    BufferUtils.createFloatBuffer(6).put(new float[] { 0.0f, 0.0f, -1.0f,  0.0f, 1.0f, 0.0f });
-    public static void init(int window){
-        ALContext context = ALContext.create();
-        ALDevice device = context.getDevice();
+    static long device;
+    static long context;
+    public static List<Integer> bufferids = new ArrayList<>();
 
-        context.makeCurrent();
-
-        ALCCapabilities capabilities = device.getCapabilities();
-        AL10.alGenSources(source);
-        if (!capabilities.OpenALC10)
-            throw new RuntimeException("OpenAL Context Creation failed");
-        AL10.alEnable(window);
-        AL10.alSourcei(source.get(0), AL10.AL_BUFFER,buffer.get(0) );
-        AL10.alSourcef(source.get(0), AL10.AL_PITCH,1f );
-        AL10.alSourcef(source.get(0), AL10.AL_GAIN,0.5f);
-        AL10.alSource3f (source.get(0), AL10.AL_POSITION, 0,0,0);
-        AL10.alSource3f (source.get(0), AL10.AL_VELOCITY, 0,0,0);
+    public static void init(int windowid) {
+        device = alcOpenDevice((ByteBuffer)null);
+        ALCCapabilities caps = ALC.createCapabilities(device);
         
-        AL10.alListener3f(AL10.AL_POSITION,0,0,0);
-        AL10.alListener3f(AL10.AL_VELOCITY,0,0,0);
-        AL10.alListener3f(AL10.AL_ORIENTATION,0,0,0);
-    }
-    
-    public static void setSoundBuffer(URL sound){
-        AL10.alGenBuffers(buffer);
- 
+        context = ALC10.alcCreateContext(device, (IntBuffer)null);
+        alcMakeContextCurrent(context);
+        AL.createCapabilities(caps);
         if(AL10.alGetError() != AL10.AL_NO_ERROR)
-            System.out.println(AL10.alGetError());
-        WaveData waveFile = WaveData.create(sound);
-        AL10.alBufferData(buffer.get(0), waveFile.format, waveFile.data, waveFile.samplerate);
-        waveFile.dispose();
+            System.out.println("OpenAL Error: " + AL10.alGetError());
 
-        AL10.alSourcei(source.get(0), AL10.AL_BUFFER,buffer.get(0) );
- 
-        if (AL10.alGetError() != AL10.AL_NO_ERROR)
-          System.out.println(AL10.alGetError());
     }
     
-    public static void play(){
-        AL10.alSourcePlay(source.get(0));
+    public static void setListener(AudioListener s){
+        alListener3f(AL_POSITION,s.pos.x,s.pos.y,s.pos.z);
+        alListener3f(AL_VELOCITY,s.vel.x,s.vel.y,s.vel.z);
+        
+        int i = AL10.alGetError();
+        if(i != AL10.AL_NO_ERROR)
+            System.out.println("OpenAL Error in AudioHandler: " + i);
     }
-    
+    public static AudioSource loadSound(URL filename){
+        int buffer = alGenBuffers();
+        bufferids.add(buffer);
+        WaveData wavFile = WaveData.create(filename);
+        AL10.alBufferData(buffer,wavFile.format,wavFile.data,wavFile.samplerate);
+        wavFile.dispose();
+        return new AudioSource(buffer);
+    }
     public static void destroy(){
-            AL10.alDeleteSources(source);
-            AL10.alDeleteBuffers(buffer);
-    }
-    
-    public static void shouldLoop(boolean loop){
-        if(loop){
-            AL10.alSourcei(source.get(0), AL10.AL_LOOPING,  AL10.AL_TRUE  );
-        }else{
-            AL10.alSourcei(source.get(0), AL10.AL_LOOPING,  AL10.AL_FALSE  );
+        for(int i: bufferids){
+            alDeleteBuffers(i);
         }
-    }
-    
-    public static void setListenerPos(Vector3f pos){
-        AL10.alListener3f(AL10.AL_POSITION,pos.x,pos.y,pos.z);
     }
 }
