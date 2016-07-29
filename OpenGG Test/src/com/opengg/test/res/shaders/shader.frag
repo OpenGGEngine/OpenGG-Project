@@ -81,7 +81,33 @@ float random(vec3 seed, int i){
 	float dot_product = dot(seed4, vec4(12.9898,78.233,45.164,94.673));
 	return fract(sin(dot_product) * 43758.5453);
 }
-
+mat3 cotangent_frame( vec3 N, vec3 p, vec2 uv )
+{
+    // get edge vectors of the pixel triangle
+    vec3 dp1 = dFdx( p );
+    vec3 dp2 = dFdy( p );
+    vec2 duv1 = dFdx( uv );
+    vec2 duv2 = dFdy( uv );
+ 
+    // solve the linear system
+    vec3 dp2perp = cross( dp2, N );
+    vec3 dp1perp = cross( N, dp1 );
+    vec3 T = dp2perp * duv1.x + dp1perp * duv2.x;
+    vec3 B = dp2perp * duv1.y + dp1perp * duv2.y;
+ 
+    // construct a scale-invariant frame 
+    float invmax = inversesqrt( max( dot(T,T), dot(B,B) ) );
+    return mat3( T * invmax, B * invmax, N );
+}
+vec3 calculatenormal( vec3 N, vec3 V, vec2 texcoord )
+{
+    // assume N, the interpolated vertex normal and 
+    // V, the view vector (vertex to eye)
+    vec3 map = texture2D( normImage, texcoord ).xyz;
+    map = map * 255./127. - 128./127.;
+    mat3 TBN = cotangent_frame( N, -V, texcoord );
+    return normalize( TBN * map );
+}
 void lightify(){
 
     int samples = 8;
@@ -147,17 +173,15 @@ vec4 shadify(){
     float distance = length( light.lightpos - pos.xyz );
 
     vec3 normal = ( view * model *  vec4(norm,0.0f)).xyz;
-    
+    vec3 n = normalize( normal );
     if(material.hasnormmap){
-        vec4 source =  getTex(normImage) * 2 - 1;
-        source.w = 0.0f;
-        normal = ( view * model * source).xyz;
+       n = calculatenormal(n,eyedir,textureCoord);
     }
     fcolor2 = vec4(normal,1);
     fcolor3 = vec4(specular,1);
     fcolor4 = vec4(diffuse,1);
 
-    vec3 n = normalize( normal );
+    
     // Direction of the light (from the fragment to the light)
     vec3 l = normalize( lightdir );
     
@@ -177,7 +201,10 @@ vec4 shadify(){
             vis * diffuse * light.color * light.lightpower * cosTheta / ((distance*distance)/light.lightdistance) +
             // Specular : reflective highlight, like a mirror
             vis * specular * light.lightpower * pow(cosAlpha,5) / ((distance*distance)/light.lightdistance)), trans);
-    
+    //test gamma correction
+    //float gamma = 2.2;
+    //fragColor.rgb = pow(fragColor.rgb, vec3(1.0/gamma));
+
     return fragColor;
 }
 vec4 getCube(){
@@ -185,8 +212,8 @@ vec4 getCube(){
 }
 vec4 getWaveEffect(){
     vec2 texcoord = textureCoord;
-    texcoord.x += cos(texcoord.y * 4*2*3.14159 + time * 4) * 0.04;
-    return texture(texImage, vec2(texcoord.x, sin(texcoord.y)));
+    texcoord.x += cos(texcoord.y * 4*2*3.14159) * 0.04 * time;
+    return texture(texImage, clamp(vec2(texcoord.x, sin(texcoord.y)), 0.001,0.999 ));
 }
 float readDepth( in vec2 coord ) {
 	return (2.0 * camerarange.x) / (camerarange.y + camerarange.x - texture2D( shadeImage, coord ).x * (camerarange.y - camerarange.x));	
@@ -307,6 +334,3 @@ void main() {
         fcolor = getCube();
     }    
 };
-
-
-
