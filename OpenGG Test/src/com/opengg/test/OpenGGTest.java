@@ -6,6 +6,7 @@ import com.opengg.core.Vector3f;
 import com.opengg.core.audio.AudioHandler;
 import com.opengg.core.audio.AudioListener;
 import com.opengg.core.audio.AudioSource;
+import com.opengg.core.engine.OpenGG;
 import com.opengg.core.engine.WorldManager;
 import com.opengg.core.gui.GUI;
 import com.opengg.core.gui.GUIText;
@@ -25,6 +26,7 @@ import static com.opengg.core.render.gl.GLOptions.enable;
 import com.opengg.core.render.shader.Mode;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.texture.Cubemap;
+import com.opengg.core.render.texture.FramebufferTexture;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.texture.text.GGFont;
 import com.opengg.core.render.window.DisplayMode;
@@ -32,6 +34,8 @@ import com.opengg.core.render.window.GLFWWindow;
 import static com.opengg.core.render.window.RenderUtil.endFrame;
 import static com.opengg.core.render.window.RenderUtil.startFrame;
 import com.opengg.core.util.GlobalInfo;
+import static com.opengg.core.util.GlobalUtil.print;
+import static com.opengg.core.util.GlobalUtil.print;
 import com.opengg.core.util.Time;
 import com.opengg.core.world.Camera;
 import com.opengg.core.world.World;
@@ -67,14 +71,15 @@ public class OpenGGTest implements KeyboardListener {
     
     public static void main(String[] args) throws IOException, Exception {
         new OpenGGTest();
+        OpenGG.initializeOpenGG();
     }
 
     private VertexArrayObject vao;
 
     Camera c;
-    Texture t1 = new Texture();
+    FramebufferTexture t1 = new FramebufferTexture();
     Texture t2 = new Texture();
-    Texture ppbf = new Texture();
+    FramebufferTexture ppbf = new FramebufferTexture();
     InstancedDrawnObject flashbang;
     DrawnObject test5,sky;
     DrawnObjectGroup test6;
@@ -135,7 +140,7 @@ public class OpenGGTest implements KeyboardListener {
         c.setPos(pos);
         c.setRot(rot);
 
-        System.out.println("Shader/VAO Loading and Generation Complete");
+        print("Shader/VAO Loading and Generation Complete");
         
         AudioHandler.init(1);
         so = AudioHandler.loadSound(OpenGGTest.class.getResource("res/maw.wav"));
@@ -165,7 +170,7 @@ public class OpenGGTest implements KeyboardListener {
                 + "\n" 
                 + " While the congress of the Republic endlessly debates this alarming chain of events,"
                 + " the Supreme Chancellor has secretly dispatched two Jedi Knights,"
-                + " the guardians of peace and justice in the galaxy, to settle the conflict...", f, 2f, new Vector2f(), 1, false);
+                + " the guardians of peace and justice in the galaxy, to settle the conflict...", f, 1f, new Vector2f(), 0.5f, false);
         
         base2 = f.loadText(g);
         base2.setMatrix(Matrix4f.translate(0,0,0).multiply(Matrix4f.scale(1f, 1f, 1)));
@@ -193,7 +198,7 @@ public class OpenGGTest implements KeyboardListener {
         test2 = ObjectBuffers.genSkyCube();
         sky = new DrawnObject(test2, 12);
         
-        System.out.println("Model and Texture Loading Completed");
+        print("Model and Texture Loading Completed");
         
         w = WorldManager.getDefaultWorld();
         GlobalInfo.curworld = w;
@@ -232,7 +237,7 @@ public class OpenGGTest implements KeyboardListener {
         enable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
         glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
-        System.out.println("Setup Complete");
+        print("Setup Complete");
     }
 
     public void exit() {
@@ -294,18 +299,18 @@ public class OpenGGTest implements KeyboardListener {
     boolean flipsd = false;
     public void update() {
         float delta = t.getDeltaSec();
-        
-        if(i > 1){
-            flipsd = true;
-        }
-        if(i < -1){
-            flipsd = false;
-        }
-        if(flipsd){
-            i -= delta;
-        }else{
-            i += delta;
-        }
+        i += delta;
+//        if(i > 1){
+//            flipsd = true;
+//        }
+//        if(i < -1){
+//            flipsd = false;
+//        }
+//        if(flipsd){
+//            i -= delta;
+//        }else{
+//            i += delta;
+//        }
         s.setTimeMod(i);
         terrain.update(delta);
         xrot -= rot1 * 7;
