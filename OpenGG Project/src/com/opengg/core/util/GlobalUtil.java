@@ -5,24 +5,28 @@
  */
 package com.opengg.core.util;
 
+import java.util.logging.Logger;
+
 /**
  *
  * @author Javier
  */
 public class GlobalUtil {
+    static Logger log = Logger.getLogger(GlobalUtil.class.getName());
+
+    public static void print(Object s){
+        log.info(s.toString());
+    }
+    
     public static void print(String s){
-        System.out.println(s);
+        log.info(s);
     }
-    public static void print(int s){
-        System.out.println(s);
+    
+    public static void error(Object s){
+        log.severe(s.toString());
     }
-    public static void print(float s){
-        System.out.println(s);
-    }
-    public static void print(long s){
-        System.out.println(s);
-    }
-    public static void print(double s){
-        System.out.println(s);
+       
+    public static void warning(Object s){
+        log.warning(s.toString());
     }
 }
