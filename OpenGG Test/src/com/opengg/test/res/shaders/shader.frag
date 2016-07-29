@@ -185,7 +185,7 @@ vec4 getCube(){
 }
 vec4 getWaveEffect(){
     vec2 texcoord = textureCoord;
-    texcoord.x += cos(texcoord.y * 4*2*3.14159) * 0.04 * time;
+    texcoord.x += cos(texcoord.y * 4*2*3.14159 + time * 4) * 0.04;
     return texture(texImage, vec2(texcoord.x, sin(texcoord.y)));
 }
 float readDepth( in vec2 coord ) {
@@ -291,7 +291,7 @@ vec4 ssao()
 
 void processPP(){
     fcolor = ssao();
-    fcolor = getWaveEffect();
+    //fcolor = getWaveEffect();
 }
 void main() {   
     if(mode == 0){
