@@ -46,13 +46,6 @@ public class DrawnObjectGroup implements Drawable {
     }
 
     @Override
-    public void drawPoints() {
-        objs.stream().forEach((d) -> {
-            d.drawPoints();
-        });
-    }
-
-    @Override
     public void setMatrix(Matrix4f model) {
         objs.stream().forEach((d) -> {
             d.setMatrix(model);

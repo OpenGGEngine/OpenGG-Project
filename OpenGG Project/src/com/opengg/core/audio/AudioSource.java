@@ -6,6 +6,7 @@
 package com.opengg.core.audio;
 
 import com.opengg.core.Vector3f;
+import static com.opengg.core.util.GlobalUtil.error;
 import org.lwjgl.openal.AL10;
 import static org.lwjgl.openal.AL10.*;
 
@@ -31,7 +32,7 @@ public class AudioSource {
         
         int i = AL10.alGetError();
         if(i != AL10.AL_NO_ERROR)
-            System.out.println("OpenAL Error in AudioSource Generation: " + i);
+            error("OpenAL Error in AudioSource Generation: " + i);
     }
     public void play(){
         isPaused = false;

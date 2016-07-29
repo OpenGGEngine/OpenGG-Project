@@ -54,7 +54,6 @@ public class GGFontFile {
         loadPaddingData();
         loadLineSizes();
         int imageWidth = getValueOfVariable("scaleW");
-        System.out.println(imageWidth);
         loadCharacterData(imageWidth);
         close();
     }

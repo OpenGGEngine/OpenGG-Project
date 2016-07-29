@@ -10,12 +10,14 @@ import com.opengg.core.Matrix4f;
 import com.opengg.core.Vector3f;
 import com.opengg.core.io.FileStringLoader;
 import com.opengg.core.io.newobjloader.Material;
+import com.opengg.core.render.VertexBufferObject;
 import com.opengg.core.render.window.ViewUtil;
 import com.opengg.core.util.GlobalInfo;
 import com.opengg.core.world.Camera;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
+import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
 import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
 import static org.lwjgl.opengl.GL32.GL_GEOMETRY_SHADER;
@@ -160,34 +162,29 @@ public class ShaderController {
     }
     
     public void initVertexAttributes() {
-        //programv.use();
         posAttrib = program.getAttributeLocation("position");
-
-        colAttrib = program.getAttributeLocation("color");
-        
-        normAttrib = program.getAttributeLocation("normal"); 
-        
+        colAttrib = program.getAttributeLocation("color");      
+        normAttrib = program.getAttributeLocation("normal");       
         texAttrib = program.getAttributeLocation("texcoord"); 
 
     }
     
     public void defVertexAttributes(){
         program.enableVertexAttribute(posAttrib);
-        program.pointVertexAttribute(posAttrib, 3, 12 * Float.BYTES, 0);
-
-        program.enableVertexAttribute(colAttrib);
-        program.pointVertexAttribute(colAttrib, 4, 12 * Float.BYTES, 3 * Float.BYTES);
-        
-        program.enableVertexAttribute(normAttrib);
-        program.pointVertexAttribute(normAttrib, 3, 12 * Float.BYTES, 7 * Float.BYTES);
-        
-        program.enableVertexAttribute(texAttrib);
-        program.pointVertexAttribute(texAttrib, 2, 12 * Float.BYTES, 10 * Float.BYTES);      
+        program.enableVertexAttribute(colAttrib);      
+        program.enableVertexAttribute(normAttrib); 
+        program.enableVertexAttribute(texAttrib);   
         program.setVertexAttribDivisor(colAttrib, 0);
-
     }
     
-    public void defInstancedVertexAttributes1(){
+    public void pointVertexAttributes(){
+        program.pointVertexAttribute(posAttrib, 3, 12 * Float.BYTES, 0);
+        program.pointVertexAttribute(colAttrib, 4, 12 * Float.BYTES, 3 * Float.BYTES);
+        program.pointVertexAttribute(normAttrib, 3, 12 * Float.BYTES, 7 * Float.BYTES);
+        program.pointVertexAttribute(texAttrib, 2, 12 * Float.BYTES, 10 * Float.BYTES);     
+    }
+    
+    public void defInstancedVertexAttributes(VertexBufferObject b){
         program.enableVertexAttribute(posAttrib);
         program.pointVertexAttribute(posAttrib, 3, 12 * Float.BYTES, 0);
 
@@ -196,13 +193,13 @@ public class ShaderController {
         
         program.enableVertexAttribute(texAttrib);
         program.pointVertexAttribute(texAttrib, 2, 12 * Float.BYTES, 10 * Float.BYTES);
-
-    }
-    public void defInstancedVertexAttributes2(){
-
+        
+        b.bind(GL_ARRAY_BUFFER);
+        
         program.enableVertexAttribute(colAttrib);
         program.pointVertexAttribute(colAttrib, 4, 3 * Float.BYTES, 0);
         program.setVertexAttribDivisor(colAttrib, 1);
+
     }
     
     public void setLightPos(Vector3f pos){

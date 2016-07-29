@@ -15,7 +15,7 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
-import org.lwjgl.BufferUtils;
+import org.lwjgl.system.MemoryUtil;
 import org.lwjgl.opengl.GL11;
 import static org.lwjgl.opengl.GL11.*;
 import org.lwjgl.opengl.GL12;
@@ -65,7 +65,7 @@ public class Cubemap {
                 width = image.getWidth();
                 height = image.getHeight();
                 
-                buffer[i] = BufferUtils.createByteBuffer(width * height * 4);
+                buffer[i] = MemoryUtil.memAlloc(width * height * 4);
                 int[] pixels = new int[width * height];
                 image.getRGB(0, 0, width, height, pixels, 0, width);
                 for (int y = height-1; y > 0; y--) {

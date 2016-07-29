@@ -12,7 +12,7 @@ import java.io.File;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
-import org.lwjgl.BufferUtils;
+import org.lwjgl.system.MemoryUtil;
 
 /**
  *
@@ -99,7 +99,7 @@ public class TextVBOGenerator {
 			curserX = 0;
 			curserY += LINE_HEIGHT * text.getFontSize();
 		}
-                FloatBuffer f = BufferUtils.createFloatBuffer(vertices.size() *12);
+                FloatBuffer f = MemoryUtil.memAllocFloat(vertices.size() *12);
                 int texpointer = 0;
                 for(int i =0;i<vertices.size();i+=3){
                     //vertices
@@ -172,9 +172,7 @@ public class TextVBOGenerator {
             
                 maxX += x;
                 maxY = y - maxY;
-                System.out.println(x+","+y);
-                System.out.println(maxX+","+maxY);
-                System.out.println("------------------------");
+
                 texCoords.add((float) x);
 		texCoords.add((float) y);
                 

@@ -7,7 +7,7 @@ package com.opengg.core;
 
 import java.io.Serializable;
 import java.nio.FloatBuffer;
-import org.lwjgl.BufferUtils;
+import org.lwjgl.system.MemoryUtil;
 
 /**
  *
@@ -136,7 +136,7 @@ public class Vector3f implements Serializable{
     }
 
     public FloatBuffer getBuffer() {
-        FloatBuffer buffer = BufferUtils.createFloatBuffer(3);
+        FloatBuffer buffer = MemoryUtil.memAllocFloat(3);
         buffer.put(x).put(y).put(z);
         buffer.flip();
         return buffer;

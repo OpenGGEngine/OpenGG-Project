@@ -14,7 +14,6 @@ import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.render.drawn.DrawnObjectGroup;
 import com.opengg.core.render.drawn.MatDrawnObject;
 import com.opengg.core.render.texture.Texture;
-import com.opengg.core.util.GlobalInfo;
 import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -22,7 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.lwjgl.BufferUtils;
+import org.lwjgl.system.MemoryUtil;
 
 /**
  *
@@ -108,7 +107,7 @@ public class OBJ {
 
         int numMIssingNormals = 0;
         int numMissingUV = 0;
-        FloatBuffer verticeAttributes = BufferUtils.createFloatBuffer(faceVertexList.size() * 78);
+        FloatBuffer verticeAttributes = MemoryUtil.memAllocFloat(faceVertexList.size() * 78);
        
       
         for (FaceVertex vertex : faceVertexList) {
@@ -147,7 +146,7 @@ public class OBJ {
 
        
 
-        IntBuffer indices = BufferUtils.createIntBuffer(indicesCount);    // indices into the vertices, to specify triangles.
+        IntBuffer indices = MemoryUtil.memAllocInt(indicesCount);    // indices into the vertices, to specify triangles.
        
         for (Face face : triangles) {
             for (FaceVertex vertex : face.vertices) {
@@ -156,7 +155,7 @@ public class OBJ {
             }
         }
         indices.flip();
-        return new MatDrawnObject(verticeAttributes,GlobalInfo.b,indices);
+        return new MatDrawnObject(verticeAttributes,indices);
     }
     public static ArrayList<Face> splitQuads(ArrayList<Face> faceList) {
         ArrayList<Face> triangleList = new ArrayList<>();

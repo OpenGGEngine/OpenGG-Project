@@ -8,7 +8,6 @@ package com.opengg.core.render.drawn;
 
 import com.opengg.core.Matrix4f;
 import com.opengg.core.io.newobjloader.Material;
-import com.opengg.core.render.VertexBufferObject;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.util.GlobalInfo;
 import java.nio.FloatBuffer;
@@ -37,12 +36,12 @@ public class MatDrawnObject implements Drawable {
         d = new DrawnObject(b,vertsize);
     }
     
-    public MatDrawnObject(List<FloatBuffer> buffers, VertexBufferObject vbo2, int vertSize){
-        d = new DrawnObject(buffers,vbo2,vertSize);
+    public MatDrawnObject(List<FloatBuffer> buffers, int vertSize){
+        d = new DrawnObject(buffers,vertSize);
     }
     
-    public MatDrawnObject(FloatBuffer b, VertexBufferObject vbo2, IntBuffer index){
-        d = new DrawnObject(b,vbo2,index);
+    public MatDrawnObject(FloatBuffer b, IntBuffer index){
+        d = new DrawnObject(b,index);
     }
     
 
@@ -68,11 +67,6 @@ public class MatDrawnObject implements Drawable {
         if(hasNormalMap) normalmap.useTexture(3);
         GlobalInfo.main.passMaterial(m,hasSpecMap, hasNormalMap);
         d.draw();
-    }
-
-    @Override
-    public void drawPoints() {
-        d.drawPoints();
     }
 
     @Override

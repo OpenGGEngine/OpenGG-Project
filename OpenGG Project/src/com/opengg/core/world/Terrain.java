@@ -10,6 +10,7 @@ import com.opengg.core.io.ImageProcessor;
 import com.opengg.core.render.buffer.ObjectBuffers;
 import com.opengg.core.render.texture.Texture;
 import static com.opengg.core.util.GlobalUtil.print;
+import static com.opengg.core.util.GlobalUtil.print;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,7 +19,8 @@ import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import javax.imageio.ImageIO;
-import org.lwjgl.BufferUtils;
+import org.lwjgl.system.MemoryUtil;
+import org.lwjgl.system.MemoryUtil;
 
 /**
  *
@@ -50,12 +52,12 @@ public class Terrain {
         image = ImageIO.read(heightmap);       
         int VERTEX_COUNT = image.getHeight();
         print(VERTEX_COUNT);
-        indices = IntBuffer.allocate(6*((VERTEX_COUNT)*(VERTEX_COUNT)));
+        indices = MemoryUtil.memAllocInt(6*((VERTEX_COUNT)*(VERTEX_COUNT)));
         //indices = BufferUtils.createIntBuffer(6*((VERTEX_COUNT)*(VERTEX_COUNT))*2);
        
         
         size = 1;
-        FloatBuffer ud = BufferUtils.createFloatBuffer((image.getWidth()*image.getHeight())*12);
+        FloatBuffer ud = MemoryUtil.memAllocFloat((image.getWidth()*image.getHeight())*12);
                
         for (int i = 0; i < image.getWidth(); i+=1) {
             for (int j = 0; j < image.getHeight(); j+=1) {
@@ -112,7 +114,7 @@ public class Terrain {
        
         
         size = 1000;
-        FloatBuffer ud = BufferUtils.createFloatBuffer((VERTEX_COUNT*VERTEX_COUNT)*12);
+        FloatBuffer ud = MemoryUtil.memAllocFloat((VERTEX_COUNT*VERTEX_COUNT)*12);
                
         for (int i = 0; i < VERTEX_COUNT; i+=1) {
             for (int j = 0; j < VERTEX_COUNT; j+=1) {

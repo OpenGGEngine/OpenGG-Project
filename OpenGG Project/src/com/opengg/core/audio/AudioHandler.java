@@ -5,6 +5,7 @@
  */
 package com.opengg.core.audio;
 
+import static com.opengg.core.util.GlobalUtil.error;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
@@ -41,7 +42,7 @@ public class AudioHandler {
         alcMakeContextCurrent(context);
         AL.createCapabilities(caps);
         if(AL10.alGetError() != AL10.AL_NO_ERROR)
-            System.out.println("OpenAL Error: " + AL10.alGetError());
+            error("OpenAL Error: " + AL10.alGetError());
 
     }
     
@@ -51,7 +52,7 @@ public class AudioHandler {
         
         int i = AL10.alGetError();
         if(i != AL10.AL_NO_ERROR)
-            System.out.println("OpenAL Error in AudioHandler: " + i);
+            error("OpenAL Error in AudioHandler: " + i);
     }
     public static AudioSource loadSound(URL filename){
         int buffer = alGenBuffers();

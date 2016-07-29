@@ -42,7 +42,7 @@ public class ImageProcessor {
 
 			if (alpha != 0x00) {
 
-				//System.out.println(alpha + ": " + Integer.toHexString(pixel));
+				//info(alpha + ": " + Integer.toHexString(pixel));
 				pixel = 0xffff00ff;
 			}
 

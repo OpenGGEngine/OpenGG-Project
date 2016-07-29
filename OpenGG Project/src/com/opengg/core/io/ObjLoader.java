@@ -3,7 +3,6 @@
 
 package com.opengg.core.io;
 
-import org.lwjgl.BufferUtils;
 import com.opengg.core.Vector2f;
 import com.opengg.core.Vector3f;
 
@@ -12,10 +11,10 @@ import java.io.*;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.FloatBuffer;
-import org.lwjgl.opengl.GL11;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;
+import org.lwjgl.system.MemoryUtil;
 
 /**
  * @author Oskar
@@ -56,7 +55,7 @@ public class ObjLoader {
     }
 
     private static FloatBuffer reserveData(int size) {
-        return BufferUtils.createFloatBuffer(size);
+        return MemoryUtil.memAllocFloat(size);
     }
 
     private static float[] asFloats(Vector3f v) {

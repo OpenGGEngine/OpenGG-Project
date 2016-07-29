@@ -2,12 +2,11 @@
 
 package com.opengg.core.io;
 
-import org.lwjgl.BufferUtils;
 import com.opengg.core.Matrix4f;
 import com.opengg.core.Vector3f;
-
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
+import org.lwjgl.system.MemoryUtil;
 
 public class BufferTools {
 
@@ -40,7 +39,7 @@ public class BufferTools {
      * @return a readable ByteBuffer
      */
     public static ByteBuffer asByteBuffer(byte... values) {
-        ByteBuffer buffer = BufferUtils.createByteBuffer(values.length);
+        ByteBuffer buffer = MemoryUtil.memAlloc(values.length);
         buffer.put(values);
         return buffer;
     }
@@ -65,7 +64,7 @@ public class BufferTools {
      * @return a FloatBuffer representation of matrix4f
      */
     public static FloatBuffer asFloatBuffer(Matrix4f matrix4f) {
-        FloatBuffer buffer = BufferUtils.createFloatBuffer(16);
+        FloatBuffer buffer = MemoryUtil.memAllocFloat(16);
         //matrix4f.store(buffer);
         return buffer;
     }
@@ -76,7 +75,7 @@ public class BufferTools {
      * @return a FloatBuffer representation of matrix4f
      */
     public static FloatBuffer asFlippedFloatBuffer(Matrix4f matrix4f) {
-        FloatBuffer buffer = BufferUtils.createFloatBuffer(16);
+        FloatBuffer buffer = MemoryUtil.memAllocFloat(16);
         //matrix4f.store(buffer);
         buffer.flip();
         return buffer;
@@ -88,7 +87,7 @@ public class BufferTools {
      * @return a readable FloatBuffer containing values
      */
     public static FloatBuffer asFloatBuffer(float... values) {
-        FloatBuffer buffer = BufferUtils.createFloatBuffer(values.length);
+        FloatBuffer buffer = MemoryUtil.memAllocFloat(values.length);
         buffer.put(values);
         return buffer;
     }
@@ -99,7 +98,7 @@ public class BufferTools {
      * @return an empty FloatBuffer with a set amount of elements
      */
     public static FloatBuffer reserveData(int amountOfElements) {
-        return BufferUtils.createFloatBuffer(amountOfElements);
+        return MemoryUtil.memAllocFloat(amountOfElements);
     }
 
     /**
@@ -108,7 +107,7 @@ public class BufferTools {
      * @return a FloatBuffer readable to OpenGL (not to you!) containing values
      */
     public static FloatBuffer asFlippedFloatBuffer(float... values) {
-        FloatBuffer buffer = BufferUtils.createFloatBuffer(values.length);
+        FloatBuffer buffer = MemoryUtil.memAllocFloat(values.length);
         buffer.put(values);
         buffer.flip();
         return buffer;

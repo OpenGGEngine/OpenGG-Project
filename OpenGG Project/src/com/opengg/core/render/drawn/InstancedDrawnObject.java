@@ -11,7 +11,7 @@ import com.opengg.core.util.GlobalInfo;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.List;
-import org.lwjgl.BufferUtils;
+import org.lwjgl.system.MemoryUtil;
 import static org.lwjgl.opengl.GL11.GL_POINTS;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
@@ -49,7 +49,7 @@ public class InstancedDrawnObject implements Drawable {
         vertLimit = limit/vertSize;
         vertOffset = offset/vertSize;
         
-        ind = BufferUtils.createIntBuffer(vertLimit);
+        ind = MemoryUtil.memAllocInt(vertLimit);
         for(long i = vertOffset; i < vertLimit; i++){
             ind.put((int) i);
         }
@@ -69,6 +69,9 @@ public class InstancedDrawnObject implements Drawable {
         ivbo = new VertexBufferObject();
         ivbo.bind(GL_ARRAY_BUFFER);
         ivbo.uploadData(GL_ARRAY_BUFFER, inst, GL_STATIC_DRAW);
+        
+        GlobalInfo.main.defVertexAttributes();
+        GlobalInfo.main.pointVertexAttributes();
         removeBuffer();
     }
     public InstancedDrawnObject(FloatBuffer b, FloatBuffer inst){
@@ -84,7 +87,7 @@ public class InstancedDrawnObject implements Drawable {
             vertLimit = limit/vertSize;
             vertOffset = offset/vertSize;
 
-            ind = BufferUtils.createIntBuffer(vertLimit);
+            ind = MemoryUtil.memAllocInt(vertLimit);
             for(long i = vertOffset; i < vertLimit; i++){
                 ind.put((int) i);
             }
@@ -95,6 +98,9 @@ public class InstancedDrawnObject implements Drawable {
             vbo.bind(GL_ARRAY_BUFFER);
             vbo.uploadData(GL_ARRAY_BUFFER, b, GL_STATIC_DRAW);
         }
+        
+        GlobalInfo.main.defVertexAttributes();
+        GlobalInfo.main.pointVertexAttributes();
         removeBuffer();
     }
     
@@ -120,6 +126,9 @@ public class InstancedDrawnObject implements Drawable {
         ivbo = new VertexBufferObject();
         ivbo.bind(GL_ARRAY_BUFFER);
         ivbo.uploadData(GL_ARRAY_BUFFER, inst, GL_STATIC_DRAW);
+        
+        GlobalInfo.main.defVertexAttributes();
+        GlobalInfo.main.pointVertexAttributes();
     }
     
     
@@ -135,26 +144,14 @@ public class InstancedDrawnObject implements Drawable {
     public void setMatrix(Matrix4f model){
         this.model = model;
     }
-    
-    @Override
-    public void drawPoints(){
-        vbo.bind(GL_ARRAY_BUFFER);  
-        evbo.bind(GL_ELEMENT_ARRAY_BUFFER);
-        GlobalInfo.main.defInstancedVertexAttributes1();
-        glDrawElements(GL_POINTS, ind.limit(), GL_UNSIGNED_INT, 0);    
-    }
 
-        
     @Override
     public void draw(){    
         GlobalInfo.main.setModel(model);       
         vbo.bind(GL_ARRAY_BUFFER);
         evbo.bind(GL_ELEMENT_ARRAY_BUFFER);
-        GlobalInfo.main.defInstancedVertexAttributes1();
-        
-        ivbo.bind(GL_ARRAY_BUFFER);
-        GlobalInfo.main.defInstancedVertexAttributes2();
-        
+        GlobalInfo.main.defInstancedVertexAttributes(ivbo);
+
         GlobalInfo.main.setInstanced(true);
         glDrawArraysInstanced(GL_TRIANGLES,0,ind.limit(), instnum);
         GlobalInfo.main.setInstanced(false);

@@ -41,7 +41,7 @@ public class PhysicsComponent implements Updatable {
         addGrav(acceleration,w);
         
         velocity.addEquals(acceleration.multiply(delta));
-        System.out.println(velocity.y);
+
         if((pos.y) < BASE){ 
             pos.y = BASE;
             velocity.y = 0;

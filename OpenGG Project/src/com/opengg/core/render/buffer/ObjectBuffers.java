@@ -9,13 +9,12 @@ import com.opengg.core.Vector3f;
 import com.opengg.core.io.objloader.parser.OBJFace;
 import com.opengg.core.io.objloader.parser.OBJMesh;
 import com.opengg.core.io.objloader.parser.OBJModel;
-import com.opengg.core.io.objloader.parser.OBJObject;
 import static com.opengg.core.util.GlobalUtil.print;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import org.lwjgl.BufferUtils;
+import org.lwjgl.system.MemoryUtil;
 
 /**
  *
@@ -34,7 +33,7 @@ public class ObjectBuffers {
         });
         
        
-        FloatBuffer elements = BufferUtils.createFloatBuffer(m.getVertices().size() * 78);
+        FloatBuffer elements = MemoryUtil.memAllocFloat(m.getVertices().size() * 78);
         for (OBJFace fa : f){
 
             int i1 = fa.getReferences().get(0).vertexIndex;
@@ -112,7 +111,7 @@ public class ObjectBuffers {
         
         List<OBJFace> f = msh.getFaces();
        
-        FloatBuffer elements = BufferUtils.createFloatBuffer(m.getVertices().size() * 78);
+        FloatBuffer elements = MemoryUtil.memAllocFloat(m.getVertices().size() * 78);
         for (OBJFace fa : f){
 
             int i1 = fa.getReferences().get(0).vertexIndex;
@@ -195,7 +194,7 @@ public class ObjectBuffers {
         
         for(OBJMesh ms :m.getObjects().get(0).getMeshes()){
             print(ms.getMaterialName());
-            FloatBuffer elements = BufferUtils.createFloatBuffer(m.getVertices().size() * 78);
+            FloatBuffer elements = MemoryUtil.memAllocFloat(m.getVertices().size() * 78);
         for (OBJFace fa : ms.getFaces()){
 
             int i1 = fa.getReferences().get(0).vertexIndex;
@@ -274,7 +273,7 @@ public class ObjectBuffers {
     }
 
     public static FloatBuffer getSquareUI(float x1, float x2, float y1, float y2, float z1 ,float transparency, boolean flippedTex){
-        FloatBuffer sq = BufferUtils.createFloatBuffer(6*12);
+        FloatBuffer sq = MemoryUtil.memAllocFloat(6*12);
         
         int i, i2;
         if(flippedTex){
@@ -299,7 +298,7 @@ public class ObjectBuffers {
 
     
     public static FloatBuffer getSquare(float x1, float z1, float x2, float z2, float y, float transparency){
-        FloatBuffer sq = BufferUtils.createFloatBuffer(6*12);
+        FloatBuffer sq = MemoryUtil.memAllocFloat(6*12);
         
         sq.put(x1).put(y).put(z1).put(1).put(0).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(1).put(0);
         sq.put(x1).put(y).put(z2).put(0).put(1).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(1).put(1);
@@ -312,7 +311,7 @@ public class ObjectBuffers {
         return sq;
     }
     public static FloatBuffer getSquare(float x1, float z1, float x2, float z2, float y1,float y2, float y3, float y4,  float transparency,boolean flippedTex){
-        FloatBuffer sq = BufferUtils.createFloatBuffer(6*12);
+        FloatBuffer sq = MemoryUtil.memAllocFloat(6*12);
         int i, i2;
         if(flippedTex){
             i = 1;
@@ -334,7 +333,7 @@ public class ObjectBuffers {
         return sq;
     }
     public static FloatBuffer getSquareTerrain(float x1, float z1, float x2, float z2, float y1,float y2, float y3, float y4, float transparency, float v1, float u1, float v2, float u2, Vector3f n1, Vector3f n2, Vector3f n3, Vector3f n4){
-        FloatBuffer sq = BufferUtils.createFloatBuffer(6*12);
+        FloatBuffer sq = MemoryUtil.memAllocFloat(6*12);
         
         sq.put(x1).put(y1).put(z1).put(1).put(1).put(1).put(transparency).put(n1.x).put(n1.y).put(n1.z).put(v1).put(u1);
         sq.put(x2).put(y2).put(z1).put(1).put(1).put(1).put(transparency).put(n2.x).put(n2.y).put(n2.z).put(v2).put(u1);
@@ -349,7 +348,7 @@ public class ObjectBuffers {
         return sq;
     }
     public static FloatBuffer createDefaultBufferData(int size){
-        FloatBuffer f = BufferUtils.createFloatBuffer(size);
+        FloatBuffer f = MemoryUtil.memAllocFloat(size);
         for(int i = 0; i < size; i++){
             f.put(0);
         }
@@ -358,7 +357,7 @@ public class ObjectBuffers {
     }
     @SuppressWarnings("empty-statement")
     public static FloatBuffer genSkyCube(){
-        FloatBuffer sq = BufferUtils.createFloatBuffer(6*6*12);
+        FloatBuffer sq = MemoryUtil.memAllocFloat(6*6*12);
         
         sq.put(-1500f).put(1500f).put(1500f).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);
         sq.put(-1500f).put(-1500f).put(1500f).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);;

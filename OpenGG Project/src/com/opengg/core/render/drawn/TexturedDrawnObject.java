@@ -34,12 +34,6 @@ public class TexturedDrawnObject implements Drawable{
     }
 
     @Override
-    public void drawPoints() {
-        tex.useTexture(0);
-        object.drawPoints();
-    }
-
-    @Override
     public void saveShadowMVP() {
         object.saveShadowMVP();
     }

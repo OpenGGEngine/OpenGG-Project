@@ -11,5 +11,6 @@ package com.opengg.core.engine;
  * @author Javier
  */
 public class OpenGG {
-    
+    public static void initializeOpenGG(){
+    }
 }

@@ -14,7 +14,6 @@ import com.opengg.core.Matrix4f;
  */
 public interface Drawable {
     public void draw();
-    public void drawPoints();
     public void saveShadowMVP();
     public void setMatrix(Matrix4f m);
     public Matrix4f getMatrix();
