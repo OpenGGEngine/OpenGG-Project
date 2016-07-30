@@ -73,7 +73,7 @@ void main(){
         }
         vertexColor = vertexColors[i];
         textureCoord = textureCoords[i];
-        //pos = vec4(poss[i], 1.0f);
+        pos = vec4(poss[i], 1.0f);
         gl_Position = temppos;
         EmitVertex();
     }
