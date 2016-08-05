@@ -35,13 +35,12 @@ import static com.opengg.core.render.window.RenderUtil.endFrame;
 import static com.opengg.core.render.window.RenderUtil.startFrame;
 import com.opengg.core.util.GlobalInfo;
 import static com.opengg.core.util.GlobalUtil.print;
-import static com.opengg.core.util.GlobalUtil.print;
 import com.opengg.core.util.Time;
 import com.opengg.core.world.Camera;
 import com.opengg.core.world.World;
 import com.opengg.core.world.WorldObject;
 import com.opengg.core.world.components.ModelRenderComponent;
-import com.opengg.core.world.components.PhysicsComponent;
+import com.opengg.core.world.components.physics.PhysicsComponent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -206,19 +205,17 @@ public class OpenGGTest implements KeyboardListener {
         w.addObject(w1 = new WorldObject(awp3));
         w.addObject(w2 = new WorldObject(flashbang));
         flashbang.removeBuffer();
-        
-        ModelRenderComponent m = new ModelRenderComponent(test6);
-        ModelRenderComponent l = new ModelRenderComponent(flashbang);
-
-        l.setPosition(new Vector3f(10,30,0));
 
         terrain = new WorldObject();
-        awps = new WorldObject();
-        awps.attach(l);
-        terrain.attach(m);
+        terrain.attach(new ModelRenderComponent(test6));
+        terrain.attach(new PhysicsComponent());
         
-        bad = new PhysicsComponent();
-        terrain.attach(bad);
+        awps = new WorldObject();
+        awps.attach(new ModelRenderComponent(flashbang));
+        awps.setPosition(new Vector3f(5,5,5));
+        
+        
+        
         ratio = win.getRatio();
         
         t = new Time();
@@ -257,7 +254,6 @@ public class OpenGGTest implements KeyboardListener {
         as.setRot(rot);
         AudioHandler.setListener(as);
         
-        //glEnable(GL_CULL_FACE);
         c.setPos(new Vector3f(15, -40, -10));
         c.setRot(new Vector3f(60, 50, 0));
 

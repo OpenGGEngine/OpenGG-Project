@@ -6,6 +6,7 @@
 package com.opengg.core;
 
 import java.io.Serializable;
+import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import org.lwjgl.system.MemoryUtil;
 
@@ -199,7 +200,10 @@ public class Vector3f implements Serializable{
     public void zero(){
         this.x = this.y = this.z = 0;
     }
-    
+    public byte[] toByteArray(){   
+        ByteBuffer b = MemoryUtil.memAlloc(12);
+        return b.putFloat(x).putFloat(y).putFloat(z).array();
+    }
     @Override
     public String toString(){
         return x + ", " + y + ", " + z;

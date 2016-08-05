@@ -6,8 +6,8 @@
 
 package com.opengg.core.online;
 
+import com.opengg.core.world.components.physics.PhysicsStruct;
 import com.opengg.core.world.entities.resources.EntityFrame;
-import com.opengg.core.world.physics.resources.PhysicsStruct;
 import java.io.Serializable;
 
 /**

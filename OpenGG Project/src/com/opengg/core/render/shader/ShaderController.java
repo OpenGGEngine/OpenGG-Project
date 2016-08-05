@@ -155,7 +155,7 @@ public class ShaderController {
         program.setUniform(hasnorm, false);
         
         billboard = program.getUniformLocation("billboard");
-        program.setUniform(billboard,1);
+        program.setUniform(billboard,false);
         program.checkStatus();
         
         GlobalInfo.main = this;
@@ -305,11 +305,13 @@ public class ShaderController {
         program.setUniform(inst, instanced);
     }
     public void passMaterial(Material m,boolean specmap, boolean normmap){
-        program.setUniform(specularexponent, /*(float) m.nsExponent*/1f);
+        program.setUniform(specularexponent, (float) m.nsExponent/*1f*/);
         program.setUniform(specularexponents, new Vector3f((float)m.ka.rx,(float)m.ka.gy,(float)m.ka.bz));
         program.setUniform(specularcolor, new Vector3f((float)m.ks.rx,(float)m.ks.gy,(float)m.ks.bz));
         program.setUniform(hasspec, specmap);
         program.setUniform(hasnorm, normmap);
     }
-    public void setBillBoard(int yes){  program.setUniform(billboard,yes);}
+    public void setBillBoard(boolean yes){  
+        program.setUniform(billboard,yes);
+    }
 }

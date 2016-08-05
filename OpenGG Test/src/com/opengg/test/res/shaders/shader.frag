@@ -328,9 +328,13 @@ void main() {
         fcolor = shadify();
     }else if(mode == 2){
         fcolor = getTex(texImage);
+    }else if(mode == 3){
+        fcolor = getCube();
+    }else if(mode == 4){
+        fcolor = vec4(1,1,1,1);
     }else if(mode == 5){
         processPP();
     }else{
-        fcolor = getCube();
+        
     }    
 };

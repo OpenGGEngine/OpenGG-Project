@@ -3,10 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.opengg.core.world.components;
+package com.opengg.core.world.components.physics;
 
 import com.opengg.core.world.WorldObject;
-import com.opengg.core.world.physics.BoundingBox;
 import java.util.ArrayList;
 import java.util.Collection;
 

@@ -10,7 +10,7 @@ import com.opengg.core.Vector3f;
 import com.opengg.core.io.input.KeySet;
 import com.opengg.core.io.input.KeyboardListener;
 import com.opengg.core.util.GlobalInfo;
-import com.opengg.core.world.components.PhysicsComponent;
+import com.opengg.core.world.components.physics.PhysicsComponent;
 
 /**
  *
