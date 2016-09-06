@@ -12,10 +12,7 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.List;
 import org.lwjgl.system.MemoryUtil;
-import static org.lwjgl.opengl.GL11.GL_POINTS;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
-import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
-import static org.lwjgl.opengl.GL11.glDrawElements;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
@@ -72,7 +69,7 @@ public class InstancedDrawnObject implements Drawable {
         
         GlobalInfo.main.defVertexAttributes();
         GlobalInfo.main.pointVertexAttributes();
-        removeBuffer();
+        this.removeBuffer();
     }
     public InstancedDrawnObject(FloatBuffer b, FloatBuffer inst){
         this(b, 12, inst);
@@ -101,7 +98,7 @@ public class InstancedDrawnObject implements Drawable {
         
         GlobalInfo.main.defVertexAttributes();
         GlobalInfo.main.pointVertexAttributes();
-        removeBuffer();
+        this.removeBuffer();
     }
     
     public InstancedDrawnObject(FloatBuffer b, IntBuffer index, FloatBuffer inst){
@@ -151,7 +148,6 @@ public class InstancedDrawnObject implements Drawable {
         vbo.bind(GL_ARRAY_BUFFER);
         evbo.bind(GL_ELEMENT_ARRAY_BUFFER);
         GlobalInfo.main.defInstancedVertexAttributes(ivbo);
-
         GlobalInfo.main.setInstanced(true);
         glDrawArraysInstanced(GL_TRIANGLES,0,ind.limit(), instnum);
         GlobalInfo.main.setInstanced(false);
@@ -159,6 +155,7 @@ public class InstancedDrawnObject implements Drawable {
     
     public void removeBuffer(){
         b = null;
+        
     }
 
     @Override
@@ -169,5 +166,10 @@ public class InstancedDrawnObject implements Drawable {
     @Override
     public void destroy() {
         removeBuffer();
+    }
+    public void setPositions(FloatBuffer f,int numparticles){
+        ivbo.bind(GL_ARRAY_BUFFER);
+        ivbo.uploadData(GL_ARRAY_BUFFER, f, GL_STATIC_DRAW);
+        instnum = numparticles;
     }
 }

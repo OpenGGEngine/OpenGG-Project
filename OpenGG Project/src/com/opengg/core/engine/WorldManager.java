@@ -16,7 +16,6 @@ import java.util.ArrayList;
  */
 public class WorldManager {
     private static ArrayList<World> worlds = new ArrayList();
-    private void WorldManager(){}
     public static World getWorld(Camera c){
         World w = new World(c);
         worlds.add(w);

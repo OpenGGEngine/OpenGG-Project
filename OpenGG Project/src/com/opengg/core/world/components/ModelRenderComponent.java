@@ -12,6 +12,8 @@ import com.opengg.core.render.drawn.Drawable;
 /**
  *
  * @author Warren
+ * 
+ * This Component Renders a Drawable
  */
 public class ModelRenderComponent extends ComponentHolder implements Renderable{
     Drawable g;
@@ -31,7 +33,7 @@ public class ModelRenderComponent extends ComponentHolder implements Renderable{
         g.draw();
         
         for(Renderable r : this.renderable){
-            
+            g.draw();
         }
     }
 

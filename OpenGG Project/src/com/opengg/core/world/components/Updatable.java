@@ -10,5 +10,9 @@ package com.opengg.core.world.components;
  * @author ethachu19
  */
 public interface Updatable extends Component{
+    /**
+     * Update The Current Component
+     * @param delta Delta
+     */
     public void update(float delta);
 }

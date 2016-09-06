@@ -10,5 +10,8 @@ package com.opengg.core.world.components;
  * @author ethachu19
  */
 public interface Renderable extends Positioned{
+    /**
+     * Render the Current Component
+     */
     public void render();
 }

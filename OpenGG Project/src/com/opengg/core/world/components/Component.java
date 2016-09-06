@@ -6,7 +6,7 @@
 package com.opengg.core.world.components;
 
 /**
- *
+ * Component
  * @author Warren
  */
 public interface Component {

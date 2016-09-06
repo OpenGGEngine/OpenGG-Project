@@ -6,7 +6,7 @@
 package com.opengg.core.world.components;
 
 import com.opengg.core.Vector3f;
-import com.opengg.core.render.particle.ParticleType;
+import com.opengg.core.render.particle.ParticleSystem;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,30 +15,35 @@ import java.util.List;
  * @author Warren
  */
 public class ParticleRenderComponent implements Updatable, Renderable{
-    List<ParticleType> particles = new ArrayList<>();
+    List<ParticleSystem> particles = new ArrayList<>();
+    private Vector3f offset = new Vector3f(0,0,0);
+    Positioned w;
     Component c;
     @Override
     public void update(float delta) {
+        
         particles.stream().forEach((p) -> {
+            p.setPosition(offset.add(w.getPosition()));
             p.update(delta);
         });
     }
-
-    
-
     @Override
     public void render() {
-        
+        particles.stream().forEach((p) -> {
+            p.render();
+        });
     }
 
     @Override
     public void setParentInfo(Component parent) {
-        c = parent;
+        if(parent instanceof Positioned){
+            w = (Positioned) parent;
+        }
     }
 
     @Override
     public void setPosition(Vector3f pos) {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+       offset = pos;
     }
 
     @Override
@@ -55,6 +60,8 @@ public class ParticleRenderComponent implements Updatable, Renderable{
     public Vector3f getRotation() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+    public void addParticleType(ParticleSystem t){
+        particles.add(t);
+    }
     
 }

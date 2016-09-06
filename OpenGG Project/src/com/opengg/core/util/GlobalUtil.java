@@ -12,7 +12,7 @@ import java.util.logging.Logger;
  * @author Javier
  */
 public class GlobalUtil {
-    static Logger log = Logger.getLogger(GlobalUtil.class.getName());
+    static final Logger log = Logger.getLogger(GlobalUtil.class.getName());
 
     public static void print(Object s){
         log.info(s.toString());
