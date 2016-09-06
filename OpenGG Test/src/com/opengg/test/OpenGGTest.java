@@ -23,6 +23,7 @@ import com.opengg.core.render.drawn.DrawnObjectGroup;
 import com.opengg.core.render.drawn.InstancedDrawnObject;
 import com.opengg.core.render.drawn.MatDrawnObject;
 import static com.opengg.core.render.gl.GLOptions.enable;
+import com.opengg.core.render.particle.ParticleSystem;
 import com.opengg.core.render.shader.Mode;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.texture.Cubemap;
@@ -40,6 +41,7 @@ import com.opengg.core.world.Camera;
 import com.opengg.core.world.World;
 import com.opengg.core.world.WorldObject;
 import com.opengg.core.world.components.ModelRenderComponent;
+import com.opengg.core.world.components.ParticleRenderComponent;
 import com.opengg.core.world.components.physics.PhysicsComponent;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -146,14 +148,14 @@ public class OpenGGTest implements KeyboardListener {
 
         so2 = AudioHandler.loadSound(OpenGGTest.class.getResource("res/mgs.wav"));
         
-        so3 = AudioHandler.loadSound(OpenGGTest.class.getResource("res/stal.wav"));
+        so3 = AudioHandler.loadSound(OpenGGTest.class.getResource("res/yes.wav"));
 
         
         t1.setupTexToBuffer(2000,2000);
         ppbf.setupTexToBuffer(win.getWidth(), win.getHeight());
         t3.loadTexture("C:/res/deer.png", true);
-        t2.loadTexture("C:/res/test.png", true);
-        f = new GGFont(t2, new File("C:/res/test.fnt"));
+        t2.loadTexture("C:/res/slightybetter.png", true);
+        f = new GGFont(t2, new File("C:/res/slightybetter.fnt"));
         GUIText g = new GUIText("It is a period of civil war. Rebel spaceships, striking from a hidden base,"
                 + " have won their first victory against the evil Galactic Empire. During the battle,"
                 + " Rebel spies managed to steal secret plans to the Empires ultimate weapon, the DEATH STAR,"
@@ -187,12 +189,15 @@ public class OpenGGTest implements KeyboardListener {
         test6 = OBJ.getDrawableModel("C:/res/3DSMusicPark/3DSMusicPark.obj");
         
         FloatBuffer b = BufferUtils.createFloatBuffer(12);
-        b.put(20).put(20).put(20).put(20).put(40).put(40)
-                .put(40).put(40).put(60).put(60).put(60).put(60);
+        b.put(0).put(50).put(0).put(0).put(0).put(0)
+                .put(0).put(0).put(0).put(0).put(0).put(0);
         b.flip();
         
         flashbang = new InstancedDrawnObject(test2, b);
-
+        ParticleRenderComponent p = new ParticleRenderComponent();
+        p.setPosition(new Vector3f(0,50,0));
+        p.addParticleType(new ParticleSystem(0.5f,20f,-0.27f,10f,test));
+        
         ppsht = new DrawnObject(ObjectBuffers.getSquareUI(-1, 1, -1, 1, 1f, 1, false),12);
         test2 = ObjectBuffers.genSkyCube();
         sky = new DrawnObject(test2, 12);
@@ -208,8 +213,10 @@ public class OpenGGTest implements KeyboardListener {
 
         terrain = new WorldObject();
         terrain.attach(new ModelRenderComponent(test6));
-        terrain.attach(new PhysicsComponent());
+        bad = new PhysicsComponent();
+        terrain.attach(bad);
         
+        terrain.attach(p);
         awps = new WorldObject();
         awps.attach(new ModelRenderComponent(flashbang));
         awps.setPosition(new Vector3f(5,5,5));
@@ -241,6 +248,7 @@ public class OpenGGTest implements KeyboardListener {
        
         AudioHandler.destroy();
         vao.delete();
+        terrain.update(1);
     }
 
     public void render() {
