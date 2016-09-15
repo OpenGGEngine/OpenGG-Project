@@ -38,7 +38,7 @@ public class MovementLoader {
         baseSpeed = s;
     }
 
-    public static void setup(long w, int s) {
+    public static void setup(int s) {
         baseSpeed = s;
 
         mouseX = mouseY = mouseDX = mouseDY = 0;
