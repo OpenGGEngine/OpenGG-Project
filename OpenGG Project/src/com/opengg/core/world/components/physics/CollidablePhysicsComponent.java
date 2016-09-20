@@ -5,6 +5,7 @@
  */
 package com.opengg.core.world.components.physics;
 
+import com.opengg.core.Vector3f;
 import com.opengg.core.world.WorldObject;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,7 +14,7 @@ import java.util.Collection;
  *
  * @author ethachu19
  */
-public class CollidablePhysicsComponent extends PhysicsComponent{
+public class CollidablePhysicsComponent extends PhysicsComponent implements Collidable{
 
     public static ArrayList<CollidablePhysicsComponent> addStack = new ArrayList<>();
     private static ArrayList<CollidablePhysicsComponent> allCollision = new ArrayList<>();
@@ -56,5 +57,15 @@ public class CollidablePhysicsComponent extends PhysicsComponent{
             }
         }
         return false;
+    }
+
+    @Override
+    public boolean onCollision(Collidable c) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public BoundingBox[] getAreas() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

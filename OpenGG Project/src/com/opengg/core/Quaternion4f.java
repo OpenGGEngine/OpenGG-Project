@@ -5,7 +5,7 @@
  */
 package com.opengg.core;
 
-import com.opengg.core.util.DashMath;
+import com.opengg.core.math.DashMath;
 
 /**
  *

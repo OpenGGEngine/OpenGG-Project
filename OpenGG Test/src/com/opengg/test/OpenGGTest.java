@@ -126,7 +126,7 @@ public class OpenGGTest implements KeyboardListener {
     FloatBuffer base, test2, test;
 
     public void setup() throws FileNotFoundException, IOException, Exception {
-        MovementLoader.setup(window, 80);
+        MovementLoader.setup(80);
         
         vao = new VertexArrayObject();
         vao.bind();
@@ -148,14 +148,14 @@ public class OpenGGTest implements KeyboardListener {
 
         so2 = AudioHandler.loadSound(OpenGGTest.class.getResource("res/mgs.wav"));
         
-        so3 = AudioHandler.loadSound(OpenGGTest.class.getResource("res/yes.wav"));
+        so3 = AudioHandler.loadSound(OpenGGTest.class.getResource("res/mgs.wav"));
 
         
         t1.setupTexToBuffer(2000,2000);
         ppbf.setupTexToBuffer(win.getWidth(), win.getHeight());
         t3.loadTexture("C:/res/deer.png", true);
-        t2.loadTexture("C:/res/slightybetter.png", true);
-        f = new GGFont(t2, new File("C:/res/slightybetter.fnt"));
+        t2.loadTexture("C:/res/test.png", true);
+        f = new GGFont(t2, new File("C:/res/test.fnt"));
         GUIText g = new GUIText("It is a period of civil war. Rebel spaceships, striking from a hidden base,"
                 + " have won their first victory against the evil Galactic Empire. During the battle,"
                 + " Rebel spies managed to steal secret plans to the Empires ultimate weapon, the DEATH STAR,"
@@ -180,48 +180,40 @@ public class OpenGGTest implements KeyboardListener {
         cb.loadTexture("C:/res/skybox/majestic");
         
         URL path = OpenGGTest.class.getResource("res/models/deer.obj");
-        URL path2 = OpenGGTest.class.getResource("res/models/awp3.obj");
         m = new OBJParser().parse(path);
-        m2 = new OBJParser().parse(path2);
-        
         test = ObjectBuffers.genBuffer(m, 1f, 0.2f, new Vector3f());
-        test2 = ObjectBuffers.genBuffer(m2, 1f, 1f, new Vector3f());
-        test6 = OBJ.getDrawableModel("C:/res/3DSMusicPark/3DSMusicPark.obj");
+        
+        //test6 = OBJ.getDrawableModel("C:/res/3DSMusicPark/3DSMusicPark.obj");
         
         FloatBuffer b = BufferUtils.createFloatBuffer(12);
         b.put(0).put(50).put(0).put(0).put(0).put(0)
                 .put(0).put(0).put(0).put(0).put(0).put(0);
         b.flip();
         
-        flashbang = new InstancedDrawnObject(test2, b);
+        flashbang = new InstancedDrawnObject(test, b);
         ParticleRenderComponent p = new ParticleRenderComponent();
         p.setPosition(new Vector3f(0,50,0));
-        p.addParticleType(new ParticleSystem(0.5f,20f,-0.27f,10f,test));
+        p.addParticleType(new ParticleSystem(0.5f,20f,-0.27f,100f,test));
         
         ppsht = new DrawnObject(ObjectBuffers.getSquareUI(-1, 1, -1, 1, 1f, 1, false),12);
-        test2 = ObjectBuffers.genSkyCube();
-        sky = new DrawnObject(test2, 12);
+        sky = new DrawnObject(ObjectBuffers.genSkyCube(), 12);
         
         print("Model and Texture Loading Completed");
         
         w = WorldManager.getDefaultWorld();
         GlobalInfo.curworld = w;
         w.floorLev = -10;
-        w.addObject(w1 = new WorldObject(awp3));
-        w.addObject(w2 = new WorldObject(flashbang));
-        flashbang.removeBuffer();
 
         terrain = new WorldObject();
-        terrain.attach(new ModelRenderComponent(test6));
         bad = new PhysicsComponent();
-        terrain.attach(bad);
-        
-        terrain.attach(p);
+         
         awps = new WorldObject();
         awps.attach(new ModelRenderComponent(flashbang));
         awps.setPosition(new Vector3f(5,5,5));
         
-        
+        //terrain.attach(new ModelRenderComponent(test6));
+        terrain.attach(bad);
+        terrain.attach(p);
         
         ratio = win.getRatio();
         
@@ -281,18 +273,23 @@ public class OpenGGTest implements KeyboardListener {
         s.setMode(Mode.SKYBOX);
         cb.use(2);
         sky.draw();
+        
         s.setMode(Mode.OBJECT);
+        
         terrain.render();
         t3.useTexture(0);
         flashbang.draw();
+        
         s.setDistanceField(true);
         awp3.draw();
+        
         ppbf.endTexRender();
         glDisable(GL_CULL_FACE);
         GUI.startGUIPos();
         s.setMode(Mode.PP);
         ppbf.useTexture(0);
         ppbf.useDepthTexture(1);
+        
         ppsht.draw();
         GUI.enableGUI();
         base2.draw();
@@ -304,17 +301,6 @@ public class OpenGGTest implements KeyboardListener {
     public void update() {
         float delta = t.getDeltaSec();
         i += delta;
-//        if(i > 1){
-//            flipsd = true;
-//        }
-//        if(i < -1){
-//            flipsd = false;
-//        }
-//        if(flipsd){
-//            i -= delta;
-//        }else{
-//            i += delta;
-//        }
         s.setTimeMod(i);
         terrain.update(delta);
         xrot -= rot1 * 7;
