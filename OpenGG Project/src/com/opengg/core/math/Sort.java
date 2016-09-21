@@ -31,4 +31,24 @@ public class Sort {
         return c;
     }
     
+    public Comparable[] selection(Comparable[] c){
+        int i,j;
+        for (j = 0; j < c.length-1; j++) {
+            int iMin = j;
+            for ( i = j+1; i < c.length; i++) {
+                if (c[i].compareTo(c[iMin]) < 0) {
+                    iMin = i;
+
+                }
+            }
+            if(iMin != j) {
+                Comparable temp = c[j];
+                c[j] = c[iMin];
+                c[iMin] = temp;
+            }
+
+        }
+        return c;
+    }
+    
 }
