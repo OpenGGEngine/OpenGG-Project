@@ -7,7 +7,7 @@
 package com.opengg.core.math;
 
 /**
- *
+ * OpenGG Optimized Sorting
  * @author Javier
  */
 public class Sort {
@@ -15,23 +15,20 @@ public class Sort {
     private Sort(){
     }
     
-    public Comparable[] bubble(Comparable[] c){
+    public static void bubble(Comparable[] c){
         boolean complete = false;
         while(!complete){
             complete = true;
             for(int i = 0; i < c.length; i++){
                 if(c[i].compareTo(c[i+1]) > 0){
                     complete = false;
-                    Comparable temp = c[i];
-                    c[i] = c[i+1];
-                    c[i+1] = temp;
+                    swap(c[i], c[i+1]);
                 }
             }
         }
-        return c;
     }
     
-    public Comparable[] selection(Comparable[] c){
+    public static void selection(Comparable[] c){
         int i,j;
         for (j = 0; j < c.length-1; j++) {
             int iMin = j;
@@ -42,13 +39,15 @@ public class Sort {
                 }
             }
             if(iMin != j) {
-                Comparable temp = c[j];
-                c[j] = c[iMin];
-                c[iMin] = temp;
+                swap(c[j],c[iMin]);
             }
 
         }
-        return c;
-    }
+    }   
     
+    private static void swap(Object i, Object k){
+        Object temp = i;
+        i = k;
+        k = temp;
+    }
 }
