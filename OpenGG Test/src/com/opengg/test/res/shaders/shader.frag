@@ -304,7 +304,7 @@ void main() {
     if(mode == 0){
         fcolor = shadify();
     }else if(mode == 1){
-        fcolor = getTex(texImage)/material.ka;
+        //fcolor = (getTex(texImage)/material.ka).rgb;
     }else if(mode == 2){
         fcolor = getTex(texImage);
     }else if(mode == 3){
