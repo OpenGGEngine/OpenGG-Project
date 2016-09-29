@@ -12,6 +12,7 @@ import com.opengg.core.engine.WorldManager;
 import com.opengg.core.exceptions.InvalidParentException;
 import com.opengg.core.io.objloader.parser.OBJModel;
 import com.opengg.core.render.drawn.Drawable;
+import com.opengg.core.util.GlobalInfo;
 import com.opengg.core.world.components.Component;
 import com.opengg.core.world.components.ComponentHolder;
 import com.opengg.core.world.components.ModelRenderComponent;
@@ -37,6 +38,7 @@ public class WorldObject extends ComponentHolder implements Positioned, Updatabl
 
     public WorldObject(Vector3f pos, Quaternion4f rot, OBJModel model, World thisWorld) {
         super();
+        GlobalInfo.engine.addObjects(this);
         this.pos = pos;
         this.rot = rot;
         this.thisWorld = thisWorld;
@@ -44,20 +46,9 @@ public class WorldObject extends ComponentHolder implements Positioned, Updatabl
 
     public WorldObject() {
         super();
+        GlobalInfo.engine.addObjects(this);
         pos = new Vector3f(0, 0, 0);  
         rot = new Quaternion4f();
-        thisWorld = WorldManager.getDefaultWorld();
-        this.thisWorld.addObject(this);
-    }
-
-    public WorldObject(Drawable d) {
-        super();
-        pos = new Vector3f(0, 0, 0);
-        rot = new Quaternion4f();
-        thisWorld = WorldManager.getDefaultWorld();
-        this.attach(new ModelRenderComponent(d));
-        this.thisWorld.addObject(this);
-
     }
 
     @Override
@@ -85,7 +76,6 @@ public class WorldObject extends ComponentHolder implements Positioned, Updatabl
      */
     @Override
     public void render() {
-        
         for (Renderable r : renderable) {
             r.render();
         }
@@ -93,14 +83,6 @@ public class WorldObject extends ComponentHolder implements Positioned, Updatabl
 
     @Override
     public void update(float delta) {
-//        if(!target.equalsVector(pos)){
-//         pos.x = (target.x - start.x) * elapsed + start.x;
-//         pos.y = (target.y - start.y) * elapsed + start.y;
-//         pos.z = (target.z - start.z) * elapsed + start.z;
-//         elapsed += (float)speed;
-//        }else{
-//            elapsed = 0;
-//        }
         for (Updatable u : updateable) {
             u.update(delta);
         }

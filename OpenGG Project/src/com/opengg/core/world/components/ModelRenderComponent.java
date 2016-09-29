@@ -64,6 +64,11 @@ public class ModelRenderComponent extends ComponentHolder implements Renderable{
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    @Override
+    public Drawable getDrawable() {
+        return g;
+    }
+
     
     
 }

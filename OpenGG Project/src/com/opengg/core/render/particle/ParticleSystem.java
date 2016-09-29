@@ -7,11 +7,13 @@ package com.opengg.core.render.particle;
 
 import com.opengg.core.Matrix4f;
 import com.opengg.core.Vector3f;
+import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.render.drawn.InstancedDrawnObject;
+import com.opengg.core.render.texture.Texture;
 import java.nio.FloatBuffer;
 import java.util.Iterator;
-import java.util.List;
 import java.util.LinkedList;
+import java.util.List;
 import org.lwjgl.BufferUtils;
 
 /**
@@ -28,6 +30,7 @@ public class ParticleSystem{
     private float speed;
     private float gravityComplient;
     private float lifeLength;
+    Texture t;
     
     public ParticleSystem(float pps, float speed, float gravityComplient, float lifeLength) {
         this.pps = pps;
@@ -91,12 +94,22 @@ public class ParticleSystem{
             particleobject = new InstancedDrawnObject(f,2,createParticleVBO());
         
     }
-    public ParticleSystem(float pps, float speed, float gravityComplient, float lifeLength,FloatBuffer model) {
+    public ParticleSystem(float pps, float speed, float gravityComplient, float lifeLength,FloatBuffer model, Texture t) {
         this.pps = pps;
         this.speed = speed;
         this.gravityComplient = gravityComplient;
         this.lifeLength = lifeLength;
         particleobject = new InstancedDrawnObject(model,2,createParticleVBO());
+        this.t = t;
+    }
+    
+    public ParticleSystem(float pps, float speed, float lifeLength,FloatBuffer model, Texture t) {
+        this.pps = pps;
+        this.speed = speed;
+        this.gravityComplient = -0.027f;
+        this.lifeLength = lifeLength;
+        particleobject = new InstancedDrawnObject(model,2,createParticleVBO());
+        this.t = t;
     }
     
     private void emitParticle(Vector3f center){
@@ -121,7 +134,7 @@ public class ParticleSystem{
         particleobject.setPositions(createParticleVBO(),particles.size());
     }
     public void render(){
-        //particleobject.setMatrix(Matrix4f.translate(position));
+        t.useTexture(0);
         particleobject.draw();
     }
     private FloatBuffer createParticleVBO(){
@@ -140,4 +153,10 @@ public class ParticleSystem{
      public void setPosition(Vector3f position) {
         this.position = position;
     }
+     public void setParticlesPerSecond(float p){
+         pps = p;
+     }
+     public Drawable getDrawable(){
+         return particleobject;
+     }
 }

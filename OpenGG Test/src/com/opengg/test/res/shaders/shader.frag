@@ -71,18 +71,8 @@ vec2 randdisk[16] = vec2[](
 );
 
 float bias = 0.005;
-float vis = 0.5f;
-
-
-vec3 diffuse = vec3(1,1,1);
-
-float random(vec3 seed, int i){
-	vec4 seed4 = vec4(seed,i);
-	float dot_product = dot(seed4, vec4(12.9898,78.233,45.164,94.673));
-	return fract(sin(dot_product) * 43758.5453);
-}
-mat3 cotangent_frame( vec3 N, vec3 p, vec2 uv )
-{
+float vis = 1;
+mat3 cotangent_frame( vec3 N, vec3 p, vec2 uv ){
     // get edge vectors of the pixel triangle
     vec3 dp1 = dFdx( p );
     vec3 dp2 = dFdy( p );
@@ -99,8 +89,8 @@ mat3 cotangent_frame( vec3 N, vec3 p, vec2 uv )
     float invmax = inversesqrt( max( dot(T,T), dot(B,B) ) );
     return mat3( T * invmax, B * invmax, N );
 }
-vec3 calculatenormal( vec3 N, vec3 V, vec2 texcoord )
-{
+
+vec3 calculatenormal( vec3 N, vec3 V, vec2 texcoord ){
     // assume N, the interpolated vertex normal and 
     // V, the view vector (vertex to eye)
     vec3 map = texture2D( normImage, texcoord ).xyz;
@@ -108,21 +98,7 @@ vec3 calculatenormal( vec3 N, vec3 V, vec2 texcoord )
     mat3 TBN = cotangent_frame( N, -V, texcoord );
     return normalize( TBN * map );
 }
-void lightify(){
 
-    int samples = 8;
-    //if ( textureProj( shadeImage, shadp.xyw ).z  <  (shadowpos.z-bias)/shadowpos.w ){
-    if(!(shadowpos.x < 0 || shadowpos.y < 0 || shadowpos.x > 1 || shadowpos.y > 1)){
-        for(int i = 0; i < samples; i++){
-            int index = int(16.0*random(pos.xyy, i))%16;
-            if(texture(shadeImage, shadowpos.xy - randdisk[index]/1100 ).r < (shadowpos.z - bias)/shadowpos.w){
-                vis -= 0.12;
-            }else{
-
-            }
-        }
-    }
-}
 vec4 getTex(sampler2D tname){
     if(text == 1){
         vec4 col = texture(tname, textureCoord);
@@ -135,6 +111,7 @@ vec4 getTex(sampler2D tname){
     }
     return texture(tname, textureCoord * vec2(uvmultx, uvmulty));
 }
+
 vec4 shadify(){
     
     vec4 vertcolor = vertexColor;
@@ -142,7 +119,7 @@ vec4 shadify(){
     
     tempdif = getTex(texImage);
 
-    diffuse = tempdif.rgb;
+    vec3 diffuse = tempdif.rgb;
     
     float trans = tempdif.a;
     
@@ -207,14 +184,17 @@ vec4 shadify(){
 
     return fragColor;
 }
+
 vec4 getCube(){
     return texture(cubemap, normalize(pos.xyz));
 }
+
 vec4 getWaveEffect(){
     vec2 texcoord = textureCoord;
     texcoord.x += cos(texcoord.y * 4*2*3.14159) * 0.04 * time;
     return texture(texImage, clamp(vec2(texcoord.x, sin(texcoord.y)), 0.001,0.999 ));
 }
+
 float readDepth( in vec2 coord ) {
 	return (2.0 * camerarange.x) / (camerarange.y + camerarange.x - texture2D( shadeImage, coord ).x * (camerarange.y - camerarange.x));	
 }
@@ -229,8 +209,7 @@ float compareDepths( in float depth1, in float depth2 ) {
 	return 1-ao;
 }
  
-vec4 ssao()
-{	
+vec4 ssao(){	
 	float depth = readDepth( textureCoord );
 	float d;
  
@@ -320,21 +299,21 @@ void processPP(){
     fcolor = ssao();
     //fcolor = getWaveEffect();
 }
+
 void main() {   
     if(mode == 0){
-        lightify();
         fcolor = shadify();
     }else if(mode == 1){
-        fcolor = shadify();
+        fcolor = getTex(texImage)/material.ka;
     }else if(mode == 2){
         fcolor = getTex(texImage);
     }else if(mode == 3){
         fcolor = getCube();
-    }else if(mode == 4){
+    }else if(mode == 4 || mode == 6){
         fcolor = vec4(1,1,1,1);
-    }else if(mode == 5){
+    }else if(mode == 5 ){
         processPP();
     }else{
-        
+        fcolor = vec4(1,1,1,1);
     }    
 };

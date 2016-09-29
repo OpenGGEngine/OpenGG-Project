@@ -6,6 +6,7 @@
 package com.opengg.core.world.components;
 
 import com.opengg.core.Vector3f;
+import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.render.particle.ParticleSystem;
 import java.util.ArrayList;
 import java.util.List;
@@ -62,6 +63,11 @@ public class ParticleRenderComponent implements Updatable, Renderable{
     }
     public void addParticleType(ParticleSystem t){
         particles.add(t);
+    }
+
+    @Override
+    public Drawable getDrawable() {
+        return particles.get(0).getDrawable();
     }
     
 }

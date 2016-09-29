@@ -24,8 +24,13 @@ public class FramebufferTexture extends Texture {
     protected int fb;
     protected int depthbuffer;
     protected int texture2;
+    protected int stencil;
     
     int rendsizex, rendsizey;
+    
+    public void drawColorAttachment(){
+        glDrawBuffer(GL_COLOR_ATTACHMENT0);
+    }
     
     public void useDepthTexture(int loc){
         glActiveTexture(GL_TEXTURE0 + loc);
@@ -34,9 +39,9 @@ public class FramebufferTexture extends Texture {
         
     public void blitBuffer(){
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);   // Make sure no FBO is set as the draw framebuffer
-          glBindFramebuffer(GL_READ_FRAMEBUFFER, fb); // Make sure your multisampled FBO is the read framebuffer
-          glDrawBuffer(GL_BACK);                       // Set the back buffer as the draw buffer
-          glBlitFramebuffer(0, 0, GlobalInfo.window.getWidth(), GlobalInfo.window.getHeight(), 0, 0, GlobalInfo.window.getWidth(), GlobalInfo.window.getHeight(), GL_COLOR_BUFFER_BIT, GL_NEAREST);
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, fb); // Make sure your multisampled FBO is the read framebuffer
+        glDrawBuffer(GL_BACK);                       // Set the back buffer as the draw buffer
+        glBlitFramebuffer(0, 0, GlobalInfo.window.getWidth(), GlobalInfo.window.getHeight(), 0, 0, GlobalInfo.window.getWidth(), GlobalInfo.window.getHeight(), GL_COLOR_BUFFER_BIT, GL_NEAREST);
     }
     
     public int setupTexToBuffer(int sizex, int sizey){
@@ -45,7 +50,7 @@ public class FramebufferTexture extends Texture {
         rendsizey = sizey;
         fb = glGenFramebuffers();
         glBindFramebuffer(GL_FRAMEBUFFER, fb);
-        glDrawBuffers(GL_COLOR_ATTACHMENT0);
+        glDrawBuffer(GL_COLOR_ATTACHMENT0);
         
         
         texture = glGenTextures();
@@ -56,24 +61,14 @@ public class FramebufferTexture extends Texture {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texture, 0);
         
-        texture2 = glGenTextures();
-        glBindTexture(GL_TEXTURE_2D, texture2);
-        glTexImage2D(GL_TEXTURE_2D, 0,GL_RGB, sizex, sizey, 0,GL_RGB, 
-                GL_UNSIGNED_BYTE, (ByteBuffer) null);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, texture2, 0);
-        
         depthbuffer = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, depthbuffer);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, sizex, sizey, 0, GL_DEPTH_COMPONENT, 
                 GL_FLOAT, (ByteBuffer) null);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        
         glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthbuffer, 0);
         
-
         try{
             if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE){
                 throw new Exception("Buffer failed to generate!");

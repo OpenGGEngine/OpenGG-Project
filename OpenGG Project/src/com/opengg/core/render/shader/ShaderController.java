@@ -254,9 +254,6 @@ public class ShaderController {
             case OBJECT:
                 program.setUniform(mode, (int) 0);
                 break;
-            case OBJECT_NO_SHADOW:
-                program.setUniform(mode, (int) 1);
-                break;
             case GUI:
                 program.setUniform(mode, (int) 2);
                 break;
@@ -269,6 +266,8 @@ public class ShaderController {
             case PP:
                 program.setUniform(mode, (int) 5);
                 break;
+            case SHADOW:
+                program.setUniform(mode, (int) 6);
         }
     }
     

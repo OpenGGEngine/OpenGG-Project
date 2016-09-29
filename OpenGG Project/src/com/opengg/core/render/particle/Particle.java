@@ -34,11 +34,9 @@ public class Particle {
     }
     
     public boolean update(){
-        
-        position = position.add(velocity,gravity);
-    
-        
-        //position = new Vector3f(20f,20f,20f);
+        velocity = velocity.add(gravity);
+        position = position.add(velocity);
+
         timeAlive++;
         return timeAlive > timeOfLife;
     }
