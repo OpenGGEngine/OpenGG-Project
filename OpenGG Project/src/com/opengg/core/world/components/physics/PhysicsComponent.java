@@ -3,23 +3,26 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.opengg.core.world.components;
+package com.opengg.core.world.components.physics;
 
 import com.opengg.core.Quaternion4f;
 import com.opengg.core.Vector3f;
 import com.opengg.core.exceptions.InvalidParentException;
 import com.opengg.core.util.GlobalInfo;
 import com.opengg.core.world.World;
-import static com.opengg.core.world.physics.PhysicsConstants.*;
+import com.opengg.core.world.components.Component;
+import com.opengg.core.world.components.Positioned;
+import com.opengg.core.world.components.Updatable;
+import static com.opengg.core.world.components.physics.PhysicsConstants.BASE;
 
 /**
  *
  * @author ethachu19
  */
-public class PhysicsComponent implements Updatable {
+public class PhysicsComponent implements Updatable, Positioned {
     
     public boolean gravEffect = true;
-    public Vector3f pos;
+    public Vector3f pos = new Vector3f();
     public Quaternion4f rot;
     public Vector3f force = new Vector3f();
     public Vector3f rotForce = new Vector3f();
@@ -85,5 +88,25 @@ public class PhysicsComponent implements Updatable {
             return;
         }
         throw new InvalidParentException("Cannot set an object with no position as having physics!");
+    }
+
+    @Override
+    public void setPosition(Vector3f pos) {
+        
+    }
+
+    @Override
+    public void setRotation(Vector3f rot) {
+        
+    }
+
+    @Override
+    public Vector3f getPosition() {
+        return pos;
+    }
+
+    @Override
+    public Vector3f getRotation() {
+        return new Vector3f();
     }
 }

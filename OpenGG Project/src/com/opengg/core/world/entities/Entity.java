@@ -20,7 +20,7 @@ import com.opengg.core.world.entities.resources.EntitySupportEnums.PhysicsType;
 import com.opengg.core.world.entities.resources.EntitySupportEnums.UpdateForce;
 import com.opengg.core.world.entities.resources.EntitySupportEnums.UpdateXYZ;
 import com.opengg.core.world.entities.resources.PhysicsState;
-import static com.opengg.core.world.physics.resources.PhysicsStruct.wind;
+
 import java.io.Serializable;
 
 /**
@@ -244,10 +244,6 @@ public class Entity implements Serializable {
      */
     public void changeWorld(World next) {
         current.switchWorld(next);
-    }
-
-    public final void changeWind(Vector3f w) {
-        wind = new Vector3f(w);
     }
 
     public void update(float t, float dt) {

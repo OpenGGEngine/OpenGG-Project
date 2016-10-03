@@ -11,6 +11,10 @@ package com.opengg.core.engine;
  * @author Javier
  */
 public class OpenGG {
+    
+    static WorldEngine e;
+    
     public static void initializeOpenGG(){
+        e = new WorldEngine();
     }
 }

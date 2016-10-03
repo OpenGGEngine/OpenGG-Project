@@ -20,6 +20,12 @@ public class Camera {
         this.pos = new Vector3f();
         this.rot = new Vector3f();
     }
+    /**
+     * 
+     * Creates a Camera
+     * @param pos Camera Position
+     * @param rot Camera Rotation
+     */
     public Camera(Vector3f pos, Vector3f rot){
         this.pos = pos;
         this.rot = rot;

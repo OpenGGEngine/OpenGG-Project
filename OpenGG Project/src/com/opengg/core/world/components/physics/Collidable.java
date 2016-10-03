@@ -4,13 +4,15 @@
  * and open the template in the editor.
  */
 
-package com.opengg.core.world.physics;
+package com.opengg.core.world.components.physics;
+
+import com.opengg.core.world.components.Positioned;
 
 /**
  *
  * @author Javier
  */
-public class PhysicsConstants {
-    public static float GRAVITY = -9.81f;
-    public static float BASE = -50;
+public interface Collidable{
+    public boolean onCollision(Collidable c);
+    public BoundingBox[] getAreas();
 }

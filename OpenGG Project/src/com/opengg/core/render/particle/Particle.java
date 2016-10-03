@@ -10,9 +10,15 @@ import com.opengg.core.Vector3f;
 /**
  *
  * @author Warren
+ * 
+ * This class represents a single particle
  */
 public class Particle {
     private Vector3f position;
+
+    public Vector3f getPosition() {
+        return position;
+    }
     private Vector3f velocity;
     private Vector3f gravity;
     private float timeAlive = 0;
@@ -28,10 +34,13 @@ public class Particle {
     }
     
     public boolean update(){
-        position.add(velocity,gravity);
+        velocity = velocity.add(gravity);
+        position = position.add(velocity);
+
         timeAlive++;
         return timeAlive > timeOfLife;
     }
+    
     
     
     

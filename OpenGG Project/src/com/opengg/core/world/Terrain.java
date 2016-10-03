@@ -6,10 +6,7 @@
 package com.opengg.core.world;
 
 import com.opengg.core.Vector3f;
-import com.opengg.core.io.ImageProcessor;
-import com.opengg.core.render.buffer.ObjectBuffers;
 import com.opengg.core.render.texture.Texture;
-import static com.opengg.core.util.GlobalUtil.print;
 import static com.opengg.core.util.GlobalUtil.print;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -20,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.imageio.ImageIO;
 import org.lwjgl.system.MemoryUtil;
-import org.lwjgl.system.MemoryUtil;
 
 /**
  *
@@ -28,9 +24,7 @@ import org.lwjgl.system.MemoryUtil;
  */
 public class Terrain {
 
-    String heightmap;
-    private float xt, zt;
-    
+    String heightmap; 
     private int size;
     
     private List<FloatBuffer> buffers = new ArrayList<>();
@@ -47,9 +41,7 @@ public class Terrain {
 
     public void generateTerrain(InputStream heightmap) throws IOException {
         
-        BufferedImage image = null;
-        ImageProcessor s = new ImageProcessor();
-        image = ImageIO.read(heightmap);       
+        BufferedImage image = ImageIO.read(heightmap);    
         int VERTEX_COUNT = image.getHeight();
         print(VERTEX_COUNT);
         indices = MemoryUtil.memAllocInt(6*((VERTEX_COUNT)*(VERTEX_COUNT)));

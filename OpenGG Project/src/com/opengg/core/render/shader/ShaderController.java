@@ -125,10 +125,10 @@ public class ShaderController {
         //program.setUniform(shadow, new Matrix4f());
         
         lightdistance = program.getUniformLocation("light.lightdistance"); 
-        program.setUniform(lightdistance, 60f);
+        program.setUniform(lightdistance, 100f);
         
         lightpower = program.getUniformLocation("light.lightpower"); 
-        program.setUniform(lightpower, 300f);
+        program.setUniform(lightpower, 50f);
         
         lightcolor = program.getUniformLocation("light.color"); 
         program.setUniform(lightcolor, new Vector3f(1,1,1));
@@ -155,7 +155,7 @@ public class ShaderController {
         program.setUniform(hasnorm, false);
         
         billboard = program.getUniformLocation("billboard");
-        program.setUniform(billboard,1);
+        program.setUniform(billboard,false);
         program.checkStatus();
         
         GlobalInfo.main = this;
@@ -254,9 +254,6 @@ public class ShaderController {
             case OBJECT:
                 program.setUniform(mode, (int) 0);
                 break;
-            case OBJECT_NO_SHADOW:
-                program.setUniform(mode, (int) 1);
-                break;
             case GUI:
                 program.setUniform(mode, (int) 2);
                 break;
@@ -269,6 +266,8 @@ public class ShaderController {
             case PP:
                 program.setUniform(mode, (int) 5);
                 break;
+            case SHADOW:
+                program.setUniform(mode, (int) 6);
         }
     }
     
@@ -305,11 +304,13 @@ public class ShaderController {
         program.setUniform(inst, instanced);
     }
     public void passMaterial(Material m,boolean specmap, boolean normmap){
-        program.setUniform(specularexponent, /*(float) m.nsExponent*/1f);
+        program.setUniform(specularexponent, (float) m.nsExponent/*1f*/);
         program.setUniform(specularexponents, new Vector3f((float)m.ka.rx,(float)m.ka.gy,(float)m.ka.bz));
         program.setUniform(specularcolor, new Vector3f((float)m.ks.rx,(float)m.ks.gy,(float)m.ks.bz));
         program.setUniform(hasspec, specmap);
         program.setUniform(hasnorm, normmap);
     }
-    public void setBillBoard(int yes){  program.setUniform(billboard,yes);}
+    public void setBillBoard(boolean yes){  
+        program.setUniform(billboard,yes);
+    }
 }

@@ -4,12 +4,13 @@
  * and open the template in the editor.
  */
 
-package com.opengg.core.render.shader;
+package com.opengg.core.world.components.physics;
 
 /**
  *
  * @author Javier
  */
-public enum Mode {
-    OBJECT, SKYBOX, GUI, POS_ONLY, PP, SHADOW;
+public class PhysicsConstants {
+    public static float GRAVITY = -9.81f;
+    public static float BASE = -50;
 }

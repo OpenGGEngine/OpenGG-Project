@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.opengg.core.world.physics;
+package com.opengg.core.world.entities.physics;
 
 import com.opengg.core.Vector3f;
 import com.opengg.core.world.entities.Entity;

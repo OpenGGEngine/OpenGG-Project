@@ -5,7 +5,9 @@
  */
 package com.opengg.core;
 
+import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
+import org.lwjgl.system.MemoryUtil;
 
 /**
  *
@@ -59,8 +61,8 @@ public class Vector2f {
         return s;
     }
     
-    /*
-    Returns the degree of angle of vector
+    /**
+    * Returns the degree of angle of vector
     */
     
     public double getAngle()
@@ -68,16 +70,32 @@ public class Vector2f {
         return Math.toDegrees(Math.atan2(y, x));
     }
     
-    /*
-    Returns magnitude of vector
+    /**
+    * Returns magnitude of vector
     */
     
     public double getMagnitude()
     {
         return Math.sqrt((x*x) + (y*y));
     }
-
-    public FloatBuffer getBuffer() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    /**
+     * Returns a FloatBuffer representation of the vector
+     * @return FloatBuffer representation of the vector
+     */
+    public FloatBuffer getBuffer(){
+        FloatBuffer b = MemoryUtil.memAllocFloat(2);
+        return b.put(x).put(y);
+    }
+    /**
+     * Returns byte array containing the vector
+     * @return Byte array containing the vector
+     */
+    public byte[] getByteArray() {
+        ByteBuffer b = MemoryUtil.memAlloc(8);
+        return b.putFloat(x).putFloat(y).array();
+    }
+    
+    public static Vector2f getFromByteArray(byte[] vector){
+        return new Vector2f(1,1);
     }
 }

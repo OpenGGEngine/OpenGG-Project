@@ -35,5 +35,17 @@ public abstract class ComponentHolder implements Component{
         for(Renderable c: renderable){
             c.render();
         }
-    }                                                                                                                                                                          
+    }      
+    
+    public ArrayList<Updatable> getUpdatables(){
+        return updateable;
+    }
+    
+    public ArrayList<Renderable> getRenderables(){
+        return renderable;
+    }
+     
+    public ArrayList<Triggerable> getTriggerables(){
+        return triggerable;
+    }
 }

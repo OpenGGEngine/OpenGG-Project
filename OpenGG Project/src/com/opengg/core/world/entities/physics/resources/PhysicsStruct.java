@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package com.opengg.core.world.physics.resources;
+package com.opengg.core.world.entities.physics.resources;
 
 import com.opengg.core.Vector3f;
 import java.io.Serializable;

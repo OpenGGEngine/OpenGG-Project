@@ -38,9 +38,7 @@ public class MovementLoader {
         baseSpeed = s;
     }
 
-    public static void setup(long w, int s) {
-        window = w;
-
+    public static void setup(int s) {
         baseSpeed = s;
 
         mouseX = mouseY = mouseDX = mouseDY = 0;
@@ -82,7 +80,14 @@ public class MovementLoader {
         
         return r;
     }
-
+    
+    /**
+     * 
+     * Processes Keyboard inputs Relating to Movement
+     * @param position Position
+     * @param rotation Rotation
+     * @return Final Position
+     */
     public static Vector3f processMovement(Vector3f position, Vector3f rotation) {
 
         boolean keyUp = KeyBoardHandler.isKeyDown(GLFW_KEY_W);
