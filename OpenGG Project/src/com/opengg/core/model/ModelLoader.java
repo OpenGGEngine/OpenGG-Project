@@ -5,11 +5,8 @@
  */
 package com.opengg.core.model;
 
-import com.opengg.core.io.newobjloader.Material;
-import com.opengg.core.render.drawn.Drawable;
-import com.opengg.core.render.drawn.DrawnObjectGroup;
-import com.opengg.core.render.drawn.MatDrawnObject;
-import com.opengg.core.render.texture.Texture;
+import static com.opengg.core.util.FileUtil.getFileName;
+import static com.opengg.core.util.GlobalUtil.print;
 import static com.opengg.core.util.GlobalUtil.print;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
@@ -27,12 +24,15 @@ import org.lwjgl.system.MemoryUtil;
  */
 public class ModelLoader {
 
-    public static Drawable loadModel(String path) throws FileNotFoundException, IOException {
-        DataInputStream in = new DataInputStream(new BufferedInputStream(new FileInputStream("C:/res/textbin.txt")));
-        ArrayList<Drawable> obj = new ArrayList<>();
+    public static Model loadModel(String path) throws FileNotFoundException, IOException {
+        DataInputStream in = new DataInputStream(new BufferedInputStream(new FileInputStream(path)));
+        
+        String texpath = path.substring(0, path.lastIndexOf("/") + 1) + "tex/";
+        
+        ArrayList<Mesh> meshes = new ArrayList<>();
+        
         int id =  in.readInt();
         for (int si = 0; si < id; si++) {
-           // System.out.println("\r["+si +"/" +id +"]");
             int fbcap = in.readInt();
             FloatBuffer f = MemoryUtil.memAllocFloat(fbcap);
             for (int i = 0; i < fbcap; i++) 
@@ -46,8 +46,6 @@ public class ModelLoader {
                 inb.put(in.readInt());
             }
             inb.flip();
-
-            MatDrawnObject test = new MatDrawnObject(f, inb);
 
             int len = in.readInt();
             String name = "";
@@ -94,7 +92,7 @@ public class ModelLoader {
                     for (int i = 0; i < len; i++) {
                         name += in.readChar();
                     }
-                    m.mapKaFilename = name;
+                    m.mapKaFilename = texpath + name;
                 } else {
                     m.mapKaFilename = null;
                 }
@@ -105,10 +103,7 @@ public class ModelLoader {
                     for (int i = 0; i < len; i++) {
                         name += in.readChar();
                     }
-                    m.mapKdFilename = name;
-                    Texture nointernet = new Texture();
-                    nointernet.loadTexture("C:/res/" + "3DSMusicPark" + "/" + name, true);
-                    test.setTexture(nointernet);
+                    m.mapKdFilename = texpath + name;
                 } else {
                     m.mapKdFilename = null;
                 }
@@ -119,7 +114,7 @@ public class ModelLoader {
                     for (int i = 0; i < len; i++) {
                         name += in.readChar();
                     }
-                    m.mapKsFilename = name;
+                    m.mapKsFilename = texpath + name;
                 } else {
                     m.mapKsFilename = null;
                 }
@@ -130,10 +125,7 @@ public class ModelLoader {
                     for (int i = 0; i < len; i++) {
                         name += in.readChar();
                     }
-                    m.mapNsFilename = name;
-                    Texture nointernet = new Texture();
-                    nointernet.loadTexture("C:/res/" + "3DSMusicPark" + "/" + name, true);
-                    test.setSpecularMap(nointernet);
+                    m.mapNsFilename = texpath + name;
                 } else {
                     m.mapNsFilename = null;
                 }
@@ -144,7 +136,7 @@ public class ModelLoader {
                     for (int i = 0; i < len; i++) {
                         name += in.readChar();
                     }
-                    m.mapDFilename = name;
+                    m.mapDFilename = texpath + name;
                 } else {
                     m.mapDFilename = null;
                 }
@@ -155,7 +147,7 @@ public class ModelLoader {
                     for (int i = 0; i < len; i++) {
                         name += in.readChar();
                     }
-                    m.decalFilename = name;
+                    m.decalFilename = texpath + name;
                 } else {
                     m.decalFilename = null;
                 }
@@ -166,7 +158,7 @@ public class ModelLoader {
                     for (int i = 0; i < len; i++) {
                         name += in.readChar();
                     }
-                    m.dispFilename = name;
+                    m.dispFilename = texpath + name;
                 } else {
                     m.dispFilename = null;
                 }
@@ -177,10 +169,7 @@ public class ModelLoader {
                     for (int i = 0; i < len; i++) {
                         name += in.readChar();
                     }
-                    m.bumpFilename = name;
-                    Texture nointernet = new Texture();
-                    nointernet.loadTexture("C:/res/" + "3DSMusicPark" + "/" + name, true);
-                    test.setNormalMap(nointernet);
+                    m.bumpFilename = texpath + name;
                 } else {
                     m.bumpFilename = null;
                 }
@@ -193,21 +182,15 @@ public class ModelLoader {
                     for (int i = 0; i < len; i++) {
                         name += in.readChar();
                     }
-                    m.reflFilename = name;
+                    m.reflFilename = texpath + name;
                 } else {
                     m.reflFilename = null;
                 }
-                obj.add(test);
-            
-
+           meshes.add(new Mesh(f, inb, m));
         }
+
         in.close();
         print("Done Parsing");
-        if (obj.size() > 1) {
-            DrawnObjectGroup d = new DrawnObjectGroup(obj);
-            return d;
-        } else {
-            return obj.get(0);
-        }
+        return new Model(getFileName(path), meshes);
     }
 }

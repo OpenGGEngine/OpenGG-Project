@@ -7,8 +7,7 @@
 package com.opengg.core.render.drawn;
 
 import com.opengg.core.Matrix4f;
-import com.opengg.core.io.newobjloader.Material;
-import com.opengg.core.render.texture.Texture;
+import com.opengg.core.model.Material;
 import com.opengg.core.util.GlobalInfo;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -20,18 +19,13 @@ import java.util.List;
  */
 public class MatDrawnObject implements Drawable {
     DrawnObject d;
-
+    Material m = Material.defaultmaterial;
+    
     public void setM(Material m) {
         this.m = m;
         d.hasmat = true;
     }
-    Material m = Material.defaultmaterial;
-    Texture tex;
-    private Texture normalmap;
-    private boolean hasNormalMap = false;
-    private Texture specmap;
-    private boolean hasSpecMap = false;
-    
+
     public MatDrawnObject(FloatBuffer b, int vertsize){
         d = new DrawnObject(b,vertsize);
     }
@@ -40,32 +34,33 @@ public class MatDrawnObject implements Drawable {
         d = new DrawnObject(buffers,vertSize);
     }
     
-    public MatDrawnObject(FloatBuffer b, IntBuffer index){
+    public MatDrawnObject(FloatBuffer b, IntBuffer index, Material m){
         d = new DrawnObject(b,index);
+        setM(m);
+        m.loadTextures();
     }
     
-
-    public void setTexture(Texture d){
-        this.tex = d;
+    public MatDrawnObject(FloatBuffer b, IntBuffer index){
+        this(b, index, Material.defaultmaterial);
     }
-    public void setNormalMap(Texture d){
-        this.normalmap = d;
-        this.hasNormalMap = true;
-        
-    }
-    public void setSpecularMap(Texture d){
-        this.specmap = d;
-        this.hasSpecMap = true;   
-    }
+    
     public void setShaderMatrix(Matrix4f m){
         d.setShaderMatrix(m);
     }
+    
+    public Material getMaterial(){
+        return m;
+    }
+    
     @Override
     public void draw() {
-        if(tex != null)tex.useTexture(0);
-        if(hasSpecMap) specmap.useTexture(4);   
-        if(hasNormalMap) normalmap.useTexture(3);
-        GlobalInfo.main.passMaterial(m,hasSpecMap, hasNormalMap);
+        if(m.Kd != null)
+            m.Kd.useTexture(0);
+        if(m.Ks != null) 
+            m.Ks.useTexture(4);   
+        if(m.norm != null) 
+            m.norm.useTexture(3);
+        GlobalInfo.main.passMaterial(m, m.Ks != null,  m.norm != null);
         d.draw();
     }
 

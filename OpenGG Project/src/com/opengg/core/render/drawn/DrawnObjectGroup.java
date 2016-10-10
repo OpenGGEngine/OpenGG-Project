@@ -7,6 +7,7 @@ package com.opengg.core.render.drawn;
 
 import com.opengg.core.Matrix4f;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -14,13 +15,13 @@ import java.util.ArrayList;
  */
 public class DrawnObjectGroup implements Drawable {
 
-    ArrayList<Drawable> objs = new ArrayList<>();
+    List<Drawable> objs = new ArrayList<>();
 
     //The list of materials are in order so the nth value in list objs
     //corresponds to the nth value in list materials
     
 
-    public DrawnObjectGroup(ArrayList<Drawable> objs) {
+    public DrawnObjectGroup(List<Drawable> objs) {
         this.objs = objs;
     }
     

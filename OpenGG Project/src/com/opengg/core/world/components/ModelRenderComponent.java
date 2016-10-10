@@ -7,6 +7,7 @@ package com.opengg.core.world.components;
 
 import com.opengg.core.Matrix4f;
 import com.opengg.core.Vector3f;
+import com.opengg.core.model.Model;
 import com.opengg.core.render.drawn.Drawable;
 
 /**
@@ -23,6 +24,10 @@ public class ModelRenderComponent extends ComponentHolder implements Renderable{
    
     public ModelRenderComponent(Drawable g){
         this.g = g;
+    }
+    
+    public ModelRenderComponent(Model m){
+        g = m.getDrawable();
     }
 
     @Override

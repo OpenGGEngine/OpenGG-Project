@@ -6,7 +6,7 @@
 package com.opengg.core.render.texture.text;
 
 import com.opengg.core.gui.GUIText;
-import com.opengg.core.io.newobjloader.Material;
+import com.opengg.core.model.Material;
 import com.opengg.core.render.drawn.MatDrawnObject;
 import java.io.File;
 import java.nio.FloatBuffer;
@@ -32,7 +32,7 @@ public class TextVBOGenerator {
 		FloatBuffer data = createQuadVertices(text, lines);
                 MatDrawnObject t = new MatDrawnObject(data, 12);     
                 t.setM(Material.defaultmaterial);
-                t.setTexture(text.font.texture);
+                t.getMaterial().Kd = text.font.texture;
 		return t;
 	}
 

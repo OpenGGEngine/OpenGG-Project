@@ -9,7 +9,7 @@ package com.opengg.core.render.shader;
 import com.opengg.core.Matrix4f;
 import com.opengg.core.Vector3f;
 import com.opengg.core.io.FileStringLoader;
-import com.opengg.core.io.newobjloader.Material;
+import com.opengg.core.model.Material;
 import com.opengg.core.render.VertexBufferObject;
 import com.opengg.core.render.window.ViewUtil;
 import com.opengg.core.util.GlobalInfo;
@@ -304,7 +304,7 @@ public class ShaderController {
         program.setUniform(inst, instanced);
     }
     public void passMaterial(Material m,boolean specmap, boolean normmap){
-        program.setUniform(specularexponent, (float) m.nsExponent/*1f*/);
+        program.setUniform(specularexponent, (float) m.nsExponent);
         program.setUniform(specularexponents, new Vector3f((float)m.ka.rx,(float)m.ka.gy,(float)m.ka.bz));
         program.setUniform(specularcolor, new Vector3f((float)m.ks.rx,(float)m.ks.gy,(float)m.ks.bz));
         program.setUniform(hasspec, specmap);

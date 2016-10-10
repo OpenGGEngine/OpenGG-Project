@@ -3,11 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.opengg.core.io.newobjloader;
+package com.opengg.core.model;
 
 /**
  *
- * @author Warren
+ * @author Javier
  */
 public class ReflectivityTransmiss {
     public ReflectivityTransmiss(float r, float g, float b){
@@ -23,3 +23,5 @@ public class ReflectivityTransmiss {
     public double bz;
 
 }
+
+

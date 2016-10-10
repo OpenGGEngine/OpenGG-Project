@@ -35,17 +35,18 @@ public class Texture {
     public static Texture blank;
     int width;
     int height;
-     
-    public Texture(){
-        //this.loc = loc;
+    //ByteBuffer buffer; 
+    
+    public Texture(){}
+    
+    public Texture(String path){
+        loadTexture(path, true);
     }
     
     public void useTexture(int loc){
         glActiveTexture(GL_TEXTURE0 + loc);
         glBindTexture(GL_TEXTURE_2D, texture);
     }   
-    
-    ByteBuffer buffer;
     
     public void setLODBias(int bias){
         glActiveTexture(GL_TEXTURE9);
@@ -69,8 +70,6 @@ public class Texture {
     }
     
     public int loadFromBuffer(ByteBuffer b, int fwidth, int fheight){
-        //glActiveTexture(GL_TEXTURE0 + loc);
-        
         texture = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, texture);
         glGenerateMipmap(GL_TEXTURE_2D);
@@ -79,7 +78,7 @@ public class Texture {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         
-        buffer = b;
+        //buffer = b;
         
         width = fwidth;
         height = fheight;
@@ -91,10 +90,10 @@ public class Texture {
     }
     
     public int loadTexture(String path, boolean flipped){
+        ByteBuffer buffer;
         glActiveTexture(GL_TEXTURE0);
         texture = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, texture);
-        
 
         try{
             
@@ -103,7 +102,6 @@ public class Texture {
                 loadtga(path);
             }else{
                 InputStream in;
-                ByteBuffer buffer;
 
                 in = new FileInputStream(path);
                 image = ImageIO.read(in);
@@ -153,14 +151,18 @@ public class Texture {
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS, -2);
             glGenerateMipmap(GL_TEXTURE_2D);
             glBindTexture(GL_TEXTURE_2D, 0);
+            buffer.clear();
             
         } catch (FileNotFoundException ex) {
-        }  catch (Exception e){
+            System.out.println(path + " was not found!");
+        } catch (Exception e){
+            System.out.println(path + " failed to load: ");
+            e.printStackTrace();
         }
         return texture;
     }
     public ByteBuffer getData(){
-        return buffer;
+        return null;
     }
     public void setAnisotropy(int level){
         if(GL.getCapabilities().GL_EXT_texture_filter_anisotropic){

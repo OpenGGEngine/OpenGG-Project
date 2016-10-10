@@ -177,7 +177,7 @@ vec4 shadify(){
             // Diffuse : "color" of the object
             vis * diffuse * light.color * light.lightpower * cosTheta / ((distance*distance)/light.lightdistance) +
             // Specular : reflective highlight, like a mirror
-            vis * specular * light.lightpower * pow(cosAlpha,5) / ((distance*distance)/light.lightdistance)), trans);
+            vis * specular * light.lightpower * pow(cosAlpha,specular.r) / ((distance*distance)/light.lightdistance)), trans);
     //test gamma correction
     //float gamma = 2.2;
     //fragColor.rgb = pow(fragColor.rgb, vec3(1.0/gamma));

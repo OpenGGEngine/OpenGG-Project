@@ -1,23 +1,20 @@
 package com.opengg.test;
 
-import com.opengg.core.Matrix4f;
 import com.opengg.core.Vector2f;
 import com.opengg.core.Vector3f;
 import com.opengg.core.audio.AudioHandler;
 import com.opengg.core.audio.AudioListener;
 import com.opengg.core.audio.AudioSource;
-import com.opengg.core.engine.DrawableContainer;
 import com.opengg.core.engine.OpenGG;
 import com.opengg.core.engine.RenderEngine;
 import com.opengg.core.engine.WorldManager;
-import com.opengg.core.gui.GUI;
 import com.opengg.core.gui.GUIItem;
 import com.opengg.core.gui.GUIText;
 import com.opengg.core.io.input.KeyboardEventHandler;
 import com.opengg.core.io.input.KeyboardListener;
 import com.opengg.core.io.objloader.parser.OBJModel;
 import com.opengg.core.io.objloader.parser.OBJParser;
-import com.opengg.core.model.OBJ;
+import com.opengg.core.model.ModelLoader;
 import com.opengg.core.movement.MovementLoader;
 import com.opengg.core.render.VertexArrayObject;
 import com.opengg.core.render.buffer.ObjectBuffers;
@@ -25,9 +22,7 @@ import com.opengg.core.render.drawn.DrawnObject;
 import com.opengg.core.render.drawn.DrawnObjectGroup;
 import com.opengg.core.render.drawn.InstancedDrawnObject;
 import com.opengg.core.render.drawn.MatDrawnObject;
-import static com.opengg.core.render.gl.GLOptions.enable;
 import com.opengg.core.render.particle.ParticleSystem;
-import com.opengg.core.render.shader.Mode;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.texture.Cubemap;
 import com.opengg.core.render.texture.FramebufferTexture;
@@ -38,9 +33,6 @@ import com.opengg.core.render.window.GLFWWindow;
 import static com.opengg.core.render.window.RenderUtil.endFrame;
 import static com.opengg.core.render.window.RenderUtil.startFrame;
 import com.opengg.core.util.GlobalInfo;
-import static com.opengg.core.util.GlobalUtil.print;
-import static com.opengg.core.util.GlobalUtil.print;
-import static com.opengg.core.util.GlobalUtil.print;
 import static com.opengg.core.util.GlobalUtil.print;
 import com.opengg.core.util.Time;
 import com.opengg.core.world.Camera;
@@ -54,13 +46,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.FloatBuffer;
-import org.lwjgl.BufferUtils;
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL14.GL_DECR_WRAP;
-import static org.lwjgl.opengl.GL14.GL_INCR_WRAP;
-import static org.lwjgl.opengl.GL20.glStencilOpSeparate;
-import static org.lwjgl.opengl.GL32.GL_DEPTH_CLAMP;
 
 public class OpenGGTest implements KeyboardListener {
 
@@ -187,9 +173,7 @@ public class OpenGGTest implements KeyboardListener {
         t2.useTexture(0);
         cb.loadTexture("C:/res/skybox/majestic");
         
-        URL path = OpenGGTest.class.getResource("res/models/deer.obj");
-        m = new OBJParser().parse(path);
-        test = ObjectBuffers.genBuffer(m, 1f, 0.2f, new Vector3f());
+        test = ObjectBuffers.genBuffer(new OBJParser().parse(OpenGGTest.class.getResource("res/models/deer.obj")), 1f, 0.2f, new Vector3f());
         
         sky = new DrawnObject(ObjectBuffers.genSkyCube(), 12);
         
@@ -209,7 +193,7 @@ public class OpenGGTest implements KeyboardListener {
         awps.attach(ep1 = new ModelRenderComponent(awp3));
         awps.setPosition(new Vector3f(5,5,5));
         
-        ModelRenderComponent r = new ModelRenderComponent(OBJ.getDrawableModel("C:/res/3DSMusicPark/3DSMusicPark.obj"));
+        ModelRenderComponent r = new ModelRenderComponent(ModelLoader.loadModel("C:/res/3DSMusicPark/3DSMusicPark.bmf"));
         bad = new PhysicsComponent();
         terrain = new WorldObject();
         terrain.attach(r);
@@ -235,8 +219,7 @@ public class OpenGGTest implements KeyboardListener {
         print("Setup Complete");
     }
 
-    public void exit() {
-       
+    public void exit() {     
         AudioHandler.destroy();
         vao.delete();
     }
@@ -257,19 +240,13 @@ public class OpenGGTest implements KeyboardListener {
 
         s.setLightPos(new Vector3f(40, 80, 40));
         s.setView(c);
-        s.setPerspective(90, ratio, 1, 2000f);
+        s.setPerspective(90, ratio, 1, 2500f);
         
         RenderEngine.drawWorld();
         
     }
-    
-    float i = 0;
-    boolean flipsd = false;
-    
+
     public void update() {
-        //float delta = t.getDeltaSec();
-        //i += delta;
-        //s.setTimeMod(i);
         terrain.getUpdatables();
         GlobalInfo.engine.update();
         xrot -= rot1 * 7;
