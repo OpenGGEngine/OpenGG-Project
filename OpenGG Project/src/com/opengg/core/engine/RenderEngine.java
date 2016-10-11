@@ -117,17 +117,20 @@ public class RenderEngine {
     
     public static void drawWorld(){
         
-        sceneTex.startTexRender();
+        //sceneTex.startTexRender();
         
         if(shadVolumes){
             glDepthMask(true);
+            
             glDisable(GL_DEPTH_TEST);
             glDrawBuffer(GL_NONE);
             s.setMode(Mode.POS_ONLY);
             for(DrawableContainer d : dlist){
                 d.draw();
             }
+            
             glEnable(GL_STENCIL_TEST);
+            
             s.setMode(Mode.SHADOW);
             glDepthMask(false);
             glEnable(GL_DEPTH_CLAMP); 
@@ -135,20 +138,31 @@ public class RenderEngine {
             glStencilFunc(GL_ALWAYS, 0, 0xff);
             glStencilOpSeparate(GL_BACK, GL_KEEP, GL_INCR_WRAP, GL_KEEP);
             glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_DECR_WRAP, GL_KEEP); 
+            
             for(DrawableContainer d : dlist){
                 d.draw();
             }
+            
             glDisable(GL_DEPTH_CLAMP);
-            sceneTex.drawColorAttachment();
+            glEnable(GL_CULL_FACE); 
             glStencilFunc(GL_EQUAL, 0x0, 0xFF);
             glStencilOpSeparate(GL_BACK, GL_KEEP, GL_KEEP, GL_KEEP);
+            //sceneTex.drawColorAttachment();
+            glEnable(GL_DEPTH_TEST);
+            glDepthMask(true);
+            glDrawBuffer(GL_BACK);
+            
         }else{
+            
             glDisable(GL_STENCIL_TEST);
+            glDepthMask(true);
+            glEnable(GL_DEPTH_TEST);
+            glEnable(GL_BLEND);
+            glEnable(GL_CULL_FACE); 
+            
         }
         
-        glEnable(GL_DEPTH_TEST);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glEnable(GL_CULL_FACE); 
+        
         s.setMode(Mode.OBJECT);
         for(DrawableContainer d : dlist){
             if(d.getDistanceField()){
@@ -169,7 +183,7 @@ public class RenderEngine {
         if(shadVolumes){
             glDisable(GL_STENCIL_TEST);
         }
-        
+        /*
         sceneTex.endTexRender();
         glDisable(GL_CULL_FACE);
         GUI.startGUIPos();
@@ -182,5 +196,6 @@ public class RenderEngine {
         GUI.enableGUI();
         GUI.render();
         s.setDistanceField(false);
+                */
     }
 }

@@ -1,7 +1,7 @@
 #version 330 core
 
 layout(triangles) in;
-layout(triangle_strip, max_vertices=15) out;
+layout(triangle_strip, max_vertices=18) out;
 
 in vec4 vertexColors[];
 in vec2 textureCoords[];
@@ -34,7 +34,7 @@ uniform mat4 projection;
 const float density =0.00137;
 const float gradient = 2.32;
 
-float epsilon = 0.0001;
+float epsilon = 0.0009;
 
 void genPhong(int vertNum){
 
@@ -85,6 +85,7 @@ void volume(){
         emitInfinityQuad(poss[1], poss[2]);
         emitInfinityQuad(poss[2], poss[0]);
         
+        
         lightdir = normalize(poss[0] - light.lightpos); 
         gl_Position = mvp * vec4((poss[0] + light.lightpos * epsilon), 1.0);
         EmitVertex();
@@ -98,16 +99,17 @@ void volume(){
         EmitVertex();
         EndPrimitive();
         
-        lightdir = normalize(poss[0] - light.lightpos); 
-        gl_Position = mvp * vec4((light.lightpos), 0.0);
+        
+        lightdir = poss[0] - light.lightpos; 
+        gl_Position = mvp * vec4(light.lightpos, 0.0);
         EmitVertex();
         
-        lightdir = normalize(poss[1] - light.lightpos); 
-        gl_Position = mvp * vec4((light.lightpos), 0.0);
+        lightdir = poss[1] - light.lightpos; 
+        gl_Position = mvp * vec4(light.lightpos, 0.0);
         EmitVertex();
         
-        lightdir = normalize(pos[2] - light.lightpos); 
-        gl_Position = mvp * vec4((light.lightpos), 0.0);
+        lightdir = pos[2] - light.lightpos; 
+        gl_Position = mvp * vec4(light.lightpos, 0.0);
         EmitVertex();
         EndPrimitive();
         
