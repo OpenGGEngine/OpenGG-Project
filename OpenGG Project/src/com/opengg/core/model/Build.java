@@ -398,7 +398,7 @@ public class Build implements BuilderInterface {
     }
 
     public void setXYZ(int type, float x, float y, float z) {
-        ReflectivityTransmiss rt = currentMaterialBeingParsed.ka;
+        Vector3f rt = currentMaterialBeingParsed.ka;
         if (type == MTL_KD) {
             rt = currentMaterialBeingParsed.kd;
         } else if (type == MTL_KS) {
@@ -407,15 +407,13 @@ public class Build implements BuilderInterface {
             rt = currentMaterialBeingParsed.tf;
         }
 
-        rt.rx = x;
-        rt.gy = y;
-        rt.bz = z;
-        rt.isXYZ = true;
-        rt.isRGB = false;
+        rt.x = x;
+        rt.y = y;
+        rt.z = z;
     }
 
     public void setRGB(int type, float r, float g, float b) {
-        ReflectivityTransmiss rt = currentMaterialBeingParsed.ka;
+        Vector3f rt = currentMaterialBeingParsed.ka;
         if (type == MTL_KD) {
             rt = currentMaterialBeingParsed.kd;
         } else if (type == MTL_KS) {
@@ -424,11 +422,9 @@ public class Build implements BuilderInterface {
             rt = currentMaterialBeingParsed.tf;
         }
 
-        rt.rx = r;
-        rt.gy = g;
-        rt.bz = b;
-        rt.isRGB = true;
-        rt.isXYZ = false;
+        rt.x = r;
+        rt.y = g;
+        rt.z = b;
     }
 
     public void setIllum(int illumModel) {

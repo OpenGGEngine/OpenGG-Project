@@ -58,21 +58,21 @@ public class ModelLoader {
                 m = Material.defaultmaterial;
             } 
 
-                m.ka.rx = in.readDouble();
-                m.ka.gy = in.readDouble();
-                m.ka.bz = in.readDouble();
+                m.ka.x = in.readFloat();
+                m.ka.y = in.readFloat();
+                m.ka.z = in.readFloat();
 
-                m.kd.rx = in.readDouble();
-                m.kd.gy = in.readDouble();
-                m.kd.bz = in.readDouble();
+                m.kd.x = in.readFloat();
+                m.kd.y = in.readFloat();
+                m.kd.z = in.readFloat();
 
-                m.ks.rx = in.readDouble();
-                m.ks.gy = in.readDouble();
-                m.ks.bz = in.readDouble();
+                m.ks.x = in.readFloat();
+                m.ks.y = in.readFloat();
+                m.ks.z = in.readFloat();
 
-                m.tf.rx = in.readDouble();
-                m.tf.gy = in.readDouble();
-                m.tf.bz = in.readDouble();
+                m.tf.x = in.readFloat();
+                m.tf.y = in.readFloat();
+                m.tf.z = in.readFloat();
 
                 m.illumModel = in.readInt();
 

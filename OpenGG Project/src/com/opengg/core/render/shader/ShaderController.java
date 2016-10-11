@@ -31,7 +31,7 @@ public class ShaderController {
     private Shader fragmentTex;
     private Shader vertexTex;
     private Shader geomTex;
-    public int uniModel,rotm,lightpos,div,uniView,lightdistance,lightpower,shadow,skycolor,mode,specularexponent,specularexponents,specularcolor,hasspec,uniProj,billboard;
+    public int uniModel,rotm,lightpos,div,uniView,lightdistance,lightpower,shadow,skycolor,mode,specularexponent,specularexponents,specularcolor,hasspec,uniProj,billboard, ambient;
     float ratio;
     Matrix4f model= new Matrix4f(), view= new Matrix4f(), proj = new Matrix4f();
     private int uvy;
@@ -84,23 +84,26 @@ public class ShaderController {
         uniProj = program.getUniformLocation("projection"); 
         program.setUniform(uniProj, new Matrix4f());
         
-        int uniTex = program.getUniformLocation("texImage"); 
+        int uniTex = program.getUniformLocation("Kd"); 
         program.setUniform(uniTex, 0);
         
-        int uniskycolor = program.getUniformLocation("skycolor"); 
-        program.setUniform(uniskycolor, new Vector3f(0.5f,0.5f,0.5f));
-
-        int uniShadow = program.getUniformLocation("shadeImage"); 
-        program.setUniform(uniShadow, 1);
+        int uniAmb = program.getUniformLocation("Ka");
+        program.setUniform(uniAmb, 1);
         
         int uniCube = program.getUniformLocation("cubemap"); 
         program.setUniform(uniCube, 2);
         
-        int uniNorm = program.getUniformLocation("normImage");
+        int uniNorm = program.getUniformLocation("bump");
         program.setUniform(uniNorm, 3);
         
-        int uniSpec = program.getUniformLocation("specImage"); 
+        int uniSpec = program.getUniformLocation("Ks"); 
         program.setUniform(uniSpec, 4);
+        
+        int uniExp = program.getUniformLocation("Ns"); 
+        program.setUniform(uniExp, 5);
+        
+        int uniskycolor = program.getUniformLocation("skycolor"); 
+        program.setUniform(uniskycolor, new Vector3f(0.5f,0.5f,0.5f));
         
         lightpos = program.getUniformLocation("light.lightpos"); 
         program.setUniform(lightpos, new Vector3f(200,50,-10));
@@ -143,7 +146,7 @@ public class ShaderController {
         program.setUniform(specularexponent, 0);
         
         specularexponents = program.getUniformLocation("material.ka");
-        program.setUniform(specularexponents, 1f);
+        program.setUniform(ambient, 1f);
         
         specularcolor = program.getUniformLocation("material.ks");
         program.setUniform(specularcolor, new Vector3f());
@@ -305,8 +308,8 @@ public class ShaderController {
     }
     public void passMaterial(Material m,boolean specmap, boolean normmap){
         program.setUniform(specularexponent, (float) m.nsExponent);
-        program.setUniform(specularexponents, new Vector3f((float)m.ka.rx,(float)m.ka.gy,(float)m.ka.bz));
-        program.setUniform(specularcolor, new Vector3f((float)m.ks.rx,(float)m.ks.gy,(float)m.ks.bz));
+        program.setUniform(specularexponents, new Vector3f((float)m.ka.x,(float)m.ka.y,(float)m.ka.z));
+        program.setUniform(specularcolor, new Vector3f((float)m.ks.x,(float)m.ks.y,(float)m.ks.z));
         program.setUniform(hasspec, specmap);
         program.setUniform(hasnorm, normmap);
     }

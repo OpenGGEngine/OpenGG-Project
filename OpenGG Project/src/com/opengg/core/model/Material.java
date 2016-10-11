@@ -5,6 +5,7 @@
  */
 package com.opengg.core.model;
 
+import com.opengg.core.Vector3f;
 import com.opengg.core.render.texture.Texture;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -17,10 +18,10 @@ public class Material {
     
     public static Material defaultmaterial = new Material("default");
     public String name;
-    public ReflectivityTransmiss ka = new ReflectivityTransmiss();
-    public ReflectivityTransmiss kd = new ReflectivityTransmiss();
-    public ReflectivityTransmiss ks = new ReflectivityTransmiss();
-    public ReflectivityTransmiss tf = new ReflectivityTransmiss();
+    public Vector3f ka = new Vector3f();
+    public Vector3f kd = new Vector3f();
+    public Vector3f ks = new Vector3f();
+    public Vector3f tf = new Vector3f();
     public int illumModel = 0;
     public boolean dHalo = false;
     public double dFactor = 0.0;
@@ -41,10 +42,12 @@ public class Material {
     public Texture Kd = null;
     public Texture Ka = null;
     public Texture Ks = null;
+    public Texture Ns = null;
     public Texture norm = null;
     
     public Material(String name) {
         this.name = name;
+        System.out.println();
     }
     
     public void loadTextures(){
@@ -55,7 +58,10 @@ public class Material {
             Ka = new Texture(mapKaFilename);
         }
         if(mapKsFilename != null){
-            Ks = new Texture(mapKdFilename);
+            Ks = new Texture(mapKsFilename);
+        }
+        if(mapNsFilename != null){
+            Ks = new Texture(mapNsFilename);
         }
         if(bumpFilename != null){
             norm = new Texture(bumpFilename);
@@ -65,18 +71,18 @@ public class Material {
     public void toFileFormat(DataOutputStream s) throws IOException {
         s.writeInt(name.length());
         s.writeChars(name);
-        s.writeDouble(ka.rx);
-        s.writeDouble(ka.gy);
-        s.writeDouble(ka.bz);
-        s.writeDouble(kd.rx);
-        s.writeDouble(kd.gy);
-        s.writeDouble(kd.bz);
-        s.writeDouble(ks.rx);
-        s.writeDouble(ks.gy);
-        s.writeDouble(ks.bz);
-        s.writeDouble(tf.rx);
-        s.writeDouble(tf.gy);
-        s.writeDouble(tf.bz);
+        s.writeFloat(ka.x);
+        s.writeFloat(ka.y);
+        s.writeFloat(ka.z);
+        s.writeFloat(kd.x);
+        s.writeFloat(kd.y);
+        s.writeFloat(kd.z);
+        s.writeFloat(ks.x);
+        s.writeFloat(ks.y);
+        s.writeFloat(ks.z);
+        s.writeFloat(tf.x);
+        s.writeFloat(tf.y);
+        s.writeFloat(tf.z);
         s.writeInt(illumModel);
         s.writeBoolean(dHalo);
         s.writeDouble(dFactor);

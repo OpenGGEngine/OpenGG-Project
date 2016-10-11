@@ -40,10 +40,11 @@ uniform mat4 view;
 uniform mat4 model;
 uniform float uvmultx;
 uniform float uvmulty;
-uniform sampler2D texImage;
-uniform sampler2D shadeImage;
-uniform sampler2D specImage;
-uniform sampler2D normImage;
+uniform sampler2D Kd;
+uniform sampler2D Ka;
+uniform sampler2D Ks;
+uniform sampler2D Ns;
+uniform sampler2D bump;
 uniform samplerCube cubemap;
 uniform Material material;
 uniform Light light;
@@ -91,9 +92,7 @@ mat3 cotangent_frame( vec3 N, vec3 p, vec2 uv ){
 }
 
 vec3 calculatenormal( vec3 N, vec3 V, vec2 texcoord ){
-    // assume N, the interpolated vertex normal and 
-    // V, the view vector (vertex to eye)
-    vec3 map = texture2D( normImage, texcoord ).xyz;
+    vec3 map = texture2D( bump, texcoord ).xyz;
     map = map * 255./127. - 128./127.;
     mat3 TBN = cotangent_frame( N, -V, texcoord );
     return normalize( TBN * map );
@@ -117,7 +116,7 @@ vec4 shadify(){
     vec4 vertcolor = vertexColor;
     vec4 tempdif;
     
-    tempdif = getTex(texImage);
+    tempdif = getTex(Kd);
 
     vec3 diffuse = tempdif.rgb;
     
@@ -127,39 +126,26 @@ vec4 shadify(){
         discard;
     }
     
-    if(texture2D(shadeImage,textureCoord).a == 0){
-            
-            diffuse = vertcolor.rgb;
-            vertcolor.a = 0;
-    }
-
     vec3 ambient = material.ka * diffuse;
     
-    vec3 specular = vec3(1,1,1); 
-    
+    vec3 specular = vec3(1,1,1);
     float expo  = material.specexponent;
-    
+
     if(material.hasspecmap){
-        specular = specular * getTex(specImage).rgb;
+        specular = getTex(Ks).rgb;
     }else{
-        specular = specular * expo;
+        //specular = material.ks;
     }
-    
-    specular = clamp(specular, 0, 1);
     
     float distance = length( light.lightpos - pos.xyz );
 
     vec3 normal = ( view * model *  vec4(norm,0.0f)).xyz;
     vec3 n = normalize( normal );
+    
     if(material.hasnormmap){
        n = calculatenormal(n,eyedir,textureCoord);
     }
-    fcolor2 = vec4(normal,1);
-    fcolor3 = vec4(specular,1);
-    fcolor4 = vec4(diffuse,1);
 
-    
-    // Direction of the light (from the fragment to the light)
     vec3 l = normalize( lightdir );
     
     float cosTheta = clamp( dot( n,l ), 0,1 );
@@ -170,6 +156,7 @@ vec4 shadify(){
 
     float cosAlpha = clamp( dot( E,R ), 0,1 );
     
+    if(trans < 0.5) discard;
     
     vec4 fragColor = 
             // Ambient : simulates indirect lighting
@@ -177,11 +164,13 @@ vec4 shadify(){
             // Diffuse : "color" of the object
             vis * diffuse * light.color * light.lightpower * cosTheta / ((distance*distance)/light.lightdistance) +
             // Specular : reflective highlight, like a mirror
-            vis * specular * light.lightpower * pow(cosAlpha,specular.r) / ((distance*distance)/light.lightdistance)), trans);
+            vis * specular * light.lightpower * pow(cosAlpha, specular.r) / ((distance*distance)/light.lightdistance)), trans);
     //test gamma correction
     //float gamma = 2.2;
     //fragColor.rgb = pow(fragColor.rgb, vec3(1.0/gamma));
-
+    
+    
+    
     return fragColor;
 }
 
@@ -192,11 +181,11 @@ vec4 getCube(){
 vec4 getWaveEffect(){
     vec2 texcoord = textureCoord;
     texcoord.x += cos(texcoord.y * 4*2*3.14159) * 0.04 * time;
-    return texture(texImage, clamp(vec2(texcoord.x, sin(texcoord.y)), 0.001,0.999 ));
+    return texture(Kd, clamp(vec2(texcoord.x, sin(texcoord.y)), 0.001,0.999 ));
 }
 
 float readDepth( in vec2 coord ) {
-	return (2.0 * camerarange.x) / (camerarange.y + camerarange.x - texture2D( shadeImage, coord ).x * (camerarange.y - camerarange.x));	
+	return (2.0 * camerarange.x) / (camerarange.y + camerarange.x - texture2D( Ka, coord ).x * (camerarange.y - camerarange.x));	
 }
  
 float compareDepths( in float depth1, in float depth2 ) {
@@ -292,7 +281,7 @@ vec4 ssao(){
 	ao/=16.0;
         ao = clamp(ao, 0, .5);
         fcolor2 = vec4(1-ao,1-ao,1-ao,1);
-	return vec4(1-ao) * texture2D(texImage,textureCoord) * 2;
+	return vec4(1-ao) * texture2D(Kd,textureCoord) * 2;
 }
 
 void processPP(){
@@ -306,7 +295,7 @@ void main() {
     }else if(mode == 1){
         //fcolor = (getTex(texImage)/material.ka).rgb;
     }else if(mode == 2){
-        fcolor = getTex(texImage);
+        fcolor = getTex(Kd);
     }else if(mode == 3){
         fcolor = getCube();
     }else if(mode == 4 || mode == 6){
