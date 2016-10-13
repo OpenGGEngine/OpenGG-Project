@@ -109,7 +109,9 @@ vec4 shadify(){
     
     float specpow = 1;
     if(material.hasspecpow){
-        specpow = getTex(Ns).r;
+        vec4 specpowvec = getTex(Ns);
+        specpow = specpowvec.r * 100 * specpowvec.a;
+        
     }else{
         specpow = material.ns;
     }
