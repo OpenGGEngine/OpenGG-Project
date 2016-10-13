@@ -20,10 +20,12 @@ struct Material
 {
     bool hasnormmap;
     bool hasspecmap;
+    bool hasspecpow;
+    bool hasambmap;
     vec3 ks;
     vec3 ka;
     vec3 kd;
-    float specexponent;
+    float ns;
 };
 struct Light
 {
@@ -51,25 +53,6 @@ uniform Light light;
 uniform int mode;
 vec2 camerarange = vec2(1280, 960);
 vec2 screensize = vec2(1280, 960);
-
-vec2 randdisk[16] = vec2[]( 
-   vec2( -0.94201624, -0.39906216 ), 
-   vec2( 0.94558609, -0.76890725 ), 
-   vec2( -0.094184101, -0.92938870 ), 
-   vec2( 0.34495938, 0.29387760 ), 
-   vec2( -0.91588581, 0.45771432 ), 
-   vec2( -0.81544232, -0.87912464 ), 
-   vec2( -0.38277543, 0.27676845 ), 
-   vec2( 0.97484398, 0.75648379 ), 
-   vec2( 0.44323325, -0.97511554 ), 
-   vec2( 0.53742981, -0.47373420 ), 
-   vec2( -0.26496911, -0.41893023 ), 
-   vec2( 0.79197514, 0.19090188 ), 
-   vec2( -0.24188840, 0.99706507 ), 
-   vec2( -0.81409955, 0.91437590 ), 
-   vec2( 0.19984126, 0.78641367 ), 
-   vec2( 0.14383161, -0.14100790 ) 
-);
 
 float bias = 0.005;
 float vis = 1;
@@ -112,65 +95,52 @@ vec4 getTex(sampler2D tname){
 }
 
 vec4 shadify(){
-    
-    vec4 vertcolor = vertexColor;
-    vec4 tempdif;
-    
-    tempdif = getTex(Kd);
+    vec4 color = getTex(Kd);
 
-    vec3 diffuse = tempdif.rgb;
-    
-    float trans = tempdif.a;
-    
-    if(trans < 0.2){
-        discard;
-    }
+    vec3 diffuse = color.rgb;
     
     vec3 ambient = material.ka * diffuse;
     
     vec3 specular = vec3(1,1,1);
-    float expo  = material.specexponent;
+    
+    float trans = color.a;
+    
+    if(trans < 0.2) discard;
+    
+    float specpow = 1;
+    if(material.hasspecpow){
+        specpow = getTex(Ns).r;
+    }else{
+        specpow = material.ns;
+    }
 
     if(material.hasspecmap){
         specular = getTex(Ks).rgb;
     }else{
-        //specular = material.ks;
+        specular = material.ks;
     }
     
     float distance = length( light.lightpos - pos.xyz );
 
-    vec3 normal = ( view * model *  vec4(norm,0.0f)).xyz;
-    vec3 n = normalize( normal );
+    vec3 n = normalize(( view * model *  vec4(norm,0.0f)).xyz);
     
     if(material.hasnormmap){
        n = calculatenormal(n,eyedir,textureCoord);
     }
 
-    vec3 l = normalize( lightdir );
-    
+    vec3 l = normalize( lightdir );   
     float cosTheta = clamp( dot( n,l ), 0,1 );
-
+    
+    
     vec3 E = normalize(eyedir);
-
     vec3 R = reflect(-l,n);
-
     float cosAlpha = clamp( dot( E,R ), 0,1 );
     
-    if(trans < 0.5) discard;
-    
     vec4 fragColor = 
-            // Ambient : simulates indirect lighting
             vec4((ambient +
-            // Diffuse : "color" of the object
-            vis * diffuse * light.color * light.lightpower * cosTheta / ((distance*distance)/light.lightdistance) +
-            // Specular : reflective highlight, like a mirror
-            vis * specular * light.lightpower * pow(cosAlpha, specular.r) / ((distance*distance)/light.lightdistance)), trans);
-    //test gamma correction
-    //float gamma = 2.2;
-    //fragColor.rgb = pow(fragColor.rgb, vec3(1.0/gamma));
-    
-    
-    
+            diffuse * light.color * light.lightpower * cosTheta / ((distance*distance)/light.lightdistance) +
+            specular * light.lightpower * pow(cosAlpha, specpow) / ((distance*distance)/light.lightdistance)), trans);
+ 
     return fragColor;
 }
 

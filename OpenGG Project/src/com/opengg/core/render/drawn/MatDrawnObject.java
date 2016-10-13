@@ -55,12 +55,14 @@ public class MatDrawnObject implements Drawable {
     @Override
     public void draw() {
         if(m.Kd != null)
-            m.Kd.useTexture(0);
-        if(m.Ks != null) 
-            m.Ks.useTexture(4);   
+            m.Kd.useTexture(0);     
         if(m.norm != null) 
             m.norm.useTexture(3);
-        GlobalInfo.main.passMaterial(m, m.Ks != null,  m.norm != null);
+        if(m.Ks != null) 
+            m.Ks.useTexture(4); 
+        if(m.Ns != null)
+            m.Ns.useTexture(5);
+        GlobalInfo.main.passMaterial(m);
         d.draw();
     }
 

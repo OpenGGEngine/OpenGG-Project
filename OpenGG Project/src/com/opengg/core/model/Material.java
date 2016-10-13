@@ -38,16 +38,20 @@ public class Material {
     public String bumpFilename = null;
     public int reflType = BuilderInterface.MTL_REFL_TYPE_UNKNOWN;
     public String reflFilename = null;
-    
     public Texture Kd = null;
     public Texture Ka = null;
     public Texture Ks = null;
     public Texture Ns = null;
+    public Texture D = null;
     public Texture norm = null;
+    
+    public boolean hasspecmap = false;
+    public boolean hasnormmap = false;
+    public boolean hasspecpow = false;
+    public boolean hasreflmap = false;
     
     public Material(String name) {
         this.name = name;
-        System.out.println();
     }
     
     public void loadTextures(){
@@ -55,15 +59,19 @@ public class Material {
             Kd = new Texture(mapKdFilename);
         }
         if(mapKaFilename != null){
+            hasreflmap = true;
             Ka = new Texture(mapKaFilename);
         }
         if(mapKsFilename != null){
+            hasspecmap = true;
             Ks = new Texture(mapKsFilename);
         }
         if(mapNsFilename != null){
-            Ks = new Texture(mapNsFilename);
+            hasspecpow = true;
+            Ns = new Texture(mapNsFilename);
         }
         if(bumpFilename != null){
+            hasnormmap = true;
             norm = new Texture(bumpFilename);
         }
     }
