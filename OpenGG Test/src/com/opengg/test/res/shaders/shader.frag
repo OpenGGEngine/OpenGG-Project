@@ -81,6 +81,7 @@ vec3 calculatenormal( vec3 N, vec3 V, vec2 texcoord ){
     return normalize( TBN * map );
 }
 
+
 vec4 getTex(sampler2D tname){
     if(text == 1){
         vec4 col = texture(tname, textureCoord);
@@ -98,20 +99,19 @@ vec4 shadify(){
     vec4 color = getTex(Kd);
 
     vec3 diffuse = color.rgb;
+
+    float trans = color.a;
+    
+    if(trans < 0.2) discard;
     
     vec3 ambient = material.ka * diffuse;
     
     vec3 specular = vec3(1,1,1);
     
-    float trans = color.a;
-    
-    if(trans < 0.2) discard;
-    
     float specpow = 1;
     if(material.hasspecpow){
         vec4 specpowvec = getTex(Ns);
-        specpow = specpowvec.r * 100 * specpowvec.a;
-        
+        specpow = specpowvec.r * 100 ;
     }else{
         specpow = material.ns;
     }
@@ -138,10 +138,12 @@ vec4 shadify(){
     vec3 R = reflect(-l,n);
     float cosAlpha = clamp( dot( E,R ), 0,1 );
     
+    float distmult = ((distance*distance)/light.lightdistance); 
+    
     vec4 fragColor = 
             vec4((ambient +
-            diffuse * light.color * light.lightpower * cosTheta / ((distance*distance)/light.lightdistance) +
-            specular * light.lightpower * pow(cosAlpha, specpow) / ((distance*distance)/light.lightdistance)), trans);
+            diffuse * light.color * light.lightpower * cosTheta / distmult +
+            specular * light.lightpower * pow(cosAlpha, specpow) / distmult), trans);
  
     return fragColor;
 }

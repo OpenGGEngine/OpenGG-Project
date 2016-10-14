@@ -238,7 +238,7 @@ public class OpenGGTest implements KeyboardListener {
         c.setPos(pos);
         c.setRot(rot);
 
-        s.setLightPos(new Vector3f(40, 80, 40));
+        s.setLightPos(new Vector3f(40, 200, 40));
         s.setView(c);
         s.setPerspective(90, ratio, 1, 2500f);
         

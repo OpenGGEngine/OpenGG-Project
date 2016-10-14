@@ -112,10 +112,10 @@ public class ShaderController {
         program.setUniform(uniView, new Matrix4f());
         
         lightdistance = program.getUniformLocation("light.lightdistance"); 
-        program.setUniform(lightdistance, 100f);
+        program.setUniform(lightdistance, 250f);
         
         lightpower = program.getUniformLocation("light.lightpower"); 
-        program.setUniform(lightpower, 50f);
+        program.setUniform(lightpower, 100f);
         
         lightcolor = program.getUniformLocation("light.color"); 
         program.setUniform(lightcolor, new Vector3f(1,1,1));
