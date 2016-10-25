@@ -9,6 +9,7 @@ import com.opengg.core.Matrix4f;
 import com.opengg.core.io.objloader.parser.MTLMaterial;
 import com.opengg.core.render.texture.Texture;
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 
 /**
  *
@@ -25,6 +26,10 @@ public class TexturedDrawnObject implements Drawable{
     }
     public TexturedDrawnObject(FloatBuffer b,int vertSize,Texture t){
         object = new DrawnObject(b,vertSize);
+        this.tex = t;
+    }
+    public TexturedDrawnObject(FloatBuffer b,IntBuffer i,Texture t){
+        object = new DrawnObject(b,i);
         this.tex = t;
     }
     @Override

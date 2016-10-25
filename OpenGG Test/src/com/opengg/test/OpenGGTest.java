@@ -8,6 +8,7 @@ import com.opengg.core.audio.AudioSource;
 import com.opengg.core.engine.OpenGG;
 import com.opengg.core.engine.RenderEngine;
 import com.opengg.core.engine.WorldManager;
+import com.opengg.core.gui.GUI;
 import com.opengg.core.gui.GUIItem;
 import com.opengg.core.gui.GUIText;
 import com.opengg.core.io.input.KeyboardEventHandler;
@@ -22,11 +23,13 @@ import com.opengg.core.render.drawn.DrawnObject;
 import com.opengg.core.render.drawn.DrawnObjectGroup;
 import com.opengg.core.render.drawn.InstancedDrawnObject;
 import com.opengg.core.render.drawn.MatDrawnObject;
+import com.opengg.core.render.drawn.TexturedDrawnObject;
 import com.opengg.core.render.particle.ParticleSystem;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.texture.Cubemap;
 import com.opengg.core.render.texture.FramebufferTexture;
 import com.opengg.core.render.texture.Texture;
+import com.opengg.core.render.texture.TextureManager;
 import com.opengg.core.render.texture.text.GGFont;
 import com.opengg.core.render.window.DisplayMode;
 import com.opengg.core.render.window.GLFWWindow;
@@ -36,12 +39,14 @@ import com.opengg.core.util.GlobalInfo;
 import static com.opengg.core.util.GlobalUtil.print;
 import com.opengg.core.util.Time;
 import com.opengg.core.world.Camera;
+import com.opengg.core.world.Terrain;
 import com.opengg.core.world.World;
 import com.opengg.core.world.WorldObject;
 import com.opengg.core.world.components.ModelRenderComponent;
 import com.opengg.core.world.components.ParticleRenderComponent;
 import com.opengg.core.world.components.physics.PhysicsComponent;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
@@ -104,7 +109,6 @@ public class OpenGGTest implements KeyboardListener {
             win = new GLFWWindow(1280, 960, "Test", DisplayMode.WINDOWED);
             
         } catch (Exception ex) {
-            ex.printStackTrace();
         }
 
         setup();
@@ -150,7 +154,10 @@ public class OpenGGTest implements KeyboardListener {
         ppbf.setupTexToBuffer(win.getWidth(), win.getHeight());
         t3.loadTexture("C:/res/deer.png", true);
         t2.loadTexture("C:/res/test.png", true);
-        f = new GGFont(t2, new File("C:/res/test.fnt"));
+        
+        TextureManager.loadTexture("C:/res/test.png", true);
+        
+        f = new GGFont("C:/res/test.png", new File("C:/res/test.fnt"));
         GUIText g = new GUIText("It is a period of civil war. Rebel spaceships, striking from a hidden base,"
                 + " have won their first victory against the evil Galactic Empire. During the battle,"
                 + " Rebel spies managed to steal secret plans to the Empires ultimate weapon, the DEATH STAR,"
@@ -168,7 +175,7 @@ public class OpenGGTest implements KeyboardListener {
                 + " the Supreme Chancellor has secretly dispatched two Jedi Knights,"
                 + " the guardians of peace and justice in the galaxy, to settle the conflict...", f, 1f, new Vector2f(), 0.5f, false);
         
-        base2 = f.loadText(g);
+       base2 = f.loadText(g);
         
         t2.useTexture(0);
         cb.loadTexture("C:/res/skybox/majestic");
@@ -177,7 +184,7 @@ public class OpenGGTest implements KeyboardListener {
         
         sky = new DrawnObject(ObjectBuffers.genSkyCube(), 12);
         
-        print("Model and Texture Loading Completed");
+       
         
         w = WorldManager.getDefaultWorld();
         GlobalInfo.curworld = w;
@@ -193,7 +200,13 @@ public class OpenGGTest implements KeyboardListener {
         awps.attach(ep1 = new ModelRenderComponent(awp3));
         awps.setPosition(new Vector3f(5,5,5));
         
-        ModelRenderComponent r = new ModelRenderComponent(ModelLoader.loadModel("C:/res/3DSMusicPark/3DSMusicPark.bmf"));
+        //ModelRenderComponent r = new ModelRenderComponent(ModelLoader.loadModel("C:/res/3DSMusicPark/3DSMusicPark.bmf"));
+         print("Model and Texture Loading Completed");
+         
+         print(TextureManager.numTextures() + " textures loaded. " + TextureManager.repsave);
+         Terrain ts = new Terrain(800,600,t2);
+         ts.generateTerrain();
+          ModelRenderComponent r = new ModelRenderComponent(new TexturedDrawnObject(ts.elementals,ts.indices,t3));
         bad = new PhysicsComponent();
         terrain = new WorldObject();
         terrain.attach(r);
@@ -220,8 +233,10 @@ public class OpenGGTest implements KeyboardListener {
     }
 
     public void exit() {     
+        TextureManager.destroy();
         AudioHandler.destroy();
         vao.delete();
+        
     }
 
     public void render() {
@@ -243,6 +258,9 @@ public class OpenGGTest implements KeyboardListener {
         s.setPerspective(90, ratio, 1, 2500f);
         
         RenderEngine.drawWorld();
+        
+        GUI.enableGUI();
+        GUI.render();
         
     }
 
