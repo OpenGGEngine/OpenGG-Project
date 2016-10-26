@@ -64,8 +64,7 @@ public class RenderEngine {
     
     public static void init(){
         s = GlobalInfo.main;
-        sceneTex = new FramebufferTexture();
-        sceneTex.setupTexToBuffer(GlobalInfo.window.getWidth(), GlobalInfo.window.getHeight());
+        sceneTex = FramebufferTexture.getFramebuffer(GlobalInfo.window.getWidth(), GlobalInfo.window.getHeight());
         
         sceneQuad = new DrawnObject(ObjectBuffers.getSquareUI(-1, 1, -1, 1, 1f, 1, false),12);
         
@@ -115,10 +114,8 @@ public class RenderEngine {
         return shadVolumes;
     }
     
-    public static void drawWorld(){
-        
-        //sceneTex.startTexRender();
-        
+    public static void draw(){
+        sceneTex.startTexRender();
         if(shadVolumes){
             glDepthMask(true);
             
@@ -183,7 +180,7 @@ public class RenderEngine {
         if(shadVolumes){
             glDisable(GL_STENCIL_TEST);
         }
-        /*
+        
         sceneTex.endTexRender();
         glDisable(GL_CULL_FACE);
         GUI.startGUIPos();
@@ -196,6 +193,6 @@ public class RenderEngine {
         GUI.enableGUI();
         GUI.render();
         s.setDistanceField(false);
-                */
+        
     }
 }

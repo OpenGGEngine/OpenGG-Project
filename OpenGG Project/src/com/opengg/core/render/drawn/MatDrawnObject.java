@@ -55,22 +55,14 @@ public class MatDrawnObject implements Drawable {
     
     @Override
     public void draw() {
-//        if(m.Kd != null)
-//            m.Kd.useTexture(0);     
-//        if(m.norm != null) 
-//            m.norm.useTexture(3);
-//        if(m.Ks != null) 
-//            m.Ks.useTexture(4); 
-//        if(m.Ns != null)
-//            m.Ns.useTexture(5);
-        if(m.mapKdFilename != null)
-            TextureManager.getTexture(m.mapKdFilename).useTexture(0);
-        if(m.bumpFilename != null) 
-            TextureManager.getTexture(m.bumpFilename).useTexture(3);
-        if(m.mapKsFilename != null) 
-            TextureManager.getTexture(m.mapKsFilename).useTexture(4);
-        if(m.mapNsFilename != null)
-            TextureManager.getTexture(m.mapNsFilename).useTexture(5);
+        if(m.Kd != null)
+            m.Kd.useTexture(0);     
+        if(m.norm != null) 
+            m.norm.useTexture(3);
+        if(m.Ks != null) 
+            m.Ks.useTexture(4); 
+        if(m.Ns != null)
+            m.Ns.useTexture(5);
         GlobalInfo.main.passMaterial(m);
         d.draw();
     }

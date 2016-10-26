@@ -7,7 +7,6 @@ package com.opengg.core.model;
 
 import com.opengg.core.Vector3f;
 import com.opengg.core.render.texture.Texture;
-import com.opengg.core.render.texture.TextureManager;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
@@ -39,12 +38,12 @@ public class Material {
     public String bumpFilename = null;
     public int reflType = BuilderInterface.MTL_REFL_TYPE_UNKNOWN;
     public String reflFilename = null;
-//    public Texture Kd = null;
-//    public Texture Ka = null;
-//    public Texture Ks = null;
-//    public Texture Ns = null;
-//    public Texture D = null;
-//    public Texture norm = null;
+    public Texture Kd = null;
+    public Texture Ka = null;
+    public Texture Ks = null;
+    public Texture Ns = null;
+    public Texture D = null;
+    public Texture norm = null;
     
     public boolean hasspecmap = false;
     public boolean hasnormmap = false;
@@ -57,28 +56,23 @@ public class Material {
     
     public void loadTextures(){
         if(mapKdFilename != null){
-//            Kd = new Texture(mapKdFilename);
-            TextureManager.loadTexture(mapKdFilename, true);
+            Kd = Texture.get(mapKdFilename);
         }
         if(mapKaFilename != null){
             hasreflmap = true;
-        //    Ka = new Texture(mapKaFilename);
-            TextureManager.loadTexture(mapKaFilename, true);
+            Ka = Texture.get(mapKaFilename);
         }
         if(mapKsFilename != null){
             hasspecmap = true;
-           // Ks = new Texture(mapKsFilename);
-            TextureManager.loadTexture(mapKsFilename, true);
+            Ks = Texture.get(mapKsFilename);
         }
         if(mapNsFilename != null){
             hasspecpow = true;
-    //        Ns = new Texture(mapNsFilename);
-            TextureManager.loadTexture(mapNsFilename, true);
+            Ns = Texture.get(mapNsFilename);
         }
         if(bumpFilename != null){
             hasnormmap = true;
-   //         norm = new Texture(bumpFilename);
-            TextureManager.loadTexture(bumpFilename, true);
+            norm = Texture.get(bumpFilename);
         }
     }
     

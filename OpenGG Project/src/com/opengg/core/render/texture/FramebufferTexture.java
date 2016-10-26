@@ -12,7 +12,6 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL14.GL_DEPTH_COMPONENT32;
-import static org.lwjgl.opengl.GL20.glDrawBuffers;
 import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.opengl.GL32.glFramebufferTexture;
 
@@ -42,6 +41,12 @@ public class FramebufferTexture extends Texture {
         glBindFramebuffer(GL_READ_FRAMEBUFFER, fb); // Make sure your multisampled FBO is the read framebuffer
         glDrawBuffer(GL_BACK);                       // Set the back buffer as the draw buffer
         glBlitFramebuffer(0, 0, GlobalInfo.window.getWidth(), GlobalInfo.window.getHeight(), 0, 0, GlobalInfo.window.getWidth(), GlobalInfo.window.getHeight(), GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    }
+    
+    public static FramebufferTexture getFramebuffer(int sizex, int sizey){
+        FramebufferTexture t = new FramebufferTexture();
+        t.setupTexToBuffer(sizex, sizey);
+        return t;
     }
     
     public int setupTexToBuffer(int sizex, int sizey){

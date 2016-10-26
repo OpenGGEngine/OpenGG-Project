@@ -57,7 +57,6 @@ public class OpenGGTest implements KeyboardListener {
 
     static long window;
     GLFWWindow win;
-    private float ratio;
     private float sens = 0.25f;
     private float sav;
     public float xrot, yrot;
@@ -79,7 +78,7 @@ public class OpenGGTest implements KeyboardListener {
 
     Camera c;
     FramebufferTexture t1 = new FramebufferTexture();
-    Texture t2 = new Texture();
+    Texture t2;
     FramebufferTexture ppbf = new FramebufferTexture();
     InstancedDrawnObject flashbang;
     DrawnObject test5,sky;
@@ -89,7 +88,7 @@ public class OpenGGTest implements KeyboardListener {
 
     OBJModel m;
     OBJModel m2;
-    private Texture t3 = new Texture();
+    private Texture t3;
     private Cubemap cb = new Cubemap();
     private ShaderController s = new ShaderController();
     private Time t;
@@ -152,12 +151,10 @@ public class OpenGGTest implements KeyboardListener {
         
         t1.setupTexToBuffer(2000,2000);
         ppbf.setupTexToBuffer(win.getWidth(), win.getHeight());
-        t3.loadTexture("C:/res/deer.png", true);
-        t2.loadTexture("C:/res/test.png", true);
-        
-        TextureManager.loadTexture("C:/res/test.png", true);
-        
-        f = new GGFont("C:/res/test.png", new File("C:/res/test.fnt"));
+        t3 = Texture.get("C:/res/deer.png");
+        t2 = Texture.get("C:/res/test.png");
+
+        f = new GGFont(t2, new File("C:/res/test.fnt"));
         GUIText g = new GUIText("It is a period of civil war. Rebel spaceships, striking from a hidden base,"
                 + " have won their first victory against the evil Galactic Empire. During the battle,"
                 + " Rebel spies managed to steal secret plans to the Empires ultimate weapon, the DEATH STAR,"
@@ -200,20 +197,19 @@ public class OpenGGTest implements KeyboardListener {
         awps.attach(ep1 = new ModelRenderComponent(awp3));
         awps.setPosition(new Vector3f(5,5,5));
         
-        //ModelRenderComponent r = new ModelRenderComponent(ModelLoader.loadModel("C:/res/3DSMusicPark/3DSMusicPark.bmf"));
-         print("Model and Texture Loading Completed");
+        ModelRenderComponent r = new ModelRenderComponent(ModelLoader.loadModel("C:/res/3DSMusicPark/3DSMusicPark.bmf"));
+        print("Model and Texture Loading Completed");
          
-         print(TextureManager.numTextures() + " textures loaded. " + TextureManager.repsave);
-         Terrain ts = new Terrain(800,600,t2);
-         ts.generateTerrain();
-          ModelRenderComponent r = new ModelRenderComponent(new TexturedDrawnObject(ts.elementals,ts.indices,t3));
-        bad = new PhysicsComponent();
+        print(TextureManager.numTextures() + " textures loaded. " + TextureManager.repsave);
+        
+        //Terrain ts = new Terrain(800,600,t3);
+        //ts.generateTerrain();
+        //ModelRenderComponent r = new ModelRenderComponent(new TexturedDrawnObject(ts.elementals,ts.indices,t3));
+
         terrain = new WorldObject();
         terrain.attach(r);
-        terrain.attach(bad);
+        terrain.attach(bad = new PhysicsComponent());
         terrain.attach(p);
-        
-        ratio = win.getRatio();
         
         t = new Time();
         
@@ -255,12 +251,9 @@ public class OpenGGTest implements KeyboardListener {
 
         s.setLightPos(new Vector3f(40, 200, 40));
         s.setView(c);
-        s.setPerspective(90, ratio, 1, 2500f);
+        s.setPerspective(90, win.getRatio(), 1, 2500f);
         
-        RenderEngine.drawWorld();
-        
-        GUI.enableGUI();
-        GUI.render();
+        RenderEngine.draw();
         
     }
 

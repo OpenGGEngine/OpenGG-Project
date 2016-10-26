@@ -35,40 +35,47 @@ public class Texture {
     public static Texture blank;
     int width;
     int height;
+    private int offset;
     //ByteBuffer buffer; 
     
-    public Texture(){}
-    
-    public Texture(String path){
-        loadTexture(path, true);
+    private Texture(String path){
+        forceLoadTexture(path, true);
     }
     
+    Texture(){};
+    
+    public static Texture get(String path){
+        Texture t;
+        if((t = TextureManager.getTexture(path)) != null){
+            return t;
+        }else{
+            t = new Texture(path);
+            TextureManager.setTexture(path, t);
+            return t;
+        }
+    }
     public void useTexture(int loc){
         glActiveTexture(GL_TEXTURE0 + loc);
         glBindTexture(GL_TEXTURE_2D, texture);
     }   
-    
     public void setLODBias(int bias){
         glActiveTexture(GL_TEXTURE9);
         glBindTexture(GL_TEXTURE_2D, texture);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS, bias);
         glActiveTexture(GL_TEXTURE0);
     }
-    
     public void setMagFilter(int filter){
         glActiveTexture(GL_TEXTURE9);
         glBindTexture(GL_TEXTURE_2D, texture);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
         glActiveTexture(GL_TEXTURE0);
     }
-    
     public void setMinFilter(int filter){
         glActiveTexture(GL_TEXTURE9);
         glBindTexture(GL_TEXTURE_2D, texture);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
         glActiveTexture(GL_TEXTURE0);
     }
-    
     public int loadFromBuffer(ByteBuffer b, int fwidth, int fheight){
         texture = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, texture);
@@ -87,9 +94,8 @@ public class Texture {
         glBindTexture(GL_TEXTURE_2D, 0);
         
         return texture;
-    }
-    
-    public int loadTexture(String path, boolean flipped){
+    } 
+    public int forceLoadTexture(String path, boolean flipped){
         ByteBuffer buffer;
         glActiveTexture(GL_TEXTURE0);
         texture = glGenTextures();
@@ -171,8 +177,6 @@ public class Texture {
         }
         
     }
-    private int offset;
-    
     private BufferedImage loadtga(String filename) throws IOException{
         File f = new File(filename);
         byte[] buf = new byte[(int)f.length()];
@@ -182,19 +186,14 @@ public class Texture {
         return decode(buf);
 
     }
-    private static int btoi(byte b)
-    {
+    private static int btoi(byte b){
         int a = b;
         return (a<0?256+a:a);
     }
-
-    private int read(byte[] buf)
-    {
+    private int read(byte[] buf){
         return btoi(buf[offset++]);
     }
-
-    public BufferedImage decode(byte[] buf) throws IOException
-    {
+    public BufferedImage decode(byte[] buf) throws IOException{
         offset = 0;
 
         // Reading header
