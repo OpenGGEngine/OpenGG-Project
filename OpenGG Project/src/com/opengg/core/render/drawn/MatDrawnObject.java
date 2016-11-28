@@ -8,7 +8,6 @@ package com.opengg.core.render.drawn;
 
 import com.opengg.core.Matrix4f;
 import com.opengg.core.model.Material;
-import com.opengg.core.render.texture.TextureManager;
 import com.opengg.core.util.GlobalInfo;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
