@@ -4,7 +4,9 @@
  * and open the template in the editor.
  */
 
-package com.opengg.core.world.components;
+package com.opengg.core.world.components.triggers;
+
+import com.opengg.core.world.components.*;
 
 /**
  *

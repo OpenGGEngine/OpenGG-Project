@@ -4,15 +4,16 @@
  * and open the template in the editor.
  */
 
-package com.opengg.core.world.components;
+package com.opengg.core.world.components.triggers;
 
+import com.opengg.core.world.components.*;
 import java.util.ArrayList;
 
 /**
  *
  * @author Javier
  */
-public interface Trigger {
-    public void addTriggerDest(Triggerable dest);
+public interface Trigger extends Updatable{
+    public void subscribeToTrigger(Triggerable dest);
     public ArrayList<Triggerable> getTriggerDest();
 }
