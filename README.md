@@ -2,12 +2,14 @@
 ___________________________________________________________________________
 One year ago OBJLoader2 was released to the world in all its glory and forever changed the 
 the way people designed model loaders. With innovative methods like FastInt and unique uses of 
-interfaces, this loader was really in a class by itself. While originally shunned by disgruntled 
-developers like javster101 who said quotes like "What the Hell is IMTLLimitingScanner" and "How the
+interfaces, this loader was really in a tier by itself. While originally shunned by disgruntled 
+developers like javster101 who said quotes like "What  is IMTLLimitingScanner" and "How the
 hell ddo you not know how to use the thing you commited", OBJLoader2 is now viewed as the forefather 
 of OpenGG model loading and ushered the additions of DrawnObjectGroup and MatDrawnObject. So on this
 day we celebrate the "commitment" of the developers who work on Opengg and the damn pull problems that
 happened on this fine day.
+
+Ripperino in pieces OBJLoader2
 
 OpenGG engine is a world class engine designed for efficiancy and performance.
 Because of this, we have decided to use Java as a language of choice. This engine 
