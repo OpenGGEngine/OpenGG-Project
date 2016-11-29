@@ -7,7 +7,7 @@ package com.opengg.core.engine;
 
 import com.opengg.core.util.GlobalInfo;
 import com.opengg.core.util.Time;
-import com.opengg.core.world.WorldObject;
+import com.opengg.core.world.components.Updatable;
 import java.util.ArrayList;
 
 /**
@@ -16,7 +16,7 @@ import java.util.ArrayList;
  */
 public class WorldEngine{
     
-    ArrayList<WorldObject> objs = new ArrayList<>();
+    ArrayList<Updatable> objs = new ArrayList<>();
     Time t;
     
     public WorldEngine(){
@@ -24,15 +24,14 @@ public class WorldEngine{
         GlobalInfo.engine = this;
     }
     
-    public void addObjects(WorldObject e){
+    public void addObjects(Updatable e){
         objs.add(e);
     }
     
     public void update(){
         
         float i = t.getDeltaSec();
-        //System.out.println("Demo Disk");
-        for(WorldObject e : objs){
+        for(Updatable e : objs){
             e.update(i);
         }
     }

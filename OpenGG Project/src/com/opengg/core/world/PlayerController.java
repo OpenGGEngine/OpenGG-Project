@@ -10,18 +10,19 @@ import com.opengg.core.Vector3f;
 import com.opengg.core.io.input.KeySet;
 import com.opengg.core.io.input.KeyboardListener;
 import com.opengg.core.util.GlobalInfo;
+import com.opengg.core.world.components.Updatable;
 import com.opengg.core.world.components.physics.PhysicsComponent;
 
 /**
  *
  * @author Javier
  */
-public class Player extends WorldObject implements KeyboardListener {
+public class PlayerController extends WorldObject implements Updatable {
     KeySet s;
     PhysicsComponent c;
     Vector3f acc;
 
-    public Player(){
+    public PlayerController(){
         s = GlobalInfo.s;
     }
     
@@ -33,17 +34,5 @@ public class Player extends WorldObject implements KeyboardListener {
     @Override
     public void update(float delta){
         c.acceleration = acc;
-        super.update(delta);
-    }
-    
-    @Override
-    public void keyPressed(int key) {
-        
-    }
-
-    @Override
-    public void keyReleased(int key) {
-        
-    }
-    
+    }  
 }

@@ -7,7 +7,6 @@ package com.opengg.core.model;
 
 import static com.opengg.core.util.FileUtil.getFileName;
 import static com.opengg.core.util.GlobalUtil.print;
-import static com.opengg.core.util.GlobalUtil.print;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
