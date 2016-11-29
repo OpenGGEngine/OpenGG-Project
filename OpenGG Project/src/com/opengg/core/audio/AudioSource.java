@@ -35,29 +35,17 @@ public class AudioSource {
             error("OpenAL Error in AudioSource Generation: " + i);
     }
     public void play(){
-        isPaused = false;
         alSourcePlay(audioid);
     }
     public void pause(){
-        isPaused = true;
         alSourcePause(audioid);
     }
     public void stop(){
-        isPaused = true;
         alSourceStop(audioid);
     }
-    public void setShouldLoop(boolean loop){
-        if(loop){
-            AL10.alSourcei(audioid, AL10.AL_LOOPING,  AL10.AL_TRUE  );
-        }else{
-            AL10.alSourcei(audioid, AL10.AL_LOOPING,  AL10.AL_FALSE  );
-        }
+    public void setLoop(boolean loop){
+        AL10.alSourcei(audioid, AL10.AL_LOOPING,  loop ? AL10.AL_TRUE : AL10.AL_FALSE  );
     }
-    
-    public boolean isPaused(){
-        return isPaused;
-    }
-    
     public void remove(){
         alDeleteSources(audioid);
     } 
