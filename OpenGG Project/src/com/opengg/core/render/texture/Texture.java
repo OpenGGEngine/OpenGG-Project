@@ -38,7 +38,7 @@ public class Texture {
     private int offset;
     //ByteBuffer buffer; 
     
-    private Texture(String path){
+    Texture(String path){
         forceLoadTexture(path, true);
     }
     
@@ -238,6 +238,10 @@ public class Texture {
         BufferedImage bimg = new BufferedImage(width,height,BufferedImage.TYPE_INT_ARGB);
         bimg.setRGB(0,0,width,height,pixels,0,width);
         return bimg;
+    }
+    
+    public void destroy(){
+        
     }
 
 }

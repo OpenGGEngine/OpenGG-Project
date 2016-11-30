@@ -7,6 +7,7 @@
 package com.opengg.core.render.drawn;
 
 import com.opengg.core.Matrix4f;
+import com.opengg.core.engine.RenderEngine;
 import com.opengg.core.model.Material;
 import com.opengg.core.util.GlobalInfo;
 import java.nio.FloatBuffer;
@@ -62,7 +63,7 @@ public class MatDrawnObject implements Drawable {
             m.Ks.useTexture(4); 
         if(m.Ns != null)
             m.Ns.useTexture(5);
-        GlobalInfo.main.passMaterial(m);
+        RenderEngine.controller.passMaterial(m);
         d.draw();
     }
 

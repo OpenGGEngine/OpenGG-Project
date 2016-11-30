@@ -6,6 +6,7 @@
 package com.opengg.core.render.drawn;
 
 import com.opengg.core.Matrix4f;
+import com.opengg.core.engine.RenderEngine;
 import com.opengg.core.render.VertexBufferObject;
 import com.opengg.core.util.GlobalInfo;
 import java.nio.FloatBuffer;
@@ -67,8 +68,8 @@ public class InstancedDrawnObject implements Drawable {
         ivbo.bind(GL_ARRAY_BUFFER);
         ivbo.uploadData(GL_ARRAY_BUFFER, inst, GL_STATIC_DRAW);
         
-        GlobalInfo.main.defVertexAttributes();
-        GlobalInfo.main.pointVertexAttributes();
+        RenderEngine.controller.defVertexAttributes();
+        RenderEngine.controller.pointVertexAttributes();
         this.removeBuffer();
     }
     public InstancedDrawnObject(FloatBuffer b, FloatBuffer inst){
@@ -96,8 +97,8 @@ public class InstancedDrawnObject implements Drawable {
             vbo.uploadData(GL_ARRAY_BUFFER, b, GL_STATIC_DRAW);
         }
         
-        GlobalInfo.main.defVertexAttributes();
-        GlobalInfo.main.pointVertexAttributes();
+        RenderEngine.controller.defVertexAttributes();
+        RenderEngine.controller.pointVertexAttributes();
         this.removeBuffer();
     }
     
@@ -124,16 +125,16 @@ public class InstancedDrawnObject implements Drawable {
         ivbo.bind(GL_ARRAY_BUFFER);
         ivbo.uploadData(GL_ARRAY_BUFFER, inst, GL_STATIC_DRAW);
         
-        GlobalInfo.main.defVertexAttributes();
-        GlobalInfo.main.pointVertexAttributes();
+        RenderEngine.controller.defVertexAttributes();
+        RenderEngine.controller.pointVertexAttributes();
     }
     
     
     
     @Override
     public void saveShadowMVP(){
-        GlobalInfo.main.setModel(model);
-        shadeModel = (GlobalInfo.main.getMVP());
+        RenderEngine.controller.setModel(model);
+        shadeModel = (RenderEngine.controller.getMVP());
     }
    
     
@@ -144,13 +145,13 @@ public class InstancedDrawnObject implements Drawable {
 
     @Override
     public void draw(){    
-        GlobalInfo.main.setModel(model);       
+        RenderEngine.controller.setModel(model);       
         vbo.bind(GL_ARRAY_BUFFER);
         evbo.bind(GL_ELEMENT_ARRAY_BUFFER);
-        GlobalInfo.main.defInstancedVertexAttributes(ivbo);
-        GlobalInfo.main.setInstanced(true);
+        RenderEngine.controller.defInstancedVertexAttributes(ivbo);
+        RenderEngine.controller.setInstanced(true);
         glDrawArraysInstanced(GL_TRIANGLES,0,ind.limit(), instnum);
-        GlobalInfo.main.setInstanced(false);
+        RenderEngine.controller.setInstanced(false);
     }
     
     public void removeBuffer(){
