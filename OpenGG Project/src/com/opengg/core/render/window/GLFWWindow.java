@@ -1,5 +1,5 @@
 package com.opengg.core.render.window;
-import com.opengg.core.io.input.KeyBoardHandler;
+import com.opengg.core.io.input.KeyboardHandler;
 import com.opengg.core.io.input.MousePosHandler;
 import com.opengg.core.util.GlobalInfo;
 import java.nio.ByteBuffer;
@@ -81,7 +81,7 @@ public class GLFWWindow implements Window {
         if ( window == NULL )
             throw new RuntimeException("Failed to create the GLFW window");
 
-        glfwSetKeyCallback(window, keyCallback = new KeyBoardHandler());
+        glfwSetKeyCallback(window, keyCallback = new KeyboardHandler());
         glfwSetCursorPosCallback(window, mouseCallback = new MousePosHandler());
 
         // Make the OpenGL context current

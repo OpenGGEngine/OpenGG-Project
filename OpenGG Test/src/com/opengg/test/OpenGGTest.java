@@ -35,13 +35,14 @@ import static com.opengg.core.render.window.RenderUtil.endFrame;
 import static com.opengg.core.render.window.RenderUtil.startFrame;
 import com.opengg.core.util.GlobalInfo;
 import static com.opengg.core.util.GlobalUtil.print;
-import com.opengg.core.util.Time;
 import com.opengg.core.world.Camera;
 import com.opengg.core.world.World;
 import com.opengg.core.world.WorldObject;
 import com.opengg.core.world.components.ModelRenderComponent;
 import com.opengg.core.world.components.ParticleRenderComponent;
+import com.opengg.core.world.components.TriggerableAudioComponent;
 import com.opengg.core.world.components.physics.PhysicsComponent;
+import com.opengg.core.world.components.triggers.KeyTrigger;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -85,11 +86,9 @@ public class OpenGGTest implements KeyboardListener {
     private Texture t3;
     private Cubemap cb = new Cubemap();
     private ShaderController s = new ShaderController();
-    private Time t;
     WorldObject w1, w2;
     private Sound so,so2,so3;
     private AudioListener as;
-    private DrawnObject ppsht;
     private WorldObject awps;
     private PhysicsComponent bad;
     
@@ -184,20 +183,21 @@ public class OpenGGTest implements KeyboardListener {
         ModelRenderComponent r = new ModelRenderComponent(ModelLoader.loadModel("C:/res/3DSMusicPark/3DSMusicPark.bmf"));
         print("Model and Texture Loading Completed");
 
+        TriggerableAudioComponent test3 = new TriggerableAudioComponent(so2);
+        KeyTrigger t = new KeyTrigger(GLFW_KEY_P);
+        t.addSubscriber(test3);
+        
         terrain = new WorldObject();
         terrain.attach(bad = new PhysicsComponent());
         terrain.attach(r);
         terrain.attach(p);
-        
-        t = new Time();
-        
+        terrain.attach(test3);
+
         as = new AudioListener();
         AudioController.setListener(as);
         
         RenderEngine.init();
-        
         RenderEngine.setSkybox(sky, cb);
-        
         RenderEngine.addGUIItem(new GUIItem(base2, new Vector2f()));
         RenderEngine.addRenderable(p);
         RenderEngine.addRenderable(r);
@@ -265,9 +265,6 @@ public class OpenGGTest implements KeyboardListener {
         }
         if (key == GLFW_KEY_G) {
             bad.velocity = new Vector3f(0,20,0);
-        }
-        if (key == GLFW_KEY_P) {
-            so3.play();
         }
         if (key == GLFW_KEY_U){
             RenderEngine.setShadowVolumes(!RenderEngine.getShadowsEnabled());
