@@ -8,6 +8,7 @@ package com.opengg.core.engine;
 
 import com.opengg.core.gui.GUI;
 import com.opengg.core.gui.GUIItem;
+import com.opengg.core.render.VertexArrayObject;
 import com.opengg.core.render.buffer.ObjectBuffers;
 import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.render.drawn.DrawnObject;
@@ -15,33 +16,15 @@ import com.opengg.core.render.shader.Mode;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.texture.Cubemap;
 import com.opengg.core.render.texture.FramebufferTexture;
+import com.opengg.core.render.texture.TextureManager;
 import com.opengg.core.util.GlobalInfo;
 import com.opengg.core.world.components.Renderable;
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.util.ArrayList;
-import static org.lwjgl.opengl.GL11.GL_ALWAYS;
-import static org.lwjgl.opengl.GL11.GL_BACK;
-import static org.lwjgl.opengl.GL11.GL_BLEND;
-import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
-import static org.lwjgl.opengl.GL11.GL_EQUAL;
-import static org.lwjgl.opengl.GL11.GL_FILL;
-import static org.lwjgl.opengl.GL11.GL_FRONT;
-import static org.lwjgl.opengl.GL11.GL_FRONT_AND_BACK;
-import static org.lwjgl.opengl.GL11.GL_KEEP;
-import static org.lwjgl.opengl.GL11.GL_LEQUAL;
-import static org.lwjgl.opengl.GL11.GL_NONE;
-import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11.GL_STENCIL_TEST;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11.glBlendFunc;
-import static org.lwjgl.opengl.GL11.glDepthFunc;
-import static org.lwjgl.opengl.GL11.glDepthMask;
-import static org.lwjgl.opengl.GL11.glDisable;
-import static org.lwjgl.opengl.GL11.glDrawBuffer;
-import static org.lwjgl.opengl.GL11.glEnable;
-import static org.lwjgl.opengl.GL11.glPolygonMode;
-import static org.lwjgl.opengl.GL11.glStencilFunc;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL14.GL_DECR_WRAP;
 import static org.lwjgl.opengl.GL14.GL_INCR_WRAP;
 import static org.lwjgl.opengl.GL20.glStencilOpSeparate;
@@ -55,30 +38,36 @@ import static org.lwjgl.opengl.GL32.GL_TEXTURE_CUBE_MAP_SEAMLESS;
 public class RenderEngine {
     static ArrayList<DrawableContainer> dlist = new ArrayList<>();
     static boolean shadVolumes = false;
-    static ShaderController s;
     static Drawable sceneQuad;
     static Drawable skybox;
     static Cubemap skytex;
-    
+    static boolean initialized;
     static FramebufferTexture sceneTex;
+    static VertexArrayObject vao;
+    public static ShaderController controller;
     
-    public static void init(){
-        s = GlobalInfo.main;
-        sceneTex = FramebufferTexture.getFramebuffer(GlobalInfo.window.getWidth(), GlobalInfo.window.getHeight());
+    static boolean init(URL vert, URL frag, URL geom){
+        vao = new VertexArrayObject();
+        vao.bind();
         
-        sceneQuad = new DrawnObject(ObjectBuffers.getSquareUI(-1, 1, -1, 1, 1f, 1, false),12);
+        try {
+            controller = new ShaderController(vert, frag, geom);
+        } catch (UnsupportedEncodingException ex) {
+            Logger.getLogger(RenderEngine.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+        
+        sceneTex = FramebufferTexture.getFramebuffer(GlobalInfo.window.getWidth(), GlobalInfo.window.getHeight());
+        sceneQuad = new DrawnObject(ObjectBuffers.getSquareUI(-1, 1, -1, 1, 1f, 1, false),12);    
         
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LEQUAL);
-        
         glEnable(GL_TEXTURE_2D);
-
         glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
-
         glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+        return true;
     }
     
     public static void addDrawable(DrawableContainer d){
@@ -121,14 +110,14 @@ public class RenderEngine {
             
             glDisable(GL_DEPTH_TEST);
             glDrawBuffer(GL_NONE);
-            s.setMode(Mode.POS_ONLY);
+            controller.setMode(Mode.POS_ONLY);
             for(DrawableContainer d : dlist){
                 d.draw();
             }
             
             glEnable(GL_STENCIL_TEST);
             
-            s.setMode(Mode.SHADOW);
+            controller.setMode(Mode.SHADOW);
             glDepthMask(false);
             glEnable(GL_DEPTH_CLAMP); 
             glDisable(GL_CULL_FACE);
@@ -160,19 +149,19 @@ public class RenderEngine {
         }
         
         
-        s.setMode(Mode.OBJECT);
+        controller.setMode(Mode.OBJECT);
         for(DrawableContainer d : dlist){
             if(d.getDistanceField()){
-                s.setDistanceField(true);
+                controller.setDistanceField(true);
                 d.draw();
-                s.setDistanceField(false);
+                controller.setDistanceField(false);
                 continue;
             }
             d.draw();
         }
 
         glDisable(GL_CULL_FACE); 
-        s.setMode(Mode.SKYBOX);
+        controller.setMode(Mode.SKYBOX);
         skytex.use(0);
         skybox.draw();
         glEnable(GL_CULL_FACE); 
@@ -184,15 +173,22 @@ public class RenderEngine {
         sceneTex.endTexRender();
         glDisable(GL_CULL_FACE);
         GUI.startGUIPos();
-        s.setMode(Mode.PP);
+        controller.setMode(Mode.PP);
         sceneTex.useTexture(0);
         sceneTex.useDepthTexture(1);
         sceneQuad.draw();
         
-        s.setDistanceField(true);
+        controller.setDistanceField(true);
         GUI.enableGUI();
         GUI.render();
-        s.setDistanceField(false);
+        controller.setDistanceField(false);
         
+    }
+    
+    public static void destroy(){
+        dlist.stream().forEach((d) -> {
+            d.d.destroy();
+        });
+        TextureManager.destroy();
     }
 }

@@ -32,7 +32,7 @@ public class AudioController {
     static long context;
     
     static ArrayList<AudioSource> sources = new ArrayList<>();
-    public static void init(int windowid) {
+    static void init() {
         device = alcOpenDevice((ByteBuffer)null);
         ALCCapabilities caps = ALC.createCapabilities(device);
         
@@ -41,7 +41,6 @@ public class AudioController {
         AL.createCapabilities(caps);
         if(AL10.alGetError() != AL10.AL_NO_ERROR)
             error("OpenAL Error: " + AL10.alGetError());
-
     }
     
     public static void setListener(AudioListener s){
@@ -57,5 +56,9 @@ public class AudioController {
         sources.add(s);
     }
     
-    
+    public static void destroy(){
+        for(AudioSource source : sources){
+            
+        }
+    }
 }

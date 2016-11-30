@@ -1,4 +1,5 @@
 package com.opengg.core.render.window;
+import com.opengg.core.exceptions.WindowCreationException;
 import com.opengg.core.io.input.KeyboardHandler;
 import com.opengg.core.io.input.MousePosHandler;
 import com.opengg.core.util.GlobalInfo;
@@ -19,7 +20,8 @@ public class GLFWWindow implements Window {
     int HEIGHT = 300;
     
     public static long window;
-
+    
+    boolean success;
     GLFWVidMode mode; 
     ByteBuffer vidmode;
     GLFWErrorCallback errorCallback;
@@ -79,7 +81,7 @@ public class GLFWWindow implements Window {
             );
         }
         if ( window == NULL )
-            throw new RuntimeException("Failed to create the GLFW window");
+            throw new WindowCreationException("Failed to create the GLFW window");
 
         glfwSetKeyCallback(window, keyCallback = new KeyboardHandler());
         glfwSetCursorPosCallback(window, mouseCallback = new MousePosHandler());
@@ -93,11 +95,12 @@ public class GLFWWindow implements Window {
 
         // Make the window visible
         glfwShowWindow(window);
-        
-        
         GL.createCapabilities();
-
-        GlobalInfo.window = this;
+        if(glGetError() == GL_NO_ERROR)
+            success = true;
+        else
+            throw new WindowCreationException("OpenGL initialization during window creation failed");
+           
     }
     
     public void setResolution(int w, int h){
@@ -180,6 +183,11 @@ public class GLFWWindow implements Window {
     @Override
     public int getHeight() {
         return HEIGHT;
+    }
+
+    @Override
+    public boolean getSuccessfulConstruction() {
+        return success;
     }
     
 }
