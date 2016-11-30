@@ -31,9 +31,9 @@ public abstract class Trigger implements Updatable{
         return subscribers;
     }
     
-    public void forceTrigger(){
+    public void trigger(TriggerInfo ti){
         for(Triggerable t : subscribers){
-            t.onTrigger(this, null);
+            t.onTrigger(this, ti);
         }
     }
 

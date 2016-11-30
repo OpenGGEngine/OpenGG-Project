@@ -12,7 +12,7 @@ package com.opengg.core.world.components.triggers;
 public class TriggerInfo {
     public Object data;
     public String info;
-    public String type;
+    public TriggerType type;
     public String source;
     
 }
