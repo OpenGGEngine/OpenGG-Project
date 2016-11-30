@@ -3,16 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
-package com.opengg.core.world.components;
-
-import java.util.ArrayList;
+package com.opengg.core.world.components.triggers;
 
 /**
  *
  * @author Javier
  */
-public interface Trigger {
-    public void addTriggerDest(Triggerable dest);
-    public ArrayList<Triggerable> getTriggerDest();
+public class TriggerInfo {
+    public Object data;
+    public String info;
+    public TriggerType type;
+    public String source;
+    
 }

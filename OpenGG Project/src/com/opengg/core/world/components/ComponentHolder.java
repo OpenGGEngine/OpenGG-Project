@@ -12,40 +12,14 @@ import java.util.ArrayList;
  * @author ethachu19
  */
 public abstract class ComponentHolder implements Component{
-    //public static ArrayList<ComponentHolder> allComponent = new ArrayList<>();
-    protected ArrayList<Updatable> updateable = new ArrayList<>();
-    protected ArrayList<Renderable> renderable = new ArrayList<>();
-    protected ArrayList<Triggerable> triggerable = new ArrayList<>();
+    protected ArrayList<Component> children = new ArrayList<>();
     
     public void attach(Component c) {
         c.setParentInfo(this);
-        if (c instanceof Updatable)
-                updateable.add((Updatable) c);
-        if (c instanceof Renderable)
-                renderable.add((Renderable) c);
-    }
+        children.add(c);
+    }  
     
-    public void update(float delta){
-        for(Updatable c: updateable){
-            c.update(delta);
-        }
-    }
-    
-    public void render(){
-        for(Renderable c: renderable){
-            c.render();
-        }
-    }      
-    
-    public ArrayList<Updatable> getUpdatables(){
-        return updateable;
-    }
-    
-    public ArrayList<Renderable> getRenderables(){
-        return renderable;
-    }
-     
-    public ArrayList<Triggerable> getTriggerables(){
-        return triggerable;
+    public ArrayList<Component> getChildren(){
+        return children;
     }
 }

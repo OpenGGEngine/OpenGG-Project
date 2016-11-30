@@ -20,7 +20,7 @@ public class ModelRenderComponent extends ComponentHolder implements Renderable{
     Drawable g;
     private Vector3f offset = new Vector3f(0,0,0);
     private Vector3f rotationoffset = new Vector3f(0,0,0);
-    Positioned w;
+    Positioned parent;
    
     public ModelRenderComponent(Drawable g){
         this.g = g;
@@ -32,14 +32,10 @@ public class ModelRenderComponent extends ComponentHolder implements Renderable{
 
     @Override
     public void render() {
-        Matrix4f m = Matrix4f.translate(w.getPosition().x + offset.x, w.getPosition().y + offset.y, w.getPosition().z + offset.z);
+        Matrix4f m = Matrix4f.translate(getPosition());
         
         g.setMatrix(m);
         g.draw();
-        
-        for(Renderable r : this.renderable){
-            g.draw();
-        }
     }
 
     @Override
@@ -55,13 +51,13 @@ public class ModelRenderComponent extends ComponentHolder implements Renderable{
     @Override
     public void setParentInfo(Component parent) {
         if(parent instanceof Positioned){
-            w = (Positioned) parent;
+            this.parent = (Positioned) parent;
         }
     }
 
     @Override
     public Vector3f getPosition() {
-        return new Vector3f(w.getPosition().x + offset.x, w.getPosition().y + offset.y, w.getPosition().z + offset.z);
+        return new Vector3f(parent.getPosition().x + offset.x, parent.getPosition().y + offset.y, parent.getPosition().z + offset.z);
     }
 
     @Override

@@ -14,9 +14,9 @@ import com.opengg.core.Vector3f;
  */
 public class AudioListener {
     public AudioListener(){}
-    Vector3f pos = new Vector3f();
-    Vector3f rot = new Vector3f();
-    Vector3f vel = new Vector3f();
+    public Vector3f pos = new Vector3f();
+    public Vector3f rot = new Vector3f();
+    public Vector3f vel = new Vector3f();
 
     public Vector3f getPos() {
         return pos;

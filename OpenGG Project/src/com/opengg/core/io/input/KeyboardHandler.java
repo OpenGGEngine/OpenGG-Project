@@ -13,7 +13,7 @@ package com.opengg.core.io.input;
 import org.lwjgl.glfw.GLFWKeyCallback;
 import static org.lwjgl.glfw.GLFW.*;
 
-public class KeyBoardHandler extends GLFWKeyCallback{
+public class KeyboardHandler extends GLFWKeyCallback{
 
 	static boolean[] keys = new boolean[65536];
 

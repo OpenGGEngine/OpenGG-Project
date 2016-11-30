@@ -49,6 +49,7 @@ public class Material {
     public boolean hasnormmap = false;
     public boolean hasspecpow = false;
     public boolean hasreflmap = false;
+    public boolean hastrans = false;
     
     public Material(String name) {
         this.name = name;
@@ -69,6 +70,10 @@ public class Material {
         if(mapNsFilename != null){
             hasspecpow = true;
             Ns = Texture.get(mapNsFilename);
+        }
+        if(mapDFilename != null){
+            hastrans = true;
+            D = Texture.get(mapDFilename);
         }
         if(bumpFilename != null){
             hasnormmap = true;
