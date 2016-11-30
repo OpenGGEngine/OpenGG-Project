@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.opengg.core.io.input;
+package com.opengg.core.io.input.mouse;
 
 import com.opengg.core.Vector2f;
 import org.lwjgl.glfw.GLFWCursorPosCallback;

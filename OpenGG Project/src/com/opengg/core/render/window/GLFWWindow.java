@@ -1,6 +1,6 @@
 package com.opengg.core.render.window;
 import com.opengg.core.exceptions.WindowCreationException;
-import com.opengg.core.io.input.keyboard.KeyboardController;
+import com.opengg.core.io.input.keyboard.KeyboardHandler;
 import com.opengg.core.io.input.mouse.MouseButtonHandler;
 import com.opengg.core.io.input.mouse.MousePosHandler;
 import com.opengg.core.engine.EngineInfo;
@@ -85,7 +85,7 @@ public class GLFWWindow implements Window {
         if ( window != NULL )
             throw new WindowCreationException("Failed to create the GLFW window");
 
-        glfwSetKeyCallback(window, keyCallback = new KeyboardController());
+        glfwSetKeyCallback(window, keyCallback = new KeyboardHandler());
         glfwSetCursorPosCallback(window, mouseCallback = new MousePosHandler());
         glfwSetMouseButtonCallback(window, mouseButtonCallback = new MouseButtonHandler());
 
