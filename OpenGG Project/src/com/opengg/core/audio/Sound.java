@@ -21,12 +21,24 @@ import static org.lwjgl.openal.AL10.alGenBuffers;
 public class Sound{
     
     AudioSource so;
+    boolean isPlaying  = false;
+    
+    public void setPlayState(boolean b){
+        if(b) so.play();
+        else so.pause();
+    }
+    
+    public void stop(){
+        so.stop();
+    }
     
     public void play(){
+        isPlaying = true;
         so.play();
     }
     
     public void pause(){
+        isPlaying = false;
         so.pause();
     }
     

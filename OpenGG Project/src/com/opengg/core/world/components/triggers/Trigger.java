@@ -13,7 +13,32 @@ import java.util.ArrayList;
  *
  * @author Javier
  */
-public interface Trigger extends Updatable{
-    public void subscribeToTrigger(Triggerable dest);
-    public ArrayList<Triggerable> getTriggerDest();
+public abstract class Trigger implements Updatable{
+    ArrayList<Triggerable> subscribers = new ArrayList<>();
+    Component parent;
+    boolean enabled;
+    
+    public void addSubscriber(Triggerable dest){
+        subscribers.add(dest);
+        dest.onSubscribe(this);
+    }
+    
+    public boolean getTriggerState(){
+        return enabled;
+    }
+    
+    public ArrayList<Triggerable> getTriggerDest(){
+        return subscribers;
+    }
+    
+    public void forceTrigger(){
+        for(Triggerable t : subscribers){
+            t.onTrigger(this, null);
+        }
+    }
+
+    @Override
+    public void setParentInfo(Component parent) {
+        this.parent = parent;
+    }
 }

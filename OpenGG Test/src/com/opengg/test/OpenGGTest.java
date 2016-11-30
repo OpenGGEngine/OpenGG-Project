@@ -135,7 +135,6 @@ public class OpenGGTest implements KeyboardListener {
         AudioController.init(1);
         so = new Sound(OpenGGTest.class.getResource("res/maw.wav"));
         so2 = new Sound(OpenGGTest.class.getResource("res/mgs.wav"));
-        so3 = new Sound(OpenGGTest.class.getResource("res/mgs.wav"));
         
         t1.setupTexToBuffer(2000,2000);
         ppbf.setupTexToBuffer(win.getWidth(), win.getHeight());

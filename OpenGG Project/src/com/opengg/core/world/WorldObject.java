@@ -19,9 +19,6 @@ import com.opengg.core.world.components.Updatable;
  * @author Javier
  */
 public class WorldObject extends ComponentHolder implements Positioned{
-
-    private float speed;
-    float elapsed = 0;
     public Vector3f pos = new Vector3f();
     public Quaternion4f rot;
     private World thisWorld;
@@ -79,7 +76,6 @@ public class WorldObject extends ComponentHolder implements Positioned{
 
     @Override
     public Vector3f getRotation() {
-        //return rot;
         return new Vector3f();
     }
     
