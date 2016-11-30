@@ -3,8 +3,8 @@ package com.opengg.core.movement;
 import java.util.logging.Logger;
 import org.lwjgl.glfw.GLFW;
 import com.opengg.core.Vector3f;
-import com.opengg.core.io.input.KeyboardHandler;
-import com.opengg.core.io.input.MousePosHandler;
+import com.opengg.core.io.input.keyboard.KeyboardController;
+import com.opengg.core.io.input.mouse.MousePosHandler;
 import static org.lwjgl.glfw.GLFW.*;
 import org.lwjgl.glfw.GLFWKeyCallback;
 
@@ -90,16 +90,16 @@ public class MovementLoader {
      */
     public static Vector3f processMovement(Vector3f position, Vector3f rotation) {
 
-        boolean keyUp = KeyboardHandler.isKeyDown(GLFW_KEY_W);
-        boolean keyDown = KeyboardHandler.isKeyDown(GLFW_KEY_S);
-        boolean keyLeft = KeyboardHandler.isKeyDown(GLFW_KEY_A);
-        boolean keyRight = KeyboardHandler.isKeyDown(GLFW_KEY_D);
-        boolean flyUp = KeyboardHandler.isKeyDown(GLFW_KEY_SPACE);
-        boolean flyDown = KeyboardHandler.isKeyDown(GLFW_KEY_LEFT_SHIFT);
+        boolean keyUp = KeyboardController.isKeyDown(GLFW_KEY_W);
+        boolean keyDown = KeyboardController.isKeyDown(GLFW_KEY_S);
+        boolean keyLeft = KeyboardController.isKeyDown(GLFW_KEY_A);
+        boolean keyRight = KeyboardController.isKeyDown(GLFW_KEY_D);
+        boolean flyUp = KeyboardController.isKeyDown(GLFW_KEY_SPACE);
+        boolean flyDown = KeyboardController.isKeyDown(GLFW_KEY_LEFT_SHIFT);
 
-        boolean moveFaster = KeyboardHandler.isKeyDown(GLFW_KEY_LEFT_CONTROL);
-        boolean moveMuchFaster = KeyboardHandler.isKeyDown(GLFW_KEY_TAB);
-        boolean reset = KeyboardHandler.isKeyDown(GLFW_KEY_C);
+        boolean moveFaster = KeyboardController.isKeyDown(GLFW_KEY_LEFT_CONTROL);
+        boolean moveMuchFaster = KeyboardController.isKeyDown(GLFW_KEY_TAB);
+        boolean reset = KeyboardController.isKeyDown(GLFW_KEY_C);
         float delta = getDelta();
 
         if (moveMuchFaster) {

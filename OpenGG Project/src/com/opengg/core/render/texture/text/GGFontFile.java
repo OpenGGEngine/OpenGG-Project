@@ -5,7 +5,7 @@
  */
 package com.opengg.core.render.texture.text;
 
-import com.opengg.core.util.GlobalInfo;
+import com.opengg.core.engine.EngineInfo;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -49,7 +49,7 @@ public class GGFontFile {
      * @param file - the font file.
      */
     protected GGFontFile(File file) {
-        this.aspectRatio = (double) GlobalInfo.window.getWidth()/ (double) GlobalInfo.window.getHeight();
+        this.aspectRatio = (double) EngineInfo.window.getWidth()/ (double) EngineInfo.window.getHeight();
         openFile(file);
         loadPaddingData();
         loadLineSizes();

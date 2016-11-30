@@ -1,8 +1,9 @@
 package com.opengg.core.render.window;
 import com.opengg.core.exceptions.WindowCreationException;
-import com.opengg.core.io.input.KeyboardHandler;
-import com.opengg.core.io.input.MousePosHandler;
-import com.opengg.core.util.GlobalInfo;
+import com.opengg.core.io.input.keyboard.KeyboardController;
+import com.opengg.core.io.input.mouse.MouseButtonHandler;
+import com.opengg.core.io.input.mouse.MousePosHandler;
+import com.opengg.core.engine.EngineInfo;
 import java.nio.ByteBuffer;
 import org.lwjgl.glfw.*;
 import static org.lwjgl.glfw.GLFW.*;
@@ -27,15 +28,16 @@ public class GLFWWindow implements Window {
     GLFWErrorCallback errorCallback;
     GLFWKeyCallback   keyCallback;
     GLFWCursorPosCallback mouseCallback;
+    GLFWMouseButtonCallback mouseButtonCallback;
 
     public GLFWWindow(int w, int h, String name, DisplayMode m) {
-       glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
+        glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
         HEIGHT = h;
         WIDTH = w;
 
         // Initialize GLFW. Most GLFW functions will not work before doing this.
-        if ( glfwInit() != true )
-            throw new IllegalStateException("Unable to initialize GLFW");
+        if (glfwInit() != true)
+            throw new WindowCreationException("Unable to initialize GLFW");
 
         // Configure our window
         glfwDefaultWindowHints(); // optional, the current window hints are already the default
@@ -80,11 +82,12 @@ public class GLFWWindow implements Window {
                 (mode.height() - HEIGHT) / 2
             );
         }
-        if ( window == NULL )
+        if ( window != NULL )
             throw new WindowCreationException("Failed to create the GLFW window");
 
-        glfwSetKeyCallback(window, keyCallback = new KeyboardHandler());
+        glfwSetKeyCallback(window, keyCallback = new KeyboardController());
         glfwSetCursorPosCallback(window, mouseCallback = new MousePosHandler());
+        glfwSetMouseButtonCallback(window, mouseButtonCallback = new MouseButtonHandler());
 
         // Make the OpenGL context current
         glfwMakeContextCurrent(window);
@@ -96,8 +99,11 @@ public class GLFWWindow implements Window {
         // Make the window visible
         glfwShowWindow(window);
         GL.createCapabilities();
-        if(glGetError() == GL_NO_ERROR)
+        if(glGetError() == GL_NO_ERROR){
             success = true;
+            EngineInfo.window = this;
+            EngineInfo.windowType = EngineInfo.GLFW;
+        }
         else
             throw new WindowCreationException("OpenGL initialization during window creation failed");
            
@@ -142,7 +148,7 @@ public class GLFWWindow implements Window {
     }
     @Override
      public boolean shouldClose(){
-        return glfwWindowShouldClose(GlobalInfo.window.getID());
+        return glfwWindowShouldClose(EngineInfo.window.getID());
     }
      
     public void setColor(float r, float g, float b){
@@ -153,8 +159,13 @@ public class GLFWWindow implements Window {
     public float getRatio(){
         return(WIDTH/HEIGHT);
     }
+    
     public void setSamples(int samples){
         glfwWindowHint(GLFW_SAMPLES, samples);
+    }
+    
+    public double getTime(){
+        return glfwGetTime();
     }
     
     public void setCursorLock(boolean locked){
@@ -168,7 +179,7 @@ public class GLFWWindow implements Window {
             
     @Override
     public void endFrame(){
-        glfwSwapBuffers(GlobalInfo.window.getID());
+        glfwSwapBuffers(EngineInfo.window.getID());
     }
     
     public long getID(){

@@ -9,7 +9,7 @@ package com.opengg.core.render.drawn;
 import com.opengg.core.Matrix4f;
 import com.opengg.core.engine.RenderEngine;
 import com.opengg.core.model.Material;
-import com.opengg.core.util.GlobalInfo;
+import com.opengg.core.engine.EngineInfo;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.List;

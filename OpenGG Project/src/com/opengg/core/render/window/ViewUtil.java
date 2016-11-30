@@ -8,7 +8,7 @@ package com.opengg.core.render.window;
 import com.opengg.core.Matrix4f;
 import com.opengg.core.engine.RenderEngine;
 import com.opengg.core.render.shader.ShaderProgram;
-import com.opengg.core.util.GlobalInfo;
+import com.opengg.core.engine.EngineInfo;
 import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
 
 /**

@@ -4,10 +4,9 @@
  * and open the template in the editor.
  */
 
-package com.opengg.core.util;
+package com.opengg.core.engine;
 
-import com.opengg.core.engine.WorldEngine;
-import com.opengg.core.io.input.KeySet;
+import com.opengg.core.io.input.keyboard.KeySet;
 import com.opengg.core.render.window.Window;
 import com.opengg.core.world.World;
 
@@ -15,9 +14,14 @@ import com.opengg.core.world.World;
  *
  * @author Javier
  */
-public class GlobalInfo {
+public class EngineInfo {
+    public final static int GLFW = 100;
+    public final static int SWT = 101;
     public static Window window;
-    public static WorldEngine engine;
+    public static UpdateEngine engine;
     public static World curworld;
     public static KeySet s;
+    public static int windowType;
+    public static double runtime;
+    
 }

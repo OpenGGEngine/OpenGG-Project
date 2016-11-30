@@ -7,8 +7,6 @@
 package com.opengg.core.engine;
 
 import com.opengg.core.render.shader.ShaderController;
-import com.opengg.core.render.texture.TextureManager;
-import com.opengg.core.util.GlobalInfo;
 import java.net.URL;
 
 /**
@@ -16,23 +14,28 @@ import java.net.URL;
  * @author Javier
  */
 public class OpenGG {
-    static WorldEngine e;
-    static TextureManager tex;
-    
-    public static void initializeOpenGG(){
-        e = new WorldEngine();
-    }
+    public static void initializeOpenGG(){}
     
     public static void initializeRenderEngine(){
-        if(GlobalInfo.window.getSuccessfulConstruction() && RenderEngine.initialized == false){
+        if(EngineInfo.window.getSuccessfulConstruction() && RenderEngine.initialized == false){
             URL verts = ShaderController.class.getResource("glsl/shader.vert");
             URL frags = ShaderController.class.getResource("glsl/shader.frag");
             URL geoms = ShaderController.class.getResource("glsl/shader.geom");
             RenderEngine.init(verts, frags, geoms);
         }
     }
+    
+    public static void initializeRenderEngine(Object obj){
+        if(EngineInfo.window.getSuccessfulConstruction() && RenderEngine.initialized == false){
+            URL verts = obj.getClass().getResource("glsl/shader.vert");
+            URL frags = obj.getClass().getResource("glsl/shader.frag");
+            URL geoms = obj.getClass().getResource("glsl/shader.geom");
+            RenderEngine.init(verts, frags, geoms);
+        }
+    }
+    
     public static void initializeAudioController(){
-       if(GlobalInfo.window.getSuccessfulConstruction() && RenderEngine.initialized == false){
+       if(EngineInfo.window.getSuccessfulConstruction() && AudioController.initialized == false){
             AudioController.init();
         }   
     }

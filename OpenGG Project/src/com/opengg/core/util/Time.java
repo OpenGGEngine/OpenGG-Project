@@ -5,29 +5,37 @@
  */
 package com.opengg.core.util;
 
-import static com.opengg.core.util.GlobalUtil.print;
+import com.opengg.core.engine.EngineInfo;
+import static com.opengg.core.engine.EngineInfo.GLFW;
+import com.opengg.core.render.window.GLFWWindow;
 
 /**
  *
  * @author Javier
  */
 public class Time {
-    long currentTime = 0;
-    float timeStep = 0f;
-    long lastTime = 0;
+    double currentTime = 0;
+    double timeStep = 0f;
+    double lastTime = 0;
     
     public Time(){
         lastTime = System.currentTimeMillis();
     }
-    public  float getDeltaMs(){
-        currentTime = System.currentTimeMillis();
-//        print(lastTime + " " + currentTime);
+    public float getDeltaMs(){
+        currentTime = getMillis();
         timeStep = currentTime - lastTime;
         lastTime = currentTime;
-        return timeStep;
+        return (float) timeStep;
     }
     
-    public  float getDeltaSec(){
-        return getDeltaMs() /1000f;
+    public float getDeltaSec(){
+        return getDeltaMs() / 1000f;
+    }
+    
+    public double getMillis(){
+        if(EngineInfo.windowType == GLFW){
+            return ((GLFWWindow) EngineInfo.window).getTime() * 1000;
+        }
+        return System.currentTimeMillis();
     }
 }

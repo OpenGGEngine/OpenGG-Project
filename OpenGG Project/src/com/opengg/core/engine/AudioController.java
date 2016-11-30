@@ -30,6 +30,7 @@ import org.lwjgl.openal.ALCCapabilities;
 public class AudioController {
     static long device;
     static long context;
+    static boolean initialized;
     
     static ArrayList<AudioSource> sources = new ArrayList<>();
     static void init() {
@@ -41,6 +42,8 @@ public class AudioController {
         AL.createCapabilities(caps);
         if(AL10.alGetError() != AL10.AL_NO_ERROR)
             error("OpenAL Error: " + AL10.alGetError());
+        else
+            initialized = true;
     }
     
     public static void setListener(AudioListener s){
@@ -56,7 +59,7 @@ public class AudioController {
         sources.add(s);
     }
     
-    public static void destroy(){
+    static void destroy(){
         for(AudioSource source : sources){
             
         }

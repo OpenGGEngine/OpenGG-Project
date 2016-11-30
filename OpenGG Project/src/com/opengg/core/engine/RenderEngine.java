@@ -17,7 +17,6 @@ import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.texture.Cubemap;
 import com.opengg.core.render.texture.FramebufferTexture;
 import com.opengg.core.render.texture.TextureManager;
-import com.opengg.core.util.GlobalInfo;
 import com.opengg.core.world.components.Renderable;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
@@ -57,7 +56,7 @@ public class RenderEngine {
             return false;
         }
         
-        sceneTex = FramebufferTexture.getFramebuffer(GlobalInfo.window.getWidth(), GlobalInfo.window.getHeight());
+        sceneTex = FramebufferTexture.getFramebuffer(EngineInfo.window.getWidth(), EngineInfo.window.getHeight());
         sceneQuad = new DrawnObject(ObjectBuffers.getSquareUI(-1, 1, -1, 1, 1f, 1, false),12);    
         
         glEnable(GL_BLEND);

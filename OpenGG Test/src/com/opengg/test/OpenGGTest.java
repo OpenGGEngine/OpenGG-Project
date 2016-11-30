@@ -10,8 +10,9 @@ import com.opengg.core.engine.RenderEngine;
 import com.opengg.core.engine.WorldManager;
 import com.opengg.core.gui.GUIItem;
 import com.opengg.core.gui.GUIText;
-import com.opengg.core.io.input.KeyboardEventHandler;
-import com.opengg.core.io.input.KeyboardListener;
+import com.opengg.core.io.input.keyboard.KeyboardEventHandler;
+import com.opengg.core.io.input.keyboard.KeyboardListener;
+import com.opengg.core.io.input.mouse.MouseButtonListener;
 import com.opengg.core.io.objloader.parser.OBJModel;
 import com.opengg.core.io.objloader.parser.OBJParser;
 import com.opengg.core.model.ModelLoader;
@@ -30,7 +31,7 @@ import com.opengg.core.render.window.DisplayMode;
 import com.opengg.core.render.window.GLFWWindow;
 import static com.opengg.core.render.window.RenderUtil.endFrame;
 import static com.opengg.core.render.window.RenderUtil.startFrame;
-import com.opengg.core.util.GlobalInfo;
+import com.opengg.core.engine.EngineInfo;
 import static com.opengg.core.util.GlobalUtil.print;
 import com.opengg.core.world.Camera;
 import com.opengg.core.world.World;
@@ -39,14 +40,14 @@ import com.opengg.core.world.components.ModelRenderComponent;
 import com.opengg.core.world.components.ParticleRenderComponent;
 import com.opengg.core.world.components.TriggerableAudioComponent;
 import com.opengg.core.world.components.physics.PhysicsComponent;
-import com.opengg.core.world.components.triggers.KeyTrigger;
+import com.opengg.core.world.components.KeyTrigger;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.FloatBuffer;
 import static org.lwjgl.glfw.GLFW.*;
 
-public class OpenGGTest implements KeyboardListener {
+public class OpenGGTest implements KeyboardListener, MouseButtonListener {
     GLFWWindow win;
     private float sens = 0.25f;
     public float xrot, yrot;
@@ -73,36 +74,29 @@ public class OpenGGTest implements KeyboardListener {
     private WorldObject awps;
     private PhysicsComponent bad;
     
-    public static void main(String[] args) throws IOException, Exception {
-        new OpenGGTest();
-    }
+    public static void main(String[] args) throws IOException, Exception {new OpenGGTest();}
     
     public OpenGGTest() throws IOException, Exception {
         OpenGG.initializeOpenGG();
-        
+        win = new GLFWWindow(1280, 960, "Test", DisplayMode.WINDOWED);   
         KeyboardEventHandler.addToPool(this); 
-        try {
-            GlobalInfo.window = win = new GLFWWindow(1280, 960, "Test", DisplayMode.WINDOWED);
-            
-        } catch (Exception ex) {
-        }
-
+        
         setup();
+         
         while (!win.shouldClose()) {
             startFrame();
             update();
             render();
             endFrame(win);
         }
-        exit();
+        OpenGG.closeEngine();
     }
 
     FloatBuffer base, test2, test;
-
-    public void setup() throws FileNotFoundException, IOException, Exception {
+    public  void setup() throws FileNotFoundException, IOException, Exception {
         MovementLoader.setup(80);
         
-        OpenGG.initializeRenderEngine();
+        OpenGG.initializeRenderEngine(this);
         OpenGG.initializeAudioController();
 
         c = new Camera(pos, rot);
@@ -137,7 +131,7 @@ public class OpenGGTest implements KeyboardListener {
                 + " the Supreme Chancellor has secretly dispatched two Jedi Knights,"
                 + " the guardians of peace and justice in the galaxy, to settle the conflict...", f, 1f, new Vector2f(), 0.5f, false);
         
-       base2 = f.loadText(g);
+        base2 = f.loadText(g);
         
         t2.useTexture(0);
         cb.loadTexture("C:/res/skybox/majestic");
@@ -147,7 +141,7 @@ public class OpenGGTest implements KeyboardListener {
         sky = new DrawnObject(ObjectBuffers.genSkyCube(), 12);
         
         w = WorldManager.getDefaultWorld();
-        GlobalInfo.curworld = w;
+        EngineInfo.curworld = w;
         w.floorLev = -10;
 
         ModelRenderComponent ep1;
@@ -163,7 +157,7 @@ public class OpenGGTest implements KeyboardListener {
         print("Model and Texture Loading Completed");
 
         TriggerableAudioComponent test3 = new TriggerableAudioComponent(so2);
-        KeyTrigger t = new KeyTrigger(GLFW_KEY_P);
+        KeyTrigger t = new KeyTrigger(GLFW_KEY_P, GLFW_KEY_I);
         t.addSubscriber(test3);
         
         terrain = new WorldObject();
@@ -184,9 +178,7 @@ public class OpenGGTest implements KeyboardListener {
         
         print("Setup Complete");
     }
-
-    public void exit() {}
-
+    
     public void render() {
         rot = new Vector3f(yrot, xrot, 0);
         if(lock){
@@ -209,7 +201,7 @@ public class OpenGGTest implements KeyboardListener {
     }
 
     public void update() {
-        GlobalInfo.engine.update();
+        EngineInfo.engine.update();
         xrot -= rot1 * 7;
         yrot -= rot2 * 7;
 
@@ -264,5 +256,15 @@ public class OpenGGTest implements KeyboardListener {
             rot2 += 0.3;
 
         }
+    }
+
+    @Override
+    public void buttonPressed(int button) {
+        bad.velocity = new Vector3f(0,20,0);
+    }
+
+    @Override
+    public void buttonReleased(int button) {
+        
     }
 }

@@ -7,9 +7,9 @@
 package com.opengg.core.world;
 
 import com.opengg.core.Vector3f;
-import com.opengg.core.io.input.KeySet;
-import com.opengg.core.io.input.KeyboardListener;
-import com.opengg.core.util.GlobalInfo;
+import com.opengg.core.io.input.keyboard.KeySet;
+import com.opengg.core.io.input.keyboard.KeyboardListener;
+import com.opengg.core.engine.EngineInfo;
 import com.opengg.core.world.components.Updatable;
 import com.opengg.core.world.components.physics.PhysicsComponent;
 
@@ -23,7 +23,7 @@ public class PlayerController extends WorldObject implements Updatable {
     Vector3f acc;
 
     public PlayerController(){
-        s = GlobalInfo.s;
+        s = EngineInfo.s;
     }
     
     public void setPlayerPhysics(PhysicsComponent c){

@@ -3,10 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.opengg.core.world.components.triggers;
+package com.opengg.core.world.components;
 
-import com.opengg.core.io.input.KeyboardEventHandler;
-import com.opengg.core.io.input.KeyboardListener;
+import com.opengg.core.io.input.keyboard.KeyboardEventHandler;
+import com.opengg.core.io.input.keyboard.KeyboardListener;
+import com.opengg.core.world.components.triggers.Trigger;
+import com.opengg.core.world.components.triggers.TriggerInfo;
+import com.opengg.core.world.components.triggers.TriggerType;
 
 /**
  *

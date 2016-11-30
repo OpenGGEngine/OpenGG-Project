@@ -8,7 +8,7 @@ package com.opengg.core.world.components.physics;
 import com.opengg.core.Quaternion4f;
 import com.opengg.core.Vector3f;
 import com.opengg.core.exceptions.InvalidParentException;
-import com.opengg.core.util.GlobalInfo;
+import com.opengg.core.engine.EngineInfo;
 import com.opengg.core.world.World;
 import com.opengg.core.world.components.Component;
 import com.opengg.core.world.components.Positioned;
@@ -35,7 +35,7 @@ public class PhysicsComponent implements Updatable, Positioned {
 
     @Override
     public void update(float delta) {
-        World w = GlobalInfo.curworld;
+        World w = EngineInfo.curworld;
         Vector3f last = new Vector3f(acceleration);
         pos.addEquals(velocity.multiply(delta).add(last.multiply((float) Math.pow(delta, 2) * 0.5f)));
         acceleration = force.divide(mass);

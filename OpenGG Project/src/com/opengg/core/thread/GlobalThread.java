@@ -6,7 +6,7 @@
 
 package com.opengg.core.thread;
 
-import com.opengg.core.engine.WorldEngine;
+import com.opengg.core.engine.UpdateEngine;
 
 /**
  *
@@ -46,7 +46,7 @@ public class GlobalThread implements Runnable{
                 g.update(1);
             }
 //            if(t == ThreadType.PHYSICS){
-//                WorldEngine.process();
+//                UpdateEngine.process();
 //            }
         }
     }

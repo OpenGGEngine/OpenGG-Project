@@ -8,7 +8,7 @@ package com.opengg.core.world;
 import com.opengg.core.Quaternion4f;
 import com.opengg.core.Vector3f;
 import com.opengg.core.io.objloader.parser.OBJModel;
-import com.opengg.core.util.GlobalInfo;
+import com.opengg.core.engine.EngineInfo;
 import com.opengg.core.world.components.Component;
 import com.opengg.core.world.components.ComponentHolder;
 import com.opengg.core.world.components.Positioned;
@@ -38,7 +38,7 @@ public class WorldObject extends ComponentHolder implements Positioned{
     @Override
     public void attach(Component c) {
         if(c instanceof Updatable){
-            GlobalInfo.engine.addObjects((Updatable) c);
+            EngineInfo.engine.addObjects((Updatable) c);
         }
         super.attach(c);
     }

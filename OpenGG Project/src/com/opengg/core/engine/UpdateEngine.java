@@ -5,7 +5,6 @@
  */
 package com.opengg.core.engine;
 
-import com.opengg.core.util.GlobalInfo;
 import com.opengg.core.util.Time;
 import com.opengg.core.world.components.Updatable;
 import java.util.ArrayList;
@@ -14,22 +13,20 @@ import java.util.ArrayList;
  *
  * @author Javier Coindreau 
  */
-public class WorldEngine{
+public class UpdateEngine{
     
-    ArrayList<Updatable> objs = new ArrayList<>();
-    Time t;
+    static ArrayList<Updatable> objs = new ArrayList<>();
+    static Time t;
     
-    public WorldEngine(){
+    static{
         t = new Time();
-        GlobalInfo.engine = this;
     }
     
-    public void addObjects(Updatable e){
+    public static void addObjects(Updatable e){
         objs.add(e);
     }
     
-    public void update(){
-        
+    public static void update(){
         float i = t.getDeltaSec();
         for(Updatable e : objs){
             e.update(i);
