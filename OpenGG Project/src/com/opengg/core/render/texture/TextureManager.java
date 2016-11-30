@@ -17,6 +17,7 @@ public class TextureManager {
     public static int repsave = 0;
     public static Texture getTexture(String path){
         Texture x = texturelist.get(path);
+        if(x == null) x = new Texture(path);
         return x;
     }
     public static void setTexture(String path, Texture t){
@@ -33,6 +34,9 @@ public class TextureManager {
         texturelist.remove(s);
     }
     public static void destroy(){
+        texturelist.values().stream().forEach((t) -> {
+            t.destroy();
+        });
         texturelist.clear();
     }
 }

@@ -6,8 +6,8 @@
 package com.opengg.core.render.drawn;
 
 import com.opengg.core.Matrix4f;
+import com.opengg.core.engine.RenderEngine;
 import com.opengg.core.render.VertexBufferObject;
-import com.opengg.core.util.GlobalInfo;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.List;
@@ -102,17 +102,17 @@ public class DrawnObject implements Drawable {
     }
     
     private void pointAttrib(){
-        GlobalInfo.main.pointVertexAttributes();
+        RenderEngine.controller.pointVertexAttributes();
     }
     
     private void defAttrib(){
-        GlobalInfo.main.defVertexAttributes();
+        RenderEngine.controller.defVertexAttributes();
     }
     
     @Override
     public void saveShadowMVP(){
-        GlobalInfo.main.setModel(model);
-        shadeModel = (GlobalInfo.main.getMVP());
+        RenderEngine.controller.setModel(model);
+        shadeModel = (RenderEngine.controller.getMVP());
     }
     
     public void setShaderMatrix(Matrix4f m){
@@ -143,8 +143,8 @@ public class DrawnObject implements Drawable {
     
     @Override
     public void draw(){    
-        GlobalInfo.main.setModel(model);  
-        GlobalInfo.main.setShadowLightMatrix(shadeModel); 
+        RenderEngine.controller.setModel(model);  
+        RenderEngine.controller.setShadowLightMatrix(shadeModel); 
         vbo.bind(GL_ARRAY_BUFFER);
         evbo.bind(GL_ELEMENT_ARRAY_BUFFER);
         defAttrib();

@@ -16,18 +16,15 @@ import com.opengg.core.io.objloader.parser.OBJModel;
 import com.opengg.core.io.objloader.parser.OBJParser;
 import com.opengg.core.model.ModelLoader;
 import com.opengg.core.movement.MovementLoader;
-import com.opengg.core.render.VertexArrayObject;
 import com.opengg.core.render.buffer.ObjectBuffers;
 import com.opengg.core.render.drawn.DrawnObject;
 import com.opengg.core.render.drawn.DrawnObjectGroup;
 import com.opengg.core.render.drawn.InstancedDrawnObject;
 import com.opengg.core.render.drawn.MatDrawnObject;
 import com.opengg.core.render.particle.ParticleSystem;
-import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.texture.Cubemap;
 import com.opengg.core.render.texture.FramebufferTexture;
 import com.opengg.core.render.texture.Texture;
-import com.opengg.core.render.texture.TextureManager;
 import com.opengg.core.render.texture.text.GGFont;
 import com.opengg.core.render.window.DisplayMode;
 import com.opengg.core.render.window.GLFWWindow;
@@ -46,58 +43,46 @@ import com.opengg.core.world.components.triggers.KeyTrigger;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URL;
 import java.nio.FloatBuffer;
 import static org.lwjgl.glfw.GLFW.*;
 
 public class OpenGGTest implements KeyboardListener {
-
-    static long window;
     GLFWWindow win;
     private float sens = 0.25f;
-    private float sav;
     public float xrot, yrot;
     public boolean lock = false;
     public float rot1 = 0, rot2 = 0;
     Vector3f rot = new Vector3f(0, 0, 0);
     Vector3f pos = new Vector3f(0, -10, -30);
-    WorldObject terrain;
-    WorldObject drawnobject;
+    WorldObject terrain, drawnobject;
     World w;
-    
-    public static void main(String[] args) throws IOException, Exception {
-        new OpenGGTest();
-    }
-
-    private VertexArrayObject vao;
-
     Camera c;
     FramebufferTexture t1 = new FramebufferTexture();
-    Texture t2;
     FramebufferTexture ppbf = new FramebufferTexture();
     InstancedDrawnObject flashbang;
     DrawnObject test5,sky;
     DrawnObjectGroup test6;
     MatDrawnObject awp3, base2;
     GGFont f;
-
-    OBJModel m;
-    OBJModel m2;
-    private Texture t3;
+    OBJModel m, m2;
+    private Texture t2, t3;
     private Cubemap cb = new Cubemap();
-    private ShaderController s = new ShaderController();
     WorldObject w1, w2;
     private Sound so,so2,so3;
     private AudioListener as;
     private WorldObject awps;
     private PhysicsComponent bad;
     
+    public static void main(String[] args) throws IOException, Exception {
+        new OpenGGTest();
+    }
+    
     public OpenGGTest() throws IOException, Exception {
         OpenGG.initializeOpenGG();
         
         KeyboardEventHandler.addToPool(this); 
         try {
-            win = new GLFWWindow(1280, 960, "Test", DisplayMode.WINDOWED);
+            GlobalInfo.window = win = new GLFWWindow(1280, 960, "Test", DisplayMode.WINDOWED);
             
         } catch (Exception ex) {
         }
@@ -116,22 +101,16 @@ public class OpenGGTest implements KeyboardListener {
 
     public void setup() throws FileNotFoundException, IOException, Exception {
         MovementLoader.setup(80);
-        vao = new VertexArrayObject();
-        vao.bind();
         
-        URL verts = OpenGGTest.class.getResource("res/shaders/shader.vert");
-        URL frags = OpenGGTest.class.getResource("res/shaders/shader.frag");
-        URL geoms = OpenGGTest.class.getResource("res/shaders/shader.geom");
-        
-        s.setup(verts, frags, geoms);
-        
+        OpenGG.initializeRenderEngine();
+        OpenGG.initializeAudioController();
+
         c = new Camera(pos, rot);
         c.setPos(pos);
         c.setRot(rot);
 
         print("Shader/VAO Loading and Generation Complete");
-        
-        AudioController.init(1);
+          
         so = new Sound(OpenGGTest.class.getResource("res/maw.wav"));
         so2 = new Sound(OpenGGTest.class.getResource("res/mgs.wav"));
         
@@ -196,7 +175,7 @@ public class OpenGGTest implements KeyboardListener {
         as = new AudioListener();
         AudioController.setListener(as);
         
-        RenderEngine.init();
+        
         RenderEngine.setSkybox(sky, cb);
         RenderEngine.addGUIItem(new GUIItem(base2, new Vector2f()));
         RenderEngine.addRenderable(p);
@@ -206,11 +185,7 @@ public class OpenGGTest implements KeyboardListener {
         print("Setup Complete");
     }
 
-    public void exit() {     
-        TextureManager.destroy();
-        vao.delete();
-        
-    }
+    public void exit() {}
 
     public void render() {
         rot = new Vector3f(yrot, xrot, 0);
@@ -226,12 +201,11 @@ public class OpenGGTest implements KeyboardListener {
         c.setPos(pos);
         c.setRot(rot);
 
-        s.setLightPos(new Vector3f(40, 200, 40));
-        s.setView(c);
-        s.setPerspective(90, win.getRatio(), 1, 2500f);
+        RenderEngine.controller.setLightPos(new Vector3f(40, 200, 40));
+        RenderEngine.controller.setView(c);
+        RenderEngine.controller.setPerspective(90, win.getRatio(), 1, 2500f);
         
         RenderEngine.draw();
-        
     }
 
     public void update() {

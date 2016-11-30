@@ -8,11 +8,11 @@ package com.opengg.core.render.shader;
 
 import com.opengg.core.Matrix4f;
 import com.opengg.core.Vector3f;
+import com.opengg.core.engine.RenderEngine;
 import com.opengg.core.io.FileStringLoader;
 import com.opengg.core.model.Material;
 import com.opengg.core.render.VertexBufferObject;
 import com.opengg.core.render.window.ViewUtil;
-import com.opengg.core.util.GlobalInfo;
 import com.opengg.core.world.Camera;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
@@ -49,7 +49,11 @@ public class ShaderController {
     private int text;
     private int time;
     
-    public void setup(URL vert, URL frag, URL geom) throws UnsupportedEncodingException{
+    public ShaderController(URL vert, URL frag, URL geom) throws UnsupportedEncodingException{
+        setup(vert, frag, geom);
+    }
+    
+    private void setup(URL vert, URL frag, URL geom) throws UnsupportedEncodingException{
         vertexTex= new Shader(GL_VERTEX_SHADER, 
                 FileStringLoader.loadStringSequence(
                         URLDecoder.decode(
@@ -132,7 +136,7 @@ public class ShaderController {
         program.setUniform(billboard,false);
         program.checkStatus();
         
-        GlobalInfo.main = this;
+        RenderEngine.controller = this;
         
         ViewUtil.setPerspective(80, 1280/720, 0.3f, 3000f, program);    
     }

@@ -18,4 +18,5 @@ public interface Window {
     public long getID();
     public int getWidth();
     public int getHeight();
+    public boolean getSuccessfulConstruction();
 }

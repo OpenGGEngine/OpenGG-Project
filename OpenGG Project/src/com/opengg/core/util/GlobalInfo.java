@@ -8,7 +8,6 @@ package com.opengg.core.util;
 
 import com.opengg.core.engine.WorldEngine;
 import com.opengg.core.io.input.KeySet;
-import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.window.Window;
 import com.opengg.core.world.World;
 
@@ -19,7 +18,6 @@ import com.opengg.core.world.World;
 public class GlobalInfo {
     public static Window window;
     public static WorldEngine engine;
-    public static ShaderController main;
     public static World curworld;
     public static KeySet s;
 }
