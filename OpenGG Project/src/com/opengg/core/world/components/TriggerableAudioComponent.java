@@ -8,7 +8,7 @@ package com.opengg.core.world.components;
 import com.opengg.core.audio.Sound;
 import com.opengg.core.world.components.triggers.Trigger;
 import com.opengg.core.world.components.triggers.TriggerInfo;
-import com.opengg.core.world.components.triggers.TriggerType;
+import static com.opengg.core.world.components.triggers.TriggerInfo.TOGGLE;
 import com.opengg.core.world.components.triggers.Triggerable;
 
 /**
@@ -25,7 +25,7 @@ public class TriggerableAudioComponent implements Triggerable {
     
     @Override
     public void onTrigger(Trigger source, TriggerInfo data) {
-        if(data.type == TriggerType.TOGGLE){
+        if(data.type == TOGGLE){
             s.setPlayState(source.getTriggerState());
         }else{
             s.stop();

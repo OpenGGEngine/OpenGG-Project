@@ -10,9 +10,11 @@ package com.opengg.core.world.components.triggers;
  * @author Javier
  */
 public class TriggerInfo {
+    public static final int SINGLE = 1;
+    public static final int TOGGLE = 2;
     public Object data;
     public String info;
-    public TriggerType type;
-    public String source;
+    public int type;
+    public Object source;
     
 }

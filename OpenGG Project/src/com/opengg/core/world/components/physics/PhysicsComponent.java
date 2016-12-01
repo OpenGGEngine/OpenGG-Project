@@ -21,6 +21,7 @@ import static com.opengg.core.world.components.physics.PhysicsConstants.BASE;
  */
 public class PhysicsComponent implements Updatable, Positioned {
     
+    Collider c;
     public boolean gravEffect = true;
     public Vector3f pos = new Vector3f();
     public Quaternion4f rot;
@@ -52,7 +53,12 @@ public class PhysicsComponent implements Updatable, Positioned {
         forces(delta);
         parent.setPosition(pos);
     }
-
+    
+    public void setCollider(Collider c){
+       this.c = c;
+       c.setParentPhysicsComponent(this);
+    }
+    
     private void forces(float delta) {
         force.x += 0;
         force.y += 0;

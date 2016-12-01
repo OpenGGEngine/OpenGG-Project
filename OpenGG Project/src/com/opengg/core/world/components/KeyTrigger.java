@@ -9,7 +9,7 @@ import com.opengg.core.io.input.keyboard.KeyboardEventHandler;
 import com.opengg.core.io.input.keyboard.KeyboardListener;
 import com.opengg.core.world.components.triggers.Trigger;
 import com.opengg.core.world.components.triggers.TriggerInfo;
-import com.opengg.core.world.components.triggers.TriggerType;
+import static com.opengg.core.world.components.triggers.TriggerInfo.SINGLE;
 
 /**
  *
@@ -34,8 +34,8 @@ public class KeyTrigger extends Trigger implements KeyboardListener {
             if(key == wkey){
                 TriggerInfo t = new TriggerInfo();
                 t.info = Integer.toString(key);
-                t.source = "KeyTrigger";
-                t.type = TriggerType.SINGLE;
+                t.source = this;
+                t.type = SINGLE;
                 trigger(t);
             }
         }
