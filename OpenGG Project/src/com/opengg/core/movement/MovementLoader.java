@@ -1,10 +1,11 @@
 package com.opengg.core.movement;
 
-import java.util.logging.Logger;
-import org.lwjgl.glfw.GLFW;
 import com.opengg.core.Vector3f;
 import com.opengg.core.io.input.keyboard.KeyboardHandler;
 import com.opengg.core.io.input.mouse.MousePosHandler;
+import com.opengg.core.util.Time;
+import java.util.logging.Logger;
+import org.lwjgl.glfw.GLFW;
 import static org.lwjgl.glfw.GLFW.*;
 import org.lwjgl.glfw.GLFWKeyCallback;
 
@@ -29,11 +30,13 @@ public class MovementLoader {
     private static double lastFrame;
     private static volatile boolean running = true;
     static final Logger main = Logger.getLogger("main");
+    private static Time t;
+    private MovementLoader(long w) {}
 
-    public MovementLoader(long w) {
-
+    static{
+        t = new Time();
     }
-
+    
     public static void setSpeed(int s) {
         baseSpeed = s;
     }
@@ -42,15 +45,6 @@ public class MovementLoader {
         baseSpeed = s;
 
         mouseX = mouseY = mouseDX = mouseDY = 0;
-
-        
-    }
-
-    private static float getDelta() {
-        double currentTime = GLFW.glfwGetTime();
-        float delta = (float) (currentTime - lastFrame);
-        lastFrame = GLFW.glfwGetTime();
-        return delta * 1000;
     }
 
     public static Vector3f processRotation(float sens, boolean inv) {
@@ -100,7 +94,7 @@ public class MovementLoader {
         boolean moveFaster = KeyboardHandler.isKeyDown(GLFW_KEY_LEFT_CONTROL);
         boolean moveMuchFaster = KeyboardHandler.isKeyDown(GLFW_KEY_TAB);
         boolean reset = KeyboardHandler.isKeyDown(GLFW_KEY_C);
-        float delta = getDelta();
+        float delta = t.getDeltaMs();
 
         if (moveMuchFaster) {
             walkingSpeed = baseSpeed * 15;

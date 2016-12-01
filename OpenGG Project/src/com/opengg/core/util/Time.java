@@ -7,7 +7,6 @@ package com.opengg.core.util;
 
 import com.opengg.core.engine.EngineInfo;
 import static com.opengg.core.engine.EngineInfo.GLFW;
-import com.opengg.core.render.window.GLFWWindow;
 
 /**
  *
@@ -15,11 +14,11 @@ import com.opengg.core.render.window.GLFWWindow;
  */
 public class Time {
     double currentTime = 0;
-    double timeStep = 0f;
+    double timeStep = 0;
     double lastTime = 0;
     
     public Time(){
-        lastTime = System.currentTimeMillis();
+        lastTime = getMillis();
     }
     public float getDeltaMs(){
         currentTime = getMillis();
@@ -32,9 +31,9 @@ public class Time {
         return getDeltaMs() / 1000f;
     }
     
-    public double getMillis(){
+    double getMillis(){
         if(EngineInfo.windowType == GLFW){
-            return ((GLFWWindow) EngineInfo.window).getTime() * 1000;
+            //return ((GLFWWindow) EngineInfo.window).getTime() * 1000;
         }
         return System.currentTimeMillis();
     }

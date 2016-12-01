@@ -82,7 +82,7 @@ public class GLFWWindow implements Window {
                 (mode.height() - HEIGHT) / 2
             );
         }
-        if ( window != NULL )
+        if ( window == NULL )
             throw new WindowCreationException("Failed to create the GLFW window");
 
         glfwSetKeyCallback(window, keyCallback = new KeyboardHandler());

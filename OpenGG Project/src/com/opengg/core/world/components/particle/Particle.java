@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.opengg.core.render.particle;
+package com.opengg.core.world.components.particle;
 
 import com.opengg.core.Vector3f;
 

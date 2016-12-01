@@ -40,12 +40,7 @@ public class UpdateEngine{
             for(int j = i + 1; i < colliders.size(); i++){
                 CollisionData info = colliders.get(i).testForCollision(colliders.get(j));
                 if(info != null){
-                    if(info.c1physact){
-                        info.c1phys.velocity = new Vector3f(-info.c1phys.velocity.x, -info.c1phys.velocity.y, -info.c1phys.velocity.z);
-                    }
-                    if(info.c2physact){
-                        info.c1phys.velocity = new Vector3f(-info.c1phys.velocity.x, -info.c1phys.velocity.y, -info.c1phys.velocity.z);
-                    }
+                    processCollision(info);
                 }
             }
         }
@@ -57,9 +52,9 @@ public class UpdateEngine{
     
     public static void update(){
         float i = t.getDeltaSec();
-        for(Updatable e : objs){
+        objs.stream().forEach((e) -> {
             e.update(i);
-        }
+        });
         checkColliders();
     }
     

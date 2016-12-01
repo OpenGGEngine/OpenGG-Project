@@ -18,7 +18,6 @@ import java.util.Collection;
  */
 public class Collider extends Trigger{
 
-    boolean collided = false;
     PhysicsComponent pc;
     BoundingBox main;
     ArrayList<BoundingBox> boxes = new ArrayList<>();
@@ -33,14 +32,12 @@ public class Collider extends Trigger{
     }
     
     public CollisionData testForCollision(Collider other) {
-        if(other.collided) return null;
         if (!main.isColliding(other.main))
             return null;
  
         for (BoundingBox x: this.boxes) {
             for(BoundingBox y: other.boxes) {
                 if (x.isColliding(y)){
-                    collided = true;
                     
                     CollisionData data = new CollisionData();
                     data.c1collider = this;
@@ -68,6 +65,6 @@ public class Collider extends Trigger{
     public void setParentInfo(Component parent) {}
 
     @Override
-    public void update(float delta) {collided = false;}
+    public void update(float delta) {}
 
 }

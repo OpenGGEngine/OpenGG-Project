@@ -3,13 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.opengg.core.render.particle;
+package com.opengg.core.world.components.particle;
 
-import com.opengg.core.Matrix4f;
 import com.opengg.core.Vector3f;
 import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.render.drawn.InstancedDrawnObject;
 import com.opengg.core.render.texture.Texture;
+import com.opengg.core.util.Time;
+import com.opengg.core.world.components.Component;
+import com.opengg.core.world.components.Renderable;
+import com.opengg.core.world.components.Updatable;
 import java.nio.FloatBuffer;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -22,7 +25,7 @@ import org.lwjgl.BufferUtils;
  * 
  * This represents a group of particles
  */
-public class ParticleSystem{
+public class ParticleSystem implements Updatable, Renderable{
     List<Particle> particles = new LinkedList<>();
     private Vector3f position = new Vector3f();
     InstancedDrawnObject particleobject;
@@ -30,76 +33,17 @@ public class ParticleSystem{
     private float speed;
     private float gravityComplient;
     private float lifeLength;
+    private float timeSinceLast = 0f;
+    Time time;
     Texture t;
-    
-    public ParticleSystem(float pps, float speed, float gravityComplient, float lifeLength) {
-        this.pps = pps;
-        this.speed = speed;
-        this.gravityComplient = gravityComplient;
-        this.lifeLength = lifeLength;
-         FloatBuffer f = BufferUtils.createFloatBuffer(48);
-            f.put(0);
-            f.put(0);
-            f.put(0); 
-            f.put(1);
-            f.put(1);
-            f.put(1);
-            f.put(1);
-            f.put(1);
-            
-            f.put(0);
-            f.put(100);
-            f.put(0);
-            f.put(1);
-            f.put(1);
-            f.put(1);
-            f.put(1);
-            f.put(1);
-            
-            f.put(100);
-            f.put(100);
-            f.put(0);
-            f.put(1);
-            f.put(1);
-            f.put(1);
-            f.put(1);
-            f.put(1);
-            
-            f.put(100);
-            f.put(100);
-            f.put(0);     
-            f.put(1);
-            f.put(1);
-            f.put(1);
-            f.put(1);
-            f.put(1);
-            
-            f.put(0);
-            f.put(0);
-            f.put(0);
-            f.put(1);
-            f.put(1);
-            f.put(1);
-            f.put(1);
-            f.put(1);
-            
-            f.put(100);
-            f.put(0);
-            f.put(0);  
-            f.put(1);
-            f.put(1);
-            f.put(1);
-            f.put(1);
-            f.put(1);
-            particleobject = new InstancedDrawnObject(f,2,createParticleVBO());
-        
-    }
+
     public ParticleSystem(float pps, float speed, float gravityComplient, float lifeLength,FloatBuffer model, Texture t) {
         this.pps = pps;
         this.speed = speed;
         this.gravityComplient = gravityComplient;
         this.lifeLength = lifeLength;
         particleobject = new InstancedDrawnObject(model,2,createParticleVBO());
+        time = new Time();
         this.t = t;
     }
     
@@ -109,6 +53,7 @@ public class ParticleSystem{
         this.gravityComplient = -0.027f;
         this.lifeLength = lifeLength;
         particleobject = new InstancedDrawnObject(model,2,createParticleVBO());
+        time = new Time();
         this.t = t;
     }
     
@@ -121,7 +66,11 @@ public class ParticleSystem{
         particles.add(new Particle(center, velocity, new Vector3f(0,gravityComplient,0), lifeLength,1f));
     }
     public void update(float delta) {
-        emitParticle(position);
+        timeSinceLast += time.getDeltaMs();
+        if(timeSinceLast >= (1/pps)*1000){
+            timeSinceLast = 0;
+            emitParticle(position);
+        }
         
         Iterator<Particle> screwconcurrent = particles.iterator();
         while(screwconcurrent.hasNext()){
@@ -159,4 +108,22 @@ public class ParticleSystem{
      public Drawable getDrawable(){
          return particleobject;
      }
+
+    @Override
+    public void setParentInfo(Component parent) {
+        
+    }
+
+    @Override
+    public void setRotation(Vector3f rot) {}
+
+    @Override
+    public Vector3f getPosition() {
+        return position;
+    }
+
+    @Override
+    public Vector3f getRotation() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

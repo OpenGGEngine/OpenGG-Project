@@ -9,7 +9,7 @@ package com.opengg.core.engine;
 import com.opengg.core.gui.GUI;
 import com.opengg.core.gui.GUIItem;
 import com.opengg.core.render.VertexArrayObject;
-import com.opengg.core.render.buffer.ObjectBuffers;
+import com.opengg.core.render.objects.ObjectBuffers;
 import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.render.drawn.DrawnObject;
 import com.opengg.core.render.shader.Mode;

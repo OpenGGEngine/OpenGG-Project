@@ -5,6 +5,7 @@ import com.opengg.core.Vector3f;
 import com.opengg.core.audio.AudioListener;
 import com.opengg.core.audio.Sound;
 import com.opengg.core.engine.AudioController;
+import com.opengg.core.engine.EngineInfo;
 import com.opengg.core.engine.OpenGG;
 import com.opengg.core.engine.RenderEngine;
 import com.opengg.core.engine.WorldManager;
@@ -14,15 +15,13 @@ import com.opengg.core.io.input.keyboard.KeyboardEventHandler;
 import com.opengg.core.io.input.keyboard.KeyboardListener;
 import com.opengg.core.io.input.mouse.MouseButtonListener;
 import com.opengg.core.io.objloader.parser.OBJModel;
-import com.opengg.core.io.objloader.parser.OBJParser;
-import com.opengg.core.model.ModelLoader;
 import com.opengg.core.movement.MovementLoader;
-import com.opengg.core.render.buffer.ObjectBuffers;
-import com.opengg.core.render.drawn.DrawnObject;
+import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.render.drawn.DrawnObjectGroup;
 import com.opengg.core.render.drawn.InstancedDrawnObject;
 import com.opengg.core.render.drawn.MatDrawnObject;
-import com.opengg.core.render.particle.ParticleSystem;
+import com.opengg.core.render.objects.ObjectCreator;
+import com.opengg.core.world.components.particle.ParticleSystem;
 import com.opengg.core.render.texture.Cubemap;
 import com.opengg.core.render.texture.FramebufferTexture;
 import com.opengg.core.render.texture.Texture;
@@ -31,16 +30,14 @@ import com.opengg.core.render.window.DisplayMode;
 import com.opengg.core.render.window.GLFWWindow;
 import static com.opengg.core.render.window.RenderUtil.endFrame;
 import static com.opengg.core.render.window.RenderUtil.startFrame;
-import com.opengg.core.engine.EngineInfo;
 import static com.opengg.core.util.GlobalUtil.print;
 import com.opengg.core.world.Camera;
 import com.opengg.core.world.World;
 import com.opengg.core.world.WorldObject;
+import com.opengg.core.world.components.KeyTrigger;
 import com.opengg.core.world.components.ModelRenderComponent;
-import com.opengg.core.world.components.ParticleRenderComponent;
 import com.opengg.core.world.components.TriggerableAudioComponent;
 import com.opengg.core.world.components.physics.PhysicsComponent;
-import com.opengg.core.world.components.KeyTrigger;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -61,7 +58,7 @@ public class OpenGGTest implements KeyboardListener, MouseButtonListener {
     FramebufferTexture t1 = new FramebufferTexture();
     FramebufferTexture ppbf = new FramebufferTexture();
     InstancedDrawnObject flashbang;
-    DrawnObject test5,sky;
+    Drawable test5;
     DrawnObjectGroup test6;
     MatDrawnObject awp3, base2;
     GGFont f;
@@ -69,7 +66,7 @@ public class OpenGGTest implements KeyboardListener, MouseButtonListener {
     private Texture t2, t3;
     private Cubemap cb = new Cubemap();
     WorldObject w1, w2;
-    private Sound so,so2,so3;
+    private Sound so, so2;
     private AudioListener as;
     private WorldObject awps;
     private PhysicsComponent bad;
@@ -105,6 +102,9 @@ public class OpenGGTest implements KeyboardListener, MouseButtonListener {
 
         print("Shader/VAO Loading and Generation Complete");
           
+        as = new AudioListener();
+        AudioController.setListener(as);
+        
         so = new Sound(OpenGGTest.class.getResource("res/maw.wav"));
         so2 = new Sound(OpenGGTest.class.getResource("res/mgs.wav"));
         
@@ -132,13 +132,8 @@ public class OpenGGTest implements KeyboardListener, MouseButtonListener {
                 + " the guardians of peace and justice in the galaxy, to settle the conflict...", f, 1f, new Vector2f(), 0.5f, false);
         
         base2 = f.loadText(g);
-        
-        t2.useTexture(0);
+
         cb.loadTexture("C:/res/skybox/majestic");
-        
-        test = ObjectBuffers.genBuffer(new OBJParser().parse(OpenGGTest.class.getResource("res/models/deer.obj")), 1f, 0.2f, new Vector3f());
-        
-        sky = new DrawnObject(ObjectBuffers.genSkyCube(), 12);
         
         w = WorldManager.getDefaultWorld();
         EngineInfo.curworld = w;
@@ -149,11 +144,8 @@ public class OpenGGTest implements KeyboardListener, MouseButtonListener {
         awps.attach(ep1 = new ModelRenderComponent(awp3));
         awps.setPosition(new Vector3f(5,5,5));
         
-        ParticleRenderComponent p = new ParticleRenderComponent();
-        p.setPosition(new Vector3f(0,50,0));
-        p.addParticleType(new ParticleSystem(0.5f,20f,100f,test, t3));
-        
-        ModelRenderComponent r = new ModelRenderComponent(ModelLoader.loadModel("C:/res/3DSMusicPark/3DSMusicPark.bmf"));
+        ParticleSystem p = new ParticleSystem(2f,20f,100f,ObjectCreator.createOldModelBuffer(OpenGGTest.class.getResource("res/models/deer.obj")), t3);
+        //ModelRenderComponent r = new ModelRenderComponent(ModelLoader.loadModel("C:/res/3DSMusicPark/3DSMusicPark.bmf"));
         print("Model and Texture Loading Completed");
 
         TriggerableAudioComponent test3 = new TriggerableAudioComponent(so2);
@@ -162,18 +154,14 @@ public class OpenGGTest implements KeyboardListener, MouseButtonListener {
         
         terrain = new WorldObject();
         terrain.attach(bad = new PhysicsComponent());
-        terrain.attach(r);
+        //terrain.attach(r);
         terrain.attach(p);
         terrain.attach(test3);
 
-        as = new AudioListener();
-        AudioController.setListener(as);
-        
-        
-        RenderEngine.setSkybox(sky, cb);
+        RenderEngine.setSkybox(ObjectCreator.createCube(1500f), cb);
         RenderEngine.addGUIItem(new GUIItem(base2, new Vector2f()));
         RenderEngine.addRenderable(p);
-        RenderEngine.addRenderable(r);
+        //RenderEngine.addRenderable(r);
         RenderEngine.addRenderable(ep1, true, false);
         
         print("Setup Complete");
