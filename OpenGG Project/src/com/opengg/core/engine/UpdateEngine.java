@@ -1,7 +1,7 @@
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ *
  */
 package com.opengg.core.engine;
 
@@ -15,7 +15,7 @@ import java.util.LinkedList;
 
 /**
  *
- * @author Javier Coindreau 
+ * @author Javier Coindreau
  */
 public class UpdateEngine{
     static LinkedList<Collider> colliders = new LinkedList<>();
@@ -51,9 +51,9 @@ public class UpdateEngine{
     }
     
     public static void update(){
-        float i = t.getDeltaSec();
+        float delta = t.getDeltaMs();
         objs.stream().forEach((e) -> {
-            e.update(i);
+            e.update(delta);
         });
         checkColliders();
     }

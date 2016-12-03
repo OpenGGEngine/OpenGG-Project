@@ -1,9 +1,11 @@
 package com.opengg.core.render.window;
 import com.opengg.core.exceptions.WindowCreationException;
-import com.opengg.core.io.input.keyboard.KeyboardHandler;
-import com.opengg.core.io.input.mouse.MouseButtonHandler;
-import com.opengg.core.io.input.mouse.MousePosHandler;
+import com.opengg.core.io.input.keyboard.GLFWKeyboardHandler;
+import com.opengg.core.io.input.mouse.GLFWMouseButtonHandler;
+import com.opengg.core.io.input.mouse.GLFWMousePosHandler;
 import com.opengg.core.engine.EngineInfo;
+import com.opengg.core.io.input.keyboard.KeyboardController;
+import com.opengg.core.io.input.mouse.MouseController;
 import java.nio.ByteBuffer;
 import org.lwjgl.glfw.*;
 import static org.lwjgl.glfw.GLFW.*;
@@ -35,11 +37,9 @@ public class GLFWWindow implements Window {
         HEIGHT = h;
         WIDTH = w;
 
-        // Initialize GLFW. Most GLFW functions will not work before doing this.
         if (glfwInit() != true)
             throw new WindowCreationException("Unable to initialize GLFW");
 
-        // Configure our window
         glfwDefaultWindowHints(); // optional, the current window hints are already the default
         glfwWindowHint(GLFW_VISIBLE, GL_FALSE); // the window will stay hidden after creation
         glfwWindowHint(GLFW_RESIZABLE, GL_TRUE); // the window will be resizable
@@ -85,10 +85,14 @@ public class GLFWWindow implements Window {
         if ( window == NULL )
             throw new WindowCreationException("Failed to create the GLFW window");
 
-        glfwSetKeyCallback(window, keyCallback = new KeyboardHandler());
-        glfwSetCursorPosCallback(window, mouseCallback = new MousePosHandler());
-        glfwSetMouseButtonCallback(window, mouseButtonCallback = new MouseButtonHandler());
+        glfwSetKeyCallback(window, keyCallback = new GLFWKeyboardHandler());
+        glfwSetCursorPosCallback(window, mouseCallback = new GLFWMousePosHandler());
+        glfwSetMouseButtonCallback(window, mouseButtonCallback = new GLFWMouseButtonHandler());
 
+        KeyboardController.setHandler((GLFWKeyboardHandler) keyCallback);
+        MouseController.setButtonHandler((GLFWMouseButtonHandler) mouseButtonCallback);
+        MouseController.setPosHandler((GLFWMousePosHandler) mouseCallback);
+        
         // Make the OpenGL context current
         glfwMakeContextCurrent(window);
         // Enable v-sync
@@ -139,16 +143,10 @@ public class GLFWWindow implements Window {
         
         errorCallback.free();
     }
-    public boolean shouldClose(long wind){
-        if(glfwWindowShouldClose(wind) == true){
-            return false;
-        }else{
-            return true;
-        }
-    }
+
     @Override
      public boolean shouldClose(){
-        return glfwWindowShouldClose(EngineInfo.window.getID());
+        return glfwWindowShouldClose(getID());
     }
      
     public void setColor(float r, float g, float b){
@@ -179,9 +177,10 @@ public class GLFWWindow implements Window {
             
     @Override
     public void endFrame(){
-        glfwSwapBuffers(EngineInfo.window.getID());
+        glfwSwapBuffers(getID());
     }
     
+    @Override
     public long getID(){
         return window;
     }

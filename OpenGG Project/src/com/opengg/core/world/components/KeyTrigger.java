@@ -5,7 +5,7 @@
  */
 package com.opengg.core.world.components;
 
-import com.opengg.core.io.input.keyboard.KeyboardEventHandler;
+import com.opengg.core.io.input.keyboard.KeyboardController;
 import com.opengg.core.io.input.keyboard.KeyboardListener;
 import com.opengg.core.world.components.triggers.Trigger;
 import com.opengg.core.world.components.triggers.TriggerInfo;
@@ -21,7 +21,7 @@ public class KeyTrigger extends Trigger implements KeyboardListener {
     
     public KeyTrigger(int... key){
         super();
-        KeyboardEventHandler.addToPool(this);
+        KeyboardController.addToPool(this);
         keys = key;
     }
     

@@ -10,13 +10,6 @@ package com.opengg.core.io.input.keyboard;
  *
  * @author Javier
  */
-public class KeyboardHandler implements IKeyboardHandler{
-    
-    public boolean[] keys = new boolean[1024];
-    
-    @Override
-    public boolean isKeyDown(int key) {
-        return keys[key];
-    }
-    
+public interface IKeyboardHandler {
+    public boolean isKeyDown(int key);
 }

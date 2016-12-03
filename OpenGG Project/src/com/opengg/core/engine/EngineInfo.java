@@ -18,7 +18,6 @@ public class EngineInfo {
     public final static int GLFW = 100;
     public final static int SWT = 101;
     public static Window window;
-    public static UpdateEngine engine;
     public static World curworld;
     public static KeySet s;
     public static int windowType;

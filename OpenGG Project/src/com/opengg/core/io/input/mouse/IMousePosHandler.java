@@ -6,16 +6,14 @@
 
 package com.opengg.core.io.input.mouse;
 
+import com.opengg.core.Vector2f;
+
 /**
  *
  * @author Javier
  */
-public class MouseButtonHandler implements IMouseButtonHandler{
-    boolean[] buttons = new boolean[50];
-    
-    @Override
-    public boolean isButtonDown(int button) {
-        return buttons[button];
-    }
-    
+public interface IMousePosHandler {
+    public double getX();
+    public double getY();
+    public Vector2f getPos();
 }

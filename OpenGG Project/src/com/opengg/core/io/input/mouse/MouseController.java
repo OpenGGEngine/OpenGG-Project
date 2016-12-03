@@ -10,9 +10,19 @@ package com.opengg.core.io.input.mouse;
  *
  * @author Javier
  */
-public class MouseButtonEventHandler {
+public class MouseController {
     static int counter;
-    static MouseButtonListener[] k = new MouseButtonListener[16];;
+    static MouseButtonListener[] k = new MouseButtonListener[16];
+    static IMousePosHandler handler;
+    static IMouseButtonHandler bhandler;
+    
+    public static void setPosHandler(IMousePosHandler handle){
+        handler = handle;
+    }
+    
+    public static void setButtonHandler(IMouseButtonHandler handle){
+        bhandler = handle;
+    }
     
     public static void addToPool(MouseButtonListener ks){
         k[counter] = ks;
@@ -20,7 +30,7 @@ public class MouseButtonEventHandler {
         
     }
     
-    public static void keyPressed(int key){
+    public static void buttonPressed(int key){
         try{
             for (MouseButtonListener k1 : k) {
                 k1.buttonPressed(key);
@@ -29,7 +39,8 @@ public class MouseButtonEventHandler {
             
         }
     }
-    public static void keyReleased(int key){
+    
+    public static void buttonReleased(int key){
         try{
             for (MouseButtonListener k1 : k) {
                 k1.buttonReleased(key);
@@ -37,5 +48,17 @@ public class MouseButtonEventHandler {
         }catch(NullPointerException e){
             
         }
+    }
+    
+    public static boolean isButtonDown(int button){
+        return bhandler.isButtonDown(button);
+    }
+    
+    public static double getX(){
+        return handler.getX();
+    }
+    
+    public static double getY(){
+        return handler.getY();
     }
 }

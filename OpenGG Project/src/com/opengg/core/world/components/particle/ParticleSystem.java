@@ -65,8 +65,10 @@ public class ParticleSystem implements Updatable, Renderable{
         velocity.multiply(speed);
         particles.add(new Particle(center, velocity, new Vector3f(0,gravityComplient,0), lifeLength,1f));
     }
+    
+    @Override
     public void update(float delta) {
-        timeSinceLast += time.getDeltaMs();
+        timeSinceLast += delta;
         if(timeSinceLast >= (1/pps)*1000){
             timeSinceLast = 0;
             emitParticle(position);
