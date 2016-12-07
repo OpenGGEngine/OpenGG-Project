@@ -5,26 +5,37 @@
  */
 package com.opengg.core.world.components.physics;
 
+import com.opengg.core.math.Vector3f;
 import com.opengg.core.world.components.Component;
+import com.opengg.core.world.components.Positioned;
 import com.opengg.core.world.components.triggers.Trigger;
 import com.opengg.core.world.components.triggers.TriggerInfo;
 import static com.opengg.core.world.components.triggers.TriggerInfo.SINGLE;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 /**
  *
  * @author ethachu19
  */
-public class Collider extends Trigger{
-
+public class Collider extends Trigger implements Positioned{
+    Positioned p;
+    Vector3f offset;
+    Vector3f rot;
     PhysicsComponent pc;
     BoundingBox main;
-    ArrayList<BoundingBox> boxes = new ArrayList<>();
+    List<BoundingBox> boxes = new ArrayList<>();
 
     public Collider(BoundingBox main, Collection<BoundingBox> all) {
         this.main = main;
         boxes.addAll(all);
+    }
+    
+    public Collider(BoundingBox main, BoundingBox... all) {
+        this.main = main;
+        boxes.addAll(Arrays.asList(all));
     }
 
     void setParentPhysicsComponent(PhysicsComponent pc){
@@ -32,6 +43,7 @@ public class Collider extends Trigger{
     }
     
     public CollisionData testForCollision(Collider other) {
+        
         if (!main.isColliding(other.main))
             return null;
  
@@ -62,9 +74,41 @@ public class Collider extends Trigger{
     }
 
     @Override
-    public void setParentInfo(Component parent) {}
+    public void setParentInfo(Component parent) {
+        if(parent instanceof Positioned){
+            p = (Positioned) parent;
+        }
+    }
 
     @Override
-    public void update(float delta) {}
+    public void update(float delta) {
+        Vector3f fpos = getPosition();
+        boxes.stream().forEach((b) -> {
+            b.recenter(fpos);
+        });
+        main.recenter(offset);
+    }
+
+    @Override
+    public void setPosition(Vector3f pos) {
+        this.offset = pos;
+    }
+
+    @Override
+    public void setRotation(Vector3f rot) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Vector3f getPosition() {
+        Vector3f fpos = offset;
+        if (p != null) fpos = offset.add(pc.pos);
+        return fpos;
+    }
+
+    @Override
+    public Vector3f getRotation() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
 }

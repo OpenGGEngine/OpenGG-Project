@@ -6,7 +6,7 @@
 
 package com.opengg.core.world;
 
-import com.opengg.core.Vector3f;
+import com.opengg.core.math.Vector3f;
 import com.opengg.core.io.input.keyboard.KeySet;
 import com.opengg.core.io.input.keyboard.KeyboardListener;
 import com.opengg.core.engine.EngineInfo;

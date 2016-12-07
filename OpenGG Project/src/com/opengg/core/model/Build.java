@@ -9,8 +9,8 @@ package com.opengg.core.model;
  *
  * @author Warren
  */
-import com.opengg.core.Vector2f;
-import com.opengg.core.Vector3f;
+import com.opengg.core.math.Vector2f;
+import com.opengg.core.math.Vector3f;
 import java.util.*;
 import static java.util.logging.Level.INFO;
 import static java.util.logging.Level.SEVERE;

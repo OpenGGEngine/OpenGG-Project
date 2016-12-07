@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package com.opengg.core.render.gl;
+package com.opengg.core.render;
 
 import static org.lwjgl.opengl.GL11.glEnable;
 

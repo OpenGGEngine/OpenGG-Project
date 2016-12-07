@@ -11,7 +11,7 @@ package com.opengg.core.io.input.mouse;
  * @author Javier
  */
 public class MouseButtonHandler implements IMouseButtonHandler{
-    boolean[] buttons = new boolean[50];
+    public boolean[] buttons = new boolean[50];
     
     @Override
     public boolean isButtonDown(int button) {

@@ -5,7 +5,7 @@
  */
 package com.opengg.core.world.components.particle;
 
-import com.opengg.core.Vector3f;
+import com.opengg.core.math.Vector3f;
 
 /**
  *

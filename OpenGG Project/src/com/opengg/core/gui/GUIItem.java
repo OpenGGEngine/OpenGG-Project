@@ -5,7 +5,7 @@
  */
 package com.opengg.core.gui;
 
-import com.opengg.core.Vector2f;
+import com.opengg.core.math.Vector2f;
 import com.opengg.core.render.drawn.Drawable;
 
 /**

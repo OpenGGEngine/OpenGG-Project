@@ -5,7 +5,7 @@
  */
 package com.opengg.core.world.components.physics;
 
-import com.opengg.core.Vector3f;
+import com.opengg.core.math.Vector3f;
 
 /**
  *
@@ -21,6 +21,10 @@ public class BoundingBox {
         this.width = width;
         this.height = height;
         recenter(pos);
+    }
+    
+    public Vector3f[] getAABBVertices(){
+        return new Vector3f[] {vertices[MIN], vertices[MAX]};
     }
     
     public void recenter(Vector3f pos) {

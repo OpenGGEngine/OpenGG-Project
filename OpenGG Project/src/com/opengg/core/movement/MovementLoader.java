@@ -1,6 +1,6 @@
 package com.opengg.core.movement;
 
-import com.opengg.core.Vector3f;
+import com.opengg.core.math.Vector3f;
 import static com.opengg.core.io.input.keyboard.Key.*;
 import com.opengg.core.io.input.keyboard.KeyboardController;
 import com.opengg.core.io.input.mouse.MouseController;

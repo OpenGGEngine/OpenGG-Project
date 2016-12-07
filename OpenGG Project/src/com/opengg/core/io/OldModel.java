@@ -9,8 +9,8 @@ package com.opengg.core.io;
  *
  * @author warren
  */
-import com.opengg.core.Vector2f;
-import com.opengg.core.Vector3f;
+import com.opengg.core.math.Vector2f;
+import com.opengg.core.math.Vector3f;
 
 import java.util.ArrayList;
 import java.util.HashMap;

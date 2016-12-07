@@ -5,7 +5,7 @@
  */
 package com.opengg.core.world.entities;
 
-import com.opengg.core.Vector3f;
+import com.opengg.core.math.Vector3f;
 import com.opengg.core.io.objloader.parser.OBJModel;
 import com.opengg.core.world.World;
 import com.opengg.core.engine.WorldManager;

@@ -6,9 +6,9 @@ package com.opengg.core.render.shader;
  * and open the template in the editor.
  */
 
-import com.opengg.core.Matrix4f;
-import com.opengg.core.Vector2f;
-import com.opengg.core.Vector3f;
+import com.opengg.core.math.Matrix4f;
+import com.opengg.core.math.Vector2f;
+import com.opengg.core.math.Vector3f;
 import static com.opengg.core.util.GlobalUtil.print;
 
 

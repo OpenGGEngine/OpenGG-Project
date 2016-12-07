@@ -22,7 +22,7 @@ public class PhysicsStruct {
             structInfo[i] = b;
             i++;
         }
-        for(byte b : p.rotVelocity.toByteArray()){
+        for(byte b : p.angvelocity.toByteArray()){
             structInfo[i] = b;
             i++;
         }
@@ -38,7 +38,7 @@ public class PhysicsStruct {
             structInfo[i] = b;
             i++;
         }
-        for(byte b : p.rotAcceleration.toByteArray()){
+        for(byte b : p.angaccel.toByteArray()){
             structInfo[i] = b;
             i++;
         }

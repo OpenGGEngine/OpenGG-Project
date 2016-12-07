@@ -3,15 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.opengg.core;
-
-import com.opengg.core.math.DashMath;
+package com.opengg.core.math;
 
 /**
  *
  * @author ethachu19
  */
-public class Quaternion4f {
+public class Quaternionf {
 
     /**
      * Angle/Scalar
@@ -25,28 +23,28 @@ public class Quaternion4f {
      */
     public Vector3f axis = new Vector3f();
 
-    public Quaternion4f() {
+    public Quaternionf() {
         w = axis.x = axis.y = axis.z = 0;
     }
 
-    public Quaternion4f(float w, float x, float y, float z) {
+    public Quaternionf(float w, float x, float y, float z) {
         this.w = w;
         this.axis.x = x;
         this.axis.y = y;
         this.axis.z = z;
     }
 
-    public Quaternion4f(Quaternion4f q) {
+    public Quaternionf(Quaternionf q) {
         this.w = q.w;
         this.axis = new Vector3f(q.axis);
     }
 
-    public Quaternion4f(float angle, Vector3f axis) {
+    public Quaternionf(float angle, Vector3f axis) {
         setAngle(angle);
         this.axis = new Vector3f(axis);
     }
 
-    public Quaternion4f(Matrix4f matrix) {
+    public Quaternionf(Matrix4f matrix) {
         final float trace = matrix.m11 + matrix.m22 + matrix.m33;
 
         if (trace > 0) {
@@ -79,41 +77,41 @@ public class Quaternion4f {
         }
     }
 
-    public Quaternion4f add(final Quaternion4f q) {
-        return new Quaternion4f(this.w + q.w, this.axis.x + q.axis.x, this.axis.y + q.axis.y, this.axis.z + q.axis.z);
+    public Quaternionf add(final Quaternionf q) {
+        return new Quaternionf(this.w + q.w, this.axis.x + q.axis.x, this.axis.y + q.axis.y, this.axis.z + q.axis.z);
     }
 
-    public void addEquals(final Quaternion4f q) {
+    public void addEquals(final Quaternionf q) {
         this.w += q.w;
         this.axis.x += q.axis.x;
         this.axis.y += q.axis.y;
         this.axis.z += q.axis.z;
     }
 
-    public Quaternion4f subtract(final Quaternion4f q) {
-        return new Quaternion4f(this.w - q.w, this.axis.x - q.axis.x, this.axis.y - q.axis.y, this.axis.z - q.axis.z);
+    public Quaternionf subtract(final Quaternionf q) {
+        return new Quaternionf(this.w - q.w, this.axis.x - q.axis.x, this.axis.y - q.axis.y, this.axis.z - q.axis.z);
     }
 
-    public Quaternion4f multiply(final Quaternion4f q) {
-        return new Quaternion4f(this.w * q.w, this.axis.x * q.axis.x, this.axis.y * q.axis.y, this.axis.z * q.axis.z);
+    public Quaternionf multiply(final Quaternionf q) {
+        return new Quaternionf(this.w * q.w, this.axis.x * q.axis.x, this.axis.y * q.axis.y, this.axis.z * q.axis.z);
     }
 
-    public Quaternion4f multiply(final float scalar) {
-        return new Quaternion4f(this.w * scalar, this.axis.x * scalar, this.axis.y * scalar, this.axis.z * scalar);
+    public Quaternionf multiply(final float scalar) {
+        return new Quaternionf(this.w * scalar, this.axis.x * scalar, this.axis.y * scalar, this.axis.z * scalar);
     }
 
-    public Quaternion4f divide(final Quaternion4f q) {
+    public Quaternionf divide(final Quaternionf q) {
         if (q.w == 0 || q.axis.x == 0 || q.axis.y == 0 || q.axis.z == 0) {
             throw new ArithmeticException("Divide by zero in quaternion");
         }
-        return new Quaternion4f(this.w / q.w, this.axis.x / q.axis.x, this.axis.y / q.axis.y, this.axis.z / q.axis.z);
+        return new Quaternionf(this.w / q.w, this.axis.x / q.axis.x, this.axis.y / q.axis.y, this.axis.z / q.axis.z);
     }
 
-    public Quaternion4f divide(final float scalar) {
+    public Quaternionf divide(final float scalar) {
         if (scalar == 0) {
             throw new ArithmeticException("Divide by zero");
         }
-        return new Quaternion4f(this.w / scalar, this.axis.x / scalar, this.axis.y / scalar, this.axis.z / scalar);
+        return new Quaternionf(this.w / scalar, this.axis.x / scalar, this.axis.y / scalar, this.axis.z / scalar);
     }
 
     public float length() {
@@ -161,7 +159,7 @@ public class Quaternion4f {
         w = (float) DashMath.cos2(Math.toRadians((degrees) / 2));
     }
 
-    public static final Quaternion4f slerp(final Quaternion4f a, final Quaternion4f b, float t) {
+    public static final Quaternionf slerp(final Quaternionf a, final Quaternionf b, float t) {
         if (!(t >= 0 && t <= 1)) {
             throw new ArithmeticException("t not in range");
         }

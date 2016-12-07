@@ -5,7 +5,7 @@
  */
 package com.opengg.core.model;
 
-import com.opengg.core.Vector3f;
+import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.texture.Texture;
 import java.io.DataOutputStream;
 import java.io.IOException;

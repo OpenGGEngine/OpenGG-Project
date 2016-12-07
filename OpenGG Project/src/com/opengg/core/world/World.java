@@ -6,7 +6,7 @@
 
 package com.opengg.core.world;
 
-import com.opengg.core.Vector3f;
+import com.opengg.core.math.Vector3f;
 import java.util.ArrayList;
 import java.util.List;
 

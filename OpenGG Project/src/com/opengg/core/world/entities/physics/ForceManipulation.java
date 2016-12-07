@@ -5,7 +5,7 @@
  */
 package com.opengg.core.world.entities.physics;
 
-import com.opengg.core.Vector3f;
+import com.opengg.core.math.Vector3f;
 import com.opengg.core.world.entities.Entity;
 
 /**

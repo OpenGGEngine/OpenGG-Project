@@ -5,7 +5,7 @@
  */
 package com.opengg.core.render.drawn;
 
-import com.opengg.core.Matrix4f;
+import com.opengg.core.math.Matrix4f;
 import com.opengg.core.io.objloader.parser.MTLMaterial;
 import com.opengg.core.render.texture.Texture;
 import java.nio.FloatBuffer;

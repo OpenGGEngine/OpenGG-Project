@@ -6,7 +6,7 @@
 
 package com.opengg.core.render.objects;
 
-import com.opengg.core.Vector3f;
+import com.opengg.core.math.Vector3f;
 import com.opengg.core.io.objloader.parser.OBJParser;
 import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.render.drawn.DrawnObject;

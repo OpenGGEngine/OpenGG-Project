@@ -5,8 +5,8 @@
  */
 package com.opengg.core.world.components;
 
-import com.opengg.core.Matrix4f;
-import com.opengg.core.Vector3f;
+import com.opengg.core.math.Matrix4f;
+import com.opengg.core.math.Vector3f;
 import com.opengg.core.model.Model;
 import com.opengg.core.render.drawn.Drawable;
 
@@ -33,7 +33,7 @@ public class ModelRenderComponent extends ComponentHolder implements Renderable{
     @Override
     public void render() {
         Matrix4f m = Matrix4f.translate(getPosition());
-        
+        System.out.println(getPosition().toString());
         g.setMatrix(m);
         g.draw();
     }

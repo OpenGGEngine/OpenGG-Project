@@ -5,8 +5,8 @@
  */
 package com.opengg.core.world.entities;
 
-import com.opengg.core.Quaternion4f;
-import com.opengg.core.Vector3f;
+import com.opengg.core.math.Quaternionf;
+import com.opengg.core.math.Vector3f;
 import com.opengg.core.io.objloader.parser.OBJModel;
 import static com.opengg.core.util.GlobalUtil.print;
 import com.opengg.core.world.Camera;
@@ -196,7 +196,7 @@ public class Entity implements Serializable {
         this.current.velocity = new Vector3f(v);
     }
 
-    public final void setRotation(Quaternion4f q) {
+    public final void setRotation(Quaternionf q) {
         this.current.rot = q;
     }
 

@@ -3,8 +3,8 @@
 
 package com.opengg.core.io;
 
-import com.opengg.core.Vector2f;
-import com.opengg.core.Vector3f;
+import com.opengg.core.math.Vector2f;
+import com.opengg.core.math.Vector3f;
 
 
 import java.io.*;

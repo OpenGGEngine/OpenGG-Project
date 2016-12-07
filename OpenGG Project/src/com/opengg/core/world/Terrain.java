@@ -5,7 +5,7 @@
  */
 package com.opengg.core.world;
 
-import com.opengg.core.Vector3f;
+import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.texture.Texture;
 import static com.opengg.core.util.GlobalUtil.print;
 import java.awt.image.BufferedImage;

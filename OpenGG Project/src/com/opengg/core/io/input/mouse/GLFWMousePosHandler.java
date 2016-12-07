@@ -5,7 +5,7 @@
  */
 package com.opengg.core.io.input.mouse;
 
-import com.opengg.core.Vector2f;
+import com.opengg.core.math.Vector2f;
 import org.lwjgl.glfw.GLFWCursorPosCallback;
 
 /**

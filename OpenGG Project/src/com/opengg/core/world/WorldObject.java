@@ -5,9 +5,8 @@
  */
 package com.opengg.core.world;
 
-import com.opengg.core.Quaternion4f;
-import com.opengg.core.Vector3f;
-import com.opengg.core.engine.EngineInfo;
+import com.opengg.core.math.Quaternionf;
+import com.opengg.core.math.Vector3f;
 import com.opengg.core.engine.UpdateEngine;
 import com.opengg.core.io.objloader.parser.OBJModel;
 import com.opengg.core.world.components.Component;
@@ -21,11 +20,11 @@ import com.opengg.core.world.components.Updatable;
  */
 public class WorldObject extends ComponentHolder implements Positioned{
     public Vector3f pos = new Vector3f();
-    public Quaternion4f rot;
+    public Quaternionf rot;
     private World thisWorld;
     public float mass;
     Component parent;
-    public WorldObject(Vector3f pos, Quaternion4f rot, OBJModel model, World thisWorld) {
+    public WorldObject(Vector3f pos, Quaternionf rot, World thisWorld) {
         this.pos = pos;
         this.rot = rot;
         this.thisWorld = thisWorld;
@@ -33,7 +32,7 @@ public class WorldObject extends ComponentHolder implements Positioned{
 
     public WorldObject() {
         pos = new Vector3f(0, 0, 0);  
-        rot = new Quaternion4f();
+        rot = new Quaternionf();
     }
 
     @Override
@@ -41,18 +40,8 @@ public class WorldObject extends ComponentHolder implements Positioned{
         if(c instanceof Updatable){
             UpdateEngine.addObjects((Updatable) c);
         }
+        c.setParentInfo(this);
         super.attach(c);
-    }
-
-    /**
-     * Changes current World of WorldObject
-     *
-     * @param next Next World
-     */
-    public void switchWorld(World next) {
-        thisWorld.removeObject(this);
-        next.addObject(this);
-        thisWorld = next;
     }
 
     @Override

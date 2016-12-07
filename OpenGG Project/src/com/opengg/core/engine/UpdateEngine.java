@@ -5,7 +5,7 @@
  */
 package com.opengg.core.engine;
 
-import com.opengg.core.Vector3f;
+import com.opengg.core.math.Vector3f;
 import com.opengg.core.util.Time;
 import com.opengg.core.world.components.Updatable;
 import com.opengg.core.world.components.physics.Collider;
@@ -26,7 +26,7 @@ public class UpdateEngine{
         t = new Time();
     }
     
-    public static void processCollision(CollisionData info){
+    static void processCollision(CollisionData info){
         if(info.c1physact){
             info.c1phys.velocity = new Vector3f(-info.c1phys.velocity.x, -info.c1phys.velocity.y, -info.c1phys.velocity.z);
         }

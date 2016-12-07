@@ -5,7 +5,7 @@
  */
 package com.opengg.core.render.objects;
 
-import com.opengg.core.Vector3f;
+import com.opengg.core.math.Vector3f;
 import com.opengg.core.io.objloader.parser.OBJFace;
 import com.opengg.core.io.objloader.parser.OBJMesh;
 import com.opengg.core.io.objloader.parser.OBJModel;

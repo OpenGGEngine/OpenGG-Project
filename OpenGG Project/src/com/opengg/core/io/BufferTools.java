@@ -2,8 +2,8 @@
 
 package com.opengg.core.io;
 
-import com.opengg.core.Matrix4f;
-import com.opengg.core.Vector3f;
+import com.opengg.core.math.Matrix4f;
+import com.opengg.core.math.Vector3f;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import org.lwjgl.system.MemoryUtil;

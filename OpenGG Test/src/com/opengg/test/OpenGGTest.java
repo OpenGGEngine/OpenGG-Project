@@ -1,27 +1,29 @@
 package com.opengg.test;
 
-import com.opengg.core.Vector2f;
-import com.opengg.core.Vector3f;
+import com.opengg.core.math.Vector2f;
+import com.opengg.core.math.Vector3f;
 import com.opengg.core.audio.AudioListener;
 import com.opengg.core.audio.Sound;
 import com.opengg.core.engine.AudioController;
 import com.opengg.core.engine.EngineInfo;
 import com.opengg.core.engine.OpenGG;
 import com.opengg.core.engine.RenderEngine;
+import com.opengg.core.engine.UpdateEngine;
 import com.opengg.core.engine.WorldManager;
 import com.opengg.core.gui.GUIItem;
 import com.opengg.core.gui.GUIText;
-import com.opengg.core.io.input.keyboard.KeyboardEventHandler;
+import static com.opengg.core.io.input.keyboard.Key.*;
+import com.opengg.core.io.input.keyboard.KeyboardController;
 import com.opengg.core.io.input.keyboard.KeyboardListener;
 import com.opengg.core.io.input.mouse.MouseButtonListener;
 import com.opengg.core.io.objloader.parser.OBJModel;
+import com.opengg.core.model.ModelLoader;
 import com.opengg.core.movement.MovementLoader;
 import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.render.drawn.DrawnObjectGroup;
 import com.opengg.core.render.drawn.InstancedDrawnObject;
 import com.opengg.core.render.drawn.MatDrawnObject;
 import com.opengg.core.render.objects.ObjectCreator;
-import com.opengg.core.world.components.particle.ParticleSystem;
 import com.opengg.core.render.texture.Cubemap;
 import com.opengg.core.render.texture.FramebufferTexture;
 import com.opengg.core.render.texture.Texture;
@@ -37,12 +39,12 @@ import com.opengg.core.world.WorldObject;
 import com.opengg.core.world.components.KeyTrigger;
 import com.opengg.core.world.components.ModelRenderComponent;
 import com.opengg.core.world.components.TriggerableAudioComponent;
+import com.opengg.core.world.components.particle.ParticleSystem;
 import com.opengg.core.world.components.physics.PhysicsComponent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.FloatBuffer;
-import static org.lwjgl.glfw.GLFW.*;
 
 public class OpenGGTest implements KeyboardListener, MouseButtonListener {
     GLFWWindow win;
@@ -76,7 +78,7 @@ public class OpenGGTest implements KeyboardListener, MouseButtonListener {
     public OpenGGTest() throws IOException, Exception {
         OpenGG.initializeOpenGG();
         win = new GLFWWindow(1280, 960, "Test", DisplayMode.WINDOWED);   
-        KeyboardEventHandler.addToPool(this); 
+        KeyboardController.addToPool(this); 
         
         setup();
          
@@ -144,24 +146,26 @@ public class OpenGGTest implements KeyboardListener, MouseButtonListener {
         awps.attach(ep1 = new ModelRenderComponent(awp3));
         awps.setPosition(new Vector3f(5,5,5));
         
-        ParticleSystem p = new ParticleSystem(2f,20f,100f,ObjectCreator.createOldModelBuffer(OpenGGTest.class.getResource("res/models/deer.obj")), t3);
-        //ModelRenderComponent r = new ModelRenderComponent(ModelLoader.loadModel("C:/res/3DSMusicPark/3DSMusicPark.bmf"));
+       // ParticleSystem p = new ParticleSystem(2f,20f,100f,ObjectCreator.createOldModelBuffer(OpenGGTest.class.getResource("res/models/deer.obj")), t3);
+        ModelRenderComponent r = new ModelRenderComponent(ModelLoader.loadModel("C:/res/3DSMusicPark/3DSMusicPark.bmf"));
         print("Model and Texture Loading Completed");
 
         TriggerableAudioComponent test3 = new TriggerableAudioComponent(so2);
-        KeyTrigger t = new KeyTrigger(GLFW_KEY_P, GLFW_KEY_I);
+        KeyTrigger t = new KeyTrigger(KEY_P, KEY_I);
         t.addSubscriber(test3);
         
         terrain = new WorldObject();
-        terrain.attach(bad = new PhysicsComponent());
-        //terrain.attach(r);
-        terrain.attach(p);
+        bad = new PhysicsComponent();
+        bad.setParentInfo(terrain);
+        terrain.attach(bad);
+        terrain.attach(r);
+        //terrain.attach(p);
         terrain.attach(test3);
 
         RenderEngine.setSkybox(ObjectCreator.createCube(1500f), cb);
         RenderEngine.addGUIItem(new GUIItem(base2, new Vector2f()));
-        RenderEngine.addRenderable(p);
-        //RenderEngine.addRenderable(r);
+       // RenderEngine.addRenderable(p);
+        RenderEngine.addRenderable(r);
         RenderEngine.addRenderable(ep1, true, false);
         
         print("Setup Complete");
@@ -189,7 +193,7 @@ public class OpenGGTest implements KeyboardListener, MouseButtonListener {
     }
 
     public void update() {
-        EngineInfo.engine.update();
+        UpdateEngine.update();
         xrot -= rot1 * 7;
         yrot -= rot2 * 7;
 
@@ -197,30 +201,28 @@ public class OpenGGTest implements KeyboardListener, MouseButtonListener {
 
     @Override
     public void keyPressed(int key) {
-
-        if (key == GLFW_KEY_M) {
+        if (key == KEY_M) {
             win.setCursorLock(lock = !lock);
         }
-        if (key == GLFW_KEY_Q) {
+        if (key == KEY_Q) {
             rot1 += 0.3;
 
         }
-        if (key == GLFW_KEY_E) {
+        if (key == KEY_E) {
             rot1 -= 0.3;
 
         }
-        if (key == GLFW_KEY_R) {
+        if (key == KEY_R) {
             rot2 += 0.3;
 
         }
-        if (key == GLFW_KEY_F) {
+        if (key == KEY_F) {
             rot2 -= 0.3;
-
         }
-        if (key == GLFW_KEY_G) {
+        if (key == KEY_G) {
             bad.velocity = new Vector3f(0,20,0);
         }
-        if (key == GLFW_KEY_U){
+        if (key == KEY_U){
             RenderEngine.setShadowVolumes(!RenderEngine.getShadowsEnabled());
         }
 
@@ -228,19 +230,19 @@ public class OpenGGTest implements KeyboardListener, MouseButtonListener {
 
     @Override
     public void keyReleased(int key) {
-        if (key == GLFW_KEY_Q) {
+        if (key == KEY_Q) {
             rot1 -= 0.3;
 
         }
-        if (key == GLFW_KEY_E) {
+        if (key == KEY_E) {
             rot1 += 0.3;
 
         }
-        if (key == GLFW_KEY_R) {
+        if (key == KEY_R) {
             rot2 -= 0.3;
 
         }
-        if (key == GLFW_KEY_F) {
+        if (key == KEY_F) {
             rot2 += 0.3;
 
         }

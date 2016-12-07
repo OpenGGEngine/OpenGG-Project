@@ -1,7 +1,7 @@
 package com.opengg.core.world.entities;
 
 
-import com.opengg.core.Vector3f;
+import com.opengg.core.math.Vector3f;
 
 
 public class ParticleEntity {

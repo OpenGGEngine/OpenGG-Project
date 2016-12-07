@@ -5,7 +5,7 @@
  */
 package com.opengg.core.render.drawn;
 
-import com.opengg.core.Matrix4f;
+import com.opengg.core.math.Matrix4f;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,26 +17,29 @@ public class DrawnObjectGroup implements Drawable {
 
     List<Drawable> objs = new ArrayList<>();
 
-    //The list of materials are in order so the nth value in list objs
-    //corresponds to the nth value in list materials
-    
 
+    
+    public DrawnObjectGroup(){
+        
+    }
+    
     public DrawnObjectGroup(List<Drawable> objs) {
         this.objs = objs;
     }
     
+    public void add(Drawable d){
+        objs.add(d);
+    }
 
+    public void remove(Drawable d){
+        objs.remove(d);
+    }
+    
     @Override
     public void saveShadowMVP() {
         objs.stream().forEach((d) -> {
             d.saveShadowMVP();
         });
-    }
-
-    public void setShaderMatrix(Matrix4f m) {
-//        objs.stream().forEach((d) -> {
-//            d.setShaderMatrix(m);
-//        });
     }
 
     @Override

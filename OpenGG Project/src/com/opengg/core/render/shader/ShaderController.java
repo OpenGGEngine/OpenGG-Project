@@ -6,8 +6,8 @@
 
 package com.opengg.core.render.shader;
 
-import com.opengg.core.Matrix4f;
-import com.opengg.core.Vector3f;
+import com.opengg.core.math.Matrix4f;
+import com.opengg.core.math.Vector3f;
 import com.opengg.core.engine.RenderEngine;
 import com.opengg.core.io.FileStringLoader;
 import com.opengg.core.model.Material;

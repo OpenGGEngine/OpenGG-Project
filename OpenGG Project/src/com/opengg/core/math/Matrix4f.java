@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.opengg.core;
+package com.opengg.core.math;
 
 import java.nio.FloatBuffer;
 import org.lwjgl.system.MemoryUtil;
@@ -118,7 +118,7 @@ public class Matrix4f {
 
     public static Matrix4f rotateQuat(float angle, float x, float y, float z) {
         Matrix4f f = new Matrix4f();
-        Quaternion4f q = new Quaternion4f(f);
+        Quaternionf q = new Quaternionf(f);
         q.axis = new Vector3f(x, y, z);
         q.addDegrees(angle);
         return q.convertMatrix();
