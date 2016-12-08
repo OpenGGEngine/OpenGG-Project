@@ -1,7 +1,5 @@
 package com.opengg.test;
 
-import com.opengg.core.math.Vector2f;
-import com.opengg.core.math.Vector3f;
 import com.opengg.core.audio.AudioListener;
 import com.opengg.core.audio.Sound;
 import com.opengg.core.engine.AudioController;
@@ -17,6 +15,9 @@ import com.opengg.core.io.input.keyboard.KeyboardController;
 import com.opengg.core.io.input.keyboard.KeyboardListener;
 import com.opengg.core.io.input.mouse.MouseButtonListener;
 import com.opengg.core.io.objloader.parser.OBJModel;
+import com.opengg.core.math.Quaternionf;
+import com.opengg.core.math.Vector2f;
+import com.opengg.core.math.Vector3f;
 import com.opengg.core.model.ModelLoader;
 import com.opengg.core.movement.MovementLoader;
 import com.opengg.core.render.drawn.Drawable;
@@ -33,6 +34,8 @@ import com.opengg.core.render.window.GLFWWindow;
 import static com.opengg.core.render.window.RenderUtil.endFrame;
 import static com.opengg.core.render.window.RenderUtil.startFrame;
 import static com.opengg.core.util.GlobalUtil.print;
+import static com.opengg.core.util.GlobalUtil.print;
+import static com.opengg.core.util.GlobalUtil.print;
 import com.opengg.core.world.Camera;
 import com.opengg.core.world.World;
 import com.opengg.core.world.WorldObject;
@@ -44,6 +47,7 @@ import com.opengg.core.world.components.physics.PhysicsComponent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import static java.lang.Math.toRadians;
 import java.nio.FloatBuffer;
 
 public class OpenGGTest implements KeyboardListener, MouseButtonListener {
@@ -54,6 +58,7 @@ public class OpenGGTest implements KeyboardListener, MouseButtonListener {
     public float rot1 = 0, rot2 = 0;
     Vector3f rot = new Vector3f(0, 0, 0);
     Vector3f pos = new Vector3f(0, -10, -30);
+    Quaternionf rottest = new Quaternionf(1,0,0,1);
     WorldObject terrain, drawnobject;
     World w;
     Camera c;
@@ -146,8 +151,8 @@ public class OpenGGTest implements KeyboardListener, MouseButtonListener {
         awps.attach(ep1 = new ModelRenderComponent(awp3));
         awps.setPosition(new Vector3f(5,5,5));
         
-       // ParticleSystem p = new ParticleSystem(2f,20f,100f,ObjectCreator.createOldModelBuffer(OpenGGTest.class.getResource("res/models/deer.obj")), t3);
-        ModelRenderComponent r = new ModelRenderComponent(ModelLoader.loadModel("C:/res/3DSMusicPark/3DSMusicPark.bmf"));
+        ParticleSystem p = new ParticleSystem(2f,20f,100f,ObjectCreator.createOldModelBuffer(OpenGGTest.class.getResource("res/models/deer.obj")), t3);
+        ModelRenderComponent r = new ModelRenderComponent(ModelLoader.loadModel("C:/res/bobomb/bobomb.bmf"));
         print("Model and Texture Loading Completed");
 
         TriggerableAudioComponent test3 = new TriggerableAudioComponent(so2);
@@ -159,12 +164,12 @@ public class OpenGGTest implements KeyboardListener, MouseButtonListener {
         bad.setParentInfo(terrain);
         terrain.attach(bad);
         terrain.attach(r);
-        //terrain.attach(p);
+        terrain.attach(p);
         terrain.attach(test3);
 
         RenderEngine.setSkybox(ObjectCreator.createCube(1500f), cb);
         RenderEngine.addGUIItem(new GUIItem(base2, new Vector2f()));
-       // RenderEngine.addRenderable(p);
+        RenderEngine.addRenderable(p);
         RenderEngine.addRenderable(r);
         RenderEngine.addRenderable(ep1, true, false);
         
@@ -196,7 +201,8 @@ public class OpenGGTest implements KeyboardListener, MouseButtonListener {
         UpdateEngine.update();
         xrot -= rot1 * 7;
         yrot -= rot2 * 7;
-
+        rottest.addDegrees(2);
+        terrain.setRotation(rottest);
     }
 
     @Override

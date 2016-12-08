@@ -25,7 +25,7 @@ public class PhysicsComponent implements Updatable, Positioned {
     World w;
     public boolean gravEffect = true;
     public Vector3f pos = new Vector3f();
-    public Quaternionf rot;
+    public Quaternionf rot = new Quaternionf();
     public Vector3f force = new Vector3f();
     public Vector3f rotForce = new Vector3f();
     public Vector3f velocity = new Vector3f();
@@ -50,7 +50,6 @@ public class PhysicsComponent implements Updatable, Positioned {
         }
         forces(delta);
         parent.setPosition(pos);
-     //   System.out.println(pos.toString());
     }
     
     public void setCollider(Collider c){
@@ -107,15 +106,15 @@ public class PhysicsComponent implements Updatable, Positioned {
     public void setPosition(Vector3f pos) {}
 
     @Override
-    public void setRotation(Vector3f rot) {}
+    public void setRotation(Quaternionf rot) {}
 
     @Override
     public Vector3f getPosition() {
         return parent.getPosition();
     }
-
+    
     @Override
-    public Vector3f getRotation() {
+    public Quaternionf getRotation() {
         return parent.getRotation();
     }
 }

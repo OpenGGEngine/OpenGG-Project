@@ -8,7 +8,6 @@ package com.opengg.core.world;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.engine.UpdateEngine;
-import com.opengg.core.io.objloader.parser.OBJModel;
 import com.opengg.core.world.components.Component;
 import com.opengg.core.world.components.ComponentHolder;
 import com.opengg.core.world.components.Positioned;
@@ -19,7 +18,7 @@ import com.opengg.core.world.components.Updatable;
  * @author Javier
  */
 public class WorldObject extends ComponentHolder implements Positioned{
-    public Vector3f pos = new Vector3f();
+    public Vector3f pos;
     public Quaternionf rot;
     private World thisWorld;
     public float mass;
@@ -55,8 +54,8 @@ public class WorldObject extends ComponentHolder implements Positioned{
     }
 
     @Override
-    public void setRotation(Vector3f rot) {
-
+    public void setRotation(Quaternionf rot) {
+        this.rot = rot;
     }
 
     @Override
@@ -65,8 +64,8 @@ public class WorldObject extends ComponentHolder implements Positioned{
     }
 
     @Override
-    public Vector3f getRotation() {
-        return new Vector3f();
+    public Quaternionf getRotation() {
+        return rot;
     }
     
 }

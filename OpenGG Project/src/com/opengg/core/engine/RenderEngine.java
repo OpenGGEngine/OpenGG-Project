@@ -74,15 +74,19 @@ public class RenderEngine {
     }
     
     public static void addDrawable(Drawable d){
-        dlist.add(new DrawableContainer(d,false,false));
+        dlist.add(new DrawableContainer(d));
+    }
+    
+    public static void addDrawable(Drawable d, boolean df, boolean trans){
+        dlist.add(new DrawableContainer(d, df, trans));
     }
     
     public static void addRenderable(Renderable r){
-        dlist.add(new DrawableContainer(r.getDrawable(), false, false));
+        dlist.add(new DrawableContainer(r));
     }
     
     public static void addRenderable(Renderable r, boolean df, boolean trans){
-        dlist.add(new DrawableContainer(r.getDrawable(), df, trans));
+        dlist.add(new DrawableContainer(r, df, trans));
     }
     
     public static void setSkybox(Drawable sky, Cubemap c){
@@ -110,9 +114,9 @@ public class RenderEngine {
             glDisable(GL_DEPTH_TEST);
             glDrawBuffer(GL_NONE);
             controller.setMode(Mode.POS_ONLY);
-            for(DrawableContainer d : dlist){
+            dlist.stream().forEach((d) -> {
                 d.draw();
-            }
+            });
             
             glEnable(GL_STENCIL_TEST);
             
@@ -124,9 +128,9 @@ public class RenderEngine {
             glStencilOpSeparate(GL_BACK, GL_KEEP, GL_INCR_WRAP, GL_KEEP);
             glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_DECR_WRAP, GL_KEEP); 
             
-            for(DrawableContainer d : dlist){
+            dlist.stream().forEach((d) -> {
                 d.draw();
-            }
+            });
             
             glDisable(GL_DEPTH_CLAMP);
             glEnable(GL_CULL_FACE); 

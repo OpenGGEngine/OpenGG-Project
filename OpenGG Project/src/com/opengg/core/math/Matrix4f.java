@@ -119,7 +119,7 @@ public class Matrix4f {
     public static Matrix4f rotateQuat(float angle, float x, float y, float z) {
         Matrix4f f = new Matrix4f();
         Quaternionf q = new Quaternionf(f);
-        q.axis = new Vector3f(x, y, z);
+        q.setAxis(new Vector3f(x,y,z));
         q.addDegrees(angle);
         return q.convertMatrix();
     }

@@ -6,6 +6,7 @@
 
 package com.opengg.core.world.components;
 
+import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
 
 /**
@@ -14,7 +15,7 @@ import com.opengg.core.math.Vector3f;
  */
 public interface Positioned extends Component {
     public void setPosition(Vector3f pos);
-    public void setRotation(Vector3f rot);
+    public void setRotation(Quaternionf rot);
     public Vector3f getPosition();
-    public Vector3f getRotation();
+    public Quaternionf getRotation();
 }

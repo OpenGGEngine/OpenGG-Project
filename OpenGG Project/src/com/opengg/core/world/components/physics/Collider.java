@@ -5,6 +5,7 @@
  */
 package com.opengg.core.world.components.physics;
 
+import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.world.components.Component;
 import com.opengg.core.world.components.Positioned;
@@ -22,8 +23,8 @@ import java.util.List;
  */
 public class Collider extends Trigger implements Positioned{
     Positioned p;
-    Vector3f offset;
-    Vector3f rot;
+    Vector3f offset = new Vector3f();
+    Quaternionf rot = new Quaternionf();
     PhysicsComponent pc;
     BoundingBox main;
     List<BoundingBox> boxes = new ArrayList<>();
@@ -86,7 +87,7 @@ public class Collider extends Trigger implements Positioned{
         boxes.stream().forEach((b) -> {
             b.recenter(fpos);
         });
-        main.recenter(offset);
+        main.recenter(fpos);
     }
 
     @Override
@@ -95,8 +96,8 @@ public class Collider extends Trigger implements Positioned{
     }
 
     @Override
-    public void setRotation(Vector3f rot) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void setRotation(Quaternionf rot) {
+        this.rot = rot;
     }
 
     @Override
@@ -107,8 +108,8 @@ public class Collider extends Trigger implements Positioned{
     }
 
     @Override
-    public Vector3f getRotation() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Quaternionf getRotation() {
+        return rot;
     }
 
 }

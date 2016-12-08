@@ -6,6 +6,7 @@
 package com.opengg.core.world.components;
 
 import com.opengg.core.math.Matrix4f;
+import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.model.Model;
 import com.opengg.core.render.drawn.Drawable;
@@ -19,7 +20,7 @@ import com.opengg.core.render.drawn.Drawable;
 public class ModelRenderComponent extends ComponentHolder implements Renderable{
     Drawable g;
     private Vector3f offset = new Vector3f(0,0,0);
-    private Vector3f rotationoffset = new Vector3f(0,0,0);
+    private Quaternionf rotoffset = new Quaternionf();
     Positioned parent;
    
     public ModelRenderComponent(Drawable g){
@@ -32,8 +33,7 @@ public class ModelRenderComponent extends ComponentHolder implements Renderable{
 
     @Override
     public void render() {
-        Matrix4f m = Matrix4f.translate(getPosition());
-        System.out.println(getPosition().toString());
+        Matrix4f m = Matrix4f.translate(getPosition()).multiply(getRotation().convertMatrix());
         g.setMatrix(m);
         g.draw();
     }
@@ -44,8 +44,8 @@ public class ModelRenderComponent extends ComponentHolder implements Renderable{
     }
 
     @Override
-    public void setRotation(Vector3f rot) {
-        rotationoffset = rot;
+    public void setRotation(Quaternionf rot) {
+        rotoffset = rot;
     }
 
     @Override
@@ -61,8 +61,9 @@ public class ModelRenderComponent extends ComponentHolder implements Renderable{
     }
 
     @Override
-    public Vector3f getRotation() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Quaternionf getRotation() {
+        //return new Quaternionf(rotoffset.multiply(parent.getRotation()));
+        return parent.getRotation();
     }
 
     @Override

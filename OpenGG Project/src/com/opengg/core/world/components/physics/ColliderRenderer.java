@@ -7,6 +7,7 @@
 package com.opengg.core.world.components.physics;
 
 import com.opengg.core.math.Matrix4f;
+import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.render.drawn.DrawnObjectGroup;
@@ -50,8 +51,8 @@ public class ColliderRenderer implements Renderable {
     }
 
     @Override
-    public void setRotation(Vector3f rot) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void setRotation(Quaternionf rot) {
+        
     }
 
     @Override
@@ -60,11 +61,11 @@ public class ColliderRenderer implements Renderable {
     }
 
     @Override
-    public Vector3f getRotation() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+    public void setParentInfo(Component parent) {}
 
     @Override
-    public void setParentInfo(Component parent) {}
+    public Quaternionf getRotation() {
+        return collider.getRotation();
+    }
     
 }

@@ -121,7 +121,7 @@ vec4 shadify(){
     }else{
         specular = material.ks;
     }
-    
+    specular = vec3(0,0,0);
     float distance = length( light.lightpos - pos.xyz );
 
     vec3 n = normalize(( view * model *  vec4(norm,0.0f)).xyz);
@@ -143,7 +143,7 @@ vec4 shadify(){
     vec4 fragColor = 
             vec4((ambient +
             diffuse * light.color * light.lightpower * cosTheta / distmult +
-            specular * light.lightpower * pow(cosAlpha, specpow) / distmult), trans);
+            specular * light.color * light.lightpower * pow(cosAlpha, specpow) / distmult), trans);
  
     return fragColor;
 }

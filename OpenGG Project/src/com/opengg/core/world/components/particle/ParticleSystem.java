@@ -5,12 +5,14 @@
  */
 package com.opengg.core.world.components.particle;
 
+import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.render.drawn.InstancedDrawnObject;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.util.Time;
 import com.opengg.core.world.components.Component;
+import com.opengg.core.world.components.Positioned;
 import com.opengg.core.world.components.Renderable;
 import com.opengg.core.world.components.Updatable;
 import java.nio.FloatBuffer;
@@ -27,13 +29,15 @@ import org.lwjgl.BufferUtils;
  */
 public class ParticleSystem implements Updatable, Renderable{
     List<Particle> particles = new LinkedList<>();
-    private Vector3f position = new Vector3f();
+    private Vector3f offset = new Vector3f();
+    private Quaternionf rotoffset = new Quaternionf();
     InstancedDrawnObject particleobject;
     private float pps;
     private float speed;
     private float gravityComplient;
     private float lifeLength;
     private float timeSinceLast = 0f;
+    Positioned p;
     Time time;
     Texture t;
 
@@ -68,6 +72,7 @@ public class ParticleSystem implements Updatable, Renderable{
     
     @Override
     public void update(float delta) {
+        Vector3f position = offset.add(p.getPosition());
         timeSinceLast += delta;
         if(timeSinceLast >= (1/pps)*1000){
             timeSinceLast = 0;
@@ -84,14 +89,15 @@ public class ParticleSystem implements Updatable, Renderable{
         }
         particleobject.setPositions(createParticleVBO(),particles.size());
     }
+    @Override
     public void render(){
         t.useTexture(0);
         particleobject.draw();
     }
     private FloatBuffer createParticleVBO(){
         FloatBuffer f = BufferUtils.createFloatBuffer(3* particles.size());
-        for(Particle p:particles){ 
-           f.put(p.getPosition().x );
+        for(Particle p : particles){ 
+           f.put(p.getPosition().x);
            f.put(p.getPosition().y);
            f.put(p.getPosition().z);
         }
@@ -101,31 +107,37 @@ public class ParticleSystem implements Updatable, Renderable{
     public void destroy(){
         particleobject.destroy();
     }
-     public void setPosition(Vector3f position) {
-        this.position = position;
+    @Override
+     public void setPosition(Vector3f offset) {
+        this.offset = offset;
     }
      public void setParticlesPerSecond(float p){
          pps = p;
      }
+    @Override
      public Drawable getDrawable(){
          return particleobject;
      }
 
     @Override
     public void setParentInfo(Component parent) {
-        
+        if(parent instanceof Positioned){
+            p = (Positioned) parent;
+        }
     }
 
     @Override
-    public void setRotation(Vector3f rot) {}
+    public void setRotation(Quaternionf rot) {
+        this.rotoffset = rot;
+    }
 
     @Override
     public Vector3f getPosition() {
-        return position;
+        return offset;
     }
 
     @Override
-    public Vector3f getRotation() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Quaternionf getRotation() {
+        return rotoffset;
     }
 }
