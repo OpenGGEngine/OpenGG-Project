@@ -5,9 +5,11 @@
  */
 package com.opengg.core.math;
 
+import com.opengg.core.world.components.particle.Particle;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.system.MemoryUtil;
 
 /**
@@ -195,6 +197,17 @@ public class Vector3f implements Serializable{
         this.y = (Math.abs(y) - v.y)*signY;
         this.z = (Math.abs(z) - v.z)*signZ;
         return this;
+    }
+    
+    public static FloatBuffer listToBuffer(Vector3f... list){
+        FloatBuffer f = BufferUtils.createFloatBuffer(3* list.length);
+        for(Vector3f v : list){ 
+           f.put(v.x);
+           f.put(v.y);
+           f.put(v.z);
+        }
+        f.flip();
+        return f;
     }
     
     public void zero(){

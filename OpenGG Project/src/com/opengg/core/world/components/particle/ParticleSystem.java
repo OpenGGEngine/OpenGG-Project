@@ -95,14 +95,13 @@ public class ParticleSystem implements Updatable, Renderable{
         particleobject.draw();
     }
     private FloatBuffer createParticleVBO(){
-        FloatBuffer f = BufferUtils.createFloatBuffer(3* particles.size());
-        for(Particle p : particles){ 
-           f.put(p.getPosition().x);
-           f.put(p.getPosition().y);
-           f.put(p.getPosition().z);
+        Vector3f[] vs = new Vector3f[particles.size()];
+        int i = 0;
+        for(Particle ps : particles){
+            vs[i] = ps.getPosition();
+            i++;
         }
-        f.flip();
-        return f;
+        return Vector3f.listToBuffer(vs);
     }
     public void destroy(){
         particleobject.destroy();
