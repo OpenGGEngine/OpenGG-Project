@@ -24,8 +24,11 @@ import java.util.logging.Logger;
  */
 public class ObjectCreator {
     public static Drawable createQuadPrism(Vector3f c1, Vector3f c2){
-        Buffer[] b = ObjectBuffers.genQuadPrism(c1,c2);
+        Buffer[] b = createQuadPrismBuffers(c1,c2);
         return new DrawnObject((FloatBuffer)b[0], (IntBuffer)b[1]);
+    }
+    public static Buffer[] createQuadPrismBuffers(Vector3f c1, Vector3f c2){
+        return ObjectBuffers.genQuadPrism(c1,c2);
     }
     public static Drawable createCube(float size){
         FloatBuffer b = ObjectBuffers.genCube(size);

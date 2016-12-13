@@ -8,7 +8,6 @@ package com.opengg.core.render.drawn;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.engine.RenderEngine;
 import com.opengg.core.render.VertexBufferObject;
-import com.opengg.core.engine.EngineInfo;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.List;
@@ -39,7 +38,7 @@ public class InstancedDrawnObject implements Drawable {
     static{
         DrawnObjectHandler.setup();
     }
-   
+    
     public InstancedDrawnObject(FloatBuffer b,  int vertSize, FloatBuffer inst){
        
         limit = b.limit();
