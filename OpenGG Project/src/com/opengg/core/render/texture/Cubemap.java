@@ -6,16 +6,12 @@
 
 package com.opengg.core.render.texture;
 
-import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
-import java.awt.image.BufferedImage;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.imageio.ImageIO;
-import org.lwjgl.system.MemoryUtil;
 import org.lwjgl.opengl.GL11;
 import static org.lwjgl.opengl.GL11.*;
 import org.lwjgl.opengl.GL12;
@@ -38,8 +34,6 @@ public class Cubemap {
     }
     
     public int loadTexture(String path){
- 
-        InputStream in;
         
         String[] endings = new String[6];
         endings[0] = "_ft.png";
@@ -52,48 +46,16 @@ public class Cubemap {
         try {
             
             for(int i = 0; i < buffer.length; i++){
-                
                 glActiveTexture(GL_TEXTURE2);
-                in = new FileInputStream(path + endings[i]);
-                BufferedImage image = ImageIO.read(in);
-
-                AffineTransform transform = AffineTransform.getScaleInstance(1f, -1f);
-                transform.translate(0, -image.getHeight());
-                AffineTransformOp operation = new AffineTransformOp(transform, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
-                image = operation.filter(image, null);
-
-                width = image.getWidth();
-                height = image.getHeight();
-                
-                buffer[i] = MemoryUtil.memAlloc(width * height * 4);
-                int[] pixels = new int[width * height];
-                image.getRGB(0, 0, width, height, pixels, 0, width);
-                for (int y = height-1; y > 0; y--) {
-                    for(int x = 0; x < width; x++){
-                    //for (int x = width-1; x > 0; x--) {
-                        /* Pixel as RGBA: 0xAARRGGBB */
-                        int pixel = pixels[y * width + x];
-
-                        /* Red component 0xAARRGGBB >> (4 * 4) = 0x0000AARR */
-                        buffer[i].put((byte) ((pixel >> 16) & 0xFF));
-
-                        /* Green component 0xAARRGGBB >> (2 * 4) = 0x00AARRGG */
-                        buffer[i].put((byte) ((pixel >> 8) & 0xFF));
-
-                        /* Blue component 0xAARRGGBB >> 0 = 0xAARRGGBB */
-                        buffer[i].put((byte) (pixel & 0xFF));
-
-                        /* Alpha component 0xAARRGGBB >> (6 * 4) = 0x000000AA */
-                        buffer[i].put((byte) ((pixel >> 24) & 0xFF));
-                    }
-                }
-
-                buffer[i].flip();
+                TextureData info = TextureBufferGenerator.getFastBuffer(path + endings[i]);
+                buffer[i] = (ByteBuffer) info.buffer;
+                width = info.width;
+                height = info.height;
             }
               
             texture = glGenTextures();
 
-            glBindTexture(GL_TEXTURE_CUBE_MAP, texture);	// Make it a cubemap
+            glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
             
             glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer[0]); // postive x
             glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer[1]); // negative x
@@ -110,10 +72,9 @@ public class Cubemap {
             //glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
          
             glActiveTexture(GL_TEXTURE0);
-            
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(Texture.class.getName()).severe("File not found!");
+
         }  catch (Exception e){
+            Logger.getLogger(Texture.class.getName()).log(Level.WARNING, "Could not load texture at {0}", path);
             e.printStackTrace();
         }
         return texture;

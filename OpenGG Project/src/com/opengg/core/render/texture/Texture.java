@@ -85,8 +85,6 @@ public class Texture {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         
-        //buffer = b;
-        
         width = fwidth;
         height = fheight;
         
@@ -102,53 +100,10 @@ public class Texture {
         glBindTexture(GL_TEXTURE_2D, texture);
 
         try{
-            
-            BufferedImage image = new BufferedImage(1,1,1);
-            if(path.substring(path.lastIndexOf(".")).equals(".tga")){
-                loadtga(path);
-            }else{
-                InputStream in;
-
-                in = new FileInputStream(path);
-                image = ImageIO.read(in);
-            }
-            AffineTransform transform = AffineTransform.getScaleInstance(1f, -1f);
-            transform.translate(0, -image.getHeight());
-            AffineTransformOp operation = new AffineTransformOp(transform, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
-            image = operation.filter(image, null);
-
-            int width = image.getWidth();
-            int height = image.getHeight();
-
-            int[] pixels = new int[width * height];
-            image.getRGB(0, 0, width, height, pixels, 0, width);
-            buffer = MemoryUtil.memAlloc(width * height * 4);
-            for (int y = 0; y < height; y++) {
-                for(int x = 0; x < width; x++){
-                //for (int x = width-1; x > 0; x--) {
-                    /* Pixel as RGBA: 0xAARRGGBB */
-                    int pixel;
-                    if(flipped){
-                        pixel = pixels[y * width + x];
-                    }else{
-                        pixel = pixels[height - y  * width + x];
-                    }
-                    /* Red component 0xAARRGGBB >> (4 * 4) = 0x0000AARR */
-                    buffer.put((byte) ((pixel >> 16) & 0xFF));
-
-                    /* Green component 0xAARRGGBB >> (2 * 4) = 0x00AARRGG */
-                    buffer.put((byte) ((pixel >> 8) & 0xFF));
-
-                    /* Blue component 0xAARRGGBB >> 0 = 0xAARRGGBB */
-                    buffer.put((byte) (pixel & 0xFF));
-
-                    /* Alpha component 0xAARRGGBB >> (6 * 4) = 0x000000AA */
-                    buffer.put((byte) ((pixel >> 24) & 0xFF));
-                }
-            }
-
-            buffer.flip();
-            //buffer = TexBufferGen.genTex(path);
+            TextureData data = TextureBufferGenerator.getFastBuffer(path, flipped);
+            width = data.width;
+            height = data.height;
+            buffer = (ByteBuffer) data.buffer;
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -158,9 +113,6 @@ public class Texture {
             glGenerateMipmap(GL_TEXTURE_2D);
             glBindTexture(GL_TEXTURE_2D, 0);
             buffer.clear();
-            
-        } catch (FileNotFoundException ex) {
-            System.out.println(path + " was not found!");
         } catch (Exception e){
             System.out.println(path + " failed to load: ");
             e.printStackTrace();
