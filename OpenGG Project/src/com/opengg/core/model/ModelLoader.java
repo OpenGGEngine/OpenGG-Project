@@ -189,7 +189,7 @@ public class ModelLoader {
         }
 
         in.close();
-        print("Done Parsing");
+        print("Done Parsing " + path);
         return new Model(getFileName(path), meshes);
     }
 }

@@ -110,7 +110,6 @@ public class Model {
             verticeAttributes.put(24);
             verticeAttributes.put(1);
             if (vertex.n == null) {
-                // @TODO: What's a reasonable default normal?  Maybe add code later to calculate normals if not present in .obj file.
                 verticeAttributes.put(1.0f);
                 verticeAttributes.put(1.0f);
                 verticeAttributes.put(1.0f);
@@ -198,12 +197,10 @@ public class Model {
         return triangleList;
     }
 
-    public void putData() throws FileNotFoundException, IOException {
-
+    public void putData(String path) throws FileNotFoundException, IOException {
         FileOutputStream ps;
 
-        ps = new FileOutputStream("C:/res/" + name + "/" + name + ".bmf");
-         
+        ps = new FileOutputStream(path + name + ".bmf");
         try (DataOutputStream dos = new DataOutputStream(ps)) {
             dos.writeInt(meshes.size());
             for (Mesh m : meshes) {

@@ -323,9 +323,7 @@ public class Build implements BuilderInterface {
             log.log(INFO, "@TODO: Got a maplib line with one name=|{0}|", names[0]);
             return;
         }
-        log.log(INFO, "@TODO: Got a maplib line;");
         for (int loopi = 0; loopi < names.length; loopi++) {
-            log.log(INFO, "        names[{0}] = |{1}|", new Object[]{loopi, names[loopi]});
         }
     }
 
@@ -434,12 +432,10 @@ public class Build implements BuilderInterface {
     public void setD(boolean halo, float factor) {
         currentMaterialBeingParsed.dHalo = halo;
         currentMaterialBeingParsed.dFactor = factor;
-        log.log(INFO, "@TODO: got a setD call!");
     }
 
     public void setNs(float exponent) {
         currentMaterialBeingParsed.nsExponent = exponent;
-        log.log(INFO, "@TODO: got a setNs call!");
     }
 
     public void setSharpness(float value) {
@@ -496,9 +492,15 @@ public class Build implements BuilderInterface {
         log.log(INFO, "Loaded filename ''{0}'' with {1} verticesG, {2} verticesT, {3} verticesN and {4} faces, of which {5} triangles, {6} quads, and {7} with more than 4 points, and faces with errors {8}", new Object[]{filename, verticesG.size(), verticesT.size(), verticesN.size(), faces.size(), faceTriCount, faceQuadCount, facePolyCount, faceErrorCount});
     }
     
+    public String getObjectFileName(){
+        String name = objFilename.substring(objFilename.lastIndexOf("\\")+1);
+        return name;
+    }
+    
     public String getObjectName(){
-        System.out.println(objFilename);
-        String name = objFilename.substring(objFilename.lastIndexOf("\\"), objFilename.length()-4);
+        String fname = getObjectFileName();
+        int fp = fname.lastIndexOf(".");
+        String name = fname.substring(0, fp);
         return name;
     }
 }
