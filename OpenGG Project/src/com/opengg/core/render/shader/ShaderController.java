@@ -302,7 +302,7 @@ public class ShaderController {
        
         Vector3f rot = c.getRot();       
   
-        view = Matrix4f.rotate(rot.x,1,0,0).multiply(Matrix4f.rotate(rot.y,0,1,0).multiply(Matrix4f.rotate(rot.z,0,0,1))).multiply(Matrix4f.translate(c.getPos()));
+        view = new Matrix4f().rotate(rot.x,1,0,0).rotate(rot.y,0,1,0).rotate(rot.z,0,0,1).translate(c.getPos());
         
         setView(view);
     }
