@@ -6,6 +6,7 @@
 package com.opengg.core.math;
 
 import java.nio.FloatBuffer;
+import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 
 /**
@@ -107,24 +108,29 @@ public class Matrix4f {
     }
 
     public FloatBuffer getBuffer() {
-        FloatBuffer buffer = MemoryUtil.memAllocFloat(16);
-        buffer.put(m00).put(m10).put(m20).put(m30);
-        buffer.put(m01).put(m11).put(m21).put(m31);
-        buffer.put(m02).put(m12).put(m22).put(m32);
-        buffer.put(m03).put(m13).put(m23).put(m33);
-        buffer.flip();
-        return buffer;
+        try(MemoryStack stack = MemoryStack.stackPush()){
+            FloatBuffer buffer = stack.callocFloat(16);
+            buffer.put(m00).put(m10).put(m20).put(m30);
+            buffer.put(m01).put(m11).put(m21).put(m31);
+            buffer.put(m02).put(m12).put(m22).put(m32);
+            buffer.put(m03).put(m13).put(m23).put(m33);
+            buffer.flip();
+            return buffer;
+        }
     }
 
-    public static Matrix4f rotateQuat(float angle, float x, float y, float z) {
-        Matrix4f f = new Matrix4f();
-        Quaternionf q = new Quaternionf(f);
+    public Matrix4f rotateQuat(float angle, float x, float y, float z) {
+        Quaternionf q = new Quaternionf();
         q.setAxis(new Vector3f(x,y,z));
         q.addDegrees(angle);
-        return q.convertMatrix();
+        return this.multiply(q.convertMatrix());
+    }
+    
+    public Matrix4f rotateQuat(Quaternionf q) {
+        return this.multiply(q.convertMatrix());
     }
 
-    public static Matrix4f rotate(float angle, float x, float y, float z) {
+    public Matrix4f rotate(float angle, float x, float y, float z) {
         Matrix4f rotation = new Matrix4f();
         float c = (float) Math.cos(Math.toRadians(angle));
         float s = (float) Math.sin(Math.toRadians(angle));
@@ -144,7 +150,7 @@ public class Matrix4f {
         rotation.m02 = x * z * (1f - c) + y * s;
         rotation.m12 = y * z * (1f - c) - x * s;
         rotation.m22 = z * z * (1f - c) + c;
-        return rotation;
+        return this.multiply(rotation);
     }
 
     public static Matrix4f translate(float x, float y, float z) {
@@ -156,15 +162,15 @@ public class Matrix4f {
 
         return translation;
     }
-
-    public static Matrix4f translate(Vector3f p) {
+    
+    public Matrix4f translate(Vector3f p) {
         Matrix4f translation = new Matrix4f();
 
         translation.m03 = p.x;
         translation.m13 = p.y;
         translation.m23 = p.z;
 
-        return translation;
+        return this.multiply(translation);
     }
 
     public Matrix4f add(Matrix4f other) {
@@ -233,18 +239,19 @@ public class Matrix4f {
         return perspective;
     }
 
-    public static Matrix4f scale(float x, float y, float z) {
+    public Matrix4f scale(float x, float y, float z) {
         Matrix4f scaling = new Matrix4f();
 
         scaling.m00 = x;
         scaling.m11 = y;
         scaling.m22 = z;
 
-        return scaling;
+        return this.multiply(scaling);
     }
-//    public Matrix4f(Matrix4f old){
-//        
-//    }
+    
+    public Matrix4f scale(Vector3f scale) {
+        return scale(scale.x, scale.y, scale.z);
+    }
 
     public static Matrix4f frustum(float left, float right, float bottom, float top, float near, float far) {
         Matrix4f frustum = new Matrix4f();
