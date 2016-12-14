@@ -190,7 +190,7 @@ public class RenderEngine {
     
     public static void destroy(){
         dlist.stream().forEach((d) -> {
-            d.d.destroy();
+            d.destroy();
         });
         TextureManager.destroy();
     }

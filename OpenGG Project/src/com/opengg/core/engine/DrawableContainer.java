@@ -55,4 +55,11 @@ public class DrawableContainer {
         }
         d.draw();
     }
+    public void destroy(){
+        if(comp){
+            r.getDrawable().destroy();
+        }else{
+            d.destroy();
+        }
+    }
 }
