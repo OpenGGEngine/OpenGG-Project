@@ -24,9 +24,6 @@ public class KeyTrigger extends Trigger implements KeyboardListener {
         KeyboardController.addToPool(this);
         keys = key;
     }
-    
-    @Override
-    public void update(float delta) {}
 
     @Override
     public void keyPressed(int key) {

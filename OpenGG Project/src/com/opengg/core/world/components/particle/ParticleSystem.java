@@ -19,7 +19,6 @@ import java.nio.FloatBuffer;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import org.lwjgl.BufferUtils;
 
 /**
  *
@@ -30,6 +29,7 @@ import org.lwjgl.BufferUtils;
 public class ParticleSystem implements Updatable, Renderable{
     List<Particle> particles = new LinkedList<>();
     private Vector3f offset = new Vector3f();
+    private Vector3f scale = new Vector3f(1,1,1);
     private Quaternionf rotoffset = new Quaternionf();
     InstancedDrawnObject particleobject;
     private float pps;
@@ -61,6 +61,16 @@ public class ParticleSystem implements Updatable, Renderable{
         this.t = t;
     }
     
+    public ParticleSystem(float pps, float speed, float lifeLength, InstancedDrawnObject model, Texture t) {
+        this.pps = pps;
+        this.speed = speed;
+        this.gravityComplient = -0.027f;
+        this.lifeLength = lifeLength;
+        this.particleobject = model;
+        time = new Time();
+        this.t = t;
+    }
+    
     private void emitParticle(Vector3f center){
         float dirX = (float) Math.random() * 2f - 1f;
         float dirZ = (float) Math.random() * 2f - 1f;
@@ -81,8 +91,8 @@ public class ParticleSystem implements Updatable, Renderable{
         
         Iterator<Particle> screwconcurrent = particles.iterator();
         while(screwconcurrent.hasNext()){
-            Particle p = screwconcurrent.next();
-            if(p.update()){
+            Particle p2 = screwconcurrent.next();
+            if(p2.update()){
                 screwconcurrent.remove();             
             }
             
@@ -138,5 +148,15 @@ public class ParticleSystem implements Updatable, Renderable{
     @Override
     public Quaternionf getRotation() {
         return rotoffset;
+    }
+
+    @Override
+    public void setScale(Vector3f v) {
+        this.scale = v;
+    }
+
+    @Override
+    public Vector3f getScale() {
+        return scale;
     }
 }

@@ -13,7 +13,7 @@ import java.util.ArrayList;
  *
  * @author Javier
  */
-public abstract class Trigger implements Updatable{
+public abstract class Trigger{
     ArrayList<Triggerable> subscribers = new ArrayList<>();
     Component parent;
     boolean enabled;
@@ -35,10 +35,5 @@ public abstract class Trigger implements Updatable{
         for(Triggerable t : subscribers){
             t.onTrigger(this, ti);
         }
-    }
-
-    @Override
-    public void setParentInfo(Component parent) {
-        this.parent = parent;
     }
 }

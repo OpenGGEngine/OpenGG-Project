@@ -5,6 +5,7 @@
  */
 package com.opengg.core.world.components;
 
+import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.drawn.Drawable;
 
 /**
@@ -16,5 +17,7 @@ public interface Renderable extends Positioned{
      * Render the Current Component
      */
     public void render();
+    public void setScale(Vector3f v);
+    public Vector3f getScale();
     public Drawable getDrawable();
 }

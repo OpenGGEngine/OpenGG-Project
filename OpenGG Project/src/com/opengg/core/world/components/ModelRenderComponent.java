@@ -19,7 +19,8 @@ import com.opengg.core.render.drawn.Drawable;
  */
 public class ModelRenderComponent extends ComponentHolder implements Renderable{
     Drawable g;
-    private Vector3f offset = new Vector3f(0,0,0);
+    private Vector3f offset = new Vector3f();
+    private Vector3f scale = new Vector3f(1,1,1);
     private Quaternionf rotoffset = new Quaternionf();
     Positioned parent;
    
@@ -33,7 +34,7 @@ public class ModelRenderComponent extends ComponentHolder implements Renderable{
 
     @Override
     public void render() {
-        Matrix4f m = Matrix4f.translate(getPosition()).multiply(getRotation().convertMatrix());
+        Matrix4f m = new Matrix4f().translate(getPosition()).scale(getScale());
         g.setMatrix(m);
         g.draw();
     }
@@ -69,6 +70,16 @@ public class ModelRenderComponent extends ComponentHolder implements Renderable{
     @Override
     public Drawable getDrawable() {
         return g;
+    }
+
+    @Override
+    public void setScale(Vector3f v) {
+        this.scale = v;
+    }
+
+    @Override
+    public Vector3f getScale() {
+        return scale;
     }
 
     

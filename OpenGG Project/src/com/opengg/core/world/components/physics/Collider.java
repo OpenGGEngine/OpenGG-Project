@@ -9,6 +9,7 @@ import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.world.components.Component;
 import com.opengg.core.world.components.Positioned;
+import com.opengg.core.world.components.Updatable;
 import com.opengg.core.world.components.triggers.Trigger;
 import com.opengg.core.world.components.triggers.TriggerInfo;
 import static com.opengg.core.world.components.triggers.TriggerInfo.SINGLE;
@@ -21,7 +22,7 @@ import java.util.List;
  *
  * @author ethachu19
  */
-public class Collider extends Trigger implements Positioned{
+public class Collider extends Trigger implements Positioned, Updatable{
     Positioned p;
     Vector3f offset = new Vector3f();
     Quaternionf rot = new Quaternionf();

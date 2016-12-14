@@ -36,7 +36,7 @@ public class ColliderRenderer implements Renderable {
     
     @Override
     public void render() {
-        Matrix4f posm = Matrix4f.translate(collider.getPosition());
+        Matrix4f posm = new Matrix4f().translate(collider.getPosition());
         drawn.setMatrix(posm);
         drawn.draw();
     }
@@ -66,6 +66,16 @@ public class ColliderRenderer implements Renderable {
     @Override
     public Quaternionf getRotation() {
         return collider.getRotation();
+    }
+
+    @Override
+    public void setScale(Vector3f v) {
+       
+    }
+
+    @Override
+    public Vector3f getScale() {
+        return new Vector3f();
     }
     
 }
