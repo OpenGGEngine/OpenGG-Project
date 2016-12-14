@@ -9,7 +9,6 @@ package com.opengg.core.render.drawn;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.engine.RenderEngine;
 import com.opengg.core.model.Material;
-import com.opengg.core.engine.EngineInfo;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.List;
@@ -65,11 +64,6 @@ public class MatDrawnObject implements Drawable {
             m.Ns.useTexture(5);
         RenderEngine.controller.passMaterial(m);
         d.draw();
-    }
-
-    @Override
-    public void saveShadowMVP() {
-       d.saveShadowMVP();
     }
 
     @Override

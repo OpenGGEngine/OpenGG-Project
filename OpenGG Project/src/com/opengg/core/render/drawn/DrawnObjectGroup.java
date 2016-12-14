@@ -34,13 +34,6 @@ public class DrawnObjectGroup implements Drawable {
     public void remove(Drawable d){
         objs.remove(d);
     }
-    
-    @Override
-    public void saveShadowMVP() {
-        objs.stream().forEach((d) -> {
-            d.saveShadowMVP();
-        });
-    }
 
     @Override
     public void draw() {

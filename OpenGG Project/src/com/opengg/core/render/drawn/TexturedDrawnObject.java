@@ -39,11 +39,6 @@ public class TexturedDrawnObject implements Drawable{
     }
 
     @Override
-    public void saveShadowMVP() {
-        object.saveShadowMVP();
-    }
-
-    @Override
     public void setMatrix(Matrix4f m) {
         object.setMatrix(m);
     }

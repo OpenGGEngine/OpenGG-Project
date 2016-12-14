@@ -109,12 +109,6 @@ public class DrawnObject implements Drawable {
         RenderEngine.controller.defVertexAttributes();
     }
     
-    @Override
-    public void saveShadowMVP(){
-        RenderEngine.controller.setModel(model);
-        shadeModel = (RenderEngine.controller.getMVP());
-    }
-    
     public void setShaderMatrix(Matrix4f m){
         shadeModel = m;
     }
@@ -144,7 +138,6 @@ public class DrawnObject implements Drawable {
     @Override
     public void draw(){    
         RenderEngine.controller.setModel(model);  
-        RenderEngine.controller.setShadowLightMatrix(shadeModel); 
         vbo.bind(GL_ARRAY_BUFFER);
         evbo.bind(GL_ELEMENT_ARRAY_BUFFER);
         defAttrib();

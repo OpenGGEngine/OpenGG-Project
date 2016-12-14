@@ -127,16 +127,7 @@ public class InstancedDrawnObject implements Drawable {
         RenderEngine.controller.defVertexAttributes();
         RenderEngine.controller.pointVertexAttributes();
     }
-    
-    
-    
-    @Override
-    public void saveShadowMVP(){
-        RenderEngine.controller.setModel(model);
-        shadeModel = (RenderEngine.controller.getMVP());
-    }
-   
-    
+  
     @Override
     public void setMatrix(Matrix4f model){
         this.model = model;
