@@ -5,8 +5,8 @@
  */
 package com.opengg.core.util;
 
-import com.opengg.core.engine.EngineInfo;
-import static com.opengg.core.engine.EngineInfo.GLFW;
+import com.opengg.core.engine.OpenGG;
+import static com.opengg.core.render.window.WindowOptions.GLFW;
 
 /**
  *
@@ -32,8 +32,8 @@ public class Time {
     }
     
     double getMillis(){
-        if(EngineInfo.windowType == GLFW){
-            //return ((GLFWWindow) EngineInfo.window).getTime() * 1000;
+        if(OpenGG.window.getType() == GLFW){
+            //return ((GLFWWindow) OpenGG.window).getTime() * 1000;
         }
         return System.currentTimeMillis();
     }

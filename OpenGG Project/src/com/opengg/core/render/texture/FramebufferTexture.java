@@ -6,7 +6,7 @@
 
 package com.opengg.core.render.texture;
 
-import com.opengg.core.engine.EngineInfo;
+import com.opengg.core.engine.OpenGG;
 import java.nio.ByteBuffer;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
@@ -40,7 +40,7 @@ public class FramebufferTexture extends Texture {
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);   // Make sure no FBO is set as the draw framebuffer
         glBindFramebuffer(GL_READ_FRAMEBUFFER, fb); // Make sure your multisampled FBO is the read framebuffer
         glDrawBuffer(GL_BACK);                       // Set the back buffer as the draw buffer
-        glBlitFramebuffer(0, 0, EngineInfo.window.getWidth(), EngineInfo.window.getHeight(), 0, 0, EngineInfo.window.getWidth(), EngineInfo.window.getHeight(), GL_COLOR_BUFFER_BIT, GL_NEAREST);
+        glBlitFramebuffer(0, 0, OpenGG.window.getWidth(), OpenGG.window.getHeight(), 0, 0, OpenGG.window.getWidth(), OpenGG.window.getHeight(), GL_COLOR_BUFFER_BIT, GL_NEAREST);
     }
     
     public static FramebufferTexture getFramebuffer(int sizex, int sizey){
@@ -98,6 +98,6 @@ public class FramebufferTexture extends Texture {
     public void endTexRender(){
         glFlush();
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        glViewport(0,0,EngineInfo.window.getWidth(),EngineInfo.window.getHeight());
+        glViewport(0,0,OpenGG.window.getWidth(),OpenGG.window.getHeight());
     }
 }
