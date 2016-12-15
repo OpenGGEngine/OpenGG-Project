@@ -9,6 +9,10 @@ package com.opengg.core.render.window;
  *
  * @author Javier
  */
-public enum DisplayMode {
-    FULLSCREEN, FULLSCREEN_WINDOWED, WINDOWED
+public final class WindowOptions {
+    public static final int FULLSCREEN = 1,
+            WINDOWED = 2,
+            BORDERLESS = 3,
+            GLFW = 100,
+            SWT = 101;
 }

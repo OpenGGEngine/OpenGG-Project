@@ -19,4 +19,5 @@ public interface Window {
     public int getWidth();
     public int getHeight();
     public boolean getSuccessfulConstruction();
+    public int getType();
 }

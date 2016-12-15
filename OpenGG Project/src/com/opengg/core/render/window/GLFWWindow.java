@@ -1,11 +1,12 @@
 package com.opengg.core.render.window;
+import com.opengg.core.engine.OpenGG;
 import com.opengg.core.exceptions.WindowCreationException;
 import com.opengg.core.io.input.keyboard.GLFWKeyboardHandler;
+import com.opengg.core.io.input.keyboard.KeyboardController;
 import com.opengg.core.io.input.mouse.GLFWMouseButtonHandler;
 import com.opengg.core.io.input.mouse.GLFWMousePosHandler;
-import com.opengg.core.engine.EngineInfo;
-import com.opengg.core.io.input.keyboard.KeyboardController;
 import com.opengg.core.io.input.mouse.MouseController;
+import static com.opengg.core.render.window.WindowOptions.*;
 import java.nio.ByteBuffer;
 import org.lwjgl.glfw.*;
 import static org.lwjgl.glfw.GLFW.*;
@@ -16,9 +17,6 @@ import static org.lwjgl.system.MemoryUtil.*;
 
 
 public class GLFWWindow implements Window {
-    public int SWT = 4;
-    public int GLFW = 6;
-    
     int WIDTH = 300;
     int HEIGHT = 300;
     
@@ -27,41 +25,40 @@ public class GLFWWindow implements Window {
     boolean success;
     GLFWVidMode mode; 
     ByteBuffer vidmode;
-    GLFWErrorCallback errorCallback;
-    GLFWKeyCallback   keyCallback;
-    GLFWCursorPosCallback mouseCallback;
+    
+    GLFWErrorCallback       errorCallback;
+    GLFWKeyCallback         keyCallback;
+    GLFWCursorPosCallback   mouseCallback;
     GLFWMouseButtonCallback mouseButtonCallback;
-
-    public GLFWWindow(int w, int h, String name, DisplayMode m) {
+    
+    public GLFWWindow(WindowInfo winfo) {
         glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
-        HEIGHT = h;
-        WIDTH = w;
+        HEIGHT = winfo.height;
+        WIDTH = winfo.width;
 
         if (glfwInit() != true)
             throw new WindowCreationException("Unable to initialize GLFW");
 
         glfwDefaultWindowHints(); // optional, the current window hints are already the default
         glfwWindowHint(GLFW_VISIBLE, GL_FALSE); // the window will stay hidden after creation
-        glfwWindowHint(GLFW_RESIZABLE, GL_TRUE); // the window will be resizable
-
 
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_FALSE);
-        glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-        glfwWindowHint(GLFW_SAMPLES, 4);
+        glfwWindowHint(GLFW_RESIZABLE, winfo.resizable ? GL_TRUE : GL_FALSE);
+        glfwWindowHint(GLFW_SAMPLES, winfo.samples);
 
 
         mode = glfwGetVideoMode(glfwGetPrimaryMonitor());   
         //mode = new GLFWVidMode(glfwGetVideoMode(glfwGetPrimaryMonitor()));
-        if(m == DisplayMode.FULLSCREEN_WINDOWED){
+        if(winfo.displaymode == BORDERLESS){
             glfwWindowHint(GLFW_RED_BITS, mode.redBits());
             glfwWindowHint(GLFW_GREEN_BITS, mode.greenBits());
             glfwWindowHint(GLFW_BLUE_BITS, mode.blueBits());
             glfwWindowHint(GLFW_REFRESH_RATE, mode.refreshRate());
 
-            window = glfwCreateWindow(mode.width(), mode.height(), name, NULL, NULL);
+            window = glfwCreateWindow(mode.width(), mode.height(), winfo.name, NULL, NULL);
             
             HEIGHT = mode.height();
             WIDTH = mode.width();
@@ -71,11 +68,10 @@ public class GLFWWindow implements Window {
                 0,
                 0
             );
-        }else if(m == DisplayMode.FULLSCREEN){
-            window = glfwCreateWindow(WIDTH, HEIGHT, name,  glfwGetPrimaryMonitor(), NULL);
+        }else if(winfo.displaymode == FULLSCREEN){
+            window = glfwCreateWindow(WIDTH, HEIGHT, winfo.name,  glfwGetPrimaryMonitor(), NULL);
         }else{
-
-            window = glfwCreateWindow(WIDTH, HEIGHT, name, NULL, NULL);
+            window = glfwCreateWindow(WIDTH, HEIGHT, winfo.name, NULL, NULL);
             glfwSetWindowPos(
                 window,
                 (mode.width() - WIDTH) / 2,
@@ -93,20 +89,14 @@ public class GLFWWindow implements Window {
         MouseController.setButtonHandler((GLFWMouseButtonHandler) mouseButtonCallback);
         MouseController.setPosHandler((GLFWMousePosHandler) mouseCallback);
         
-        // Make the OpenGL context current
         glfwMakeContextCurrent(window);
-        // Enable v-sync
-        glfwSwapInterval(1);
+        glfwSwapInterval(winfo.vsync ? 1 : 0);
 
-        //glViewport(0, 0, WIDTH, HEIGHT);
-
-        // Make the window visible
         glfwShowWindow(window);
         GL.createCapabilities();
         if(glGetError() == GL_NO_ERROR){
             success = true;
-            EngineInfo.window = this;
-            EngineInfo.windowType = EngineInfo.GLFW;
+            OpenGG.window = this;
         }
         else
             throw new WindowCreationException("OpenGL initialization during window creation failed");
@@ -198,6 +188,11 @@ public class GLFWWindow implements Window {
     @Override
     public boolean getSuccessfulConstruction() {
         return success;
+    }
+
+    @Override
+    public int getType() {
+        return GLFW;
     }
     
 }
