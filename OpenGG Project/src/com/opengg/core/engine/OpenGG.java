@@ -26,6 +26,7 @@ public class OpenGG {
     public static GGApplication app;
     public static World curworld;
     static boolean end = false;
+    static boolean force = false;
     
     public static void initialize(GGApplication app, WindowInfo windowinfo){
         OpenGG.app = app;
@@ -36,18 +37,35 @@ public class OpenGG {
         }
         initializeRenderEngine(app);
         initializeAudioController();
+        curworld = WorldManager.getDefaultWorld();
         
         app.setup();
+    }
+    
+    public static void initializeNoWindow(GGApplication app){
+        OpenGG.app = app;
+        curworld = WorldManager.getDefaultWorld();
+        app.setup();
+    }
+    
+    public static void runNoWindow(){
+        while(!end){
+            app.update();
+            UpdateEngine.update();
+        }
     }
     
     public static void run(){
         while (!window.shouldClose() && !end) {
             startFrame();
-            app.update();
             app.render();
+            app.update();
+            UpdateEngine.update();
             endFrame(window);
         }
-        closeEngine();
+        if(!force){
+            closeEngine();
+        }
     }
     
     private static void initializeRenderEngine(){
@@ -74,7 +92,12 @@ public class OpenGG {
         }   
     }
     
-    public void endApplication(){
+    public static void endApplication(){
+        end = true;
+    }
+    
+    public static void forceEnd(){
+        force = true;
         end = true;
     }
     

@@ -6,8 +6,6 @@ import com.opengg.core.engine.AudioController;
 import com.opengg.core.engine.GGApplication;
 import com.opengg.core.engine.OpenGG;
 import com.opengg.core.engine.RenderEngine;
-import com.opengg.core.engine.UpdateEngine;
-import com.opengg.core.engine.WorldManager;
 import com.opengg.core.gui.GUIItem;
 import com.opengg.core.gui.GUIText;
 import static com.opengg.core.io.input.keyboard.Key.*;
@@ -30,7 +28,6 @@ import com.opengg.core.render.window.WindowOptions;
 import static com.opengg.core.render.window.WindowOptions.GLFW;
 import static com.opengg.core.util.GlobalUtil.print;
 import com.opengg.core.world.Camera;
-import com.opengg.core.world.World;
 import com.opengg.core.world.WorldObject;
 import com.opengg.core.world.components.KeyTrigger;
 import com.opengg.core.world.components.ModelRenderComponent;
@@ -43,7 +40,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class OpenGGTest extends GGApplication implements KeyboardListener, MouseButtonListener {
-    private float sens = 0.25f;
+    private final float sens = 0.25f;
     private float xrot, yrot;
     private boolean lock = false;
     private float rot1 = 0, rot2 = 0;
@@ -51,7 +48,6 @@ public class OpenGGTest extends GGApplication implements KeyboardListener, Mouse
     private Vector3f pos = new Vector3f(0, -10, -30);
     private Quaternionf rottest = new Quaternionf(1,0,0,1);
     private WorldObject terrain;
-    private World w;
     private Camera c;
     private MatDrawnObject awp3, base2;
     private GGFont f;
@@ -112,10 +108,7 @@ public class OpenGGTest extends GGApplication implements KeyboardListener, Mouse
             
             base2 = f.loadText(g);
             
-            
-            w = WorldManager.getDefaultWorld();
-            OpenGG.curworld = w;
-            w.floorLev = -10;
+            OpenGG.curworld.floorLev = -10;
             
             ModelRenderComponent ep1;
             awps = new WorldObject();
@@ -151,6 +144,7 @@ public class OpenGGTest extends GGApplication implements KeyboardListener, Mouse
         }
     }
     
+    @Override
     public void render() {
         rot = new Vector3f(yrot, xrot, 0);
         if(lock){
@@ -172,8 +166,8 @@ public class OpenGGTest extends GGApplication implements KeyboardListener, Mouse
         RenderEngine.draw();
     }
 
+    @Override
     public void update() {
-        UpdateEngine.update();
         xrot -= rot1 * 7;
         yrot -= rot2 * 7;
         //rottest.addDegrees(2);
@@ -203,6 +197,9 @@ public class OpenGGTest extends GGApplication implements KeyboardListener, Mouse
         }
         if (key == KEY_G) {
             bad.velocity = new Vector3f(0,20,0);
+        }
+        if (key == KEY_ESCAPE) {
+            OpenGG.endApplication();
         }
         if (key == KEY_U){
             RenderEngine.setShadowVolumes(!RenderEngine.getShadowsEnabled());
