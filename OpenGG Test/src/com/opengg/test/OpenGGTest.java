@@ -34,8 +34,6 @@ import com.opengg.core.render.window.GLFWWindow;
 import static com.opengg.core.render.window.RenderUtil.endFrame;
 import static com.opengg.core.render.window.RenderUtil.startFrame;
 import static com.opengg.core.util.GlobalUtil.print;
-import static com.opengg.core.util.GlobalUtil.print;
-import static com.opengg.core.util.GlobalUtil.print;
 import com.opengg.core.world.Camera;
 import com.opengg.core.world.World;
 import com.opengg.core.world.WorldObject;
@@ -47,7 +45,6 @@ import com.opengg.core.world.components.physics.PhysicsComponent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import static java.lang.Math.toRadians;
 import java.nio.FloatBuffer;
 
 public class OpenGGTest implements KeyboardListener, MouseButtonListener {
@@ -71,7 +68,6 @@ public class OpenGGTest implements KeyboardListener, MouseButtonListener {
     GGFont f;
     OBJModel m, m2;
     private Texture t2, t3;
-    private Cubemap cb = new Cubemap();
     WorldObject w1, w2;
     private Sound so, so2;
     private AudioListener as;
@@ -140,7 +136,6 @@ public class OpenGGTest implements KeyboardListener, MouseButtonListener {
         
         base2 = f.loadText(g);
 
-        cb.loadTexture("C:/res/skybox/majestic");
         
         w = WorldManager.getDefaultWorld();
         EngineInfo.curworld = w;
@@ -152,7 +147,8 @@ public class OpenGGTest implements KeyboardListener, MouseButtonListener {
         awps.setPosition(new Vector3f(5,5,5));
         
         ParticleSystem p = new ParticleSystem(2f,20f,100f,ObjectCreator.createOldModelBuffer(OpenGGTest.class.getResource("res/models/deer.obj")), t3);
-        ModelRenderComponent r = new ModelRenderComponent(ModelLoader.loadModel("C:/res/bobomb/bobomb.bmf"));
+        ModelRenderComponent r = new ModelRenderComponent(ModelLoader.loadModel("C:/res/bigbee/model.bmf"));
+        r.setScale(new Vector3f(50,50,50));
         print("Model and Texture Loading Completed");
 
         TriggerableAudioComponent test3 = new TriggerableAudioComponent(so2);
@@ -167,7 +163,7 @@ public class OpenGGTest implements KeyboardListener, MouseButtonListener {
         terrain.attach(p);
         terrain.attach(test3);
 
-        RenderEngine.setSkybox(ObjectCreator.createCube(1500f), cb);
+        RenderEngine.setSkybox(ObjectCreator.createCube(1500f), Cubemap.get("C:/res/skybox/majestic"));
         RenderEngine.addGUIItem(new GUIItem(base2, new Vector2f()));
         RenderEngine.addRenderable(p);
         RenderEngine.addRenderable(r);
@@ -201,7 +197,8 @@ public class OpenGGTest implements KeyboardListener, MouseButtonListener {
         UpdateEngine.update();
         xrot -= rot1 * 7;
         yrot -= rot2 * 7;
-        rottest.addDegrees(2);
+        //rottest.addDegrees(2);
+        //System.out.println(rottest);
         terrain.setRotation(rottest);
     }
 

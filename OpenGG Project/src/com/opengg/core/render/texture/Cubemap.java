@@ -33,7 +33,15 @@ public class Cubemap {
         glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
     }
     
-    public int loadTexture(String path){
+    private Cubemap(String path){
+        loadTexture(path);
+    }
+    
+    public static Cubemap get(String path){
+        return new Cubemap(path);
+    }
+    
+    private int loadTexture(String path){
         
         String[] endings = new String[6];
         endings[0] = "_ft.png";
