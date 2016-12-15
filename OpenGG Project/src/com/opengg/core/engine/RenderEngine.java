@@ -56,7 +56,7 @@ public class RenderEngine {
             return false;
         }
         
-        sceneTex = FramebufferTexture.getFramebuffer(EngineInfo.window.getWidth(), EngineInfo.window.getHeight());
+        sceneTex = FramebufferTexture.getFramebuffer(OpenGG.window.getWidth(), OpenGG.window.getHeight());
         sceneQuad = new DrawnObject(ObjectBuffers.getSquareUI(-1, 1, -1, 1, 1f, 1, false),12);    
         
         glEnable(GL_BLEND);
