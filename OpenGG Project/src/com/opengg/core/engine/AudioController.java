@@ -8,7 +8,7 @@ package com.opengg.core.engine;
 
 import com.opengg.core.audio.AudioListener;
 import com.opengg.core.audio.AudioSource;
-import static com.opengg.core.util.GlobalUtil.error;
+import static com.opengg.core.engine.GGConsole.error;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
@@ -41,7 +41,7 @@ public class AudioController {
         alcMakeContextCurrent(context);
         AL.createCapabilities(caps);
         if(AL10.alGetError() != AL10.AL_NO_ERROR)
-            error("OpenAL Error: " + AL10.alGetError());
+            error("OpenAL Error in initialization: " + AL10.alGetError());
         else
             initialized = true;
     }

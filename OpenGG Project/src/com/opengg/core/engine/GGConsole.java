@@ -28,12 +28,28 @@ public class GGConsole {
         return messages.get(messages.size()-1);
     }
     
-    public static void log(String s){
-        StackTraceElement[] e = Thread.currentThread().getStackTrace();
-        String sender = e[e.length-2].getClassName();
-        Message m = new Message(s,sender);
+    public static void log(String message){
+        write(message, Level.INFO);
+    }
+    
+    public static void warning(String message){
+        write(message, Level.WARNING);
+    }
+    
+    public static void error(String message){
+        write(message, Level.ERROR);
+    }
+    
+    
+    private static void write(String message, Level level){
+        Message m = new Message(message, getSender(), level);
         messages.add(m);
         System.out.println(m);
+    } 
+    
+    private static String getSender(){
+        StackTraceElement[] e = Thread.currentThread().getStackTrace();
+        return (e[4].getClassName()).substring(e[4].getClassName().lastIndexOf('.')+1);
     }
     
     public static void addListener(ConsoleListener listener){

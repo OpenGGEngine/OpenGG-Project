@@ -8,7 +8,6 @@ package com.opengg.core.world.entities;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.io.objloader.parser.OBJModel;
-import static com.opengg.core.util.GlobalUtil.print;
 import com.opengg.core.world.Camera;
 import com.opengg.core.world.World;
 import com.opengg.core.engine.WorldManager;
@@ -251,7 +250,6 @@ public class Entity implements Serializable {
             return;
         previous = new PhysicsState(current);
         current.integrate(current, t, dt);
-        print (current.momentum.toString());
         updateBoundingBox();
     }
 }

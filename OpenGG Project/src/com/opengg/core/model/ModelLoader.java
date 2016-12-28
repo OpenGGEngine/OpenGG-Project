@@ -5,8 +5,8 @@
  */
 package com.opengg.core.model;
 
+import com.opengg.core.engine.GGConsole;
 import static com.opengg.core.util.FileUtil.getFileName;
-import static com.opengg.core.util.GlobalUtil.print;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
@@ -24,39 +24,38 @@ import org.lwjgl.system.MemoryUtil;
 public class ModelLoader {
 
     public static Model loadModel(String path) throws FileNotFoundException, IOException {
-        DataInputStream in = new DataInputStream(new BufferedInputStream(new FileInputStream(path)));
-        
-        String texpath = path.substring(0, path.lastIndexOf("/") + 1) + "tex/";
-        
-        ArrayList<Mesh> meshes = new ArrayList<>();
-        
-        int id =  in.readInt();
-        for (int si = 0; si < id; si++) {
-            int fbcap = in.readInt();
-            FloatBuffer f = MemoryUtil.memAllocFloat(fbcap);
-            for (int i = 0; i < fbcap; i++) 
-            {
-                f.put(in.readFloat());
-            }
-            f.flip();
-            int ibcap = in.readInt();
-            IntBuffer inb = MemoryUtil.memAllocInt(ibcap);
-            for (int i = 0; i < ibcap; i++) {
-                inb.put(in.readInt());
-            }
-            inb.flip();
-
-            int len = in.readInt();
-            String name = "";
-            for (int i = 0; i < len; i++) {
-                name += in.readChar();
-            }
-
-            Material m = new Material(name);
-            if ("default".equals(name)) {
-                m = Material.defaultmaterial;
-            } 
-
+        GGConsole.log("Loading model at " + path + "...");
+        ArrayList<Mesh> meshes;
+        try (DataInputStream in = new DataInputStream(new BufferedInputStream(new FileInputStream(path)))) {
+            String texpath = path.substring(0, path.lastIndexOf("/") + 1) + "tex/";
+            meshes = new ArrayList<>();
+            int id =  in.readInt();
+            for (int si = 0; si < id; si++) {
+                int fbcap = in.readInt();
+                FloatBuffer f = MemoryUtil.memAllocFloat(fbcap);
+                for (int i = 0; i < fbcap; i++)
+                {
+                    f.put(in.readFloat());
+                }
+                f.flip();
+                int ibcap = in.readInt();
+                IntBuffer inb = MemoryUtil.memAllocInt(ibcap);
+                for (int i = 0; i < ibcap; i++) {
+                    inb.put(in.readInt());
+                }
+                inb.flip();
+                
+                int len = in.readInt();
+                String name = "";
+                for (int i = 0; i < len; i++) {
+                    name += in.readChar();
+                }
+                
+                Material m = new Material(name);
+                if ("default".equals(name)) {
+                    m = Material.defaultmaterial;
+                }
+                
                 m.ka.x = in.readFloat();
                 m.ka.y = in.readFloat();
                 m.ka.z = in.readFloat();
@@ -185,11 +184,12 @@ public class ModelLoader {
                 } else {
                     m.reflFilename = null;
                 }
-           meshes.add(new Mesh(f, inb, m));
+                meshes.add(new Mesh(f, inb, m));
+            }
         }
-
-        in.close();
-        print("Done Parsing " + path);
-        return new Model(getFileName(path), meshes);
+        
+        Model m = new Model(getFileName(path), meshes);
+        GGConsole.log("Done Parsing " + path + ", got " +m.getName());
+        return m;
     }
 }

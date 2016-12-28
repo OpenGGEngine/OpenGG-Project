@@ -4,6 +4,7 @@ import com.opengg.core.audio.AudioListener;
 import com.opengg.core.audio.Sound;
 import com.opengg.core.engine.AudioController;
 import com.opengg.core.engine.GGApplication;
+import com.opengg.core.engine.GGConsole;
 import com.opengg.core.engine.OpenGG;
 import com.opengg.core.engine.RenderEngine;
 import com.opengg.core.gui.GUIItem;
@@ -27,7 +28,6 @@ import com.opengg.core.render.window.GLFWWindow;
 import com.opengg.core.render.window.WindowInfo;
 import com.opengg.core.render.window.WindowOptions;
 import static com.opengg.core.render.window.WindowOptions.GLFW;
-import static com.opengg.core.util.GlobalUtil.print;
 import com.opengg.core.world.Camera;
 import com.opengg.core.world.WorldObject;
 import com.opengg.core.world.components.KeyTrigger;
@@ -112,14 +112,16 @@ public class OpenGGTest extends GGApplication implements KeyboardListener, Mouse
             OpenGG.curworld.floorLev = -10;
             
             ModelRenderComponent ep1;
+
             awps = new WorldObject();
-            awps.attach(ep1 = new ModelRenderComponent(awp3));
+            awps.attach(ep1 = new ModelRenderComponent(awp3));ep1.getDrawable();
             awps.setPosition(new Vector3f(5,5,5));
             
             ParticleSystem p = new ParticleSystem(2f,20f,100f,ObjectCreator.createOldModelBuffer(OpenGGTest.class.getResource("res/models/deer.obj")), t3);
             ModelRenderComponent r = new ModelRenderComponent(ModelLoader.loadModel("C:/res/bigbee/model.bmf"));
             r.setScale(new Vector3f(50,50,50));
-            print("Model and Texture Loading Completed");
+            
+            GGConsole.log("Model and Texture Loading Completed");
             
             TriggerableAudioComponent test3 = new TriggerableAudioComponent(so2);
             KeyTrigger t = new KeyTrigger(KEY_P, KEY_I);
@@ -139,7 +141,7 @@ public class OpenGGTest extends GGApplication implements KeyboardListener, Mouse
             RenderEngine.addRenderable(r);
             RenderEngine.addRenderable(ep1, true, false);
             
-            print("Setup Complete");
+            GGConsole.log("Setup Complete");
         } catch (IOException ex) {
             Logger.getLogger(OpenGGTest.class.getName()).log(Level.SEVERE, null, ex);
         }

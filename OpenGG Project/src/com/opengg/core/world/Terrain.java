@@ -5,9 +5,9 @@
  */
 package com.opengg.core.world;
 
+import com.opengg.core.engine.GGConsole;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.texture.Texture;
-import static com.opengg.core.util.GlobalUtil.print;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,7 +43,7 @@ public class Terrain {
         
         BufferedImage image = ImageIO.read(heightmap);    
         int VERTEX_COUNT = image.getHeight();
-        print(VERTEX_COUNT);
+        GGConsole.log("Generating terrain with " + VERTEX_COUNT + " vertices...");
         indices = MemoryUtil.memAllocInt(6*((VERTEX_COUNT)*(VERTEX_COUNT)));
         //indices = BufferUtils.createIntBuffer(6*((VERTEX_COUNT)*(VERTEX_COUNT))*2);
        
@@ -57,13 +57,9 @@ public class Terrain {
                 float x1 = (j/(float)(VERTEX_COUNT-1))*size;
                 float y = getHeight(i, j, image) ; 
                 float z1 = (i/(float)(VERTEX_COUNT-1))*size;
-              
-                  
-                
 
                 Vector3f normal = calculateNormal(j,i, image);
-
-             
+           
                 
                 float u = (i)/(float)(VERTEX_COUNT-1);
                 float v = (j)/(float)(VERTEX_COUNT-1);
