@@ -5,19 +5,20 @@
  */
 package com.opengg.core.render.drawn;
 
-import com.opengg.core.math.Matrix4f;
 import com.opengg.core.engine.RenderEngine;
+import com.opengg.core.math.Matrix4f;
 import com.opengg.core.render.VertexBufferObject;
+import com.opengg.core.render.shader.ShaderController;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.List;
-import org.lwjgl.system.MemoryUtil;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
 import static org.lwjgl.opengl.GL11.glDrawElements;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
+import org.lwjgl.system.MemoryUtil;
 
 /**
  *
@@ -102,11 +103,11 @@ public class DrawnObject implements Drawable {
     }
     
     private void pointAttrib(){
-        RenderEngine.controller.pointVertexAttributes();
+        ShaderController.pointVertexAttributes();
     }
     
     private void defAttrib(){
-        RenderEngine.controller.defVertexAttributes();
+        ShaderController.defVertexAttributes();
     }
     
     public void setShaderMatrix(Matrix4f m){
@@ -137,7 +138,7 @@ public class DrawnObject implements Drawable {
     
     @Override
     public void draw(){    
-        RenderEngine.controller.setModel(model);  
+        ShaderController.setModel(model);  
         vbo.bind(GL_ARRAY_BUFFER);
         evbo.bind(GL_ELEMENT_ARRAY_BUFFER);
         defAttrib();

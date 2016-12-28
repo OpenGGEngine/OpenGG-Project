@@ -58,4 +58,7 @@ public class AudioSource {
     public void setVelocity(Vector3f vel){
         alSource3f(audioid,AL_VELOCITY,vel.x,vel.y,vel.z);
     }
+    public void destroy(){
+        alDeleteBuffers(bufferid);
+    }
 }

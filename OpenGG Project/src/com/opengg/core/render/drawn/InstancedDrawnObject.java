@@ -5,18 +5,19 @@
  */
 package com.opengg.core.render.drawn;
 
-import com.opengg.core.math.Matrix4f;
 import com.opengg.core.engine.RenderEngine;
+import com.opengg.core.math.Matrix4f;
 import com.opengg.core.render.VertexBufferObject;
+import com.opengg.core.render.shader.ShaderController;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.List;
-import org.lwjgl.system.MemoryUtil;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
 import static org.lwjgl.opengl.GL31.glDrawArraysInstanced;
+import org.lwjgl.system.MemoryUtil;
 
 /**
  *
@@ -67,8 +68,8 @@ public class InstancedDrawnObject implements Drawable {
         ivbo.bind(GL_ARRAY_BUFFER);
         ivbo.uploadData(GL_ARRAY_BUFFER, inst, GL_STATIC_DRAW);
         
-        RenderEngine.controller.defVertexAttributes();
-        RenderEngine.controller.pointVertexAttributes();
+        ShaderController.defVertexAttributes();
+        ShaderController.pointVertexAttributes();
         this.removeBuffer();
     }
     public InstancedDrawnObject(FloatBuffer b, FloatBuffer inst){
@@ -96,8 +97,8 @@ public class InstancedDrawnObject implements Drawable {
             vbo.uploadData(GL_ARRAY_BUFFER, b, GL_STATIC_DRAW);
         }
         
-        RenderEngine.controller.defVertexAttributes();
-        RenderEngine.controller.pointVertexAttributes();
+        ShaderController.defVertexAttributes();
+        ShaderController.pointVertexAttributes();
         this.removeBuffer();
     }
     
@@ -124,8 +125,8 @@ public class InstancedDrawnObject implements Drawable {
         ivbo.bind(GL_ARRAY_BUFFER);
         ivbo.uploadData(GL_ARRAY_BUFFER, inst, GL_STATIC_DRAW);
         
-        RenderEngine.controller.defVertexAttributes();
-        RenderEngine.controller.pointVertexAttributes();
+        ShaderController.defVertexAttributes();
+        ShaderController.pointVertexAttributes();
     }
   
     @Override
@@ -135,13 +136,13 @@ public class InstancedDrawnObject implements Drawable {
 
     @Override
     public void draw(){    
-        RenderEngine.controller.setModel(model);       
+        ShaderController.setModel(model);       
         vbo.bind(GL_ARRAY_BUFFER);
         evbo.bind(GL_ELEMENT_ARRAY_BUFFER);
-        RenderEngine.controller.defInstancedVertexAttributes(ivbo);
-        RenderEngine.controller.setInstanced(true);
+        ShaderController.defInstancedVertexAttributes(ivbo);
+        ShaderController.setInstanced(true);
         glDrawArraysInstanced(GL_TRIANGLES,0,ind.limit(), instnum);
-        RenderEngine.controller.setInstanced(false);
+        ShaderController.setInstanced(false);
     }
     
     public void removeBuffer(){

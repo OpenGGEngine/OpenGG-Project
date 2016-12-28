@@ -10,7 +10,6 @@ import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import static org.lwjgl.stb.STBImage.stbi_failure_reason;
 import static org.lwjgl.stb.STBImage.stbi_load;
-import static org.lwjgl.stb.STBImage.stbi_load;
 import static org.lwjgl.stb.STBImage.stbi_set_flip_vertically_on_load;
 import org.lwjgl.system.MemoryStack;
 

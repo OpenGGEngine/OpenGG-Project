@@ -168,6 +168,7 @@ public class GLFWWindow implements Window {
     @Override
     public void endFrame(){
         glfwSwapBuffers(getID());
+        glfwPollEvents();
     }
     
     @Override

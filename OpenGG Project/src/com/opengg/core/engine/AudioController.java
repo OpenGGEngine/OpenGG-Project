@@ -60,8 +60,8 @@ public class AudioController {
     }
     
     static void destroy(){
-        for(AudioSource source : sources){
-            
-        }
+        sources.stream().forEach((source) -> {
+            source.destroy();
+        });
     }
 }

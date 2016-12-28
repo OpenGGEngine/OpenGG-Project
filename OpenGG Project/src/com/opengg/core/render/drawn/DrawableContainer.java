@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package com.opengg.core.engine;
+package com.opengg.core.render.drawn;
 
 import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.world.components.Renderable;

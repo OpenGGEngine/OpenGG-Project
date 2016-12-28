@@ -19,6 +19,7 @@ import com.opengg.core.model.ModelLoader;
 import com.opengg.core.movement.MovementLoader;
 import com.opengg.core.render.drawn.MatDrawnObject;
 import com.opengg.core.render.objects.ObjectCreator;
+import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.texture.Cubemap;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.texture.text.GGFont;
@@ -159,9 +160,9 @@ public class OpenGGTest extends GGApplication implements KeyboardListener, Mouse
         c.setPos(pos);
         c.setRot(rot);
 
-        RenderEngine.controller.setLightPos(new Vector3f(40, 200, 40));
-        RenderEngine.controller.setView(c);
-        RenderEngine.controller.setPerspective(90, OpenGG.window.getRatio(), 1, 2500f);
+        ShaderController.setLightPos(new Vector3f(40, 200, 40));
+        ShaderController.setView(c);
+        ShaderController.setPerspective(90, OpenGG.window.getRatio(), 1, 2500f);
         
         RenderEngine.draw();
     }
@@ -182,15 +183,12 @@ public class OpenGGTest extends GGApplication implements KeyboardListener, Mouse
         }
         if (key == KEY_Q) {
             rot1 += 0.3;
-
         }
         if (key == KEY_E) {
             rot1 -= 0.3;
-
         }
         if (key == KEY_R) {
             rot2 += 0.3;
-
         }
         if (key == KEY_F) {
             rot2 -= 0.3;
@@ -210,19 +208,15 @@ public class OpenGGTest extends GGApplication implements KeyboardListener, Mouse
     public void keyReleased(int key) {
         if (key == KEY_Q) {
             rot1 -= 0.3;
-
         }
         if (key == KEY_E) {
             rot1 += 0.3;
-
         }
         if (key == KEY_R) {
             rot2 -= 0.3;
-
         }
         if (key == KEY_F) {
             rot2 += 0.3;
-
         }
     }
 
@@ -232,7 +226,5 @@ public class OpenGGTest extends GGApplication implements KeyboardListener, Mouse
     }
 
     @Override
-    public void buttonReleased(int button) {
-        
-    }
+    public void buttonReleased(int button) {}
 }

@@ -21,14 +21,14 @@ import java.net.URL;
  *
  * @author Javier
  */
-public class OpenGG {
+public class OpenGG implements ConsoleListener{
     public static Window window;
     public static GGApplication app;
     public static World curworld;
     static boolean end = false;
     static boolean force = false;
     
-    public static void initialize(GGApplication app, WindowInfo windowinfo){
+    public static void initialize(GGApplication app, WindowInfo windowinfo){        
         OpenGG.app = app;
         if(windowinfo.type == GLFW){
             window = new GLFWWindow(windowinfo);
@@ -52,6 +52,7 @@ public class OpenGG {
         while(!end){
             app.update();
             UpdateEngine.update();
+            GGConsole.pollInput();
         }
     }
     
@@ -61,7 +62,8 @@ public class OpenGG {
             app.render();
             app.update();
             UpdateEngine.update();
-            endFrame(window);
+            endFrame();
+            //GGConsole.pollInput();
         }
         if(!force){
             closeEngine();
@@ -104,5 +106,16 @@ public class OpenGG {
     private static void closeEngine(){
         RenderEngine.destroy();
         AudioController.destroy();
+        GGConsole.destroy();
+    }
+
+    @Override
+    public void onConsoleInput(String s) {
+        if(s.equalsIgnoreCase("quit")){
+            endApplication();
+        }
+        if(s.equalsIgnoreCase("forcequit")){
+            forceEnd();
+        }
     }
 }
