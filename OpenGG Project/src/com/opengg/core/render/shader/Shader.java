@@ -2,12 +2,12 @@ package com.opengg.core.render.shader;
 
 
 
+import com.opengg.core.engine.GGConsole;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-
 import static org.lwjgl.opengl.GL11.GL_TRUE;
 import static org.lwjgl.opengl.GL20.*;
 
@@ -45,7 +45,7 @@ public class Shader {
         if (status != GL_TRUE) {
             int e = glGetShaderi(id, GL_INFO_LOG_LENGTH);
             String s = glGetShaderInfoLog(id,e);
-            System.out.println(s);
+            GGConsole.error(s);
             throw new RuntimeException(glGetShaderInfoLog(id));
         }
     }

@@ -5,6 +5,7 @@
  */
 package com.opengg.core.render.texture.text;
 
+import com.opengg.core.engine.GGConsole;
 import com.opengg.core.engine.OpenGG;
 import java.io.BufferedReader;
 import java.io.File;
@@ -121,7 +122,7 @@ public class GGFontFile {
         try {
             reader = new BufferedReader(new FileReader(file));
         } catch (Exception e) {
-            System.err.println("Couldn't load the damn file!");
+            GGConsole.warning("Couldn't load the font file!");
         }
     }
     private void loadPaddingData() {

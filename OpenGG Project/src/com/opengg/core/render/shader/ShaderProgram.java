@@ -6,14 +6,14 @@ package com.opengg.core.render.shader;
  * and open the template in the editor.
  */
 
+import com.opengg.core.engine.GGConsole;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
-
-
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL11.GL_TRUE;
 import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL30.glBindFragDataLocation;
 import static org.lwjgl.opengl.GL30.glBindFragDataLocation;
 import static org.lwjgl.opengl.GL33.glVertexAttribDivisor;
 
@@ -197,7 +197,7 @@ public class ShaderProgram {
         if (status != GL_TRUE) {
             int e = glGetProgrami(id, GL_INFO_LOG_LENGTH);
             String s = glGetProgramInfoLog(id,e);
-            System.out.println(s);
+            GGConsole.error(s);
             throw new RuntimeException(glGetProgramInfoLog(id));
         }
     }

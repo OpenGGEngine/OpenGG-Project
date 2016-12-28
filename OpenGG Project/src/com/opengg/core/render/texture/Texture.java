@@ -5,6 +5,7 @@
  */
 package com.opengg.core.render.texture;
 
+import com.opengg.core.engine.GGConsole;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
@@ -114,7 +115,7 @@ public class Texture {
             glBindTexture(GL_TEXTURE_2D, 0);
             buffer.clear();
         } catch (Exception e){
-            System.out.println(path + " failed to load: ");
+            GGConsole.warning(path + " failed to load: ");
             e.printStackTrace();
         }
         return texture;
