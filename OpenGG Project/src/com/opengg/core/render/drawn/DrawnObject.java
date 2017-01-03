@@ -136,6 +136,14 @@ public class DrawnObject implements Drawable {
         removeBuffer();
     }    
     
+    public FloatBuffer getBuffer(){
+        return b;
+    }
+    
+    public IntBuffer getElementBuffer(){
+        return ind;
+    }
+    
     @Override
     public void draw(){    
         ShaderController.setModel(model);  
@@ -147,7 +155,7 @@ public class DrawnObject implements Drawable {
     }
     
     public void removeBuffer(){
-        b = null;
+        //b = null;
     }
 
     @Override

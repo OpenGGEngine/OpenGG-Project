@@ -56,8 +56,9 @@ public class ShaderController {
                             URLDecoder.decode(
                                     frag.getFile(), "UTF-8")));
             program = new ShaderProgram();
+            GGConsole.log("Shader files loaded and validated");
         } catch (UnsupportedEncodingException ex) {
-            GGConsole.log("Unable to parse shader files!");
+            GGConsole.error("Unable to parse shader files!");
             return;
         }
         program.attachShader(vertexTex);
@@ -68,6 +69,8 @@ public class ShaderController {
         program.checkStatus();
 
         initVertexAttributes();
+        
+        GGConsole.log("Shaders linked, attributes have been validated");
 
         /* Set shader variables */
 

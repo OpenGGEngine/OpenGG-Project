@@ -349,28 +349,26 @@ public class ObjectBuffers {
     static FloatBuffer genCube(float size){
         FloatBuffer sq = MemoryUtil.memAllocFloat(6*6*12);
         
-        sq.put(-size).put(size).put(size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);
-        sq.put(-size).put(-size).put(size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);
-        sq.put(size).put(-size).put(size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);
-        sq.put(size).put(-size).put(size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);
+        sq.put(-size).put(size).put(size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0).put(0);
+        sq.put(-size).put(-size).put(size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0).put(1);
+        sq.put(size).put(-size).put(size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0);
+        sq.put(size).put(-size).put(size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0);
         sq.put(size).put(size).put(size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);
-        sq.put(-size).put(size).put(size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);
+        sq.put(-size).put(size).put(size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0).put(1);
+        sq.put(-size).put(size).put(-size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0).put(0);
+        sq.put(-size).put(-size).put(-size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0).put(1);
+        sq.put(size).put(-size).put(-size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0);
+        sq.put(size).put(-size).put(-size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0);
+        sq.put(size).put(size).put(-size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);
+        sq.put(-size).put(size).put(-size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0).put(1);
         
-        sq.put(-size).put(size).put(-size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);
+        
+        sq.put(-size).put(-size).put(size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);
         sq.put(-size).put(-size).put(-size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);
-        sq.put(size).put(-size).put(-size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);
-        sq.put(size).put(-size).put(-size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);
-        sq.put(size).put(size).put(-size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);
-        sq.put(-size).put(size).put(-size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);
-        
-        
-        sq.put(-size).put(-size).put(size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);
-        sq.put(-size).put(-size).put(-size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);
         sq.put(-size).put(size).put(-size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);
         sq.put(-size).put(size).put(-size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);
         sq.put(-size).put(size).put(size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);
         sq.put(-size).put(-size).put(size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);
-        
         sq.put(size).put(-size).put(size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);
         sq.put(size).put(-size).put(-size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);
         sq.put(size).put(size).put(-size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);
@@ -385,7 +383,6 @@ public class ObjectBuffers {
         sq.put(size).put(size).put(-size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);
         sq.put(size).put(size).put(size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);
         sq.put(-size).put(size).put(size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);
-        
         sq.put(-size).put(-size).put(size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);
         sq.put(-size).put(-size).put(-size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);
         sq.put(size).put(-size).put(-size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);

@@ -6,7 +6,6 @@
 
 package com.opengg.core.render.drawn;
 
-import com.opengg.core.engine.RenderEngine;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.model.Material;
 import com.opengg.core.render.shader.ShaderController;

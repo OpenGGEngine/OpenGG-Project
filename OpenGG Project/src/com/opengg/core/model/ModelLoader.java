@@ -9,6 +9,7 @@ import com.opengg.core.engine.GGConsole;
 import static com.opengg.core.util.FileUtil.getFileName;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -22,8 +23,23 @@ import org.lwjgl.system.MemoryUtil;
  * @author Warren
  */
 public class ModelLoader {
-
-    public static Model loadModel(String path) throws FileNotFoundException, IOException {
+    
+    public static Model loadModel (String path){
+        Model m;
+        if((m = ModelManager.getModel(path)) != null){
+            return m;
+        }else if(new File(path).exists()){
+            try {
+                return forceLoadModel(path);
+            } catch (IOException ex) {
+                return m;
+            }
+        }
+        return m;
+    }
+    
+    public static Model forceLoadModel(String path) throws FileNotFoundException, IOException {
+        
         GGConsole.log("Loading model at " + path + "...");
         ArrayList<Mesh> meshes;
         try (DataInputStream in = new DataInputStream(new BufferedInputStream(new FileInputStream(path)))) {

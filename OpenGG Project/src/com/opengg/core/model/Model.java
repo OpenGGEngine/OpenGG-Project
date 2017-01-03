@@ -5,6 +5,7 @@
  */
 package com.opengg.core.model;
 
+import com.opengg.core.engine.GGConsole;
 import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.render.drawn.DrawnObjectGroup;
 import com.opengg.core.render.drawn.MatDrawnObject;
@@ -72,11 +73,11 @@ public class Model {
     public Drawable getDrawable(){
         if(drawable != null)
             return drawable;
+        
+        GGConsole.log("Drawable for " + name + " has been requested, loading textures...");
         List<Drawable> draws = new ArrayList<>();
-        int i = 0;
         for(Mesh mesh : meshes){
             draws.add(new MatDrawnObject(mesh.vbodata, mesh.inddata, mesh.m));
-            i++;
         }
         drawable = new DrawnObjectGroup(draws);
         return drawable;
@@ -221,7 +222,7 @@ public class Model {
         ps.close();
        
         
-        System.out.println("Finished");
+        System.out.println("Finished putting data for " + name);
     }
     
     public String getName(){

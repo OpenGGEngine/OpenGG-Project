@@ -12,6 +12,9 @@ package com.opengg.core.util;
  */
 public class FileUtil {
     public static String getFileName(String path){
-        return path.substring(path.lastIndexOf("/"), path.length()-4);
+        int lio = path.lastIndexOf("/");
+        if(lio < 0)
+            lio = path.lastIndexOf("\\");
+        return path.substring(lio, path.length()-4);
     }
 }

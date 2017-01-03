@@ -41,12 +41,14 @@ public class RenderEngine {
     static boolean initialized;
     static FramebufferTexture sceneTex;
     static VertexArrayObject vao;
+    static boolean cull = true;
     
     static boolean init(URL vert, URL frag, URL geom){
         vao = new VertexArrayObject();
         vao.bind();
         
         ShaderController.initialize(vert, frag, geom);
+        TextureManager.initialize();
         
         sceneTex = FramebufferTexture.getFramebuffer(OpenGG.window.getWidth(), OpenGG.window.getHeight());
         sceneQuad = new DrawnObject(ObjectBuffers.getSquareUI(-1, 1, -1, 1, 1f, 1, false),12);    
@@ -92,6 +94,10 @@ public class RenderEngine {
     
     public static void setShadowVolumes(boolean vol){
         shadVolumes = vol;
+    }
+    
+    public static void setCulling(boolean enable){
+        cull = enable;
     }
     
     public static boolean getShadowsEnabled(){
@@ -148,6 +154,9 @@ public class RenderEngine {
         
         
         ShaderController.setMode(Mode.OBJECT);
+        if(!cull){
+            glDisable(GL_CULL_FACE); 
+        }
         for(DrawableContainer d : dlist){
             if(d.getDistanceField()){
                 ShaderController.setDistanceField(true);

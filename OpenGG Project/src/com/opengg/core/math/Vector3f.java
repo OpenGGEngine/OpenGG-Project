@@ -210,6 +210,14 @@ public class Vector3f implements Serializable{
         return f;
     }
     
+    public Vector3f lerp(Vector3f sv, Vector3f other, float t ) {
+        x = sv.x + (other.x - sv.x) * t;
+        y = sv.y + (other.y - sv.y) * t;
+        z = sv.z + (other.z - sv.z) * t;
+        return this;
+    }
+
+    
     public void zero(){
         this.x = this.y = this.z = 0;
     }
