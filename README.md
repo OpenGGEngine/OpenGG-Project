@@ -1,6 +1,8 @@
  
- 500 Commits Bois
- 
+Happy New Year 2017
+
+New Features will be coming to an OpenGG release near you.
+
  OBJLoader2 One Year Anniversary
 ___________________________________________________________________________
 One year ago OBJLoader2 was released to the world in all its glory and forever changed the 
