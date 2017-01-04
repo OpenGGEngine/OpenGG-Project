@@ -493,7 +493,7 @@ public class Build implements BuilderInterface {
     }
     
     public String getObjectFileName(){
-        String name = objFilename.substring(objFilename.lastIndexOf("\\")+1);
+        String name = objFilename.substring(objFilename.lastIndexOf("\\")+2);
         return name;
     }
     

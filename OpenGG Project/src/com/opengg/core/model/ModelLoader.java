@@ -32,10 +32,13 @@ public class ModelLoader {
             try {
                 return forceLoadModel(path);
             } catch (IOException ex) {
-                return m;
+                GGConsole.warning("Failed to load model at " + path + ", using default model instead");
+                return ModelManager.getModel("default");
             }
+        }else{
+            GGConsole.warning("Couldn't find model at " + path + ", using default model instead");
+                return ModelManager.getModel("default");
         }
-        return m;
     }
     
     public static Model forceLoadModel(String path) throws FileNotFoundException, IOException {

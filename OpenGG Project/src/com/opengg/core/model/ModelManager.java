@@ -11,8 +11,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -25,7 +23,7 @@ public class ModelManager {
     public static String defPath;
     public static void initialize(){
         try {
-            File deft = new File("resources/tex/default.png");
+            File deft = new File("resources/models/default/default.bmf");
             if(deft.exists()){
                 defPath = deft.getCanonicalPath();
                 Model def = ModelLoader.loadModel(defPath);
@@ -38,13 +36,7 @@ public class ModelManager {
         }
     }
     public static Model getModel(String path){
-        Model x = modellist.get(path);
-        if(x == null) try {
-            x = ModelLoader.forceLoadModel(path);
-        } catch (IOException ex) {
-            Logger.getLogger(ModelManager.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return x;
+        return modellist.get(path);
     }
     public static void setModel(String path, Model t){
         if(modellist.containsKey(path)){

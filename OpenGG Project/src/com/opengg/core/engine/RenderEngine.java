@@ -6,13 +6,14 @@
 
 package com.opengg.core.engine;
 
-import com.opengg.core.render.drawn.DrawableContainer;
 import com.opengg.core.gui.GUI;
 import com.opengg.core.gui.GUIItem;
+import com.opengg.core.model.ModelManager;
 import com.opengg.core.render.VertexArrayObject;
-import com.opengg.core.render.objects.ObjectBuffers;
 import com.opengg.core.render.drawn.Drawable;
+import com.opengg.core.render.drawn.DrawableContainer;
 import com.opengg.core.render.drawn.DrawnObject;
+import com.opengg.core.render.objects.ObjectBuffers;
 import com.opengg.core.render.shader.Mode;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.texture.Cubemap;
@@ -49,6 +50,7 @@ public class RenderEngine {
         
         ShaderController.initialize(vert, frag, geom);
         TextureManager.initialize();
+        ModelManager.initialize();
         
         sceneTex = FramebufferTexture.getFramebuffer(OpenGG.window.getWidth(), OpenGG.window.getHeight());
         sceneQuad = new DrawnObject(ObjectBuffers.getSquareUI(-1, 1, -1, 1, 1f, 1, false),12);    
