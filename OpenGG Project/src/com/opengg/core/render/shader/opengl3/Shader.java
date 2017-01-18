@@ -1,4 +1,4 @@
-package com.opengg.core.render.shader;
+package com.opengg.core.render.shader.opengl3;
 
 
 

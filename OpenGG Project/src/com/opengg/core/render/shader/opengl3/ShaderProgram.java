@@ -1,4 +1,4 @@
-package com.opengg.core.render.shader;
+package com.opengg.core.render.shader.opengl3;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -13,7 +13,6 @@ import com.opengg.core.math.Vector3f;
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL11.GL_TRUE;
 import static org.lwjgl.opengl.GL20.*;
-import static org.lwjgl.opengl.GL30.glBindFragDataLocation;
 import static org.lwjgl.opengl.GL30.glBindFragDataLocation;
 import static org.lwjgl.opengl.GL33.glVertexAttribDivisor;
 
