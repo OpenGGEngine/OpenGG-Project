@@ -63,5 +63,6 @@ public class AudioController {
         sources.stream().forEach((source) -> {
             source.destroy();
         });
+        GGConsole.log("Audio controller has finalized");
     }
 }

@@ -7,7 +7,7 @@ package com.opengg.core.render.shader.deprecated.premade;
 
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Vector3f;
-import com.opengg.core.render.shader.ShaderProgram;
+import com.opengg.core.render.shader.opengl3.ShaderProgram;
 
 /**
  *
