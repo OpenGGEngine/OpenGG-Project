@@ -18,14 +18,23 @@ import java.util.List;
  * @author Javier
  */
 public class MatDrawnObject implements Drawable {
-    DrawnObject d;
+    Drawable d;
     Material m = Material.defaultmaterial;
     
     public void setM(Material m) {
         this.m = m;
-        d.hasmat = true;
     }
 
+    public MatDrawnObject(Drawable d){
+        this.d = d;
+    }
+    
+    public MatDrawnObject(Drawable d, Material m){
+        this.d = d;
+        this.m = m;
+        m.loadTextures();
+    }
+    
     public MatDrawnObject(FloatBuffer b, int vertsize){
         d = new DrawnObject(b,vertsize);
     }
@@ -36,16 +45,12 @@ public class MatDrawnObject implements Drawable {
     
     public MatDrawnObject(FloatBuffer b, IntBuffer index, Material m){
         d = new DrawnObject(b,index);
-        setM(m);
+        this.m = m;
         m.loadTextures();
     }
     
     public MatDrawnObject(FloatBuffer b, IntBuffer index){
         this(b, index, Material.defaultmaterial);
-    }
-    
-    public void setShaderMatrix(Matrix4f m){
-        d.setShaderMatrix(m);
     }
     
     public Material getMaterial(){

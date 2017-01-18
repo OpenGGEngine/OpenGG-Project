@@ -68,8 +68,4 @@ public class TexturedDrawnObject implements Drawable{
     public void setTexture(Texture tex) {
         this.tex = tex;
     }
-     public void setShaderMatrix(Matrix4f m){
-        object.shadeModel = m;
-    }
-    
 }

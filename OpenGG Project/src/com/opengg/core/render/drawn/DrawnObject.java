@@ -18,6 +18,7 @@ import static org.lwjgl.opengl.GL11.glDrawElements;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
+import static org.lwjgl.opengl.GL32.GL_TRIANGLES_ADJACENCY;
 import org.lwjgl.system.MemoryUtil;
 
 /**
@@ -29,25 +30,23 @@ public class DrawnObject implements Drawable {
     VertexBufferObject evbo;
     FloatBuffer b;
     IntBuffer ind; 
-    boolean hasmat;
+    boolean adj = false;
     int limit;
     int vertLimit;
-    long vertOffset;
     
     Matrix4f model = Matrix4f.translate(0, 0, 0);
-    Matrix4f shadeModel = new Matrix4f();
     
     static{
         DrawnObjectHandler.setup();
     }
    
-    public DrawnObject(FloatBuffer b, int vertSize){
+    DrawnObject(FloatBuffer b, int vertSize){
        
         limit = b.limit();
         vertLimit = limit/vertSize;
         
         ind = MemoryUtil.memAllocInt(vertLimit);
-        for(long i = vertOffset; i < vertLimit; i++){
+        for(long i = 0; i < vertLimit; i++){
             ind.put((int) i);
         }
         ind.flip();
@@ -57,11 +56,12 @@ public class DrawnObject implements Drawable {
 
         removeBuffer();
     }
+    
     public DrawnObject(FloatBuffer b){
         this(b, 12);
     }
     
-    public DrawnObject(List<FloatBuffer> buffers, int vertSize){
+    DrawnObject(List<FloatBuffer> buffers, int vertSize){
       
         for(FloatBuffer b: buffers){
         
@@ -69,7 +69,7 @@ public class DrawnObject implements Drawable {
             vertLimit = limit/vertSize;
 
             ind = MemoryUtil.memAllocInt(vertLimit);
-            for(long i = vertOffset; i < vertLimit; i++){
+            for(long i = 0; i < vertLimit; i++){
                 ind.put((int) i);
             }
             ind.flip();
@@ -81,7 +81,11 @@ public class DrawnObject implements Drawable {
         removeBuffer();
     }
     
-    public DrawnObject(FloatBuffer b,IntBuffer index){
+    public DrawnObject(List<FloatBuffer> buffers){
+        this(buffers, 12);
+    }
+    
+    public DrawnObject(FloatBuffer b, IntBuffer index){
         
         limit = b.limit();
         vertLimit = limit/12;
@@ -110,8 +114,8 @@ public class DrawnObject implements Drawable {
         ShaderController.defVertexAttributes();
     }
     
-    public void setShaderMatrix(Matrix4f m){
-        shadeModel = m;
+    public void setAdjacency(boolean adj){
+        this.adj = adj;
     }
     
     @Override
@@ -125,7 +129,7 @@ public class DrawnObject implements Drawable {
         vertLimit = limit/vertSize;
         
         ind = MemoryUtil.memAllocInt(vertLimit);
-        for(long i = vertOffset; i < vertLimit; i++){
+        for(long i = 0; i < vertLimit; i++){
             ind.put((int) i);
         }
         ind.flip();
@@ -151,7 +155,7 @@ public class DrawnObject implements Drawable {
         evbo.bind(GL_ELEMENT_ARRAY_BUFFER);
         defAttrib();
         pointAttrib();
-        glDrawElements(GL_TRIANGLES, ind.limit(), GL_UNSIGNED_INT, 0);       
+        glDrawElements(adj ? GL_TRIANGLES_ADJACENCY : GL_TRIANGLES, ind.limit(), GL_UNSIGNED_INT, 0);       
     }
     
     public void removeBuffer(){

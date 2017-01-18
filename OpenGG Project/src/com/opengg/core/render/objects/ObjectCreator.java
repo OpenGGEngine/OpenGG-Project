@@ -32,10 +32,10 @@ public class ObjectCreator {
     }
     public static Drawable createCube(float size){
         FloatBuffer b = ObjectBuffers.genCube(size);
-        return new DrawnObject(b, 12);
+        return new DrawnObject(b);
     }
     public static Drawable createOldModel(URL model){
-        return new DrawnObject(createOldModelBuffer(model),12);
+        return new DrawnObject(createOldModelBuffer(model));
     }
     public static FloatBuffer createOldModelBuffer(URL model){
         try {
