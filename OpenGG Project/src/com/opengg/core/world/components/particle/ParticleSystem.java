@@ -46,7 +46,7 @@ public class ParticleSystem implements Updatable, Renderable{
         this.speed = speed;
         this.gravityComplient = gravityComplient;
         this.lifeLength = lifeLength;
-        particleobject = new InstancedDrawnObject(model,2,createParticleVBO());
+        particleobject = new InstancedDrawnObject(model,createParticleVBO());
         time = new Time();
         this.t = t;
     }
@@ -56,7 +56,7 @@ public class ParticleSystem implements Updatable, Renderable{
         this.speed = speed;
         this.gravityComplient = -0.027f;
         this.lifeLength = lifeLength;
-        particleobject = new InstancedDrawnObject(model,2,createParticleVBO());
+        particleobject = new InstancedDrawnObject(model,createParticleVBO());
         time = new Time();
         this.t = t;
     }
