@@ -7,66 +7,61 @@
 package com.opengg.core.render.shader;
 
 import com.opengg.core.engine.GGConsole;
+import com.opengg.core.engine.OpenGG;
 import com.opengg.core.io.FileStringLoader;
 import com.opengg.core.math.Matrix4f;
+import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.model.Material;
 import com.opengg.core.render.Light;
 import com.opengg.core.render.VertexBufferObject;
+import com.opengg.core.render.shader.opengl3.ShaderProgram;
 import com.opengg.core.render.window.ViewUtil;
 import com.opengg.core.world.Camera;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.util.HashMap;
+import java.util.List;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
-import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
-import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
-import static org.lwjgl.opengl.GL32.GL_GEOMETRY_SHADER;
 
 /**
  *
  * @author Javier
  */
 public class ShaderController {
-    private static ShaderProgram program;
-    private static Shader fragmentTex;
-    private static Shader vertexTex;
-    private static Shader geomTex;
+    private static HashMap<String, Program> programs = new HashMap<>();
+    private static HashMap<String, Pipeline> pipelines = new HashMap<>(); 
+    private static String curv, curg, curf;
+    private static List<String> searched;
     private static float ratio;
     private static Matrix4f model= new Matrix4f(), view= new Matrix4f(), proj = new Matrix4f();
-    private static int posAttrib,colAttrib,normAttrib,texAttrib;
-    private static int uniModel,rotm,lightpos,div,uniView,
-            lightdistance,lightpower,shadow,skycolor,
-            mode,specularcolor,hasspec,uniProj,billboard,
-            ambient,hasspecpow,hasamb,specularpow, uvy,
-            uvx,hasnorm,lightcolor,inst,text,time;
     
     public static void initialize(URL vert, URL frag, URL geom){
         try {
-            vertexTex= new Shader(GL_VERTEX_SHADER,
-                    FileStringLoader.loadStringSequence(
+            CharSequence v1 = FileStringLoader.loadStringSequence(
                             URLDecoder.decode(
-                                    vert.getFile(), "UTF-8")));
-            geomTex = new Shader(GL_GEOMETRY_SHADER,
-                    FileStringLoader.loadStringSequence(
+                                    vert.getFile(), "UTF-8"));
+            CharSequence g1 = FileStringLoader.loadStringSequence(
                             URLDecoder.decode(
-                                    geom.getFile(), "UTF-8")));
-            fragmentTex = new Shader(GL_FRAGMENT_SHADER,
-                    FileStringLoader.loadStringSequence(
+                                    geom.getFile(), "UTF-8"));
+            CharSequence f1 = FileStringLoader.loadStringSequence(
                             URLDecoder.decode(
-                                    frag.getFile(), "UTF-8")));
-            program = new ShaderProgram();
+                                    frag.getFile(), "UTF-8"));
+            
+            programs.put("mainvert", new Program(Program.VERTEX, v1));
+            programs.put("maingeom", new Program(Program.GEOMETRY, g1));
+            programs.put("mainfrag", new Program(Program.FRAGMENT, f1));
+            
+            use("mainvert", "maingeom", "mainfrag");
+            checkError();
+            System.exit(0);
+            
             GGConsole.log("Shader files loaded and validated");
         } catch (UnsupportedEncodingException ex) {
             GGConsole.error("Unable to parse shader files!");
             return;
         }
-        program.attachShader(vertexTex);
-        program.attachShader(geomTex);
-        program.attachShader(fragmentTex);
-        program.link();
-        program.use();
-        program.checkStatus();
 
         initVertexAttributes();
         
@@ -74,228 +69,269 @@ public class ShaderController {
 
         /* Set shader variables */
 
-        inst = program.getUniformLocation("inst");
-        program.setUniform(inst, 0);
+        findUniform("inst");
+        setUniform("inst", 0);
 
-        text = program.getUniformLocation("text");
-        program.setUniform(text, false);
+        findUniform("text");
+        setUniform("text", false);
 
-        uniModel = program.getUniformLocation("model");
-        program.setUniform(uniModel, new Matrix4f());
+        findUniform("model");
+        setUniform("uniModel", new Matrix4f());
 
-        uniProj = program.getUniformLocation("projection");
-        program.setUniform(uniProj, new Matrix4f());
+        findUniform("projection");
+        setUniform("uniProj", new Matrix4f());
 
-        int uniCube = program.getUniformLocation("cubemap");
-        program.setUniform(uniCube, 2);
+        findUniform("cubemap");
+        setUniform("uniCube", 2);
 
-        int uniskycolor = program.getUniformLocation("skycolor");
-        program.setUniform(uniskycolor, new Vector3f(0.5f,0.5f,0.5f));
+        findUniform("skycolor");
+        setUniform("uniskycolor", new Vector3f(0.5f,0.5f,0.5f));
 
-        lightpos = program.getUniformLocation("light.lightpos");
-        program.setUniform(lightpos, new Vector3f(200,50,-10));
+        findUniform("light.lightpos");
+        setUniform("lightpos", new Vector3f(200,50,-10));
 
-        div = program.getUniformLocation("divAmount");
-        program.setUniform(div, 1f);
+        findUniform("divAmount");
+        setUniform("div", 1f);
 
-        uvx = program.getUniformLocation("uvmultx");
-        program.setUniform(uvx, (float)1f);
+        findUniform("uvmultx");
+        setUniform("uvx", (float)1f);
 
-        uvy = program.getUniformLocation("uvmulty");
-        program.setUniform(uvy, (float)1f);
+        findUniform("uvmulty");
+        setUniform("uvy", (float)1f);
 
-        rotm = program.getUniformLocation("rot");
-        program.setUniform(rotm, new Vector3f(0,0,0));
+        findUniform("rot");
+        setUniform("rotm", new Vector3f(0,0,0));
 
-        uniView = program.getUniformLocation("view");
-        program.setUniform(uniView, new Matrix4f());
+        findUniform("view");
+        setUniform("uniView", new Matrix4f());
 
-        lightdistance = program.getUniformLocation("light.lightdistance");
-        program.setUniform(lightdistance, 250f);
+        findUniform("light.lightdistance");
+        setUniform("lightdistance", 250f);
 
-        lightpower = program.getUniformLocation("light.lightpower");
-        program.setUniform(lightpower, 100f);
+        findUniform("light.lightpower");
+        setUniform("lightpower", 100f);
 
-        lightcolor = program.getUniformLocation("light.color");
-        program.setUniform(lightcolor, new Vector3f(1,1,1));
+        findUniform("light.color");
+        setUniform("lightcolor", new Vector3f(1,1,1));
 
-        mode = program.getUniformLocation("mode");
-        program.setUniform(mode, (int) 0);
+        findUniform("mode");
+        setUniform("mode", (int) 0);
 
-        time = program.getUniformLocation("time");
-        program.setUniform(time, 0f);
+        findUniform("time");
+        setUniform("time", 0f);
 
         setMatLinks();
 
-        billboard = program.getUniformLocation("billboard");
-        program.setUniform(billboard,false);
-        program.checkStatus();
-
-        ViewUtil.setPerspective(80, 1280/720, 0.3f, 3000f, program);
-        
+        findUniform("billboard");
+        setUniform("billboard", false);
+        checkError();     
     }
     
     private static void setMatLinks(){
+        findUniform("Kd"); 
+        setUniform("uniTex", 0);
         
-        int uniTex = program.getUniformLocation("Kd"); 
-        program.setUniform(uniTex, 0);
+        findUniform("Ka");
+        setUniform("uniAmb", 1);
         
-        int uniAmb = program.getUniformLocation("Ka");
-        program.setUniform(uniAmb, 1);
+        findUniform("bump");
+        setUniform("uniNorm", 3);
         
-        int uniNorm = program.getUniformLocation("bump");
-        program.setUniform(uniNorm, 3);
+        findUniform("Ks"); 
+        setUniform("uniSpec", 4);
         
-        int uniSpec = program.getUniformLocation("Ks"); 
-        program.setUniform(uniSpec, 4);
+        findUniform("Ns"); 
+        setUniform("uniExp", 5);
         
-        int uniExp = program.getUniformLocation("Ns"); 
-        program.setUniform(uniExp, 5);
+        findUniform("material.ka");
+        setUniform("ambient", 1f);
         
-        ambient = program.getUniformLocation("material.ka");
-        program.setUniform(ambient, 1f);
+        findUniform("material.ks");
+        setUniform("specularcolor", new Vector3f());
         
-        specularcolor = program.getUniformLocation("material.ks");
-        program.setUniform(specularcolor, new Vector3f());
+        findUniform("material.ns");
+        setUniform("specularpow", 0f);
         
-        specularpow = program.getUniformLocation("material.ns");
-        program.setUniform(specularpow, 0f);
+        findUniform("material.hasspecmap");
+        setUniform("hasspec", false);
         
-        hasspec = program.getUniformLocation("material.hasspecmap");
-        program.setUniform(hasspec, false);
+        findUniform("material.hasnormmap");
+        setUniform("hasnorm", false);
         
-        hasnorm = program.getUniformLocation("material.hasnormmap");
-        program.setUniform(hasnorm, false);
+        findUniform("material.hasambmap");
+        setUniform("hasamb", false);
         
-        hasamb= program.getUniformLocation("material.hasambmap");
-        program.setUniform(hasamb, false);
-        
-        hasspecpow = program.getUniformLocation("material.hasspecpow");
-        program.setUniform(hasspecpow, false);
+        findUniform("material.hasspecpow");
+        setUniform("hasspecpow", false);
     }
     
     public static void initVertexAttributes() {
-        posAttrib = program.getAttributeLocation("position");
-        colAttrib = program.getAttributeLocation("color");      
-        normAttrib = program.getAttributeLocation("normal");       
-        texAttrib = program.getAttributeLocation("texcoord"); 
+        findAttribLocation("position");
+        findAttribLocation("color");      
+        findAttribLocation("normal");       
+        findAttribLocation("texcoord"); 
 
     }
     
     public static void defVertexAttributes(){
-        program.enableVertexAttribute(posAttrib);
-        program.enableVertexAttribute(colAttrib);      
-        program.enableVertexAttribute(normAttrib); 
-        program.enableVertexAttribute(texAttrib);   
-        program.setVertexAttribDivisor(colAttrib, 0);
+        enableVertexAttribute("position");
+        enableVertexAttribute("color");      
+        enableVertexAttribute("normal"); 
+        enableVertexAttribute("texcoord");   
+        setVertexAttribDivisor("color", 0);
     }
     
     public static void pointVertexAttributes(){
-        program.pointVertexAttribute(posAttrib, 3, 12 * Float.BYTES, 0);
-        program.pointVertexAttribute(colAttrib, 4, 12 * Float.BYTES, 3 * Float.BYTES);
-        program.pointVertexAttribute(normAttrib, 3, 12 * Float.BYTES, 7 * Float.BYTES);
-        program.pointVertexAttribute(texAttrib, 2, 12 * Float.BYTES, 10 * Float.BYTES);     
+        pointVertexAttribute("position", 3, 12 * Float.BYTES, 0);
+        pointVertexAttribute("color", 4, 12 * Float.BYTES, 3 * Float.BYTES);
+        pointVertexAttribute("normal", 3, 12 * Float.BYTES, 7 * Float.BYTES);
+        pointVertexAttribute("texcoord", 2, 12 * Float.BYTES, 10 * Float.BYTES);     
     }
     
     public static void defInstancedVertexAttributes(VertexBufferObject b){
-        program.enableVertexAttribute(posAttrib);
-        program.pointVertexAttribute(posAttrib, 3, 12 * Float.BYTES, 0);
+        enableVertexAttribute("position");
+        pointVertexAttribute("position", 3, 12 * Float.BYTES, 0);
 
-        program.enableVertexAttribute(normAttrib);
-        program.pointVertexAttribute(normAttrib, 3, 12 * Float.BYTES, 7 * Float.BYTES);
+        enableVertexAttribute("normal");
+        pointVertexAttribute("normal", 3, 12 * Float.BYTES, 7 * Float.BYTES);
         
-        program.enableVertexAttribute(texAttrib);
-        program.pointVertexAttribute(texAttrib, 2, 12 * Float.BYTES, 10 * Float.BYTES);
+        enableVertexAttribute("texcoord");
+        pointVertexAttribute("texcoord", 2, 12 * Float.BYTES, 10 * Float.BYTES);
         
         b.bind(GL_ARRAY_BUFFER);
         
-        program.enableVertexAttribute(colAttrib);
-        program.pointVertexAttribute(colAttrib, 4, 3 * Float.BYTES, 0);
-        program.setVertexAttribDivisor(colAttrib, 1);
+        enableVertexAttribute("color");
+        pointVertexAttribute("color", 4, 3 * Float.BYTES, 0);
+        setVertexAttribDivisor("color", 1);
 
     }
     
-    public static void setLightPos(Vector3f pos){
-        
-        program.setUniform(lightpos, pos);
+    public static void setLightPos(Vector3f pos){ 
+        setUniform("lightpos", pos);
     }
     
     public static void setModel(Matrix4f model){
-        
-        program.setUniform(uniModel, model);
+        setUniform("uniModel", model);
     }
     
     public static void setTimeMod(float mod){
-        
-        program.setUniform(time, mod);
+        setUniform("time", mod);
     }
     
     public static void setView(Matrix4f view){
         
-        program.setUniform(uniView, view);
+        setUniform("uniView", view);
     }
     
     public static void setDistanceField(boolean distfield){
-        
-        program.setUniform(text, distfield);
+        setUniform("text", distfield);
     }
     
     public static void setPerspective(float fov, float aspect, float znear, float zfar){
         proj = Matrix4f.perspective(fov, aspect, znear, zfar);
-        program.setUniform(uniProj, proj);
+        setUniform("uniProj", proj);
     }
     
     public static void setOrtho(float left, float right, float bottom, float top, float near, float far){
         proj = Matrix4f.orthographic(left, right, bottom, top, near, far);
-        program.setUniform(uniProj, proj);
+        setUniform("uniProj", proj);
     }
     
     public static void setFrustum(float left, float right, float bottom, float top, float near, float far){
         proj = Matrix4f.frustum(left, right, bottom, top, near, far);
-        program.setUniform(uniProj, proj);
+        setUniform("uniProj", proj);
     }
     
-    public static ShaderProgram getProgram(){
-        
-        return program;
+    public static void findAttribLocation(String loc){
+        programs.values().stream().filter((p) -> (p.type == Program.VERTEX)).forEach((p) -> {
+            p.findAttributeLocation(loc);
+        });
+    }
+    
+    public static void enableVertexAttribute(String loc){
+        programs.get(curv).enableVertexAttribute(loc);
+    }
+    
+    public static void disableVertexAttribute(String loc){
+        programs.get(curv).enableVertexAttribute(loc);
+    }
+    
+    public static void pointVertexAttribute(String loc, int size, int tot, int start){
+        programs.get(curv).pointVertexAttribute(loc, size, tot, start);
+    }
+    
+    public static void setVertexAttribDivisor(String loc, int idk){
+        programs.get(curv).setVertexAttribDivisor(loc, idk);
+    }
+    
+    public static void findUniform(String loc){
+        for(Program p : programs.values()){
+            p.findUniformLocation(loc);
+        }
+        searched.add(loc);
+    }
+    
+    public static void setUniform(String s, Vector3f v3){
+        for(Program p : programs.values()){p.setUniform(p.getUniformLocation(s), v3);}
+    }
+    
+    public static void setUniform(String s, Vector2f v2){
+        for(Program p : programs.values()){p.setUniform(p.getUniformLocation(s), v2);}
+    }
+    
+    public static void setUniform(String s, Matrix4f m4){
+        for(Program p : programs.values()){p.setUniform(p.getUniformLocation(s), m4);}
+    }
+    
+    public static void setUniform(String s, int i){
+        for(Program p : programs.values()){p.setUniform(p.getUniformLocation(s), i);}
+    }
+    
+    public static void setUniform(String s, float f){
+        for(Program p : programs.values()){p.setUniform(p.getUniformLocation(s), f);}
+    }
+    
+    public static void setUniform(String s, boolean b){
+        for(Program p : programs.values()){p.setUniform(p.getUniformLocation(s), b);}
     }
     
     public static void setMode(Mode m){
         switch(m){
             case OBJECT:
-                program.setUniform(mode, (int) 0);
+                setUniform("mode", (int) 0);
                 break;
             case GUI:
-                program.setUniform(mode, (int) 2);
+                setUniform("mode", (int) 2);
                 break;
             case SKYBOX:
-                program.setUniform(mode, (int) 3);
+                setUniform("mode", (int) 3);
                 break;
             case POS_ONLY:
-                program.setUniform(mode, (int) 4);
+                setUniform("mode", (int) 4);
                 break;
             case PP:
-                program.setUniform(mode, (int) 5);
+                setUniform("mode", (int) 5);
                 break;
             case SHADOW:
-                program.setUniform(mode, (int) 6);
+                setUniform("mode", (int) 6);
         }
     }
     
     public static void checkError(){
-        
-        program.checkStatus();
+        for(Program p : programs.values()){
+            //p.checkStatus();
+        }
+        for(Pipeline p : pipelines.values()){
+            p.validate();
+        }
     }
     
     public static void setShadowLightMatrix(Matrix4f m){
-        
-        program.setUniform(shadow, m);
+        setUniform("shadow", m);
     }
     
     public static void setView(Camera c){
-       
         Vector3f rot = c.getRot();       
-  
         view = new Matrix4f().rotate(rot.x,1,0,0).rotate(rot.y,0,1,0).rotate(rot.z,0,0,1).translate(c.getPos());
         
         setView(view);
@@ -306,33 +342,49 @@ public class ShaderController {
     }
     
     public static void setUVMultX(float f){
-        program.setUniform(uvx, (float)f);
+        setUniform("uvx", (float)f);
     }
     
     public static void setUVMultY(float f){
-        program.setUniform(uvy, (float)f);
+        setUniform("uvy", (float)f);
     }
     
     public static void setInstanced(boolean instanced){
-        program.setUniform(inst, instanced);
+        setUniform("inst", instanced);
     }
     
     public static void passMaterial(Material m){
-        program.setUniform(specularpow, (float) m.nsExponent);
-        program.setUniform(ambient, new Vector3f((float)m.ka.x,(float)m.ka.y,(float)m.ka.z));
-        program.setUniform(specularcolor, new Vector3f(1,1,1));
-        //program.setUniform(specularcolor, new Vector3f((float)m.ks.x,(float)m.ks.y,(float)m.ks.z));
-        program.setUniform(hasspec, m.hasspecmap);
-        program.setUniform(hasnorm, m.hasnormmap);
-        program.setUniform(hasspecpow, m.hasspecpow);
-        program.setUniform(hasamb, m.hasreflmap);
+        setUniform("specularpow", (float) m.nsExponent);
+        setUniform("ambient", new Vector3f((float)m.ka.x,(float)m.ka.y,(float)m.ka.z));
+        setUniform("specularcolor", new Vector3f(1,1,1));
+        //setUniform("specularcolor, new Vector3f((float)m.ks.x,(float)m.ks.y,(float)m.ks.z));
+        setUniform("hasspec", m.hasspecmap);
+        setUniform("hasnorm", m.hasnormmap);
+        setUniform("hasspecpow", m.hasspecpow);
+        setUniform("hasamb", m.hasreflmap);
     }
     
     public static void setBillBoard(boolean yes){  
-        program.setUniform(billboard,yes);
+        setUniform("billboard", yes);
     }
     
     public static void setLight(Light light){
-        program.setUniform(lightpos, light.pos);
+        setUniform("lightpos", light.pos);
+    }
+    
+    public static void use(Program v, Program g, Program f){
+        String st = Integer.toString(v.id) + Integer.toString(g.id) + Integer.toString(f.id);
+        Pipeline p;
+        if((p = pipelines.get(st)) != null){
+            p.bind();
+            return;
+        }
+        p = new Pipeline(v,g,f);
+        pipelines.put(st, p);
+        p.bind();
+    }
+    
+    public static void use(String v, String g, String f){
+        use(programs.get(v), programs.get(g), programs.get(f));
     }
 }
