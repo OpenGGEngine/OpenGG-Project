@@ -11,7 +11,7 @@ import com.opengg.core.gui.GUIItem;
 import com.opengg.core.model.ModelManager;
 import com.opengg.core.render.VertexArrayObject;
 import com.opengg.core.render.drawn.Drawable;
-import com.opengg.core.render.drawn.DrawableContainer;
+import com.opengg.core.engine.DrawableContainer;
 import com.opengg.core.render.drawn.DrawnObject;
 import com.opengg.core.render.objects.ObjectBuffers;
 import com.opengg.core.render.shader.Mode;
@@ -22,6 +22,7 @@ import com.opengg.core.render.texture.TextureManager;
 import com.opengg.core.world.components.Renderable;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL14.GL_DECR_WRAP;
 import static org.lwjgl.opengl.GL14.GL_INCR_WRAP;
@@ -34,7 +35,8 @@ import static org.lwjgl.opengl.GL32.GL_TEXTURE_CUBE_MAP_SEAMLESS;
  * @author Javier
  */
 public class RenderEngine {
-    static ArrayList<DrawableContainer> dlist = new ArrayList<>();
+    static List<RenderGroup> groups = new ArrayList<>();
+    static RenderGroup dlist;
     static boolean shadVolumes = false;
     static Drawable sceneQuad;
     static Drawable skybox;
@@ -53,7 +55,9 @@ public class RenderEngine {
         ModelManager.initialize();
         
         sceneTex = FramebufferTexture.getFramebuffer(OpenGG.window.getWidth(), OpenGG.window.getHeight());
-        sceneQuad = new DrawnObject(ObjectBuffers.getSquareUI(-1, 1, -1, 1, 1f, 1, false),12);    
+        sceneQuad = new DrawnObject(ObjectBuffers.getSquareUI(-1, 1, -1, 1, 1f, 1, false));    
+        dlist = new RenderGroup();
+        groups.add(dlist);
         
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -65,24 +69,31 @@ public class RenderEngine {
         return true;
     }
     
+    public static void setWireframe(boolean wf){
+        if(wf)
+            glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+        else
+            glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+    }
+    
+    public static void addRenderGroup(RenderGroup r){
+        groups.add(r);
+    }
+    
+    public List<RenderGroup> getRenderGroups(){
+        return groups;
+    }
+    
     public static void addDrawable(DrawableContainer d){
         dlist.add(d);
     }
     
     public static void addDrawable(Drawable d){
-        dlist.add(new DrawableContainer(d));
-    }
-    
-    public static void addDrawable(Drawable d, boolean df, boolean trans){
-        dlist.add(new DrawableContainer(d, df, trans));
+        dlist.add(d);
     }
     
     public static void addRenderable(Renderable r){
-        dlist.add(new DrawableContainer(r));
-    }
-    
-    public static void addRenderable(Renderable r, boolean df, boolean trans){
-        dlist.add(new DrawableContainer(r, df, trans));
+        dlist.add(r);
     }
     
     public static void setSkybox(Drawable sky, Cubemap c){
@@ -106,17 +117,17 @@ public class RenderEngine {
         return shadVolumes;
     }
     
-    public static void getShadowStencil(){
+    private static void getShadowStencil(){
         glDepthMask(true);
         glDisable(GL_DEPTH_TEST);
         glDrawBuffer(GL_NONE);
         ShaderController.setMode(Mode.POS_ONLY);
-        dlist.stream().forEach((d) -> {
-            d.draw();
+        groups.stream().filter(group -> group.shadows).forEach((group) -> {
+            group.render();
         });
     }
     
-    public static void cullShadowFaces(){
+    private static void cullShadowFaces(){
         glEnable(GL_STENCIL_TEST);
 
         ShaderController.setMode(Mode.SHADOW);
@@ -126,9 +137,9 @@ public class RenderEngine {
         glStencilFunc(GL_ALWAYS, 0, 0xff);
         glStencilOpSeparate(GL_BACK, GL_KEEP, GL_INCR_WRAP, GL_KEEP);
         glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_DECR_WRAP, GL_KEEP); 
-
-        dlist.stream().forEach((d) -> {
-            d.draw();
+        
+        groups.stream().filter(group -> group.shadows).forEach((group) -> {
+            group.render();
         });
 
         glDisable(GL_DEPTH_CLAMP);
@@ -159,15 +170,23 @@ public class RenderEngine {
         if(!cull){
             glDisable(GL_CULL_FACE); 
         }
-        for(DrawableContainer d : dlist){
-            if(d.getDistanceField()){
-                ShaderController.setDistanceField(true);
-                d.draw();
-                ShaderController.setDistanceField(false);
-                continue;
+        groups.stream().sorted((RenderGroup o1, RenderGroup o2) -> {
+            if(o1.getOrder() > o2.getOrder()){
+                return 1;
+            }else if(o1.getOrder() < o2.getOrder()){
+                return -1;
+            }else{
+                return 0;
             }
-            d.draw();
-        }
+        }).forEach((d) -> {
+            ShaderController.setDistanceField(d.isText());
+            ShaderController.setMode(d.getMode());
+            
+            d.render();
+        });
+            
+            
+        
 
         glDisable(GL_CULL_FACE); 
         ShaderController.setMode(Mode.SKYBOX);
@@ -195,9 +214,10 @@ public class RenderEngine {
     }
     
     static void destroy(){
-        dlist.stream().forEach((d) -> {
+        dlist.getList().stream().forEach((d) -> {
             d.destroy();
         });
         TextureManager.destroy();
+        GGConsole.log("Render engine has finalized");
     }
 }
