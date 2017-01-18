@@ -56,7 +56,7 @@ public class ModelLoader {
                 {
                     f.put(in.readFloat());
                 }
-                f.flip();
+                f.flip();               
                 int ibcap = in.readInt();
                 IntBuffer inb = MemoryUtil.memAllocInt(ibcap);
                 for (int i = 0; i < ibcap; i++) {

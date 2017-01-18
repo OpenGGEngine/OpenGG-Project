@@ -14,10 +14,25 @@ import com.opengg.core.math.Vector3f;
  */
 public class FaceVertex {
     int index = -1;
-    public Vector3f v = null;
-    public Vector2f t = null;
-    public Vector3f n = null;
+    public Vector3f v = new Vector3f();
+    public Vector2f t = new Vector2f();
+    public Vector3f n = new Vector3f();
 
+    @Override
+    public boolean equals(Object eq){
+        if(eq instanceof FaceVertex){
+            FaceVertex e = (FaceVertex) eq;
+            if(!this.v.equals(e.v))
+                return false;
+            if(!this.t.equals(e.t))
+                return false;
+            if(!this.n.equals(e.n))
+                return false;
+            return true;
+        }
+        return false;
+    }
+    
     @Override
     public String toString() {
         return v + "|" + n + "|" + t;

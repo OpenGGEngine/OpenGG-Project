@@ -32,13 +32,13 @@ public class Build implements BuilderInterface {
     HashMap<String, FaceVertex> faceVerticeMap = new HashMap<>();
     // Each face vertex as it is parsed, minus the redundant face vertices.  @TODO: Not used anywhere yet, maybe get rid of this.
     public ArrayList<FaceVertex> faceVerticeList = new ArrayList<>();
-    public ArrayList<Face> faces = new ArrayList<>();
-    public HashMap<Integer, ArrayList<Face>> smoothingGroups = new HashMap<>();
+    public ArrayList<BuilderFace> faces = new ArrayList<>();
+    public HashMap<Integer, ArrayList<BuilderFace>> smoothingGroups = new HashMap<>();
     private int currentSmoothingGroupNumber = NO_SMOOTHING_GROUP;
-    private ArrayList<Face> currentSmoothingGroup = null;
-    public HashMap<String, ArrayList<Face>> groups = new HashMap<>();
+    private ArrayList<BuilderFace> currentSmoothingGroup = null;
+    public HashMap<String, ArrayList<BuilderFace>> groups = new HashMap<>();
     private ArrayList<String> currentGroups = new ArrayList<>();
-    private ArrayList<ArrayList<Face>> currentGroupFaceLists = new ArrayList<>();
+    private ArrayList<ArrayList<BuilderFace>> currentGroupFaceLists = new ArrayList<>();
     public String objectName = null;
     private Material currentMaterial = null;
     private Material currentMap = null;
@@ -85,7 +85,7 @@ public class Build implements BuilderInterface {
 
     @Override
     public void addFace(int[] vertexIndices) {
-        Face face = new Face();
+        BuilderFace face = new BuilderFace();
 
         face.material = currentMaterial;
         face.map = currentMap;
@@ -277,7 +277,7 @@ public class Build implements BuilderInterface {
             String group = names[loopi].trim();
             currentGroups.add(group);
             if (null == groups.get(group)) {
-                groups.put(group, new ArrayList<Face>());
+                groups.put(group, new ArrayList<BuilderFace>());
             }
             currentGroupFaceLists.add(groups.get(group));
         }
@@ -293,7 +293,7 @@ public class Build implements BuilderInterface {
             return;
         }
         if (null == smoothingGroups.get(currentSmoothingGroupNumber)) {
-            currentSmoothingGroup = new ArrayList<Face>();
+            currentSmoothingGroup = new ArrayList<BuilderFace>();
             smoothingGroups.put(currentSmoothingGroupNumber, currentSmoothingGroup);
         }
     }
