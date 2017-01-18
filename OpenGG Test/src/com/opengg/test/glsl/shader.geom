@@ -1,4 +1,4 @@
-#version 330 core
+#version 410 core
 
 layout(triangles) in;
 layout(triangle_strip, max_vertices=18) out;
@@ -57,68 +57,11 @@ void genPhong(int vertNum){
 
 }
 
-void emitInfinityQuad(vec3 p1, vec3 p2){
-    mat4 mvp = projection * view * model;
-    
-    vec3 lightdir = normalize(p1 - light.lightpos);
-    gl_Position = mvp * vec4((p1 + lightdir * epsilon), 1.0);
-    EmitVertex();
-    
-    gl_Position = mvp * vec4(lightdir, 0.0);
-    EmitVertex();
-    
-    lightdir = normalize(p2 - light.lightpos);
-    gl_Position = mvp * vec4((p2 + lightdir * epsilon), 1.0);
-    EmitVertex();
-    
-    gl_Position = mvp * vec4(lightdir, 0.0);
-    EmitVertex();
 
-    EndPrimitive();
-}
-
-void volume(){
-    mat4 mvp = projection * view * model;
-    vec3 lightdir;
-    if(dot(norms[0], light.lightpos - poss[0]) > 0){
-        emitInfinityQuad(poss[0], poss[1]);
-        emitInfinityQuad(poss[1], poss[2]);
-        emitInfinityQuad(poss[2], poss[0]);
-        
-        
-        lightdir = normalize(poss[0] - light.lightpos); 
-        gl_Position = mvp * vec4((poss[0] + light.lightpos * epsilon), 1.0);
-        EmitVertex();
-        
-        lightdir = normalize(poss[1] - light.lightpos); 
-        gl_Position = mvp * vec4((poss[1] + light.lightpos * epsilon), 1.0);
-        EmitVertex();
-        
-        lightdir = normalize(pos[2] - light.lightpos); 
-        gl_Position = mvp * vec4((poss[2] + light.lightpos * epsilon), 1.0);
-        EmitVertex();
-        EndPrimitive();
-        
-        
-        lightdir = poss[0] - light.lightpos; 
-        gl_Position = mvp * vec4(light.lightpos, 0.0);
-        EmitVertex();
-        
-        lightdir = poss[1] - light.lightpos; 
-        gl_Position = mvp * vec4(light.lightpos, 0.0);
-        EmitVertex();
-        
-        lightdir = pos[2] - light.lightpos; 
-        gl_Position = mvp * vec4(light.lightpos, 0.0);
-        EmitVertex();
-        EndPrimitive();
-        
-    }
-}
 
 void main(){
     if(mode == 6){
-        volume();
+        
     }
     for(int i = 0; i < gl_in.length(); i++){
         vec4 temppos = gl_in[i].gl_Position;

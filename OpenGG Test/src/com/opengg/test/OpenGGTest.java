@@ -4,9 +4,9 @@ import com.opengg.core.audio.AudioListener;
 import com.opengg.core.audio.Sound;
 import com.opengg.core.engine.AudioController;
 import com.opengg.core.engine.GGApplication;
-import com.opengg.core.engine.GGConsole;
 import com.opengg.core.engine.OpenGG;
 import com.opengg.core.engine.RenderEngine;
+import com.opengg.core.engine.RenderGroup;
 import com.opengg.core.gui.GUIItem;
 import com.opengg.core.gui.GUIText;
 import static com.opengg.core.io.input.keyboard.Key.*;
@@ -37,8 +37,6 @@ import com.opengg.core.world.components.particle.ParticleSystem;
 import com.opengg.core.world.components.physics.PhysicsComponent;
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class OpenGGTest extends GGApplication implements KeyboardListener, MouseButtonListener {
     private final float sens = 0.25f;
@@ -72,79 +70,81 @@ public class OpenGGTest extends GGApplication implements KeyboardListener, Mouse
 
     @Override
     public  void setup(){
-        try {
-            KeyboardController.addToPool(this);
-            MovementLoader.setup(80);
-            
-            c = new Camera(pos, rot);
-            c.setPos(pos);
-            c.setRot(rot);
-            
-            as = new AudioListener();
-            AudioController.setListener(as);
-            
-            so = new Sound(OpenGGTest.class.getResource("res/maw.wav"));
-            so2 = new Sound(OpenGGTest.class.getResource("res/mgs.wav"));
-            
-            t3 = Texture.get("C:/res/deer.png");
-            t2 = Texture.get("C:/res/test.png");
-            
-            f = new GGFont(t2, new File("C:/res/test.fnt"));
-            GUIText g = new GUIText("It is a period of civil war. Rebel spaceships, striking from a hidden base,"
-                    + " have won their first victory against the evil Galactic Empire. During the battle,"
-                    + " Rebel spies managed to steal secret plans to the Empires ultimate weapon, the DEATH STAR,"
-                    + " an armored space station with enough power to destroy an entire planet. \n\n"
-                    + " Pursued by the Empires sinister agents, Princess Leia races home aboard her starship,"
-                    + " custodian of the stolen plans that can save her people and restore freedom to the galaxy...", f, 20f, new Vector2f(), 10, false);
-            awp3 = f.loadText(g);
-            
-            g = new GUIText("Turmoil has engulfed the Galactic Republic. The taxation of trade routes to outlying star systems is in dispute. \n"
-                    + "\n"
-                    + " Hoping to resolve the matter with a blockade of deadly battleships, "
-                    + "the greedy Trade Federation has stopped all shipping to the small planet of Naboo. \n"
-                    + "\n"
-                    + " While the congress of the Republic endlessly debates this alarming chain of events,"
-                    + " the Supreme Chancellor has secretly dispatched two Jedi Knights,"
-                    + " the guardians of peace and justice in the galaxy, to settle the conflict...", f, 1f, new Vector2f(), 0.5f, false);
-            
-            base2 = f.loadText(g);
-            
-            OpenGG.curworld.floorLev = -10;
-            
-            ModelRenderComponent ep1;
+        KeyboardController.addToPool(this);
+        MovementLoader.setup(80);
 
-            awps = new WorldObject();
-            awps.attach(ep1 = new ModelRenderComponent(awp3));ep1.getDrawable();
-            awps.setPosition(new Vector3f(5,5,5));
-            
-            ParticleSystem p = new ParticleSystem(2f,20f,100f,ObjectCreator.createOldModelBuffer(OpenGGTest.class.getResource("res/models/deer.obj")), t3);
-            ModelRenderComponent r = new ModelRenderComponent(ModelLoader.loadModel("C:/res/bigbee/model.bmf"));
-            r.setScale(new Vector3f(50,50,50));
-            
-            GGConsole.log("Model and Texture Loading Completed");
-            
-            TriggerableAudioComponent test3 = new TriggerableAudioComponent(so2);
-            KeyTrigger t = new KeyTrigger(KEY_P, KEY_I);
-            t.addSubscriber(test3);
-            
-            terrain = new WorldObject();
-            bad = new PhysicsComponent();
-            bad.setParentInfo(terrain);
-            terrain.attach(bad);
-            terrain.attach(r);
-            terrain.attach(p);
-            terrain.attach(test3);
-            
-            RenderEngine.setSkybox(ObjectCreator.createCube(1500f), Cubemap.get("C:/res/skybox/majestic"));
-            RenderEngine.addGUIItem(new GUIItem(base2, new Vector2f()));
-            RenderEngine.addRenderable(p);
-            RenderEngine.addRenderable(r);
-            RenderEngine.addRenderable(ep1, true, false);
-            
-            GGConsole.log("Setup Complete");
-        } catch (IOException ex) {
-            Logger.getLogger(OpenGGTest.class.getName()).log(Level.SEVERE, null, ex);
+        c = new Camera(pos, rot);
+        c.setPos(pos);
+        c.setRot(rot);
+
+        as = new AudioListener();
+        AudioController.setListener(as);
+
+        so = new Sound(OpenGGTest.class.getResource("res/maw.wav"));
+        so2 = new Sound(OpenGGTest.class.getResource("res/mgs.wav"));
+
+        t3 = Texture.get("C:/res/deer.png");
+        t2 = Texture.get("C:/res/test.png");
+
+        f = new GGFont(t2, new File("C:/res/test.fnt"));
+        GUIText g = new GUIText("It is a period of civil war. Rebel spaceships, striking from a hidden base,"
+                + " have won their first victory against the evil Galactic Empire. During the battle,"
+                + " Rebel spies managed to steal secret plans to the Empires ultimate weapon, the DEATH STAR,"
+                + " an armored space station with enough power to destroy an entire planet. \n\n"
+                + " Pursued by the Empires sinister agents, Princess Leia races home aboard her starship,"
+                + " custodian of the stolen plans that can save her people and restore freedom to the galaxy...", f, 20f, new Vector2f(), 10, false);
+        awp3 = f.loadText(g);
+
+        g = new GUIText("Turmoil has engulfed the Galactic Republic. The taxation of trade routes to outlying star systems is in dispute. \n"
+                + "\n"
+                + " Hoping to resolve the matter with a blockade of deadly battleships, "
+                + "the greedy Trade Federation has stopped all shipping to the small planet of Naboo. \n"
+                + "\n"
+                + " While the congress of the Republic endlessly debates this alarming chain of events,"
+                + " the Supreme Chancellor has secretly dispatched two Jedi Knights,"
+                + " the guardians of peace and justice in the galaxy, to settle the conflict...", f, 1f, new Vector2f(), 0.5f, false);
+
+        base2 = f.loadText(g);
+
+        OpenGG.curworld.floorLev = -10;
+
+        ModelRenderComponent ep1;
+
+        awps = new WorldObject();
+        awps.attach(ep1 = new ModelRenderComponent(awp3));ep1.getDrawable();
+        awps.setPosition(new Vector3f(5,5,5));
+
+        ParticleSystem p = new ParticleSystem(2f,20f,100f,ObjectCreator.createOldModelBuffer(OpenGGTest.class.getResource("res/models/deer.obj")), t3);
+        ModelRenderComponent r = new ModelRenderComponent(ModelLoader.loadModel("C:/res/bigbee/model.bmf"));
+        r.setScale(new Vector3f(50,50,50));
+
+        TriggerableAudioComponent test3 = new TriggerableAudioComponent(so2);
+        KeyTrigger t = new KeyTrigger(KEY_P, KEY_I);
+        t.addSubscriber(test3);
+
+        terrain = new WorldObject();
+        bad = new PhysicsComponent();
+        bad.setParentInfo(terrain);
+        terrain.attach(bad);
+        terrain.attach(r);
+        terrain.attach(p);
+        terrain.attach(test3);
+
+        for(int ii = 0; ii < 10; ii++){
+            for(int j = ii + 1; j < 10; j++){
+                //System.out.println(ii + ", " + j);
+            }
         }
+
+        RenderGroup text = new RenderGroup().add(ep1);
+        text.setText(true);
+
+        RenderEngine.setSkybox(ObjectCreator.createCube(1500f), Cubemap.get("C:/res/skybox/majestic"));
+        RenderEngine.addGUIItem(new GUIItem(base2, new Vector2f()));
+        RenderEngine.addRenderable(p);
+        RenderEngine.addRenderable(r);
+        RenderEngine.addRenderGroup(text);
+        
     }
     
     @Override

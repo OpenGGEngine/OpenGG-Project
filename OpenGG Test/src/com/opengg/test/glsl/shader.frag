@@ -1,4 +1,4 @@
-#version 330 core
+#version 410 core
 
 layout(location = 0) out vec4 fcolor;
 layout(location = 1) out vec4 fcolor2;
@@ -75,7 +75,7 @@ mat3 cotangent_frame( vec3 N, vec3 p, vec2 uv ){
 }
 
 vec3 calculatenormal( vec3 N, vec3 V, vec2 texcoord ){
-    vec3 map = texture2D( bump, texcoord ).xyz;
+    vec3 map = texture( bump, texcoord ).xyz;
     map = map * 255./127. - 128./127.;
     mat3 TBN = cotangent_frame( N, -V, texcoord );
     return normalize( TBN * map );
@@ -159,7 +159,7 @@ vec4 getWaveEffect(){
 }
 
 float readDepth( in vec2 coord ) {
-	return (2.0 * camerarange.x) / (camerarange.y + camerarange.x - texture2D( Ka, coord ).x * (camerarange.y - camerarange.x));	
+	return (2.0 * camerarange.x) / (camerarange.y + camerarange.x - texture( Ka, coord ).x * (camerarange.y - camerarange.x));	
 }
  
 float compareDepths( in float depth1, in float depth2 ) {
@@ -255,7 +255,7 @@ vec4 ssao(){
 	ao/=16.0;
         ao = clamp(ao, 0, .5);
         fcolor2 = vec4(1-ao,1-ao,1-ao,1);
-	return vec4(1-ao) * texture2D(Kd,textureCoord) * 2;
+	return vec4(1-ao) * texture(Kd,textureCoord) * 2;
 }
 
 void processPP(){
