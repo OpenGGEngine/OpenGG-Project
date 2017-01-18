@@ -221,10 +221,27 @@ public class Vector3f implements Serializable{
     public void zero(){
         this.x = this.y = this.z = 0;
     }
+    
     public byte[] toByteArray(){   
         ByteBuffer b = MemoryUtil.memAlloc(12);
         return b.putFloat(x).putFloat(y).putFloat(z).array();
     }
+    
+    @Override
+    public boolean equals(Object ot){
+        if(ot instanceof Vector3f){
+            Vector3f o = (Vector3f) ot;
+            if(o.x != this.x)
+                return false;
+            if(o.y != this.y)
+                return false;
+            if(o.z != this.z)
+                return false;
+            return true;
+        }   
+        return false;
+    }
+    
     @Override
     public String toString(){
         return x + ", " + y + ", " + z;

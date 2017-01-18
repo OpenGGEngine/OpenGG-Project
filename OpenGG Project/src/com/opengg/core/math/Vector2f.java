@@ -95,6 +95,19 @@ public class Vector2f {
         return b.putFloat(x).putFloat(y).array();
     }
     
+    @Override
+    public boolean equals(Object ot){
+        if(ot instanceof Vector2f){
+            Vector2f o = (Vector2f) ot;
+            if(o.x != this.x)
+                return false;
+            if(o.y != this.y)
+                return false;
+            return true;
+        }   
+        return false;
+    }
+    
     public static Vector2f getFromByteArray(byte[] vector){
         return new Vector2f(1,1);
     }
