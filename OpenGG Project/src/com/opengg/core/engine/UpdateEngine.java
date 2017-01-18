@@ -37,7 +37,8 @@ public class UpdateEngine{
     
     public static void checkColliders(){
         for(int i = 0; i < colliders.size(); i++){
-            for(int j = i + 1; i < colliders.size(); i++){
+            for(int j = i + 1; j < colliders.size(); j++){
+                
                 CollisionData info = colliders.get(i).testForCollision(colliders.get(j));
                 if(info != null){
                     processCollision(info);

@@ -74,19 +74,24 @@ public class OpenGG implements ConsoleListener{
  
         if(test){
             initializeRenderEngine(app);
-            GGConsole.warning("Using test mode, external shaders will not load!");
         }else{
             initializeRenderEngine();
-        }
-        GGConsole.log("Render engine initialized");
+        }    
 
-        initializeAudioController();
-        GGConsole.log("Audio controller initialized");
+        initializeAudioController();      
         
         curworld = WorldManager.getDefaultWorld();
         GGConsole.log("OpenGG initialization complete, running application setup");
-        app.setup();
-        GGConsole.log("Application setup complete");
+        try{
+            app.setup();
+            GGConsole.log("Application setup complete");
+        }catch (Exception e){
+            GGConsole.error("Uncaught exception on application setup: " + e.toString());
+            e.printStackTrace();
+            closeEngine();
+            writeLog();
+            System.exit(0);
+        }
     }
     
     public static void initializeNoWindow(GGApplication app){
@@ -104,10 +109,18 @@ public class OpenGG implements ConsoleListener{
     }
     
     public static void run(){
+        
         while (!window.shouldClose() && !end) {
             startFrame();
-            app.render();
-            app.update();
+            try{
+                app.render();
+                app.update();
+            }catch (Exception e){
+                GGConsole.error("Uncaught exception during application runtime: " + e.toString());
+                e.printStackTrace();
+                endFrame();
+                break;
+            }
             UpdateEngine.update();
             endFrame();
             //GGConsole.pollInput();
@@ -125,6 +138,8 @@ public class OpenGG implements ConsoleListener{
                 URL frags = new File("resources\\glsl\\shader.frag").toURI().toURL();
                 URL geoms = new File("resources\\glsl\\shader.geom").toURI().toURL();
                 RenderEngine.init(verts, frags, geoms);
+                GGConsole.log("Render engine initialized");
+                GGConsole.warning("Using test mode, external shaders will not load!");
             } catch (MalformedURLException ex) {
                 Logger.getLogger(OpenGG.class.getName()).log(Level.SEVERE, null, ex);
                 throw new RuntimeException("Failed to load shaders!");
@@ -137,6 +152,7 @@ public class OpenGG implements ConsoleListener{
             URL verts = obj.getClass().getResource("glsl/shader.vert");
             URL frags = obj.getClass().getResource("glsl/shader.frag");
             URL geoms = obj.getClass().getResource("glsl/shader.geom");
+            GGConsole.log("Render engine initialized");
             RenderEngine.init(verts, frags, geoms);
         }
     }
@@ -144,6 +160,7 @@ public class OpenGG implements ConsoleListener{
     private static void initializeAudioController(){
        if(window.getSuccessfulConstruction() && AudioController.initialized == false){
             AudioController.init();
+            GGConsole.log("Audio controller initialized");
         }   
     }
     
@@ -157,10 +174,8 @@ public class OpenGG implements ConsoleListener{
     }
     
     private static void closeEngine(){
-        RenderEngine.destroy();
-        GGConsole.log("Render engine has finalized");
+        RenderEngine.destroy();      
         AudioController.destroy();
-        GGConsole.log("Audio controller has finalized");
         GGConsole.destroy();
         GGConsole.log("OpenGG has closed gracefully, application can now be ended");
     }
