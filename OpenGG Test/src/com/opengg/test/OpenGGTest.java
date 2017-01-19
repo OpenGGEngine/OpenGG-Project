@@ -16,7 +16,6 @@ import com.opengg.core.io.input.mouse.MouseButtonListener;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
-import com.opengg.core.model.ModelLoader;
 import com.opengg.core.movement.MovementLoader;
 import com.opengg.core.render.drawn.MatDrawnObject;
 import com.opengg.core.render.objects.ObjectCreator;
@@ -115,8 +114,8 @@ public class OpenGGTest extends GGApplication implements KeyboardListener, Mouse
         awps.setPosition(new Vector3f(5,5,5));
 
         ParticleSystem p = new ParticleSystem(2f,20f,100f,ObjectCreator.createOldModelBuffer(OpenGGTest.class.getResource("res/models/deer.obj")), t3);
-        ModelRenderComponent r = new ModelRenderComponent(ModelLoader.loadModel("C:/res/bigbee/model.bmf"));
-        r.setScale(new Vector3f(50,50,50));
+        //ModelRenderComponent r = new ModelRenderComponent(ModelLoader.loadModel("C:/res/bigbee/model.bmf"));
+        //r.setScale(new Vector3f(50,50,50));
 
         TriggerableAudioComponent test3 = new TriggerableAudioComponent(so2);
         KeyTrigger t = new KeyTrigger(KEY_P, KEY_I);
@@ -126,7 +125,7 @@ public class OpenGGTest extends GGApplication implements KeyboardListener, Mouse
         bad = new PhysicsComponent();
         bad.setParentInfo(terrain);
         terrain.attach(bad);
-        terrain.attach(r);
+        //terrain.attach(r);
         terrain.attach(p);
         terrain.attach(test3);
 
@@ -142,8 +141,9 @@ public class OpenGGTest extends GGApplication implements KeyboardListener, Mouse
         RenderEngine.setSkybox(ObjectCreator.createCube(1500f), Cubemap.get("C:/res/skybox/majestic"));
         RenderEngine.addGUIItem(new GUIItem(base2, new Vector2f()));
         RenderEngine.addRenderable(p);
-        RenderEngine.addRenderable(r);
+        //RenderEngine.addRenderable(r);
         RenderEngine.addRenderGroup(text);
+        RenderEngine.setCulling(false);
         
     }
     
@@ -173,8 +173,6 @@ public class OpenGGTest extends GGApplication implements KeyboardListener, Mouse
     public void update() {
         xrot -= rot1 * 7;
         yrot -= rot2 * 7;
-        //rottest.addDegrees(2);
-        //System.out.println(rottest);
         terrain.setRotation(rottest);
     }
 

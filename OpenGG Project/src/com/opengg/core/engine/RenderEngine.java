@@ -11,7 +11,6 @@ import com.opengg.core.gui.GUIItem;
 import com.opengg.core.model.ModelManager;
 import com.opengg.core.render.VertexArrayObject;
 import com.opengg.core.render.drawn.Drawable;
-import com.opengg.core.engine.DrawableContainer;
 import com.opengg.core.render.drawn.DrawnObject;
 import com.opengg.core.render.objects.ObjectBuffers;
 import com.opengg.core.render.shader.Mode;
@@ -27,6 +26,8 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL14.GL_DECR_WRAP;
 import static org.lwjgl.opengl.GL14.GL_INCR_WRAP;
 import static org.lwjgl.opengl.GL20.glStencilOpSeparate;
+import static org.lwjgl.opengl.GL30.GL_MAJOR_VERSION;
+import static org.lwjgl.opengl.GL30.GL_MINOR_VERSION;
 import static org.lwjgl.opengl.GL32.GL_DEPTH_CLAMP;
 import static org.lwjgl.opengl.GL32.GL_TEXTURE_CUBE_MAP_SEAMLESS;
 
@@ -67,6 +68,10 @@ public class RenderEngine {
         glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
         glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
         return true;
+    }
+    
+    public static String getGLVersion(){
+        return glGetInteger(GL_MAJOR_VERSION) + "." + glGetInteger(GL_MINOR_VERSION);
     }
     
     public static void setWireframe(boolean wf){

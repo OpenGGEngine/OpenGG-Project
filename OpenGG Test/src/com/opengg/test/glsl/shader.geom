@@ -3,19 +3,32 @@
 layout(triangles) in;
 layout(triangle_strip, max_vertices=18) out;
 
+in gl_PerVertex
+{
+  vec4 gl_Position;
+  float gl_PointSize;
+  float gl_ClipDistance[];
+} gl_in[];
+
+out gl_PerVertex{
+    vec4 gl_Position;
+};
+
+out vertexData{
+    vec4 vertexColor;
+    vec2 textureCoord;
+    vec3 lightdir;
+    vec3 eyedir;
+    vec4 pos;
+    vec3 norm;
+    vec4 shadowpos;
+    float visibility;
+};
+
 in vec4 vertexColors[];
 in vec2 textureCoords[];
 in vec3 poss[];
 in vec3 norms[];
-
-out vec4 vertexColor;
-out vec2 textureCoord;
-out vec3 lightdir;
-out vec3 eyedir;
-out vec4 pos;
-out vec3 norm;
-out vec4 shadowpos;
-out float visibility;
 
 struct Light
 {
@@ -54,7 +67,6 @@ void genPhong(int vertNum){
 
     visibility = exp(-pow((distance*density),gradient));
     visibility = clamp(visibility,0.0,1.0);
-
 }
 
 

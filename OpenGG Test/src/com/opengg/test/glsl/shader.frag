@@ -1,19 +1,17 @@
 #version 410 core
 
 layout(location = 0) out vec4 fcolor;
-layout(location = 1) out vec4 fcolor2;
-layout(location = 2) out vec4 fcolor3;
-layout(location = 3) out vec4 fcolor4;
 
-in vec4 vertexColor;
-in vec2 textureCoord;
-in vec3 lightdir;
-in vec3 eyedir;
-in vec4 pos;
-in vec3 norm;
-in vec3 lightposition;
-in vec4 shadowpos;
-in float visibility;
+in vertexData{
+    vec4 vertexColor;
+    vec2 textureCoord;
+    vec3 lightdir;
+    vec3 eyedir;
+    vec4 pos;
+    vec3 norm;
+    vec4 shadowpos;
+    float visibility;
+};
 
 
 struct Material
@@ -253,8 +251,7 @@ vec4 ssao(){
 	ao+=compareDepths(depth,d)/aoscale;
         
 	ao/=16.0;
-        ao = clamp(ao, 0, .5);
-        fcolor2 = vec4(1-ao,1-ao,1-ao,1);
+        ao = clamp(ao, 0f, 0.5f);
 	return vec4(1-ao) * texture(Kd,textureCoord) * 2;
 }
 
@@ -279,4 +276,5 @@ void main() {
     }else{
         fcolor = vec4(1,1,1,1);
     }    
+    //fcolor = vec4(pos.xyz, 1);
 };

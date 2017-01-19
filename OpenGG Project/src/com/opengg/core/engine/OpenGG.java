@@ -70,7 +70,7 @@ public class OpenGG implements ConsoleListener{
         else
             throw new IncompatibleWindowFormatException("Window type passed in is unknown!");
         
-        GGConsole.log("Window generation successful");
+        GGConsole.log("Window generation successful, using OpenGL context version " + RenderEngine.getGLVersion());
  
         if(test){
             initializeRenderEngine(app);

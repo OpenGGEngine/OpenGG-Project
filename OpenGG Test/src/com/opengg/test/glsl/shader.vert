@@ -5,11 +5,14 @@ in vec3 normal;
 in vec4 color;
 in vec3 position;
             
+out gl_PerVertex{
+    vec4 gl_Position;
+};
+
 out vec4 vertexColors;
 out vec2 textureCoords;
 out vec3 poss;
 out vec3 norms;
-
 
 uniform mat4 model;
 uniform int billboard;
@@ -59,6 +62,4 @@ void main() {
     }
     vec4 P = modelView * vec4(position,1);
     gl_Position = projection * P;
-    //gl_Position = projection * view * model * vec4(position, 1.0f);
-    
 };

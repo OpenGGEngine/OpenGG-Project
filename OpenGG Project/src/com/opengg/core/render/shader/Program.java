@@ -22,6 +22,7 @@ import static org.lwjgl.opengl.GL20.glGetAttribLocation;
 import static org.lwjgl.opengl.GL20.glGetProgramInfoLog;
 import static org.lwjgl.opengl.GL20.glGetProgrami;
 import static org.lwjgl.opengl.GL20.glGetUniformLocation;
+import static org.lwjgl.opengl.GL20.glUseProgram;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import static org.lwjgl.opengl.GL30.glBindFragDataLocation;
 import static org.lwjgl.opengl.GL32.GL_GEOMETRY_SHADER;
@@ -40,14 +41,15 @@ public class Program {
     public int id;
     public int type;
     
-    private static HashMap<String, Integer> ulocs = new HashMap<>();
-    private static HashMap<String, Integer> alocs = new HashMap<>();
+    private HashMap<String, Integer> ulocs = new HashMap<>();
+    private HashMap<String, Integer> alocs = new HashMap<>();
     
     public Program(int type, CharSequence source){
-        id = glCreateShaderProgramv(type, source);
-        glProgramParameteri(id, GL_PROGRAM_SEPARABLE, GL_TRUE);
         this.type = type;
+        id = glCreateShaderProgramv(type, source);
+        glUseProgram(id);
         checkStatus();
+        glUseProgram(0);
     }
     
     public void findUniformLocation(String pos){

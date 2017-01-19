@@ -9,6 +9,7 @@ package com.opengg.core.render.shader;
 import com.opengg.core.engine.GGConsole;
 import static org.lwjgl.opengl.GL11.GL_TRUE;
 import static org.lwjgl.opengl.GL20.GL_VALIDATE_STATUS;
+import static org.lwjgl.opengl.GL20.glUseProgram;
 import static org.lwjgl.opengl.GL41.*;
 
 /**
@@ -17,21 +18,22 @@ import static org.lwjgl.opengl.GL41.*;
  */
 public class Pipeline {
     int id = 0;
-    
-    public Pipeline(){
-        id = glGenProgramPipelines();
-    }
+    Program vert, frag, geom;
     
     public Pipeline(Program vert, Program geom, Program frag){
+        this.vert = vert;
+        this.geom = geom;
+        this.frag = frag;
+        glUseProgram(0);
         id = glGenProgramPipelines();
         bind();
         if(!glIsProgramPipeline(id)){
             GGConsole.error("Failed to generate program pipeline ID!");
             return;
         }
-        glUseProgramStages(id, Program.VERTEX, vert.id);
-        glUseProgramStages(id, Program.GEOMETRY, geom.id);
-        glUseProgramStages(id, Program.FRAGMENT, frag.id);
+        glUseProgramStages(id, GL_VERTEX_SHADER_BIT, vert.id);
+        glUseProgramStages(id, GL_GEOMETRY_SHADER_BIT, geom.id);
+        glUseProgramStages(id, GL_FRAGMENT_SHADER_BIT, frag.id);
         validate();
         unbind();
     }
@@ -55,5 +57,9 @@ public class Pipeline {
     
     public String getStatus(){
         return glGetProgramPipelineInfoLog(id);
+    }
+    
+    public void deletePipeline(){
+        glDeleteProgramPipelines(id);
     }
 }
