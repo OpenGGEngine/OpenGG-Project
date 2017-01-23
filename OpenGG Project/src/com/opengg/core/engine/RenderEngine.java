@@ -194,7 +194,7 @@ public class RenderEngine {
         
 
         glDisable(GL_CULL_FACE); 
-        ShaderController.setMode(Mode.SKYBOX);
+        ShaderController.useConfiguration("sky");
         skytex.use(0);
         skybox.draw();
         glEnable(GL_CULL_FACE); 
@@ -206,11 +206,11 @@ public class RenderEngine {
         sceneTex.endTexRender();
         glDisable(GL_CULL_FACE);
         GUI.startGUIPos();
-        ShaderController.setMode(Mode.PP);
+        ShaderController.useConfiguration("pp");
         sceneTex.useTexture(0);
         sceneTex.useDepthTexture(1);
         sceneQuad.draw();
-        
+        ShaderController.useConfiguration("object");
         ShaderController.setDistanceField(true);
         GUI.enableGUI();
         GUI.render();

@@ -38,13 +38,15 @@ public class Program {
             GEOMETRY = GL_GEOMETRY_SHADER,
             FRAGMENT = GL_FRAGMENT_SHADER;
     
+    public String name;
     public int id;
     public int type;
     
     private HashMap<String, Integer> ulocs = new HashMap<>();
     private HashMap<String, Integer> alocs = new HashMap<>();
     
-    public Program(int type, CharSequence source){
+    public Program(int type, CharSequence source, String name){
+        this.name = name;
         this.type = type;
         id = glCreateShaderProgramv(type, source);
         glUseProgram(id);

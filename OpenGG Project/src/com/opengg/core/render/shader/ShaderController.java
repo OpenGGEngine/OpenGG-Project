@@ -40,16 +40,32 @@ public class ShaderController {
     public static void initialize(){
         try {
             loadShader("mainvert", new File("resources\\glsl\\shader.vert").getCanonicalPath(), Program.VERTEX);
+            loadShader("passthroughvert", new File("resources\\glsl\\passthrough.vert").getCanonicalPath(), Program.VERTEX);
+            
             loadShader("maingeom", new File("resources\\glsl\\shader.geom").getCanonicalPath(), Program.GEOMETRY);
+            loadShader("passthroughgeom", new File("resources\\glsl\\passthrough.geom").getCanonicalPath(), Program.GEOMETRY);
+            
             loadShader("mainfrag", new File("resources\\glsl\\shader.frag").getCanonicalPath(), Program.FRAGMENT);
-        loadShader("ppfrag", new File("resources\\glsl\\pp.frag").getCanonicalPath(), Program.FRAGMENT);
+            loadShader("passthroughfrag", new File("resources\\glsl\\passthrough.frag").getCanonicalPath(), Program.FRAGMENT);
+            loadShader("ppfrag", new File("resources\\glsl\\pp.frag").getCanonicalPath(), Program.FRAGMENT);  
+            loadShader("cubemapfrag", new File("resources\\glsl\\cubemap.frag").getCanonicalPath(), Program.FRAGMENT);  
         } catch (IOException ex) {
             GGConsole.error("Failed to find default shaders!");
             throw new RuntimeException();
         }
 
         use("mainvert", "maingeom", "mainfrag");
+        saveCurrentConfiguration("object");
+        
+        use("passthroughvert", "passthroughgeom", "ppfrag");
+        saveCurrentConfiguration("pp");
 
+        use("passthroughvert", "passthroughgeom", "passthroughfrag");
+        saveCurrentConfiguration("passthrough");
+        
+        use("passthroughvert", "passthroughgeom", "cubemapfrag");
+        saveCurrentConfiguration("sky");
+        
         initVertexAttributes();
         GGConsole.log("Default shaders loaded and validated");
 
@@ -390,7 +406,7 @@ public class ShaderController {
         use(programs.get(v), programs.get(g), programs.get(f));
     }
     
-    public static void setPipelineName(String v, String g, String f, String name){
+    public static void saveConfiguration(String v, String g, String f, String name){
         Program vp = programs.get(v);
         Program gp = programs.get(g);
         Program fp = programs.get(f);
@@ -400,11 +416,19 @@ public class ShaderController {
         rnames.put(name, st);
     }
     
-    public void usePipeline(String name){
+    public static void saveCurrentConfiguration(String name){
+        saveConfiguration(curv, curg, curf, name);
+    }
+    
+    public static void useConfiguration(String name){
         String id = rnames.get(name);
         Pipeline p = pipelines.get(id);
         
-        curv = programs.
+        curv = p.vert.name;
+        curg = p.geom.name;
+        curf = p.frag.name;
+        
+        p.bind();
     }
     
     public static void clearPipelineCache(){
@@ -418,7 +442,7 @@ public class ShaderController {
     public static boolean loadShader(String name, String loc, int type){
         try {
             CharSequence sec = FileStringLoader.loadStringSequence(URLDecoder.decode(loc, "UTF-8"));
-            programs.put(name, new Program(type, sec));
+            programs.put(name, new Program(type, sec, name));
             Program p = programs.get(name);
             for(String s : searched){
                 p.findUniformLocation(s);
