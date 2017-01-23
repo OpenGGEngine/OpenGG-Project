@@ -47,11 +47,11 @@ public class RenderEngine {
     static VertexArrayObject vao;
     static boolean cull = true;
     
-    static boolean init(URL vert, URL frag, URL geom){
+    static boolean init(){
         vao = new VertexArrayObject();
         vao.bind();
         
-        ShaderController.initialize(vert, frag, geom);
+        ShaderController.initialize();
         TextureManager.initialize();
         ModelManager.initialize();
         

@@ -15,8 +15,9 @@ import com.opengg.core.model.Material;
 import com.opengg.core.render.Light;
 import com.opengg.core.render.VertexBufferObject;
 import com.opengg.core.world.Camera;
+import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,38 +31,27 @@ import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 public class ShaderController {
     private static HashMap<String, Program> programs = new HashMap<>();
     private static HashMap<String, Pipeline> pipelines = new HashMap<>(); 
+    private static HashMap<String, String> rnames = new HashMap<>();
     private static List<String> searched = new ArrayList<>();
     private static String curv, curg, curf;
     private static float ratio;
     private static Matrix4f model= new Matrix4f(), view= new Matrix4f(), proj = new Matrix4f();
     
-    public static void initialize(URL vert, URL frag, URL geom){
+    public static void initialize(){
         try {
-            CharSequence v1 = FileStringLoader.loadStringSequence(
-                            URLDecoder.decode(
-                                    vert.getFile(), "UTF-8"));
-            CharSequence g1 = FileStringLoader.loadStringSequence(
-                            URLDecoder.decode(
-                                    geom.getFile(), "UTF-8"));
-            CharSequence f1 = FileStringLoader.loadStringSequence(
-                            URLDecoder.decode(
-                                    frag.getFile(), "UTF-8"));
-            
-            programs.put("mainvert", new Program(Program.VERTEX, v1));
-            programs.put("maingeom", new Program(Program.GEOMETRY, g1));
-            programs.put("mainfrag", new Program(Program.FRAGMENT, f1));
-            
-            use("mainvert", "maingeom", "mainfrag");
-            
-            GGConsole.log("Shader files loaded and validated");
-        } catch (UnsupportedEncodingException ex) {
-            GGConsole.error("Unable to parse shader files!");
-            return;
+            loadShader("mainvert", new File("resources\\glsl\\shader.vert").getCanonicalPath(), Program.VERTEX);
+            loadShader("maingeom", new File("resources\\glsl\\shader.geom").getCanonicalPath(), Program.GEOMETRY);
+            loadShader("mainfrag", new File("resources\\glsl\\shader.frag").getCanonicalPath(), Program.FRAGMENT);
+        loadShader("ppfrag", new File("resources\\glsl\\pp.frag").getCanonicalPath(), Program.FRAGMENT);
+        } catch (IOException ex) {
+            GGConsole.error("Failed to find default shaders!");
+            throw new RuntimeException();
         }
 
+        use("mainvert", "maingeom", "mainfrag");
+
         initVertexAttributes();
-        
-        GGConsole.log("Shaders linked, attributes have been validated");
+        GGConsole.log("Default shaders loaded and validated");
 
         /* Set shader variables */
 
@@ -381,7 +371,7 @@ public class ShaderController {
         setUniform("light.lightpos", light.pos);
     }
     
-    public static void use(Program v, Program g, Program f){
+    private static void use(Program v, Program g, Program f){
         String st = Integer.toString(v.id) + Integer.toString(g.id) + Integer.toString(f.id);
         Pipeline p;
         if((p = pipelines.get(st)) != null){
@@ -400,11 +390,43 @@ public class ShaderController {
         use(programs.get(v), programs.get(g), programs.get(f));
     }
     
+    public static void setPipelineName(String v, String g, String f, String name){
+        Program vp = programs.get(v);
+        Program gp = programs.get(g);
+        Program fp = programs.get(f);
+        
+        String st = Integer.toString(vp.id) + Integer.toString(gp.id) + Integer.toString(fp.id);
+        
+        rnames.put(name, st);
+    }
+    
+    public void usePipeline(String name){
+        String id = rnames.get(name);
+        Pipeline p = pipelines.get(id);
+        
+        curv = programs.
+    }
+    
     public static void clearPipelineCache(){
         for(Pipeline p : pipelines.values()){
             p.deletePipeline();
         }
         pipelines.clear();
         pipelines = new HashMap<>();
+    }
+    
+    public static boolean loadShader(String name, String loc, int type){
+        try {
+            CharSequence sec = FileStringLoader.loadStringSequence(URLDecoder.decode(loc, "UTF-8"));
+            programs.put(name, new Program(type, sec));
+            Program p = programs.get(name);
+            for(String s : searched){
+                p.findUniformLocation(s);
+            }
+            return true;
+        } catch (UnsupportedEncodingException ex) {
+            GGConsole.error("Failed to load shader: " + name);
+            return false;
+        }
     }
 }

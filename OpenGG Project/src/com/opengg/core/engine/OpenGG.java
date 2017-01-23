@@ -71,12 +71,8 @@ public class OpenGG implements ConsoleListener{
             throw new IncompatibleWindowFormatException("Window type passed in is unknown!");
         
         GGConsole.log("Window generation successful, using OpenGL context version " + RenderEngine.getGLVersion());
- 
-        if(test){
-            initializeRenderEngine(app);
-        }else{
-            initializeRenderEngine();
-        }    
+        
+        initializeRenderEngine();  
 
         initializeAudioController();      
         
@@ -137,23 +133,13 @@ public class OpenGG implements ConsoleListener{
                 URL verts = new File("resources\\glsl\\shader.vert").toURI().toURL();
                 URL frags = new File("resources\\glsl\\shader.frag").toURI().toURL();
                 URL geoms = new File("resources\\glsl\\shader.geom").toURI().toURL();
-                RenderEngine.init(verts, frags, geoms);
+                RenderEngine.init();
                 GGConsole.log("Render engine initialized");
                 GGConsole.warning("Using test mode, external shaders will not load!");
             } catch (MalformedURLException ex) {
                 Logger.getLogger(OpenGG.class.getName()).log(Level.SEVERE, null, ex);
                 throw new RuntimeException("Failed to load shaders!");
             }
-        }
-    }
-    
-    private static void initializeRenderEngine(Object obj){
-        if(window.getSuccessfulConstruction() && RenderEngine.initialized == false){
-            URL verts = obj.getClass().getResource("glsl/shader.vert");
-            URL frags = obj.getClass().getResource("glsl/shader.frag");
-            URL geoms = obj.getClass().getResource("glsl/shader.geom");
-            GGConsole.log("Render engine initialized");
-            RenderEngine.init(verts, frags, geoms);
         }
     }
     
