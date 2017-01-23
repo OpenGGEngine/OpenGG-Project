@@ -3,4 +3,7 @@
 /OpenGG Project/build/
 /OpenGG Test/build/
 /OpenGG Project/dist/
-/OpenGG Test/dist/
+/OpenGG Test/dist/OpenGG_Test.jar
+/OpenGG Test/dist/lib/
+/OpenGG Test/dist/natives/
+/cloc-1.70.exe

@@ -26,11 +26,7 @@ uniform int inst;
 uniform float divAmount;
 
 void main() {
-    
-    if(mode == 6){
-        poss = position;
-    }
-    
+
     mat4 modelView = view * model;
     if(inst == 1){
         vertexColors = vec4(1,1,1,1);

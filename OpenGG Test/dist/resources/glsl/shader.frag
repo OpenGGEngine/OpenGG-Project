@@ -146,19 +146,11 @@ vec4 shadify(){
     return fragColor;
 }
 
-vec4 getCube(){
-    return texture(cubemap, normalize(pos.xyz));
-}
-
 void main() {   
     if(mode == 0){
         fcolor = shadify();
-    }else if(mode == 1){
-        //fcolor = (getTex(texImage)/material.ka).rgb;
     }else if(mode == 2){
         fcolor = getTex(Kd);
-    }else if(mode == 3){
-        fcolor = getCube();
     }else if(mode == 4 || mode == 6){
         fcolor = vec4(1,1,1,1);
     }else{
