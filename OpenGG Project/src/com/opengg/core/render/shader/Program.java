@@ -178,8 +178,7 @@ public class Program {
         int status = glGetProgrami(id, GL_LINK_STATUS);
         if (status != GL_TRUE) {
             String s = glGetProgramInfoLog(id);
-            GGConsole.error(s);
-            throw new RuntimeException(glGetProgramInfoLog(id));
+            throw new RuntimeException("From shader (" + name + "):" + glGetProgramInfoLog(id));
         }
     }
 }

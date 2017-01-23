@@ -6,7 +6,6 @@
 package com.opengg.core.model;
 
 import com.opengg.core.engine.GGConsole;
-import com.opengg.core.model.ModelUtil;
 import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.render.drawn.DrawnObject;
 import com.opengg.core.render.drawn.DrawnObjectGroup;

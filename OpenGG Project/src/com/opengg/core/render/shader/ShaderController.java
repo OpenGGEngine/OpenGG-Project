@@ -44,6 +44,7 @@ public class ShaderController {
             
             loadShader("maingeom", new File("resources\\glsl\\shader.geom").getCanonicalPath(), Program.GEOMETRY);
             loadShader("passthroughgeom", new File("resources\\glsl\\passthrough.geom").getCanonicalPath(), Program.GEOMETRY);
+            loadShader("volumegeom", new File("resources\\glsl\\volume.geom").getCanonicalPath(), Program.GEOMETRY);
             
             loadShader("mainfrag", new File("resources\\glsl\\shader.frag").getCanonicalPath(), Program.FRAGMENT);
             loadShader("passthroughfrag", new File("resources\\glsl\\passthrough.frag").getCanonicalPath(), Program.FRAGMENT);
@@ -64,6 +65,9 @@ public class ShaderController {
         saveCurrentConfiguration("passthrough");
         
         use("passthroughvert", "passthroughgeom", "cubemapfrag");
+        saveCurrentConfiguration("sky");
+        
+        use("passthroughvert", "volumegeom", "passthroughfrag");
         saveCurrentConfiguration("sky");
         
         initVertexAttributes();

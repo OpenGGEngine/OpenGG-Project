@@ -1,7 +1,7 @@
 #version 410 core
 
 layout(triangles) in;
-layout(triangle_strip, max_vertices=18) out;
+layout(triangle_strip, max_vertices=3) out;
 
 in gl_PerVertex
 {
@@ -46,8 +46,6 @@ uniform mat4 projection;
 
 const float density =0.00137;
 const float gradient = 2.32;
-
-float epsilon = 0.0009;
 
 void genPhong(int vertNum){
 
