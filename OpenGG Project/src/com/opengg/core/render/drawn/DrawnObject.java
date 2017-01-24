@@ -5,7 +5,6 @@
  */
 package com.opengg.core.render.drawn;
 
-import com.opengg.core.engine.RenderEngine;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.render.VertexBufferObject;
 import com.opengg.core.render.shader.ShaderController;
@@ -155,7 +154,7 @@ public class DrawnObject implements Drawable {
         evbo.bind(GL_ELEMENT_ARRAY_BUFFER);
         defAttrib();
         pointAttrib();
-        glDrawElements(adj ? GL_TRIANGLES_ADJACENCY : GL_TRIANGLES, ind.limit(), GL_UNSIGNED_INT, 0);       
+        glDrawElements(adj ? GL_TRIANGLES_ADJACENCY : GL_TRIANGLES, ind.limit(), GL_UNSIGNED_INT, 0);     
     }
     
     public void removeBuffer(){

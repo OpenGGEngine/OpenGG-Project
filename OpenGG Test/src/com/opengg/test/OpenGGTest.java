@@ -16,6 +16,7 @@ import com.opengg.core.io.input.mouse.MouseButtonListener;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
+import com.opengg.core.model.ModelLoader;
 import com.opengg.core.movement.MovementLoader;
 import com.opengg.core.render.drawn.MatDrawnObject;
 import com.opengg.core.render.objects.ObjectCreator;
@@ -31,6 +32,7 @@ import com.opengg.core.world.Camera;
 import com.opengg.core.world.WorldObject;
 import com.opengg.core.world.components.KeyTrigger;
 import com.opengg.core.world.components.ModelRenderComponent;
+import com.opengg.core.world.components.RenderComponent;
 import com.opengg.core.world.components.TriggerableAudioComponent;
 import com.opengg.core.world.components.particle.ParticleSystem;
 import com.opengg.core.world.components.physics.PhysicsComponent;
@@ -107,15 +109,16 @@ public class OpenGGTest extends GGApplication implements KeyboardListener, Mouse
 
         OpenGG.curworld.floorLev = -10;
 
-        ModelRenderComponent ep1;
+        RenderComponent ep1;
 
         awps = new WorldObject();
-        awps.attach(ep1 = new ModelRenderComponent(awp3));ep1.getDrawable();
+        awps.attach(ep1 = new RenderComponent(awp3));
         awps.setPosition(new Vector3f(5,5,5));
 
         ParticleSystem p = new ParticleSystem(2f,20f,100f,ObjectCreator.createOldModelBuffer(OpenGGTest.class.getResource("res/models/deer.obj")), t3);
-        //ModelRenderComponent r = new ModelRenderComponent(ModelLoader.loadModel("C:/res/bigbee/model.bmf"));
-        //r.setScale(new Vector3f(50,50,50));
+        
+        ModelRenderComponent r = new ModelRenderComponent(ModelLoader.loadModel("C:/res/bigbee/model.bmf"));
+        r.setScale(new Vector3f(50,50,50));
 
         TriggerableAudioComponent test3 = new TriggerableAudioComponent(so2);
         KeyTrigger t = new KeyTrigger(KEY_P, KEY_I);
@@ -125,23 +128,17 @@ public class OpenGGTest extends GGApplication implements KeyboardListener, Mouse
         bad = new PhysicsComponent();
         bad.setParentInfo(terrain);
         terrain.attach(bad);
-        //terrain.attach(r);
+        terrain.attach(r);
         terrain.attach(p);
         terrain.attach(test3);
 
-        for(int ii = 0; ii < 10; ii++){
-            for(int j = ii + 1; j < 10; j++){
-                //System.out.println(ii + ", " + j);
-            }
-        }
-
         RenderGroup text = new RenderGroup().add(ep1);
         text.setText(true);
-
+        
         RenderEngine.setSkybox(ObjectCreator.createCube(1500f), Cubemap.get("C:/res/skybox/majestic"));
         RenderEngine.addGUIItem(new GUIItem(base2, new Vector2f()));
         RenderEngine.addRenderable(p);
-        //RenderEngine.addRenderable(r);
+        RenderEngine.addRenderable(r);
         RenderEngine.addRenderGroup(text);
         RenderEngine.setCulling(false);
         
@@ -162,9 +159,9 @@ public class OpenGGTest extends GGApplication implements KeyboardListener, Mouse
         c.setPos(pos);
         c.setRot(rot);
 
-        ShaderController.setLightPos(new Vector3f(40, 200, 40));
+        ShaderController.setLightPos(new Vector3f(40, 100, 40));
         ShaderController.setView(c);
-        ShaderController.setPerspective(90, OpenGG.window.getRatio(), 1, 2500f);
+        ShaderController.setPerspective(90, OpenGG.window.getRatio(), 1, 5000f);
         
         RenderEngine.draw();
     }

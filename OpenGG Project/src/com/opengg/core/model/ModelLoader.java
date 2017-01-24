@@ -56,7 +56,8 @@ public class ModelLoader {
                 {
                     f.put(in.readFloat());
                 }
-                f.flip();               
+                f.flip();              
+                
                 int ibcap = in.readInt();
                 IntBuffer inb = MemoryUtil.memAllocInt(ibcap);
                 for (int i = 0; i < ibcap; i++) {
@@ -208,6 +209,9 @@ public class ModelLoader {
         }
         
         Model m = new Model(getFileName(path), meshes);
+        for(Mesh me : m.getMeshes()){
+            //ModelUtil.findAdjacencies(me);
+        }
         GGConsole.log("Done Parsing " + path + ", got " +m.getName());
         return m;
     }

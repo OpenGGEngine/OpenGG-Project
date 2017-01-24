@@ -76,9 +76,12 @@ public class Model {
         GGConsole.log("Drawable for " + name + " has been requested, loading textures...");
         List<Drawable> draws = new ArrayList<>();
         for(Mesh mesh : meshes){
-            ModelUtil.findAdjacencies(mesh);
+            if(!mesh.hasAdjacencyData()){
+                //ModelUtil.findAdjacencies(mesh);
+            }
+            ModelUtil.makeadamnvbo(mesh);
             DrawnObject dr = new DrawnObject(mesh.vbodata, mesh.inddata);
-            dr.setAdjacency(true);
+            //dr.setAdjacency(true);
             draws.add(new MatDrawnObject(dr, mesh.m));
         }
         drawable = new DrawnObjectGroup(draws);

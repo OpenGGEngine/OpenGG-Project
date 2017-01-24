@@ -6,11 +6,13 @@
 
 package com.opengg.core.model;
 
+import com.opengg.core.engine.OpenGG;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import org.lwjgl.system.MemoryUtil;
 
 /**
  *
@@ -21,6 +23,7 @@ public class ModelUtil {
         List<Edge> edges = new ArrayList<>();
         int i = 0;
         for(Face f : m.faces){
+            
             Edge e1 = new Edge();
             e1.faceid = i;
             e1.edgeid = 1;
@@ -46,12 +49,13 @@ public class ModelUtil {
         }
         
         for(int ii = 0; ii < edges.size(); ii++){
-            for(int j = ii + 1; j < edges.size(); j++){
+            badpractice : for(int j = ii + 1; j < edges.size(); j++){
                 Edge e1 = edges.get(ii);
                 Edge e2 = edges.get(j);
                 if((e1.f1.equals(e2.f1) && e1.f2.equals(e2.f2)) || (e1.f1.equals(e2.f2) && e1.f2.equals(e2.f1))){
                     e1.adjfaceid = e2.faceid;
                     e2.adjfaceid = e1.faceid;
+                    //break badpractice;
                 }
             }
         }
@@ -67,6 +71,121 @@ public class ModelUtil {
         });
         
         m.adjacency = true;
+    }
+    
+    public static void makeadamnadjacencyvbo(Mesh mesh){
+        int nextVertexIndex = 0;
+        HashMap<FaceVertex, Integer> indexMap = new HashMap<>();
+        ArrayList<FaceVertex> faceVertexList = new ArrayList<>();
+        for (Face face : mesh.faces) {
+            FaceVertex vertex = face.v1;
+            if (!indexMap.containsKey(vertex)) {
+                indexMap.put(vertex, nextVertexIndex++);
+                faceVertexList.add(vertex);
+            }
+            
+            vertex = face.v2;
+            
+            if (!indexMap.containsKey(vertex)) {
+                indexMap.put(vertex, nextVertexIndex++);
+                faceVertexList.add(vertex);
+            }
+            
+            vertex = face.v3;
+            
+            if (!indexMap.containsKey(vertex)) {
+                indexMap.put(vertex, nextVertexIndex++);
+                faceVertexList.add(vertex);
+            }
+            
+            vertex = findAdjacentVertex(face, 1, mesh.faces);
+            
+            if (!indexMap.containsKey(vertex)) {
+                indexMap.put(vertex, nextVertexIndex++);
+                faceVertexList.add(vertex);
+            }
+            
+            vertex = findAdjacentVertex(face, 2, mesh.faces);
+            
+            if (!indexMap.containsKey(vertex)) {
+                indexMap.put(vertex, nextVertexIndex++);
+                faceVertexList.add(vertex);
+            }
+            
+            vertex = findAdjacentVertex(face, 3, mesh.faces);
+            
+            if (!indexMap.containsKey(vertex)) {
+                indexMap.put(vertex, nextVertexIndex++);
+                faceVertexList.add(vertex);
+            }
+            
+            
+        }
+
+        FloatBuffer verticeAttributes = FloatBuffer.allocate(1);
+        if(OpenGG.lwjglinit){
+            verticeAttributes = MemoryUtil.memAllocFloat(faceVertexList.size() * 12);
+        }else{
+            verticeAttributes = FloatBuffer.allocate(faceVertexList.size() * 12);
+        }
+        
+        for (FaceVertex vertex : faceVertexList) {
+            verticeAttributes.put(vertex.v.x);
+            verticeAttributes.put(vertex.v.y);
+            verticeAttributes.put(vertex.v.z);
+            verticeAttributes.put(1f);
+            verticeAttributes.put(1f);
+            verticeAttributes.put(1f);
+            verticeAttributes.put(1f);
+
+            verticeAttributes.put(vertex.n.x);
+            verticeAttributes.put(vertex.n.y);
+            verticeAttributes.put(vertex.n.z);
+
+            verticeAttributes.put(vertex.t.x);
+            verticeAttributes.put(vertex.t.y);
+
+        }
+        verticeAttributes.flip();
+
+        int indicesCount = mesh.faces.size() * 6;
+        
+        IntBuffer indices = IntBuffer.allocate(1);
+        if(OpenGG.lwjglinit){
+            indices = MemoryUtil.memAllocInt(indicesCount);
+        }else{
+            indices = IntBuffer.allocate(indicesCount);
+        }
+        
+        for (Face face : mesh.faces) {
+            
+            FaceVertex vertex = face.v1;
+            int index = indexMap.get(vertex);
+            indices.put(index);
+            
+            vertex = findAdjacentVertex(face, 1, mesh.faces);
+            index = indexMap.get(vertex);
+            indices.put(index);
+            
+            vertex = face.v2;
+            index = indexMap.get(vertex);
+            indices.put(index);
+            
+            vertex = findAdjacentVertex(face, 2, mesh.faces);
+            index = indexMap.get(vertex);
+            indices.put(index);
+            
+            vertex = face.v3;
+            index = indexMap.get(vertex);
+            indices.put(index);
+            
+            vertex = findAdjacentVertex(face, 3, mesh.faces);
+            index = indexMap.get(vertex);
+            indices.put(index);
+        }
+        indices.flip();
+
+        mesh.updateVBO(verticeAttributes, indices);
     }
     
     public static void makeadamnvbo(Mesh mesh){
@@ -93,48 +212,44 @@ public class ModelUtil {
                 indexMap.put(vertex, nextVertexIndex++);
                 faceVertexList.add(vertex);
             }
+        }       
+        
+        FloatBuffer verticeAttributes = FloatBuffer.allocate(1);
+        if(OpenGG.lwjglinit){
+            verticeAttributes = MemoryUtil.memAllocFloat(faceVertexList.size() * 12);
+        }else{
+            verticeAttributes = FloatBuffer.allocate(faceVertexList.size() * 12);
         }
-        int verticeAttributesCount = nextVertexIndex;
-        int indicesCount = mesh.faces.size() * 3;
-        int numMIssingNormals = 0;
-        int numMissingUV = 0;
-        FloatBuffer verticeAttributes = FloatBuffer.allocate(faceVertexList.size() * 12); //DO NOT CHANGE TO MEMORYUTIL AS IT REQUIRES LWJGL
+        
         for (FaceVertex vertex : faceVertexList) {
             verticeAttributes.put(vertex.v.x);
             verticeAttributes.put(vertex.v.y);
             verticeAttributes.put(vertex.v.z);
+            
             verticeAttributes.put(1f);
             verticeAttributes.put(1f);
             verticeAttributes.put(1f);
             verticeAttributes.put(1f);
-            if (vertex.n == null) {
-                verticeAttributes.put(1.0f);
-                verticeAttributes.put(1.0f);
-                verticeAttributes.put(1.0f);
-                numMIssingNormals++;
-            } else {
-                verticeAttributes.put(vertex.n.x);
-                verticeAttributes.put(vertex.n.y);
-                verticeAttributes.put(vertex.n.z);
-            }
-            // @TODO: What's a reasonable default texture coord?  
-            if (vertex.t == null) {
-                //                verticeAttributes.put(0.5f);
-                //                verticeAttributes.put(0.5f);
-                verticeAttributes.put((float) Math.random());
-                verticeAttributes.put((float) Math.random());
-                numMissingUV++;
-            } else {
-                verticeAttributes.put(vertex.t.x);
-                verticeAttributes.put(vertex.t.y);
-            }
+
+            verticeAttributes.put(vertex.n.x);
+            verticeAttributes.put(vertex.n.y);
+            verticeAttributes.put(vertex.n.z);
+
+            verticeAttributes.put(vertex.t.x);
+            verticeAttributes.put(vertex.t.y);
 
         }
         verticeAttributes.flip();
-
-
-
-        IntBuffer indices = IntBuffer.allocate(indicesCount);
+        
+        
+        int indicesCount = mesh.faces.size() * 3;
+        IntBuffer indices = IntBuffer.allocate(1);
+        if(OpenGG.lwjglinit){
+            indices = MemoryUtil.memAllocInt(indicesCount);
+        }else{
+            indices = IntBuffer.allocate(indicesCount);
+        }
+        
         for (Face face : mesh.faces) {
             FaceVertex vertex = face.v1;
             int index = indexMap.get(vertex);
@@ -149,9 +264,8 @@ public class ModelUtil {
             indices.put(index);
         }
         indices.flip();
-
-        mesh.vbodata = verticeAttributes;
-        mesh.inddata = indices;
+        
+        mesh.updateVBO(verticeAttributes, indices);
     }
     
     public static void makeadamnvbo(List<Mesh> meshes) {
@@ -164,9 +278,10 @@ public class ModelUtil {
         List<Face> faces = new ArrayList<>();
             
         List<FaceVertex> vertices = new ArrayList<>();
-
+              
         for(int i = 0; i < mesh.inddata.limit(); i++){
             int index = mesh.inddata.get(i);
+            
             FaceVertex fv = new FaceVertex();
             fv.v.x = mesh.vbodata.get(index + 0);
             fv.v.y = mesh.vbodata.get(index + 1);
@@ -175,9 +290,10 @@ public class ModelUtil {
             fv.n.x = mesh.vbodata.get(index + 7);
             fv.n.y = mesh.vbodata.get(index + 8);
             fv.n.z = mesh.vbodata.get(index + 9);
-
+      
             fv.t.x = mesh.vbodata.get(index + 10);
             fv.t.y = mesh.vbodata.get(index + 11);
+            
             
             vertices.add(fv);
         }
@@ -196,9 +312,9 @@ public class ModelUtil {
     }
     
     public static void makeadamnfacelist(List<Mesh> meshes){
-        meshes.stream().parallel().forEach((mesh) -> {
+        for(Mesh mesh : meshes){
             makeadamnfacelist(mesh);
-        });
+        }
     }
     
     public static ArrayList<BuilderFace> splitQuads(ArrayList<BuilderFace> faceList) {
@@ -262,5 +378,109 @@ public class ModelUtil {
             faces.add(face);
         }
         return faces;
+    }
+    
+    private static FaceVertex findAdjacentVertex(Face f, int vid, List<Face> faces){
+        int i = 0;
+        if(vid == 1){
+            i = f.adj1;
+        }else if(vid == 2){
+            i = f.adj2;
+        }else if(vid == 3){
+            i = f.adj3;
+        }
+        
+        if(i == -1){
+            return f.v1;
+        }
+        
+        Face other = faces.get(i);
+        
+        FaceVertex adj = new FaceVertex();
+        if(vid == 1){
+            int v1e = 0, v2e = 0;
+            if(f.v1.equals(other.v1)){v1e = 1;
+            }else if(f.v1.equals(other.v2)){v1e = 2;
+            }else if(f.v1.equals(other.v3)){v1e = 3;
+            }
+            
+            if(f.v2.equals(other.v1)){v2e = 1;
+            }else if(f.v2.equals(other.v2)){v2e = 2;
+            }else if(f.v2.equals(other.v3)){v2e = 3;
+            }
+            
+            if(v1e == 1){
+                if(v2e == 2){adj = other.v3;}
+                if(v2e == 3){adj = other.v2;}
+            }
+            
+            if(v1e == 2){
+                if(v2e == 1){adj = other.v3;}
+                if(v2e == 3){adj = other.v1;}
+            }
+            if(v1e == 3){
+                if(v2e == 1){adj = other.v2;}
+                if(v2e == 2){adj = other.v1;}
+            }
+            
+        }else if(vid == 2){
+            
+            int v2e = 0, v3e = 0;
+            if(f.v2.equals(other.v1)){v2e = 1;
+            }else if(f.v2.equals(other.v2)){v2e = 2;
+            }else if(f.v2.equals(other.v3)){v2e = 3;
+            }
+            
+            if(f.v3.equals(other.v1)){v3e = 1;
+            }else if(f.v3.equals(other.v2)){v3e = 2;
+            }else if(f.v3.equals(other.v3)){v3e = 3;
+            }
+            
+            if(v2e == 1){
+                if(v3e == 2){adj = other.v3;}
+                if(v3e == 3){adj = other.v2;}
+            }
+            
+            if(v2e == 2){
+                if(v3e == 1){adj = other.v3;}
+                if(v3e == 3){adj = other.v1;}
+            }
+            if(v2e == 3){
+                if(v3e == 1){adj = other.v2;}
+                if(v3e == 2){adj = other.v1;}
+            }
+            
+        }else if(vid == 3){
+            
+            int v3e = 0, v1e = 0;
+            if(f.v3.equals(other.v1)){v3e = 1;
+            }else if(f.v3.equals(other.v2)){v3e = 2;
+            }else if(f.v3.equals(other.v3)){v3e = 3;
+            }
+            
+            if(f.v1.equals(other.v1)){v1e = 1;
+            }else if(f.v1.equals(other.v2)){v1e = 2;
+            }else if(f.v1.equals(other.v3)){v1e = 3;
+            }
+            
+            if(v3e == 1){
+                if(v1e == 2){adj = other.v3;}
+                if(v1e == 3){adj = other.v2;}
+            }
+            
+            if(v3e == 2){
+                if(v1e == 1){adj = other.v3;}
+                if(v1e == 3){adj = other.v1;}
+            }
+            if(v3e == 3){
+                if(v1e == 1){adj = other.v2;}
+                if(v1e == 2){adj = other.v1;}
+            }
+            
+        }
+        if(adj.equals(new FaceVertex())){
+            adj = f.v1;
+        }
+        return adj;
     }
 }

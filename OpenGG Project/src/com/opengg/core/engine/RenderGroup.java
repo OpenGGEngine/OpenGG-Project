@@ -21,6 +21,10 @@ public class RenderGroup {
     
     boolean transparency = false;
     boolean distancefield;
+    boolean shadows = true;
+    boolean adj = false;
+    int order = 5;
+    Mode mode = Mode.OBJECT;
 
     public boolean isText() {
         return distancefield;
@@ -29,10 +33,7 @@ public class RenderGroup {
     public void setText(boolean distancefield) {
         this.distancefield = distancefield;
     }
-    boolean shadows = true;
-    int order = 5;
-    Mode mode = Mode.OBJECT;
-    
+  
     public boolean isTransparent() {
         return transparency;
     }
@@ -41,6 +42,14 @@ public class RenderGroup {
         this.transparency = transparency;
     }
 
+    public boolean hasAdjacencyMesh(){
+        return adj;
+    }
+    
+    public void setAdjacencyMesh(boolean adj){
+        this.adj = adj;
+    }
+    
     public boolean ifCastsShadows() {
         return shadows;
     }

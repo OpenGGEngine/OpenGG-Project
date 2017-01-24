@@ -70,20 +70,20 @@ void genPhong(int vertNum){
 
 
 void main(){
-    if(mode == 6){
-        
-    }
     for(int i = 0; i < gl_in.length(); i++){
         vec4 temppos = gl_in[i].gl_Position;
-        
-        if(mode != 2 && mode != 5){     
-            genPhong(i);
-        }
+ 
+        genPhong(i);
+		
         vertexColor = vertexColors[i];
         textureCoord = textureCoords[i];
         pos = vec4(poss[i], 1.0f);
         gl_Position = temppos;
+		
         EmitVertex();
+		if(i % 3 == 2){
+			EndPrimitive();
+		}
     }
     
 };

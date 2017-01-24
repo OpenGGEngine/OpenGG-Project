@@ -30,12 +30,13 @@ public class OpenGG implements ConsoleListener{
     public static Window window;
     public static GGApplication app;
     public static World curworld;
+    public static boolean lwjglinit = false;
     static Date startTime;
     static boolean end = false;
     static boolean force = false;
     static boolean verbose = false;
     static boolean test = false;
-    
+      
     public static void initialize(GGApplication app, WindowInfo windowinfo){       
         
         startTime = Calendar.getInstance().getTime();
@@ -51,6 +52,8 @@ public class OpenGG implements ConsoleListener{
             writeLog();
             System.exit(0);
         }
+        
+        lwjglinit = true;
         
         String verb = System.getProperty("gg.verbose");
         String stest = System.getProperty("gg.istest");

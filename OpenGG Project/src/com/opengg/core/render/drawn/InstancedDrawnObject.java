@@ -72,7 +72,7 @@ public class InstancedDrawnObject extends DrawnObject implements Drawable {
         
         ivbo = new VertexBufferObject();
         ivbo.bind(GL_ARRAY_BUFFER);
-        ivbo.uploadData(adj ? GL_TRIANGLES_ADJACENCY : GL_TRIANGLES, inst, GL_STATIC_DRAW);
+        ivbo.uploadData(GL_ARRAY_BUFFER, inst, GL_STATIC_DRAW);
     }
   
     @Override
@@ -87,7 +87,7 @@ public class InstancedDrawnObject extends DrawnObject implements Drawable {
         evbo.bind(GL_ELEMENT_ARRAY_BUFFER);
         ShaderController.defInstancedVertexAttributes(ivbo);
         ShaderController.setInstanced(true);
-        glDrawArraysInstanced(GL_TRIANGLES,0,ind.limit(), instnum);
+        glDrawArraysInstanced(adj ? GL_TRIANGLES_ADJACENCY : GL_TRIANGLES,0,ind.limit(), instnum);
         ShaderController.setInstanced(false);
     }
     

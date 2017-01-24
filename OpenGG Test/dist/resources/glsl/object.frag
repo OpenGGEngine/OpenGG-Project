@@ -102,7 +102,7 @@ vec4 shadify(){
     
     if(trans < 0.2) discard;
     
-    vec3 ambient = material.ka * diffuse;
+    vec3 ambient = 0.2f * diffuse;
     
     vec3 specular = vec3(1,1,1);
     
@@ -147,14 +147,5 @@ vec4 shadify(){
 }
 
 void main() {   
-    if(mode == 0){
-        fcolor = shadify();
-    }else if(mode == 2){
-        fcolor = getTex(Kd);
-    }else if(mode == 4 || mode == 6){
-        fcolor = vec4(1,1,1,1);
-    }else{
-        fcolor = vec4(1,1,1,1);
-    }    
-    //fcolor = vec4(pos.xyz, 1);
+    fcolor = shadify();
 };

@@ -38,9 +38,9 @@ public class Mesh {
     }
     
     public Mesh(FloatBuffer fb, IntBuffer ib, Material m){
-        this.vbodata = fb;
-        this.inddata = ib;
+        updateVBO(fb, ib);
         this.m = m;
+        System.out.println("Generating mesh for " + m.name);
         makeadamnfacelist(this);
     }
     
@@ -49,5 +49,10 @@ public class Mesh {
         this.vbodata = fb;
         this.inddata = ib;
         this.m = m;
+    }
+    
+    public void updateVBO(FloatBuffer fb, IntBuffer ib){
+        vbodata = fb;
+        inddata = ib;
     }
 }

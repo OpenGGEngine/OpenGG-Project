@@ -39,14 +39,16 @@ public class ShaderController {
     
     public static void initialize(){
         try {
-            loadShader("mainvert", new File("resources\\glsl\\shader.vert").getCanonicalPath(), Program.VERTEX);
+            loadShader("mainvert", new File("resources\\glsl\\object.vert").getCanonicalPath(), Program.VERTEX);
             loadShader("passthroughvert", new File("resources\\glsl\\passthrough.vert").getCanonicalPath(), Program.VERTEX);
             
-            loadShader("maingeom", new File("resources\\glsl\\shader.geom").getCanonicalPath(), Program.GEOMETRY);
+            loadShader("maingeom", new File("resources\\glsl\\object.geom").getCanonicalPath(), Program.GEOMETRY);
             loadShader("passthroughgeom", new File("resources\\glsl\\passthrough.geom").getCanonicalPath(), Program.GEOMETRY);
             loadShader("volumegeom", new File("resources\\glsl\\volume.geom").getCanonicalPath(), Program.GEOMETRY);
+            loadShader("mainadjgeom", new File("resources\\glsl\\objectadj.geom").getCanonicalPath(), Program.GEOMETRY);
+            loadShader("passthroughadjgeom", new File("resources\\glsl\\passthroughadj.geom").getCanonicalPath(), Program.GEOMETRY);
             
-            loadShader("mainfrag", new File("resources\\glsl\\shader.frag").getCanonicalPath(), Program.FRAGMENT);
+            loadShader("mainfrag", new File("resources\\glsl\\object.frag").getCanonicalPath(), Program.FRAGMENT);
             loadShader("passthroughfrag", new File("resources\\glsl\\passthrough.frag").getCanonicalPath(), Program.FRAGMENT);
             loadShader("ppfrag", new File("resources\\glsl\\pp.frag").getCanonicalPath(), Program.FRAGMENT);  
             loadShader("cubemapfrag", new File("resources\\glsl\\cubemap.frag").getCanonicalPath(), Program.FRAGMENT);  
@@ -58,17 +60,23 @@ public class ShaderController {
         use("mainvert", "maingeom", "mainfrag");
         saveCurrentConfiguration("object");
         
+        use("mainvert", "mainadjgeom", "mainfrag");
+        saveCurrentConfiguration("adjobject");
+        
         use("passthroughvert", "passthroughgeom", "ppfrag");
         saveCurrentConfiguration("pp");
 
         use("passthroughvert", "passthroughgeom", "passthroughfrag");
         saveCurrentConfiguration("passthrough");
         
+        use("passthroughvert", "passthroughadjgeom", "passthroughfrag");
+        saveCurrentConfiguration("passthroughadj");
+        
         use("passthroughvert", "passthroughgeom", "cubemapfrag");
         saveCurrentConfiguration("sky");
         
         use("passthroughvert", "volumegeom", "passthroughfrag");
-        saveCurrentConfiguration("sky");
+        saveCurrentConfiguration("volume");
         
         initVertexAttributes();
         GGConsole.log("Default shaders loaded and validated");
@@ -451,6 +459,7 @@ public class ShaderController {
             for(String s : searched){
                 p.findUniformLocation(s);
             }
+            p.checkStatus();
             return true;
         } catch (UnsupportedEncodingException ex) {
             GGConsole.error("Failed to load shader: " + name);

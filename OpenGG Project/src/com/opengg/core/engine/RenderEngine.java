@@ -13,13 +13,12 @@ import com.opengg.core.render.VertexArrayObject;
 import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.render.drawn.DrawnObject;
 import com.opengg.core.render.objects.ObjectBuffers;
-import com.opengg.core.render.shader.Mode;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.texture.Cubemap;
 import com.opengg.core.render.texture.FramebufferTexture;
 import com.opengg.core.render.texture.TextureManager;
+import com.opengg.core.world.components.ModelRenderComponent;
 import com.opengg.core.world.components.Renderable;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import static org.lwjgl.opengl.GL11.*;
@@ -38,6 +37,7 @@ import static org.lwjgl.opengl.GL32.GL_TEXTURE_CUBE_MAP_SEAMLESS;
 public class RenderEngine {
     static List<RenderGroup> groups = new ArrayList<>();
     static RenderGroup dlist;
+    static RenderGroup adjdlist;
     static boolean shadVolumes = false;
     static Drawable sceneQuad;
     static Drawable skybox;
@@ -58,7 +58,11 @@ public class RenderEngine {
         sceneTex = FramebufferTexture.getFramebuffer(OpenGG.window.getWidth(), OpenGG.window.getHeight());
         sceneQuad = new DrawnObject(ObjectBuffers.getSquareUI(-1, 1, -1, 1, 1f, 1, false));    
         dlist = new RenderGroup();
+        adjdlist = new RenderGroup();
+        adjdlist.setAdjacencyMesh(true);
+        
         groups.add(dlist);
+        groups.add(adjdlist);
         
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -98,7 +102,11 @@ public class RenderEngine {
     }
     
     public static void addRenderable(Renderable r){
-        dlist.add(r);
+        if(r instanceof ModelRenderComponent && ((ModelRenderComponent)r).getModel().getMeshes().get(0).adjacency){
+            adjdlist.add(r);
+        }else{
+            dlist.add(r);
+        }
     }
     
     public static void setSkybox(Drawable sky, Cubemap c){
@@ -126,7 +134,7 @@ public class RenderEngine {
         glDepthMask(true);
         glDisable(GL_DEPTH_TEST);
         glDrawBuffer(GL_NONE);
-        ShaderController.setMode(Mode.POS_ONLY);
+        ShaderController.useConfiguration("passthrough");
         groups.stream().filter(group -> group.shadows).forEach((group) -> {
             group.render();
         });
@@ -135,7 +143,7 @@ public class RenderEngine {
     private static void cullShadowFaces(){
         glEnable(GL_STENCIL_TEST);
 
-        ShaderController.setMode(Mode.SHADOW);
+        ShaderController.useConfiguration("volume");
         glDepthMask(false);
         glEnable(GL_DEPTH_CLAMP); 
         glDisable(GL_CULL_FACE);
@@ -170,8 +178,6 @@ public class RenderEngine {
             glEnable(GL_CULL_FACE);   
         }
         
-        
-        ShaderController.setMode(Mode.OBJECT);
         if(!cull){
             glDisable(GL_CULL_FACE); 
         }
@@ -186,12 +192,13 @@ public class RenderEngine {
         }).forEach((d) -> {
             ShaderController.setDistanceField(d.isText());
             ShaderController.setMode(d.getMode());
-            
+            if(d.hasAdjacencyMesh()){
+                ShaderController.useConfiguration("adjobject");
+            }else{
+                ShaderController.useConfiguration("object");
+            }
             d.render();
         });
-            
-            
-        
 
         glDisable(GL_CULL_FACE); 
         ShaderController.useConfiguration("sky");
