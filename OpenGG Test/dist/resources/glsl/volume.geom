@@ -116,12 +116,12 @@ void EmitQuad(vec3 StartVertex, vec3 EndVertex)
          }
 
          // render the front cap
-         lightdir = (normalize(pos[0] - light.lightpos));
-         gl_Position = mvp * vec4((pos[0] + lightdir * epsilon), 1.0);
+         lightdir = (normalize(poss[0] - light.lightpos));
+         gl_Position = mvp * vec4((poss[0] + lightdir * epsilon), 1.0);
          EmitVertex();
 
          lightdir = (normalize(poss[2] - light.lightpos));
-         gl_Position = mvp * vec4((pos[2] + lightdir * epsilon), 1.0);
+         gl_Position = mvp * vec4((poss[2] + lightdir * epsilon), 1.0);
          EmitVertex();
 
          lightdir = (normalize(poss[4] - light.lightpos));
@@ -138,7 +138,7 @@ void EmitQuad(vec3 StartVertex, vec3 EndVertex)
          gl_Position = mvp * vec4(lightdir, 0.0);
          EmitVertex();
 
-         lightdir = pos[2] - light.lightpos;
+         lightdir = poss[2] - light.lightpos;
          gl_Position = mvp * vec4(lightdir, 0.0);
          EmitVertex();
      }

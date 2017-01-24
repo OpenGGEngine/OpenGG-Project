@@ -94,6 +94,7 @@ vec4 getTex(sampler2D tname){
 }
 
 vec4 shadify(){
+
     vec4 color = getTex(Kd);
 
     vec3 diffuse = color.rgb;

@@ -25,7 +25,7 @@ public class FramebufferTexture extends Texture {
     protected int texture2;
     protected int stencil;
     
-    int rendsizex, rendsizey;
+    int x, y;
     
     public void drawColorAttachment(){
         glDrawBuffer(GL_COLOR_ATTACHMENT0);
@@ -45,34 +45,61 @@ public class FramebufferTexture extends Texture {
     
     public static FramebufferTexture getFramebuffer(int sizex, int sizey){
         FramebufferTexture t = new FramebufferTexture();
-        t.setupTexToBuffer(sizex, sizey);
+        t.setupFramebuffer(sizex, sizey);
         return t;
     }
     
-    public int setupTexToBuffer(int sizex, int sizey){
-        //glActiveTexture(GL_TEXTURE0 + loc);
-        rendsizex = sizex;
-        rendsizey = sizey;
-        fb = glGenFramebuffers();
-        glBindFramebuffer(GL_FRAMEBUFFER, fb);
-        glDrawBuffer(GL_COLOR_ATTACHMENT0);
-        
-        
+    public void addColorTexture(){
         texture = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, texture);
-        glTexImage2D(GL_TEXTURE_2D, 0,GL_RGB, sizex, sizey, 0,GL_RGB, 
+        glTexImage2D(GL_TEXTURE_2D, 0,GL_RGB, x, y, 0,GL_RGB, 
                 GL_UNSIGNED_BYTE, (ByteBuffer) null);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texture, 0);
-        
+
+    }
+    
+    public void addStencilTarget(){
+        stencil = glGenRenderbuffers();
+        glBindRenderbuffer(GL_RENDERBUFFER, stencil);
+        glRenderbufferStorage(GL_RENDERBUFFER,
+            GL_STENCIL_INDEX, x, y);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER,
+            GL_STENCIL_ATTACHMENT,
+            GL_RENDERBUFFER, stencil);
+    }
+    
+    public void addDepthTexture(){
         depthbuffer = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, depthbuffer);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, sizex, sizey, 0, GL_DEPTH_COMPONENT, 
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, x, y, 0, GL_DEPTH_COMPONENT, 
                 GL_FLOAT, (ByteBuffer) null);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthbuffer, 0);
+    }
+    
+     public void addDepthTarget(){
+        depthbuffer = glGenRenderbuffers();
+        glBindRenderbuffer(GL_RENDERBUFFER, depthbuffer);
+        glRenderbufferStorage(GL_RENDERBUFFER,
+            GL_DEPTH_COMPONENT32, x, y);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER,
+            GL_DEPTH_ATTACHMENT,
+            GL_RENDERBUFFER, depthbuffer);
+    }
+    
+    public int setupFramebuffer(int sizex, int sizey){
+        x = sizex;
+        y = sizey;
+        fb = glGenFramebuffers();
+        glBindFramebuffer(GL_FRAMEBUFFER, fb);
+        glDrawBuffer(GL_COLOR_ATTACHMENT0);
+        
+        addColorTexture();
+        addDepthTexture();
+        addStencilTarget();
         
         try{
             if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE){
@@ -91,8 +118,8 @@ public class FramebufferTexture extends Texture {
         //glActiveTexture(GL_TEXTURE0 + loc);
         glBindTexture(GL_TEXTURE_2D, 0);
         glBindFramebuffer(GL_FRAMEBUFFER, fb);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glViewport(0,0,rendsizex, rendsizey); 
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        glViewport(0,0,x, y); 
     }
     
     public void endTexRender(){

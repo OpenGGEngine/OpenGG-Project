@@ -51,7 +51,8 @@ public class ShaderController {
             loadShader("mainfrag", new File("resources\\glsl\\object.frag").getCanonicalPath(), Program.FRAGMENT);
             loadShader("passthroughfrag", new File("resources\\glsl\\passthrough.frag").getCanonicalPath(), Program.FRAGMENT);
             loadShader("ppfrag", new File("resources\\glsl\\pp.frag").getCanonicalPath(), Program.FRAGMENT);  
-            loadShader("cubemapfrag", new File("resources\\glsl\\cubemap.frag").getCanonicalPath(), Program.FRAGMENT);  
+            loadShader("cubemapfrag", new File("resources\\glsl\\cubemap.frag").getCanonicalPath(), Program.FRAGMENT); 
+            loadShader("ambientfrag", new File("resources\\glsl\\ambient.frag").getCanonicalPath(), Program.FRAGMENT);  
         } catch (IOException ex) {
             GGConsole.error("Failed to find default shaders!");
             throw new RuntimeException();
@@ -62,6 +63,12 @@ public class ShaderController {
         
         use("mainvert", "mainadjgeom", "mainfrag");
         saveCurrentConfiguration("adjobject");
+        
+        use("mainvert", "maingeom", "ambientfrag");
+        saveCurrentConfiguration("ambient");
+        
+        use("mainvert", "mainadjgeom", "ambientfrag");
+        saveCurrentConfiguration("adjambient");
         
         use("passthroughvert", "passthroughgeom", "ppfrag");
         saveCurrentConfiguration("pp");

@@ -117,7 +117,7 @@ public class OpenGGTest extends GGApplication implements KeyboardListener, Mouse
 
         ParticleSystem p = new ParticleSystem(2f,20f,100f,ObjectCreator.createOldModelBuffer(OpenGGTest.class.getResource("res/models/deer.obj")), t3);
         
-        ModelRenderComponent r = new ModelRenderComponent(ModelLoader.loadModel("C:/res/bigbee/model.bmf"));
+        ModelRenderComponent r = new ModelRenderComponent(ModelLoader.loadModel("C:/res/bigbee/model.bmf"));//"C:/res/bobomb/bobomb.bmf"));
         r.setScale(new Vector3f(50,50,50));
 
         TriggerableAudioComponent test3 = new TriggerableAudioComponent(so2);
@@ -140,7 +140,7 @@ public class OpenGGTest extends GGApplication implements KeyboardListener, Mouse
         RenderEngine.addRenderable(p);
         RenderEngine.addRenderable(r);
         RenderEngine.addRenderGroup(text);
-        
+        RenderEngine.setCulling(false);
     }
     
     @Override
@@ -158,7 +158,7 @@ public class OpenGGTest extends GGApplication implements KeyboardListener, Mouse
         c.setPos(pos);
         c.setRot(rot);
 
-        ShaderController.setLightPos(new Vector3f(40, 100, 40));
+        ShaderController.setLightPos(new Vector3f(40, 200, 40));
         ShaderController.setView(c);
         ShaderController.setPerspective(90, OpenGG.window.getRatio(), 1, 5000f);
         
