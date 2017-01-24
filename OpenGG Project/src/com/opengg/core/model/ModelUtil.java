@@ -182,7 +182,7 @@ public class ModelUtil {
             vertex = findAdjacentVertex(face, 3, mesh.faces);
             index = indexMap.get(vertex);
             indices.put(index);
-        }
+        }     
         indices.flip();
 
         mesh.updateVBO(verticeAttributes, indices);
@@ -278,26 +278,35 @@ public class ModelUtil {
         List<Face> faces = new ArrayList<>();
             
         List<FaceVertex> vertices = new ArrayList<>();
-              
+        mesh.inddata.rewind();
+        mesh.vbodata.rewind();
         for(int i = 0; i < mesh.inddata.limit(); i++){
             int index = mesh.inddata.get(i);
+            mesh.vbodata.position(index * 12);
             
             FaceVertex fv = new FaceVertex();
-            fv.v.x = mesh.vbodata.get(index + 0);
-            fv.v.y = mesh.vbodata.get(index + 1);
-            fv.v.z = mesh.vbodata.get(index + 2);
+            fv.v.x = mesh.vbodata.get();
+            fv.v.y = mesh.vbodata.get();
+            fv.v.z = mesh.vbodata.get();
 
-            fv.n.x = mesh.vbodata.get(index + 7);
-            fv.n.y = mesh.vbodata.get(index + 8);
-            fv.n.z = mesh.vbodata.get(index + 9);
+            mesh.vbodata.get();
+            mesh.vbodata.get();
+            mesh.vbodata.get();
+            mesh.vbodata.get();
+            
+            fv.n.x = mesh.vbodata.get();
+            fv.n.y = mesh.vbodata.get();
+            fv.n.z = mesh.vbodata.get();
       
-            fv.t.x = mesh.vbodata.get(index + 10);
-            fv.t.y = mesh.vbodata.get(index + 11);
+            fv.t.x = mesh.vbodata.get();
+            fv.t.y = mesh.vbodata.get();
             
             
             vertices.add(fv);
+            
         }
-
+        mesh.vbodata.rewind();
+        
         for(int i = 0; i < vertices.size(); i += 3){
             Face f = new Face();
 

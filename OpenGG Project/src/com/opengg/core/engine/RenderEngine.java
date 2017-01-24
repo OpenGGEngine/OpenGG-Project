@@ -134,8 +134,8 @@ public class RenderEngine {
         glDepthMask(true);
         glDisable(GL_DEPTH_TEST);
         glDrawBuffer(GL_NONE);
-        ShaderController.useConfiguration("passthrough");
-        groups.stream().filter(group -> group.shadows).forEach((group) -> {
+        ShaderController.useConfiguration("passthroughadj");
+        groups.stream().filter(group -> group.adj).forEach((group) -> {
             group.render();
         });
     }
@@ -151,7 +151,7 @@ public class RenderEngine {
         glStencilOpSeparate(GL_BACK, GL_KEEP, GL_INCR_WRAP, GL_KEEP);
         glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_DECR_WRAP, GL_KEEP); 
         
-        groups.stream().filter(group -> group.shadows).forEach((group) -> {
+        groups.stream().filter(group -> group.adj).forEach((group) -> {
             group.render();
         });
 
@@ -201,15 +201,11 @@ public class RenderEngine {
         });
 
         glDisable(GL_CULL_FACE); 
+        glDisable(GL_STENCIL_TEST);
         ShaderController.useConfiguration("sky");
         skytex.use(0);
         skybox.draw();
-        glEnable(GL_CULL_FACE); 
-        
-        if(shadVolumes){
-            glDisable(GL_STENCIL_TEST);
-        }
-        
+        glEnable(GL_CULL_FACE);        
         sceneTex.endTexRender();
         glDisable(GL_CULL_FACE);
         GUI.startGUIPos();

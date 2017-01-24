@@ -210,7 +210,7 @@ public class ModelLoader {
         
         Model m = new Model(getFileName(path), meshes);
         for(Mesh me : m.getMeshes()){
-            //ModelUtil.findAdjacencies(me);
+            ModelUtil.findAdjacencies(me);
         }
         GGConsole.log("Done Parsing " + path + ", got " +m.getName());
         return m;

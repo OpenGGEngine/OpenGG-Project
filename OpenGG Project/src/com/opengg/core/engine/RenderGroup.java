@@ -21,7 +21,7 @@ public class RenderGroup {
     
     boolean transparency = false;
     boolean distancefield;
-    boolean shadows = true;
+    boolean shadows = false;
     boolean adj = false;
     int order = 5;
     Mode mode = Mode.OBJECT;

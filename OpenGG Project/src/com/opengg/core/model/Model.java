@@ -77,11 +77,11 @@ public class Model {
         List<Drawable> draws = new ArrayList<>();
         for(Mesh mesh : meshes){
             if(!mesh.hasAdjacencyData()){
-                //ModelUtil.findAdjacencies(mesh);
+                ModelUtil.findAdjacencies(mesh);
             }
-            ModelUtil.makeadamnvbo(mesh);
+            ModelUtil.makeadamnadjacencyvbo(mesh);
             DrawnObject dr = new DrawnObject(mesh.vbodata, mesh.inddata);
-            //dr.setAdjacency(true);
+            dr.setAdjacency(true);
             draws.add(new MatDrawnObject(dr, mesh.m));
         }
         drawable = new DrawnObjectGroup(draws);

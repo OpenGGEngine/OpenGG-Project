@@ -140,7 +140,6 @@ public class OpenGGTest extends GGApplication implements KeyboardListener, Mouse
         RenderEngine.addRenderable(p);
         RenderEngine.addRenderable(r);
         RenderEngine.addRenderGroup(text);
-        RenderEngine.setCulling(false);
         
     }
     
