@@ -20,4 +20,5 @@ public interface Window {
     public int getHeight();
     public boolean getSuccessfulConstruction();
     public int getType();
+    public void setIcon(String path) throws Exception;
 }
