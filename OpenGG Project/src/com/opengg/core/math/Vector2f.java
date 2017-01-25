@@ -5,6 +5,7 @@
  */
 package com.opengg.core.math;
 
+import static com.opengg.core.math.FastMath.isEqual;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import org.lwjgl.system.MemoryUtil;
@@ -99,9 +100,9 @@ public class Vector2f {
     public boolean equals(Object ot){
         if(ot instanceof Vector2f){
             Vector2f o = (Vector2f) ot;
-            if(o.x != this.x)
+            if(!isEqual(o.x, this.x))
                 return false;
-            if(o.y != this.y)
+            if(!isEqual(o.y, this.y))
                 return false;
             return true;
         }   

@@ -26,6 +26,7 @@ struct Material
     float ns;
 };
 
+uniform Material material;
 uniform sampler2D Kd;
 uniform sampler2D Ka;
 
@@ -43,8 +44,12 @@ void main() {
     float trans = color.a;
     
     if(trans < 0.2) discard;
-    
-    vec3 ambient = 0.1f * diffuse;
+    vec3 ambient = vec3(0.2f, 0.2f, 0.2f);
+	if(material.hasambmap){
+		ambient = vec3(getTex(Ka).rgb);
+	}else{
+		//ambient = material.ka;
+	}
 	
-	fcolor = vec4(ambient.xyz, trans);
+	fcolor = vec4(ambient * diffuse, trans);
 };

@@ -13,8 +13,6 @@ in vertexData{
     float visibility;
 };
 
-
-
 void main() {   
-    fcolor = vec4(1,1,1,1);
+    fcolor = vec4(1,1,1,0.1);
 };

@@ -117,8 +117,8 @@ public class OpenGGTest extends GGApplication implements KeyboardListener, Mouse
 
         ParticleSystem p = new ParticleSystem(2f,20f,100f,ObjectCreator.createOldModelBuffer(OpenGGTest.class.getResource("res/models/deer.obj")), t3);
         
-        ModelRenderComponent r = new ModelRenderComponent(ModelLoader.loadModel("C:/res/bigbee/model.bmf"));//"C:/res/bobomb/bobomb.bmf"));
-        r.setScale(new Vector3f(50,50,50));
+        ModelRenderComponent r = new ModelRenderComponent(ModelLoader.loadModel("C:/res/awp/Model.bmf"));//"C:/res/bobomb/bobomb.bmf"));
+        //r.setScale(new Vector3f(2,2,20));
 
         TriggerableAudioComponent test3 = new TriggerableAudioComponent(so2);
         KeyTrigger t = new KeyTrigger(KEY_P, KEY_I);

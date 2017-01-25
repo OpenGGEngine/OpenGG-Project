@@ -6,6 +6,7 @@
 
 package com.opengg.core.render.texture;
 
+import com.opengg.core.engine.GGConsole;
 import com.opengg.core.engine.OpenGG;
 import java.nio.ByteBuffer;
 import static org.lwjgl.opengl.GL11.*;
@@ -23,7 +24,6 @@ public class FramebufferTexture extends Texture {
     protected int fb;
     protected int depthbuffer;
     protected int texture2;
-    protected int stencil;
     
     int x, y;
     
@@ -58,16 +58,16 @@ public class FramebufferTexture extends Texture {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texture, 0);
 
-    }
+    } 
     
-    public void addStencilTarget(){
-        stencil = glGenRenderbuffers();
-        glBindRenderbuffer(GL_RENDERBUFFER, stencil);
-        glRenderbufferStorage(GL_RENDERBUFFER,
-            GL_STENCIL_INDEX, x, y);
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER,
-            GL_STENCIL_ATTACHMENT,
-            GL_RENDERBUFFER, stencil);
+    public void addDepthStencilTexture(){
+        depthbuffer = glGenTextures();
+        glBindTexture(GL_TEXTURE_2D, depthbuffer);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, x, y, 0, GL_DEPTH_STENCIL, 
+                GL_UNSIGNED_INT_24_8, (ByteBuffer) null);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, depthbuffer, 0);
     }
     
     public void addDepthTexture(){
@@ -98,11 +98,14 @@ public class FramebufferTexture extends Texture {
         glDrawBuffer(GL_COLOR_ATTACHMENT0);
         
         addColorTexture();
-        addDepthTexture();
-        addStencilTarget();
+        addDepthStencilTexture();
         
         try{
-            if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE){
+            int i = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+            if( i != GL_FRAMEBUFFER_COMPLETE){
+                if(i == GL_FRAMEBUFFER_UNSUPPORTED){
+                    GGConsole.error("Framebuffer generation failed: Framebuffer unsupported");
+                }
                 throw new Exception("Buffer failed to generate!");
                 
             }
@@ -115,7 +118,6 @@ public class FramebufferTexture extends Texture {
     }
     
     public void startTexRender(){
-        //glActiveTexture(GL_TEXTURE0 + loc);
         glBindTexture(GL_TEXTURE_2D, 0);
         glBindFramebuffer(GL_FRAMEBUFFER, fb);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);

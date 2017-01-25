@@ -67,6 +67,7 @@ public class RenderEngine {
         groups.add(adjdlist);
         
         glEnable(GL_BLEND);
+        glBlendEquation(GL_FUNC_ADD);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LEQUAL);
@@ -135,7 +136,7 @@ public class RenderEngine {
     private static void getShadowStencil(){
         glDepthMask(true);
         glDrawBuffer(GL_NONE);
-        ShaderController.useConfiguration("passthroughadj");
+        ShaderController.useConfiguration("adjpassthrough");
         groups.stream().filter(group -> group.adj).forEach((group) -> {
             group.render();
         });
@@ -163,29 +164,20 @@ public class RenderEngine {
     }
     
     public static void draw(){
-        //sceneTex.startTexRender();
+        sceneTex.startTexRender();
         if(shadVolumes){
             getShadowStencil();
             cullShadowFaces();
-            glDrawBuffer(GL_BACK);
+
+            sceneTex.drawColorAttachment();
             glStencilFunc(GL_EQUAL, 0x0, 0xFF);
             glStencilOpSeparate(GL_BACK, GL_KEEP, GL_KEEP, GL_KEEP);
-            //sceneTex.drawColorAttachment();
-            glEnable(GL_DEPTH_TEST);
-            glDepthMask(true);
-            
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         }else{
             glDisable(GL_STENCIL_TEST);
-            glDepthMask(true);
-            glEnable(GL_DEPTH_TEST);
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            glEnable(GL_CULL_FACE);   
         }
         
-        if(!cull){
-            glDisable(GL_CULL_FACE); 
-        }
+        resetConfig();
         
         groups.stream().sorted((RenderGroup o1, RenderGroup o2) -> {
             if(o1.getOrder() > o2.getOrder()){
@@ -199,19 +191,19 @@ public class RenderEngine {
             ShaderController.setDistanceField(d.isText());
             ShaderController.setMode(d.getMode());
             if(d.hasAdjacencyMesh()){
-                ShaderController.useConfiguration("adjobject");
+                //ShaderController.useConfiguration("adjobject");
             }else{
-                ShaderController.useConfiguration("object");
+                //ShaderController.useConfiguration("object");
             }
-            d.render();
+            d.render(); 
         });
 
         
         if(shadVolumes){
-            glDisable(GL_STENCIL_TEST);
-            glEnable(GL_BLEND);
-            glBlendEquation(GL_FUNC_ADD);
-            glBlendFunc(GL_ONE, GL_ONE);
+            glStencilFunc(GL_NOTEQUAL, 0, 0xff);
+            
+            glDepthFunc(GL_LEQUAL);        
+            
             groups.stream().sorted((RenderGroup o1, RenderGroup o2) -> {
                 if(o1.getOrder() > o2.getOrder()){
                     return 1;
@@ -224,34 +216,49 @@ public class RenderEngine {
                 ShaderController.setDistanceField(d.isText());
                 ShaderController.setMode(d.getMode());
                 if(d.hasAdjacencyMesh()){
-                    ShaderController.useConfiguration("adjambient");
+                    //ShaderController.useConfiguration("adjambient");
                 }else{
-                    ShaderController.useConfiguration("ambient");
+                    //ShaderController.useConfiguration("ambient");
                 }
                 d.render();
             });
+            glDisable(GL_STENCIL_TEST);
         }
         
+        resetConfig();
+        
         glDisable(GL_CULL_FACE); 
-        glDisable(GL_STENCIL_TEST);
         ShaderController.useConfiguration("sky");
         skytex.use(0);
         skybox.draw();
         glEnable(GL_CULL_FACE);        
         
-//        sceneTex.endTexRender();
-//        glDisable(GL_CULL_FACE);
-//        GUI.startGUIPos();
-//        ShaderController.useConfiguration("pp");
-//        sceneTex.useTexture(0);
-//        sceneTex.useDepthTexture(1);
-//        sceneQuad.draw();
-//        ShaderController.useConfiguration("object");
-//        ShaderController.setDistanceField(true);
-//        GUI.enableGUI();
-//        GUI.render();
-//        ShaderController.setDistanceField(false);
+        sceneTex.endTexRender();
+        glDisable(GL_CULL_FACE);
+        GUI.startGUIPos();
+        ShaderController.useConfiguration("pp");
+        sceneTex.useTexture(0);
+        sceneTex.useDepthTexture(1);
+        sceneQuad.draw();
+        ShaderController.useConfiguration("object");
+        ShaderController.setDistanceField(true);
+        GUI.enableGUI();
+        GUI.render();
+        ShaderController.setDistanceField(false);
         
+    }
+    
+    public static void resetConfig(){
+        glDepthMask(true);
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LEQUAL);
+        
+        glEnable(GL_BLEND);
+        glBlendEquation(GL_FUNC_ADD);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        
+        glEnable(GL_CULL_FACE);
+        glDepthFunc(GL_LEQUAL);
     }
     
     static void destroy(){

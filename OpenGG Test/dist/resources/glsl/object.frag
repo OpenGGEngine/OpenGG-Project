@@ -110,17 +110,16 @@ vec4 shadify(){
     float specpow = 1;
     if(material.hasspecpow){
         vec4 specpowvec = getTex(Ns);
-        specpow = (1 - specpowvec.r);
+        specpow = (specpowvec.r);
     }else{
         specpow = material.ns;
     }
-
+	specpow = 5;
     if(material.hasspecmap){
         specular = getTex(Ks).rgb;
     }else{
         specular = material.ks;
     }
-    specular = vec3(0,0,0);
     float distance = length( light.lightpos - pos.xyz );
 
     vec3 n = normalize(( view * model *  vec4(norm,0.0f)).xyz);
@@ -141,8 +140,8 @@ vec4 shadify(){
     
     vec4 fragColor = 
             vec4((ambient +
-            diffuse * light.color * light.lightpower * cosTheta / distmult +
-            specular * light.color * light.lightpower * pow(cosAlpha, specpow) / distmult), trans);
+            (diffuse * light.color * light.lightpower * cosTheta / distmult) +
+            (specular * light.color * light.lightpower * pow(cosAlpha, specpow) / distmult)), trans);
  
     return fragColor;
 }

@@ -5,6 +5,7 @@
  */
 package com.opengg.core.math;
 
+import static com.opengg.core.math.FastMath.isEqual;
 import com.opengg.core.world.components.particle.Particle;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
@@ -231,11 +232,11 @@ public class Vector3f implements Serializable{
     public boolean equals(Object ot){
         if(ot instanceof Vector3f){
             Vector3f o = (Vector3f) ot;
-            if(o.x != this.x)
+            if(!isEqual(o.x, this.x))
                 return false;
-            if(o.y != this.y)
+            if(!isEqual(o.y, this.y))
                 return false;
-            if(o.z != this.z)
+            if(!isEqual(o.z, this.z))
                 return false;
             return true;
         }   

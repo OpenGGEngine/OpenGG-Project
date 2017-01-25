@@ -64,10 +64,10 @@ public class ShaderController {
         use("mainvert", "mainadjgeom", "mainfrag");
         saveCurrentConfiguration("adjobject");
         
-        use("mainvert", "maingeom", "ambientfrag");
+        use("mainvert", "passthroughgeom", "ambientfrag");
         saveCurrentConfiguration("ambient");
         
-        use("mainvert", "mainadjgeom", "ambientfrag");
+        use("mainvert", "passthroughadjgeom", "ambientfrag");
         saveCurrentConfiguration("adjambient");
         
         use("passthroughvert", "passthroughgeom", "ppfrag");
@@ -77,7 +77,7 @@ public class ShaderController {
         saveCurrentConfiguration("passthrough");
         
         use("passthroughvert", "passthroughadjgeom", "passthroughfrag");
-        saveCurrentConfiguration("passthroughadj");
+        saveCurrentConfiguration("adjpassthrough");
         
         use("passthroughvert", "passthroughgeom", "cubemapfrag");
         saveCurrentConfiguration("sky");
