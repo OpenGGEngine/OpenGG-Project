@@ -10,6 +10,7 @@ import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.render.drawn.DrawnObject;
 import com.opengg.core.render.drawn.DrawnObjectGroup;
 import com.opengg.core.render.drawn.MatDrawnObject;
+import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -25,6 +26,7 @@ import java.util.List;
  * @author Warren
  */
 public class Model {
+    public static int mversion = 1;
     private String name;
     private List<Mesh> meshes = new ArrayList<>();
     private Drawable drawable = null;
@@ -65,46 +67,52 @@ public class Model {
             List<Face> faces = ModelUtil.builderToFace(currentFaceList);         
             
             Mesh obj = new Mesh(faces, material);
+            ModelUtil.findAdjacencies(obj);
             meshes.add(obj);
         }
     }
 
-    public Drawable getDrawable(){
-        if(drawable != null)
-            return drawable;
-        
+    public void generateDrawable(){
         GGConsole.log("Drawable for " + name + " has been requested, loading textures...");
         List<Drawable> draws = new ArrayList<>();
         for(Mesh mesh : meshes){
-            if(!mesh.hasAdjacencyData()){
-                ModelUtil.findAdjacencies(mesh);
-            }
-            ModelUtil.makeadamnadjacencyvbo(mesh);
             DrawnObject dr = new DrawnObject(mesh.vbodata, mesh.inddata);
             dr.setAdjacency(true);
             draws.add(new MatDrawnObject(dr, mesh.m));
         }
         drawable = new DrawnObjectGroup(draws);
+    }
+    
+    public Drawable getDrawable(){
+        if(drawable != null)
+            return drawable;
+        generateDrawable();
         return drawable;
     }
 
     public void putData(String path) throws FileNotFoundException, IOException {
         FileOutputStream ps;
-
+        ModelUtil.makeadamnvbo(meshes);
         ps = new FileOutputStream(path + name + ".bmf");
-        try (DataOutputStream dos = new DataOutputStream(ps)) {
+        try (DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(ps))) {
+            //dos.writeInt(mversion);
             dos.writeInt(meshes.size());
             for (Mesh m : meshes) {
-                FloatBuffer fs = m.vbodata;
-                IntBuffer ib = m.inddata;
-                
-                dos.writeInt(fs.capacity());
-                for (float f : fs.array()) {
+                dos.writeInt(m.vbodata.capacity());
+                for (float f : m.vbodata.array()) {
                     dos.writeFloat(f);
                 }
-                dos.writeInt(ib.capacity());
-                for (int i : ib.array()) {
+                
+                dos.writeInt(m.inddata.capacity());
+                for (int i : m.inddata.array()) {
                     dos.writeInt(i);
+                }
+                
+                dos.writeInt(m.faces.size());
+                for(Face f : m.faces){
+                    dos.writeInt(f.adj1);
+                    dos.writeInt(f.adj2);
+                    dos.writeInt(f.adj3);
                 }
                 m.m.toFileFormat(dos);
             }

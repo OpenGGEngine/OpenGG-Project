@@ -166,9 +166,8 @@ public class RenderEngine {
     public static void draw(){
         sceneTex.startTexRender();
         if(shadVolumes){
-            getShadowStencil();
+            getShadowStencil();        
             cullShadowFaces();
-
             sceneTex.drawColorAttachment();
             glStencilFunc(GL_EQUAL, 0x0, 0xFF);
             glStencilOpSeparate(GL_BACK, GL_KEEP, GL_KEEP, GL_KEEP);
@@ -191,9 +190,9 @@ public class RenderEngine {
             ShaderController.setDistanceField(d.isText());
             ShaderController.setMode(d.getMode());
             if(d.hasAdjacencyMesh()){
-                //ShaderController.useConfiguration("adjobject");
+                ShaderController.useConfiguration("adjobject");
             }else{
-                //ShaderController.useConfiguration("object");
+                ShaderController.useConfiguration("object");
             }
             d.render(); 
         });
@@ -216,9 +215,9 @@ public class RenderEngine {
                 ShaderController.setDistanceField(d.isText());
                 ShaderController.setMode(d.getMode());
                 if(d.hasAdjacencyMesh()){
-                    //ShaderController.useConfiguration("adjambient");
+                    ShaderController.useConfiguration("adjambient");
                 }else{
-                    //ShaderController.useConfiguration("ambient");
+                    ShaderController.useConfiguration("ambient");
                 }
                 d.render();
             });

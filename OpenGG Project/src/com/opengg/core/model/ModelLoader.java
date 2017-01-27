@@ -44,12 +44,14 @@ public class ModelLoader {
     public static Model forceLoadModel(String path) throws FileNotFoundException, IOException {
         
         GGConsole.log("Loading model at " + path + "...");
-        ArrayList<Mesh> meshes;
+        ArrayList<Mesh> meshes = new ArrayList<>();
         try (DataInputStream in = new DataInputStream(new BufferedInputStream(new FileInputStream(path)))) {
             String texpath = path.substring(0, path.lastIndexOf("/") + 1) + "tex/";
-            meshes = new ArrayList<>();
+            
+            //int ver = in.readInt();
+            //System.out.println(ver);
             int id =  in.readInt();
-            for (int si = 0; si < id; si++) {
+            for (int si = 0; si < id; si++) {     
                 int fbcap = in.readInt();
                 FloatBuffer f = MemoryUtil.memAllocFloat(fbcap);
                 for (int i = 0; i < fbcap; i++)
@@ -64,6 +66,12 @@ public class ModelLoader {
                     inb.put(in.readInt());
                 }
                 inb.flip();
+
+                int fam = in.readInt();
+                int[] adjs = new int[fam * 3];
+                for(int i = 0; i < fam * 3; i++){
+                    adjs[i] = in.readInt();
+                }
                 
                 int len = in.readInt();
                 String name = "";
@@ -204,14 +212,12 @@ public class ModelLoader {
                 } else {
                     m.reflFilename = null;
                 }
-                meshes.add(new Mesh(f, inb, m));
+                
+                meshes.add(new Mesh(f, inb, m, adjs));
             }
         }
         
         Model m = new Model(getFileName(path), meshes);
-        for(Mesh me : m.getMeshes()){
-            ModelUtil.findAdjacencies(me);
-        }
         GGConsole.log("Done Parsing " + path + ", got " +m.getName());
         return m;
     }

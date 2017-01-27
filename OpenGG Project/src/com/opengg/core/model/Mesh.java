@@ -5,8 +5,7 @@
  */
 package com.opengg.core.model;
 
-import static com.opengg.core.model.ModelUtil.makeadamnfacelist;
-import static com.opengg.core.model.ModelUtil.makeadamnvbo;
+import static com.opengg.core.model.ModelUtil.*;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
@@ -40,8 +39,16 @@ public class Mesh {
     public Mesh(FloatBuffer fb, IntBuffer ib, Material m){
         updateVBO(fb, ib);
         this.m = m;
-        System.out.println("Generating mesh for " + m.name);
         makeadamnfacelist(this);
+        findAdjacencies(this);
+        makeadamnadjacencyvbo(this);
+    }
+    
+    public Mesh(FloatBuffer fb, IntBuffer ib, Material m, int[] adjacencies){
+        updateVBO(fb, ib);
+        this.m = m;
+        makeadamnfacelist(this, adjacencies);
+        makeadamnadjacencyvbo(this);
     }
     
     public Mesh(FloatBuffer fb, IntBuffer ib, List<Face> faces, Material m){

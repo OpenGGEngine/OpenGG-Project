@@ -49,13 +49,12 @@ public class ModelUtil {
         }
         
         for(int ii = 0; ii < edges.size(); ii++){
-            badpractice : for(int j = ii + 1; j < edges.size(); j++){
+            for(int j = ii + 1; j < edges.size(); j++){
                 Edge e1 = edges.get(ii);
                 Edge e2 = edges.get(j);
                 if((e1.f1.equals(e2.f1) && e1.f2.equals(e2.f2)) || (e1.f1.equals(e2.f2) && e1.f2.equals(e2.f1))){
                     e1.adjfaceid = e2.faceid;
                     e2.adjfaceid = e1.faceid;
-                    //break badpractice;
                 }
             }
         }
@@ -122,7 +121,7 @@ public class ModelUtil {
             
         }
 
-        FloatBuffer verticeAttributes = FloatBuffer.allocate(1);
+        FloatBuffer verticeAttributes;
         if(OpenGG.lwjglinit){
             verticeAttributes = MemoryUtil.memAllocFloat(faceVertexList.size() * 12);
         }else{
@@ -150,7 +149,7 @@ public class ModelUtil {
 
         int indicesCount = mesh.faces.size() * 6;
         
-        IntBuffer indices = IntBuffer.allocate(1);
+        IntBuffer indices;
         if(OpenGG.lwjglinit){
             indices = MemoryUtil.memAllocInt(indicesCount);
         }else{
@@ -214,7 +213,7 @@ public class ModelUtil {
             }
         }       
         
-        FloatBuffer verticeAttributes = FloatBuffer.allocate(1);
+        FloatBuffer verticeAttributes;
         if(OpenGG.lwjglinit){
             verticeAttributes = MemoryUtil.memAllocFloat(faceVertexList.size() * 12);
         }else{
@@ -243,7 +242,7 @@ public class ModelUtil {
         
         
         int indicesCount = mesh.faces.size() * 3;
-        IntBuffer indices = IntBuffer.allocate(1);
+        IntBuffer indices;
         if(OpenGG.lwjglinit){
             indices = MemoryUtil.memAllocInt(indicesCount);
         }else{
@@ -273,7 +272,17 @@ public class ModelUtil {
             makeadamnvbo(mesh);
         });
     }
-
+    public static void makeadamnfacelist(Mesh mesh, int[] adjacencies){
+        makeadamnfacelist(mesh);
+        for(int i = 0; i < mesh.faces.size(); i++){
+            int j = i * 3;
+            Face f = mesh.faces.get(i);
+            f.adj1 = adjacencies[i + 0];
+            f.adj2 = adjacencies[i + 1];
+            f.adj3 = adjacencies[i + 2];
+        }
+        mesh.adjacency = true;
+    }
     public static void makeadamnfacelist(Mesh mesh){
         List<Face> faces = new ArrayList<>();
             
