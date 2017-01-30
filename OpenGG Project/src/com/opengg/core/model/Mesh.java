@@ -33,7 +33,8 @@ public class Mesh {
     public Mesh(List<Face> faces, Material m) {
         this.faces = faces;
         this.m = m;
-        makeadamnvbo(this);
+        findAdjacencies(this);
+        makeadamnadjacencyvbo(this);
     }
     
     public Mesh(FloatBuffer fb, IntBuffer ib, Material m){

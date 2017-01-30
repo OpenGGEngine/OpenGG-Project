@@ -64,7 +64,7 @@ public class OpenGGTest extends GGApplication implements KeyboardListener, Mouse
         w.width = 1280;
         w.resizable = false;
         w.type = GLFW;
-        w.vsync = true;
+        w.vsync = false;
         OpenGG.initialize(new OpenGGTest(), w);
         OpenGG.run();
     }
@@ -117,7 +117,7 @@ public class OpenGGTest extends GGApplication implements KeyboardListener, Mouse
 
         ParticleSystem p = new ParticleSystem(2f,20f,100f,ObjectCreator.createOldModelBuffer(OpenGGTest.class.getResource("res/models/deer.obj")), t3);
         
-        ModelRenderComponent r = new ModelRenderComponent(ModelLoader.loadModel("C:/res/3DSMusicPark/3DSMusicPark.bmf"));//"C:/res/awp/Model.bmf"));//
+        ModelRenderComponent r = new ModelRenderComponent(ModelLoader.loadModel("C:/res/bigbee/model.bmf"));//"C:/res/3DSMusicPark/3DSMusicPark.bmf"));//"C:/res/awp/Model.bmf"));//
         r.setScale(new Vector3f(50,50,50));
 
         TriggerableAudioComponent test3 = new TriggerableAudioComponent(so2);

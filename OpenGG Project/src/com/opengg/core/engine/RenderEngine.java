@@ -21,10 +21,12 @@ import com.opengg.core.world.components.ModelRenderComponent;
 import com.opengg.core.world.components.Renderable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL14.GL_DECR_WRAP;
 import static org.lwjgl.opengl.GL14.GL_FUNC_ADD;
 import static org.lwjgl.opengl.GL14.GL_INCR_WRAP;
+import static org.lwjgl.opengl.GL14.GL_MAX;
 import static org.lwjgl.opengl.GL14.glBlendEquation;
 import static org.lwjgl.opengl.GL20.glStencilOpSeparate;
 import static org.lwjgl.opengl.GL30.GL_MAJOR_VERSION;
@@ -163,22 +165,8 @@ public class RenderEngine {
         
     }
     
-    public static void draw(){
-        sceneTex.startTexRender();
-        if(shadVolumes){
-            getShadowStencil();        
-            cullShadowFaces();
-            sceneTex.drawColorAttachment();
-            glStencilFunc(GL_EQUAL, 0x0, 0xFF);
-            glStencilOpSeparate(GL_BACK, GL_KEEP, GL_KEEP, GL_KEEP);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        }else{
-            glDisable(GL_STENCIL_TEST);
-        }
-        
-        resetConfig();
-        
-        groups.stream().sorted((RenderGroup o1, RenderGroup o2) -> {
+    public static void sortOrders(){
+        groups = groups.stream().sorted((RenderGroup o1, RenderGroup o2) -> {
             if(o1.getOrder() > o2.getOrder()){
                 return 1;
             }else if(o1.getOrder() < o2.getOrder()){
@@ -186,7 +174,25 @@ public class RenderEngine {
             }else{
                 return 0;
             }
-        }).forEach((d) -> {
+        }).collect(Collectors.toList());
+    }
+    
+    public static void draw(){
+        sceneTex.startTexRender();
+        if(shadVolumes){
+            getShadowStencil();        
+            cullShadowFaces();
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            sceneTex.drawColorAttachment();
+            glStencilFunc(GL_EQUAL, 0x0, 0xFF);
+            glStencilOpSeparate(GL_BACK, GL_KEEP, GL_KEEP, GL_KEEP);
+        }else{
+            glDisable(GL_STENCIL_TEST);
+        }
+        
+        resetConfig();
+        
+        for(RenderGroup d : groups){
             ShaderController.setDistanceField(d.isText());
             ShaderController.setMode(d.getMode());
             if(d.hasAdjacencyMesh()){
@@ -195,32 +201,22 @@ public class RenderEngine {
                 ShaderController.useConfiguration("object");
             }
             d.render(); 
-        });
-
+        }
         
         if(shadVolumes){
-            glStencilFunc(GL_NOTEQUAL, 0, 0xff);
-            
-            glDepthFunc(GL_LEQUAL);        
-            
-            groups.stream().sorted((RenderGroup o1, RenderGroup o2) -> {
-                if(o1.getOrder() > o2.getOrder()){
-                    return 1;
-                }else if(o1.getOrder() < o2.getOrder()){
-                    return -1;
-                }else{
-                    return 0;
-                }
-            }).forEach((d) -> {
+            glBlendEquation(GL_MAX);
+            glBlendFunc(GL_ONE, GL_ONE);
+
+            for(RenderGroup d : groups){
                 ShaderController.setDistanceField(d.isText());
                 ShaderController.setMode(d.getMode());
                 if(d.hasAdjacencyMesh()){
-                    ShaderController.useConfiguration("adjambient");
+                   ShaderController.useConfiguration("adjambient");
                 }else{
                     ShaderController.useConfiguration("ambient");
                 }
                 d.render();
-            });
+            }
             glDisable(GL_STENCIL_TEST);
         }
         

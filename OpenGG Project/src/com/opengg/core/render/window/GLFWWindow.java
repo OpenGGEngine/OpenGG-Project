@@ -251,4 +251,8 @@ public class GLFWWindow implements Window {
         return GLFW;
     }
 
+    @Override
+    public void setVSync(boolean vsync) {
+        glfwSwapInterval(vsync ? 1 : 0);
+    }
 }

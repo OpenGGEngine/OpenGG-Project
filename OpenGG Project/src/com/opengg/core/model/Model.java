@@ -15,8 +15,6 @@ import java.io.DataOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -41,6 +39,7 @@ public class Model {
     
     public Model(Build b) {
         name = b.getObjectName();
+        GGConsole.log(name + " has been loaded, generating meshes...");
         HashMap<String, ArrayList<BuilderFace>> facesByTextureList = new HashMap<>();
 
         for (BuilderFace face : b.faces) {
@@ -59,17 +58,18 @@ public class Model {
                 facesByTextureList.put(face.material.toString(), temp);
             }
         }
-        for (String key : facesByTextureList.keySet()) {
-            ArrayList<BuilderFace> currentFaceList = facesByTextureList.get(key);
-            currentFaceList = ModelUtil.splitQuads(currentFaceList);
-            
-            Material material = currentFaceList.get(0).material;
-            List<Face> faces = ModelUtil.builderToFace(currentFaceList);         
-            
-            Mesh obj = new Mesh(faces, material);
-            ModelUtil.findAdjacencies(obj);
-            meshes.add(obj);
-        }
+        facesByTextureList.keySet()
+            .parallelStream()
+            .map((key) -> facesByTextureList.get(key))
+            .map((currentFaceList) -> ModelUtil.splitQuads(currentFaceList))
+            .map((currentFaceList) -> {
+                Material material = currentFaceList.get(0).material;
+                List<Face> faces = ModelUtil.builderToFace(currentFaceList);
+                Mesh obj = new Mesh(faces, material);
+                return obj;})
+            .forEach((obj) -> {
+                meshes.add(obj);
+        });
     }
 
     public void generateDrawable(){
@@ -93,6 +93,7 @@ public class Model {
     public void putData(String path) throws FileNotFoundException, IOException {
         FileOutputStream ps;
         ModelUtil.makeadamnvbo(meshes);
+        GGConsole.log("Writing model data to file...");
         ps = new FileOutputStream(path + name + ".bmf");
         try (DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(ps))) {
             //dos.writeInt(mversion);
@@ -120,7 +121,7 @@ public class Model {
         ps.close();
        
         
-        System.out.println("Finished putting data for " + name);
+        GGConsole.log("Finished putting data for " + name);
     }
     
     public String getName(){

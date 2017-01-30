@@ -26,6 +26,10 @@ public class RenderGroup {
     int order = 5;
     Mode mode = Mode.OBJECT;
 
+    public RenderGroup(){
+        RenderEngine.sortOrders();
+    }
+    
     public boolean isText() {
         return distancefield;
     }
@@ -64,6 +68,7 @@ public class RenderGroup {
 
     public void setOrder(int order) {
         this.order = order;
+        RenderEngine.sortOrders();
     }
 
     public Mode getMode() {

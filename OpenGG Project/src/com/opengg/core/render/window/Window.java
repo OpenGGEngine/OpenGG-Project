@@ -21,4 +21,5 @@ public interface Window {
     public boolean getSuccessfulConstruction();
     public int getType();
     public void setIcon(String path) throws Exception;
+    public void setVSync(boolean vsync);
 }
