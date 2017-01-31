@@ -44,7 +44,7 @@ void main() {
     float trans = color.a;
     
     if(trans < 0.2) discard;
-    vec3 ambient = vec3(0.2f, 0.2f, 0.2f);
+    vec3 ambient = vec3(0.3f, 0.3f, 0.3f);
 	if(material.hasambmap){
 		ambient = vec3(getTex(Ka).rgb);
 	}else{
@@ -52,4 +52,5 @@ void main() {
 	}
 	
 	fcolor = vec4(ambient * diffuse, trans);
+	fcolor = vec4(1,1,1,1);
 };

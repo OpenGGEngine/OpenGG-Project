@@ -50,28 +50,33 @@ public class Texture {
             return t;
         }
     }
+    
     public void useTexture(int loc){
         glActiveTexture(GL_TEXTURE0 + loc);
         glBindTexture(GL_TEXTURE_2D, texture);
-    }   
+    }  
+    
     public void setLODBias(int bias){
         glActiveTexture(GL_TEXTURE9);
         glBindTexture(GL_TEXTURE_2D, texture);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS, bias);
         glActiveTexture(GL_TEXTURE0);
     }
+    
     public void setMagFilter(int filter){
         glActiveTexture(GL_TEXTURE9);
         glBindTexture(GL_TEXTURE_2D, texture);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
         glActiveTexture(GL_TEXTURE0);
     }
+    
     public void setMinFilter(int filter){
         glActiveTexture(GL_TEXTURE9);
         glBindTexture(GL_TEXTURE_2D, texture);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
         glActiveTexture(GL_TEXTURE0);
     }
+    
     public int loadFromBuffer(ByteBuffer b, int fwidth, int fheight){
         texture = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, texture);
@@ -89,6 +94,7 @@ public class Texture {
         
         return texture;
     } 
+    
     public int forceLoadTexture(String path, boolean flipped){
         
         try{
@@ -118,9 +124,11 @@ public class Texture {
         }
         return texture;
     }
+    
     public ByteBuffer getData(){
         return null;
     }
+    
     public void setAnisotropy(int level){
         if(GL.getCapabilities().GL_EXT_texture_filter_anisotropic){
             float lev = Math.min(level, glGetFloat(EXTTextureFilterAnisotropic.GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT));

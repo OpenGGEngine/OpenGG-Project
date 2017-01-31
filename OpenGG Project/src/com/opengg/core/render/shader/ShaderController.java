@@ -53,7 +53,8 @@ public class ShaderController {
             loadShader("ppfrag", new File("resources\\glsl\\pp.frag").getCanonicalPath(), Program.FRAGMENT);  
             loadShader("cubemapfrag", new File("resources\\glsl\\cubemap.frag").getCanonicalPath(), Program.FRAGMENT); 
             loadShader("ambientfrag", new File("resources\\glsl\\ambient.frag").getCanonicalPath(), Program.FRAGMENT);  
-            loadShader("blankfrag", new File("resources\\glsl\\blank.frag").getCanonicalPath(), Program.FRAGMENT);  
+            loadShader("texturefrag", new File("resources\\glsl\\texture.frag").getCanonicalPath(), Program.FRAGMENT);  
+            
         } catch (IOException ex) {
             GGConsole.error("Failed to find default shaders!");
             throw new RuntimeException();
@@ -77,14 +78,17 @@ public class ShaderController {
         use("passthroughvert", "passthroughgeom", "passthroughfrag");
         saveCurrentConfiguration("passthrough");
         
-        use("passthroughvert", "passthroughadjgeom", "blankfrag");
+        use("passthroughvert", "passthroughadjgeom", "passthroughfrag");
         saveCurrentConfiguration("adjpassthrough");
         
         use("passthroughvert", "passthroughgeom", "cubemapfrag");
         saveCurrentConfiguration("sky");
         
-        use("passthroughvert", "volumegeom", "blankfrag");
+        use("passthroughvert", "volumegeom", "passthroughfrag");
         saveCurrentConfiguration("volume");
+        
+        use("passthroughvert", "passthroughgeom", "texturefrag");
+        saveCurrentConfiguration("texture");
         
         initVertexAttributes();
         GGConsole.log("Default shaders loaded and validated");

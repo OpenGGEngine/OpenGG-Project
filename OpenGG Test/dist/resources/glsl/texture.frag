@@ -13,6 +13,11 @@ in vertexData{
     float visibility;
 };
 
+uniform sampler2D Kd;
+
+vec4 getTex(sampler2D tname){
+    return texture(tname, textureCoord);
+}
 void main() {   
-    fcolor = vec4(1,1,1,1);
+    fcolor = getTex(Kd);
 };

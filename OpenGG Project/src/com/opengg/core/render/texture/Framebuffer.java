@@ -9,10 +9,13 @@ package com.opengg.core.render.texture;
 import com.opengg.core.engine.GGConsole;
 import com.opengg.core.engine.OpenGG;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL14.GL_DEPTH_COMPONENT32;
+import static org.lwjgl.opengl.GL20.glDrawBuffers;
 import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.opengl.GL32.glFramebufferTexture;
 
@@ -20,15 +23,23 @@ import static org.lwjgl.opengl.GL32.glFramebufferTexture;
  *
  * @author Javier
  */
-public class FramebufferTexture extends Texture {
+public class Framebuffer extends Texture {
     protected int fb;
     protected int depthbuffer;
-    protected int texture2;
-    
+    protected List<Integer> textures = new ArrayList<>();
     int x, y;
     
-    public void drawColorAttachment(){
-        glDrawBuffer(GL_COLOR_ATTACHMENT0);
+    public void enableColorAttachments(){
+        int[] attachments = new int[textures.size()];
+        for(int i = 0; i < textures.size(); i++){
+            attachments[i] = GL_COLOR_ATTACHMENT0 + i;
+        }
+        glDrawBuffers(attachments);
+    }
+    
+public void useTexture(int loc, int attachment){
+        glActiveTexture(GL_TEXTURE0 + loc);
+        glBindTexture(GL_TEXTURE_2D, textures.get(attachment)); 
     }
     
     public void useDepthTexture(int loc){
@@ -43,21 +54,29 @@ public class FramebufferTexture extends Texture {
         glBlitFramebuffer(0, 0, OpenGG.window.getWidth(), OpenGG.window.getHeight(), 0, 0, OpenGG.window.getWidth(), OpenGG.window.getHeight(), GL_COLOR_BUFFER_BIT, GL_NEAREST);
     }
     
-    public static FramebufferTexture getFramebuffer(int sizex, int sizey){
-        FramebufferTexture t = new FramebufferTexture();
-        t.setupFramebuffer(sizex, sizey);
+    public static Framebuffer getFramebuffer(int sizex, int sizey){
+        Framebuffer t = new Framebuffer();
+        t.setupFramebuffer(sizex, sizey, 1);
         return t;
     }
     
-    public void addColorTexture(){
-        texture = glGenTextures();
+    public static Framebuffer getFramebuffer(int sizex, int sizey, int attachmentCount){
+        Framebuffer t = new Framebuffer();
+        t.setupFramebuffer(sizex, sizey, attachmentCount);
+        return t;
+    }
+    
+    public void addColorTarget(int attachment){
+        int texture = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, texture);
         glTexImage2D(GL_TEXTURE_2D, 0,GL_RGB, x, y, 0,GL_RGB, 
                 GL_UNSIGNED_BYTE, (ByteBuffer) null);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texture, 0);
-
+        glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + attachment, texture, 0);
+        textures.add(texture);
+        if(attachment == 0)
+            this.texture = texture;    
     } 
     
     public void addDepthStencilTexture(){
@@ -89,15 +108,18 @@ public class FramebufferTexture extends Texture {
             GL_DEPTH_ATTACHMENT,
             GL_RENDERBUFFER, depthbuffer);
     }
-    
-    public int setupFramebuffer(int sizex, int sizey){
+     
+    public void setupFramebuffer(int sizex, int sizey, int attachmentCount){
         x = sizex;
         y = sizey;
         fb = glGenFramebuffers();
         glBindFramebuffer(GL_FRAMEBUFFER, fb);
         glDrawBuffer(GL_COLOR_ATTACHMENT0);
         
-        addColorTexture();
+        for(int i = 0; i < attachmentCount; i++){
+            addColorTarget(i);
+        }
+        
         addDepthStencilTexture();
         
         try{
@@ -114,7 +136,6 @@ public class FramebufferTexture extends Texture {
         } 
         glBindTexture(GL_TEXTURE_2D, 0);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);    
-        return texture;
     }
     
     public void startTexRender(){

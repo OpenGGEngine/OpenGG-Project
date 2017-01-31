@@ -1,6 +1,7 @@
 #version 410 core
 
 layout(location = 0) out vec4 fcolor;
+layout(location = 1) out vec4 bright;
 
 in vertexData{
     vec4 vertexColor;
@@ -53,6 +54,7 @@ vec2 camerarange = vec2(1280, 960);
 vec2 screensize = vec2(1280, 960);
 
 float bias = 0.005;
+float bloomMin = 0.9;
 float vis = 1;
 mat3 cotangent_frame( vec3 N, vec3 p, vec2 uv ){
     // get edge vectors of the pixel triangle
@@ -148,5 +150,11 @@ vec4 shadify(){
 
 void main() {   
     fcolor = shadify();
+	float brightness = (fcolor.r + fcolor.g + fcolor.z) / 3.0;
+	if(brightness > bloomMin){
+		bright = fcolor;
+	}else{
+		bright = vec4(0,0,0,1);
+	}
 };
 
