@@ -15,7 +15,15 @@ import com.opengg.core.math.Vector3f;
  */
 public interface Positioned extends Component {
     public void setPosition(Vector3f pos);
-    public void setRotation(Quaternionf rot);
+    public default void setRotation(Quaternionf rot){}
+    public default void setScale(Vector3f v){}
+    
     public Vector3f getPosition();
-    public Quaternionf getRotation();
+    public default Quaternionf getRotation(){
+        return new Quaternionf();
+    }
+    public default Vector3f getScale(){
+        return new Vector3f();
+    }
+        
 }

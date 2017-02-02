@@ -6,6 +6,7 @@
 package com.opengg.core.render.postprocess;
 
 import com.opengg.core.engine.OpenGG;
+import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.texture.Framebuffer;
 
 /**
@@ -15,11 +16,21 @@ import com.opengg.core.render.texture.Framebuffer;
 public class Stage {
     String shader;
     Framebuffer buffer;
-    int order;
     
-    public Stage(String shader, int order){
+    public Stage(String shader){
         buffer = Framebuffer.getFramebuffer(OpenGG.window.getWidth(), OpenGG.window.getHeight());
         this.shader = shader;
-        this.order = order;
+    }
+    
+    public void use(){
+        PostProcessPipeline.current = this;
+        ShaderController.useConfiguration(shader);
+        buffer.enableColorAttachments();
+        buffer.startTexRender();
+    }
+    
+    public void save(int end){
+        buffer.endTexRender();
+        buffer.useTexture(end);
     }
 }

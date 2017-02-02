@@ -8,13 +8,14 @@ package com.opengg.core.world.components;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
+import com.opengg.core.render.Renderable;
 import com.opengg.core.render.drawn.Drawable;
 
 /**
  *
  * @author Javier
  */
-public class RenderComponent extends ComponentHolder implements Renderable{
+public class RenderComponent extends ComponentHolder implements Renderable, Positioned{
     Drawable g;
     private Vector3f offset = new Vector3f();
     private Vector3f scale = new Vector3f(1,1,1);
@@ -29,7 +30,7 @@ public class RenderComponent extends ComponentHolder implements Renderable{
     public void render() {
         Matrix4f m = new Matrix4f().translate(getPosition()).scale(getScale());
         g.setMatrix(m);
-        g.draw();
+        g.render();
     }
 
     public void setDrawable(Drawable d){
@@ -62,11 +63,6 @@ public class RenderComponent extends ComponentHolder implements Renderable{
     public Quaternionf getRotation() {
         //return new Quaternionf(rotoffset.multiply(parent.getRotation()));
         return parent.getRotation();
-    }
-
-    @Override
-    public Drawable getDrawable() {
-        return g;
     }
 
     @Override

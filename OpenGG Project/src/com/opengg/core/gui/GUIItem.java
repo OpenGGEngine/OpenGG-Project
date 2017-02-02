@@ -27,6 +27,6 @@ public class GUIItem {
     }
     
     public void render(){
-        d.draw();
+        d.render();
     }
 }

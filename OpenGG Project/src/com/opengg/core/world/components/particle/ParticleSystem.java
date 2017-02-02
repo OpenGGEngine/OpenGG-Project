@@ -7,13 +7,13 @@ package com.opengg.core.world.components.particle;
 
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
+import com.opengg.core.render.Renderable;
 import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.render.drawn.InstancedDrawnObject;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.util.Time;
 import com.opengg.core.world.components.Component;
 import com.opengg.core.world.components.Positioned;
-import com.opengg.core.world.components.Renderable;
 import com.opengg.core.world.components.Updatable;
 import java.nio.FloatBuffer;
 import java.util.Iterator;
@@ -26,7 +26,7 @@ import java.util.List;
  * 
  * This represents a group of particles
  */
-public class ParticleSystem implements Updatable, Renderable{
+public class ParticleSystem implements Updatable, Positioned, Renderable{
     List<Particle> particles = new LinkedList<>();
     private Vector3f offset = new Vector3f();
     private Vector3f scale = new Vector3f(1,1,1);
@@ -102,7 +102,7 @@ public class ParticleSystem implements Updatable, Renderable{
     @Override
     public void render(){
         t.useTexture(0);
-        particleobject.draw();
+        particleobject.render();
     }
     private FloatBuffer createParticleVBO(){
         Vector3f[] vs = new Vector3f[particles.size()];
@@ -122,10 +122,6 @@ public class ParticleSystem implements Updatable, Renderable{
     }
      public void setParticlesPerSecond(float p){
          pps = p;
-     }
-    @Override
-     public Drawable getDrawable(){
-         return particleobject;
      }
 
     @Override

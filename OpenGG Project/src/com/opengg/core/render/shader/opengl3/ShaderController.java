@@ -12,7 +12,7 @@ import com.opengg.core.io.FileStringLoader;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.model.Material;
-import com.opengg.core.render.Light;
+import com.opengg.core.render.light.Light;
 import com.opengg.core.render.VertexBufferObject;
 import com.opengg.core.render.shader.Mode;
 import com.opengg.core.render.window.ViewUtil;

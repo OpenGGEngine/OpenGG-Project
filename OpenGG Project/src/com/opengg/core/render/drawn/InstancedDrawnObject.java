@@ -81,7 +81,7 @@ public class InstancedDrawnObject extends DrawnObject implements Drawable {
     }
 
     @Override
-    public void draw(){    
+    public void render(){    
         ShaderController.setModel(model);       
         vbo.bind(GL_ARRAY_BUFFER);
         evbo.bind(GL_ELEMENT_ARRAY_BUFFER);

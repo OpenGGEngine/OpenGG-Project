@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package com.opengg.core.render;
+package com.opengg.core.render.light;
 
 import com.opengg.core.math.Vector3f;
 

@@ -9,17 +9,15 @@ package com.opengg.core.engine;
 import com.opengg.core.gui.GUI;
 import com.opengg.core.gui.GUIItem;
 import com.opengg.core.model.ModelManager;
+import com.opengg.core.render.Renderable;
 import com.opengg.core.render.VertexArrayObject;
 import com.opengg.core.render.drawn.Drawable;
-import com.opengg.core.render.drawn.DrawnObject;
-import com.opengg.core.render.objects.ObjectBuffers;
 import com.opengg.core.render.postprocess.PostProcessPipeline;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.texture.Cubemap;
 import com.opengg.core.render.texture.Framebuffer;
 import com.opengg.core.render.texture.TextureManager;
 import com.opengg.core.world.components.ModelRenderComponent;
-import com.opengg.core.world.components.Renderable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -100,16 +98,8 @@ public class RenderEngine {
         return groups;
     }
     
-    public static void addDrawable(DrawableContainer d){
-        dlist.add(d);
-    }
-    
-    public static void addDrawable(Drawable d){
-        dlist.add(d);
-    }
-    
     public static void addRenderable(Renderable r){
-        if(r instanceof ModelRenderComponent && ((ModelRenderComponent)r).getModel().getMeshes().get(0).adjacency){
+        if(r instanceof ModelRenderComponent){
             adjdlist.add(r);
         }else{
             dlist.add(r);
@@ -233,7 +223,7 @@ public class RenderEngine {
         glDisable(GL_CULL_FACE); 
         ShaderController.useConfiguration("sky");
         skytex.use(0);
-        skybox.draw();    
+        skybox.render();    
         GUI.startGUIPos();
         
         PostProcessPipeline.process();
@@ -259,9 +249,6 @@ public class RenderEngine {
     }
     
     static void destroy(){
-        dlist.getList().stream().forEach((d) -> {
-            d.destroy();
-        });
         TextureManager.destroy();
         GGConsole.log("Render engine has finalized");
     }

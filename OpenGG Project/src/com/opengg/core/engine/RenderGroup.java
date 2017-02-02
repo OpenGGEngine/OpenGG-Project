@@ -6,9 +6,9 @@
 
 package com.opengg.core.engine;
 
+import com.opengg.core.render.Renderable;
 import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.render.shader.Mode;
-import com.opengg.core.world.components.Renderable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +17,7 @@ import java.util.List;
  * @author Javier
  */
 public class RenderGroup {
-    List<DrawableContainer> items = new ArrayList<>();
+    List<Renderable> items = new ArrayList<>();
     
     boolean transparency = false;
     boolean distancefield;
@@ -78,23 +78,13 @@ public class RenderGroup {
     public void setMode(Mode mode) {
         this.mode = mode;
     }
-        
-    public RenderGroup add(DrawableContainer container){
-        items.add(container);
-        return this;
-    }
-    
-    public RenderGroup add(Drawable d){
-        items.add(new DrawableContainer(d));
-        return this;
-    }
-    
+
     public RenderGroup add(Renderable r){
-        items.add(new DrawableContainer(r));
+        items.add(r);
         return this;
     }
     
-    public List<DrawableContainer> getList(){
+    public List<Renderable> getList(){
         return items;
     }
     

@@ -12,7 +12,7 @@ import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.model.Material;
-import com.opengg.core.render.Light;
+import com.opengg.core.render.light.Light;
 import com.opengg.core.render.VertexBufferObject;
 import com.opengg.core.world.Camera;
 import java.io.File;
@@ -50,10 +50,12 @@ public class ShaderController {
             
             loadShader("mainfrag", new File("resources\\glsl\\object.frag").getCanonicalPath(), Program.FRAGMENT);
             loadShader("passthroughfrag", new File("resources\\glsl\\passthrough.frag").getCanonicalPath(), Program.FRAGMENT);
-            loadShader("ppfrag", new File("resources\\glsl\\pp.frag").getCanonicalPath(), Program.FRAGMENT);  
+            loadShader("ssaofrag", new File("resources\\glsl\\ssao.frag").getCanonicalPath(), Program.FRAGMENT);  
             loadShader("cubemapfrag", new File("resources\\glsl\\cubemap.frag").getCanonicalPath(), Program.FRAGMENT); 
             loadShader("ambientfrag", new File("resources\\glsl\\ambient.frag").getCanonicalPath(), Program.FRAGMENT);  
             loadShader("texturefrag", new File("resources\\glsl\\texture.frag").getCanonicalPath(), Program.FRAGMENT);  
+            loadShader("bloomfrag", new File("resources\\glsl\\bloom.frag").getCanonicalPath(), Program.FRAGMENT);  
+            loadShader("addfrag", new File("resources\\glsl\\add.frag").getCanonicalPath(), Program.FRAGMENT);  
             
         } catch (IOException ex) {
             GGConsole.error("Failed to find default shaders!");
@@ -72,8 +74,11 @@ public class ShaderController {
         use("mainvert", "passthroughadjgeom", "ambientfrag");
         saveCurrentConfiguration("adjambient");
         
-        use("passthroughvert", "passthroughgeom", "ppfrag");
-        saveCurrentConfiguration("pp");
+        use("passthroughvert", "passthroughgeom", "ssaofrag");
+        saveCurrentConfiguration("ssao");
+        
+        use("passthroughvert", "passthroughgeom", "bloomfrag");
+        saveCurrentConfiguration("bloom");
 
         use("passthroughvert", "passthroughgeom", "passthroughfrag");
         saveCurrentConfiguration("passthrough");
@@ -89,6 +94,9 @@ public class ShaderController {
         
         use("passthroughvert", "passthroughgeom", "texturefrag");
         saveCurrentConfiguration("texture");
+        
+        use("passthroughvert", "passthroughgeom", "addfrag");
+        saveCurrentConfiguration("add");
         
         initVertexAttributes();
         GGConsole.log("Default shaders loaded and validated");
@@ -132,7 +140,7 @@ public class ShaderController {
         setUniform("view", new Matrix4f());
 
         findUniform("light.lightdistance");
-        setUniform("light.lightdistance", 250f);
+        setUniform("light.lightdistance", 200f);
 
         findUniform("light.lightpower");
         setUniform("light.lightpower", 100f);

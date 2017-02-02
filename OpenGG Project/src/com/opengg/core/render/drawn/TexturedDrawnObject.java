@@ -33,9 +33,9 @@ public class TexturedDrawnObject implements Drawable{
         this.tex = t;
     }
     @Override
-    public void draw() {
+    public void render() {
         tex.useTexture(0);
-        object.draw();
+        object.render();
     }
 
     @Override

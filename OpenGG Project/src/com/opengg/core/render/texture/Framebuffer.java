@@ -47,11 +47,29 @@ public void useTexture(int loc, int attachment){
         glBindTexture(GL_TEXTURE_2D, depthbuffer);       
     }
         
-    public void blitBuffer(){
+    public void blitBuffer(Framebuffer b){
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, b.fb);   // Make sure no FBO is set as the draw framebuffer
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, fb); // Make sure your multisampled FBO is the read framebuffer
+        glBlitFramebuffer(0, 0, x, y,
+                0, 0, b.x, b.y,
+                GL_COLOR_BUFFER_BIT, GL_LINEAR);
+    }
+    
+    public void blitToBack(){
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);   // Make sure no FBO is set as the draw framebuffer
         glBindFramebuffer(GL_READ_FRAMEBUFFER, fb); // Make sure your multisampled FBO is the read framebuffer
         glDrawBuffer(GL_BACK);                       // Set the back buffer as the draw buffer
-        glBlitFramebuffer(0, 0, OpenGG.window.getWidth(), OpenGG.window.getHeight(), 0, 0, OpenGG.window.getWidth(), OpenGG.window.getHeight(), GL_COLOR_BUFFER_BIT, GL_NEAREST);
+        glBlitFramebuffer(0, 0, x, y,
+                0, 0, OpenGG.window.getWidth(), OpenGG.window.getHeight(),
+                GL_COLOR_BUFFER_BIT, GL_LINEAR);
+    }
+    
+    public void blitWithDepth(Framebuffer b){
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, b.fb);   // Make sure no FBO is set as the draw framebuffer
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, fb); // Make sure your multisampled FBO is the read framebuffer
+        glBlitFramebuffer(0, 0, x, y,
+                0, 0, b.x, b.y,
+                GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT, GL_NEAREST);
     }
     
     public static Framebuffer getFramebuffer(int sizex, int sizey){
@@ -82,7 +100,7 @@ public void useTexture(int loc, int attachment){
     public void addDepthStencilTexture(){
         depthbuffer = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, depthbuffer);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, x, y, 0, GL_DEPTH_STENCIL, 
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH32F_STENCIL8, x, y, 0, GL_DEPTH_STENCIL, 
                 GL_UNSIGNED_INT_24_8, (ByteBuffer) null);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);

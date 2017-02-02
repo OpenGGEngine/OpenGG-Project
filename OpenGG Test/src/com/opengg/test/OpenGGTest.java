@@ -96,11 +96,9 @@ public class OpenGGTest extends GGApplication implements KeyboardListener, Mouse
                 + " custodian of the stolen plans that can save her people and restore freedom to the galaxy...", f, 20f, new Vector2f(), 10, false);
         awp3 = f.loadText(g);
 
-        g = new GUIText("Turmoil has engulfed the Galactic Republic. The taxation of trade routes to outlying star systems is in dispute. \n"
-                + "\n"
+        g = new GUIText("Turmoil has engulfed the Galactic Republic. The taxation of trade routes to outlying star systems is in dispute. \n\n"
                 + " Hoping to resolve the matter with a blockade of deadly battleships, "
-                + "the greedy Trade Federation has stopped all shipping to the small planet of Naboo. \n"
-                + "\n"
+                + " the greedy Trade Federation has stopped all shipping to the small planet of Naboo. \n\n"
                 + " While the congress of the Republic endlessly debates this alarming chain of events,"
                 + " the Supreme Chancellor has secretly dispatched two Jedi Knights,"
                 + " the guardians of peace and justice in the galaxy, to settle the conflict...", f, 1f, new Vector2f(), 0.5f, false);

@@ -13,6 +13,8 @@ import com.opengg.core.render.texture.Framebuffer;
 import java.util.ArrayList;
 import java.util.List;
 import static org.lwjgl.opengl.GL11.GL_BACK;
+import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
+import static org.lwjgl.opengl.GL11.glDisable;
 import static org.lwjgl.opengl.GL11.glDrawBuffer;
 
 /**
@@ -21,32 +23,54 @@ import static org.lwjgl.opengl.GL11.glDrawBuffer;
  */
 public class PostProcessPipeline {
     static Framebuffer initial;
-    static List<Stage> stages = new ArrayList<>();
+    static List<StageSet> sets = new ArrayList<>();
     static Drawable sceneQuad;
+    static Stage current;
+    static Stage add, mult, set;
     public static void initialize(Framebuffer initial){
         PostProcessPipeline.initial = initial;
         sceneQuad = new DrawnObject(ObjectBuffers.getSquareUI(-1, 1, -1, 1, 1f, 1, false));
-        //addStage(new Stage("pp", 0));
+        
+        set = new Stage("texture");
+        add = new Stage("add");
+        
+        StageSet bloom = new StageSet(StageSet.ADD, 1);
+        bloom.addStage(new Stage("bloom"));
+        //sets.add(bloom);
     }
     
-    public static void addStage(Stage s){
-        stages.add(s);
+    public static void addStage(StageSet s){
+        sets.add(s);
     }
     
     public static void process(){
+        glDisable(GL_CULL_FACE);
+        
         initial.endTexRender();
-        initial.useTexture(0, 0);
-        initial.useTexture(1, 1);
-        for(Stage s : stages){
-            ShaderController.useConfiguration(s.shader);
-            s.buffer.enableColorAttachments();
-            s.buffer.startTexRender();
-            sceneQuad.draw();
-            s.buffer.endTexRender();
-            s.buffer.useTexture(0);
+        initial.useTexture(0, 1);
+        initial.useTexture(0, 1);
+        for(StageSet s : sets){
+            s.render();
+            switch(s.func){
+                case StageSet.SET:
+                    set.use();
+                    sceneQuad.render();
+                    set.save(0);
+                    break;
+                    
+                case StageSet.ADD:
+                    add.use();
+                    sceneQuad.render();
+                    add.save(0);
+                    break;
+                    
+            }
         }
+        if(current != null)
+            current.buffer.blitToBack();
+        else
+            initial.blitToBack();
+        
         glDrawBuffer(GL_BACK);
-        ShaderController.useConfiguration("texture");
-        sceneQuad.draw();
     }
 }
