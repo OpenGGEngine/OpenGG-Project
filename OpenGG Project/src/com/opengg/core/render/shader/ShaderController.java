@@ -29,13 +29,13 @@ import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
  * @author Javier
  */
 public class ShaderController {
+    private static Matrix4f model= new Matrix4f(), view= new Matrix4f(), proj = new Matrix4f();
     private static HashMap<String, Program> programs = new HashMap<>();
     private static HashMap<String, Pipeline> pipelines = new HashMap<>(); 
     private static HashMap<String, String> rnames = new HashMap<>();
     private static List<String> searched = new ArrayList<>();
     private static String curv, curg, curf;
-    private static float ratio;
-    private static Matrix4f model= new Matrix4f(), view= new Matrix4f(), proj = new Matrix4f();
+    private static int currentBind;
     
     public static void initialize(){
         try {
@@ -146,7 +146,7 @@ public class ShaderController {
         setUniform("light.lightpower", 100f);
 
         findUniform("light.color");
-        setUniform("light.color", new Vector3f(1,1,1));
+        setUniform("light.color", new Vector3f(1,0.5f,1));
 
         findUniform("mode");
         setUniform("mode", (int) 0);
@@ -366,6 +366,12 @@ public class ShaderController {
         programs.values().stream().filter((p) -> (p.type == Program.FRAGMENT)).forEach((p) -> {
             p.setUniform(p.getUniformLocation(s), i);
         });
+    }
+    
+    public static void setUniformBlockLocation(UniformBuffer ub, String name){
+        for(Program p : programs.values()){
+            
+        }
     }
     
     public static void checkError(){

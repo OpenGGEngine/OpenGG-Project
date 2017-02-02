@@ -12,6 +12,7 @@ import com.opengg.core.model.ModelManager;
 import com.opengg.core.render.Renderable;
 import com.opengg.core.render.VertexArrayObject;
 import com.opengg.core.render.drawn.Drawable;
+import com.opengg.core.render.light.Light;
 import com.opengg.core.render.postprocess.PostProcessPipeline;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.texture.Cubemap;
@@ -39,6 +40,7 @@ import static org.lwjgl.opengl.GL32.GL_TEXTURE_CUBE_MAP_SEAMLESS;
  */
 public class RenderEngine {
     static List<RenderGroup> groups = new ArrayList<>();
+    static List<Light> lights = new ArrayList<>();
     static RenderGroup dlist;
     static RenderGroup adjdlist;
     static boolean shadVolumes = false;
@@ -90,6 +92,10 @@ public class RenderEngine {
             glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
     }
     
+    public static void addLight(Light l){
+        lights.add(l);
+    }
+    
     public static void addRenderGroup(RenderGroup r){
         groups.add(r);
     }
@@ -126,6 +132,14 @@ public class RenderEngine {
     
     public static boolean getShadowsEnabled(){
         return shadVolumes;
+    }
+    
+    public void useLight(Light l, int loc){
+        
+    }
+    
+    public void useLight(Light l){
+        useLight(l,0);
     }
     
     private static void writeToDepth(){
