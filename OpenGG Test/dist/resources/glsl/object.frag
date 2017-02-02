@@ -50,12 +50,19 @@ uniform samplerCube cubemap;
 uniform Material material;
 uniform Light light;
 uniform int mode;
-vec2 camerarange = vec2(1280, 960);
-vec2 screensize = vec2(1280, 960);
 
 float bias = 0.005;
 float bloomMin = 0.9;
 float vis = 1;
+
+vec4 color;
+vec3 diffuse;
+float trans;
+vec3 ambient;
+vec3 specular;
+float specpow;
+vec3 n;
+
 mat3 cotangent_frame( vec3 N, vec3 p, vec2 uv ){
     // get edge vectors of the pixel triangle
     vec3 dp1 = dFdx( p );
@@ -92,43 +99,12 @@ vec4 getTex(sampler2D tname){
         vec3 colr = col.rgb;
         return vec4(colr, alpha);
     }
-    return texture(tname, textureCoord * vec2(uvmultx, uvmulty));
+    return texture(tname, textureCoord);
 }
 
 vec4 shadify(){
-
-    vec4 color = getTex(Kd);
-
-    vec3 diffuse = color.rgb;
-
-    float trans = color.a;
-    
-    if(trans < 0.2) discard;
-    
-    vec3 ambient = 0.2f * diffuse;
-    
-    vec3 specular = vec3(1,1,1);
-    
-    float specpow = 1;
-    if(material.hasspecpow){
-        vec4 specpowvec = getTex(Ns);
-        specpow = (specpowvec.r);
-    }else{
-        specpow = material.ns;
-    }
-	specpow = 5;
-    if(material.hasspecmap){
-        specular = getTex(Ks).rgb;
-    }else{
-        specular = material.ks;
-    }
+	
     float distance = length( light.lightpos - pos.xyz );
-
-    vec3 n = normalize(( view * model *  vec4(norm,0.0f)).xyz);
-    
-    if(material.hasnormmap){
-       n = calculatenormal(n,eyedir,textureCoord);
-    }
 
     vec3 l = normalize( lightdir );   
     float cosTheta = clamp( dot( n,l ), 0,1 );
@@ -141,15 +117,50 @@ vec4 shadify(){
     float distmult = ((distance*distance)/light.lightdistance); 
     
     vec4 fragColor = 
-            vec4((ambient +
-            (diffuse * light.color * light.lightpower * cosTheta / distmult) +
+            vec4(((diffuse * light.color * light.lightpower * cosTheta / distmult) +
             (specular * light.color * light.lightpower * pow(cosAlpha, specpow) / distmult)), trans);
  
     return fragColor;
 }
 
+void process(){
+	color = getTex(Kd);
+
+    diffuse = color.rgb;
+
+    trans = color.a;
+    
+    if(trans < 0.2) discard;
+    
+    ambient = 0.2f * diffuse;
+    
+    specular = vec3(1,1,1);
+    
+    specpow = 1;
+    if(material.hasspecpow){
+        vec4 specpowvec = getTex(Ns);
+        specpow = (specpowvec.r);
+    }else{
+        specpow = material.ns;
+    }
+	specpow = 5;
+    if(material.hasspecmap){
+        specular = getTex(Ks).rgb;
+    }else{
+        specular = material.ks;
+    }
+	
+	n = normalize(( view * model *  vec4(norm,0.0f)).xyz);
+    
+    if(material.hasnormmap){
+       n = calculatenormal(n,eyedir,textureCoord);
+    }
+}
+
 void main() {   
+	process();
     fcolor = shadify();
+	
 	float brightness = (fcolor.r + fcolor.g + fcolor.z) / 3.0;
 	if(brightness > bloomMin){
 		bright = fcolor;
