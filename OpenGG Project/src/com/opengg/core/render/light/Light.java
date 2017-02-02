@@ -7,6 +7,8 @@
 package com.opengg.core.render.light;
 
 import com.opengg.core.math.Vector3f;
+import java.nio.FloatBuffer;
+import org.lwjgl.system.MemoryUtil;
 
 /**
  *
@@ -16,6 +18,23 @@ public class Light {
     public Vector3f pos = new Vector3f();
     public Vector3f color = new Vector3f();
     public float distance = 10;
-    public float strength = 10;
-    public boolean shadows = false;
+    public float distance2 = 50;
+    public boolean moved = false;
+    
+    public Light(Vector3f pos, Vector3f color, float distance, float distance2){
+        this.pos = pos;
+        this.color = color;
+        this.distance = distance;
+        this.distance2 = distance2;
+    }
+    
+    public FloatBuffer getBuffer(){
+        FloatBuffer fb = MemoryUtil.memAllocFloat(8);
+        fb.put(pos.x).put(pos.y).put(pos.z);
+        fb.put(color.x).put(color.y).put(color.z);
+        fb.put(distance);
+        fb.put(distance2);
+        fb.flip();
+        return fb;
+    }
 }

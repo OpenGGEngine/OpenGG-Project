@@ -35,7 +35,7 @@ public class ShaderController {
     private static HashMap<String, String> rnames = new HashMap<>();
     private static List<String> searched = new ArrayList<>();
     private static String curv, curg, curf;
-    private static int currentBind;
+    private static int currentBind = 0;
     
     public static void initialize(){
         try {
@@ -140,16 +140,13 @@ public class ShaderController {
         setUniform("view", new Matrix4f());
 
         findUniform("light.lightdistance");
-        setUniform("light.lightdistance", 200f);
-
-        findUniform("light.lightpower");
-        setUniform("light.lightpower", 100f);
+        setUniform("light.lightdistance", 1000f);
+        
+        findUniform("numLights");
+        setUniform("numLights", 1f);
 
         findUniform("light.color");
         setUniform("light.color", new Vector3f(1,0.5f,1));
-
-        findUniform("mode");
-        setUniform("mode", (int) 0);
 
         findUniform("time");
         setUniform("time", 0f);
@@ -368,9 +365,18 @@ public class ShaderController {
         });
     }
     
-    public static void setUniformBlockLocation(UniformBuffer ub, String name){
+    public static void addUniformBuffer(UniformBufferObject ubo){
+        ubo.setBufferBindIndex(currentBind);
+        currentBind++;
+    }
+    
+    public static void setUniformBlockLocation(UniformBufferObject ubo, String name){
+        setUniformBlockLocation(ubo.index, name);
+    }
+    
+    public static void setUniformBlockLocation(int bind, String name){
         for(Program p : programs.values()){
-            
+            p.setUniformBlockIndex(bind, name);
         }
     }
     

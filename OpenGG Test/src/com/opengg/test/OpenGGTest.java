@@ -19,6 +19,7 @@ import com.opengg.core.math.Vector3f;
 import com.opengg.core.model.ModelLoader;
 import com.opengg.core.movement.MovementLoader;
 import com.opengg.core.render.drawn.MatDrawnObject;
+import com.opengg.core.render.light.Light;
 import com.opengg.core.render.objects.ObjectCreator;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.texture.Cubemap;
@@ -133,6 +134,9 @@ public class OpenGGTest extends GGApplication implements KeyboardListener, Mouse
         RenderGroup text = new RenderGroup().add(ep1);
         text.setText(true);
         
+        Light l = new Light(new Vector3f(100,100,100), new Vector3f(1,1,1), 500, 0);
+        
+        RenderEngine.addLight(l);
         RenderEngine.setSkybox(ObjectCreator.createCube(1500f), Cubemap.get("C:/res/skybox/majestic"));
         RenderEngine.addGUIItem(new GUIItem(base2, new Vector2f()));
         RenderEngine.addRenderable(p);
@@ -156,7 +160,7 @@ public class OpenGGTest extends GGApplication implements KeyboardListener, Mouse
         c.setPos(pos);
         c.setRot(rot);
 
-        ShaderController.setLightPos(new Vector3f(40, 200, 40));
+        ShaderController.setLightPos(new Vector3f(100, 100, 100));
         ShaderController.setView(c);
         ShaderController.setPerspective(90, OpenGG.window.getRatio(), 1, 5000f);
         

@@ -15,6 +15,7 @@ import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.render.light.Light;
 import com.opengg.core.render.postprocess.PostProcessPipeline;
 import com.opengg.core.render.shader.ShaderController;
+import com.opengg.core.render.shader.UniformBufferObject;
 import com.opengg.core.render.texture.Cubemap;
 import com.opengg.core.render.texture.Framebuffer;
 import com.opengg.core.render.texture.TextureManager;
@@ -41,6 +42,7 @@ import static org.lwjgl.opengl.GL32.GL_TEXTURE_CUBE_MAP_SEAMLESS;
 public class RenderEngine {
     static List<RenderGroup> groups = new ArrayList<>();
     static List<Light> lights = new ArrayList<>();
+    static UniformBufferObject lightobj;
     static RenderGroup dlist;
     static RenderGroup adjdlist;
     static boolean shadVolumes = false;
@@ -64,6 +66,10 @@ public class RenderEngine {
         dlist = new RenderGroup();
         adjdlist = new RenderGroup();
         adjdlist.setAdjacencyMesh(true);
+        
+        lightobj = new UniformBufferObject(800);
+        ShaderController.addUniformBuffer(lightobj);
+        ShaderController.setUniformBlockLocation(lightobj, "LightBuffer");
         
         groups.add(dlist);
         groups.add(adjdlist);
@@ -134,12 +140,11 @@ public class RenderEngine {
         return shadVolumes;
     }
     
-    public void useLight(Light l, int loc){
-        
-    }
-    
-    public void useLight(Light l){
-        useLight(l,0);
+    public static void useLights(){
+        for(int i = 0; i < lights.size(); i++){
+            lightobj.updateBuffer(lights.get(i).getBuffer(), i * 8);
+        }
+        ShaderController.setUniform("numLights", lights.size());
     }
     
     private static void writeToDepth(){
@@ -198,11 +203,11 @@ public class RenderEngine {
         }
         
         sceneTex.enableColorAttachments();
+        useLights();
         resetConfig();
         
         for(RenderGroup d : groups){
             ShaderController.setDistanceField(d.isText());
-            ShaderController.setMode(d.getMode());
             if(d.hasAdjacencyMesh()){
                 ShaderController.useConfiguration("adjobject");
             }else{
@@ -222,7 +227,6 @@ public class RenderEngine {
 
             for(RenderGroup d : groups){
                 ShaderController.setDistanceField(d.isText());
-                ShaderController.setMode(d.getMode());
                 if(d.hasAdjacencyMesh()){
                    ShaderController.useConfiguration("adjpassthrough");
                 }else{
@@ -244,7 +248,6 @@ public class RenderEngine {
         
         ShaderController.useConfiguration("object");
         ShaderController.setDistanceField(true);
-        GUI.enableGUI();
         GUI.render();
         ShaderController.setDistanceField(false);
         

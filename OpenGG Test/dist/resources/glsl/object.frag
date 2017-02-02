@@ -1,4 +1,5 @@
 #version 410 core
+#define LIGHTNUM 100
 
 layout(location = 0) out vec4 fcolor;
 layout(location = 1) out vec4 bright;
@@ -14,7 +15,6 @@ in vertexData{
     float visibility;
 };
 
-
 struct Material
 {
     bool hasnormmap;
@@ -26,14 +26,20 @@ struct Material
     vec3 kd;
     float ns;
 };
+
 struct Light
-{
-    float lightdistance;
-    float lightpower;
+{ 
     vec3 lightpos;
     vec3 color;
+	float lightdistance;
+	float lightdistance2;
 };
 
+layout (std140) uniform LightBuffer {
+	Light lights[LIGHTNUM];
+};
+
+uniform int numLights;
 uniform float time;
 uniform int text;
 uniform mat4 shmvp;
@@ -48,10 +54,7 @@ uniform sampler2D Ns;
 uniform sampler2D bump;
 uniform samplerCube cubemap;
 uniform Material material;
-uniform Light light;
-uniform int mode;
 
-float bias = 0.005;
 float bloomMin = 0.9;
 float vis = 1;
 
@@ -102,11 +105,14 @@ vec4 getTex(sampler2D tname){
     return texture(tname, textureCoord);
 }
 
-vec4 shadify(){
+vec3 shadify(Light light){
 	
-    float distance = length( light.lightpos - pos.xyz );
+	vec3 lightposCamera = ( view * vec4(light.lightpos,1.0f)).xyz;
+    vec3 ldir = lightposCamera + eyedir;
+	
+    float distance = 1;//length( light.lightpos - pos.xyz );
 
-    vec3 l = normalize( lightdir );   
+    vec3 l = normalize( ldir );   
     float cosTheta = clamp( dot( n,l ), 0,1 );
     
     
@@ -114,11 +120,12 @@ vec4 shadify(){
     vec3 R = reflect(-l,n);
     float cosAlpha = clamp( dot( E,R ), 0,1 );
     
-    float distmult = ((distance*distance)/light.lightdistance); 
+    float attenuation =  clamp((1.0 - distance/light.lightdistance), 0.0, 1.0);
+	attenuation = attenuation * attenuation;
     
-    vec4 fragColor = 
-            vec4(((diffuse * light.color * light.lightpower * cosTheta / distmult) +
-            (specular * light.color * light.lightpower * pow(cosAlpha, specpow) / distmult)), trans);
+    vec3 fragColor = 
+            vec3(diffuse * light.color * cosTheta * attenuation +
+            (specular * light.color * pow(cosAlpha, specpow) * attenuation));
  
     return fragColor;
 }
@@ -159,7 +166,16 @@ void process(){
 
 void main() {   
 	process();
-    fcolor = shadify();
+	vec3 col = vec3(0,0,0);
+	
+	col += shadify(lights[0]);
+	for(int i = 0; i < numLights; i++){
+		col += shadify(lights[i]);
+	}
+	
+	fcolor = vec4(col + ambient, color.a);
+	
+	fcolor = vec4(lights[0].color.x,0,0,1);
 	
 	float brightness = (fcolor.r + fcolor.g + fcolor.z) / 3.0;
 	if(brightness > bloomMin){

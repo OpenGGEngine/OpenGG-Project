@@ -7,7 +7,6 @@
 package com.opengg.core.engine;
 
 import com.opengg.core.render.Renderable;
-import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.render.shader.Mode;
 import java.util.ArrayList;
 import java.util.List;
