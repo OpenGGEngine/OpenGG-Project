@@ -22,6 +22,7 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import static org.lwjgl.opengl.GL11.glGetError;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 
 /**
@@ -61,7 +62,7 @@ public class ShaderController {
             GGConsole.error("Failed to find default shaders!");
             throw new RuntimeException();
         }
-
+        
         use("mainvert", "maingeom", "mainfrag");
         saveCurrentConfiguration("object");
         
@@ -121,9 +122,6 @@ public class ShaderController {
         findUniform("skycolor");
         setUniform("skycolor", new Vector3f(0.5f,0.5f,0.5f));
 
-        findUniform("light.lightpos");
-        setUniform("light.lightpos", new Vector3f(200,50,-10));
-
         findUniform("divAmount");
         setUniform("divAmount", 1f);
 
@@ -138,15 +136,9 @@ public class ShaderController {
 
         findUniform("view");
         setUniform("view", new Matrix4f());
-
-        findUniform("light.lightdistance");
-        setUniform("light.lightdistance", 1000f);
         
         findUniform("numLights");
-        setUniform("numLights", 1f);
-
-        findUniform("light.color");
-        setUniform("light.color", new Vector3f(1,0.5f,1));
+        setUniform("numLights", 1);
 
         findUniform("time");
         setUniform("time", 0f);
@@ -365,9 +357,10 @@ public class ShaderController {
         });
     }
     
-    public static void addUniformBuffer(UniformBufferObject ubo){
-        ubo.setBufferBindIndex(currentBind);
+    public static int getUniqueUniformBufferLocation(){
+        int n = currentBind;
         currentBind++;
+        return n;
     }
     
     public static void setUniformBlockLocation(UniformBufferObject ubo, String name){

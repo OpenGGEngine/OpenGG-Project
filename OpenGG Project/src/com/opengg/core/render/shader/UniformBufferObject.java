@@ -7,6 +7,7 @@
 package com.opengg.core.render.shader;
 
 import java.nio.FloatBuffer;
+import static org.lwjgl.opengl.GL11.glGetError;
 import static org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW;
 import static org.lwjgl.opengl.GL15.glBindBuffer;
 import static org.lwjgl.opengl.GL15.glBufferData;
@@ -28,6 +29,9 @@ public class UniformBufferObject {
     public UniformBufferObject(int size){
         this.size = size;
         FloatBuffer f = MemoryUtil.memAllocFloat(size);
+        for(int i = 0; i < size; i++){
+            f.put(0);
+        }
         f.flip();
         
         ubo = glGenBuffers();
@@ -46,16 +50,6 @@ public class UniformBufferObject {
     public void setBufferBindIndex(int index){
         this.index = index;
         glBindBufferBase(GL_UNIFORM_BUFFER, index, ubo);
-        
-        FloatBuffer f = MemoryUtil.memAllocFloat(size);
-        for(int i = 0; i < size; i++){
-            f.put(0f);
-        }
-        f.flip();
-        
-        glBindBuffer(GL_UNIFORM_BUFFER, ubo);
-        glBufferData(GL_UNIFORM_BUFFER, f, GL_DYNAMIC_DRAW);
-        glBindBuffer(GL_UNIFORM_BUFFER, 0);
     }
     
     public void updateBuffer(FloatBuffer fb, int loc){

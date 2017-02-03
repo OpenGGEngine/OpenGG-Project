@@ -34,6 +34,7 @@ import static org.lwjgl.opengl.GL30.GL_MAJOR_VERSION;
 import static org.lwjgl.opengl.GL30.GL_MINOR_VERSION;
 import static org.lwjgl.opengl.GL32.GL_DEPTH_CLAMP;
 import static org.lwjgl.opengl.GL32.GL_TEXTURE_CUBE_MAP_SEAMLESS;
+import org.lwjgl.system.MemoryUtil;
 
 /**
  *
@@ -52,11 +53,11 @@ public class RenderEngine {
     static Framebuffer sceneTex;
     static VertexArrayObject vao;
     static boolean cull = true;
+    static int lightoffset;
     
     static boolean init(){
         vao = new VertexArrayObject();
         vao.bind();
-        
         ShaderController.initialize();
         TextureManager.initialize();
         ModelManager.initialize();
@@ -68,8 +69,10 @@ public class RenderEngine {
         adjdlist.setAdjacencyMesh(true);
         
         lightobj = new UniformBufferObject(800);
-        ShaderController.addUniformBuffer(lightobj);
+        lightobj.setBufferBindIndex(ShaderController.getUniqueUniformBufferLocation());
         ShaderController.setUniformBlockLocation(lightobj, "LightBuffer");
+        
+        lightoffset = (MemoryUtil.memAllocFloat(Light.bfsize).capacity())<< 2;
         
         groups.add(dlist);
         groups.add(adjdlist);
@@ -85,6 +88,13 @@ public class RenderEngine {
         glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
         glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
         return true;
+    }
+    
+    public static void checkForGLErrors(){
+        int i = 0;
+        while((i = glGetError()) != GL_NO_ERROR){
+            GGConsole.warning("OpenGL Error code : " + i);
+        }
     }
     
     public static String getGLVersion(){
@@ -142,7 +152,7 @@ public class RenderEngine {
     
     public static void useLights(){
         for(int i = 0; i < lights.size(); i++){
-            lightobj.updateBuffer(lights.get(i).getBuffer(), i * 8);
+            lightobj.updateBuffer(lights.get(i).getBuffer(), i * lightoffset);
         }
         ShaderController.setUniform("numLights", lights.size());
     }

@@ -27,4 +27,4 @@ void main() {
 	color1 = color1 + color2;
 	
     fcolor = color1;
-};
+}

@@ -113,7 +113,7 @@ vec3 shadify(Light light){
     float distance = 1;//length( light.lightpos - pos.xyz );
 
     vec3 l = normalize( ldir );   
-    float cosTheta = clamp( dot( n,l ), 0,1 );
+    float cosTheta = clamp( dot( n,l ), 0,1f );
     
     
     vec3 E = normalize(eyedir);
@@ -168,14 +168,11 @@ void main() {
 	process();
 	vec3 col = vec3(0,0,0);
 	
-	col += shadify(lights[0]);
 	for(int i = 0; i < numLights; i++){
 		col += shadify(lights[i]);
 	}
 	
 	fcolor = vec4(col + ambient, color.a);
-	
-	fcolor = vec4(lights[0].color.x,0,0,1);
 	
 	float brightness = (fcolor.r + fcolor.g + fcolor.z) / 3.0;
 	if(brightness > bloomMin){
@@ -183,5 +180,5 @@ void main() {
 	}else{
 		bright = vec4(0,0,0,1);
 	}
-};
+}
 

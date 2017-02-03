@@ -134,9 +134,12 @@ public class OpenGGTest extends GGApplication implements KeyboardListener, Mouse
         RenderGroup text = new RenderGroup().add(ep1);
         text.setText(true);
         
-        Light l = new Light(new Vector3f(100,100,100), new Vector3f(1,1,1), 500, 0);
+        Light l = new Light(new Vector3f(100,100,100), new Vector3f(1f,0,0), 500f, 0);
+        Light l2 = new Light(new Vector3f(-100,-100,-100), new Vector3f(0,0,1f), 500f, 0);
+        
         
         RenderEngine.addLight(l);
+        RenderEngine.addLight(l2);
         RenderEngine.setSkybox(ObjectCreator.createCube(1500f), Cubemap.get("C:/res/skybox/majestic"));
         RenderEngine.addGUIItem(new GUIItem(base2, new Vector2f()));
         RenderEngine.addRenderable(p);
@@ -160,7 +163,6 @@ public class OpenGGTest extends GGApplication implements KeyboardListener, Mouse
         c.setPos(pos);
         c.setRot(rot);
 
-        ShaderController.setLightPos(new Vector3f(100, 100, 100));
         ShaderController.setView(c);
         ShaderController.setPerspective(90, OpenGG.window.getRatio(), 1, 5000f);
         

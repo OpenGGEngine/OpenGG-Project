@@ -76,13 +76,15 @@ public class OpenGG implements ConsoleListener{
         GGConsole.log("Window generation successful, using OpenGL context version " + RenderEngine.getGLVersion());
         
         initializeRenderEngine();  
-
+        RenderEngine.checkForGLErrors();
+        
         initializeAudioController();      
         
         curworld = WorldManager.getDefaultWorld();
         GGConsole.log("OpenGG initialization complete, running application setup");
         try{
             app.setup();
+            RenderEngine.checkForGLErrors();
             GGConsole.log("Application setup complete");
         }catch (Exception e){
             GGConsole.error("Uncaught exception on application setup: " + e.toString());
@@ -121,6 +123,7 @@ public class OpenGG implements ConsoleListener{
                 break;
             }
             UpdateEngine.update();
+            RenderEngine.checkForGLErrors();
             endFrame();
             //GGConsole.pollInput();
         }
