@@ -54,9 +54,13 @@ void genPhong(int vertNum){
     
     vec3 posCameraspace = ( positionRelativeToCam);
     eyedir = vec3(0,0,0) - posCameraspace;
+    
+    vec3 lightposCamera = ( view * vec4(light.lightpos,1.0f)).xyz;
+    lightdir = lightposCamera + eyedir;
 
     norm = norms[vertNum];
-
+    
+    
     float distance = length(positionRelativeToCam.xyz);
 
     visibility = exp(-pow((distance*density),gradient));

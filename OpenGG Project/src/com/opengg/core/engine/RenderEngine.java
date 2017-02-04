@@ -72,7 +72,7 @@ public class RenderEngine {
         lightobj.setBufferBindIndex(ShaderController.getUniqueUniformBufferLocation());
         ShaderController.setUniformBlockLocation(lightobj, "LightBuffer");
         
-        lightoffset = (MemoryUtil.memAllocFloat(Light.bfsize).capacity())<< 2;
+        lightoffset = (MemoryUtil.memAllocFloat(Light.bfsize).capacity()) << 2;
         
         groups.add(dlist);
         groups.add(adjdlist);

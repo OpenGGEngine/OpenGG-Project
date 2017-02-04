@@ -10,6 +10,7 @@ import com.opengg.core.io.input.keyboard.KeyboardListener;
 import com.opengg.core.world.components.triggers.Trigger;
 import com.opengg.core.world.components.triggers.TriggerInfo;
 import static com.opengg.core.world.components.triggers.TriggerInfo.SINGLE;
+import static com.opengg.core.world.components.triggers.TriggerInfo.TOGGLE;
 
 /**
  *
@@ -32,7 +33,7 @@ public class KeyTrigger extends Trigger implements KeyboardListener {
                 TriggerInfo t = new TriggerInfo();
                 t.info = Integer.toString(key);
                 t.source = this;
-                t.type = SINGLE;
+                t.type = TOGGLE;
                 trigger(t);
             }
         }

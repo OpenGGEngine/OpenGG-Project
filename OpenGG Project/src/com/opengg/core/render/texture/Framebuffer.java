@@ -87,7 +87,7 @@ public void useTexture(int loc, int attachment){
     public void addColorTarget(int attachment){
         int texture = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, texture);
-        glTexImage2D(GL_TEXTURE_2D, 0,GL_RGB, x, y, 0,GL_RGB, 
+        glTexImage2D(GL_TEXTURE_2D, 0,GL_RGBA16F, x, y, 0,GL_RGBA, 
                 GL_UNSIGNED_BYTE, (ByteBuffer) null);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);

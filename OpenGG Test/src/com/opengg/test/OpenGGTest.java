@@ -32,6 +32,7 @@ import static com.opengg.core.render.window.WindowOptions.GLFW;
 import com.opengg.core.world.Camera;
 import com.opengg.core.world.WorldObject;
 import com.opengg.core.world.components.KeyTrigger;
+import com.opengg.core.world.components.LightRenderComponent;
 import com.opengg.core.world.components.ModelRenderComponent;
 import com.opengg.core.world.components.RenderComponent;
 import com.opengg.core.world.components.TriggerableAudioComponent;
@@ -69,6 +70,7 @@ public class OpenGGTest extends GGApplication implements KeyboardListener, Mouse
         OpenGG.initialize(new OpenGGTest(), w);
         OpenGG.run();
     }
+    private Light l;
 
     @Override
     public  void setup(){
@@ -116,8 +118,8 @@ public class OpenGGTest extends GGApplication implements KeyboardListener, Mouse
 
         ParticleSystem p = new ParticleSystem(2f,20f,100f,ObjectCreator.createOldModelBuffer(OpenGGTest.class.getResource("res/models/deer.obj")), t3);
         
-        ModelRenderComponent r = new ModelRenderComponent(ModelLoader.loadModel("C:/res/awp/Model.bmf"));//"C:/res/3DSMusicPark/3DSMusicPark.bmf"));//
-        //r.setScale(new Vector3f(20,20,20));
+        ModelRenderComponent r = new ModelRenderComponent(ModelLoader.loadModel("C:/res/awp/model.bmf"));//
+        //r.setScale(new Vector3f(50f,50f,50f));
 
         TriggerableAudioComponent test3 = new TriggerableAudioComponent(so2);
         KeyTrigger t = new KeyTrigger(KEY_P, KEY_I);
@@ -134,12 +136,15 @@ public class OpenGGTest extends GGApplication implements KeyboardListener, Mouse
         RenderGroup text = new RenderGroup().add(ep1);
         text.setText(true);
         
-        Light l = new Light(new Vector3f(100,100,100), new Vector3f(1f,0,0), 500f, 0);
-        Light l2 = new Light(new Vector3f(-100,-100,-100), new Vector3f(0,0,1f), 500f, 0);
+        l = new Light(new Vector3f(10,10,10), new Vector3f(1,1,1), 80f, 0);
+        //Light l2 = new Light(new Vector3f(25,0,25), new Vector3f(1,0,0), 50f, 0);
         
+        LightRenderComponent lrp = new LightRenderComponent(l);
+        awps.attach(lrp);
         
         RenderEngine.addLight(l);
-        RenderEngine.addLight(l2);
+        //RenderEngine.addLight(l2);
+        RenderEngine.addRenderable(lrp);
         RenderEngine.setSkybox(ObjectCreator.createCube(1500f), Cubemap.get("C:/res/skybox/majestic"));
         RenderEngine.addGUIItem(new GUIItem(base2, new Vector2f()));
         RenderEngine.addRenderable(p);
@@ -180,6 +185,12 @@ public class OpenGGTest extends GGApplication implements KeyboardListener, Mouse
     public void keyPressed(int key) {
         if (key == KEY_M) {
             ((GLFWWindow) OpenGG.window).setCursorLock(lock = !lock);
+        }
+        if (key == KEY_O){
+            l.pos = new Vector3f(l.pos.x, l.pos.y + 5, l.pos.z);
+        }
+        if (key == KEY_L){
+            l.pos = new Vector3f(l.pos.x, l.pos.y - 5, l.pos.z);
         }
         if (key == KEY_Q) {
             rot1 += 0.3;

@@ -110,7 +110,7 @@ vec3 shadify(Light light){
 	vec3 lightposCamera = ( view * vec4(light.lightpos,1.0f)).xyz;
     vec3 ldir = lightposCamera + eyedir;
 	
-    float distance = 1;//length( light.lightpos - pos.xyz );
+    float distance = length( light.lightpos - pos.xyz ); 
 
     vec3 l = normalize( ldir );   
     float cosTheta = clamp( dot( n,l ), 0,1f );
