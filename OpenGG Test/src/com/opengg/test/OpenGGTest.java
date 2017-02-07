@@ -30,7 +30,7 @@ import com.opengg.core.render.window.WindowInfo;
 import com.opengg.core.render.window.WindowOptions;
 import static com.opengg.core.render.window.WindowOptions.GLFW;
 import com.opengg.core.world.Camera;
-import com.opengg.core.world.WorldObject;
+import com.opengg.core.world.components.WorldObject;
 import com.opengg.core.world.components.KeyTrigger;
 import com.opengg.core.world.components.LightRenderComponent;
 import com.opengg.core.world.components.ModelRenderComponent;
@@ -58,6 +58,7 @@ public class OpenGGTest extends GGApplication implements KeyboardListener, Mouse
     private AudioListener as;
     private WorldObject awps;
     private PhysicsComponent bad;
+    private Light l;
     
     public static void main(String[] args) throws IOException, Exception {
         WindowInfo w = new WindowInfo();
@@ -68,9 +69,7 @@ public class OpenGGTest extends GGApplication implements KeyboardListener, Mouse
         w.type = GLFW;
         w.vsync = true;
         OpenGG.initialize(new OpenGGTest(), w);
-        OpenGG.run();
     }
-    private Light l;
 
     @Override
     public  void setup(){

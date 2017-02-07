@@ -3,15 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.opengg.core.world;
+package com.opengg.core.world.components;
 
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.engine.UpdateEngine;
-import com.opengg.core.world.components.Component;
-import com.opengg.core.world.components.ComponentHolder;
-import com.opengg.core.world.components.Positioned;
-import com.opengg.core.world.components.Updatable;
+import com.opengg.core.world.World;
 
 /**
  *
@@ -20,13 +17,11 @@ import com.opengg.core.world.components.Updatable;
 public class WorldObject extends ComponentHolder implements Positioned{
     public Vector3f pos;
     public Quaternionf rot;
-    private World thisWorld;
-    public float mass;
     Component parent;
+    
     public WorldObject(Vector3f pos, Quaternionf rot, World thisWorld) {
         this.pos = pos;
         this.rot = rot;
-        this.thisWorld = thisWorld;
     }
 
     public WorldObject() {

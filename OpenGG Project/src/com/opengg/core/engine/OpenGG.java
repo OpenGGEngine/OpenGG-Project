@@ -93,20 +93,65 @@ public class OpenGG implements ConsoleListener{
             writeLog();
             System.exit(0);
         }
+        run();
     }
     
-    public static void initializeNoWindow(GGApplication app){
+    public static void initializeHeadless(GGApplication app){
+        startTime = Calendar.getInstance().getTime();
+        
+        if(System.getProperty("os.name").contains("Windows")){
+            System.setProperty("org.lwjgl.librarypath", new File("natives\\windows").getAbsolutePath());
+        }else if(System.getProperty("os.name").contains("OS X")){
+           System.setProperty("org.lwjgl.librarypath", new File("natives\\osx").getAbsolutePath());
+        }else if(System.getProperty("os.name").contains("Linux")){
+            System.setProperty("org.lwjgl.librarypath", new File("natives\\linux").getAbsolutePath());
+        }else{
+            GGConsole.error("OpenGG is not supported on " + System.getProperty("os.name") + ", exiting...");
+            writeLog();
+            System.exit(0);
+        }
+        
+        lwjglinit = true;
+        
+        String verb = System.getProperty("gg.verbose");
+        String stest = System.getProperty("gg.istest");
+        if(verb != null)
+            if(verb.equals("true"))
+                verbose = true;
+        
+        if(stest != null)
+            if(stest.equals("true"))
+                test = true;
+        
+        GGConsole.log("OpenGG initializing, running on " + System.getProperty("os.name") + ", " + System.getProperty("os.arch"));
+        
         OpenGG.app = app;
+        
         curworld = WorldManager.getDefaultWorld();
-        app.setup();
+        
+        try{
+            app.setup();
+            GGConsole.log("Application setup complete");
+        }catch (Exception e){
+            GGConsole.error("Uncaught exception on application setup: " + e.toString());
+            e.printStackTrace();
+            closeEngine();
+            writeLog();
+            System.exit(0);
+        }
+        runHeadless();
     }
     
-    public static void runNoWindow(){
+    public static void runHeadless(){
         while(!end){
             app.update();
             UpdateEngine.update();
-            GGConsole.pollInput();
+            //GGConsole.pollInput();
         }
+        if(!force){
+            closeEngine();
+        }
+        writeLog();
     }
     
     public static void run(){
@@ -128,7 +173,8 @@ public class OpenGG implements ConsoleListener{
             //GGConsole.pollInput();
         }
         if(!force){
-            closeEngine();
+            GGConsole.destroy();
+            GGConsole.log("OpenGG has closed gracefully, application can now be ended");
         }
         writeLog();
     }

@@ -5,9 +5,6 @@
  */
 package com.opengg.core.util;
 
-import com.opengg.core.engine.OpenGG;
-import static com.opengg.core.render.window.WindowOptions.GLFW;
-
 /**
  *
  * @author Javier
@@ -32,9 +29,6 @@ public class Time {
     }
     
     double getMillis(){
-        if(OpenGG.window.getType() == GLFW){
-            //return ((GLFWWindow) OpenGG.window).getTime() * 1000;
-        }
         return System.currentTimeMillis();
     }
 }

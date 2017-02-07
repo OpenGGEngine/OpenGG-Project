@@ -10,7 +10,7 @@ package com.opengg.core.engine;
  *
  * @author Javier
  */
-public abstract class GGApplication {
+public abstract class GGApplication{
     public String applicationName;
     public long applicationID;
     public abstract void setup();

@@ -6,7 +6,9 @@
 
 package com.opengg.core.world;
 
+import com.opengg.core.exceptions.InvalidParentException;
 import com.opengg.core.math.Vector3f;
+import com.opengg.core.world.components.Component;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,11 +16,11 @@ import java.util.List;
  *
  * @author Javier
  */
-public class World {
-    private List<WorldObject> objs = new ArrayList<>();
+public class World implements Component{
+    private List<Component> objs = new ArrayList<>();
     private List<Camera> cams = new ArrayList<>();
     private Camera mainCam;
-    public float floorLev = -1;
+    public float floorLev = 0;
     public Vector3f gravityVector = new Vector3f(0,-9.81f,0);
     public Vector3f wind = new Vector3f();
     
@@ -33,7 +35,7 @@ public class World {
     public void setFloor(float floor){
         floorLev = floor;
     }
-    public void addObject(WorldObject o){
+    public void addObject(Component o){
         objs.add(o);
     }
     public void addCamera(Camera c){
@@ -45,7 +47,7 @@ public class World {
     public void removeObject(int i){
         objs.remove(i);
     }
-    public void removeObject(WorldObject w){
+    public void removeObject(Component w){
         objs.remove(w);
     }
     public void removeCamera(int i){
@@ -56,5 +58,9 @@ public class World {
     }
     public List getObjects(){
         return objs;
+    }
+    @Override
+    public void setParentInfo(Component parent) {
+        throw new InvalidParentException("World must be the top level component!");
     }
 }
