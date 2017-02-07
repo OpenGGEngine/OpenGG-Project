@@ -15,7 +15,7 @@ import com.opengg.core.world.components.triggers.Triggerable;
  *
  * @author Javier
  */
-public class TriggerableAudioComponent implements Triggerable {
+public class TriggerableAudioComponent extends Component implements Triggerable {
     Sound s;
     
     public TriggerableAudioComponent(){}
@@ -35,7 +35,4 @@ public class TriggerableAudioComponent implements Triggerable {
 
     @Override
     public void onSubscribe(Trigger trigger) {}
-
-    @Override
-    public void setParentInfo(Component parent) {}
 }

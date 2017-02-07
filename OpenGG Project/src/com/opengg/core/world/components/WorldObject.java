@@ -7,17 +7,13 @@ package com.opengg.core.world.components;
 
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
-import com.opengg.core.engine.UpdateEngine;
 import com.opengg.core.world.World;
 
 /**
  *
  * @author Javier
  */
-public class WorldObject extends ComponentHolder implements Positioned{
-    public Vector3f pos;
-    public Quaternionf rot;
-    Component parent;
+public class WorldObject extends ComponentHolder{
     
     public WorldObject(Vector3f pos, Quaternionf rot, World thisWorld) {
         this.pos = pos;
@@ -31,36 +27,7 @@ public class WorldObject extends ComponentHolder implements Positioned{
 
     @Override
     public void attach(Component c) {
-        if(c instanceof Updatable){
-            UpdateEngine.addObjects((Updatable) c);
-        }
         c.setParentInfo(this);
         super.attach(c);
     }
-
-    @Override
-    public void setParentInfo(Component parent) {
-        this.parent = parent;
-    }
-
-    @Override
-    public void setPosition(Vector3f pos) {
-        this.pos = pos;
-    }
-
-    @Override
-    public void setRotation(Quaternionf rot) {
-        this.rot = rot;
-    }
-
-    @Override
-    public Vector3f getPosition() {
-        return pos;
-    }
-
-    @Override
-    public Quaternionf getRotation() {
-        return rot;
-    }
-    
 }

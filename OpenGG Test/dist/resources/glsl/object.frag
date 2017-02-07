@@ -106,27 +106,22 @@ vec4 getTex(sampler2D tname){
 }
 
 vec3 shadify(Light light){
-	
-	vec3 lightposCamera = ( view * vec4(light.lightpos,1.0f)).xyz;
-    vec3 ldir = lightposCamera + eyedir;
-	
-    float distance = length( light.lightpos - pos.xyz ); 
 
-    vec3 l = normalize( ldir );   
-    float cosTheta = clamp( dot( n,l ), 0,1f );
-    
-    
-    vec3 E = normalize(eyedir);
-    vec3 R = reflect(-l,n);
-    float cosAlpha = clamp( dot( E,R ), 0,1 );
-    
-    float attenuation =  clamp((1.0 - distance/light.lightdistance), 0.0, 1.0);
+	float distance = length( light.lightpos - pos.xyz ); 
+	float attenuation =  clamp((1.0 - distance/light.lightdistance), 0.0, 1.0);
 	attenuation = attenuation * attenuation;
-    
-    vec3 fragColor = 
-            vec3(diffuse * light.color * cosTheta * attenuation +
-            (specular * light.color * pow(cosAlpha, specpow) * attenuation));
- 
+
+	vec3 lightDir = normalize(light.lightpos - pos.xyz);
+	vec3 halfwayDir = normalize(lightDir + eyedir);
+
+    float cosTheta = max(dot( n,lightDir ), 0.0f );
+    vec3 fdif = diffuse * light.color * cosTheta * attenuation;
+	
+    float cosAlpha = clamp(max(dot(n, halfwayDir), 0.0), 0, 1);
+	vec3 fspec = specular * light.color * pow(cosAlpha, specpow) * attenuation;
+	
+    vec3 fragColor = fdif + fspec;
+	
     return fragColor;
 }
 
@@ -146,18 +141,18 @@ void process(){
     specpow = 1;
     if(material.hasspecpow){
         vec4 specpowvec = getTex(Ns);
-        specpow = (specpowvec.r);
+        specpow = specpowvec.r;
     }else{
         specpow = material.ns;
     }
-	specpow = 5;
+	
     if(material.hasspecmap){
         specular = getTex(Ks).rgb;
     }else{
         specular = material.ks;
     }
 	
-	n = normalize(( view * model *  vec4(norm,0.0f)).xyz);
+	n = normalize(( view * model * vec4(norm,0.0f)).xyz);
     
     if(material.hasnormmap){
        n = calculatenormal(n,eyedir,textureCoord);

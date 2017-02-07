@@ -6,7 +6,7 @@
 
 package com.opengg.core.world.components;
 
-import com.opengg.core.math.Matrix4f;
+import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.render.light.Light;
 import com.opengg.core.render.objects.ObjectCreator;
@@ -15,7 +15,7 @@ import com.opengg.core.render.objects.ObjectCreator;
  *
  * @author Javier
  */
-public class LightRenderComponent extends RenderComponent implements Updatable{
+public class LightRenderComponent extends RenderComponent{
     Light l;  
     
     public LightRenderComponent(Drawable g) {
@@ -28,8 +28,7 @@ public class LightRenderComponent extends RenderComponent implements Updatable{
     }
 
     @Override
-    public void update(float delta) {
-        setPosition(l.pos);
-    }
-    
+    public Vector3f getPosition(){
+        return l.pos;
+    } 
 }

@@ -30,6 +30,7 @@ import com.opengg.core.render.window.WindowInfo;
 import com.opengg.core.render.window.WindowOptions;
 import static com.opengg.core.render.window.WindowOptions.GLFW;
 import com.opengg.core.world.Camera;
+import com.opengg.core.world.World;
 import com.opengg.core.world.components.WorldObject;
 import com.opengg.core.world.components.KeyTrigger;
 import com.opengg.core.world.components.LightRenderComponent;
@@ -108,12 +109,13 @@ public class OpenGGTest extends GGApplication implements KeyboardListener, Mouse
         base2 = f.loadText(g);
 
         OpenGG.curworld.floorLev = -10;
+        World w = OpenGG.curworld;
 
         RenderComponent ep1;
 
         awps = new WorldObject();
         awps.attach(ep1 = new RenderComponent(awp3));
-        awps.setPosition(new Vector3f(5,5,5));
+        awps.setPositionOffset(new Vector3f(5,5,5));
 
         ParticleSystem p = new ParticleSystem(2f,20f,100f,ObjectCreator.createOldModelBuffer(OpenGGTest.class.getResource("res/models/deer.obj")), t3);
         
@@ -130,7 +132,10 @@ public class OpenGGTest extends GGApplication implements KeyboardListener, Mouse
         terrain.attach(bad);
         terrain.attach(r);
         terrain.attach(p);
-        terrain.attach(test3);
+        
+        w.attach(test3);
+        w.attach(terrain);
+        w.attach(awps);
 
         RenderGroup text = new RenderGroup().add(ep1);
         text.setText(true);
@@ -177,7 +182,7 @@ public class OpenGGTest extends GGApplication implements KeyboardListener, Mouse
     public void update() {
         xrot -= rot1 * 7;
         yrot -= rot2 * 7;
-        terrain.setRotation(rottest);
+        terrain.setRotationOffset(rottest);
     }
 
     @Override

@@ -5,11 +5,8 @@
  */
 package com.opengg.core.world.components.physics;
 
-import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.world.components.Component;
-import com.opengg.core.world.components.Positioned;
-import com.opengg.core.world.components.Updatable;
 import com.opengg.core.world.components.triggers.Trigger;
 import com.opengg.core.world.components.triggers.TriggerInfo;
 import static com.opengg.core.world.components.triggers.TriggerInfo.SINGLE;
@@ -22,10 +19,7 @@ import java.util.List;
  *
  * @author ethachu19
  */
-public class Collider extends Trigger implements Positioned, Updatable{
-    Positioned p;
-    Vector3f offset = new Vector3f();
-    Quaternionf rot = new Quaternionf();
+public class Collider extends Trigger{
     PhysicsComponent pc;
     BoundingBox main;
     List<BoundingBox> boxes = new ArrayList<>();
@@ -76,13 +70,6 @@ public class Collider extends Trigger implements Positioned, Updatable{
     }
 
     @Override
-    public void setParentInfo(Component parent) {
-        if(parent instanceof Positioned){
-            p = (Positioned) parent;
-        }
-    }
-
-    @Override
     public void update(float delta) {
         Vector3f fpos = getPosition();
         boxes.stream().forEach((b) -> {
@@ -92,25 +79,7 @@ public class Collider extends Trigger implements Positioned, Updatable{
     }
 
     @Override
-    public void setPosition(Vector3f pos) {
-        this.offset = pos;
-    }
-
-    @Override
-    public void setRotation(Quaternionf rot) {
-        this.rot = rot;
-    }
-
-    @Override
     public Vector3f getPosition() {
-        Vector3f fpos = offset;
-        if (p != null) fpos = offset.add(pc.pos);
-        return fpos;
+        return pc.parent.getPosition();
     }
-
-    @Override
-    public Quaternionf getRotation() {
-        return rot;
-    }
-
 }

@@ -13,9 +13,8 @@ import java.util.ArrayList;
  *
  * @author Javier
  */
-public abstract class Trigger{
+public abstract class Trigger extends Component{
     ArrayList<Triggerable> subscribers = new ArrayList<>();
-    Component parent;
     boolean enabled;
     
     public void addSubscriber(Triggerable dest){

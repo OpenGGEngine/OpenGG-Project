@@ -63,7 +63,6 @@ public class ConnectionListener implements Runnable{
                     GGConsole.log("Connection with " + ip + " failed");
                 }
                 
-                out.println(server.name);
                 GGConsole.log(ip + " connected to server, sending game state");
                 server.addServerClient(sc);
             } catch (IOException ex) {

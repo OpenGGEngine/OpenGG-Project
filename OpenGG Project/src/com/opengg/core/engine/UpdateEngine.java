@@ -7,7 +7,7 @@ package com.opengg.core.engine;
 
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.util.Time;
-import com.opengg.core.world.components.Updatable;
+import com.opengg.core.world.components.Component;
 import com.opengg.core.world.components.physics.Collider;
 import com.opengg.core.world.components.physics.CollisionData;
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ import java.util.LinkedList;
  */
 public class UpdateEngine{
     static LinkedList<Collider> colliders = new LinkedList<>();
-    static ArrayList<Updatable> objs = new ArrayList<>();
+    static ArrayList<Component> objs = new ArrayList<>();
     static Time t;
     
     static{
@@ -47,7 +47,7 @@ public class UpdateEngine{
         }
     }
     
-    public static void addObjects(Updatable e){
+    public static void addObjects(Component e){
         objs.add(e);
     }
     

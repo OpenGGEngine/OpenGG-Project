@@ -6,43 +6,21 @@
 
 package com.opengg.core.world.components;
 
-import com.opengg.core.math.Quaternionf;
-import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.light.Light;
 
 /**
  *
  * @author Javier
  */
-public class LightComponent implements Positioned, Updatable{
-
+public class LightComponent extends Component{
     Light l;
-    Component parent;
-    Vector3f offset;
     
     public LightComponent(Light l){
         this.l = l;
     }
-    
-    @Override
-    public void setPosition(Vector3f pos) {
-        offset = pos;
-    }
-
-    @Override
-    public Vector3f getPosition() {
-        return offset;
-    }
-
-    @Override
-    public void setParentInfo(Component parent) {
-        this.parent = parent;
-    }
 
     @Override
     public void update(float delta) {
-        if(parent instanceof Positioned){
-            l.pos = ((Positioned)parent).getPosition().add(offset);
-        }
+        l.pos = parent.getPosition();
     }    
 }
