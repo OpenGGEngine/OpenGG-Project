@@ -25,9 +25,6 @@ import java.util.List;
  */
 public class ParticleSystem extends Component implements Renderable{
     List<Particle> particles = new LinkedList<>();
-    private Vector3f offset = new Vector3f();
-    private Vector3f scale = new Vector3f(1,1,1);
-    private Quaternionf rotoffset = new Quaternionf();
     InstancedDrawnObject particleobject;
     private float pps;
     private float speed;
@@ -36,25 +33,9 @@ public class ParticleSystem extends Component implements Renderable{
     private float timeSinceLast = 0f;
     Time time;
     Texture t;
-
-    public ParticleSystem(float pps, float speed, float gravityComplient, float lifeLength,FloatBuffer model, Texture t) {
-        this.pps = pps;
-        this.speed = speed;
-        this.gravityComplient = gravityComplient;
-        this.lifeLength = lifeLength;
-        particleobject = new InstancedDrawnObject(model,createParticleVBO());
-        time = new Time();
-        this.t = t;
-    }
     
-    public ParticleSystem(float pps, float speed, float lifeLength,FloatBuffer model, Texture t) {
-        this.pps = pps;
-        this.speed = speed;
-        this.gravityComplient = -0.027f;
-        this.lifeLength = lifeLength;
-        particleobject = new InstancedDrawnObject(model,createParticleVBO());
-        time = new Time();
-        this.t = t;
+    public ParticleSystem(float pps, float speed, float lifeLength, FloatBuffer model, Texture t) {
+        this(pps, speed, lifeLength, new InstancedDrawnObject(model), t);
     }
     
     public ParticleSystem(float pps, float speed, float lifeLength, InstancedDrawnObject model, Texture t) {
@@ -78,7 +59,7 @@ public class ParticleSystem extends Component implements Renderable{
     
     @Override
     public void update(float delta) {
-        Vector3f position = parent.getPosition();
+        Vector3f position = getPosition();
         timeSinceLast += delta;
         if(timeSinceLast >= (1/pps)*1000){
             timeSinceLast = 0;

@@ -7,6 +7,7 @@ package com.opengg.core.engine;
 
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.util.Time;
+import com.opengg.core.world.World;
 import com.opengg.core.world.components.Component;
 import com.opengg.core.world.components.physics.Collider;
 import com.opengg.core.world.components.physics.CollisionData;
@@ -17,7 +18,7 @@ import java.util.LinkedList;
  *
  * @author Javier Coindreau
  */
-public class UpdateEngine{
+public class WorldEngine{
     static LinkedList<Collider> colliders = new LinkedList<>();
     static ArrayList<Component> objs = new ArrayList<>();
     static Time t;
@@ -59,4 +60,33 @@ public class UpdateEngine{
         checkColliders();
     }
     
+    private static ArrayList<World> worlds = new ArrayList();
+    
+    public static World getWorld(int world){
+        return worlds.get(world);
+    }
+    
+    public static World getDefaultWorld(){
+        if (worlds.isEmpty())
+            worlds.add(new World());
+        return worlds.get(0);
+    }
+    
+    public static boolean deleteWorld(int world){
+        if(!worlds.get(world).getObjects().isEmpty())
+            return false;
+        worlds.remove(world);
+        return true;
+    }
+    
+    public static boolean deleteWorld(World world){
+        if(!world.getObjects().isEmpty())
+            return false;
+        return worlds.remove(world);
+    }
+    
+    public static boolean isEmpty(){
+        return worlds.isEmpty();
+    }
+
 }

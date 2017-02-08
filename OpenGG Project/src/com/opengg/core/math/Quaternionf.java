@@ -7,12 +7,13 @@ package com.opengg.core.math;
 
 import static com.opengg.core.math.FastMath.cosFromSin;
 import static com.opengg.core.math.FastMath.sin;
+import java.io.Serializable;
 
 /**
  *
  * @author ethachu19
  */
-public class Quaternionf {
+public class Quaternionf implements Serializable{
 
     /**
      * Angle/Scalar

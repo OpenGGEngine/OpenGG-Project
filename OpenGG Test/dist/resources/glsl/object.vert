@@ -30,9 +30,10 @@ void main() {
     mat4 modelView = view * model;
     vertexColors = color;
     textureCoords = texcoord;
-    poss = vec3(position);
+	
+    poss = (vec4(position,1) * model).xyz;
 	if(inst == 1){
-		poss = vec3(position.x + color.x, position.y + color.y, position.z + color.z);
+		poss = (vec4(position.x + color.x, position.y + color.y, position.z + color.z, 1) * model).xyz;
 	}
     norms = normal;
     if(billboard == 1){

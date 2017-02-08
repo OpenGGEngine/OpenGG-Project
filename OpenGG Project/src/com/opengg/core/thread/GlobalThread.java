@@ -6,7 +6,7 @@
 
 package com.opengg.core.thread;
 
-import com.opengg.core.engine.UpdateEngine;
+import com.opengg.core.engine.WorldEngine;
 
 /**
  *

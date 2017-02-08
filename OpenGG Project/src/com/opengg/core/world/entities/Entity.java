@@ -10,7 +10,6 @@ import com.opengg.core.math.Vector3f;
 import com.opengg.core.io.objloader.parser.OBJModel;
 import com.opengg.core.world.Camera;
 import com.opengg.core.world.World;
-import com.opengg.core.engine.WorldManager;
 import static com.opengg.core.world.entities.EntityBuilder.AddStack;
 import com.opengg.core.world.entities.resources.EntityFrame;
 import com.opengg.core.world.entities.resources.EntitySupportEnums;
@@ -68,10 +67,6 @@ public class Entity implements Serializable {
      *
      */
     public Entity() {
-        if (WorldManager.isEmpty()) {
-            WorldManager.getWorld(new Camera());
-        }
-        current = new PhysicsState(WorldManager.getDefaultWorld(), 10f);
         setXYZ(0f, 0f, 0f);
         setTags(PhysicsType.Physics);
         bindModel(new OBJModel());

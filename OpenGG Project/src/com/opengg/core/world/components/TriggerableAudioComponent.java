@@ -18,8 +18,11 @@ import com.opengg.core.world.components.triggers.Triggerable;
 public class TriggerableAudioComponent extends Component implements Triggerable {
     Sound s;
     
-    public TriggerableAudioComponent(){}
+    public TriggerableAudioComponent(){
+        super();
+    }
     public TriggerableAudioComponent(Sound s){
+        super();
         this.s = s;
     }
     

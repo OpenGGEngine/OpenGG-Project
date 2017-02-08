@@ -80,7 +80,7 @@ public class OpenGG implements ConsoleListener{
         
         initializeAudioController();      
         
-        curworld = WorldManager.getDefaultWorld();
+        curworld = WorldEngine.getDefaultWorld();
         GGConsole.log("OpenGG initialization complete, running application setup");
         try{
             app.setup();
@@ -127,7 +127,7 @@ public class OpenGG implements ConsoleListener{
         
         OpenGG.app = app;
         
-        curworld = WorldManager.getDefaultWorld();
+        curworld = WorldEngine.getDefaultWorld();
         
         try{
             app.setup();
@@ -145,7 +145,7 @@ public class OpenGG implements ConsoleListener{
     public static void runHeadless(){
         while(!end){
             app.update();
-            UpdateEngine.update();
+            WorldEngine.update();
             //GGConsole.pollInput();
         }
         if(!force){
@@ -167,7 +167,7 @@ public class OpenGG implements ConsoleListener{
                 endFrame();
                 break;
             }
-            UpdateEngine.update();
+            WorldEngine.update();
             RenderEngine.checkForGLErrors();
             endFrame();
             //GGConsole.pollInput();

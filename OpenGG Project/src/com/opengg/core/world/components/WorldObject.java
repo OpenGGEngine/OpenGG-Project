@@ -16,11 +16,13 @@ import com.opengg.core.world.World;
 public class WorldObject extends ComponentHolder{
     
     public WorldObject(Vector3f pos, Quaternionf rot, World thisWorld) {
+        
         this.pos = pos;
         this.rot = rot;
     }
 
     public WorldObject() {
+        super();
         pos = new Vector3f(0, 0, 0);  
         rot = new Quaternionf();
     }

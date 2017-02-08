@@ -9,7 +9,6 @@ package com.opengg.core.engine;
 import com.opengg.core.online.Client;
 import com.opengg.core.online.Server;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -57,7 +56,7 @@ public class NetworkEngine {
             out.println("oh shit we out here");
             
             c.servName = in.readLine();
-            
+                     
             GGConsole.log("Connected to " + c.servName);
             
             return c;

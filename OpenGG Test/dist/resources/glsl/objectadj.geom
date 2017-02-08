@@ -1,7 +1,7 @@
 #version 410 core
 
 layout(triangles_adjacency) in;
-layout(triangle_strip, max_vertices=18) out;
+layout(triangle_strip, max_vertices=3) out;
 
 in gl_PerVertex
 {
@@ -48,18 +48,12 @@ const float density =0.00137;
 const float gradient = 2.32;
 
 void genPhong(int vertNum){
-
-    vec3 worldPosition = (model * vec4(poss[vertNum], 1.0f)).xyz;
     vec3 positionRelativeToCam = (view * model * vec4(poss[vertNum], 1.0f)).xyz;
     
     vec3 posCameraspace = ( positionRelativeToCam);
     eyedir = vec3(0,0,0) - posCameraspace;
-    
-    vec3 lightposCamera = ( view * vec4(light.lightpos,1.0f)).xyz;
-    lightdir = lightposCamera + eyedir;
 
     norm = norms[vertNum];
-    
     
     float distance = length(positionRelativeToCam.xyz);
 

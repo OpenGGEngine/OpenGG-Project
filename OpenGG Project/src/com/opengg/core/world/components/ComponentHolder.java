@@ -5,7 +5,7 @@
  */
 package com.opengg.core.world.components;
 
-import com.opengg.core.engine.UpdateEngine;
+import com.opengg.core.engine.WorldEngine;
 import java.util.ArrayList;
 
 /**
@@ -17,7 +17,7 @@ public abstract class ComponentHolder extends Component{
     
     public void attach(Component c) {
         c.setParentInfo(this);
-        UpdateEngine.addObjects(c);
+        WorldEngine.addObjects(c);
         children.add(c);
     }  
     

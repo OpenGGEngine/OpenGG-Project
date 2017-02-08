@@ -52,5 +52,4 @@ void main() {
 	}
 	
 	fcolor = vec4(ambient * diffuse, trans);
-	fcolor = vec4(1,1,1,1);
 };

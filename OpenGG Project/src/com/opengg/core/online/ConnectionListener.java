@@ -8,7 +8,6 @@ package com.opengg.core.online;
 
 import com.opengg.core.engine.GGConsole;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -50,9 +49,8 @@ public class ConnectionListener implements Runnable{
                 PrintWriter out = new PrintWriter(new OutputStreamWriter(s.getOutputStream()), true);
                 
                 String handshake = in.readLine();
-                System.out.println(handshake);
                 
-                if(!handshake.endsWith("hey server")){
+                if(!handshake.equals("hey server")){
                     GGConsole.log("Connection with " + ip + " failed");
                 }
                 
@@ -62,7 +60,7 @@ public class ConnectionListener implements Runnable{
                 if(!handshake.equals("oh shit we out here")){
                     GGConsole.log("Connection with " + ip + " failed");
                 }
-                
+                               
                 GGConsole.log(ip + " connected to server, sending game state");
                 server.addServerClient(sc);
             } catch (IOException ex) {

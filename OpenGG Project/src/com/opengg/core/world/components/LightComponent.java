@@ -16,6 +16,7 @@ public class LightComponent extends Component{
     Light l;
     
     public LightComponent(Light l){
+        super();
         this.l = l;
     }
 

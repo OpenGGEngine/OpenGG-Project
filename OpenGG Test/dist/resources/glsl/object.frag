@@ -141,7 +141,7 @@ void process(){
     specpow = 1;
     if(material.hasspecpow){
         vec4 specpowvec = getTex(Ns);
-        specpow = specpowvec.r;
+        specpow = specpowvec.r * 32;
     }else{
         specpow = material.ns;
     }

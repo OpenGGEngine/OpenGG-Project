@@ -8,7 +8,6 @@ package com.opengg.core.world.entities;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.io.objloader.parser.OBJModel;
 import com.opengg.core.world.World;
-import com.opengg.core.engine.WorldManager;
 import com.opengg.core.world.entities.resources.EntitySupportEnums.PhysicsType;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +44,6 @@ public class EntityBuilder {
     private Entity copy = null;
 
     public EntityBuilder() {
-        thisWorld = WorldManager.getDefaultWorld();
     }
 
     public EntityBuilder(Entity copy) {

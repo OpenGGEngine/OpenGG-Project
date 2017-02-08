@@ -7,16 +7,24 @@ package com.opengg.core.world.components;
 
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
+import java.io.Serializable;
 
 /**
  * Component
  * @author Warren
  */
-public class Component {
+public class Component implements Serializable{
+    public static short curid = 0;
+    public short id;
     public Component parent;
     public Vector3f pos = new Vector3f();
     public Quaternionf rot = new Quaternionf();
-   public  Vector3f scale = new Vector3f(1,1,1);
+    public Vector3f scale = new Vector3f(1,1,1);
+    
+    public Component(){
+        id = curid;
+        curid++;
+    }
     
     public void setParentInfo(Component parent){
         this.parent = parent;
@@ -57,5 +65,5 @@ public class Component {
     public void update(float delta){
         
     }
-    
+
 }

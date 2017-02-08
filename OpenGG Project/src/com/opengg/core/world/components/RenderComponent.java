@@ -17,6 +17,7 @@ public class RenderComponent extends ComponentHolder implements Renderable{
     Drawable g;
    
     public RenderComponent(Drawable g){
+        super();
         this.g = g;
     }
 

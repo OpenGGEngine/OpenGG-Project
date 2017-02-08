@@ -20,40 +20,12 @@ import java.util.List;
  */
 public class World extends ComponentHolder{
     private List<Component> objs = new ArrayList<>();
-    private List<Camera> cams = new ArrayList<>();
-    private Camera mainCam;
     public float floorLev = 0;
     public Vector3f gravityVector = new Vector3f(0,-9.81f,0);
     public Vector3f wind = new Vector3f();
-    
-    public World(){
-        mainCam = new Camera(new Vector3f(), new Vector3f());
-        cams.add(mainCam);
-    }
-    
-    public World(Camera c){
-        cams.add(c);
-        mainCam = c;
-    }
-    
+
     public void setFloor(float floor){
         floorLev = floor;
-    }
-    
-    public void addCamera(Camera c){
-        cams.add(c);
-    }
-    
-    public void setMainCam(int i){
-        mainCam = cams.get(i);
-    }
-
-    public void removeCamera(int i){
-        cams.remove(i);
-    }
-    
-    public void removeCamera(Camera des){
-        cams.remove(des);
     }
     
     public List getObjects(){

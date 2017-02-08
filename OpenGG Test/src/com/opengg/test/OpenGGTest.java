@@ -141,20 +141,18 @@ public class OpenGGTest extends GGApplication implements KeyboardListener, Mouse
         text.setText(true);
         
         l = new Light(new Vector3f(10,10,10), new Vector3f(1,1,1), 80f, 0);
-        //Light l2 = new Light(new Vector3f(25,0,25), new Vector3f(1,0,0), 50f, 0);
         
         LightRenderComponent lrp = new LightRenderComponent(l);
         awps.attach(lrp);
         
         RenderEngine.addLight(l);
-        //RenderEngine.addLight(l2);
         RenderEngine.addRenderable(lrp);
         RenderEngine.setSkybox(ObjectCreator.createCube(1500f), Cubemap.get("C:/res/skybox/majestic"));
         RenderEngine.addGUIItem(new GUIItem(base2, new Vector2f()));
         RenderEngine.addRenderable(p);
         RenderEngine.addRenderable(r);
         RenderEngine.addRenderGroup(text);
-        RenderEngine.setCulling(false);
+        RenderEngine.setCulling(false);     
     }
     
     @Override
