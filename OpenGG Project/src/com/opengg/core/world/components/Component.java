@@ -7,6 +7,8 @@ package com.opengg.core.world.components;
 
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
+import com.opengg.core.world.Deserializer;
+import com.opengg.core.world.Serializer;
 import java.io.Serializable;
 
 /**
@@ -14,8 +16,8 @@ import java.io.Serializable;
  * @author Warren
  */
 public class Component implements Serializable{
-    public static short curid = 0;
-    public short id;
+    public static int curid = 0;
+    public int id;
     public Component parent;
     public Vector3f pos = new Vector3f();
     public Quaternionf rot = new Quaternionf();
@@ -53,7 +55,7 @@ public class Component implements Serializable{
     public Quaternionf getRotation(){
         return rot.add(parent.getRotation());
     }
-    
+        
     public Quaternionf getRotationOffset(){
         return rot;
     }
@@ -65,5 +67,16 @@ public class Component implements Serializable{
     public void update(float delta){
         
     }
+    
+    public void serialize(Serializer s){
+        s.add(pos);
+        s.add(rot);
+        s.add(scale);
+    }
 
+    public void deserialize(Deserializer d){
+        pos = d.getVector3f();
+        rot = d.getQuaternionf();
+        scale = d.getVector3f();
+    }
 }

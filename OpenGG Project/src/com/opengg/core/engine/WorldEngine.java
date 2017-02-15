@@ -73,14 +73,14 @@ public class WorldEngine{
     }
     
     public static boolean deleteWorld(int world){
-        if(!worlds.get(world).getObjects().isEmpty())
+        if(!worlds.get(world).getChildren().isEmpty())
             return false;
         worlds.remove(world);
         return true;
     }
     
     public static boolean deleteWorld(World world){
-        if(!world.getObjects().isEmpty())
+        if(!world.getChildren().isEmpty())
             return false;
         return worlds.remove(world);
     }

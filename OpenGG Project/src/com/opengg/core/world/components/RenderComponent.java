@@ -13,9 +13,11 @@ import com.opengg.core.render.drawn.Drawable;
  *
  * @author Javier
  */
-public class RenderComponent extends ComponentHolder implements Renderable{
+public class RenderComponent extends Component implements Renderable{
     Drawable g;
    
+    public RenderComponent(){};
+    
     public RenderComponent(Drawable g){
         super();
         this.g = g;

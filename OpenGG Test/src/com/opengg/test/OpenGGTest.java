@@ -30,6 +30,7 @@ import com.opengg.core.render.window.WindowInfo;
 import com.opengg.core.render.window.WindowOptions;
 import static com.opengg.core.render.window.WindowOptions.GLFW;
 import com.opengg.core.world.Camera;
+import com.opengg.core.world.Serializer;
 import com.opengg.core.world.World;
 import com.opengg.core.world.components.WorldObject;
 import com.opengg.core.world.components.KeyTrigger;
@@ -119,7 +120,7 @@ public class OpenGGTest extends GGApplication implements KeyboardListener, Mouse
 
         ParticleSystem p = new ParticleSystem(2f,20f,100f,ObjectCreator.createOldModelBuffer(OpenGGTest.class.getResource("res/models/deer.obj")), t3);
         
-        ModelRenderComponent r = new ModelRenderComponent(ModelLoader.loadModel("C:/res/awp/model.bmf"));//
+        ModelRenderComponent r = new ModelRenderComponent(ModelLoader.loadModel("C:/res/awp/model.bmf"));
         //r.setScale(new Vector3f(50f,50f,50f));
 
         TriggerableAudioComponent test3 = new TriggerableAudioComponent(so2);
@@ -142,17 +143,16 @@ public class OpenGGTest extends GGApplication implements KeyboardListener, Mouse
         
         l = new Light(new Vector3f(10,10,10), new Vector3f(1,1,1), 80f, 0);
         
-        LightRenderComponent lrp = new LightRenderComponent(l);
-        awps.attach(lrp);
-        
         RenderEngine.addLight(l);
-        RenderEngine.addRenderable(lrp);
         RenderEngine.setSkybox(ObjectCreator.createCube(1500f), Cubemap.get("C:/res/skybox/majestic"));
         RenderEngine.addGUIItem(new GUIItem(base2, new Vector2f()));
         RenderEngine.addRenderable(p);
         RenderEngine.addRenderable(r);
         RenderEngine.addRenderGroup(text);
-        RenderEngine.setCulling(false);     
+        RenderEngine.setCulling(false);    
+        
+        OpenGG.saveState();
+        OpenGG.loadState();
     }
     
     @Override

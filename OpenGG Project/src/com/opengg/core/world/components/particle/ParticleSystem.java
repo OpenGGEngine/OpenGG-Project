@@ -11,6 +11,8 @@ import com.opengg.core.render.Renderable;
 import com.opengg.core.render.drawn.InstancedDrawnObject;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.util.Time;
+import com.opengg.core.world.Deserializer;
+import com.opengg.core.world.Serializer;
 import com.opengg.core.world.components.Component;
 import java.nio.FloatBuffer;
 import java.util.Iterator;
@@ -31,8 +33,10 @@ public class ParticleSystem extends Component implements Renderable{
     private float gravityComplient;
     private float lifeLength;
     private float timeSinceLast = 0f;
-    Time time;
+    Time time = new Time();
     Texture t;
+    
+    public ParticleSystem(){}
     
     public ParticleSystem(float pps, float speed, float lifeLength, FloatBuffer model, Texture t) {
         this(pps, speed, lifeLength, new InstancedDrawnObject(model), t);
@@ -44,7 +48,6 @@ public class ParticleSystem extends Component implements Renderable{
         this.gravityComplient = -0.027f;
         this.lifeLength = lifeLength;
         this.particleobject = model;
-        time = new Time();
         this.t = t;
     }
     
@@ -99,5 +102,23 @@ public class ParticleSystem extends Component implements Renderable{
     
     public void setParticlesPerSecond(float p){
         pps = p;
+    }
+    
+    @Override
+    public void serialize(Serializer s){
+        super.serialize(s);
+        s.add(pps);
+        s.add(speed);
+        s.add(gravityComplient);
+        s.add(lifeLength);
+    }
+    
+    @Override
+    public void deserialize(Deserializer ds){
+        super.deserialize(ds);
+        pps = ds.getFloat();
+        speed = ds.getFloat();
+        gravityComplient = ds.getFloat();
+        lifeLength = ds.getFloat();
     }
 }

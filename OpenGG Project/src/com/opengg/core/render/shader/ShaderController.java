@@ -7,6 +7,7 @@
 package com.opengg.core.render.shader;
 
 import com.opengg.core.engine.GGConsole;
+import com.opengg.core.engine.Resource;
 import com.opengg.core.io.FileStringLoader;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Vector2f;
@@ -39,29 +40,23 @@ public class ShaderController {
     private static int currentBind = 0;
     
     public static void initialize(){
-        try {
-            loadShader("mainvert", new File("resources\\glsl\\object.vert").getCanonicalPath(), Program.VERTEX);
-            loadShader("passthroughvert", new File("resources\\glsl\\passthrough.vert").getCanonicalPath(), Program.VERTEX);
-            
-            loadShader("maingeom", new File("resources\\glsl\\object.geom").getCanonicalPath(), Program.GEOMETRY);
-            loadShader("passthroughgeom", new File("resources\\glsl\\passthrough.geom").getCanonicalPath(), Program.GEOMETRY);
-            loadShader("volumegeom", new File("resources\\glsl\\volume.geom").getCanonicalPath(), Program.GEOMETRY);
-            loadShader("mainadjgeom", new File("resources\\glsl\\objectadj.geom").getCanonicalPath(), Program.GEOMETRY);
-            loadShader("passthroughadjgeom", new File("resources\\glsl\\passthroughadj.geom").getCanonicalPath(), Program.GEOMETRY);
-            
-            loadShader("mainfrag", new File("resources\\glsl\\object.frag").getCanonicalPath(), Program.FRAGMENT);
-            loadShader("passthroughfrag", new File("resources\\glsl\\passthrough.frag").getCanonicalPath(), Program.FRAGMENT);
-            loadShader("ssaofrag", new File("resources\\glsl\\ssao.frag").getCanonicalPath(), Program.FRAGMENT);  
-            loadShader("cubemapfrag", new File("resources\\glsl\\cubemap.frag").getCanonicalPath(), Program.FRAGMENT); 
-            loadShader("ambientfrag", new File("resources\\glsl\\ambient.frag").getCanonicalPath(), Program.FRAGMENT);  
-            loadShader("texturefrag", new File("resources\\glsl\\texture.frag").getCanonicalPath(), Program.FRAGMENT);  
-            loadShader("bloomfrag", new File("resources\\glsl\\bloom.frag").getCanonicalPath(), Program.FRAGMENT);  
-            loadShader("addfrag", new File("resources\\glsl\\add.frag").getCanonicalPath(), Program.FRAGMENT);  
-            
-        } catch (IOException ex) {
-            GGConsole.error("Failed to find default shaders!");
-            throw new RuntimeException();
-        }
+        loadShader("mainvert", Resource.getShaderPath("object.vert"), Program.VERTEX);
+        loadShader("passthroughvert", Resource.getShaderPath("passthrough.vert"), Program.VERTEX);
+
+        loadShader("maingeom", Resource.getShaderPath("object.geom"), Program.GEOMETRY);
+        loadShader("passthroughgeom", Resource.getShaderPath("passthrough.geom"), Program.GEOMETRY);
+        loadShader("volumegeom", Resource.getShaderPath("volume.geom"), Program.GEOMETRY);
+        loadShader("mainadjgeom", Resource.getShaderPath("objectadj.geom"), Program.GEOMETRY);
+        loadShader("passthroughadjgeom", Resource.getShaderPath("passthroughadj.geom"), Program.GEOMETRY);
+
+        loadShader("mainfrag", Resource.getShaderPath("object.frag"), Program.FRAGMENT);
+        loadShader("passthroughfrag", Resource.getShaderPath("passthrough.frag"), Program.FRAGMENT);
+        loadShader("ssaofrag", Resource.getShaderPath("ssao.frag"), Program.FRAGMENT);  
+        loadShader("cubemapfrag", Resource.getShaderPath("cubemap.frag"), Program.FRAGMENT); 
+        loadShader("ambientfrag", Resource.getShaderPath("ambient.frag"), Program.FRAGMENT);  
+        loadShader("texturefrag", Resource.getShaderPath("texture.frag"), Program.FRAGMENT);  
+        loadShader("bloomfrag", Resource.getShaderPath("bloom.frag"), Program.FRAGMENT);  
+        loadShader("addfrag", Resource.getShaderPath("add.frag"), Program.FRAGMENT);  
         
         use("mainvert", "maingeom", "mainfrag");
         saveCurrentConfiguration("object");

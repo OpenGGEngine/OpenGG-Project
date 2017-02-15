@@ -11,25 +11,18 @@ import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.world.components.Component;
 import com.opengg.core.world.components.ComponentHolder;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
  * @author Javier
  */
 public class World extends ComponentHolder{
-    private List<Component> objs = new ArrayList<>();
     public float floorLev = 0;
     public Vector3f gravityVector = new Vector3f(0,-9.81f,0);
     public Vector3f wind = new Vector3f();
 
     public void setFloor(float floor){
         floorLev = floor;
-    }
-    
-    public List getObjects(){
-        return objs;
     }
     
     @Override
@@ -50,5 +43,22 @@ public class World extends ComponentHolder{
     @Override
     public void setParentInfo(Component parent) {
         throw new InvalidParentException("World must be the top level component!");
+    }
+    
+    @Override
+    public void serialize(Serializer s){
+        super.serialize(s);
+        s.add(gravityVector);
+        s.add(floorLev);
+        s.add(wind);
+        
+    }
+    
+    @Override
+    public void deserialize(Deserializer ds){
+        super.deserialize(ds);
+        gravityVector = ds.getVector3f();
+        floorLev = ds.getFloat();
+        wind = ds.getVector3f();
     }
 }
