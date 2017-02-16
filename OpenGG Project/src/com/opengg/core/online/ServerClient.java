@@ -15,6 +15,7 @@ import java.util.Date;
  */
 public class ServerClient {
     String ip;
+    String name;
     Socket s;
     Date timeConnected;
     int latency;

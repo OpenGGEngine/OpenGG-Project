@@ -9,6 +9,7 @@ import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.world.Deserializer;
 import com.opengg.core.world.Serializer;
+import com.opengg.core.world.World;
 import java.io.Serializable;
 
 /**
@@ -78,5 +79,9 @@ public class Component implements Serializable{
         pos = d.getVector3f();
         rot = d.getQuaternionf();
         scale = d.getVector3f();
+    }
+    
+    public World getWorld(){
+        return parent.getWorld();
     }
 }

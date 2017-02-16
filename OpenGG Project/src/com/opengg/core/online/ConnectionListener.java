@@ -7,6 +7,8 @@
 package com.opengg.core.online;
 
 import com.opengg.core.engine.GGConsole;
+import com.opengg.core.engine.OpenGG;
+import com.opengg.core.world.Serializer;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -61,7 +63,19 @@ public class ConnectionListener implements Runnable{
                     GGConsole.log("Connection with " + ip + " failed");
                 }
                                
+                out.println(OpenGG.app.applicationName);
+                sc.name = in.readLine();
+                
                 GGConsole.log(ip + " connected to server, sending game state");
+                
+                byte[] bytes = Serializer.serialize(OpenGG.curworld);
+                
+                out.println(bytes.length);
+                
+                s.getOutputStream().write(bytes);
+                
+                GGConsole.log(ip + " connected to server.");
+                
                 server.addServerClient(sc);
             } catch (IOException ex) {
                 GGConsole.warning("Client failed to connect!");

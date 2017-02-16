@@ -87,7 +87,7 @@ public class OpenGG implements ConsoleListener{
         
         initializeAudioController();      
         
-        curworld = WorldEngine.getDefaultWorld();
+        curworld = new World();
         GGConsole.log("OpenGG initialization complete, running application setup");
         try{
             app.setup();
@@ -135,7 +135,7 @@ public class OpenGG implements ConsoleListener{
         
         OpenGG.app = app;
         
-        curworld = WorldEngine.getDefaultWorld();
+        curworld = new World();
         
         try{
             app.setup();

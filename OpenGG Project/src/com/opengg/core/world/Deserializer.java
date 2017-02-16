@@ -34,7 +34,6 @@ public class Deserializer {
         ds.w = new World();
         ds.w.deserialize(ds);
         ds.w.id = 0;
-        System.out.println(ds.w.floorLev);
         
         doList(ds);
         

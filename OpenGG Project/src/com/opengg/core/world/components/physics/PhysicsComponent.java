@@ -5,10 +5,12 @@
  */
 package com.opengg.core.world.components.physics;
 
+import com.opengg.core.engine.OpenGG;
+import com.opengg.core.exceptions.InvalidParentException;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
-import com.opengg.core.exceptions.InvalidParentException;
-import com.opengg.core.engine.OpenGG;
+import com.opengg.core.world.Deserializer;
+import com.opengg.core.world.Serializer;
 import com.opengg.core.world.World;
 import com.opengg.core.world.components.Component;
 import static com.opengg.core.world.components.physics.PhysicsConstants.BASE;
@@ -28,13 +30,13 @@ public class PhysicsComponent extends Component {
     public Vector3f acceleration = new Vector3f();
     public Vector3f angaccel = new Vector3f();
     private float mass = 10f;
+    private float density = 1f;
 
     @Override
     public void update(float delta) {
         pos = parent.getPosition();
         
         delta /= 1000;
-        w = OpenGG.curworld;
         
         Vector3f last = new Vector3f(acceleration);
         pos.addEquals(velocity.multiply(delta).add(last.multiply((float) Math.pow(delta, 2) * 0.5f)));
@@ -64,15 +66,13 @@ public class PhysicsComponent extends Component {
         acceleration = force.divide(mass);
         acceleration = (last.add(acceleration)).divide(2);
         
-        acceleration.y += w.gravityVector.x;
-        acceleration.y += w.gravityVector.y;
-        acceleration.y += w.gravityVector.z;
+        addGrav();
     }
     
-    private void addGrav(Vector3f accel, World w){
-        accel.y += w.gravityVector.x;
-        accel.y += w.gravityVector.y;
-        accel.y += w.gravityVector.z;
+    private void addGrav(){
+        acceleration.x += getWorld().gravityVector.x;
+        acceleration.y += getWorld().gravityVector.y;
+        acceleration.z += getWorld().gravityVector.z;
     }
     
     public PhysicsComponent(){}
@@ -87,5 +87,19 @@ public class PhysicsComponent extends Component {
         state.rot = Quaternionf.slerp(a.rot, b.rot, alpha);
         state.rotForce = a.rotForce.multiply(1 - alpha).add(b.rotForce.multiply(alpha));
         return state;
+    }
+    
+    @Override
+    public void serialize(Serializer s){
+        super.serialize(s);
+        s.add(mass);
+        s.add(density);
+    }
+    
+    @Override
+    public void deserialize(Deserializer s){
+        super.deserialize(s);
+        mass = s.getFloat();
+        density = s.getFloat();
     }
 }

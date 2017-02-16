@@ -61,4 +61,9 @@ public class World extends ComponentHolder{
         floorLev = ds.getFloat();
         wind = ds.getVector3f();
     }
+    
+    @Override
+    public World getWorld(){
+        return this;
+    }
 }

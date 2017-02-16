@@ -9,6 +9,7 @@ import com.opengg.core.math.Vector3f;
 import com.opengg.core.util.Time;
 import com.opengg.core.world.World;
 import com.opengg.core.world.components.Component;
+import com.opengg.core.world.components.ComponentHolder;
 import com.opengg.core.world.components.physics.Collider;
 import com.opengg.core.world.components.physics.CollisionData;
 import java.util.ArrayList;
@@ -54,39 +55,25 @@ public class WorldEngine{
     
     public static void update(){
         float delta = t.getDeltaMs();
-        objs.stream().forEach((e) -> {
-            e.update(delta);
-        });
-        checkColliders();
+        for(Component c : OpenGG.curworld.getChildren()){
+            traverseUpdate(c, delta);
+        }
     }
     
-    private static ArrayList<World> worlds = new ArrayList();
-    
-    public static World getWorld(int world){
-        return worlds.get(world);
+    private static void traverseUpdate(Component c, float delta){
+        c.update(delta);
+        if(c instanceof ComponentHolder){
+            for(Component comp : ((ComponentHolder)c).getChildren()){
+                traverseUpdate(comp, delta);
+            }
+        }
     }
     
-    public static World getDefaultWorld(){
-        if (worlds.isEmpty())
-            worlds.add(new World());
-        return worlds.get(0);
+    public static void useWorld(World w){
+        OpenGG.curworld = w;
     }
     
-    public static boolean deleteWorld(int world){
-        if(!worlds.get(world).getChildren().isEmpty())
-            return false;
-        worlds.remove(world);
-        return true;
+    public static World getCurrent(){
+        return OpenGG.curworld;
     }
-    
-    public static boolean deleteWorld(World world){
-        if(!world.getChildren().isEmpty())
-            return false;
-        return worlds.remove(world);
-    }
-    
-    public static boolean isEmpty(){
-        return worlds.isEmpty();
-    }
-
 }

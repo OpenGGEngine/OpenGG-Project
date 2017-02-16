@@ -8,6 +8,9 @@ package com.opengg.core.engine;
 
 import com.opengg.core.online.Client;
 import com.opengg.core.online.Server;
+import com.opengg.core.world.Deserializer;
+import com.opengg.core.world.World;
+import com.opengg.core.world.components.ComponentHolder;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -15,6 +18,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.ByteBuffer;
 
 /**
  *
@@ -56,7 +60,18 @@ public class NetworkEngine {
             out.println("oh shit we out here");
             
             c.servName = in.readLine();
+            out.println(OpenGG.app.applicationName);
                      
+            GGConsole.log("Connected to " + c.servName + ", receiving world...");
+            
+            int worldsize = Integer.decode(in.readLine());
+            
+            byte[] bytes = new byte[worldsize];
+            s.getInputStream().read(bytes);
+            
+            World w = Deserializer.deserialize(ByteBuffer.wrap(bytes));
+            WorldEngine.useWorld(w);
+            
             GGConsole.log("Connected to " + c.servName);
             
             return c;
