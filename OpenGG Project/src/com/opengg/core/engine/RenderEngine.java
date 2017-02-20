@@ -19,6 +19,7 @@ import com.opengg.core.render.shader.UniformBufferObject;
 import com.opengg.core.render.texture.Cubemap;
 import com.opengg.core.render.texture.Framebuffer;
 import com.opengg.core.render.texture.TextureManager;
+import com.opengg.core.world.Camera;
 import com.opengg.core.world.components.ModelRenderComponent;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,6 +55,7 @@ public class RenderEngine {
     static VertexArrayObject vao;
     static boolean cull = true;
     static int lightoffset;
+    static Camera camera;
     
     static boolean init(){
         vao = new VertexArrayObject();
@@ -150,13 +152,17 @@ public class RenderEngine {
         return shadVolumes;
     }
     
-    public static void useLights(){
+    public static void useCamera(Camera c){
+        camera = c;
+    }
+    
+    static void useLights(){
         for(int i = 0; i < lights.size(); i++){
             lightobj.updateBuffer(lights.get(i).getBuffer(), i * lightoffset);
         }
         ShaderController.setUniform("numLights", lights.size());
     }
-    
+     
     private static void writeToDepth(){
         glDepthMask(true);
         glDrawBuffer(GL_NONE);
@@ -200,6 +206,7 @@ public class RenderEngine {
     }
     
     public static void draw(){
+        ShaderController.setView(camera);
         sceneTex.startTexRender();
         if(shadVolumes){
             writeToDepth();   
