@@ -75,7 +75,7 @@ public class ConnectionListener implements Runnable{
                 
                 out.println(server.packetsize);
                 s.close();
-
+                
                 Packet p = Packet.receive(server.dsocket, server.packetsize);
                 Packet.send(server.dsocket, p.getData(), sc.ip, p.getPort());
                 sc.port = p.getPort();

@@ -33,7 +33,7 @@ public class ClientResponseThread implements Runnable{
             }
             
             byte[] actions = ActionQueuer.generatePacket();
-            Packet.send(client.udpsocket, actions, client.servIP, client.port);
+            //Packet.send(client.udpsocket, actions, client.servIP, client.port);
         }
     }
     
