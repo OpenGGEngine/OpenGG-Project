@@ -4,10 +4,11 @@
  * and open the template in the editor.
  */
 
-package com.opengg.core.online;
+package com.opengg.core.online.server;
 
 import com.opengg.core.engine.GGConsole;
 import com.opengg.core.engine.OpenGG;
+import com.opengg.core.online.Packet;
 import com.opengg.core.world.Serializer;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -27,6 +28,7 @@ public class ConnectionListener implements Runnable{
     Server server;
     ServerSocket ssocket;
     boolean close = false;
+    int curid;
     
     public ConnectionListener(ServerSocket r, Server server){
         this.ssocket = r;
@@ -41,9 +43,10 @@ public class ConnectionListener implements Runnable{
                 String ip = s.getInetAddress().getHostAddress();
                 Date d = Calendar.getInstance().getTime();
                 ServerClient sc = new ServerClient();
-                sc.s = s;
-                sc.ip = ip;
+                sc.ip = s.getInetAddress();
                 sc.timeConnected = d;
+                sc.id = curid;
+                curid++;
                 
                 GGConsole.log("User connecting from " + ip);
                 
@@ -52,18 +55,14 @@ public class ConnectionListener implements Runnable{
                 
                 String handshake = in.readLine();
                 
-                if(!handshake.equals("hey server")){
-                    GGConsole.log("Connection with " + ip + " failed");
-                }
+                if(!handshake.equals("hey server")){GGConsole.log("Connection with " + ip + " failed");}
                 
                 out.println("hey client");
                 handshake = in.readLine();
                 
-                if(!handshake.equals("oh shit we out here")){
-                    GGConsole.log("Connection with " + ip + " failed");
-                }
+                if(!handshake.equals("oh shit we out here")){GGConsole.log("Connection with " + ip + " failed");}
                                
-                out.println(OpenGG.app.applicationName);
+                out.println(server.name);
                 sc.name = in.readLine();
                 
                 GGConsole.log(ip + " connected to server, sending game state");
@@ -73,6 +72,13 @@ public class ConnectionListener implements Runnable{
                 out.println(bytes.length);
                 
                 s.getOutputStream().write(bytes);
+                
+                out.println(server.packetsize);
+                s.close();
+
+                Packet p = Packet.receive(server.dsocket, server.packetsize);
+                Packet.send(server.dsocket, new byte[128], sc.ip, p.getPort());
+                sc.port = p.getPort();
                 
                 GGConsole.log(ip + " connected to server.");
                 

@@ -6,30 +6,67 @@
 
 package com.opengg.core.online;
 
-import com.opengg.core.world.components.physics.PhysicsStruct;
-import com.opengg.core.world.entities.resources.EntityFrame;
+import com.opengg.core.engine.GGConsole;
+import java.io.IOException;
 import java.io.Serializable;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 
 /**
  *
  * @author Javier
  */
 public class Packet implements Serializable{
-    PhysicsStruct c;// = new PhysicsStruct();
-    EntityFrame[] e;
-    public Packet(EntityFrame[] el){
-        this.e = el;  
-    }
-    public Packet(PhysicsStruct c){
-        this.c = c;
+    byte[] buf;
+    int port;
+    DatagramPacket dp;
+    InetAddress address;
         
+    public static Packet receive(DatagramSocket ds, int size){
+        Packet p = new Packet(size);
+        p.receive(ds);
+        return p;
     }
-    public Packet(EntityFrame[] el, PhysicsStruct c){
-        this.e = el;
-        this.c = c;
+    
+    public byte[] getData(){
+        return buf;
     }
-    public Packet(){
-        e = new EntityFrame[5];
-        e[0] = new EntityFrame();
+    
+    public int getPort(){
+        return port;
     }
+    
+    public static void send(DatagramSocket ds, byte[] bytes, InetAddress address, int port){
+        Packet p = new Packet(bytes, address, port);
+        p.send(ds);
+    }
+    
+    private Packet(int size){
+        buf = new byte[size];
+        dp = new DatagramPacket(buf, size);
+    }
+    
+    private Packet(byte[] bytes, InetAddress address, int port){
+        dp = new DatagramPacket(bytes, bytes.length, address, port);
+    }
+    
+    private void receive(DatagramSocket ds){
+        try {
+            ds.receive(dp);
+            address = dp.getAddress();
+            port = dp.getPort();
+        } catch (IOException ex) {
+            GGConsole.warning("Failed to receive messages!");
+        }
+    }
+    
+    private void send(DatagramSocket ds){
+        try {
+            ds.send(dp);
+        } catch (IOException ex) {
+            GGConsole.warning("Failed to communicate with " + address.getHostAddress());
+        }
+    }
+        
 }

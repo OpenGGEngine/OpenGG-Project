@@ -4,9 +4,11 @@
  * and open the template in the editor.
  */
 
-package com.opengg.core.online;
+package com.opengg.core.online.server;
 
-import java.net.Socket;
+import com.opengg.core.online.Packet;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.util.Date;
 
 /**
@@ -14,9 +16,14 @@ import java.util.Date;
  * @author Javier
  */
 public class ServerClient {
-    String ip;
+    InetAddress ip;
     String name;
-    Socket s;
     Date timeConnected;
     int latency;
+    int port;
+    int id;
+    
+    public void send(DatagramSocket client, byte[] bytes){
+        Packet.send(client, bytes, ip, port);
+    }
 }

@@ -4,8 +4,9 @@
  * and open the template in the editor.
  */
 
-package com.opengg.core.online;
+package com.opengg.core.online.server;
 
+import java.net.DatagramSocket;
 import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,20 +18,26 @@ import java.util.List;
 public class Server {
     String name;
     ServerSocket socket;
+    DatagramSocket dsocket;
     List<ServerClient> clients;
     ConnectionListener clistener;
-    int iport, oport;
+    ServerThread sthread;
+    int port;
+    int packetsize = 1024;
     
-    
-    public Server(String name, int port, ServerSocket ssocket){
+    public Server(String name, int port, ServerSocket ssocket, DatagramSocket dsocket){
         this.name = name;
-        this.iport = port;
-        this.oport = port + 1;
+        this.port = port;
         this.clients = new ArrayList<>();
         this.socket = ssocket;
-        ConnectionListener listener = new ConnectionListener(socket, this);
-        new Thread(listener).start();
+        this.dsocket = dsocket;
+        this.clistener = new ConnectionListener(socket, this);
+        this.sthread = new ServerThread(this, 15);
+        new Thread(clistener).start();
+        new Thread(sthread).start();
     }
+    
+    
     
     public void addServerClient(ServerClient sc){
         clients.add(sc);

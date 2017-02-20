@@ -29,11 +29,7 @@ public class Serializer {
         w.serialize(serializer);
         traverse(w.getChildren());
         
-        byte[] b = new byte[serializer.bytes.size()];
-        for(int i = 0; i < b.length; i++){
-            b[i] = serializer.bytes.get(i);
-        }
-        return b;
+        return serializer.getByteArray();
     }
     
     private static void traverse(List<Component> components){
@@ -49,6 +45,14 @@ public class Serializer {
         }
     }
     
+    public byte[] getByteArray(){
+        byte[] nbytes = new byte[bytes.size()];
+        for(int i = 0; i < bytes.size(); i++){
+            nbytes[i] = bytes.get(i);
+        }
+        return nbytes;
+    }
+    
     public void add(Vector2f v){
         add(v.x);
         add(v.y);
@@ -62,6 +66,10 @@ public class Serializer {
     
     public void add(Quaternionf q){       
         addNormalized(q);
+    }
+    
+    public void add(long l){
+        add(ByteBuffer.allocate(Long.BYTES).putLong(l).array());
     }
     
     public void add(int i){
