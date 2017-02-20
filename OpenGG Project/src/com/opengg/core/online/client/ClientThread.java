@@ -25,7 +25,6 @@ public class ClientThread implements Runnable{
     @Override
     public void run() {
         while(!OpenGG.getEnded()){
-            System.out.println("Goon");
             Packet p = Packet.receive(c.udpsocket, c.packetsize);
             byte[] bytes = p.getData();
             NetworkSerializer.deserializeUpdate(bytes);
