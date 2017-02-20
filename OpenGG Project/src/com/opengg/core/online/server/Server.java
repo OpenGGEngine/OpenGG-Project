@@ -22,6 +22,7 @@ public class Server {
     List<ServerClient> clients;
     ConnectionListener clistener;
     ServerThread sthread;
+    ServerResponseThread srthread;
     int port;
     int packetsize = 1024;
     
@@ -35,6 +36,7 @@ public class Server {
         this.sthread = new ServerThread(this, 15);
         new Thread(clistener).start();
         new Thread(sthread).start();
+        new Thread(srthread).start();
     }
     
     

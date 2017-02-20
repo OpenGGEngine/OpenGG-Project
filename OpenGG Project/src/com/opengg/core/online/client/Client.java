@@ -25,7 +25,8 @@ public class Client {
     public int latency;
     public int packetsize;
     
-    public ClientThread thread;
+    public ClientThread input;
+    public ClientResponseThread output;
     
     public Client(DatagramSocket ds, InetAddress ip, int port, String servName, int packetsize){
         this.servIP = ip;
@@ -34,7 +35,9 @@ public class Client {
         this.servName = servName;
         this.packetsize = packetsize;
         this.timeConnected = Calendar.getInstance().getTime();
-        this.thread = new ClientThread(this);
-        new Thread(thread).start();
+        this.input = new ClientThread(this);
+        this.output = new ClientResponseThread(this);
+        new Thread(input).start();
+        new Thread(output).start();
     }
 }

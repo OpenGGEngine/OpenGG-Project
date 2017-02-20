@@ -6,6 +6,7 @@
 
 package com.opengg.core.world.components;
 
+import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.light.Light;
 
 /**
@@ -14,6 +15,11 @@ import com.opengg.core.render.light.Light;
  */
 public class LightComponent extends Component{
     Light l;
+    
+    public LightComponent(){
+        super();
+        l = new Light(new Vector3f(0,0,0),new Vector3f(0,0,0),0,0);
+    }
     
     public LightComponent(Light l){
         super();

@@ -24,7 +24,7 @@ public class ServerResponseThread implements Runnable{
 
     @Override
     public void run() {
-        while(!end && OpenGG.getEnded()){
+        while(!end && !OpenGG.getEnded()){
             p = Packet.receive(s.dsocket, s.packetsize);
         }
     }

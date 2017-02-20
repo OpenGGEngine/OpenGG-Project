@@ -12,8 +12,8 @@ import com.opengg.core.io.input.keyboard.KeyboardController;
 import com.opengg.core.io.input.keyboard.KeyboardListener;
 import com.opengg.core.io.input.mouse.MouseButtonListener;
 import com.opengg.core.world.Action;
+import com.opengg.core.world.ActionTransmitter;
 import com.opengg.core.world.ActionType;
-import com.opengg.core.world.components.UserControlComponent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +23,7 @@ import java.util.List;
  */
 public class BindController implements KeyboardListener, MouseButtonListener{
     private static BindController bc;
-    static List<UserControlComponent> controllers = new ArrayList<>();
+    static List<ActionTransmitter> controllers = new ArrayList<>();
     static List<Bind> binds = new ArrayList<>();
 
     private BindController(){
@@ -42,7 +42,7 @@ public class BindController implements KeyboardListener, MouseButtonListener{
         binds.add(b);
     }
     
-    public static void addController(UserControlComponent controller){
+    public static void addController(ActionTransmitter controller){
         controllers.add(controller);
     }
     
@@ -50,7 +50,7 @@ public class BindController implements KeyboardListener, MouseButtonListener{
     public void keyPressed(int key) {
         for(Bind bind : binds){    
             if(bind.button == key && bind.type == ControlType.KEYBOARD){
-                for(UserControlComponent c : controllers){
+                for(ActionTransmitter c : controllers){
                     Action a = new Action();
                     a.name = bind.action;
                     a.type = ActionType.PRESS;
@@ -64,7 +64,7 @@ public class BindController implements KeyboardListener, MouseButtonListener{
     public void keyReleased(int key) {
         for(Bind bind : binds){
             if(bind.button == key && bind.type == ControlType.KEYBOARD){
-                for(UserControlComponent c : controllers){
+                for(ActionTransmitter c : controllers){
                     Action a = new Action();
                     a.name = bind.action;
                     a.type = ActionType.RELEASE;
@@ -78,7 +78,7 @@ public class BindController implements KeyboardListener, MouseButtonListener{
     public void buttonPressed(int button) {
         for(Bind bind : binds){
             if(bind.button == button && bind.type == ControlType.MOUSEBUTTON){
-                for(UserControlComponent c : controllers){
+                for(ActionTransmitter c : controllers){
                     Action a = new Action();
                     a.name = bind.action;
                     a.type = ActionType.PRESS;
@@ -92,7 +92,7 @@ public class BindController implements KeyboardListener, MouseButtonListener{
     public void buttonReleased(int button) {
         for(Bind bind : binds){
             if(bind.button == button && bind.type == ControlType.MOUSEBUTTON){
-                for(UserControlComponent c : controllers){
+                for(ActionTransmitter c : controllers){
                     Action a = new Action();
                     a.name = bind.action;
                     a.type = ActionType.RELEASE;

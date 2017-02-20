@@ -8,15 +8,17 @@ package com.opengg.core.world.components;
 
 import com.opengg.core.exceptions.InvalidParentException;
 import com.opengg.core.world.Action;
+import com.opengg.core.world.ActionTransmitter;
 import com.opengg.core.world.Actionable;
 
 /**
  *
  * @author Javier
  */
-public class UserControlComponent extends Component{
+public class UserControlComponent extends Component implements ActionTransmitter{
     public int userid;
     
+    @Override
     public void doAction(Action action){
         ((Actionable)parent).onAction(action);
     }

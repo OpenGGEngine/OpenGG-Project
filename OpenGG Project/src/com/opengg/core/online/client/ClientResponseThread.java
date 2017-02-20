@@ -6,10 +6,34 @@
 
 package com.opengg.core.online.client;
 
+import com.opengg.core.engine.OpenGG;
+import com.opengg.core.online.Packet;
+
 /**
  *
  * @author Javier
  */
-public class ClientResponseThread {
+public class ClientResponseThread implements Runnable{
+    Client client;
+    boolean end = false;
+    
+    public ClientResponseThread(Client client){
+        this.client = client;
+        ActionQueuer.initialize(client);
+    }
+    
+    @Override
+    public void run() {
+        while(!end && !OpenGG.getEnded()){
+            try {
+                Thread.sleep(1000/30);
+            } catch (InterruptedException ex) {
+                end = true;
+            }
+            
+            byte[] actions = ActionQueuer.generatePacket();
+            Packet.send(client.udpsocket, actions, client.servIP, client.port);
+        }
+    }
     
 }
