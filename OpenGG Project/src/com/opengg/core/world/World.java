@@ -6,11 +6,16 @@
 
 package com.opengg.core.world;
 
+import com.opengg.core.engine.RenderEngine;
+import com.opengg.core.engine.RenderGroup;
 import com.opengg.core.exceptions.InvalidParentException;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
+import com.opengg.core.render.Renderable;
 import com.opengg.core.world.components.Component;
 import com.opengg.core.world.components.ComponentHolder;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  *
@@ -20,9 +25,62 @@ public class World extends ComponentHolder{
     public float floorLev = 0;
     public Vector3f gravityVector = new Vector3f(0,-9.81f,0);
     public Vector3f wind = new Vector3f();
-
+    public RenderGroup group = new RenderGroup();
+    
     public void setFloor(float floor){
         floorLev = floor;
+    }
+    
+    public List<Component> getAll(){
+        List<Component> components = new LinkedList<>();
+        for(Component c : this.getChildren()){
+            traverseGet(c, components);
+        }
+        return components;
+    }
+    
+    public Component find(int i){
+        Component c = null;
+        for(Component cc : this.getChildren()){
+            Component ccc = traverseFind(cc, i);
+            if(ccc != null){
+                return ccc;
+            }
+        }
+        return null;
+    }
+    
+    public void useRenderables(){
+        group.setAdjacencyMesh(true);
+        for(Component c : getAll()){
+            if(c instanceof Renderable){
+                group.add((Renderable)c);
+            }
+        }
+        
+        RenderEngine.addRenderGroup(group);
+    }
+    
+    private Component traverseFind(Component c, int i){
+        if(c.id == i)
+            return c;
+        if(c instanceof ComponentHolder){
+            for(Component comp : ((ComponentHolder)c).getChildren()){
+                Component fc = traverseFind(comp, i);
+                if(fc != null)
+                    return fc;           
+            }
+        }
+        return null;
+    }
+    
+    private void traverseGet(Component c, List<Component> list){
+        list.add(c);
+        if(c instanceof ComponentHolder){
+            for(Component comp : ((ComponentHolder)c).getChildren()){
+                traverseGet(comp, list);      
+            }
+        }
     }
     
     @Override

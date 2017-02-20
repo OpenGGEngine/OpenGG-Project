@@ -71,6 +71,8 @@ public class WorldEngine{
     
     public static void useWorld(World w){
         OpenGG.curworld = w;
+        w.useRenderables();
+        
     }
     
     public static World getCurrent(){

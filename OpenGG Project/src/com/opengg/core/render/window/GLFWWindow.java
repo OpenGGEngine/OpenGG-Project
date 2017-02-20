@@ -136,6 +136,9 @@ public class GLFWWindow implements Window {
         glfwTerminate();
 
         errorCallback.free();
+        keyCallback.free();
+        mouseButtonCallback.free();
+        mouseCallback.free();
     }
 
     @Override
