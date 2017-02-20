@@ -75,10 +75,6 @@ public class ConnectionListener implements Runnable{
                 
                 out.println(server.packetsize);
                 s.close();
-
-                Packet p = Packet.receive(server.dsocket, server.packetsize);
-                Packet.send(server.dsocket, new byte[128], sc.ip, p.getPort());
-                sc.port = p.getPort();
                 
                 GGConsole.log(ip + " connected to server.");
                 
