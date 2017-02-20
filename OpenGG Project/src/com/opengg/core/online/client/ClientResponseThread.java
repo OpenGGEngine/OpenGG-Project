@@ -8,7 +8,6 @@ package com.opengg.core.online.client;
 
 import com.opengg.core.engine.GGConsole;
 import com.opengg.core.engine.OpenGG;
-import com.opengg.core.online.Packet;
 
 /**
  *
