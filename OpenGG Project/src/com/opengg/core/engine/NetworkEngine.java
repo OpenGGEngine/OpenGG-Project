@@ -71,8 +71,10 @@ public class NetworkEngine {
             int packetsize = Integer.decode(in.readLine());
             InetAddress address = s.getInetAddress();
             s.close();
-
-            System.out.println("Past parse");
+            
+            Packet.send(ds, new byte[packetsize], address, port);
+            Packet p = Packet.receive(ds, packetsize);
+            port = p.getPort();
             
             GGConsole.log("Connected to " + servname);
             

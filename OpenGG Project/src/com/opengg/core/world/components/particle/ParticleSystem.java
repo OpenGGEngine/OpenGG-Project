@@ -5,7 +5,6 @@
  */
 package com.opengg.core.world.components.particle;
 
-import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.Renderable;
 import com.opengg.core.render.drawn.InstancedDrawnObject;

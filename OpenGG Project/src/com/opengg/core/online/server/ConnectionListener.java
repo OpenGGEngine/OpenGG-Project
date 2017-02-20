@@ -37,7 +37,7 @@ public class ConnectionListener implements Runnable{
     
     @Override
     public void run() {
-        while(!close){
+        while(!close && !OpenGG.getEnded()){
             try {
                 Socket s = ssocket.accept();
                 String ip = s.getInetAddress().getHostAddress();
@@ -75,6 +75,10 @@ public class ConnectionListener implements Runnable{
                 
                 out.println(server.packetsize);
                 s.close();
+
+                Packet p = Packet.receive(server.dsocket, server.packetsize);
+                Packet.send(server.dsocket, p.getData(), sc.ip, p.getPort());
+                sc.port = p.getPort();
                 
                 GGConsole.log(ip + " connected to server.");
                 
