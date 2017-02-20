@@ -3,21 +3,21 @@ package com.opengg.test;
 import com.opengg.core.audio.AudioListener;
 import com.opengg.core.audio.Sound;
 import com.opengg.core.engine.AudioController;
+import com.opengg.core.engine.BindController;
 import com.opengg.core.engine.GGApplication;
 import com.opengg.core.engine.OpenGG;
 import com.opengg.core.engine.RenderEngine;
 import com.opengg.core.engine.RenderGroup;
+import com.opengg.core.engine.WorldEngine;
 import com.opengg.core.gui.GUIItem;
 import com.opengg.core.gui.GUIText;
+import com.opengg.core.io.ControlType;
 import static com.opengg.core.io.input.keyboard.Key.*;
-import com.opengg.core.io.input.keyboard.KeyboardController;
-import com.opengg.core.io.input.keyboard.KeyboardListener;
 import com.opengg.core.io.input.mouse.MouseButtonListener;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.model.ModelLoader;
-import com.opengg.core.movement.MovementLoader;
 import com.opengg.core.render.drawn.MatDrawnObject;
 import com.opengg.core.render.light.Light;
 import com.opengg.core.render.objects.ObjectCreator;
@@ -25,25 +25,25 @@ import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.texture.Cubemap;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.texture.text.GGFont;
-import com.opengg.core.render.window.GLFWWindow;
 import com.opengg.core.render.window.WindowInfo;
 import com.opengg.core.render.window.WindowOptions;
 import static com.opengg.core.render.window.WindowOptions.GLFW;
 import com.opengg.core.world.Camera;
-import com.opengg.core.world.Serializer;
 import com.opengg.core.world.World;
+import com.opengg.core.world.components.CameraComponent;
 import com.opengg.core.world.components.WorldObject;
 import com.opengg.core.world.components.KeyTrigger;
-import com.opengg.core.world.components.LightRenderComponent;
 import com.opengg.core.world.components.ModelRenderComponent;
+import com.opengg.core.world.components.PlayerComponent;
 import com.opengg.core.world.components.RenderComponent;
 import com.opengg.core.world.components.TriggerableAudioComponent;
+import com.opengg.core.world.components.UserControlComponent;
 import com.opengg.core.world.components.particle.ParticleSystem;
 import com.opengg.core.world.components.physics.PhysicsComponent;
 import java.io.File;
 import java.io.IOException;
 
-public class OpenGGTest extends GGApplication implements KeyboardListener, MouseButtonListener {
+public class OpenGGTest extends GGApplication implements MouseButtonListener {
     private final float sens = 0.25f;
     private float xrot, yrot;
     private boolean lock = false;
@@ -75,13 +75,6 @@ public class OpenGGTest extends GGApplication implements KeyboardListener, Mouse
 
     @Override
     public  void setup(){
-        KeyboardController.addToPool(this);
-        MovementLoader.setup(80);
-
-        c = new Camera(pos, rot);
-        c.setPos(pos);
-        c.setRot(rot);
-
         as = new AudioListener();
         AudioController.setListener(as);
 
@@ -120,8 +113,7 @@ public class OpenGGTest extends GGApplication implements KeyboardListener, Mouse
 
         ParticleSystem p = new ParticleSystem(2f,20f,100f,ObjectCreator.createOldModelBuffer(OpenGGTest.class.getResource("res/models/deer.obj")), t3);
         
-        ModelRenderComponent r = new ModelRenderComponent(ModelLoader.loadModel("C:/res/awp/model.bmf"));
-        //r.setScale(new Vector3f(50f,50f,50f));
+        ModelRenderComponent r = new ModelRenderComponent(ModelLoader.loadModel("C:/res/model/model.bmf"));
 
         TriggerableAudioComponent test3 = new TriggerableAudioComponent(so2);
         KeyTrigger t = new KeyTrigger(KEY_P, KEY_I);
@@ -133,6 +125,25 @@ public class OpenGGTest extends GGApplication implements KeyboardListener, Mouse
         terrain.attach(bad);
         terrain.attach(r);
         terrain.attach(p);
+        
+        PlayerComponent player = new PlayerComponent();
+        CameraComponent camera = new CameraComponent();
+        UserControlComponent controller = new UserControlComponent();
+        player.attach(camera);
+        player.attach(controller);
+        WorldEngine.getCurrent().attach(player);
+        camera.use();
+        BindController.addController(controller);
+        BindController.addBind(ControlType.KEYBOARD, "forward", KEY_W);
+        BindController.addBind(ControlType.KEYBOARD, "backward", KEY_S);
+        BindController.addBind(ControlType.KEYBOARD, "left", KEY_A);
+        BindController.addBind(ControlType.KEYBOARD, "right", KEY_D);
+        BindController.addBind(ControlType.KEYBOARD, "up", KEY_SPACE);
+        BindController.addBind(ControlType.KEYBOARD, "down", KEY_LEFT_SHIFT);
+        BindController.addBind(ControlType.KEYBOARD, "lookright", KEY_Q);
+        BindController.addBind(ControlType.KEYBOARD, "lookleft", KEY_E);
+        BindController.addBind(ControlType.KEYBOARD, "lookup", KEY_U);
+        BindController.addBind(ControlType.KEYBOARD, "lookdown", KEY_F);
         
         w.attach(test3);
         w.attach(terrain);
@@ -150,27 +161,13 @@ public class OpenGGTest extends GGApplication implements KeyboardListener, Mouse
         RenderEngine.addRenderable(r);
         RenderEngine.addRenderGroup(text);
         RenderEngine.setCulling(false);    
-        
-        OpenGG.saveState();
-        OpenGG.loadState();
     }
     
     @Override
     public void render() {
-        rot = new Vector3f(yrot, xrot, 0);
-        if(lock){
-            rot = MovementLoader.processRotation(sens, false);
-        }
-        pos = MovementLoader.processMovement(pos, rot);
-        
         as.setPos(pos);
         as.setRot(rot);
         AudioController.setListener(as);
-        
-        c.setPos(pos);
-        c.setRot(rot);
-
-        ShaderController.setView(c);
         ShaderController.setPerspective(90, OpenGG.window.getRatio(), 1, 5000f);
         
         RenderEngine.draw();
@@ -181,56 +178,6 @@ public class OpenGGTest extends GGApplication implements KeyboardListener, Mouse
         xrot -= rot1 * 7;
         yrot -= rot2 * 7;
         terrain.setRotationOffset(rottest);
-    }
-
-    @Override
-    public void keyPressed(int key) {
-        if (key == KEY_M) {
-            ((GLFWWindow) OpenGG.window).setCursorLock(lock = !lock);
-        }
-        if (key == KEY_O){
-            l.pos = new Vector3f(l.pos.x, l.pos.y + 5, l.pos.z);
-        }
-        if (key == KEY_L){
-            l.pos = new Vector3f(l.pos.x, l.pos.y - 5, l.pos.z);
-        }
-        if (key == KEY_Q) {
-            rot1 += 0.3;
-        }
-        if (key == KEY_E) {
-            rot1 -= 0.3;
-        }
-        if (key == KEY_R) {
-            rot2 += 0.3;
-        }
-        if (key == KEY_F) {
-            rot2 -= 0.3;
-        }
-        if (key == KEY_G) {
-            bad.velocity = new Vector3f(0,20,0);
-        }
-        if (key == KEY_ESCAPE) {
-            OpenGG.endApplication();
-        }
-        if (key == KEY_U){
-            RenderEngine.setShadowVolumes(!RenderEngine.getShadowsEnabled());
-        }
-    }
-
-    @Override
-    public void keyReleased(int key) {
-        if (key == KEY_Q) {
-            rot1 -= 0.3;
-        }
-        if (key == KEY_E) {
-            rot1 += 0.3;
-        }
-        if (key == KEY_R) {
-            rot2 -= 0.3;
-        }
-        if (key == KEY_F) {
-            rot2 += 0.3;
-        }
     }
 
     @Override

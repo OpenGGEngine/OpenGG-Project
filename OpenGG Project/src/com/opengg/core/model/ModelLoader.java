@@ -46,7 +46,7 @@ public class ModelLoader {
         GGConsole.log("Loading model at " + path + "...");
         ArrayList<Mesh> meshes = new ArrayList<>();
         try (DataInputStream in = new DataInputStream(new BufferedInputStream(new FileInputStream(path)))) {
-            String texpath = path.substring(0, path.lastIndexOf("/") + 1) + "tex/";
+            String texpath = path.substring(0, path.lastIndexOf("\\") + 1) + "tex\\";
             
             //int ver = in.readInt();
             //System.out.println(ver);
