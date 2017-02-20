@@ -31,6 +31,11 @@ public class PhysicsComponent extends Component {
     public Vector3f angaccel = new Vector3f();
     private float mass = 10f;
     private float density = 1f;
+    
+    public PhysicsComponent(){}
+    public PhysicsComponent(float mass){
+        this.mass = mass;
+    }
 
     @Override
     public void update(float delta) {
@@ -56,6 +61,10 @@ public class PhysicsComponent extends Component {
        c.setParentPhysicsComponent(this);
     }
     
+    public Collider getCollider() {
+        return c;
+    }
+    
     private void forces(float delta) {
         force.x += 0;
         force.y += 0;
@@ -66,18 +75,11 @@ public class PhysicsComponent extends Component {
         acceleration = force.divide(mass);
         acceleration = (last.add(acceleration)).divide(2);
         
-        addGrav();
-    }
-    
-    private void addGrav(){
-        acceleration.x += getWorld().gravityVector.x;
-        acceleration.y += getWorld().gravityVector.y;
-        acceleration.z += getWorld().gravityVector.z;
-    }
-    
-    public PhysicsComponent(){}
-    public PhysicsComponent(float mass){
-        this.mass = mass;
+        if (gravEffect) {
+            acceleration.x += getWorld().gravityVector.x;
+            acceleration.y += getWorld().gravityVector.y;
+            acceleration.z += getWorld().gravityVector.z;
+        }
     }
     
     public static PhysicsComponent interpolate(PhysicsComponent a, PhysicsComponent b, float alpha) {

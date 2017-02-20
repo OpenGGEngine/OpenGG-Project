@@ -14,6 +14,7 @@ import com.opengg.core.world.components.physics.Collider;
 import com.opengg.core.world.components.physics.CollisionData;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  *
@@ -28,21 +29,25 @@ public class WorldEngine{
         t = new Time();
     }
     
-    static void processCollision(CollisionData info){
-        if(info.c1physact){
-            info.c1phys.velocity = new Vector3f(-info.c1phys.velocity.x, -info.c1phys.velocity.y, -info.c1phys.velocity.z);
-        }
-        if(info.c2physact){
-            info.c2phys.velocity = new Vector3f(-info.c2phys.velocity.x, -info.c2phys.velocity.y, -info.c2phys.velocity.z);
-        }
+    public static void addCollider(Collider c) {
+        colliders.add(c);
+    }
+    
+    static void processCollision(List<CollisionData> info){
+//        if(info.c1physact){
+//            info.c1phys.velocity = new Vector3f(-info.c1phys.velocity.x, -info.c1phys.velocity.y, -info.c1phys.velocity.z);
+//        }
+//        if(info.c2physact){
+//            info.c2phys.velocity = new Vector3f(-info.c2phys.velocity.x, -info.c2phys.velocity.y, -info.c2phys.velocity.z);
+//        }
+        System.out.println("IT COLLIDED FOR FUCKS SAKE");
     }
     
     public static void checkColliders(){
         for(int i = 0; i < colliders.size(); i++){
             for(int j = i + 1; j < colliders.size(); j++){
-                
-                CollisionData info = colliders.get(i).testForCollision(colliders.get(j));
-                if(info != null){
+                List<CollisionData> info = colliders.get(i).testForCollision(colliders.get(j));
+                if(!info.isEmpty()){
                     processCollision(info);
                 }
             }
@@ -72,7 +77,7 @@ public class WorldEngine{
     public static void useWorld(World w){
         OpenGG.curworld = w;
         w.useRenderables();
-        
+        colliders = w.useColliders();
     }
     
     public static World getCurrent(){

@@ -38,7 +38,7 @@ public class BoundingBox {
     }
     
     public boolean isColliding(BoundingBox x) {
-        return !(vertices[MAX].x < x.vertices[MIN].x || 
+        return ! (vertices[MAX].x < x.vertices[MIN].x || 
              vertices[MAX].y < x.vertices[MIN].y ||
              vertices[MAX].z < x.vertices[MIN].z ||
              vertices[MIN].x > x.vertices[MAX].x || 

@@ -14,6 +14,8 @@ import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.Renderable;
 import com.opengg.core.world.components.Component;
 import com.opengg.core.world.components.ComponentHolder;
+import com.opengg.core.world.components.physics.Collider;
+import com.opengg.core.world.components.physics.PhysicsComponent;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -59,6 +61,18 @@ public class World extends ComponentHolder{
         }
         
         RenderEngine.addRenderGroup(group);
+    }
+    
+    public LinkedList<Collider> useColliders() {
+        LinkedList<Collider> list = new LinkedList<>();
+        for(Component c : getAll()){
+            if(c instanceof PhysicsComponent){
+                Collider collide = ((PhysicsComponent) c).getCollider();
+                if (collide != null)
+                    list.add(collide);
+            }
+        }
+        return list;
     }
     
     private Component traverseFind(Component c, int i){
@@ -109,7 +123,6 @@ public class World extends ComponentHolder{
         s.add(gravityVector);
         s.add(floorLev);
         s.add(wind);
-        
     }
     
     @Override

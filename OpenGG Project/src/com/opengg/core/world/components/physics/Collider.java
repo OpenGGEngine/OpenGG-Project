@@ -38,15 +38,16 @@ public class Collider extends Trigger{
         this.pc = pc;
     }
     
-    public CollisionData testForCollision(Collider other) {
-        
+    public List<CollisionData> testForCollision(Collider other) {
+        List<CollisionData> dataList = new ArrayList<>();
         if (!main.isColliding(other.main))
-            return null;
- 
+            return dataList;
+        
+        boolean trigger = false;
         for (BoundingBox x: this.boxes) {
             for(BoundingBox y: other.boxes) {
                 if (x.isColliding(y)){
-                    
+                    trigger = true;
                     CollisionData data = new CollisionData();
                     data.c1collider = this;
                     data.c2collider = other;
@@ -57,16 +58,19 @@ public class Collider extends Trigger{
                     data.c1physact = pc != null;
                     data.c2physact = other.pc != null;
                     
-                    TriggerInfo ti = new TriggerInfo();
-                    ti.info = "collision";
-                    ti.type = SINGLE;
-                    ti.source = this;
-                    ti.data = data;
-                    trigger(ti);
-                    return data;
+                    dataList.add(data);
                 }
             }
-        }return null;
+        }
+        if (trigger) {
+            TriggerInfo ti = new TriggerInfo();
+            ti.info = "collision";
+            ti.type = SINGLE;
+            ti.source = this;
+            ti.data = dataList;
+            trigger(ti);
+        }
+        return dataList;
     }
 
     @Override
