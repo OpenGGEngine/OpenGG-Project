@@ -5,6 +5,7 @@
  */
 package com.opengg.core.world.components;
 
+import com.opengg.core.engine.OpenGG;
 import com.opengg.core.engine.Resource;
 import com.opengg.core.model.Model;
 import com.opengg.core.model.ModelLoader;
@@ -19,8 +20,19 @@ import com.opengg.core.world.Serializer;
  */
 public class ModelRenderComponent extends RenderComponent{
     Model model;
+    String name;
+    boolean frame = false;
+    
+    public static ModelRenderComponent getFramework(String name){
+        return new ModelRenderComponent(name);
+    }
     
     public ModelRenderComponent(){}
+    
+    private ModelRenderComponent(String name){
+        frame = true;
+        this.name = name;
+    }
     
     public ModelRenderComponent(Model model){
         super(model.getDrawable());
@@ -39,14 +51,22 @@ public class ModelRenderComponent extends RenderComponent{
     @Override
     public void serialize(Serializer s){
         super.serialize(s);
-        s.add(model.getName());
+        if(frame){
+            s.add(name);
+        }else{
+            s.add(model.getName());
+        }
     }
     
     @Override
     public void deserialize(Deserializer s){
         super.deserialize(s);
-        Model m = ModelLoader.loadModel(Resource.getModelPath(s.getString()));
-        this.model = m;
-        //this.g = m.getDrawable();
+        String path = s.getString();
+        if(model == null){
+            model = ModelLoader.loadModel(Resource.getModelPath(path));
+            OpenGG.addExecutable(() -> {
+                this.g = model.getDrawable();
+            });
+        }
     }
 }

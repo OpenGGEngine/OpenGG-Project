@@ -26,6 +26,8 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -38,6 +40,7 @@ public class OpenGG implements ConsoleListener{
     public static GGApplication app;
     public static World curworld;
     public static boolean lwjglinit = false;
+    static List<Executable> executable = new LinkedList<>();
     static Date startTime;
     static boolean end = false;
     static boolean force = false;
@@ -88,6 +91,9 @@ public class OpenGG implements ConsoleListener{
         initializeAudioController();      
         
         curworld = new World();
+        
+        BindController.initialize();
+        
         GGConsole.log("OpenGG initialization complete, running application setup");
         try{
             app.setup();
@@ -155,10 +161,21 @@ public class OpenGG implements ConsoleListener{
         while(!end){
             app.update();
             WorldEngine.update();
-            //GGConsole.pollInput();
+            executable.stream().forEach((e) -> {
+                    e.execute();
+            });
+            executable.clear();
+            try {
+                //GGConsole.pollInput();
+                Thread.sleep(20);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(OpenGG.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
+        end = true;
         if(!force){
-            closeEngine();
+            GGConsole.destroy();
+            GGConsole.log("OpenGG has closed gracefully, application can now be ended");
         }
         writeLog();
     }
@@ -167,23 +184,20 @@ public class OpenGG implements ConsoleListener{
         
         while (!window.shouldClose() && !end) {
             startFrame();
-            try{
-                app.render();
-                app.update();
-            }catch (Exception e){
-                GGConsole.error("Uncaught exception during application runtime: " + e.toString());
-                e.printStackTrace();
-                endFrame();
-                break;
-            }
+            app.render();
+            app.update();
+            executable.stream().forEach((e) -> {
+                e.execute();
+            });
+            executable.clear();
             WorldEngine.update();
             RenderEngine.checkForGLErrors();
             endFrame();
             //GGConsole.pollInput();
         }
+        end = true;
         if(!force){
-            GGConsole.destroy();
-            GGConsole.log("OpenGG has closed gracefully, application can now be ended");
+            closeEngine();
         }
         writeLog();
     }
@@ -223,7 +237,7 @@ public class OpenGG implements ConsoleListener{
                 worlddata[i] = dis.readByte();
             }
             World w = Deserializer.deserialize(ByteBuffer.wrap(worlddata));
-            //curworld = w;
+            curworld = w;
         } catch (FileNotFoundException ex) {
             Logger.getLogger(OpenGG.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
@@ -240,9 +254,14 @@ public class OpenGG implements ConsoleListener{
         end = true;
     }
     
+    public static boolean getEnded(){
+        return end;
+    }
+    
     private static void closeEngine(){
         RenderEngine.destroy();      
         AudioController.destroy();
+        window.destroy();
         GGConsole.destroy();
         GGConsole.log("OpenGG has closed gracefully, application can now be ended");
     }
@@ -252,6 +271,10 @@ public class OpenGG implements ConsoleListener{
         GGConsole.writeLog(startTime);
     }
 
+    public static void addExecutable(Executable e){
+        executable.add(e);
+    }
+    
     @Override
     public void onConsoleInput(String s) {
         if(s.equalsIgnoreCase("quit")){
