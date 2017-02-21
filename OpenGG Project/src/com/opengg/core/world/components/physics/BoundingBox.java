@@ -15,12 +15,17 @@ public class BoundingBox {
     public static final int MAX = 1, MIN = 0;
     private float length, width, height;
     private Vector3f[] vertices = {new Vector3f(), new Vector3f()};
+    private Vector3f angle = new Vector3f();
     
     public BoundingBox(Vector3f pos, float length, float width, float height) {
         this.length = length;
         this.width = width;
         this.height = height;
         recenter(pos);
+    }
+    
+    public void setRotation(Vector3f rot) {
+        angle = rot;
     }
     
     public Vector3f[] getAABBVertices(){

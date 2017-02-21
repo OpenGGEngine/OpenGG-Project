@@ -30,4 +30,8 @@ public class TriggerableCollisionResponse implements Triggerable{
     @Override
     public void onSubscribe(Trigger trigger) {}
     
+    public void getAngleOfCollision() {
+        
+    }
+    
 }
