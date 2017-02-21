@@ -33,9 +33,23 @@ public class Collider extends Trigger{
         this.main = main;
         boxes.addAll(Arrays.asList(all));
     }
+    
+    public void addBoundingBox(BoundingBox bb) {
+        boxes.add(bb);
+    }
 
     void setParentPhysicsComponent(PhysicsComponent pc){
         this.pc = pc;
+    }
+    
+    public String toString() {
+        String ret = "[";
+        for (BoundingBox box: boxes) {
+            ret += box.toString();
+            ret += " , ";
+        }
+        ret += "]";
+        return ret;
     }
     
     public List<CollisionData> testForCollision(Collider other) {

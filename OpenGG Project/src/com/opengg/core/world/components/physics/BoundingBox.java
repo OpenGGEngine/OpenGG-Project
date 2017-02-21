@@ -27,6 +27,10 @@ public class BoundingBox {
         return new Vector3f[] {vertices[MIN], vertices[MAX]};
     }
     
+    public String toString() {
+        return "[" + vertices[MIN].toString() + " , " + vertices[MAX].toString() + "]";
+    }
+    
     public void recenter(Vector3f pos) {
         vertices[MIN].y = pos.y;
         vertices[MIN].x = pos.x - width / 2;

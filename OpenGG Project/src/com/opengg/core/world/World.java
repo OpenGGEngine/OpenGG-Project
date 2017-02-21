@@ -65,7 +65,8 @@ public class World extends ComponentHolder{
     
     public LinkedList<Collider> useColliders() {
         LinkedList<Collider> list = new LinkedList<>();
-        for(Component c : getAll()){
+        List<Component> components = getAll();
+        for(Component c : components){
             if(c instanceof PhysicsComponent){
                 Collider collide = ((PhysicsComponent) c).getCollider();
                 if (collide != null)
