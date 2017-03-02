@@ -5,15 +5,14 @@
  */
 package com.opengg.core.world.components.physics;
 
-import com.opengg.core.engine.OpenGG;
-import com.opengg.core.exceptions.InvalidParentException;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.world.Deserializer;
 import com.opengg.core.world.Serializer;
-import com.opengg.core.world.World;
 import com.opengg.core.world.components.Component;
 import static com.opengg.core.world.components.physics.PhysicsConstants.BASE;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  *
@@ -21,14 +20,16 @@ import static com.opengg.core.world.components.physics.PhysicsConstants.BASE;
  */
 public class PhysicsComponent extends Component {
     Collider c;
-    World w;
     public boolean gravEffect = true;
-    public Vector3f force = new Vector3f();
-    public Vector3f rotForce = new Vector3f();
+    public List<Vector3f> forces = new LinkedList<>();
+    public List<Vector3f> rotforces = new LinkedList<>();
+    
     public Vector3f velocity = new Vector3f();
     public Vector3f angvelocity = new Vector3f();
+    
     public Vector3f acceleration = new Vector3f();
     public Vector3f angaccel = new Vector3f();
+    
     private float mass = 10f;
     private float density = 1f;
     
@@ -40,20 +41,23 @@ public class PhysicsComponent extends Component {
     @Override
     public void update(float delta) {
         pos = parent.getPosition();
-        
+        rot = parent.getRotation();
         delta /= 1000;
         
         Vector3f last = new Vector3f(acceleration);
         pos.addEquals(velocity.multiply(delta).add(last.multiply((float) Math.pow(delta, 2) * 0.5f)));
-        accel(last);
+        
+        Vector3f force = finalForce(delta);
+        accel(last, force);
         velocity.addEquals(acceleration.multiply(delta));
+        
         if((pos.y) < BASE){ 
             pos.y = BASE;
             velocity.y = 0;
         }
-        forces(delta);
-        
+               
         parent.setPositionOffset(pos);
+        parent.setRotationOffset(rot);
     }
     
     public void setCollider(Collider c){
@@ -65,13 +69,15 @@ public class PhysicsComponent extends Component {
         return c;
     }
     
-    private void forces(float delta) {
-        force.x += 0;
-        force.y += 0;
-        force.z += 0;
+    private Vector3f finalForce(float delta) {
+        Vector3f fforce = new Vector3f();
+        for(Vector3f force : forces){
+            fforce.add(force);
+        }
+        return fforce;
     }
     
-    private void accel(Vector3f last){
+    private void accel(Vector3f last, Vector3f force){
         acceleration = force.divide(mass);
         acceleration = (last.add(acceleration)).divide(2);
         
@@ -85,9 +91,13 @@ public class PhysicsComponent extends Component {
     public static PhysicsComponent interpolate(PhysicsComponent a, PhysicsComponent b, float alpha) {
         PhysicsComponent state = b;
         state.pos = a.pos.multiply(1 - alpha).add(b.pos.multiply(alpha));
-        state.force = a.force.multiply(1 - alpha).add(b.force.multiply(alpha));
+        state.velocity = a.velocity .multiply(1 - alpha).add(b.velocity .multiply(alpha));
+        
         state.rot = Quaternionf.slerp(a.rot, b.rot, alpha);
-        state.rotForce = a.rotForce.multiply(1 - alpha).add(b.rotForce.multiply(alpha));
+        state.angvelocity = a.angvelocity.multiply(1 - alpha).add(b.angvelocity.multiply(alpha));
+        
+        state.acceleration = a.acceleration.multiply(1 - alpha).add(b.acceleration.multiply(alpha));
+        state.angaccel = a.angaccel.multiply(1 - alpha).add(b.angaccel.multiply(alpha));
         return state;
     }
     

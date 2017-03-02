@@ -15,15 +15,11 @@ import com.opengg.core.math.Vector3f;
 import com.opengg.core.model.Material;
 import com.opengg.core.render.light.Light;
 import com.opengg.core.render.VertexBufferObject;
-import com.opengg.core.world.Camera;
-import java.io.File;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import static org.lwjgl.opengl.GL11.glGetError;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 
 /**
@@ -165,6 +161,9 @@ public class ShaderController {
         findUniform("material.ka");
         setUniform("material.ka", new Vector3f());
         
+        findUniform("material.kd");
+        setUniform("material.kd", new Vector3f());
+        
         findUniform("material.ks");
         setUniform("material.ks", new Vector3f());
         
@@ -182,6 +181,9 @@ public class ShaderController {
         
         findUniform("material.hasspecpow");
         setUniform("material.hasspecpow", false);
+        
+        findUniform("material.hascolormap");
+        setUniform("material.hascolormap", false);
     }
     
     public static void initVertexAttributes() {
@@ -236,7 +238,6 @@ public class ShaderController {
     }
     
     public static void setView(Matrix4f view){
-        
         setUniform("view", view);
     }
     
@@ -376,14 +377,7 @@ public class ShaderController {
             p.validate();
         }
     }
-     
-    public static void setView(Camera c){
-        Vector3f rot = c.getRot();       
-        view = new Matrix4f().rotate(rot.x,1,0,0).rotate(rot.y,0,1,0).rotate(rot.z,0,0,1).translate(c.getPos());
-        
-        setView(view);
-    }
-    
+
     public static Matrix4f getMVP(){
         return proj.multiply(view).multiply(model);
     }
@@ -402,13 +396,14 @@ public class ShaderController {
     
     public static void passMaterial(Material m){
         setUniform("material.ns", (float) m.nsExponent);
-        setUniform("material.ka", new Vector3f((float)m.ka.x,(float)m.ka.y,(float)m.ka.z));
-        setUniform("material.ks", new Vector3f(1,1,1));
-        //setUniform("specularcolor, new Vector3f((float)m.ks.x,(float)m.ks.y,(float)m.ks.z));
+        setUniform("material.ka", m.ka);
+        setUniform("material.kd", m.kd);
+        setUniform("material.ks", m.ks);
         setUniform("material.hasspecmap", m.hasspecmap);
         setUniform("material.hasnormmap", m.hasnormmap);
         setUniform("material.hasspecpow", m.hasspecpow);
         setUniform("material.hasambmap", m.hasreflmap);
+        setUniform("material.hascolormap", m.hascolmap);
     }
     
     public static void setBillBoard(boolean yes){  

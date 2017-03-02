@@ -7,7 +7,6 @@ package com.opengg.core.world.components;
 
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
-import com.opengg.core.world.World;
 
 /**
  *
@@ -15,7 +14,7 @@ import com.opengg.core.world.World;
  */
 public class WorldObject extends ComponentHolder{
     
-    public WorldObject(Vector3f pos, Quaternionf rot, World thisWorld) {
+    public WorldObject(Vector3f pos, Quaternionf rot) {
         
         this.pos = pos;
         this.rot = rot;

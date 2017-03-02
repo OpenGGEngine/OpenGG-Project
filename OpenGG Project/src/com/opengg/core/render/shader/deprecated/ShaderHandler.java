@@ -6,6 +6,7 @@
 package com.opengg.core.render.shader.deprecated;
 
 import com.opengg.core.math.Matrix4f;
+import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.shader.deprecated.premade.ShaderEnabled;
 import com.opengg.core.world.Camera;
@@ -43,7 +44,7 @@ public class ShaderHandler {
     
     public static void setView(Camera c){
         Vector3f pos = c.getPos();
-        Vector3f rot = c.getRot();       
+        Quaternionf rot = c.getRot();       
         Matrix4f posm = Matrix4f.translate(pos.x, pos.y, pos.z);
         
         

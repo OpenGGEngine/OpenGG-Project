@@ -26,7 +26,7 @@ public class CameraComponent extends Component{
     
     @Override
     public void update(float delta){
-        camera.setPos(parent.getPosition());
-        camera.setRot(parent.getRotation().axis());
+        camera.setPos(getPosition());
+        camera.setRot(getRotation());
     }
 }

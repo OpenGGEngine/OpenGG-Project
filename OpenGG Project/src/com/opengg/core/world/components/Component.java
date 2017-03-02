@@ -46,7 +46,7 @@ public class Component implements Serializable{
     }
     
     public Vector3f getPosition(){
-        return pos.add(parent.getPosition());
+        return new Vector3f(pos).add(parent.getPosition());
     }
     
     public Vector3f getPositionOffset(){
@@ -54,7 +54,7 @@ public class Component implements Serializable{
     }
     
     public Quaternionf getRotation(){
-        return rot.add(parent.getRotation());
+        return new Quaternionf(rot).multiply(parent.getRotation());
     }
         
     public Quaternionf getRotationOffset(){
@@ -62,7 +62,7 @@ public class Component implements Serializable{
     }
     
     public Vector3f getScale(){
-        return scale.add(parent.getScale());
+        return new Vector3f(scale).add(parent.getScale());
     }
     
     public void update(float delta){

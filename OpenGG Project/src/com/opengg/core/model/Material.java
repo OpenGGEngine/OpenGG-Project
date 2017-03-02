@@ -49,6 +49,7 @@ public class Material {
     public boolean hasnormmap = false;
     public boolean hasspecpow = false;
     public boolean hasreflmap = false;
+    public boolean hascolmap = false;
     public boolean hastrans = false;
     
     public Material(String name) {
@@ -57,6 +58,7 @@ public class Material {
     
     public void loadTextures(){
         if(mapKdFilename != null){
+            hascolmap = true;
             Kd = Texture.get(mapKdFilename);
         }
         if(mapKaFilename != null){

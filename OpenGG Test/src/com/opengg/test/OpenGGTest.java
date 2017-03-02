@@ -14,7 +14,6 @@ import com.opengg.core.gui.GUIText;
 import com.opengg.core.io.ControlType;
 import static com.opengg.core.io.input.keyboard.Key.*;
 import com.opengg.core.io.input.mouse.MouseButtonListener;
-import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.model.ModelLoader;
@@ -28,31 +27,22 @@ import com.opengg.core.render.texture.text.GGFont;
 import com.opengg.core.render.window.WindowInfo;
 import com.opengg.core.render.window.WindowOptions;
 import static com.opengg.core.render.window.WindowOptions.GLFW;
-import com.opengg.core.world.Camera;
 import com.opengg.core.world.World;
 import com.opengg.core.world.components.CameraComponent;
-import com.opengg.core.world.components.WorldObject;
 import com.opengg.core.world.components.KeyTrigger;
 import com.opengg.core.world.components.ModelRenderComponent;
 import com.opengg.core.world.components.PlayerComponent;
 import com.opengg.core.world.components.RenderComponent;
 import com.opengg.core.world.components.TriggerableAudioComponent;
 import com.opengg.core.world.components.UserControlComponent;
+import com.opengg.core.world.components.WorldObject;
 import com.opengg.core.world.components.particle.ParticleSystem;
 import com.opengg.core.world.components.physics.PhysicsComponent;
 import java.io.File;
 import java.io.IOException;
 
 public class OpenGGTest extends GGApplication implements MouseButtonListener {
-    private final float sens = 0.25f;
-    private float xrot, yrot;
-    private boolean lock = false;
-    private float rot1 = 0, rot2 = 0;
-    private Vector3f rot = new Vector3f(0, 0, 0);
-    private Vector3f pos = new Vector3f(0, -10, -30);
-    private Quaternionf rottest = new Quaternionf(1,0,0,1);
     private WorldObject terrain;
-    private Camera c;
     private MatDrawnObject awp3, base2;
     private GGFont f;
     private Texture t2, t3;
@@ -113,8 +103,9 @@ public class OpenGGTest extends GGApplication implements MouseButtonListener {
 
         ParticleSystem p = new ParticleSystem(2f,20f,100f,ObjectCreator.createOldModelBuffer(OpenGGTest.class.getResource("res/models/deer.obj")), t3);
         
-        ModelRenderComponent r = new ModelRenderComponent(ModelLoader.loadModel("C:/res/model/model.bmf"));
-
+        ModelRenderComponent beretta = new ModelRenderComponent(ModelLoader.loadModel("C:\\res\\beretta\\Beretta_M9.bmf"));
+        beretta.setScale(new Vector3f(0.08f,0.08f,0.08f));
+        
         TriggerableAudioComponent test3 = new TriggerableAudioComponent(so2);
         KeyTrigger t = new KeyTrigger(KEY_P, KEY_I);
         t.addSubscriber(test3);
@@ -123,7 +114,7 @@ public class OpenGGTest extends GGApplication implements MouseButtonListener {
         bad = new PhysicsComponent();
         bad.setParentInfo(terrain);
         terrain.attach(bad);
-        terrain.attach(r);
+        terrain.attach(beretta);
         terrain.attach(p);
         
         PlayerComponent player = new PlayerComponent();
@@ -133,6 +124,7 @@ public class OpenGGTest extends GGApplication implements MouseButtonListener {
         player.attach(controller);
         WorldEngine.getCurrent().attach(player);
         camera.use();
+        
         BindController.addController(controller);
         BindController.addBind(ControlType.KEYBOARD, "forward", KEY_W);
         BindController.addBind(ControlType.KEYBOARD, "backward", KEY_S);
@@ -142,7 +134,7 @@ public class OpenGGTest extends GGApplication implements MouseButtonListener {
         BindController.addBind(ControlType.KEYBOARD, "down", KEY_LEFT_SHIFT);
         BindController.addBind(ControlType.KEYBOARD, "lookright", KEY_Q);
         BindController.addBind(ControlType.KEYBOARD, "lookleft", KEY_E);
-        BindController.addBind(ControlType.KEYBOARD, "lookup", KEY_U);
+        BindController.addBind(ControlType.KEYBOARD, "lookup", KEY_R);
         BindController.addBind(ControlType.KEYBOARD, "lookdown", KEY_F);
         
         w.attach(test3);
@@ -152,21 +144,19 @@ public class OpenGGTest extends GGApplication implements MouseButtonListener {
         RenderGroup text = new RenderGroup().add(ep1);
         text.setText(true);
         
-        l = new Light(new Vector3f(10,10,10), new Vector3f(1,1,1), 80f, 0);
+        l = new Light(new Vector3f(10,20,190), new Vector3f(1,1,1), 400f, 0);
         
         RenderEngine.addLight(l);
         RenderEngine.setSkybox(ObjectCreator.createCube(1500f), Cubemap.get("C:/res/skybox/majestic"));
         RenderEngine.addGUIItem(new GUIItem(base2, new Vector2f()));
         RenderEngine.addRenderable(p);
-        RenderEngine.addRenderable(r);
+        RenderEngine.addRenderable(beretta);
         RenderEngine.addRenderGroup(text);
         RenderEngine.setCulling(false);    
     }
     
     @Override
     public void render() {
-        as.setPos(pos);
-        as.setRot(rot);
         AudioController.setListener(as);
         ShaderController.setPerspective(90, OpenGG.window.getRatio(), 1, 5000f);
         
@@ -174,11 +164,7 @@ public class OpenGGTest extends GGApplication implements MouseButtonListener {
     }
 
     @Override
-    public void update() {
-        xrot -= rot1 * 7;
-        yrot -= rot2 * 7;
-        terrain.setRotationOffset(rottest);
-    }
+    public void update() {}
 
     @Override
     public void buttonPressed(int button) {

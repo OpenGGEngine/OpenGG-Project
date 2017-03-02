@@ -40,7 +40,6 @@ public class PlayerEntity extends Entity{
      */
     public PlayerEntity(PhysicsType type, Vector3f position, Vector3f f, float mass, OBJModel model, World current){
         super(type,position, f, mass, model, current);
-        playerCam = new Camera(this.current.pos, direction);
     }
 
     /**
@@ -50,7 +49,6 @@ public class PlayerEntity extends Entity{
      */
     public PlayerEntity(Entity v){
         super(v);
-        playerCam = new Camera(current.pos, direction);
     }
     
     @Override

@@ -6,6 +6,7 @@
 
 package com.opengg.core.world.components;
 
+import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.world.Action;
 import com.opengg.core.world.ActionType;
@@ -18,13 +19,19 @@ import com.opengg.core.world.Actionable;
 public class PlayerComponent extends ComponentHolder implements Actionable{
     Vector3f control = new Vector3f();
     Vector3f controlrot = new Vector3f();
-    float yrot;
+    Vector3f currot = new Vector3f();
     float speed = 100;
+    float rotspeed = 3;
     
     @Override
     public void update(float delta){
         float deltasec = delta / 1000;
-        yrot += controlrot.x  * deltasec;
+        
+        currot.x += controlrot.x  * rotspeed * deltasec;
+        currot.y += controlrot.y  * rotspeed * deltasec;
+        currot.z += controlrot.z  * rotspeed * deltasec;
+        
+        this.setRotationOffset(new Quaternionf(currot));
         
         this.pos.x += control.x * speed * deltasec;
         this.pos.y += control.y * speed * deltasec;
@@ -54,16 +61,16 @@ public class PlayerComponent extends ComponentHolder implements Actionable{
                     control.y += 1;
                     break;
                 case "lookright":
-                    controlrot.y += 1;
-                    break;
-                case "lookleft":
                     controlrot.y -= 1;
                     break;
+                case "lookleft":
+                    controlrot.y += 1;
+                    break;
                  case "lookup":
-                    controlrot.x += 1;
+                    controlrot.x -= 1;
                     break;
                 case "lookdown":
-                    controlrot.x -= 1;
+                    controlrot.x += 1;
                     break;
             }
         }else{
@@ -87,16 +94,16 @@ public class PlayerComponent extends ComponentHolder implements Actionable{
                     control.y -= 1;
                     break;
                 case "lookright":
-                    controlrot.y -= 1;
-                    break;
-                case "lookleft":
                     controlrot.y += 1;
                     break;
+                case "lookleft":
+                    controlrot.y -= 1;
+                    break;
                 case "lookup":
-                    controlrot.x -= 1;
+                    controlrot.x += 1;
                     break;
                 case "lookdown":
-                    controlrot.x += 1;
+                    controlrot.x -= 1;
                     break;
             }
         }

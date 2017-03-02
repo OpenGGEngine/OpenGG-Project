@@ -52,6 +52,10 @@ public class Quaternionf implements Serializable{
         y = axis.y;
         z = axis.z;
     }
+    
+    public Quaternionf(Vector3f euler){
+        rotationXYZ(euler.x, euler.y, euler.z);
+    }
         
     public Quaternionf(Matrix4f matrix) {
         final float trace = matrix.m11 + matrix.m22 + matrix.m33;
@@ -143,9 +147,9 @@ public class Quaternionf implements Serializable{
     public Matrix4f convertMatrix() {
         this.normalize();
         return new Matrix4f(
-                1.0f - 2.0f * y * y - 2.0f * z * z, 2.0f * x * y - 2.0f * z * w, 2.0f * x * z + 2.0f * y * w,
-                2.0f * x * y + 2.0f * z * w, 1.0f - 2.0f * x * x - 2.0f * z * z, 2.0f * y * z - 2.0f * x * w,
-                2.0f * x * z - 2.0f * y * w, 2.0f * y * z + 2.0f * x * w, 1.0f - 2.0f * x * x - 2.0f * y * y);
+                1.0f - 2.0f * y * y - 2.0f * z * z,     2.0f * x * y - 2.0f * z * w,            2.0f * x * z + 2.0f * y * w,
+                2.0f * x * y + 2.0f * z * w,            1.0f - 2.0f * x * x - 2.0f * z * z,     2.0f * y * z - 2.0f * x * w,
+                2.0f * x * z - 2.0f * y * w,            2.0f * y * z + 2.0f * x * w,            1.0f - 2.0f * x * x - 2.0f * y * y);
     }
 
     public Vector3f axis(){
@@ -236,7 +240,7 @@ public class Quaternionf implements Serializable{
         return this;
     }
 
-    public Quaternionf rotationXYZ(float angleX, float angleY, float angleZ) {
+    public Quaternionf rotationXYZ(float angleX, float angleY, float angleZ) {    
         float sx = sin(angleX * 0.5f);
         float cx = (float) cosFromSin(sx, angleX * 0.5f);
         float sy = sin(angleY * 0.5f);
@@ -252,7 +256,7 @@ public class Quaternionf implements Serializable{
         x = sx*cycz + cx*sysz;
         y = cx*sycz - sx*cysz;
         z = cx*cysz + sx*sycz;
-
+//
         return this;
     }
     

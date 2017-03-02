@@ -21,6 +21,7 @@ struct Material
     bool hasspecmap;
     bool hasspecpow;
     bool hasambmap;
+	bool hascolormap;
     vec3 ks;
     vec3 ka;
     vec3 kd;
@@ -126,7 +127,11 @@ vec3 shadify(Light light){
 }
 
 void process(){
-	color = getTex(Kd);
+	if(material.hascolormap){
+		color = getTex(Kd);
+	}else{
+		color = vec4(material.kd, 1);
+	}
 
     diffuse = color.rgb;
 
@@ -151,7 +156,6 @@ void process(){
     }else{
         specular = material.ks;
     }
-	
 	n = normalize(( view * model * vec4(norm,0.0f)).xyz);
     
     if(material.hasnormmap){

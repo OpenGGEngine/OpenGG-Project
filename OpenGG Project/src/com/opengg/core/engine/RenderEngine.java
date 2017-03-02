@@ -206,7 +206,7 @@ public class RenderEngine {
     }
     
     public static void draw(){
-        ShaderController.setView(camera);
+        ShaderController.setView(camera.getMatrix());
         sceneTex.startTexRender();
         if(shadVolumes){
             writeToDepth();   

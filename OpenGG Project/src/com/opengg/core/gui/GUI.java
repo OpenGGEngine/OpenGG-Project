@@ -20,7 +20,7 @@ public class GUI {
 
     public static void startGUIPos(){
         ShaderController.setOrtho(-1, 1, -1, 1, -1, 1);
-        ShaderController.setView(new Camera());
+        ShaderController.setView(new Camera().getMatrix());
     }
     
     public static void addItem(GUIItem item){
