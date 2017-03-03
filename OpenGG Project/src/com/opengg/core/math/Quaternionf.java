@@ -260,6 +260,31 @@ public class Quaternionf implements Serializable{
         return this;
     }
     
+    public Vector3f toEuler(){
+        Vector3f end = new Vector3f();
+        
+        float ysqr = y * y;
+        
+	float t0 = + 2.0f * (w * x + y * z);
+	float t1 = + 1.0f - 2.0f * (x * x + ysqr);
+	end.x = FastMath.atan2(t0, t1);
+
+	float t2 = + 2.0f * (w * y - z * x);
+	t2 = t2 > 1.0f ? 1.0f : t2;
+	t2 = t2 < -1.0f ? -1.0f : t2;
+	end.y = (float)Math.asin(t2);
+
+	float t3 = + 2.0f * (w * z + x * y);
+	float t4 = + 1.0f - 2.0f * (ysqr + z * z);  
+	end.z = FastMath.atan2(t3, t4);
+        
+        end.x = (float)Math.toDegrees(end.x);
+        end.y = (float)Math.toDegrees(end.y);
+        end.z = (float)Math.toDegrees(end.z);
+        
+        return end;
+    }
+    
     @Override
     public boolean equals(Object obj) {
         if (this == obj)

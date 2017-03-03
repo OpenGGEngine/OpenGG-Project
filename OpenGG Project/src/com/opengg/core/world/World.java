@@ -26,7 +26,6 @@ import java.util.List;
 public class World extends ComponentHolder{
     public float floorLev = 0;
     public Vector3f gravityVector = new Vector3f(0,-9.81f,0);
-    public Vector3f wind = new Vector3f();
     public RenderGroup group = new RenderGroup();
     
     public void setFloor(float floor){
@@ -110,7 +109,7 @@ public class World extends ComponentHolder{
 
     @Override
     public Vector3f getScale(){
-        return new Vector3f();
+        return new Vector3f(1,1,1);
     }
     
     @Override
@@ -123,7 +122,6 @@ public class World extends ComponentHolder{
         super.serialize(s);
         s.add(gravityVector);
         s.add(floorLev);
-        s.add(wind);
     }
     
     @Override
@@ -131,7 +129,6 @@ public class World extends ComponentHolder{
         super.deserialize(ds);
         gravityVector = ds.getVector3f();
         floorLev = ds.getFloat();
-        wind = ds.getVector3f();
     }
     
     @Override

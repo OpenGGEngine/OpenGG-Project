@@ -6,6 +6,7 @@
 
 package com.opengg.core.online.client;
 
+import com.opengg.core.engine.GGConsole;
 import com.opengg.core.engine.OpenGG;
 import com.opengg.core.online.NetworkSerializer;
 import com.opengg.core.online.Packet;
@@ -24,6 +25,11 @@ public class ClientThread implements Runnable{
     
     @Override
     public void run() {
+        try {
+            Thread.sleep(50);
+        } catch (InterruptedException ex) {
+            GGConsole.error("Response Thread failed!");
+        }
         while(!OpenGG.getEnded()){
             Packet p = Packet.receive(c.udpsocket, c.packetsize);
             byte[] bytes = p.getData();

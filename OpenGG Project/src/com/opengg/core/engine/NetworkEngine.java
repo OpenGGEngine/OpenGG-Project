@@ -73,8 +73,6 @@ public class NetworkEngine {
             s.close();
             
             Packet.send(ds, new byte[packetsize], address, port);
-            Packet p = Packet.receive(ds, packetsize);
-            port = p.getPort();
             
             GGConsole.log("Connected to " + servname);
             

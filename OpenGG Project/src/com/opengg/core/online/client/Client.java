@@ -37,7 +37,7 @@ public class Client {
         this.timeConnected = Calendar.getInstance().getTime();
         this.input = new ClientThread(this);
         this.output = new ClientResponseThread(this);
-        new Thread(input).start();
         new Thread(output).start();
+        new Thread(input).start();
     }
 }

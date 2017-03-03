@@ -6,7 +6,6 @@
 package com.opengg.core.math;
 
 import static com.opengg.core.math.FastMath.isEqual;
-import com.opengg.core.world.components.particle.Particle;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
@@ -89,7 +88,7 @@ public class Vector3f implements Serializable{
     }
     public Vector3f add(Vector3f... v){
         Vector3f sum = new Vector3f(this);
-        for(Vector3f n :v)
+        for(Vector3f n : v)
             sum = sum.addVectors(n);
         return sum;
     }
@@ -145,7 +144,13 @@ public class Vector3f implements Serializable{
         buffer.flip();
         return buffer;
     }
-
+    
+    public void set(float x, float y, float z) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
+    
     public void setRadius(float radi) {
         float inclination = getInclination();
         float azimuth = getAzimuth();

@@ -6,22 +6,39 @@
 
 package com.opengg.core.world.components;
 
+import com.opengg.core.engine.BindController;
+import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.world.Action;
 import com.opengg.core.world.ActionType;
 import com.opengg.core.world.Actionable;
+import com.opengg.core.world.components.physics.PhysicsComponent;
+import static java.lang.Math.abs;
 
 /**
  *
  * @author Javier
  */
 public class PlayerComponent extends ComponentHolder implements Actionable{
+    private final PhysicsComponent playerphysics;
+    private final UserControlComponent controller;
+    private final CameraComponent camera;
+    
     Vector3f control = new Vector3f();
     Vector3f controlrot = new Vector3f();
     Vector3f currot = new Vector3f();
-    float speed = 100;
-    float rotspeed = 3;
+    float speed = 80;
+    float rotspeed = 1;
+    
+    public PlayerComponent(){
+        camera = new CameraComponent();
+        controller = new UserControlComponent();
+        playerphysics = new PhysicsComponent();
+        attach(camera);
+        attach(controller);
+        attach(playerphysics);
+    }
     
     @Override
     public void update(float delta){
@@ -33,9 +50,22 @@ public class PlayerComponent extends ComponentHolder implements Actionable{
         
         this.setRotationOffset(new Quaternionf(currot));
         
-        this.pos.x += control.x * speed * deltasec;
-        this.pos.y += control.y * speed * deltasec;
-        this.pos.z += control.z * speed * deltasec;
+        float xvel = control.x * deltasec * speed;
+        if((abs(playerphysics.velocity.x) < 20))
+            playerphysics.velocity.x += xvel;
+        
+        if(control.x == 0)
+            playerphysics.velocity.x /= 2;
+        
+        float zvel = control.z * deltasec * speed;
+        if(abs(playerphysics.velocity.z) < 20)
+            playerphysics.velocity.z += zvel; 
+        
+        if(control.z == 0)
+            playerphysics.velocity.z /= 2;
+            
+        if((control.y == 1) && (getPosition().y <= getWorld().floorLev + 0.001f))
+            playerphysics.velocity.y += 20;
     }
     
     @Override
@@ -43,21 +73,18 @@ public class PlayerComponent extends ComponentHolder implements Actionable{
         if(action.type == ActionType.PRESS){
             switch(action.name){
                 case "forward":
-                    control.z += 1;
-                    break;
-                case "backward":
                     control.z -= 1;
                     break;
-                case "left":
-                    control.x += 1;
+                case "backward":
+                    control.z += 1;
                     break;
-                case "right":
+                case "left":
                     control.x -= 1;
                     break;
-                case "up":
-                    control.y -= 1;
+                case "right":
+                    control.x += 1;
                     break;
-                case "down":
+                case "up":
                     control.y += 1;
                     break;
                 case "lookright":
@@ -76,21 +103,18 @@ public class PlayerComponent extends ComponentHolder implements Actionable{
         }else{
             switch(action.name){
                 case "forward":
-                    control.z -= 1;
-                    break;
-                case "backward":
                     control.z += 1;
                     break;
-                case "left":
-                    control.x -= 1;
+                case "backward":
+                    control.z -= 1;
                     break;
-                case "right":
+                case "left":
                     control.x += 1;
                     break;
-                case "up":
-                    control.y += 1;
+                case "right":
+                    control.x -= 1;
                     break;
-                case "down":
+                case "up":
                     control.y -= 1;
                     break;
                 case "lookright":
@@ -107,6 +131,11 @@ public class PlayerComponent extends ComponentHolder implements Actionable{
                     break;
             }
         }
+    }
+    
+    public void use(){
+        BindController.addController(controller);
+        camera.use();
     }
     
 }

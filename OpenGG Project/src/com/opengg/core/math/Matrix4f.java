@@ -292,4 +292,12 @@ public class Matrix4f {
     public float access(int x, int y) {
         return getArr()[x][y];
     }
+    
+    @Override
+    public String toString(){
+        return  m00 + ", " + m01 + ", " + m02 + ", " + m03 + ", " + "\n" +
+                m10 + ", " + m11 + ", " + m12 + ", " + m13 + ", " + "\n" +
+                m20 + ", " + m21 + ", " + m22 + ", " + m23 + ", " + "\n" + 
+                m30 + ", " + m31 + ", " + m32 + ", " + m33;
+    }
 }

@@ -8,6 +8,7 @@ package com.opengg.core.online.client;
 
 import com.opengg.core.engine.GGConsole;
 import com.opengg.core.engine.OpenGG;
+import com.opengg.core.online.Packet;
 
 /**
  *
@@ -25,14 +26,14 @@ public class ClientResponseThread implements Runnable{
     @Override
     public void run() {
         while(!end && !OpenGG.getEnded()){
+            byte[] actions = ActionQueuer.generatePacket();
+            Packet.send(client.udpsocket, actions, client.servIP, client.port);
+            
             try {
                 Thread.sleep(1000/30);
             } catch (InterruptedException ex) {
                 GGConsole.error("Response Thread failed!");
             }
-            
-            byte[] actions = ActionQueuer.generatePacket();
-            //Packet.send(client.udpsocket, actions, client.servIP, client.port);
         }
     }
     

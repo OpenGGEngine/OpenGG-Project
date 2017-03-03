@@ -10,7 +10,6 @@ import com.opengg.core.math.Vector3f;
 import com.opengg.core.world.Deserializer;
 import com.opengg.core.world.Serializer;
 import com.opengg.core.world.components.Component;
-import static com.opengg.core.world.components.physics.PhysicsConstants.BASE;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -20,16 +19,21 @@ import java.util.List;
  */
 public class PhysicsComponent extends Component {
     Collider c;
+    
     public boolean gravEffect = true;
+    
     public List<Vector3f> forces = new LinkedList<>();
     public List<Vector3f> rotforces = new LinkedList<>();
     
-    public Vector3f velocity = new Vector3f();
-    public Vector3f angvelocity = new Vector3f();
+    public Vector3f force = new Vector3f();
+    public Vector3f rotforce = new Vector3f();
     
     public Vector3f acceleration = new Vector3f();
     public Vector3f angaccel = new Vector3f();
     
+    public Vector3f velocity = new Vector3f();
+    public Vector3f angvelocity = new Vector3f();
+
     private float mass = 10f;
     private float density = 1f;
     
@@ -44,15 +48,20 @@ public class PhysicsComponent extends Component {
         rot = parent.getRotation();
         delta /= 1000;
         
-        Vector3f last = new Vector3f(acceleration);
-        pos.addEquals(velocity.multiply(delta).add(last.multiply((float) Math.pow(delta, 2) * 0.5f)));
+        float floor = getWorld().floorLev;
         
-        Vector3f force = finalForce(delta);
-        accel(last, force);
+        force = finalForce();
+        accel(force);
         velocity.addEquals(acceleration.multiply(delta));
+        pos.addEquals(velocity.multiply(delta));
         
-        if((pos.y) < BASE){ 
-            pos.y = BASE;
+        rotforce = finalRotForce();
+        angaccel = rotforce.divide(mass);
+        angvelocity.addEquals(angaccel.multiply(delta));
+
+        
+        if(pos.y < floor){ 
+            pos.y = floor;
             velocity.y = 0;
         }
                
@@ -69,23 +78,43 @@ public class PhysicsComponent extends Component {
         return c;
     }
     
-    private Vector3f finalForce(float delta) {
+    private Vector3f finalForce() {
         Vector3f fforce = new Vector3f();
-        for(Vector3f force : forces){
-            fforce.add(force);
+        for(Vector3f forcee : forces){
+            fforce = fforce.add(forcee);
         }
         return fforce;
     }
     
-    private void accel(Vector3f last, Vector3f force){
+    private Vector3f finalRotForce() {
+        Vector3f fforce = new Vector3f();
+        for(Vector3f forcee : rotforces){
+            fforce = fforce.add(forcee);
+        }
+        return fforce;
+    }
+    
+    private void accel(Vector3f force){
         acceleration = force.divide(mass);
-        acceleration = (last.add(acceleration)).divide(2);
         
         if (gravEffect) {
             acceleration.x += getWorld().gravityVector.x;
             acceleration.y += getWorld().gravityVector.y;
             acceleration.z += getWorld().gravityVector.z;
         }
+    }
+    
+    public void addForce(Vector3f force){
+        forces.add(force);
+    }
+    
+    public void addAngularForce(Vector3f force){
+        rotforces.add(force);
+    }
+    
+    public void clearForces(){
+        forces.clear();
+        rotforces.clear();
     }
     
     public static PhysicsComponent interpolate(PhysicsComponent a, PhysicsComponent b, float alpha) {

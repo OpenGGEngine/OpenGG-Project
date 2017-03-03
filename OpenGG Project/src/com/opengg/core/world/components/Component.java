@@ -62,7 +62,7 @@ public class Component implements Serializable{
     }
     
     public Vector3f getScale(){
-        return new Vector3f(scale).add(parent.getScale());
+        return new Vector3f(scale).multiply(parent.getScale());
     }
     
     public void update(float delta){

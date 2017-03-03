@@ -34,6 +34,7 @@ public class Server {
         this.dsocket = dsocket;
         this.clistener = new ConnectionListener(socket, this);
         this.sthread = new ServerThread(this, 15);
+        this.srthread = new ServerResponseThread(this);
         new Thread(clistener).start();
         new Thread(sthread).start();
         new Thread(srthread).start();

@@ -32,6 +32,15 @@ public class Resource {
         return null;
     }
     
+    public static String getConfigPath(String name){
+        try {
+            return new File("resources\\config\\" +  name + ".cfg").getCanonicalPath();
+        } catch (IOException ex) {
+            GGConsole.warning("Failed to load " + name + "!");
+        }
+        return null;
+    }
+    
     public static String getShaderPath(String name){
         try {
             return new File("resources\\glsl\\" +  name).getCanonicalPath();
