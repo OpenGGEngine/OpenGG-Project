@@ -60,7 +60,7 @@ public class MatDrawnObject implements Drawable {
     @Override
     public void render() {
         if(m.Kd != null)
-            m.Kd.useTexture(0);     
+            m.Kd.useTexture(0); 
         if(m.norm != null) 
             m.norm.useTexture(3);
         if(m.Ks != null) 

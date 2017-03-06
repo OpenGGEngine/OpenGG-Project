@@ -7,13 +7,15 @@ package com.opengg.core.gui;
 
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
+import com.opengg.core.render.Renderable;
+import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.render.texture.text.GGFont;
 
 /**
  *
  * @author Warren
  */
-public class GUIText {
+public class GUIText extends GUIItem implements Renderable {
 
     private String textString;
     private float fontSize;
@@ -37,14 +39,17 @@ public class GUIText {
     private Vector2f offset = new Vector2f(0f, 0f);
     private Vector3f outlineColor = new Vector3f(0f, 0f, 0f);
 
+    Drawable textDraw;
     public GUIText(String text, GGFont font,float fontSize,  Vector2f position, float maxLineLength,
         boolean centered) {
-        this.textString = text;
+       
+        super(font.loadText(text,fontSize,maxLineLength,font,centered),position);
         this.fontSize = fontSize;
         this.font = font;
         this.position = position;
         this.lineMaxSize = maxLineLength;
         this.centerText = centered;
+        this.textString = text;
         //TextMaster.loadText(this);
     }
     public void remove() {
@@ -52,7 +57,9 @@ public class GUIText {
     }
     
     public void setText(String text){
-        
+        System.out.println(text);
+        this.textString = text;
+        this.d = font.loadText(this);
     }
     
     public void setColour(float r, float g, float b) {
@@ -153,4 +160,6 @@ public class GUIText {
         outlineColor = new Vector3f(r, g, b);
         
     }
+
+ 
 }

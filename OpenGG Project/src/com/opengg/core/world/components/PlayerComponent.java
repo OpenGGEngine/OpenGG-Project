@@ -27,7 +27,7 @@ public class PlayerComponent extends ComponentHolder implements Actionable{
     
     Vector3f control = new Vector3f();
     Vector3f controlrot = new Vector3f();
-    Vector3f currot = new Vector3f();
+    public Vector3f currot = new Vector3f();
     float speed = 80;
     float rotspeed = 1;
     

@@ -12,8 +12,11 @@ import com.opengg.core.exceptions.InvalidParentException;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.Renderable;
+import com.opengg.core.render.drawn.Drawable;
+import com.opengg.core.render.drawn.DrawnObject;
 import com.opengg.core.world.components.Component;
 import com.opengg.core.world.components.ComponentHolder;
+import com.opengg.core.world.components.RenderComponent;
 import com.opengg.core.world.components.physics.Collider;
 import com.opengg.core.world.components.physics.PhysicsComponent;
 import java.util.LinkedList;
@@ -27,6 +30,7 @@ public class World extends ComponentHolder{
     public float floorLev = 0;
     public Vector3f gravityVector = new Vector3f(0,-9.81f,0);
     public RenderGroup group = new RenderGroup();
+    public RenderGroup groupnoadj = new RenderGroup();
     
     public void setFloor(float floor){
         floorLev = floor;
@@ -53,13 +57,24 @@ public class World extends ComponentHolder{
     
     public void useRenderables(){
         group.setAdjacencyMesh(true);
+        groupnoadj.setAdjacencyMesh(false);  
         for(Component c : getAll()){
             if(c instanceof Renderable){
+                if(((Renderable)c) instanceof RenderComponent){
+                    if(((RenderComponent)c).getDrawable() instanceof DrawnObject){
+                        if(((DrawnObject)(((RenderComponent)c).getDrawable())).hasAdjacency()){
+                            groupnoadj.add(((DrawnObject)(((RenderComponent)c).getDrawable())));
+                            continue;
+                        }
+                    }
+                }
                 group.add((Renderable)c);
             }
         }
+
         
         RenderEngine.addRenderGroup(group);
+        RenderEngine.addRenderGroup(groupnoadj);
     }
     
     public LinkedList<Collider> useColliders() {

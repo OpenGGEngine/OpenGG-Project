@@ -14,7 +14,7 @@ import com.opengg.core.render.drawn.Drawable;
  */
 public class GUIItem {
     
-    Drawable d;
+    public Drawable d;
     Vector2f screenlocalpos;
 
     public void setPos(Vector2f screenlocalpos) {

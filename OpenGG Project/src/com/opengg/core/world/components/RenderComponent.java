@@ -25,10 +25,7 @@ public class RenderComponent extends Component implements Renderable{
 
     @Override
     public void render() {
-        Matrix4f m = new Matrix4f().translate(getPosition()).rotateQuat(getRotation()).scale(getScale());
-        //Matrix4f m = getRotation().convertMatrix();
-        System.out.println(m);
-        System.out.println();
+        Matrix4f m = new Matrix4f().translate(getPosition()).rotateQuat(getRotation()).scale(getScale());   
         if(g != null){
             g.setMatrix(m);
             g.render();
@@ -38,5 +35,9 @@ public class RenderComponent extends Component implements Renderable{
 
     public void setDrawable(Drawable d){
         this.g = d;
+    }
+    
+    public Drawable getDrawable(){
+        return g;
     }
 }
