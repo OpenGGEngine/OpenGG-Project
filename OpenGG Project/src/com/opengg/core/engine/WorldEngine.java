@@ -33,21 +33,21 @@ public class WorldEngine{
         colliders.add(c);
     }
     
-    static void processCollision(List<CollisionData> info){
-//        if(info.c1physact){
-//            info.c1phys.velocity = new Vector3f(-info.c1phys.velocity.x, -info.c1phys.velocity.y, -info.c1phys.velocity.z);
-//        }
-//        if(info.c2physact){
-//            info.c2phys.velocity = new Vector3f(-info.c2phys.velocity.x, -info.c2phys.velocity.y, -info.c2phys.velocity.z);
-//        }
-        System.out.println("IT COLLIDED FOR FUCKS SAKE");
+    static void processCollision(List<CollisionData> collisions){
+        CollisionData info = collisions.get(0);
+        if(info.c1physact){
+            info.c1phys.velocity = info.c1phys.velocity.inverse();
+        }
+        if(info.c2physact){
+            info.c2phys.velocity = info.c2phys.velocity.inverse();
+        }
     }
     
     public static void checkColliders(){
         for(int i = 0; i < colliders.size(); i++){
             for(int j = i + 1; j < colliders.size(); j++){
                 List<CollisionData> info = colliders.get(i).testForCollision(colliders.get(j));
-                if(!info.isEmpty()){
+                if(info == null || !info.isEmpty()){
                     processCollision(info);
                 }
             }
@@ -59,6 +59,7 @@ public class WorldEngine{
     }
     
     public static void update(){
+        checkColliders();
         float delta = t.getDeltaMs();
         for(Component c : OpenGG.curworld.getChildren()){
             traverseUpdate(c, delta);

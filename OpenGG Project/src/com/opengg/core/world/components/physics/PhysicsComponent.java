@@ -10,6 +10,7 @@ import com.opengg.core.math.Vector3f;
 import com.opengg.core.world.Deserializer;
 import com.opengg.core.world.Serializer;
 import com.opengg.core.world.components.Component;
+import com.opengg.core.world.components.ComponentHolder;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -17,7 +18,7 @@ import java.util.List;
  *
  * @author ethachu19
  */
-public class PhysicsComponent extends Component {
+public class PhysicsComponent extends ComponentHolder {
     Collider c;
     
     public boolean gravEffect = true;
@@ -64,14 +65,14 @@ public class PhysicsComponent extends Component {
             pos.y = floor;
             velocity.y = 0;
         }
-               
+        
         parent.setPositionOffset(pos);
         parent.setRotationOffset(rot);
     }
     
     public void setCollider(Collider c){
        this.c = c;
-       c.setParentPhysicsComponent(this);
+       attach(c);
     }
     
     public Collider getCollider() {

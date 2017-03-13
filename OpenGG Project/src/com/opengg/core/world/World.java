@@ -12,7 +12,6 @@ import com.opengg.core.exceptions.InvalidParentException;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.Renderable;
-import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.render.drawn.DrawnObject;
 import com.opengg.core.world.components.Component;
 import com.opengg.core.world.components.ComponentHolder;
@@ -83,8 +82,9 @@ public class World extends ComponentHolder{
         for(Component c : components){
             if(c instanceof PhysicsComponent){
                 Collider collide = ((PhysicsComponent) c).getCollider();
-                if (collide != null)
+                if (collide != null){
                     list.add(collide);
+                }
             }
         }
         return list;

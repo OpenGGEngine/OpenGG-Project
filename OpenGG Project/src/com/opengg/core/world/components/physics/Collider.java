@@ -6,7 +6,6 @@
 package com.opengg.core.world.components.physics;
 
 import com.opengg.core.math.Vector3f;
-import com.opengg.core.world.components.Component;
 import com.opengg.core.world.components.triggers.Trigger;
 import com.opengg.core.world.components.triggers.TriggerInfo;
 import static com.opengg.core.world.components.triggers.TriggerInfo.SINGLE;
@@ -20,7 +19,6 @@ import java.util.List;
  * @author ethachu19
  */
 public class Collider extends Trigger{
-    PhysicsComponent pc;
     BoundingBox main;
     List<BoundingBox> boxes = new ArrayList<>();
 
@@ -36,10 +34,6 @@ public class Collider extends Trigger{
     
     public void addBoundingBox(BoundingBox bb) {
         boxes.add(bb);
-    }
-
-    void setParentPhysicsComponent(PhysicsComponent pc){
-        this.pc = pc;
     }
     
     public String toString() {
@@ -65,13 +59,18 @@ public class Collider extends Trigger{
                     CollisionData data = new CollisionData();
                     data.c1collider = this;
                     data.c2collider = other;
+                    
                     data.c1colliderbox = x;
                     data.c2colliderbox = y;
-                    data.c1phys = pc;
-                    data.c2phys = other.pc;
-                    data.c1physact = pc != null;
-                    data.c2physact = other.pc != null;
                     
+                    if(parent instanceof PhysicsComponent){
+                        data.c1phys = (PhysicsComponent)parent;
+                        data.c1physact = true;
+                    }
+                    if(other.parent instanceof PhysicsComponent){
+                        data.c2phys = (PhysicsComponent)other.parent;
+                        data.c2physact = true;
+                    }
                     dataList.add(data);
                 }
             }
@@ -90,14 +89,9 @@ public class Collider extends Trigger{
     @Override
     public void update(float delta) {
         Vector3f fpos = getPosition();
-        boxes.stream().forEach((b) -> {
+        for(BoundingBox b : boxes){
             b.recenter(fpos);
-        });
+        }
         main.recenter(fpos);
-    }
-
-    @Override
-    public Vector3f getPosition() {
-        return pc.parent.getPosition();
     }
 }

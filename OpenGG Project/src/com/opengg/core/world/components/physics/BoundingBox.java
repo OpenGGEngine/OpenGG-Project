@@ -15,12 +15,14 @@ public class BoundingBox {
     public static final int MAX = 1, MIN = 0;
     private float length, width, height;
     private Vector3f[] vertices = {new Vector3f(), new Vector3f()};
+    private Vector3f pos = new Vector3f();
     
     public BoundingBox(Vector3f pos, float length, float width, float height) {
         this.length = length;
         this.width = width;
-        this.height = height;
+        this.height = height;        
         recenter(pos);
+        this.pos = pos;
     }
     
     public Vector3f[] getAABBVertices(){
@@ -32,21 +34,21 @@ public class BoundingBox {
     }
     
     public void recenter(Vector3f pos) {
-        vertices[MIN].y = pos.y;
-        vertices[MIN].x = pos.x - width / 2;
-        vertices[MIN].z = pos.z - length / 2;
+        vertices[MIN].y = (this.pos.y + pos.y) - height / 2;
+        vertices[MIN].x = (this.pos.x + pos.x) - width / 2;
+        vertices[MIN].z = (this.pos.z + pos.z) - length / 2;
 
-        vertices[MAX].y = pos.y + height;
-        vertices[MAX].x = pos.x + width / 2;
-        vertices[MAX].z = pos.z + length / 2;
+        vertices[MAX].y = (this.pos.y + pos.y) + height / 2;
+        vertices[MAX].x = (this.pos.x + pos.x) + width / 2;
+        vertices[MAX].z = (this.pos.z + pos.z) + length / 2;
     }
     
     public boolean isColliding(BoundingBox x) {
         return ! (vertices[MAX].x < x.vertices[MIN].x || 
-             vertices[MAX].y < x.vertices[MIN].y ||
-             vertices[MAX].z < x.vertices[MIN].z ||
-             vertices[MIN].x > x.vertices[MAX].x || 
-             vertices[MIN].y > x.vertices[MAX].y ||
-             vertices[MIN].z > x.vertices[MAX].z);
+                  vertices[MAX].y < x.vertices[MIN].y ||
+                  vertices[MAX].z < x.vertices[MIN].z ||
+                  vertices[MIN].x > x.vertices[MAX].x || 
+                  vertices[MIN].y > x.vertices[MAX].y ||
+                  vertices[MIN].z > x.vertices[MAX].z);
     }
 }
