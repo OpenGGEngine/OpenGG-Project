@@ -73,10 +73,15 @@ public class GGConsole {
     public static void writeLog(Date date){
         String dates = DateFormat.getDateTimeInstance().format(date);
         dates = dates.replace(":", "-");
-        try(PrintWriter writer = new PrintWriter(new FileOutputStream(Resource.getLocal("logs\\" + dates + ".log")))) {
+        writeLog(date, "", dates);
+    }
+    
+    public static void writeLog(Date date, String error, String name){
+        try(PrintWriter writer = new PrintWriter(new FileOutputStream(Resource.getLocal("logs\\" + name + ".log")))) {
             for(Message m : messages){
                 writer.println(m.toString());
             }
+            writer.println(error);
         } catch (FileNotFoundException ex) {
             GGConsole.error("Could not create log file!");
         }

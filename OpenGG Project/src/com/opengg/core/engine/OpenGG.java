@@ -36,83 +36,64 @@ import java.util.logging.Logger;
  * @author Javier
  */
 public class OpenGG implements ConsoleListener{
+    public static String version = "0.0.1a1";
+    
     public static Window window;
     public static GGApplication app;
     public static World curworld;
     public static boolean lwjglinit = false;
-    static List<Executable> executable = new LinkedList<>();
+    static List<Executable> executables = new LinkedList<>();
     static Date startTime;
+    static boolean head = false;
     static boolean end = false;
     static boolean force = false;
     static boolean verbose = false;
     static boolean test = false;
       
-    public static void initialize(GGApplication app, WindowInfo windowinfo){       
-        
-        startTime = Calendar.getInstance().getTime();
-        
-        if(System.getProperty("os.name").contains("Windows")){
-            System.setProperty("org.lwjgl.librarypath", new File("natives\\windows").getAbsolutePath());
-        }else if(System.getProperty("os.name").contains("OS X")){
-           System.setProperty("org.lwjgl.librarypath", new File("natives\\osx").getAbsolutePath());
-        }else if(System.getProperty("os.name").contains("Linux")){
-            System.setProperty("org.lwjgl.librarypath", new File("natives\\linux").getAbsolutePath());
-        }else{
-            GGConsole.error("OpenGG is not supported on " + System.getProperty("os.name") + ", exiting...");
-            writeLog();
+    public static void initialize(GGApplication app, WindowInfo info){
+        try{
+            if(info == null){
+                GGConsole.log("Null WindowInfo, assuming headless");
+                initializeLocal(app, null, false);
+            }else{
+                initializeLocal(app, info, true);
+            }
+        }catch(Exception e){
+            GGConsole.error("Uncaught exception: " + e.getMessage());
+            e.printStackTrace();
+            try {Thread.sleep(10);} catch (InterruptedException ex) {}
+            closeEngine();
+            writeErrorLog();
             System.exit(0);
         }
         
-        lwjglinit = true;
-        
-        String verb = System.getProperty("gg.verbose");
-        String stest = System.getProperty("gg.istest");
-        if(verb != null)
-            if(verb.equals("true"))
-                verbose = true;
-        
-        if(stest != null)
-            if(stest.equals("true"))
-                test = true;
-        
-        GGConsole.log("OpenGG initializing, running on " + System.getProperty("os.name") + ", " + System.getProperty("os.arch"));
-        
-        OpenGG.app = app;
+    }
+    
+    public static void initializeHeadless(GGApplication app){
+        initialize(app, null);
+    }
+    
+    private static void initializeGraphics(WindowInfo windowinfo){       
         if(windowinfo.type == GLFW)
             window = new GLFWWindow(windowinfo);
         else
             throw new IncompatibleWindowFormatException("Window type passed in is unknown!");
         
+        SystemInfo.queryOpenGLInfo();
         GGConsole.log("Window generation successful, using OpenGL context version " + RenderEngine.getGLVersion());
         
         initializeRenderEngine();  
         RenderEngine.checkForGLErrors();
         
         initializeAudioController();      
-        
-        curworld = new World();
-        
         BindController.initialize();
-        
-        GGConsole.log("OpenGG initialization complete, running application setup");
-        try{
-            app.setup();
-            RenderEngine.checkForGLErrors();
-            GGConsole.log("Application setup complete");
-            run();
-        }catch (Exception e){
-            GGConsole.error("Uncaught exception: " + e.toString());
-            e.printStackTrace();
-            try {Thread.sleep(10);} catch (InterruptedException ex) {}
-            closeEngine();
-            writeLog();
-            System.exit(0);
-        }
     }
     
-    public static void initializeHeadless(GGApplication app){
+    private static void initializeLocal(GGApplication app, WindowInfo info, boolean client){
         startTime = Calendar.getInstance().getTime();
+        head = client;
         
+        GGConsole.log("Loading native libraries...");
         if(System.getProperty("os.name").contains("Windows")){
             System.setProperty("org.lwjgl.librarypath", new File("natives\\windows").getAbsolutePath());
         }else if(System.getProperty("os.name").contains("OS X")){
@@ -141,30 +122,27 @@ public class OpenGG implements ConsoleListener{
         
         OpenGG.app = app;
         
+        if(client)
+            initializeGraphics(info);
+        
         curworld = new World();
         
-        try{
-            app.setup();
-            GGConsole.log("Application setup complete");
+        app.setup();
+        GGConsole.log("Application setup complete");
+        if(client)
+            run();
+        else
             runHeadless();
-        }catch (Exception e){
-            GGConsole.error("Uncaught exception: " + e.getMessage());
-            e.printStackTrace();
-            try {Thread.sleep(10);} catch (InterruptedException ex) {}
-            closeEngine();
-            writeLog();
-            System.exit(0);
-        }
     }
     
     public static void runHeadless(){
         while(!end){
             app.update();
             WorldEngine.update();
-            executable.stream().forEach((e) -> {
+            for(Executable e : executables){
                     e.execute();
-            });
-            executable.clear();
+            }
+            executables.clear();
             try {
                 //GGConsole.pollInput();
                 Thread.sleep(20);
@@ -181,15 +159,14 @@ public class OpenGG implements ConsoleListener{
     }
     
     public static void run(){
-        
         while (!window.shouldClose() && !end) {
             startFrame();
             app.render();
             app.update();
-            executable.stream().forEach((e) -> {
-                e.execute();
-            });
-            executable.clear();
+            for(Executable e : executables){
+                    e.execute();
+            }
+            executables.clear();
             WorldEngine.update();
             RenderEngine.checkForGLErrors();
             endFrame();
@@ -270,9 +247,15 @@ public class OpenGG implements ConsoleListener{
         if(test) return;
         GGConsole.writeLog(startTime);
     }
+    
+    private static void writeErrorLog(){
+        if(test) return;
+        String error = SystemInfo.getInfo();
+        GGConsole.writeLog(startTime, error, "error");
+    }
 
     public static void addExecutable(Executable e){
-        executable.add(e);
+        executables.add(e);
     }
     
     @Override
