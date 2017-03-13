@@ -6,7 +6,7 @@
 package com.opengg.core.render.drawn;
 
 import com.opengg.core.math.Matrix4f;
-import com.opengg.core.render.VertexBufferObject;
+import com.opengg.core.render.GLNativeBuffer;
 import com.opengg.core.render.shader.ShaderController;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -24,14 +24,10 @@ import org.lwjgl.system.MemoryStack;
  * @author Javier
  */
 public class InstancedDrawnObject extends DrawnObject implements Drawable {
-    VertexBufferObject ivbo;
+    GLNativeBuffer ivbo;
     long offset;
     int instnum;
     Matrix4f shadeModel = new Matrix4f();
-    
-    static{
-        DrawnObjectHandler.setup();
-    }
     
     public InstancedDrawnObject(FloatBuffer b){
         super(b);
@@ -39,7 +35,7 @@ public class InstancedDrawnObject extends DrawnObject implements Drawable {
             FloatBuffer buffer = stack.callocFloat(3);
             buffer.put(0).put(0).put(0);
             
-            ivbo = new VertexBufferObject();
+            ivbo = new GLNativeBuffer();
             ivbo.bind(GL_ARRAY_BUFFER);
             ivbo.uploadData(GL_ARRAY_BUFFER, buffer, GL_STATIC_DRAW);
         }
@@ -50,7 +46,7 @@ public class InstancedDrawnObject extends DrawnObject implements Drawable {
 
         instnum = inst.limit()/4;
         
-        ivbo = new VertexBufferObject();
+        ivbo = new GLNativeBuffer();
         ivbo.bind(GL_ARRAY_BUFFER);
         ivbo.uploadData(GL_ARRAY_BUFFER, inst, GL_STATIC_DRAW);
     }
@@ -60,7 +56,7 @@ public class InstancedDrawnObject extends DrawnObject implements Drawable {
 
         instnum = inst.limit()/4;
         
-        ivbo = new VertexBufferObject();
+        ivbo = new GLNativeBuffer();
         ivbo.bind(GL_ARRAY_BUFFER);
         ivbo.uploadData(GL_ARRAY_BUFFER, inst, GL_STATIC_DRAW);
     }
@@ -70,7 +66,7 @@ public class InstancedDrawnObject extends DrawnObject implements Drawable {
 
         instnum = inst.limit()/4;
         
-        ivbo = new VertexBufferObject();
+        ivbo = new GLNativeBuffer();
         ivbo.bind(GL_ARRAY_BUFFER);
         ivbo.uploadData(GL_ARRAY_BUFFER, inst, GL_STATIC_DRAW);
     }

@@ -13,7 +13,7 @@ import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.model.Material;
-import com.opengg.core.render.VertexBufferObject;
+import com.opengg.core.render.GLNativeBuffer;
 import com.opengg.core.render.light.Light;
 import com.opengg.core.render.shader.Mode;
 import com.opengg.core.render.window.ViewUtil;
@@ -200,7 +200,7 @@ public class ShaderController {
         program.pointVertexAttribute(texAttrib, 2, 12 * Float.BYTES, 10 * Float.BYTES);     
     }
     
-    public static void defInstancedVertexAttributes(VertexBufferObject b){
+    public static void defInstancedVertexAttributes(GLNativeBuffer b){
         program.enableVertexAttribute(posAttrib);
         program.pointVertexAttribute(posAttrib, 3, 12 * Float.BYTES, 0);
 

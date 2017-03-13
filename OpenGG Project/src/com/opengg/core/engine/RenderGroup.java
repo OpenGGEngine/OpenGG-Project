@@ -88,8 +88,6 @@ public class RenderGroup {
     }
     
     public void render(){
-        items.stream().forEach(item -> {
-            item.render();
-        });
+        items.stream().forEach(Renderable::render);
     }
 }

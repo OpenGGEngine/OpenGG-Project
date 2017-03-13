@@ -5,9 +5,8 @@
  */
 package com.opengg.core.render.drawn;
 
-import com.opengg.core.engine.RenderEngine;
 import com.opengg.core.math.Matrix4f;
-import com.opengg.core.render.VertexBufferObject;
+import com.opengg.core.render.GLNativeBuffer;
 import com.opengg.core.render.shader.ShaderController;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -26,8 +25,8 @@ import org.lwjgl.system.MemoryUtil;
  * @author Javier
  */
 public class DrawnObject implements Drawable {
-    VertexBufferObject vbo;
-    VertexBufferObject evbo;
+    GLNativeBuffer vbo;
+    GLNativeBuffer evbo;
     FloatBuffer b;
     IntBuffer ind; 
     boolean adj = false;
@@ -35,10 +34,6 @@ public class DrawnObject implements Drawable {
     int vertLimit;
     
     Matrix4f model = Matrix4f.translate(0, 0, 0);
-    
-    static{
-        DrawnObjectHandler.setup();
-    }
    
     DrawnObject(FloatBuffer b, int vertSize){
        
@@ -97,11 +92,11 @@ public class DrawnObject implements Drawable {
     }
     
     private void defBuffers(FloatBuffer b, IntBuffer ind ){
-        vbo = new VertexBufferObject();
+        vbo = new GLNativeBuffer();
         vbo.bind(GL_ARRAY_BUFFER);
         vbo.uploadData(GL_ARRAY_BUFFER, b, GL_STATIC_DRAW);
         
-        evbo = new VertexBufferObject();
+        evbo = new GLNativeBuffer();
         evbo.bind(GL_ELEMENT_ARRAY_BUFFER);
         evbo.uploadData(GL_ELEMENT_ARRAY_BUFFER, ind, GL_STATIC_DRAW);
     }

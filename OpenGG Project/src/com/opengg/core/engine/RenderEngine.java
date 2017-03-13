@@ -9,13 +9,13 @@ package com.opengg.core.engine;
 import com.opengg.core.gui.GUI;
 import com.opengg.core.gui.GUIItem;
 import com.opengg.core.model.ModelManager;
+import com.opengg.core.render.GLBuffer;
 import com.opengg.core.render.Renderable;
 import com.opengg.core.render.VertexArrayObject;
 import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.render.light.Light;
 import com.opengg.core.render.postprocess.PostProcessPipeline;
 import com.opengg.core.render.shader.ShaderController;
-import com.opengg.core.render.shader.UniformBufferObject;
 import com.opengg.core.render.texture.Cubemap;
 import com.opengg.core.render.texture.Framebuffer;
 import com.opengg.core.render.texture.TextureManager;
@@ -30,9 +30,11 @@ import static org.lwjgl.opengl.GL14.GL_FUNC_ADD;
 import static org.lwjgl.opengl.GL14.GL_INCR_WRAP;
 import static org.lwjgl.opengl.GL14.GL_MAX;
 import static org.lwjgl.opengl.GL14.glBlendEquation;
+import static org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW;
 import static org.lwjgl.opengl.GL20.glStencilOpSeparate;
 import static org.lwjgl.opengl.GL30.GL_MAJOR_VERSION;
 import static org.lwjgl.opengl.GL30.GL_MINOR_VERSION;
+import static org.lwjgl.opengl.GL31.GL_UNIFORM_BUFFER;
 import static org.lwjgl.opengl.GL32.GL_DEPTH_CLAMP;
 import static org.lwjgl.opengl.GL32.GL_TEXTURE_CUBE_MAP_SEAMLESS;
 import org.lwjgl.system.MemoryUtil;
@@ -44,7 +46,7 @@ import org.lwjgl.system.MemoryUtil;
 public class RenderEngine {
     static List<RenderGroup> groups = new ArrayList<>();
     static List<Light> lights = new ArrayList<>();
-    static UniformBufferObject lightobj;
+    static GLBuffer lightobj;
     static RenderGroup dlist;
     static RenderGroup adjdlist;
     static boolean shadVolumes = false;
@@ -70,8 +72,8 @@ public class RenderEngine {
         adjdlist = new RenderGroup();
         adjdlist.setAdjacencyMesh(true);
         
-        lightobj = new UniformBufferObject(800);
-        lightobj.setBufferBindIndex(ShaderController.getUniqueUniformBufferLocation());
+        lightobj = new GLBuffer(GL_UNIFORM_BUFFER, 800, GL_DYNAMIC_DRAW);
+        lightobj.bindBase(ShaderController.getUniqueUniformBufferLocation());
         ShaderController.setUniformBlockLocation(lightobj, "LightBuffer");
         
         lightoffset = (MemoryUtil.memAllocFloat(Light.bfsize).capacity()) << 2;
@@ -158,7 +160,7 @@ public class RenderEngine {
     
     static void useLights(){
         for(int i = 0; i < lights.size(); i++){
-            lightobj.updateBuffer(lights.get(i).getBuffer(), i * lightoffset);
+            lightobj.uploadSubData(lights.get(i).getBuffer(), i * lightoffset);
         }
         ShaderController.setUniform("numLights", lights.size());
     }

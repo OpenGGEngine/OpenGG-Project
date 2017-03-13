@@ -37,9 +37,9 @@ public class DrawnObjectGroup implements Drawable {
 
     @Override
     public void render() {
-        objs.stream().forEach((d) -> {
+        for(Drawable d : objs){
             d.render();
-        });
+        }
     }
 
     @Override

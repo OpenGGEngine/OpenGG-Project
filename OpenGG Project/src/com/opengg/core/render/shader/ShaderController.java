@@ -13,8 +13,9 @@ import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.model.Material;
+import com.opengg.core.render.GLBuffer;
+import com.opengg.core.render.GLNativeBuffer;
 import com.opengg.core.render.light.Light;
-import com.opengg.core.render.VertexBufferObject;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
@@ -208,7 +209,7 @@ public class ShaderController {
         pointVertexAttribute("texcoord", 2, 12 * Float.BYTES, 10 * Float.BYTES);     
     }
     
-    public static void defInstancedVertexAttributes(VertexBufferObject b){
+    public static void defInstancedVertexAttributes(GLNativeBuffer b){
         enableVertexAttribute("position");
         pointVertexAttribute("position", 3, 12 * Float.BYTES, 0);
 
@@ -359,8 +360,8 @@ public class ShaderController {
         return n;
     }
     
-    public static void setUniformBlockLocation(UniformBufferObject ubo, String name){
-        setUniformBlockLocation(ubo.index, name);
+    public static void setUniformBlockLocation(GLBuffer ubo, String name){
+        setUniformBlockLocation(ubo.getBase(), name);
     }
     
     public static void setUniformBlockLocation(int bind, String name){
