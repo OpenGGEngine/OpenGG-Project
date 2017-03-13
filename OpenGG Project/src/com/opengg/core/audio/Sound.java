@@ -20,7 +20,7 @@ import static org.lwjgl.openal.AL10.alGenBuffers;
  */
 public class Sound{
     
-    AudioSource so;
+    NativeSound so;
     boolean isPlaying  = false;
     
     public void setPlayState(boolean b){
@@ -55,7 +55,7 @@ public class Sound{
         WaveData wavFile = WaveData.create(u);
         AL10.alBufferData(buffer,wavFile.format,wavFile.data,wavFile.samplerate);
         wavFile.dispose();
-        so = new AudioSource(buffer);
+        so = new NativeSound(buffer);
         AudioController.addAudioSource(so);
     }
     public void setSound(String u){

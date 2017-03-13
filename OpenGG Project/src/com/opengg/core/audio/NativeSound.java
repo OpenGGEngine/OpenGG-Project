@@ -15,11 +15,11 @@ import static org.lwjgl.openal.AL10.*;
  *
  * @author Warren
  */
-public class AudioSource {
+public class NativeSound {
     private int audioid;
     private int bufferid;
     boolean isPaused = true;
-    public AudioSource(int bufferid){
+    public NativeSound(int bufferid){
         this.bufferid = bufferid;
         audioid = alGenSources();
         alSourcei(audioid,AL_BUFFER,bufferid);

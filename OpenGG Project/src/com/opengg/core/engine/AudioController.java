@@ -7,7 +7,7 @@
 package com.opengg.core.engine;
 
 import com.opengg.core.audio.AudioListener;
-import com.opengg.core.audio.AudioSource;
+import com.opengg.core.audio.NativeSound;
 import static com.opengg.core.engine.GGConsole.error;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
@@ -32,7 +32,7 @@ public class AudioController {
     static long context;
     static boolean initialized;
     
-    static ArrayList<AudioSource> sources = new ArrayList<>();
+    static ArrayList<NativeSound> sources = new ArrayList<>();
     static void init() {
         device = alcOpenDevice((ByteBuffer)null);
         ALCCapabilities caps = ALC.createCapabilities(device);
@@ -55,7 +55,7 @@ public class AudioController {
             error("OpenAL Error in AudioHandler: " + i);
     }
     
-    public static void addAudioSource(AudioSource s){
+    public static void addAudioSource(NativeSound s){
         sources.add(s);
     }
     
