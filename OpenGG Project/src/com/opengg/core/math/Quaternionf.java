@@ -99,7 +99,7 @@ public class Quaternionf implements Serializable{
         this.x += q.x;
         this.y += q.y;
         this.z += q.z;
-        return this;
+        return new Quaternionf(this);
     }
 
     public Quaternionf subtract(final Quaternionf q) {
@@ -256,7 +256,7 @@ public class Quaternionf implements Serializable{
         x = sx*cycz + cx*sysz;
         y = cx*sycz - sx*cysz;
         z = cx*cysz + sx*sycz;
-//
+
         return this;
     }
     

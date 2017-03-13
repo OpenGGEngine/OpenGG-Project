@@ -9,7 +9,7 @@ import static com.opengg.core.math.FastMath.isEqual;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
-import org.lwjgl.BufferUtils;
+import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 
 /**
@@ -139,10 +139,12 @@ public class Vector3f implements Serializable{
     }
 
     public FloatBuffer getBuffer() {
-        FloatBuffer buffer = MemoryUtil.memAllocFloat(3);
-        buffer.put(x).put(y).put(z);
-        buffer.flip();
-        return buffer;
+        try(MemoryStack stack = MemoryStack.stackPush()){
+            FloatBuffer buffer = stack.callocFloat(3);
+            buffer.put(x).put(y).put(z);
+            buffer.flip();
+            return buffer;
+        }
     }
     
     public void set(float x, float y, float z) {
@@ -206,7 +208,7 @@ public class Vector3f implements Serializable{
     }
     
     public static FloatBuffer listToBuffer(Vector3f... list){
-        FloatBuffer f = BufferUtils.createFloatBuffer(3* list.length);
+        FloatBuffer f = MemoryUtil.memAllocFloat(3* list.length);
         for(Vector3f v : list){ 
            f.put(v.x);
            f.put(v.y);

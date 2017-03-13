@@ -7,7 +7,6 @@ package com.opengg.core.math;
 
 import java.nio.FloatBuffer;
 import org.lwjgl.system.MemoryStack;
-import org.lwjgl.system.MemoryUtil;
 
 /**
  *
@@ -119,6 +118,10 @@ public class Matrix4f {
         }
     }
 
+    public Vector4f transform(Vector4f init){
+        return init.mul(this);
+    }
+    
     public Matrix4f rotateQuat(float angle, float x, float y, float z) {
         Quaternionf q = new Quaternionf();
         q.setAxis(new Vector3f(x,y,z));
@@ -280,7 +283,7 @@ public class Matrix4f {
         return ortho;
     }
 
-    public float[][] getArr() {
+    public float[][] getArray() {
         float[][] arr = {{m00, m01, m02, m03},
         {m10, m11, m12, m13},
         {m20, m21, m22, m23},
@@ -288,9 +291,9 @@ public class Matrix4f {
 
         return arr;
     }
-
+    
     public float access(int x, int y) {
-        return getArr()[x][y];
+        return getArray()[x][y];
     }
     
     @Override
