@@ -15,7 +15,8 @@ import com.opengg.core.render.drawn.Drawable;
  */
 public class RenderComponent extends Component implements Renderable{
     Drawable g;
-   
+    Matrix4f m = new Matrix4f();
+    
     public RenderComponent(){};
     
     public RenderComponent(Drawable g){
@@ -25,7 +26,6 @@ public class RenderComponent extends Component implements Renderable{
 
     @Override
     public void render() {
-        Matrix4f m = new Matrix4f().translate(getPosition()).rotateQuat(getRotation()).scale(getScale());   
         if(g != null){
             g.setMatrix(m);
             g.render();
@@ -33,6 +33,11 @@ public class RenderComponent extends Component implements Renderable{
         
     }
 
+    @Override
+    public void update(float delta){
+        m = new Matrix4f().translate(getPosition()).rotateQuat(getRotation()).scale(getScale());
+    }
+    
     public void setDrawable(Drawable d){
         this.g = d;
     }

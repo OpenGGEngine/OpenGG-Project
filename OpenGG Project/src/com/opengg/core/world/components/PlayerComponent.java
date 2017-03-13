@@ -7,12 +7,13 @@
 package com.opengg.core.world.components;
 
 import com.opengg.core.engine.BindController;
-import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.world.Action;
 import com.opengg.core.world.ActionType;
 import com.opengg.core.world.Actionable;
+import com.opengg.core.world.components.physics.BoundingBox;
+import com.opengg.core.world.components.physics.Collider;
 import com.opengg.core.world.components.physics.PhysicsComponent;
 import static java.lang.Math.abs;
 
@@ -35,6 +36,7 @@ public class PlayerComponent extends ComponentHolder implements Actionable{
         camera = new CameraComponent();
         controller = new UserControlComponent();
         playerphysics = new PhysicsComponent();
+        playerphysics.setCollider(new Collider(new BoundingBox(new Vector3f(),5,5,5), new BoundingBox(new Vector3f(),5,5,5)));
         attach(camera);
         attach(controller);
         attach(playerphysics);
@@ -65,7 +67,7 @@ public class PlayerComponent extends ComponentHolder implements Actionable{
             playerphysics.velocity.z /= 2;
             
         if((control.y == 1) && (getPosition().y <= getWorld().floorLev + 0.001f))
-            playerphysics.velocity.y += 20;
+            playerphysics.velocity.y += 5;
     }
     
     @Override
