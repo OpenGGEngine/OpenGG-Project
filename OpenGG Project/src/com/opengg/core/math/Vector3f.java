@@ -68,7 +68,6 @@ public class Vector3f implements Serializable{
     
     public static float getDistance(Vector3f v1, Vector3f v2){
         return (float) Math.sqrt(Math.pow((v2.x - v1.x), 2)+Math.pow((v2.y - v1.y), 2)+Math.pow((v2.z - v1.z), 2));  
-       
     }
     
     public float length() {
@@ -117,6 +116,10 @@ public class Vector3f implements Serializable{
         return divide(length());
     }
 
+    public float dot(Vector3f v) {
+        return x * v.x + y * v.y + z * v.z;
+    }
+    
     private double lengthSquared() {
         return x * x + y * y + z * z;
     }
@@ -225,6 +228,13 @@ public class Vector3f implements Serializable{
         return this;
     }
 
+    public Vector3f reflect(Vector3f normal) {
+        float dot = this.dot(normal);
+        x = x - (dot + dot) * normal.x;
+        y = y - (dot + dot) * normal.y;
+        z = z - (dot + dot) * normal.z;
+        return this;
+    }
     
     public void zero(){
         this.x = this.y = this.z = 0;

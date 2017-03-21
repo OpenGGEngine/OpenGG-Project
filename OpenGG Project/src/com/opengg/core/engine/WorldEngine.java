@@ -10,8 +10,9 @@ import com.opengg.core.util.Time;
 import com.opengg.core.world.World;
 import com.opengg.core.world.components.Component;
 import com.opengg.core.world.components.ComponentHolder;
-import com.opengg.core.world.components.physics.Collider;
-import com.opengg.core.world.components.physics.CollisionData;
+import com.opengg.core.world.components.physics.PhysicsComponent;
+import com.opengg.core.world.components.physics.collision.CollisionComponent;
+import com.opengg.core.world.components.physics.collision.CollisionData;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -21,7 +22,7 @@ import java.util.List;
  * @author Javier Coindreau
  */
 public class WorldEngine{
-    static LinkedList<Collider> colliders = new LinkedList<>();
+    static LinkedList<CollisionComponent> colliders = new LinkedList<>();
     static ArrayList<Component> objs = new ArrayList<>();
     static Time t;
     
@@ -29,17 +30,20 @@ public class WorldEngine{
         t = new Time();
     }
     
-    public static void addCollider(Collider c) {
+    public static void addCollider(CollisionComponent c) {
         colliders.add(c);
     }
     
     static void processCollision(List<CollisionData> collisions){
-        CollisionData info = collisions.get(0);
-        if(info.c1physact){
-            info.c1phys.velocity = info.c1phys.velocity.inverse();
+        CollisionData data = collisions.get(0);
+        PhysicsComponent component1 = data.collider1.getPhysicsComponent();
+        PhysicsComponent component2 = data.collider2.getPhysicsComponent();
+
+        if(component1 != null){
+            component1.velocity = component1.velocity.reflect(data.collisionNormal);
         }
-        if(info.c2physact){
-            info.c2phys.velocity = info.c2phys.velocity.inverse();
+        if(component2 != null){
+            component2.velocity = component2.velocity.reflect(data.collisionNormal);
         }
     }
     

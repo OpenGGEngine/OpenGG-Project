@@ -1,0 +1,53 @@
+[Thu Mar 09 13:44:17 EST 2017] INFO (OpenGG): OpenGG initializing, running on Windows 8.1, amd64
+[Thu Mar 09 13:44:17 EST 2017] INFO (OpenGG): Window generation successful, using OpenGL context version 4.1
+[Thu Mar 09 13:44:17 EST 2017] INFO (ShaderController): Default shaders loaded and validated
+[Thu Mar 09 13:44:17 EST 2017] INFO (ModelLoader): Loading model at C:\Users\Javier\Documents\NetBeansProjects\OpenGG-Project\OpenGG Test\dist\resources\models\default\default.bmf...
+[Thu Mar 09 13:44:17 EST 2017] WARNING (ModelLoader): Failed to load model at C:\Users\Javier\Documents\NetBeansProjects\OpenGG-Project\OpenGG Test\dist\resources\models\default\default.bmf, using default model instead
+[Thu Mar 09 13:44:17 EST 2017] INFO (OpenGG): Render engine initialized
+[Thu Mar 09 13:44:17 EST 2017] WARNING (RenderEngine): OpenGL Error code : 1281
+[Thu Mar 09 13:44:18 EST 2017] INFO (OpenGG): Audio controller initialized
+[Thu Mar 09 13:44:18 EST 2017] INFO (OpenGG): OpenGG initialization complete, running application setup
+[Thu Mar 09 13:44:18 EST 2017] INFO (ModelLoader): Loading model at C:\res\island\Island.bmf...
+[Thu Mar 09 13:44:18 EST 2017] INFO (ModelLoader): Done Parsing C:\res\island\Island.bmf, got Island
+[Thu Mar 09 13:44:18 EST 2017] INFO (Model): Drawable for Island has been requested, loading textures...
+[Thu Mar 09 13:44:18 EST 2017] INFO (ModelLoader): Loading model at C:\res\island\Sea.bmf...
+[Thu Mar 09 13:44:18 EST 2017] INFO (ModelLoader): Done Parsing C:\res\island\Sea.bmf, got Sea
+[Thu Mar 09 13:44:18 EST 2017] INFO (Model): Drawable for Sea has been requested, loading textures...
+[Thu Mar 09 13:44:18 EST 2017] INFO (ModelLoader): Loading model at C:\res\beretta\Beretta_M9.bmf...
+[Thu Mar 09 13:44:18 EST 2017] INFO (ModelLoader): Done Parsing C:\res\beretta\Beretta_M9.bmf, got Beretta_M9
+[Thu Mar 09 13:44:18 EST 2017] INFO (Model): Drawable for Beretta_M9 has been requested, loading textures...
+[Thu Mar 09 13:44:19 EST 2017] INFO (OpenGG): Application setup complete
+[Thu Mar 09 13:44:19 EST 2017] ERROR (OpenGG): Uncaught exception: java.lang.RuntimeException
+[Thu Mar 09 13:44:19 EST 2017] INFO (RenderEngine): Render engine has finalized
+[Thu Mar 09 13:44:19 EST 2017] INFO (AudioController): Audio controller has finalized
+[Thu Mar 09 13:44:19 EST 2017] INFO (OpenGG): OpenGG has closed gracefully, application can now be ended
+OpenGG Engine Version: 0.0.1a1
+
+System Information
+System Model: Surface Pro 3
+Operating System: Windows 10 Pro 64-bit (10.0, Build 14393) (14393.rs1_release.161220-1747)
+System Model: Surface Pro 3
+Processor: Intel(R) Core(TM) i5-4300U CPU @ 1.90GHz (4 CPUs), ~2.5GHz
+OS Architecture: amd64
+CPU Count4
+Memory: 4096MB RAM
+
+Graphics Information
+Card name: Intel(R) HD Graphics Family
+Current Mode: 2160 x 1440 (32 bit) (59Hz)
+Native Mode: 2160 x 1440(p) (59.955Hz)
+Display Memory: 2113 MB
+Dedicated Memory: 112 MB
+Shared Memory: 2000 MB
+
+Java Information
+Java Version: 1.8.0_40-ea
+JVM Name: Java HotSpot(TM) 64-Bit Server VM
+JVM Vendor: Oracle Corporation
+JVM CPU Availability: 4
+Current Memory Usage: 502792192
+Maximum Available Memory: 932184064
+Free Memory: 494896224
+
+OpenGL Information
+OpenGL Version: 4.1

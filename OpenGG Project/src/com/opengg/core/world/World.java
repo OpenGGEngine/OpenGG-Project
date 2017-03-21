@@ -16,7 +16,7 @@ import com.opengg.core.render.drawn.DrawnObject;
 import com.opengg.core.world.components.Component;
 import com.opengg.core.world.components.ComponentHolder;
 import com.opengg.core.world.components.RenderComponent;
-import com.opengg.core.world.components.physics.Collider;
+import com.opengg.core.world.components.physics.collision.CollisionComponent;
 import com.opengg.core.world.components.physics.PhysicsComponent;
 import java.util.LinkedList;
 import java.util.List;
@@ -76,14 +76,14 @@ public class World extends ComponentHolder{
         RenderEngine.addRenderGroup(groupnoadj);
     }
     
-    public LinkedList<Collider> useColliders() {
-        LinkedList<Collider> list = new LinkedList<>();
+    public LinkedList<CollisionComponent> useColliders() {
+        LinkedList<CollisionComponent> list = new LinkedList<>();
         List<Component> components = getAll();
         for(Component c : components){
             if(c instanceof PhysicsComponent){
-                Collider collide = ((PhysicsComponent) c).getCollider();
+                List<CollisionComponent> collide = ((PhysicsComponent) c).getColliders();
                 if (collide != null){
-                    list.add(collide);
+                    list.addAll(collide);
                 }
             }
         }

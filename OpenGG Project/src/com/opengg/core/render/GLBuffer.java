@@ -13,17 +13,18 @@ import java.nio.IntBuffer;
  *
  * @author Javier
  */
-public class GLBuffer extends GLNativeBuffer{
+public class GLBuffer{
+    NativeGLBuffer buffer;
     int target;
     int size;
     int usage;
     int index;
     boolean bound = false;
     
-    private GLBuffer() {super();}
+    private GLBuffer() {}
     
     public GLBuffer(int type, int busage){
-        super();
+        buffer = new NativeGLBuffer();
         target = type;
         size = 0;
         usage = busage;
@@ -45,49 +46,46 @@ public class GLBuffer extends GLNativeBuffer{
     }
     
     public void bind() {
-        bind(target);
+        buffer.bind(target);
         bound = true;
     }
     
     public void unbind() {
-        unbind(target);
+        buffer.unbind(target);
     }
 
     public void alloc(int size) {
         bind();
-        uploadData(target, size, usage);
-        this.size = size;
+        buffer.uploadData(target, size, usage);
         unbind();
     }
 
     public void uploadData(FloatBuffer data) {
         bind();
-        uploadData(target, data, usage);
-        size = data.limit() * Float.BYTES;
+        buffer.uploadData(target, data, usage);
         unbind();
     }
     
     public void uploadData(IntBuffer data) {
         bind();
-        uploadData(target, data, usage);
-        size = data.limit() * Integer.BYTES;
+        buffer.uploadData(target, data, usage);
         unbind();
     }
 
     public void uploadSubData(FloatBuffer data, long offset) {
         bind();
-        uploadSubData(target, offset, data);
+        buffer.uploadSubData(target, offset, data);
         unbind();
     }
     
     public void uploadSubData(IntBuffer data, long offset) {
         bind();
-        uploadSubData(target, offset, data);
+        buffer.uploadSubData(target, offset, data);
         unbind();
     }
     
     public void bindBase(int base){
-        bindBase(target, base);
+        buffer.bindBase(target, base);
         index = base;
     }
     
@@ -96,7 +94,7 @@ public class GLBuffer extends GLNativeBuffer{
     }
     
     public int getSize(){
-        return size;
+        return buffer.getSize(target);
     }
     
     public int getTarget(){
@@ -105,5 +103,9 @@ public class GLBuffer extends GLNativeBuffer{
     
     public int getUsage(){
         return usage;
+    }
+    
+    public void delete(){
+        buffer.delete();
     }
 }

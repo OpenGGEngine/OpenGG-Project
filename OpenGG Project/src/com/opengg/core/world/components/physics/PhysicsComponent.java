@@ -5,12 +5,14 @@
  */
 package com.opengg.core.world.components.physics;
 
+import com.opengg.core.world.components.physics.collision.CollisionComponent;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.world.Deserializer;
 import com.opengg.core.world.Serializer;
 import com.opengg.core.world.components.Component;
 import com.opengg.core.world.components.ComponentHolder;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -19,8 +21,6 @@ import java.util.List;
  * @author ethachu19
  */
 public class PhysicsComponent extends ComponentHolder {
-    Collider c;
-    
     public boolean gravEffect = true;
     
     public List<Vector3f> forces = new LinkedList<>();
@@ -39,8 +39,13 @@ public class PhysicsComponent extends ComponentHolder {
     private float density = 1f;
     
     public PhysicsComponent(){}
+    
     public PhysicsComponent(float mass){
         this.mass = mass;
+    }
+    
+    public PhysicsComponent(CollisionComponent collider){
+        addCollider(collider);
     }
 
     @Override
@@ -70,13 +75,17 @@ public class PhysicsComponent extends ComponentHolder {
         parent.setRotationOffset(rot);
     }
     
-    public void setCollider(Collider c){
-       this.c = c;
+    public void addCollider(CollisionComponent c){
        attach(c);
     }
     
-    public Collider getCollider() {
-        return c;
+    public List<CollisionComponent> getColliders() {
+        List<CollisionComponent> colliders = new ArrayList<>();
+        for(Component c : children){
+            if(c instanceof Component)
+                colliders.add((CollisionComponent)c);
+        }
+        return colliders;
     }
     
     private Vector3f finalForce() {

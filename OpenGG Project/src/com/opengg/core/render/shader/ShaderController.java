@@ -14,7 +14,7 @@ import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.model.Material;
 import com.opengg.core.render.GLBuffer;
-import com.opengg.core.render.GLNativeBuffer;
+import com.opengg.core.render.NativeGLBuffer;
 import com.opengg.core.render.light.Light;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -209,7 +209,7 @@ public class ShaderController {
         pointVertexAttribute("texcoord", 2, 12 * Float.BYTES, 10 * Float.BYTES);     
     }
     
-    public static void defInstancedVertexAttributes(GLNativeBuffer b){
+    public static void defInstancedVertexAttributes(NativeGLBuffer b){
         enableVertexAttribute("position");
         pointVertexAttribute("position", 3, 12 * Float.BYTES, 0);
 

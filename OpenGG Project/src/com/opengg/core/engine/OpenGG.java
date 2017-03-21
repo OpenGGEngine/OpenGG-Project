@@ -105,7 +105,7 @@ public class OpenGG implements ConsoleListener{
             writeLog();
             System.exit(0);
         }
-        
+        SystemInfo.querySystemInfo();
         lwjglinit = true;
         
         String verb = System.getProperty("gg.verbose");
@@ -126,7 +126,7 @@ public class OpenGG implements ConsoleListener{
             initializeGraphics(info);
         
         curworld = new World();
-        
+
         app.setup();
         GGConsole.log("Application setup complete");
         if(client)

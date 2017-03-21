@@ -4,7 +4,9 @@
  * and open the template in the editor.
  */
 
-package com.opengg.core.world.components.physics;
+package com.opengg.core.world.components.physics.collision;
+
+import com.opengg.core.math.Vector3f;
 
 /**
  *
@@ -12,8 +14,8 @@ package com.opengg.core.world.components.physics;
  */
 public class CollisionData{
     CollisionData(){};
-    public boolean c1physact, c2physact;
-    public PhysicsComponent c1phys, c2phys;  
-    public Collider c1collider, c2collider;
-    public BoundingBox c1colliderbox, c2colliderbox;
+    public CollisionComponent collider1, collider2;
+    public Vector3f collisionNormal;
+    public Vector3f collisionPoint;
+    
 }

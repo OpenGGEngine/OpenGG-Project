@@ -8,24 +8,32 @@ package com.opengg.core.render;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import static org.lwjgl.opengl.GL15.GL_BUFFER_SIZE;
 import static org.lwjgl.opengl.GL15.glBindBuffer;
 import static org.lwjgl.opengl.GL15.glBufferData;
 import static org.lwjgl.opengl.GL15.glBufferSubData;
+import static org.lwjgl.opengl.GL15.glBufferSubData;
+import static org.lwjgl.opengl.GL15.glBufferSubData;
+import static org.lwjgl.opengl.GL15.glDeleteBuffers;
+import static org.lwjgl.opengl.GL15.glDeleteBuffers;
 import static org.lwjgl.opengl.GL15.glDeleteBuffers;
 import static org.lwjgl.opengl.GL15.glGenBuffers;
+import static org.lwjgl.opengl.GL15.glGenBuffers;
+import static org.lwjgl.opengl.GL15.glGenBuffers;
+import static org.lwjgl.opengl.GL15.glGetBufferParameteri;
 import static org.lwjgl.opengl.GL30.glBindBufferBase;
 
 /**
  *
  * @author Javier
  */
-public class GLNativeBuffer {
+public class NativeGLBuffer {
     final int id;
     
     /**
      * Creates a Vertex Buffer Object (VBO).
      */
-    public GLNativeBuffer() {
+    public NativeGLBuffer() {
         id = glGenBuffers(); 
     }
     
@@ -65,6 +73,10 @@ public class GLNativeBuffer {
         glDeleteBuffers(id);
     }
 
+    public int getSize(int target){
+        return glGetBufferParameteri(target, GL_BUFFER_SIZE);
+    }
+    
     public int getID() {
         return id;
     }

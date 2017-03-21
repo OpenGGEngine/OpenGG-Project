@@ -6,7 +6,7 @@
 package com.opengg.core.render.drawn;
 
 import com.opengg.core.math.Matrix4f;
-import com.opengg.core.render.GLNativeBuffer;
+import com.opengg.core.render.NativeGLBuffer;
 import com.opengg.core.render.shader.ShaderController;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -24,7 +24,7 @@ import org.lwjgl.system.MemoryStack;
  * @author Javier
  */
 public class InstancedDrawnObject extends DrawnObject implements Drawable {
-    GLNativeBuffer ivbo;
+    NativeGLBuffer ivbo;
     long offset;
     int instnum;
     Matrix4f shadeModel = new Matrix4f();
@@ -35,7 +35,7 @@ public class InstancedDrawnObject extends DrawnObject implements Drawable {
             FloatBuffer buffer = stack.callocFloat(3);
             buffer.put(0).put(0).put(0);
             
-            ivbo = new GLNativeBuffer();
+            ivbo = new NativeGLBuffer();
             ivbo.bind(GL_ARRAY_BUFFER);
             ivbo.uploadData(GL_ARRAY_BUFFER, buffer, GL_STATIC_DRAW);
         }
@@ -46,7 +46,7 @@ public class InstancedDrawnObject extends DrawnObject implements Drawable {
 
         instnum = inst.limit()/4;
         
-        ivbo = new GLNativeBuffer();
+        ivbo = new NativeGLBuffer();
         ivbo.bind(GL_ARRAY_BUFFER);
         ivbo.uploadData(GL_ARRAY_BUFFER, inst, GL_STATIC_DRAW);
     }
@@ -56,7 +56,7 @@ public class InstancedDrawnObject extends DrawnObject implements Drawable {
 
         instnum = inst.limit()/4;
         
-        ivbo = new GLNativeBuffer();
+        ivbo = new NativeGLBuffer();
         ivbo.bind(GL_ARRAY_BUFFER);
         ivbo.uploadData(GL_ARRAY_BUFFER, inst, GL_STATIC_DRAW);
     }
@@ -66,7 +66,7 @@ public class InstancedDrawnObject extends DrawnObject implements Drawable {
 
         instnum = inst.limit()/4;
         
-        ivbo = new GLNativeBuffer();
+        ivbo = new NativeGLBuffer();
         ivbo.bind(GL_ARRAY_BUFFER);
         ivbo.uploadData(GL_ARRAY_BUFFER, inst, GL_STATIC_DRAW);
     }
@@ -79,8 +79,8 @@ public class InstancedDrawnObject extends DrawnObject implements Drawable {
     @Override
     public void render(){    
         ShaderController.setModel(model);       
-        vbo.bind(GL_ARRAY_BUFFER);
-        evbo.bind(GL_ELEMENT_ARRAY_BUFFER);
+        vbo.bind();
+        evbo.bind();
         ShaderController.defInstancedVertexAttributes(ivbo);
         ShaderController.setInstanced(true);
         glDrawArraysInstanced(adj ? GL_TRIANGLES_ADJACENCY : GL_TRIANGLES,0,ind.limit(), instnum);

@@ -6,7 +6,8 @@
 package com.opengg.core.render.drawn;
 
 import com.opengg.core.math.Matrix4f;
-import com.opengg.core.render.GLNativeBuffer;
+import com.opengg.core.render.GLBuffer;
+import com.opengg.core.render.NativeGLBuffer;
 import com.opengg.core.render.shader.ShaderController;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -25,8 +26,8 @@ import org.lwjgl.system.MemoryUtil;
  * @author Javier
  */
 public class DrawnObject implements Drawable {
-    GLNativeBuffer vbo;
-    GLNativeBuffer evbo;
+    GLBuffer vbo;
+    GLBuffer evbo;
     FloatBuffer b;
     IntBuffer ind; 
     boolean adj = false;
@@ -92,13 +93,13 @@ public class DrawnObject implements Drawable {
     }
     
     private void defBuffers(FloatBuffer b, IntBuffer ind ){
-        vbo = new GLNativeBuffer();
-        vbo.bind(GL_ARRAY_BUFFER);
-        vbo.uploadData(GL_ARRAY_BUFFER, b, GL_STATIC_DRAW);
+        vbo = new GLBuffer(GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+        vbo.bind();
+        vbo.uploadData(b);
         
-        evbo = new GLNativeBuffer();
-        evbo.bind(GL_ELEMENT_ARRAY_BUFFER);
-        evbo.uploadData(GL_ELEMENT_ARRAY_BUFFER, ind, GL_STATIC_DRAW);
+        evbo = new GLBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW);
+        evbo.bind();
+        evbo.uploadData(ind);
     }
     
     private void pointAttrib(){
@@ -146,8 +147,8 @@ public class DrawnObject implements Drawable {
     @Override
     public void render(){    
         ShaderController.setModel(model);  
-        vbo.bind(GL_ARRAY_BUFFER);
-        evbo.bind(GL_ELEMENT_ARRAY_BUFFER);
+        vbo.bind();
+        evbo.bind();
         defAttrib();
         pointAttrib();
         glDrawElements(adj ? GL_TRIANGLES_ADJACENCY : GL_TRIANGLES, ind.limit(), GL_UNSIGNED_INT, 0);     
