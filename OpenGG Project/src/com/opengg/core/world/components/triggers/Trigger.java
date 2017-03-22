@@ -26,7 +26,7 @@ public abstract class Trigger extends Component{
         return enabled;
     }
     
-    public ArrayList<Triggerable> getTriggerDest(){
+    public ArrayList<Triggerable> getTriggerables(){
         return subscribers;
     }
     

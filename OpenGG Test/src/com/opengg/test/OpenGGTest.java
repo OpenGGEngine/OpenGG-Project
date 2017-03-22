@@ -27,11 +27,12 @@ import static com.opengg.core.render.window.WindowOptions.GLFW;
 import com.opengg.core.world.World;
 import com.opengg.core.world.components.ModelRenderComponent;
 import com.opengg.core.world.components.PlayerComponent;
+import com.opengg.core.world.components.TriggerableAudioComponent;
 import com.opengg.core.world.components.WorldObject;
 import com.opengg.core.world.components.physics.PhysicsComponent;
 import com.opengg.core.world.components.physics.collision.BoundingBox;
 import com.opengg.core.world.components.physics.collision.CollisionComponent;
-import com.opengg.core.world.components.physics.collision.SphereCollider;
+import com.opengg.core.world.components.physics.collision.CylinderCollider;
 import java.io.File;
 import java.io.IOException;
 
@@ -41,8 +42,6 @@ public class OpenGGTest extends GGApplication{
     private Texture t2, t3;
     private Sound so, so2;
     private AudioListener as;
-    private WorldObject awps;
-    private PhysicsComponent bad;
     private Light l;
     PlayerComponent player;
     
@@ -60,7 +59,7 @@ public class OpenGGTest extends GGApplication{
 
     @Override
     public  void setup(){
-        so = new Sound(OpenGGTest.class.getResource("res/maw.wav"));
+        so = new Sound(OpenGGTest.class.getResource("res/gay.wav"));
         so2 = new Sound(OpenGGTest.class.getResource("res/mgs.wav"));
         
         t3 = Texture.get("C:/res/deer.png");
@@ -91,7 +90,8 @@ public class OpenGGTest extends GGApplication{
         
         WorldObject collider = new WorldObject();
         collider.setPositionOffset(new Vector3f(10,0,0));
-        collider.attach(new PhysicsComponent(new CollisionComponent(new BoundingBox(new Vector3f(0,0,0),3,3,3), new SphereCollider(4))));
+        CollisionComponent c = new CollisionComponent(new BoundingBox(new Vector3f(0,0,0),10,8,10), new CylinderCollider(3,2));
+        collider.attach(new PhysicsComponent(c));
         ModelRenderComponent beretta = new ModelRenderComponent(ModelLoader.loadModel("C:\\res\\beretta\\Beretta_M9.bmf"));
         beretta.setScale(new Vector3f(0.26f,0.26f,0.26f));
         beretta.setRotationOffset(new Quaternionf());
@@ -100,6 +100,16 @@ public class OpenGGTest extends GGApplication{
         player = new PlayerComponent();
         player.use();
        
+        //TriggerableAudioComponent sound = new TriggerableAudioComponent(so);
+        //c.addSubscriber(sound);
+        
+        w.attach(terrain);
+        w.attach(player);
+        w.attach(collider);
+        //w.attach(sound);
+        
+        WorldEngine.useWorld(w);
+        
         BindController.addBind(ControlType.KEYBOARD, "forward", KEY_W);
         BindController.addBind(ControlType.KEYBOARD, "backward", KEY_S);
         BindController.addBind(ControlType.KEYBOARD, "left", KEY_A);
@@ -109,12 +119,6 @@ public class OpenGGTest extends GGApplication{
         BindController.addBind(ControlType.KEYBOARD, "lookleft", KEY_E);
         BindController.addBind(ControlType.KEYBOARD, "lookup", KEY_R);
         BindController.addBind(ControlType.KEYBOARD, "lookdown", KEY_F);
-        
-        w.attach(terrain);
-        w.attach(player);
-        w.attach(collider);
-        
-        WorldEngine.useWorld(w);
         
         l = new Light(new Vector3f(10,20,190), new Vector3f(1,1,1), 4000f, 0);
         

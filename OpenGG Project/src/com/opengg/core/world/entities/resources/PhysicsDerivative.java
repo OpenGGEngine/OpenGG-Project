@@ -29,10 +29,10 @@ public class PhysicsDerivative {
     }
 
     public static PhysicsDerivative evaluate(PhysicsState state, float t, float dt, PhysicsDerivative derivative) {
-        state.pos.addEquals(derivative.velocity.multiply(dt));
-        state.momentum.addEquals(derivative.force.multiply(dt));
+        state.pos.addThis(derivative.velocity.multiply(dt));
+        state.momentum.addThis(derivative.force.multiply(dt));
         state.rot.addEquals(derivative.spin.multiply(dt));
-        state.angularMomentum.addEquals(derivative.torque.multiply(dt));
+        state.angularMomentum.addThis(derivative.torque.multiply(dt));
         state.recalculate();
 
         PhysicsDerivative output = new PhysicsDerivative();

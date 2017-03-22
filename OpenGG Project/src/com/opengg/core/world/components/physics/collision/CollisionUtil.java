@@ -36,9 +36,10 @@ public class CollisionUtil {
     
     public static CollisionData CylinderCylinder(CylinderCollider c1, CylinderCollider c2){
         int ctype = 0;
+
         if(c1.getPosition().y > c2.height + c2.getPosition().y) return null;
         if(c2.getPosition().y > c1.height + c1.getPosition().y) return null;
-        
+
         if(new Vector2f(c1.getPosition().x, c1.getPosition().z).getDistance(new Vector2f(c2.getPosition().x, c2.getPosition().z)) > c1.radius + c2.radius) return null;
         
         if(c1.getPosition().y > c2.height + c2.getPosition().y - COLLISION_OFFSET) ctype = 1;

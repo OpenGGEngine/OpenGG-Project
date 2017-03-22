@@ -74,10 +74,10 @@ public class PhysicsState implements Serializable {
         PhysicsDerivative c = PhysicsDerivative.evaluate(state, t, dt * 0.5f, b);
         PhysicsDerivative d = PhysicsDerivative.evaluate(state, t, dt, c);
 
-        state.pos.addEquals((a.velocity.add(2f).add(b.velocity.add(c.velocity)).add(d.velocity)).multiply(dt / 6));
-        state.momentum.addEquals(a.force.add((b.force.add(c.force)).multiply(2f).add(d.force)).multiply(dt / 6f));
+        state.pos.addThis((a.velocity.add(2f).add(b.velocity.add(c.velocity)).add(d.velocity)).multiply(dt / 6));
+        state.momentum.addThis(a.force.add((b.force.add(c.force)).multiply(2f).add(d.force)).multiply(dt / 6f));
         state.rot.addEquals(a.spin.add(b.spin.add(c.spin)).multiply(2f).add(d.spin).multiply(dt / 6f));
-        state.angularMomentum.addEquals(a.torque.add((b.torque.add(c.torque)).multiply(2f).add(d.torque).multiply(dt / 6f)));
+        state.angularMomentum.addThis(a.torque.add((b.torque.add(c.torque)).multiply(2f).add(d.torque).multiply(dt / 6f)));
 
         state.recalculate();
     }

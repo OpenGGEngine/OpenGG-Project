@@ -5,7 +5,6 @@
  */
 package com.opengg.core.engine;
 
-import com.opengg.core.math.Vector3f;
 import com.opengg.core.util.Time;
 import com.opengg.core.world.World;
 import com.opengg.core.world.components.Component;

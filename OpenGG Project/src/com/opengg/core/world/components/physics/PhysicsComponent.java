@@ -58,12 +58,12 @@ public class PhysicsComponent extends ComponentHolder {
         
         force = finalForce();
         accel(force);
-        velocity.addEquals(acceleration.multiply(delta));
-        pos.addEquals(velocity.multiply(delta));
+        velocity.addThis(acceleration.multiply(delta));
+        pos.addThis(velocity.multiply(delta));
         
         rotforce = finalRotForce();
         angaccel = rotforce.divide(mass);
-        angvelocity.addEquals(angaccel.multiply(delta));
+        angvelocity.addThis(angaccel.multiply(delta));
 
         
         if(pos.y < floor){ 

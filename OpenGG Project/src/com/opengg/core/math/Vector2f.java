@@ -52,8 +52,7 @@ public class Vector2f {
      */
     
     public float getDistance(Vector2f v){
-        return (float) Math.sqrt((this.x * v.x)+(this.y * v.y));  
-       
+        return (float) Math.sqrt(Math.pow((this.x - v.x), 2)+Math.pow((this.y - v.y), 2));  
     }
     
     @Override

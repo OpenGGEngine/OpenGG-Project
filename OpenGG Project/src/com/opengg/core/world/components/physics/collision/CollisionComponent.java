@@ -22,6 +22,7 @@ import java.util.List;
 public class CollisionComponent extends Trigger{
     BoundingBox main;
     List<Collider> boxes = new ArrayList<>();
+    boolean lastcollided = false;
 
     public CollisionComponent(BoundingBox main, Collection<Collider> all) {
         this.main = main;
@@ -50,23 +51,19 @@ public class CollisionComponent extends Trigger{
         if (!main.isColliding(other.main))
             return dataList;
         
-        boolean trigger = false;
+        boolean collided = false;
         for (Collider x: this.boxes) {
             for(Collider y: other.boxes) {
                 CollisionData data = x.isColliding(y);
                 if ((data) != null){
+                    collided = true;
                     dataList.add(data);
                 }
             }
         }
-        if (trigger) {
-            TriggerInfo ti = new TriggerInfo();
-            ti.info = "collision";
-            ti.type = SINGLE;
-            ti.source = this;
-            ti.data = dataList;
-            trigger(ti);
-        }
+
+        
+        
         return dataList;
     }
 
@@ -81,5 +78,17 @@ public class CollisionComponent extends Trigger{
     public void update(float delta) {
         Vector3f fpos = getPosition();
         main.recenter(fpos);
+    }
+    
+    public void collisionTrigger(List<CollisionData> data){
+        if(lastcollided == false){
+            TriggerInfo ti = new TriggerInfo();
+            ti.info = "collision";
+            ti.type = SINGLE;
+            ti.source = this;
+            ti.data = data;
+            trigger(ti);
+            lastcollided = true;
+        }
     }
 }

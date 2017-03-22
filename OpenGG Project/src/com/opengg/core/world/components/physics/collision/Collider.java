@@ -14,7 +14,7 @@ import com.opengg.core.math.Vector3f;
  */
 public abstract class Collider {
     CollisionComponent parent;
-    Vector3f offset;
+    Vector3f offset = new Vector3f();
     public abstract CollisionData isColliding(Collider c);
     
     public Vector3f getPosition(){
