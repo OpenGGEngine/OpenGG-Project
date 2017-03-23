@@ -19,7 +19,7 @@ public class TexturedDrawnObject implements Drawable{
     Texture normalmap;
     Texture specularmap;
     MTLMaterial m = new MTLMaterial();
-    Texture tex;
+    public Texture tex;
     DrawnObject object;
      public TexturedDrawnObject(FloatBuffer b,int vertSize){
         object = new DrawnObject(b,vertSize);

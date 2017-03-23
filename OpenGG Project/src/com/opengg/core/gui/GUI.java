@@ -7,6 +7,7 @@
 package com.opengg.core.gui;
 
 import com.opengg.core.math.Matrix4f;
+import com.opengg.core.math.Vector2f;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.world.Camera;
 import java.util.ArrayList;
@@ -16,21 +17,14 @@ import java.util.ArrayList;
  * @author Javier
  */
 public class GUI {
-    private static ArrayList<GUIItem> guiitems = new ArrayList<>();
+    public static GUIGroup root = new GUIGroup(new Vector2f(0,0));
 
     public static void startGUIPos(){
         ShaderController.setOrtho(-1, 1, -1, 1, -1, 1);
         ShaderController.setView(new Camera().getMatrix());
     }
-    
-    public static void addItem(GUIItem item){
-        guiitems.add(item);
-    }
-    
+
     public static void render(){
-        for(GUIItem item: guiitems){ 
-            ShaderController.setModel(Matrix4f.translate(item.screenlocalpos.x, item.screenlocalpos.y, 0));
-            item.render();
-        }
+        root.render(root.pos);
     }
 }
