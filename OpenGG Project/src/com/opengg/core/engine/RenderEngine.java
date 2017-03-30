@@ -70,7 +70,8 @@ public class RenderEngine {
         
         dlist = new RenderGroup();
         adjdlist = new RenderGroup();
-        adjdlist.setAdjacencyMesh(true);
+        dlist.setPipeline("object");
+        adjdlist.setPipeline("adjobject");
         
         lightobj = new GLBuffer(GL_UNIFORM_BUFFER, 800, GL_DYNAMIC_DRAW);
         lightobj.bindBase(ShaderController.getUniqueUniformBufferLocation());
@@ -169,7 +170,7 @@ public class RenderEngine {
         glDepthMask(true);
         glDrawBuffer(GL_NONE);
         ShaderController.useConfiguration("adjpassthrough");
-        groups.stream().filter(group -> group.adj).forEach((group) -> {
+        groups.stream().forEach((group) -> {
             group.render();
         });
     }
@@ -186,7 +187,7 @@ public class RenderEngine {
         glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_DECR_WRAP, GL_KEEP); 
         
         ShaderController.useConfiguration("volume");
-        groups.stream().filter(group -> group.adj).forEach((group) -> {
+        groups.stream().forEach((group) -> {
             group.render();
         });
 
@@ -226,14 +227,8 @@ public class RenderEngine {
         resetConfig();
         
         for(RenderGroup d : groups){
-            ShaderController.setDistanceField(d.isText());
-            if(d.hasAdjacencyMesh()){
-                ShaderController.useConfiguration("adjobject");
-            }else{
-                ShaderController.useConfiguration("object");
-            }
+            ShaderController.useConfiguration(d.pipeline);
             d.render(); 
-            
         }
         
         glDisable(GL_STENCIL_TEST);
@@ -245,13 +240,8 @@ public class RenderEngine {
             glBlendFunc(GL_ONE, GL_ONE);
 
             for(RenderGroup d : groups){
-                ShaderController.setDistanceField(d.isText());
-                if(d.hasAdjacencyMesh()){
-                   ShaderController.useConfiguration("adjpassthrough");
-                }else{
-                    ShaderController.useConfiguration("ambient");
-                }
-                d.render();
+                ShaderController.useConfiguration(d.pipeline);
+                d.render(); 
             }
         }
         

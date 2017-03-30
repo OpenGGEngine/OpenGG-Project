@@ -83,23 +83,21 @@ public class OpenGGTest extends GGApplication{
         WorldObject terrain = new WorldObject();
         ModelRenderComponent island = new ModelRenderComponent(ModelLoader.loadModel("C:\\res\\island\\Island.bmf"));
         ModelRenderComponent water = new ModelRenderComponent(ModelLoader.loadModel("C:\\res\\island\\Sea.bmf"));
-        island.setScale(new Vector3f(0.2f,0.2f,0.2f));
-        island.setPositionOffset(new Vector3f(0, 0, -550f));
-        water.setScale(new Vector3f(0.2f,0.2f,0.2f));
-        water.setPositionOffset(new Vector3f(0, 0, -550f));
+        terrain.setScale(new Vector3f(0.04f,0.04f,0.04f));
+        terrain.setPositionOffset(new Vector3f(0, 0, -550f));
         terrain.attach(island);
         terrain.attach(water);
         
-        Terrain t = Terrain.generate("C:\\res\\emak.png", 10, 10);
+        Terrain t = Terrain.generate("C:\\res\\emak.png", 30, 30);
         RenderComponent component = new RenderComponent(t.getDrawable());
-        component.setPositionOffset(new Vector3f(0,3,0));
+        component.setPositionOffset(new Vector3f(0,2,0));
         
         WorldObject collider = new WorldObject();
         collider.setPositionOffset(new Vector3f(10,0,0));
         CollisionComponent c = new CollisionComponent(new BoundingBox(new Vector3f(0,0,0),10,8,10), new CylinderCollider(3,2));
         collider.attach(new PhysicsComponent(c));
         ModelRenderComponent beretta = new ModelRenderComponent(ModelLoader.loadModel("C:\\res\\beretta\\Beretta_M9.bmf"));
-        beretta.setScale(new Vector3f(0.26f,0.26f,0.26f));
+        beretta.setScale(new Vector3f(0.12f,0.12f,0.12f));
         beretta.setRotationOffset(new Quaternionf());
         collider.attach(beretta);
         
@@ -126,7 +124,7 @@ public class OpenGGTest extends GGApplication{
         BindController.addBind(ControlType.KEYBOARD, "lookup", KEY_R);
         BindController.addBind(ControlType.KEYBOARD, "lookdown", KEY_F);
         
-        l = new Light(new Vector3f(10,20,190), new Vector3f(1,1,1), 4000f, 0);
+        l = new Light(new Vector3f(10,200,0), new Vector3f(1,1,1), 4000f, 0);
         
         RenderEngine.addLight(l);
         RenderEngine.setSkybox(ObjectCreator.createCube(1500f), Cubemap.get("C:\\res\\skybox\\majestic"));

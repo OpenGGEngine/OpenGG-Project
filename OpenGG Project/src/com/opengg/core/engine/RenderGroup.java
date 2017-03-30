@@ -7,7 +7,6 @@
 package com.opengg.core.engine;
 
 import com.opengg.core.render.Renderable;
-import com.opengg.core.render.shader.Mode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,23 +17,13 @@ import java.util.List;
 public class RenderGroup {
     List<Renderable> items = new ArrayList<>();
     
+    String pipeline = "object";
     boolean transparency = false;
-    boolean distancefield;
     boolean shadows = false;
-    boolean adj = false;
     int order = 5;
-    Mode mode = Mode.OBJECT;
 
     public RenderGroup(){
         RenderEngine.sortOrders();
-    }
-    
-    public boolean isText() {
-        return distancefield;
-    }
-
-    public void setText(boolean distancefield) {
-        this.distancefield = distancefield;
     }
   
     public boolean isTransparent() {
@@ -43,14 +32,6 @@ public class RenderGroup {
 
     public void setTransparent(boolean transparency) {
         this.transparency = transparency;
-    }
-
-    public boolean hasAdjacencyMesh(){
-        return adj;
-    }
-    
-    public void setAdjacencyMesh(boolean adj){
-        this.adj = adj;
     }
     
     public boolean ifCastsShadows() {
@@ -70,14 +51,14 @@ public class RenderGroup {
         RenderEngine.sortOrders();
     }
 
-    public Mode getMode() {
-        return mode;
+    public String getPipeline() {
+        return pipeline;
     }
 
-    public void setMode(Mode mode) {
-        this.mode = mode;
+    public void setPipeline(String pipeline) {
+        this.pipeline = pipeline;
     }
-
+    
     public RenderGroup add(Renderable r){
         items.add(r);
         return this;

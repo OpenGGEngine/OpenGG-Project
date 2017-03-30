@@ -32,10 +32,13 @@ void main() {
     textureCoords = texcoord;
 	
     poss = (model * vec4(position,1) ).xyz;
+	
 	if(inst == 1){
-		poss = (vec4(position.x + color.x, position.y + color.y, position.z + color.z, 1) * model).xyz;
+		poss = ( model * vec4(position.x + color.x, position.y + color.y, position.z + color.z, 1) ).xyz;
 	}
+	
     norms = normal;
+	
     if(billboard == 1){
         modelView[0][0] = 1.0; 
         modelView[0][1] = 0.0; 
@@ -44,6 +47,7 @@ void main() {
         modelView[2][1] = 0.0; 
         modelView[2][2] = 1.0; 
     }
-    vec4 P = modelView * vec4(poss,1);
+	
+    vec4 P = view * vec4(poss.xyz,1);
     gl_Position = projection * P;
 };

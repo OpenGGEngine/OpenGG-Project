@@ -25,8 +25,8 @@ void main() {
 	
     vertexColors = color;
     textureCoords = texcoord;
-    poss = (vec4(position, 1.0f) * model).xyz;
+    poss = (model * vec4(position, 1.0f) ).xyz;
     norms = normal;
-    vec4 P = modelView * vec4(position,1);
+    vec4 P = view * vec4(position,1);
     gl_Position = projection * P;
 };

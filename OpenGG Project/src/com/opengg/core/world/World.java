@@ -56,8 +56,8 @@ public class World extends ComponentHolder{
     }
     
     public void useRenderables(){
-        group.setAdjacencyMesh(true);
-        groupnoadj.setAdjacencyMesh(false);  
+        group.setPipeline("adjobject");
+        groupnoadj.setPipeline("object");
         for(Component c : getAll()){
             if(c instanceof Renderable){
                 if(((Renderable)c) instanceof RenderComponent){

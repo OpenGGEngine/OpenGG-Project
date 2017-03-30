@@ -123,8 +123,7 @@ vec3 shadify(Light light){
 	
     vec3 fragColor = fdif + fspec;
 	
-    return fragColor;
-	//return vec3(pos/1000);
+	return fragColor;
 }
 
 void process(){
