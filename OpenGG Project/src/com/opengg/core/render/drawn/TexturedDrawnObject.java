@@ -20,7 +20,7 @@ public class TexturedDrawnObject implements Drawable{
     Texture specularmap;
     MTLMaterial m = new MTLMaterial();
     public Texture tex;
-    DrawnObject object;
+    Drawable object;
      public TexturedDrawnObject(FloatBuffer b,int vertSize){
         object = new DrawnObject(b,vertSize);
     }
@@ -45,7 +45,7 @@ public class TexturedDrawnObject implements Drawable{
 
     @Override
     public Matrix4f getMatrix() {
-       return object.model;
+       return object.getMatrix();
     }
     
     @Override
@@ -67,5 +67,10 @@ public class TexturedDrawnObject implements Drawable{
 
     public void setTexture(Texture tex) {
         this.tex = tex;
+    }
+    
+    @Override
+    public boolean hasAdjacency(){
+        return object.hasAdjacency();
     }
 }

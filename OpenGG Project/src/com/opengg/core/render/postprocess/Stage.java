@@ -29,7 +29,7 @@ public class Stage {
         buffer.startTexRender();
     }
     
-    public void save(int end){
+    public void finalizeAtLoc(int end){
         buffer.endTexRender();
         buffer.useTexture(end);
     }

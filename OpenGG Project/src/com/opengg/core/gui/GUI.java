@@ -6,11 +6,9 @@
 
 package com.opengg.core.gui;
 
-import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.world.Camera;
-import java.util.ArrayList;
 
 /**
  *
@@ -26,5 +24,9 @@ public class GUI {
 
     public static void render(){
         root.render(root.pos);
+    }
+    
+    public static void addItem(String name, GUIItem item){
+        root.addItem(name, item);
     }
 }

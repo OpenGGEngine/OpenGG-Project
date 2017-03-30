@@ -34,7 +34,7 @@ public class PostProcessPipeline {
         set = new Stage("texture");
         add = new Stage("add");
         
-        StageSet bloom = new StageSet(StageSet.ADD, 1);
+        StageSet bloom = new StageSet(StageSet.SET, 1);
         bloom.addStage(new Stage("bloom"));
         //sets.add(bloom);
     }
@@ -48,24 +48,16 @@ public class PostProcessPipeline {
         
         initial.endTexRender();
         initial.useTexture(0, 1);
-        initial.useTexture(0, 1);
-        for(StageSet s : sets){
-            s.render();
-            switch(s.func){
-                case StageSet.SET:
-                    set.use();
-                    sceneQuad.render();
-                    set.save(0);
-                    break;
-                    
-                case StageSet.ADD:
-                    add.use();
-                    sceneQuad.render();
-                    add.save(0);
-                    break;
-                    
+        initial.useDepthTexture(1);
+        for(StageSet ss : sets){
+            ss.render();
+            if(ss.func == StageSet.ADD){
+                add.use();
+                
+                add.finalizeAtLoc(0);
             }
         }
+        
         if(current != null)
             current.buffer.blitToBack();
         else

@@ -22,6 +22,7 @@ public class RenderComponent extends Component implements Renderable{
     public RenderComponent(Drawable g){
         super();
         this.g = g;
+        System.out.println(g.getClass().getCanonicalName());
     }
 
     @Override
@@ -30,7 +31,7 @@ public class RenderComponent extends Component implements Renderable{
             g.setMatrix(m);
             g.render();
         }
-        
+
     }
 
     @Override

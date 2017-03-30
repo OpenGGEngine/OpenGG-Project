@@ -44,9 +44,9 @@ public class DrawnObjectGroup implements Drawable {
 
     @Override
     public void setMatrix(Matrix4f model) {
-        objs.stream().forEach((d) -> {
+        for(Drawable d : objs){
             d.setMatrix(model);
-        });
+        }
     }
 
     @Override
@@ -56,9 +56,17 @@ public class DrawnObjectGroup implements Drawable {
 
     @Override
     public void destroy() {
-        objs.stream().forEach((d) -> {
+        for(Drawable d : objs){
             d.destroy();
-        });
+        }
     }
-
+    
+    @Override
+    public boolean hasAdjacency() {
+        boolean adj = false;
+        for(Drawable d : objs){
+            adj = adj || d.hasAdjacency();
+        }
+        return adj;
+    }
 }

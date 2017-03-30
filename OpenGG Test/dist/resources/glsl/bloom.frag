@@ -21,10 +21,10 @@ vec4 getTex(sampler2D tname){
 }
 
 void main() {   
-	vec4 color = getTex(Kd);
 	vec4 blur = getTex(Ka);
 	
-	color += blur;
+	if(blur.length > 0.9)
+		blur = vec4(0,0,0,1);
 	
-    fcolor = vec4(1,0,0,1);
+    fcolor = blur;
 };

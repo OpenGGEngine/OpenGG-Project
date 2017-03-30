@@ -40,7 +40,7 @@ public class StageSet {
         for(Stage s : stages){
             s.use();
             sceneQuad.render();
-            s.save(loc);
+            s.finalizeAtLoc(loc);
         }
     }
 }

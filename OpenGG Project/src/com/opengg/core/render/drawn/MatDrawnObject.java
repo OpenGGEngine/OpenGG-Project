@@ -86,4 +86,8 @@ public class MatDrawnObject implements Drawable {
         d.destroy();
     }
     
+    @Override
+    public boolean hasAdjacency(){
+        return d.hasAdjacency();
+    }
 }

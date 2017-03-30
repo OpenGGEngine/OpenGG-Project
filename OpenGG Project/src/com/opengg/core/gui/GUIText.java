@@ -40,10 +40,12 @@ public class GUIText extends GUIItem implements Renderable {
     private Vector3f outlineColor = new Vector3f(0f, 0f, 0f);
 
     Drawable textDraw;
-    public GUIText(String text, GGFont font,float fontSize,  Vector2f position, float maxLineLength,
-        boolean centered) {
+    
+    public GUIText(String text, GGFont font, float fontSize, Vector2f position, float maxLineLength, boolean centered) {
+        
        
-        super(font.loadText(text,fontSize,maxLineLength,font,centered),position);
+        //super(font.loadText(text,fontSize,maxLineLength,font,centered),position);
+        super(null,null);
         this.fontSize = fontSize;
         this.font = font;
         this.position = position;
@@ -52,6 +54,7 @@ public class GUIText extends GUIItem implements Renderable {
         this.textString = text;
         //TextMaster.loadText(this);
     }
+    
     public void remove() {
         //TextMaster.removeText(this);
     }

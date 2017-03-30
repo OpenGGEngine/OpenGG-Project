@@ -24,9 +24,11 @@ import com.opengg.core.render.texture.text.GGFont;
 import com.opengg.core.render.window.WindowInfo;
 import com.opengg.core.render.window.WindowOptions;
 import static com.opengg.core.render.window.WindowOptions.GLFW;
+import com.opengg.core.world.Terrain;
 import com.opengg.core.world.World;
 import com.opengg.core.world.components.ModelRenderComponent;
 import com.opengg.core.world.components.PlayerComponent;
+import com.opengg.core.world.components.RenderComponent;
 import com.opengg.core.world.components.TriggerableAudioComponent;
 import com.opengg.core.world.components.WorldObject;
 import com.opengg.core.world.components.physics.PhysicsComponent;
@@ -88,6 +90,10 @@ public class OpenGGTest extends GGApplication{
         terrain.attach(island);
         terrain.attach(water);
         
+        Terrain t = Terrain.generate("C:\\res\\emak.png", 10, 10);
+        RenderComponent component = new RenderComponent(t.getDrawable());
+        component.setPositionOffset(new Vector3f(0,3,0));
+        
         WorldObject collider = new WorldObject();
         collider.setPositionOffset(new Vector3f(10,0,0));
         CollisionComponent c = new CollisionComponent(new BoundingBox(new Vector3f(0,0,0),10,8,10), new CylinderCollider(3,2));
@@ -106,7 +112,7 @@ public class OpenGGTest extends GGApplication{
         w.attach(terrain);
         w.attach(player);
         w.attach(collider);
-        //w.attach(sound);
+        w.attach(component);
         
         WorldEngine.useWorld(w);
         

@@ -7,7 +7,6 @@ package com.opengg.core.render.drawn;
 
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.render.GLBuffer;
-import com.opengg.core.render.NativeGLBuffer;
 import com.opengg.core.render.shader.ShaderController;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -47,10 +46,7 @@ public class DrawnObject implements Drawable {
         }
         ind.flip();
         
-        this.b = b;
         defBuffers(b, ind);
-
-        removeBuffer();
     }
     
     public DrawnObject(FloatBuffer b){
@@ -74,7 +70,6 @@ public class DrawnObject implements Drawable {
         }
         
         defBuffers(b, ind);
-        removeBuffer();
     }
     
     public DrawnObject(List<FloatBuffer> buffers){
@@ -87,7 +82,6 @@ public class DrawnObject implements Drawable {
         vertLimit = limit/12;
         ind = index;
         
-        this.b = b;
         defBuffers(b, ind);
 
     }
@@ -132,8 +126,6 @@ public class DrawnObject implements Drawable {
         
         this.b = b;
         defBuffers(b, ind);
-        
-        removeBuffer();
     }    
     
     public FloatBuffer getBuffer(){
@@ -154,12 +146,9 @@ public class DrawnObject implements Drawable {
         glDrawElements(adj ? GL_TRIANGLES_ADJACENCY : GL_TRIANGLES, ind.limit(), GL_UNSIGNED_INT, 0);     
     }
     
+    @Override
     public boolean hasAdjacency(){
         return adj;
-    }
-    
-    public void removeBuffer(){
-        //b = null;
     }
 
     @Override
@@ -169,6 +158,7 @@ public class DrawnObject implements Drawable {
 
     @Override
     public void destroy() {
-        removeBuffer();
+        vbo.delete();
+        evbo.delete();
     }
 }
