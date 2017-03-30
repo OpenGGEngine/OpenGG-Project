@@ -37,7 +37,6 @@ import static org.lwjgl.opengl.GL30.GL_MINOR_VERSION;
 import static org.lwjgl.opengl.GL31.GL_UNIFORM_BUFFER;
 import static org.lwjgl.opengl.GL32.GL_DEPTH_CLAMP;
 import static org.lwjgl.opengl.GL32.GL_TEXTURE_CUBE_MAP_SEAMLESS;
-import static org.lwjgl.opengl.GLUtil.setupDebugMessageCallback;
 import org.lwjgl.system.MemoryUtil;
 
 /**

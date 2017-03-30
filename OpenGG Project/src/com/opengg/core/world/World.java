@@ -62,7 +62,7 @@ public class World extends ComponentHolder{
             if(c instanceof Renderable){
                 if(((Renderable)c) instanceof RenderComponent){
                     if(((Drawable)(((RenderComponent)c).getDrawable())).hasAdjacency()){
-                        group.add(((Drawable)(((RenderComponent)c).getDrawable())));
+                        group.add((Renderable)c);
                         continue;
                     }
                 }

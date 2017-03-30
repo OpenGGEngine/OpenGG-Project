@@ -33,7 +33,7 @@ public class ModelRenderComponent extends RenderComponent{
         frame = true;
         this.name = name;
     }
-    
+
     public ModelRenderComponent(Model model){
         super(model.getDrawable());
         this.model = model;

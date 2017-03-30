@@ -45,14 +45,14 @@ public class ShaderController {
         loadShader("volumegeom", Resource.getShaderPath("volume.geom"), Program.GEOMETRY);
         loadShader("mainadjgeom", Resource.getShaderPath("objectadj.geom"), Program.GEOMETRY);
         loadShader("passthroughadjgeom", Resource.getShaderPath("passthroughadj.geom"), Program.GEOMETRY);
-
+        
         loadShader("mainfrag", Resource.getShaderPath("object.frag"), Program.FRAGMENT);
         loadShader("passthroughfrag", Resource.getShaderPath("passthrough.frag"), Program.FRAGMENT);
         loadShader("ssaofrag", Resource.getShaderPath("ssao.frag"), Program.FRAGMENT);  
         loadShader("cubemapfrag", Resource.getShaderPath("cubemap.frag"), Program.FRAGMENT); 
-        loadShader("ambientfrag", Resource.getShaderPath("ambient.frag"), Program.FRAGMENT);  
+        loadShader("ambientfrag", Resource.getShaderPath("ambient.frag"), Program.FRAGMENT); 
         loadShader("texturefrag", Resource.getShaderPath("texture.frag"), Program.FRAGMENT);  
-        loadShader("bloomfrag", Resource.getShaderPath("bloom.frag"), Program.FRAGMENT);  
+        //loadShader("bloomfrag", Resource.getShaderPath("bloom.frag"), Program.FRAGMENT);  
         loadShader("addfrag", Resource.getShaderPath("add.frag"), Program.FRAGMENT);  
         
         use("mainvert", "maingeom", "mainfrag");
@@ -70,8 +70,8 @@ public class ShaderController {
         use("passthroughvert", "passthroughgeom", "ssaofrag");
         saveCurrentConfiguration("ssao");
         
-        use("passthroughvert", "passthroughgeom", "bloomfrag");
-        saveCurrentConfiguration("bloom");
+        //use("passthroughvert", "passthroughgeom", "bloomfrag");
+        //saveCurrentConfiguration("bloom");
 
         use("passthroughvert", "passthroughgeom", "passthroughfrag");
         saveCurrentConfiguration("passthrough");

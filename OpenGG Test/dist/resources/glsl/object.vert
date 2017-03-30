@@ -31,7 +31,7 @@ void main() {
     vertexColors = color;
     textureCoords = texcoord;
 	
-    poss = (vec4(position,1) * model).xyz;
+    poss = (model * vec4(position,1) ).xyz;
 	if(inst == 1){
 		poss = (vec4(position.x + color.x, position.y + color.y, position.z + color.z, 1) * model).xyz;
 	}
