@@ -7,6 +7,7 @@
 package com.opengg.test;
 
 import com.opengg.core.engine.BindController;
+import com.opengg.core.math.FastMath;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.world.Action;
@@ -33,17 +34,22 @@ public class TestPlayerComponent extends ComponentHolder implements Actionable{
     
     Vector3f control = new Vector3f();
     Vector3f controlrot = new Vector3f();
-    public Vector3f currot = new Vector3f();
+    Vector3f currot = new Vector3f();
+    Vector3f weaponpos = new Vector3f(2,-2,-3);
     float speed = 80;
-    float rotspeed = 1;
+    float rotspeed = 30;
+    boolean weaponbob = true;
+    float bob = 0;
     
     public TestPlayerComponent(){
         camera = new CameraComponent();
         controller = new UserControlComponent();
         playerphysics = new PhysicsComponent();
-        gun = new GunComponent();
-        gun.setPositionOffset(new Vector3f(2,-2,-3));
         playerphysics.addCollider(new CollisionComponent(new BoundingBox(new Vector3f(),10,6,10), new CylinderCollider(3,2)));
+        gun = new GunComponent();
+        gun.setPositionOffset(weaponpos);
+        gun.setRotationOffset(new Quaternionf(new Vector3f(90,0,0)));
+        
         attach(camera);
         attach(controller);
         attach(playerphysics);
@@ -52,12 +58,13 @@ public class TestPlayerComponent extends ComponentHolder implements Actionable{
     
     @Override
     public void update(float delta){
+        gun.setRotationOffset(new Quaternionf(new Vector3f(0,pos.x,0)));
         float deltasec = delta / 1000;
         
         currot.x += controlrot.x * rotspeed * deltasec;
         currot.y += controlrot.y * rotspeed * deltasec;
         currot.z += controlrot.z * rotspeed * deltasec;
-        
+                
         this.setRotationOffset(new Quaternionf(currot));
         
         float xvel = control.x * deltasec * speed;
@@ -76,6 +83,22 @@ public class TestPlayerComponent extends ComponentHolder implements Actionable{
             
         if((control.y == 1) && (getPosition().y <= getWorld().floorLev + 0.001f))
             playerphysics.velocity.y += 5;
+        
+        if(weaponbob){
+            if(playerphysics.velocity.length() == 0){
+                bob = 0;
+                gun.setPositionOffset(weaponpos);
+                return;
+            }
+                
+            Vector3f init = new Vector3f();
+            Vector3f fin = new Vector3f(0,0.5f,0);
+            
+            bob += playerphysics.velocity.length() * 30f * deltasec;
+            
+            Vector3f fpos = weaponpos.add(Vector3f.lerp(init, fin, FastMath.sinDeg(bob)));
+            gun.setPositionOffset(fpos);
+        }
     }
     
     @Override

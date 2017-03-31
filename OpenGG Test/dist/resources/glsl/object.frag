@@ -173,6 +173,8 @@ void main() {
 	
 	fcolor = vec4(col + ambient, color.a);
 	
+	fcolor = color;
+	
 	float brightness = (fcolor.r + fcolor.g + fcolor.z) / 3.0;
 	if(brightness > bloomMin){
 		bright = fcolor;

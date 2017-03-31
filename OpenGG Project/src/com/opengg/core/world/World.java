@@ -6,6 +6,8 @@
 
 package com.opengg.core.world;
 
+import com.opengg.core.engine.OpenGG;
+import static com.opengg.core.engine.OpenGG.processExecutables;
 import com.opengg.core.engine.RenderEngine;
 import com.opengg.core.engine.RenderGroup;
 import com.opengg.core.exceptions.InvalidParentException;
@@ -16,8 +18,8 @@ import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.world.components.Component;
 import com.opengg.core.world.components.ComponentHolder;
 import com.opengg.core.world.components.RenderComponent;
-import com.opengg.core.world.components.physics.collision.CollisionComponent;
 import com.opengg.core.world.components.physics.PhysicsComponent;
+import com.opengg.core.world.components.physics.collision.CollisionComponent;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -69,6 +71,9 @@ public class World extends ComponentHolder{
     }
     
     public void addRenderable(Renderable r){
+        if(OpenGG.hasExecutables())
+            processExecutables();
+        
         if(r instanceof RenderComponent){
             if(((Drawable)(((RenderComponent)r).getDrawable())).hasAdjacency()){
                 group.add(r);

@@ -17,7 +17,9 @@ public class RenderComponent extends Component implements Renderable{
     Drawable g;
     Matrix4f m = new Matrix4f();
     
-    public RenderComponent(){};
+    public RenderComponent(){
+        super();
+    };
     
     public RenderComponent(Drawable g){
         super();

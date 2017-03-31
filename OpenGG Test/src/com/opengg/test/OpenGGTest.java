@@ -90,7 +90,7 @@ public class OpenGGTest extends GGApplication{
         Terrain t = Terrain.generate("C:\\res\\emak.png", 30, 30);
         RenderComponent component = new RenderComponent(t.getDrawable());
         component.setPositionOffset(new Vector3f(0,2,0));
-        
+
         WorldObject collider = new WorldObject();
         collider.setPositionOffset(new Vector3f(10,0,0));
         CollisionComponent c = new CollisionComponent(new BoundingBox(new Vector3f(0,0,0),10,8,10), new CylinderCollider(3,2));

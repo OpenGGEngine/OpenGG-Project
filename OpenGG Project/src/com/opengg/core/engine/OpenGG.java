@@ -163,10 +163,7 @@ public class OpenGG implements ConsoleListener{
             startFrame();
             app.render();
             app.update();
-            for(Executable e : executables){
-                    e.execute();
-            }
-            executables.clear();
+            processExecutables();
             WorldEngine.update();
             RenderEngine.checkForGLErrors();
             endFrame();
@@ -256,6 +253,17 @@ public class OpenGG implements ConsoleListener{
 
     public static void addExecutable(Executable e){
         executables.add(e);
+    }
+    
+    public static boolean hasExecutables(){
+        return !executables.isEmpty();
+    }
+    
+    public static void processExecutables(){
+        for(Executable e : executables){
+            e.execute();
+        }
+        executables.clear();
     }
     
     @Override

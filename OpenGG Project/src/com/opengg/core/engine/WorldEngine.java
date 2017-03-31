@@ -13,6 +13,7 @@ import com.opengg.core.world.components.physics.PhysicsComponent;
 import com.opengg.core.world.components.physics.collision.CollisionComponent;
 import com.opengg.core.world.components.physics.collision.CollisionData;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -23,6 +24,7 @@ import java.util.List;
 public class WorldEngine{
     static LinkedList<CollisionComponent> colliders = new LinkedList<>();
     static ArrayList<Component> objs = new ArrayList<>();
+    static ArrayList<Component> removal = new ArrayList<>();
     static Time t;
     
     static{
@@ -64,16 +66,20 @@ public class WorldEngine{
     public static void update(){
         checkColliders();
         float delta = t.getDeltaMs();
-        for(Component c : OpenGG.curworld.getChildren()){
-            traverseUpdate(c, delta);
+        Iterator<Component> iterator = OpenGG.curworld.getChildren().iterator();
+        while(iterator.hasNext()){
+            Component next = iterator.next();
+            traverseUpdate(next, delta);
         }
     }
     
     private static void traverseUpdate(Component c, float delta){
         c.update(delta);
         if(c instanceof ComponentHolder){
-            for(Component comp : ((ComponentHolder)c).getChildren()){
-                traverseUpdate(comp, delta);
+            Iterator<Component> iterator = ((ComponentHolder)c).getChildren().iterator();
+            while(iterator.hasNext()){
+                Component next = iterator.next();
+                traverseUpdate(next, delta);
             }
         }
     }

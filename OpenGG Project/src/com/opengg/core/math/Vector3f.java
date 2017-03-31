@@ -194,20 +194,20 @@ public class Vector3f implements Serializable{
         set(x * v.x, y * v.y, z * v.z);
         return this;
     }
-
-    public FloatBuffer getBuffer() {
-        try(MemoryStack stack = MemoryStack.stackPush()){
-            FloatBuffer buffer = stack.callocFloat(3);
-            buffer.put(x).put(y).put(z);
-            buffer.flip();
-            return buffer;
-        }
-    }
-    
+ 
     public void set(float x, float y, float z) {
         this.x = x;
         this.y = y;
         this.z = z;
+    }
+    
+    public Vector3f transformByQuat(Quaternionf q){
+        return new Vector3f(this).transformThisByQuat(q);
+    }
+    
+    public Vector3f transformThisByQuat(Quaternionf q){
+        q.transform(this);
+        return this;
     }
     
     public void setRadius(float radi) {
@@ -296,6 +296,15 @@ public class Vector3f implements Serializable{
     
     public void zero(){
         this.x = this.y = this.z = 0;
+    }
+    
+    public FloatBuffer getBuffer() {
+        try(MemoryStack stack = MemoryStack.stackPush()){
+            FloatBuffer buffer = stack.callocFloat(3);
+            buffer.put(x).put(y).put(z);
+            buffer.flip();
+            return buffer;
+        }
     }
     
     public byte[] toByteArray(){   

@@ -35,7 +35,10 @@ public class ModelRenderComponent extends RenderComponent{
     }
 
     public ModelRenderComponent(Model model){
-        super(model.getDrawable());
+        super();
+        OpenGG.addExecutable(() -> {
+            this.g = model.getDrawable();
+        });
         this.model = model;
     }
     

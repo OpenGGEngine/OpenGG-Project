@@ -217,6 +217,10 @@ public class Quaternionf implements Serializable{
     }
     
     public Quaternionf invert() {
+        return new Quaternionf(this).invertThis();
+    }
+    
+    public Quaternionf invertThis() {
         float invNorm = 1.0f / (x * x + y * y + z * z + w * w);
         x = -x * invNorm;
         y = -y * invNorm;
@@ -240,7 +244,11 @@ public class Quaternionf implements Serializable{
         return this;
     }
 
-    public Quaternionf rotationXYZ(float angleX, float angleY, float angleZ) {    
+    public Quaternionf rotationXYZ(float angleX, float angleY, float angleZ) {   
+        angleX = (float)Math.toRadians(angleX);
+        angleY = (float)Math.toRadians(angleY);
+        angleZ = (float)Math.toRadians(angleZ);
+        
         float sx = sin(angleX * 0.5f);
         float cx = (float) cosFromSin(sx, angleX * 0.5f);
         float sy = sin(angleY * 0.5f);
@@ -285,11 +293,11 @@ public class Quaternionf implements Serializable{
         return end;
     }
     
-    public Vector3f transform(Vector3f v){
-        return transform(v.x, v.y, v.z);
-    }
-    
-    public Vector3f transform(float x, float y, float z) {
+    public Vector3f transformMutable(Vector3f v){
+        float x = v.x;
+        float y = v.y;
+        float z = v.z;
+        
         float w2 = this.w * this.w;
         float x2 = this.x * this.x;
         float y2 = this.y * this.y;
@@ -310,12 +318,15 @@ public class Quaternionf implements Serializable{
         float m20 = yw + xz + xz + yw;
         float m21 = yz + yz - xw - xw;
         float m22 = z2 - y2 - x2 + w2;
-        
-        Vector3f dest = new Vector3f();
-        dest.x = m00 * x + m10 * y + m20 * z;
-        dest.y = m01 * x + m11 * y + m21 * z;
-        dest.z = m02 * x + m12 * y + m22 * z;
-        return dest;
+
+        v.x = m00 * x + m10 * y + m20 * z;
+        v.y = m01 * x + m11 * y + m21 * z;
+        v.z = m02 * x + m12 * y + m22 * z;
+        return v;
+    }
+    
+    public Vector3f transform(Vector3f v){
+        return transformMutable(new Vector3f(v));
     }
     
     @Override
@@ -350,7 +361,7 @@ public class Quaternionf implements Serializable{
     
     @Override
     public String toString(){
-        return x + ", " + y + ", " + z + ", " +w;
+        return this.toEuler().toString();
     }
 
 }
