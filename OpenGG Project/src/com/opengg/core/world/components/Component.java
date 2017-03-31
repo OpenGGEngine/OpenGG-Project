@@ -19,7 +19,7 @@ import java.io.Serializable;
 public class Component implements Serializable{
     public static int curid = 0;
     public int id;
-    public Component parent;
+    public ComponentHolder parent;
     public Vector3f pos = new Vector3f();
     public Quaternionf rot = new Quaternionf();
     public Vector3f scale = new Vector3f(1,1,1);
@@ -29,7 +29,7 @@ public class Component implements Serializable{
         curid++;
     }
     
-    public void setParentInfo(Component parent){
+    public void setParentInfo(ComponentHolder parent){
         this.parent = parent;
     }
     
@@ -46,7 +46,7 @@ public class Component implements Serializable{
     }
     
     public Vector3f getPosition(){
-        return new Vector3f(pos).add(parent.getPosition());
+        return parent.getPosition().add(parent.getRotationOffset().transform(pos));
     }
     
     public Vector3f getPositionOffset(){

@@ -16,7 +16,7 @@ public abstract class ComponentHolder extends Component{
     protected ArrayList<Component> children = new ArrayList<>();
     
     public void attach(Component c) {
-        c.setParentInfo(this);
+        c.setParentInfo((ComponentHolder)this);
         WorldEngine.addObjects(c);
         children.add(c);
     }  

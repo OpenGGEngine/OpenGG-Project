@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package com.opengg.core.world.components;
+package com.opengg.test;
 
 import com.opengg.core.engine.BindController;
 import com.opengg.core.math.Quaternionf;
@@ -12,21 +12,24 @@ import com.opengg.core.math.Vector3f;
 import com.opengg.core.world.Action;
 import com.opengg.core.world.ActionType;
 import com.opengg.core.world.Actionable;
+import com.opengg.core.world.components.CameraComponent;
+import com.opengg.core.world.components.ComponentHolder;
+import com.opengg.core.world.components.UserControlComponent;
 import com.opengg.core.world.components.physics.PhysicsComponent;
 import com.opengg.core.world.components.physics.collision.BoundingBox;
 import com.opengg.core.world.components.physics.collision.CollisionComponent;
 import com.opengg.core.world.components.physics.collision.CylinderCollider;
-import com.opengg.core.world.components.physics.collision.SphereCollider;
 import static java.lang.Math.abs;
 
 /**
  *
  * @author Javier
  */
-public class PlayerComponent extends ComponentHolder implements Actionable{
+public class TestPlayerComponent extends ComponentHolder implements Actionable{
     private final PhysicsComponent playerphysics;
     private final UserControlComponent controller;
     private final CameraComponent camera;
+    private final GunComponent gun;
     
     Vector3f control = new Vector3f();
     Vector3f controlrot = new Vector3f();
@@ -34,14 +37,17 @@ public class PlayerComponent extends ComponentHolder implements Actionable{
     float speed = 80;
     float rotspeed = 1;
     
-    public PlayerComponent(){
+    public TestPlayerComponent(){
         camera = new CameraComponent();
         controller = new UserControlComponent();
         playerphysics = new PhysicsComponent();
+        gun = new GunComponent();
+        gun.setPositionOffset(new Vector3f(2,-2,-3));
         playerphysics.addCollider(new CollisionComponent(new BoundingBox(new Vector3f(),10,6,10), new CylinderCollider(3,2)));
         attach(camera);
         attach(controller);
         attach(playerphysics);
+        attach(gun);
     }
     
     @Override
@@ -102,6 +108,9 @@ public class PlayerComponent extends ComponentHolder implements Actionable{
                     break;
                 case "lookdown":
                     controlrot.x -= 1;
+                    break;
+                case "fire":
+                    gun.fire();
                     break;
             }
         }else{

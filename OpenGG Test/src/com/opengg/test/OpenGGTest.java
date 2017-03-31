@@ -27,7 +27,6 @@ import static com.opengg.core.render.window.WindowOptions.GLFW;
 import com.opengg.core.world.Terrain;
 import com.opengg.core.world.World;
 import com.opengg.core.world.components.ModelRenderComponent;
-import com.opengg.core.world.components.PlayerComponent;
 import com.opengg.core.world.components.RenderComponent;
 import com.opengg.core.world.components.TriggerableAudioComponent;
 import com.opengg.core.world.components.WorldObject;
@@ -45,7 +44,7 @@ public class OpenGGTest extends GGApplication{
     private Sound so, so2;
     private AudioListener as;
     private Light l;
-    PlayerComponent player;
+    TestPlayerComponent player;
     
     public static void main(String[] args) throws IOException, Exception {
         WindowInfo w = new WindowInfo();
@@ -97,16 +96,14 @@ public class OpenGGTest extends GGApplication{
         CollisionComponent c = new CollisionComponent(new BoundingBox(new Vector3f(0,0,0),10,8,10), new CylinderCollider(3,2));
         collider.attach(new PhysicsComponent(c));
         ModelRenderComponent beretta = new ModelRenderComponent(ModelLoader.loadModel("C:\\res\\beretta\\Beretta_M9.bmf"));
-        beretta.setScale(new Vector3f(0.12f,0.12f,0.12f));
+        beretta.setScale(new Vector3f(0.1f,0.1f,0.1f));
         beretta.setRotationOffset(new Quaternionf());
         collider.attach(beretta);
         
-        player = new PlayerComponent();
-        player.use();
-       
-        //TriggerableAudioComponent sound = new TriggerableAudioComponent(so);
-        //c.addSubscriber(sound);
         
+        player = new TestPlayerComponent();
+        player.use();
+
         w.attach(terrain);
         w.attach(player);
         w.attach(collider);
@@ -123,6 +120,7 @@ public class OpenGGTest extends GGApplication{
         BindController.addBind(ControlType.KEYBOARD, "lookleft", KEY_E);
         BindController.addBind(ControlType.KEYBOARD, "lookup", KEY_R);
         BindController.addBind(ControlType.KEYBOARD, "lookdown", KEY_F);
+        BindController.addBind(ControlType.KEYBOARD, "fire", KEY_L);
         
         l = new Light(new Vector3f(10,200,0), new Vector3f(1,1,1), 4000f, 0);
         

@@ -26,9 +26,4 @@ public class WorldObject extends ComponentHolder{
         rot = new Quaternionf();
     }
 
-    @Override
-    public void attach(Component c) {
-        c.setParentInfo(this);
-        super.attach(c);
-    }
 }

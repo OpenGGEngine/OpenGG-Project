@@ -13,7 +13,6 @@ import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.Renderable;
 import com.opengg.core.render.drawn.Drawable;
-import com.opengg.core.render.drawn.DrawnObject;
 import com.opengg.core.world.components.Component;
 import com.opengg.core.world.components.ComponentHolder;
 import com.opengg.core.world.components.RenderComponent;
@@ -60,19 +59,28 @@ public class World extends ComponentHolder{
         groupnoadj.setPipeline("object");
         for(Component c : getAll()){
             if(c instanceof Renderable){
-                if(((Renderable)c) instanceof RenderComponent){
-                    if(((Drawable)(((RenderComponent)c).getDrawable())).hasAdjacency()){
-                        group.add((Renderable)c);
-                        continue;
-                    }
-                }
-                groupnoadj.add((Renderable)c);
+                addRenderable((Renderable)c);
             }
         }
 
         
         RenderEngine.addRenderGroup(group);
         RenderEngine.addRenderGroup(groupnoadj);
+    }
+    
+    public void addRenderable(Renderable r){
+        if(r instanceof RenderComponent){
+            if(((Drawable)(((RenderComponent)r).getDrawable())).hasAdjacency()){
+                group.add(r);
+                return;
+            }
+        }
+        groupnoadj.add(r);
+    }
+    
+    public void removeRenderable(Renderable r){
+        group.remove(r);
+        groupnoadj.remove(r);
     }
     
     public LinkedList<CollisionComponent> useColliders() {
@@ -127,7 +135,7 @@ public class World extends ComponentHolder{
     }
     
     @Override
-    public void setParentInfo(Component parent) {
+    public void setParentInfo(ComponentHolder parent) {
         throw new InvalidParentException("World must be the top level component!");
     }
     

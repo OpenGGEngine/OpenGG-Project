@@ -30,7 +30,9 @@ public class ModelLoader {
             return m;
         }else if(new File(path).exists()){
             try {
-                return forceLoadModel(path);
+                m = forceLoadModel(path);
+                ModelManager.setModel(path, m);
+                return m;
             } catch (IOException ex) {
                 GGConsole.warning("Failed to load model at " + path + ", using default model instead");
                 return ModelManager.getModel("default");

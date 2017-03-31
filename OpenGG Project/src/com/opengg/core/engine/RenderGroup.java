@@ -71,4 +71,12 @@ public class RenderGroup {
     public void render(){
         items.stream().forEach(Renderable::render);
     }
+    
+    public void clear(){
+        items.clear();
+    }
+    
+    public void remove(Renderable r){
+        items.remove(r);
+    }
 }
