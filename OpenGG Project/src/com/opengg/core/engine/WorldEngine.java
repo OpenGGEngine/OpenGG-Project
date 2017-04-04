@@ -5,6 +5,7 @@
  */
 package com.opengg.core.engine;
 
+import com.opengg.core.render.Renderable;
 import com.opengg.core.util.Time;
 import com.opengg.core.world.World;
 import com.opengg.core.world.components.Component;
@@ -59,12 +60,33 @@ public class WorldEngine{
         }
     }
     
+    public static void markForRemoval(Component c){
+        removal.add(c);
+    }
+    
     public static void addObjects(Component e){
         objs.add(e);
     }
     
+    public static void removeMarked(){
+        for(Component c : removal){
+            if(c instanceof Renderable){
+                c.getWorld().removeRenderable((Renderable)c);
+            }
+            
+            if(c instanceof CollisionComponent){
+                colliders.remove((CollisionComponent)c);
+            }
+            
+            c.parent.remove(c);
+            objs.remove(c);
+        }
+        removal.clear();
+    }
+    
     public static void update(){
         checkColliders();
+        removeMarked();
         float delta = t.getDeltaMs();
         Iterator<Component> iterator = OpenGG.curworld.getChildren().iterator();
         while(iterator.hasNext()){

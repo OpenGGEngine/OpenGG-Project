@@ -85,7 +85,7 @@ public class TestPlayerComponent extends ComponentHolder implements Actionable{
             playerphysics.velocity.y += 5;
         
         if(weaponbob){
-            if(playerphysics.velocity.length() == 0){
+            if(playerphysics.velocity.length() < 0.5f){
                 bob = 0;
                 gun.setPositionOffset(weaponpos);
                 return;
