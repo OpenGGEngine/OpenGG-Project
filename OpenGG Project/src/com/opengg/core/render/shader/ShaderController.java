@@ -411,10 +411,6 @@ public class ShaderController {
         setUniform("billboard", yes);
     }
     
-    public static void setLight(Light light){
-        setUniform("light.lightpos", light.pos);
-    }
-    
     private static void use(Program v, Program g, Program f){
         String st = Integer.toString(v.id) + Integer.toString(g.id) + Integer.toString(f.id);
         Pipeline p;

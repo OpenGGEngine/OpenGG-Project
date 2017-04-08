@@ -29,6 +29,6 @@ public class LightRenderComponent extends RenderComponent{
 
     @Override
     public Vector3f getPosition(){
-        return l.pos;
+        return l.getPosition();
     } 
 }

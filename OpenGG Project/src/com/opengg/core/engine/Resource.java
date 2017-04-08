@@ -34,7 +34,7 @@ public class Resource {
     
     public static String getConfigPath(String name){
         try {
-            return new File("resources\\config\\" +  name + ".cfg").getCanonicalPath();
+            return new File("config\\" +  name + ".cfg").getCanonicalPath();
         } catch (IOException ex) {
             GGConsole.warning("Failed to load " + name + "!");
         }

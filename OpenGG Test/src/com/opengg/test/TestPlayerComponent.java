@@ -20,7 +20,6 @@ import com.opengg.core.world.components.physics.PhysicsComponent;
 import com.opengg.core.world.components.physics.collision.BoundingBox;
 import com.opengg.core.world.components.physics.collision.CollisionComponent;
 import com.opengg.core.world.components.physics.collision.CylinderCollider;
-import static java.lang.Math.abs;
 
 /**
  *
@@ -35,20 +34,25 @@ public class TestPlayerComponent extends ComponentHolder implements Actionable{
     Vector3f control = new Vector3f();
     Vector3f controlrot = new Vector3f();
     Vector3f currot = new Vector3f();
-    Vector3f weaponpos = new Vector3f(2,-2,-3);
-    float speed = 80;
+    Vector3f weaponpos = new Vector3f(0.5f,1.2f,-2f);
+    Vector3f aweaponpos = new Vector3f(0f,1.36f,-2);
+    Vector3f cweaponpos = weaponpos;
+    float speed = 20;
     float rotspeed = 30;
+    float bobspeed = 30;
     boolean weaponbob = true;
+    boolean aim = false;
     float bob = 0;
     
     public TestPlayerComponent(){
         camera = new CameraComponent();
+        camera.setPositionOffset(new Vector3f(0,2f,0));
         controller = new UserControlComponent();
         playerphysics = new PhysicsComponent();
-        playerphysics.addCollider(new CollisionComponent(new BoundingBox(new Vector3f(),10,6,10), new CylinderCollider(3,2)));
+        playerphysics.addCollider(new CollisionComponent(new BoundingBox(new Vector3f(),10,6,10), new CylinderCollider(1,2)));
         gun = new GunComponent();
         gun.setPositionOffset(weaponpos);
-        gun.setRotationOffset(new Quaternionf(new Vector3f(90,0,0)));
+        gun.setRotationOffset(new Quaternionf(new Vector3f(0,90,0)));
         
         attach(camera);
         attach(controller);
@@ -58,46 +62,43 @@ public class TestPlayerComponent extends ComponentHolder implements Actionable{
     
     @Override
     public void update(float delta){
-        gun.setRotationOffset(new Quaternionf(new Vector3f(0,pos.x,0)));
         float deltasec = delta / 1000;
         
         currot.x += controlrot.x * rotspeed * deltasec;
         currot.y += controlrot.y * rotspeed * deltasec;
         currot.z += controlrot.z * rotspeed * deltasec;
                 
-        this.setRotationOffset(new Quaternionf(currot));
+        this.setRotationOffset(new Quaternionf(currot));      
+        Vector3f movement = new Vector3f(control.x  * speed, 0 ,control.z  *speed);
+        movement = getRotation().transform(movement);
         
-        float xvel = control.x * deltasec * speed;
-        if((abs(playerphysics.velocity.x) < 20))
-            playerphysics.velocity.x += xvel;
-        
-        if(control.x == 0)
-            playerphysics.velocity.x /= 2;
-        
-        float zvel = control.z * deltasec * speed;
-        if(abs(playerphysics.velocity.z) < 20)
-            playerphysics.velocity.z += zvel; 
-        
-        if(control.z == 0)
-            playerphysics.velocity.z /= 2;
+        playerphysics.velocity.x = movement.x;
+        playerphysics.velocity.z = movement.z;
             
         if((control.y == 1) && (getPosition().y <= getWorld().floorLev + 0.001f))
             playerphysics.velocity.y += 5;
         
+        if(aim)
+            cweaponpos = aweaponpos;
+        else
+            cweaponpos = weaponpos;
+        
         if(weaponbob){
             if(playerphysics.velocity.length() < 0.5f){
                 bob = 0;
-                gun.setPositionOffset(weaponpos);
+                gun.setPositionOffset(cweaponpos);
                 return;
             }
                 
             Vector3f init = new Vector3f();
             Vector3f fin = new Vector3f(0,0.5f,0);
             
-            bob += playerphysics.velocity.length() * 30f * deltasec;
+            bob += playerphysics.velocity.length() * bobspeed * deltasec;
             
-            Vector3f fpos = weaponpos.add(Vector3f.lerp(init, fin, FastMath.sinDeg(bob)));
+            Vector3f fpos = cweaponpos.add(Vector3f.lerp(init, fin, FastMath.sinDeg(bob)));
             gun.setPositionOffset(fpos);
+        }else{
+            gun.setPositionOffset(cweaponpos);
         }
     }
     
@@ -132,6 +133,9 @@ public class TestPlayerComponent extends ComponentHolder implements Actionable{
                 case "lookdown":
                     controlrot.x -= 1;
                     break;
+                case "aim":
+                    aim = true;
+                    break;
                 case "fire":
                     gun.fire();
                     break;
@@ -164,6 +168,9 @@ public class TestPlayerComponent extends ComponentHolder implements Actionable{
                     break;
                 case "lookdown":
                     controlrot.x += 1;
+                    break;
+                case "aim":
+                    aim = false;
                     break;
             }
         }

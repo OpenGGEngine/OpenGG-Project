@@ -19,6 +19,7 @@ import java.io.Serializable;
 public class Component implements Serializable{
     public static int curid = 0;
     public int id;
+    public String name = "";
     public ComponentHolder parent;
     public Vector3f pos = new Vector3f();
     public Quaternionf rot = new Quaternionf();
@@ -27,6 +28,14 @@ public class Component implements Serializable{
     public Component(){
         id = curid;
         curid++;
+    }
+    
+    public void setName(String name){
+        this.name = name;
+    }
+    
+    public String getName(){
+        return name;
     }
     
     public void setParentInfo(ComponentHolder parent){
@@ -83,5 +92,9 @@ public class Component implements Serializable{
     
     public World getWorld(){
         return parent.getWorld();
+    }
+    
+    public void remove(){
+        
     }
 }

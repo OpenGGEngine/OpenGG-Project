@@ -14,6 +14,17 @@ public class KeyboardController {
     static IKeyboardHandler handler;
     static KeyboardListener[] k = new KeyboardListener[32];;
     
+    public static int charToKeycode(char ch){
+        if(Character.isAlphabetic(ch))
+            return (int)Character.toUpperCase(ch);
+        else return (int)ch;
+            
+    }
+    
+    public static char keycodeToChar(int key){
+        return (char)key;
+    }
+    
     public static void addToPool(KeyboardListener ks){
         k[counter] = ks;
         counter++;

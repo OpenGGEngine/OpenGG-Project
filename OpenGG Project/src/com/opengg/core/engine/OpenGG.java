@@ -106,6 +106,7 @@ public class OpenGG implements ConsoleListener{
             System.exit(0);
         }
         SystemInfo.querySystemInfo();
+        Config.reloadConfigs();
         lwjglinit = true;
         
         String verb = System.getProperty("gg.verbose");

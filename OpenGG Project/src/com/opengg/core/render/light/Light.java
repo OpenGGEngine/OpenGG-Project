@@ -15,12 +15,14 @@ import org.lwjgl.system.MemoryUtil;
  * @author Javier
  */
 public class Light {
-    public Vector3f pos = new Vector3f();
-    public Vector3f color = new Vector3f();
-    public float distance = 10;
-    public float distance2 = 50;
-    public boolean moved = false;
+    Vector3f pos = new Vector3f();
+    Vector3f color = new Vector3f();
+    float distance = 10;
+    float distance2 = 50;
+    public boolean changed = false;
     public static int bfsize = 12;
+
+    
     
     public Light(Vector3f pos, Vector3f color, float distance, float distance2){
         this.pos = pos;
@@ -41,5 +43,23 @@ public class Light {
         fb.put(0);
         fb.flip();
         return fb;
+    }
+    
+    public Vector3f getPosition() {
+        return pos;
+    }
+
+    public void setPosition(Vector3f pos) {
+        this.pos = pos;
+        changed = true;
+    }
+
+    public Vector3f getColor() {
+        return color;
+    }
+
+    public void setColor(Vector3f color) {
+        this.color = color;
+        changed = true;
     }
 }

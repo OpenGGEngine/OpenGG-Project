@@ -80,6 +80,7 @@ public class WorldEngine{
             
             c.parent.remove(c);
             objs.remove(c);
+            c.remove();
         }
         removal.clear();
     }
@@ -108,8 +109,12 @@ public class WorldEngine{
     
     public static void useWorld(World w){
         OpenGG.curworld = w;
-        w.useRenderables();
-        colliders = w.useColliders();
+        rescanCurrent();
+    }
+    
+    public static void rescanCurrent(){
+        OpenGG.curworld.useRenderables();
+        colliders = OpenGG.curworld.useColliders();
     }
     
     public static World getCurrent(){

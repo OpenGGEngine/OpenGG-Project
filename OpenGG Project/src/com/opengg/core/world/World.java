@@ -92,11 +92,8 @@ public class World extends ComponentHolder{
         LinkedList<CollisionComponent> list = new LinkedList<>();
         List<Component> components = getAll();
         for(Component c : components){
-            if(c instanceof PhysicsComponent){
-                List<CollisionComponent> collide = ((PhysicsComponent) c).getColliders();
-                if (collide != null){
-                    list.addAll(collide);
-                }
+            if(c instanceof CollisionComponent){
+                list.add((CollisionComponent)c);
             }
         }
         return list;

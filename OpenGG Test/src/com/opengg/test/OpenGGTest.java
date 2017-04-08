@@ -10,7 +10,6 @@ import com.opengg.core.engine.WorldEngine;
 import com.opengg.core.gui.GUIText;
 import com.opengg.core.io.ControlType;
 import static com.opengg.core.io.input.keyboard.Key.*;
-import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.model.ModelLoader;
@@ -28,12 +27,7 @@ import com.opengg.core.world.Terrain;
 import com.opengg.core.world.World;
 import com.opengg.core.world.components.ModelRenderComponent;
 import com.opengg.core.world.components.RenderComponent;
-import com.opengg.core.world.components.TriggerableAudioComponent;
 import com.opengg.core.world.components.WorldObject;
-import com.opengg.core.world.components.physics.PhysicsComponent;
-import com.opengg.core.world.components.physics.collision.BoundingBox;
-import com.opengg.core.world.components.physics.collision.CollisionComponent;
-import com.opengg.core.world.components.physics.collision.CylinderCollider;
 import java.io.File;
 import java.io.IOException;
 
@@ -77,7 +71,7 @@ public class OpenGGTest extends GGApplication{
         base2 = f.loadText(g);
 
         World w = WorldEngine.getCurrent();
-        w.setFloor(5);
+        w.setFloor(2);
         
         WorldObject terrain = new WorldObject();
         ModelRenderComponent island = new ModelRenderComponent(ModelLoader.loadModel("C:\\res\\island\\Island.bmf"));
@@ -90,23 +84,15 @@ public class OpenGGTest extends GGApplication{
         Terrain t = Terrain.generate("C:\\res\\emak.png", 30, 30);
         RenderComponent component = new RenderComponent(t.getDrawable());
         component.setPositionOffset(new Vector3f(0,2,0));
-
-        WorldObject collider = new WorldObject();
-        collider.setPositionOffset(new Vector3f(10,0,0));
-        CollisionComponent c = new CollisionComponent(new BoundingBox(new Vector3f(0,0,0),10,8,10), new CylinderCollider(3,2));
-        collider.attach(new PhysicsComponent(c));
-        ModelRenderComponent beretta = new ModelRenderComponent(ModelLoader.loadModel("C:\\res\\beretta\\Beretta_M9.bmf"));
-        beretta.setScale(new Vector3f(0.1f,0.1f,0.1f));
-        beretta.setRotationOffset(new Quaternionf());
-        collider.attach(beretta);
-        
         
         player = new TestPlayerComponent();
         player.use();
 
+        EnemySpawnerComponent cc = new EnemySpawnerComponent();
+        
+        w.attach(cc);
         w.attach(terrain);
         w.attach(player);
-        w.attach(collider);
         w.attach(component);
         
         WorldEngine.useWorld(w);
@@ -121,6 +107,7 @@ public class OpenGGTest extends GGApplication{
         BindController.addBind(ControlType.KEYBOARD, "lookup", KEY_R);
         BindController.addBind(ControlType.KEYBOARD, "lookdown", KEY_F);
         BindController.addBind(ControlType.KEYBOARD, "fire", KEY_L);
+        BindController.addBind(ControlType.KEYBOARD, "aim", KEY_K);
         
         l = new Light(new Vector3f(10,200,0), new Vector3f(1,1,1), 4000f, 0);
         

@@ -28,6 +28,6 @@ public class LightComponent extends Component{
 
     @Override
     public void update(float delta) {
-        l.pos = parent.getPosition();
+        l.setPosition(parent.getPosition());
     }    
 }

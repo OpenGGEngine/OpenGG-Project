@@ -117,6 +117,10 @@ public class RenderEngine {
         lights.add(l);
     }
     
+    public static void removeLight(Light l){
+        lights.remove(l);
+    }
+    
     public static void addRenderGroup(RenderGroup r){
         groups.add(r);
     }
@@ -144,7 +148,6 @@ public class RenderEngine {
     
     public static void setShadowVolumes(boolean vol){
         shadVolumes = vol;
-        System.out.println(vol);
     }
     
     public static void setCulling(boolean enable){

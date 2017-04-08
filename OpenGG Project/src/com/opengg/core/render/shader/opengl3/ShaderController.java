@@ -334,8 +334,4 @@ public class ShaderController {
     public static void setBillBoard(boolean yes){  
         program.setUniform(billboard,yes);
     }
-    
-    public static void setLight(Light light){
-        program.setUniform(lightpos, light.pos);
-    }
 }

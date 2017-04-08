@@ -57,6 +57,8 @@ public class CollisionComponent extends Trigger{
                 CollisionData data = x.isColliding(y);
                 if ((data) != null){
                     collided = true;
+                    data.collider1 = this;
+                    data.collider2 = other;
                     dataList.add(data);
                 }
             }

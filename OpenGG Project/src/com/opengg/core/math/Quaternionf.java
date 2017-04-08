@@ -229,6 +229,16 @@ public class Quaternionf implements Serializable{
         return this;
     }
     
+    public Quaternionf invertIndirect() {
+        return new Quaternionf(this).invertThisIndirect();
+    }
+    
+    public Quaternionf invertThisIndirect() {
+        Vector3f v = this.toEuler();
+        v.invertThis();
+        return rotationXYZ(v.x,v.y,v.z);
+    }
+    
     public Quaternionf set(float x, float y, float z, float w) {
         this.x = x;
         this.y = y;
