@@ -49,6 +49,7 @@ public class BulletComponent extends ComponentHolder{
         RenderEngine.addLight(l);
         
         WorldEngine.getCurrent().addRenderable(bullet);
+        WorldEngine.getCurrent().addCollider(physics.getColliders().get(0));
     }
     
     @Override

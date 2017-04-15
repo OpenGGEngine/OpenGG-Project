@@ -10,6 +10,7 @@ import com.opengg.core.engine.OpenGG;
 import static com.opengg.core.engine.OpenGG.processExecutables;
 import com.opengg.core.engine.RenderEngine;
 import com.opengg.core.engine.RenderGroup;
+import com.opengg.core.engine.WorldEngine;
 import com.opengg.core.exceptions.InvalidParentException;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
@@ -97,6 +98,16 @@ public class World extends ComponentHolder{
             }
         }
         return list;
+    }
+    
+    public void addCollider(CollisionComponent c){
+        if(this != OpenGG.curworld)
+            return;
+        WorldEngine.addCollider(c);
+    }
+    
+    public void removeCollider(CollisionComponent c){
+        WorldEngine.removeCollider(c);
     }
     
     private Component traverseFind(Component c, int i){

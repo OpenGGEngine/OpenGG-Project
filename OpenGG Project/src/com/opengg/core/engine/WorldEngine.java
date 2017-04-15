@@ -36,6 +36,10 @@ public class WorldEngine{
         colliders.add(c);
     }
     
+    public static void removeCollider(CollisionComponent c){
+        colliders.remove(c);
+    }
+    
     static void processCollision(List<CollisionData> collisions){
         CollisionData data = collisions.get(0);
         PhysicsComponent component1 = data.collider1.getPhysicsComponent();

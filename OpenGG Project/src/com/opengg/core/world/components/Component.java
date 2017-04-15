@@ -16,9 +16,10 @@ import java.io.Serializable;
  * Component
  * @author Warren
  */
-public class Component implements Serializable{
+public abstract class Component implements Serializable{
     public static int curid = 0;
     public int id;
+    public boolean absoluteOffset = false;
     public String name = "";
     public ComponentHolder parent;
     public Vector3f pos = new Vector3f();
@@ -54,8 +55,20 @@ public class Component implements Serializable{
         this.scale = scale;
     }
     
+    public void setAbsoluteOffset(boolean abs){
+        absoluteOffset = abs;
+    }
+    
+    public boolean isAbsoluteOffset(){
+        return absoluteOffset;
+    }
+    
     public Vector3f getPosition(){
-        return parent.getPosition().add(parent.getRotation().transform(pos));
+        if(absoluteOffset){
+            return parent.getPosition().add(pos);
+        }else{
+            return parent.getPosition().add(parent.getRotation().transform(pos));
+        }
     }
     
     public Vector3f getPositionOffset(){

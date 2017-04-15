@@ -16,6 +16,7 @@ import com.opengg.core.world.Actionable;
 import com.opengg.core.world.components.CameraComponent;
 import com.opengg.core.world.components.ComponentHolder;
 import com.opengg.core.world.components.UserControlComponent;
+import com.opengg.core.world.components.WorldObject;
 import com.opengg.core.world.components.physics.PhysicsComponent;
 import com.opengg.core.world.components.physics.collision.BoundingBox;
 import com.opengg.core.world.components.physics.collision.CollisionComponent;
@@ -35,7 +36,7 @@ public class TestPlayerComponent extends ComponentHolder implements Actionable{
     Vector3f controlrot = new Vector3f();
     Vector3f currot = new Vector3f();
     Vector3f weaponpos = new Vector3f(0.5f,1.2f,-2f);
-    Vector3f aweaponpos = new Vector3f(0f,1.36f,-2);
+    Vector3f aweaponpos = new Vector3f(0f,1.36f,-2f);
     Vector3f cweaponpos = weaponpos;
     float speed = 20;
     float rotspeed = 30;
@@ -45,8 +46,10 @@ public class TestPlayerComponent extends ComponentHolder implements Actionable{
     float bob = 0;
     
     public TestPlayerComponent(){
+        WorldObject head = new WorldObject();
         camera = new CameraComponent();
-        camera.setPositionOffset(new Vector3f(0,2f,0));
+        head.setPositionOffset(new Vector3f(0,2f,0));
+        head.setAbsoluteOffset(true);
         controller = new UserControlComponent();
         playerphysics = new PhysicsComponent();
         playerphysics.addCollider(new CollisionComponent(new BoundingBox(new Vector3f(),10,6,10), new CylinderCollider(1,2)));
@@ -54,10 +57,11 @@ public class TestPlayerComponent extends ComponentHolder implements Actionable{
         gun.setPositionOffset(weaponpos);
         gun.setRotationOffset(new Quaternionf(new Vector3f(0,90,0)));
         
-        attach(camera);
+        head.attach(camera);
+        head.attach(gun);
         attach(controller);
         attach(playerphysics);
-        attach(gun);
+        attach(head);
     }
     
     @Override
@@ -86,7 +90,7 @@ public class TestPlayerComponent extends ComponentHolder implements Actionable{
         if(weaponbob){
             if(playerphysics.velocity.length() < 0.5f){
                 bob = 0;
-                gun.setPositionOffset(cweaponpos);
+                gun.setPositionOffset(cweaponpos.subtract(new Vector3f(0,2,0)));
                 return;
             }
                 
@@ -96,9 +100,10 @@ public class TestPlayerComponent extends ComponentHolder implements Actionable{
             bob += playerphysics.velocity.length() * bobspeed * deltasec;
             
             Vector3f fpos = cweaponpos.add(Vector3f.lerp(init, fin, FastMath.sinDeg(bob)));
+            fpos = fpos.subtract(new Vector3f(0,2,0));
             gun.setPositionOffset(fpos);
         }else{
-            gun.setPositionOffset(cweaponpos);
+            gun.setPositionOffset(cweaponpos.subtract(new Vector3f(0,2,0)));
         }
     }
     
