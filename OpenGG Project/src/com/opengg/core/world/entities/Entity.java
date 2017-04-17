@@ -39,7 +39,6 @@ public class Entity implements Serializable {
     /**
      * Only to be used for smooth rendering with interpolate
      *
-     * @see interpolate
      */
     public PhysicsState previous;
     public PhysicsState current;

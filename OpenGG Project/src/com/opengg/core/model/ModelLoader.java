@@ -19,11 +19,21 @@ import java.util.ArrayList;
 import org.lwjgl.system.MemoryUtil;
 
 /**
- *
+ * Static handler for loading and processing BMF Model files
  * @author Warren
  */
 public class ModelLoader {
     
+    /**
+     * Loads a model in the BMF format from the specified path<br>
+     * If the model has already been loaded, it returns that object instead. If you require a fresh copy, call {@link #forceLoadModel(java.lang.String) forceLoadModel()} instead<br><br>
+     * 
+     * This method does not generate a {@link com.opengg.core.render.drawn.Drawable Drawable} for the model, so it is multithreading safe as it does not call OpenGL<br><br>
+     * 
+     * If the model cannot be found or fails to load, this method will load the default model instead. If that fails, an IOException is thrown.
+     * @param path Path for the model to be loaded, also used as the identifier for the ModelManager
+     * @return Loaded/retrieved model
+     */
     public static Model loadModel (String path){
         Model m;
         if((m = ModelManager.getModel(path)) != null){
@@ -43,6 +53,14 @@ public class ModelLoader {
         }
     }
     
+    /**
+     * Creates a new Model object from the given path. Unless you know that a new object is needed, calls to {@link #loadModel(java.lang.String) loadModel()} should suffice<br>
+     * Note: This method does not create the Drawable, so it is thread safe
+     * @param path Path of the model
+     * @return Loaded model
+     * @throws FileNotFoundException Throws if the model is not found
+     * @throws IOException Throws if the file is inaccessible, fails to parse due to malformed lengths, or is invalidly formatted
+     */
     public static Model forceLoadModel(String path) throws FileNotFoundException, IOException {
         
         GGConsole.log("Loading model at " + path + "...");

@@ -30,7 +30,7 @@ public class OBJModel {
 
     /**
      * Returns a list of vertices.
-     * @return non-null writable list of {@link OBJVertex} 
+     * @return non-null writable list of
      * instances.
      */
     public List<Vector3f> getVertices() {

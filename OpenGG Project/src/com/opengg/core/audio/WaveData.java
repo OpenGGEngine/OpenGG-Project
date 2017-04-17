@@ -22,7 +22,7 @@ import javax.sound.sampled.UnsupportedAudioFileException;
  *
  * Utility class for loading wave files.
  *
- * @author Brian Matzon <brian@matzon.dk>
+ * @author Brian Matzon
  * @version $Revision$ $Id$
  */
 public class WaveData {

@@ -32,7 +32,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * Primary controller of all functionality in the OpenGG Engine
  * @author Javier
  */
 public class OpenGG implements ConsoleListener{
@@ -50,6 +50,11 @@ public class OpenGG implements ConsoleListener{
     static boolean verbose = false;
     static boolean test = false;
       
+    /**
+     * Initializes an instance of the OpenGG Engine. This gives full runtime control of the program to OpenGG, so no code will run past this call until the engine closes
+     * @param app Instance of the OpenGG-driven application
+     * @param info Window information
+     */
     public static void initialize(GGApplication app, WindowInfo info){
         try{
             if(info == null){
