@@ -12,7 +12,6 @@ import com.opengg.core.io.ControlType;
 import static com.opengg.core.io.input.keyboard.Key.*;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
-import com.opengg.core.model.ModelLoader;
 import com.opengg.core.render.drawn.MatDrawnObject;
 import com.opengg.core.render.light.Light;
 import com.opengg.core.render.objects.ObjectCreator;
@@ -25,9 +24,8 @@ import com.opengg.core.render.window.WindowOptions;
 import static com.opengg.core.render.window.WindowOptions.GLFW;
 import com.opengg.core.world.Terrain;
 import com.opengg.core.world.World;
-import com.opengg.core.world.components.ModelRenderComponent;
 import com.opengg.core.world.components.RenderComponent;
-import com.opengg.core.world.components.WorldObject;
+import com.opengg.core.world.generators.SmoothPerlinGenerator;
 import java.io.File;
 import java.io.IOException;
 
@@ -73,27 +71,28 @@ public class OpenGGTest extends GGApplication{
         World w = WorldEngine.getCurrent();
         w.setFloor(2);
         
-        WorldObject terrain = new WorldObject();
+        //WorldObject terrain = new WorldObject();
+        /*
         ModelRenderComponent island = new ModelRenderComponent(ModelLoader.loadModel("C:\\res\\island\\Island.bmf"));
         ModelRenderComponent water = new ModelRenderComponent(ModelLoader.loadModel("C:\\res\\island\\Sea.bmf"));
         terrain.setScale(new Vector3f(0.04f,0.04f,0.04f));
         terrain.setPositionOffset(new Vector3f(0, 0, -550f));
         terrain.attach(island);
-        terrain.attach(water);
+        terrain.attach(water);*/
         
-        Terrain t = Terrain.generate("C:\\res\\emak.png", 30, 30);
-        RenderComponent component = new RenderComponent(t.getDrawable());
-        component.setPositionOffset(new Vector3f(0,2,0));
+        Terrain t = Terrain.generateProcedural(new SmoothPerlinGenerator(6,0.2,10), 300,300);
+        RenderComponent world = new RenderComponent(t.getDrawable());
+        world.setScale(new Vector3f(500,1,500));
         
         player = new TestPlayerComponent();
         player.use();
 
-        EnemySpawnerComponent cc = new EnemySpawnerComponent();
+        //EnemySpawnerComponent cc = new EnemySpawnerComponent();
         
-        w.attach(cc);
-        w.attach(terrain);
+        //w.attach(cc);
+        //w.attach(terrain);
         w.attach(player);
-        w.attach(component);
+        w.attach(world);
         
         WorldEngine.useWorld(w);
         

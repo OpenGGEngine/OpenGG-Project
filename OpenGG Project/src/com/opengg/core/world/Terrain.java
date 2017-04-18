@@ -35,18 +35,20 @@ public class Terrain {
         sizez = gridz;
     }
 
-    public static Terrain generate(String mappath, int sizex, int sizez){
+    public static Terrain generate(String mappath){
         
-        Terrain t = new Terrain(sizex, sizez);
+        Terrain t = new Terrain(1, 1);
         t.generateTexture(mappath);
         return t;
     }
     
-    public static Terrain generateProcedural(int gridx, int gridz){
-        return null;
+    public static Terrain generateProcedural(HeightsGenerator generator, int gridx, int gridz){
+        Terrain t = new Terrain(1, 1);
+        t.genProcedural(generator, gridx, gridz);
+        return t;
     }
     
-    public void generateTexture(String path){
+    private void generateTexture(String path){
         try {
             BufferedImage image = ImageIO.read(new FileInputStream(new File(path)));
             int gx = image.getWidth();
@@ -65,38 +67,15 @@ public class Terrain {
             Logger.getLogger(Terrain.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    /*
-    public void generateProcedural() throws IOException {
-        HeightsGenerator generator = new HeightsGenerator();
-
-        
-        //size = 1000;
-        FloatBuffer ud = MemoryUtil.memAllocFloat((VERTEX_COUNT*VERTEX_COUNT)*12);
-               
-         for (int i = 0; i < VERTEX_COUNT; i+=1) {
-            for (int j = 0; j < VERTEX_COUNT; j+=1) {
-                
-                float x1 = (j/(float)(VERTEX_COUNT-1))*size;
-                float y = getHeight(i, j, generator) ; 
-                float z1 = (i/(float)(VERTEX_COUNT-1))*size;
-              
-                  
-                
-
-                Vector3f normal = calculateNormal(j,i, generator);
-
-             
-                
-                float u = (j)/(float)(VERTEX_COUNT-1);
-                
-                float v = (i)/(float)(VERTEX_COUNT-1);
-                
-                ud.put(x1).put(y).put(z1).put(0).put(0).put(0).put(0).put(normal.x).put(normal.y).put(normal.z).put(u).put(v);  
-            }
-                
+    
+    private void genProcedural(HeightsGenerator gen, int gx, int gz){   
+        map = new float[gx][gz];
+         for (int i = 0; i < gx; i+=1) {
+            for (int j = 0; j < gz; j+=1) {
+                map[i][j] = getHeight(i,j,gen);
+            }    
         }
     }
-    */
     private float getHeight(int x, int z, BufferedImage image) {
         float height = 0;
         if (x < 0 || x > image.getWidth() || z < 0 || z > image.getHeight()) {
@@ -117,7 +96,7 @@ public class Terrain {
     }
     
     private float getHeight(int x,int z,HeightsGenerator generator){
-        return generator.generateHeight(x,z)*6f;
+        return generator.getHeight(x,z)*6f;
     }
 
     
