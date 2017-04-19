@@ -42,7 +42,7 @@ public class OpenGGTest extends GGApplication{
         WindowInfo w = new WindowInfo();
         w.displaymode = WindowOptions.WINDOWED;
         w.height = 1024;
-        w.width = 1024;
+        w.width = 1280;
         w.resizable = false;
         w.type = GLFW;
         w.vsync = true;
@@ -80,7 +80,7 @@ public class OpenGGTest extends GGApplication{
         terrain.attach(island);
         terrain.attach(water);*/
         
-        Terrain t = Terrain.generateProcedural(new SmoothPerlinGenerator(6,0.2,10), 300,300);
+        Terrain t = Terrain.generateProcedural(new SmoothPerlinGenerator(6,0.2,10), 200,200);
         RenderComponent world = new RenderComponent(t.getDrawable());
         world.setScale(new Vector3f(500,1,500));
         

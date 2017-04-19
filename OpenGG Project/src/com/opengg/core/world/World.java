@@ -19,7 +19,6 @@ import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.world.components.Component;
 import com.opengg.core.world.components.ComponentHolder;
 import com.opengg.core.world.components.RenderComponent;
-import com.opengg.core.world.components.physics.PhysicsComponent;
 import com.opengg.core.world.components.physics.collision.CollisionComponent;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,8 +30,8 @@ import java.util.List;
 public class World extends ComponentHolder{
     public float floorLev = 0;
     public Vector3f gravityVector = new Vector3f(0,-9.81f,0);
-    public RenderGroup group = new RenderGroup();
-    public RenderGroup groupnoadj = new RenderGroup();
+    public RenderGroup group = new RenderGroup("world");
+    public RenderGroup groupnoadj = new RenderGroup("worldadj");
     
     public void setFloor(float floor){
         floorLev = floor;

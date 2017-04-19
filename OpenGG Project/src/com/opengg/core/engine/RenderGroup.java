@@ -18,12 +18,14 @@ public class RenderGroup {
     List<Renderable> items = new ArrayList<>();
     
     String pipeline = "object";
+    String name = "default";
     boolean transparency = false;
     boolean shadows = false;
+    boolean enabled = true;
     int order = 5;
 
-    public RenderGroup(){
-        RenderEngine.sortOrders();
+    public RenderGroup(String name){
+        this.name = name;
     }
   
     public boolean isTransparent() {

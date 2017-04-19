@@ -46,7 +46,7 @@ public class ShaderController {
         loadShader("mainadjgeom", Resource.getShaderPath("objectadj.geom"), Program.GEOMETRY);
         loadShader("passthroughadjgeom", Resource.getShaderPath("passthroughadj.geom"), Program.GEOMETRY);
         
-        loadShader("mainfrag", Resource.getShaderPath("object.frag"), Program.FRAGMENT);
+        loadShader("mainfrag", Resource.getShaderPath("phong.frag"), Program.FRAGMENT);
         loadShader("passthroughfrag", Resource.getShaderPath("passthrough.frag"), Program.FRAGMENT);
         loadShader("ssaofrag", Resource.getShaderPath("ssao.frag"), Program.FRAGMENT);  
         loadShader("cubemapfrag", Resource.getShaderPath("cubemap.frag"), Program.FRAGMENT); 

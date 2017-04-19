@@ -7,12 +7,8 @@ layout(location = 1) out vec4 bright;
 in vertexData{
     vec4 vertexColor;
     vec2 textureCoord;
-    vec3 lightdir;
-    vec3 eyedir;
     vec4 pos;
     vec3 norm;
-    vec4 shadowpos;
-    float visibility;
 };
 
 struct Material
@@ -56,6 +52,9 @@ uniform sampler2D bump;
 uniform samplerCube cubemap;
 uniform Material material;
 
+const float density =0.00137;
+const float gradient = 2.32;
+
 float bloomMin = 0.9;
 float vis = 1;
 
@@ -66,6 +65,8 @@ vec3 ambient;
 vec3 specular;
 float specpow;
 vec3 n;
+float visibility = 1f;
+vec3 eyedir;
 
 mat3 cotangent_frame( vec3 N, vec3 p, vec2 uv ){
     // get edge vectors of the pixel triangle
@@ -92,6 +93,18 @@ vec3 calculatenormal( vec3 N, vec3 V, vec2 texcoord ){
     return normalize( TBN * map );
 }
 
+
+void genPhong(){
+    vec3 positionRelativeToCam = (view * model * vec4(pos.xyz, 1.0f)).xyz;
+    
+    vec3 posCameraspace = (positionRelativeToCam);
+    eyedir = vec3(0,0,0) - posCameraspace;
+
+    float distance = length(positionRelativeToCam.xyz);
+
+    visibility = exp(-pow((distance*density),gradient));
+    visibility = clamp(visibility,0.0,1.0);
+}
 
 vec4 getTex(sampler2D tname){
     if(text == 1){
@@ -164,6 +177,7 @@ void process(){
 }
 
 void main() {   
+	genPhong();
 	process();
 	vec3 col = vec3(0,0,0);
 	
@@ -172,8 +186,6 @@ void main() {
 	}
 	
 	fcolor = vec4(col + ambient, color.a);
-	
-	//fcolor = color;
 	
 	float brightness = (fcolor.r + fcolor.g + fcolor.z) / 3.0;
 	if(brightness > bloomMin){

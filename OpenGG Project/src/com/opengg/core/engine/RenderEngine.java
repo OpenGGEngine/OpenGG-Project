@@ -40,12 +40,13 @@ import static org.lwjgl.opengl.GL32.GL_TEXTURE_CUBE_MAP_SEAMLESS;
 import org.lwjgl.system.MemoryUtil;
 
 /**
- *
+ * 
  * @author Javier
  */
 public class RenderEngine {
     static List<RenderGroup> groups = new ArrayList<>();
     static List<Light> lights = new ArrayList<>();
+    static List<RenderPath> paths = new ArrayList<>();
     static GLBuffer lightobj;
     static RenderGroup dlist;
     static RenderGroup adjdlist;
@@ -67,18 +68,15 @@ public class RenderEngine {
         ModelManager.initialize();
         sceneTex = Framebuffer.getFramebuffer(OpenGG.window.getWidth(), OpenGG.window.getHeight(), 2);
         PostProcessPipeline.initialize(sceneTex);
-        
-        dlist = new RenderGroup();
-        adjdlist = new RenderGroup();
-        dlist.setPipeline("object");
-        adjdlist.setPipeline("adjobject");
-        
+             
         lightobj = new GLBuffer(GL_UNIFORM_BUFFER, 800, GL_DYNAMIC_DRAW);
         lightobj.bindBase(ShaderController.getUniqueUniformBufferLocation());
         ShaderController.setUniformBlockLocation(lightobj, "LightBuffer");
         
-        lightoffset = (MemoryUtil.memAllocFloat(Light.bfsize).capacity()) << 2;
+        enableDefaultGroups();
         
+        lightoffset = (MemoryUtil.memAllocFloat(Light.bfsize).capacity()) << 2;
+               
         groups.add(dlist);
         groups.add(adjdlist);
         
@@ -95,6 +93,20 @@ public class RenderEngine {
         return true;
     }
     
+    public static void enableDefaultGroups(){
+        dlist = new RenderGroup("default");
+        adjdlist = new RenderGroup("adjdefault");
+        dlist.setPipeline("object");
+        adjdlist.setPipeline("adjobject");
+        RenderPath path = new RenderPath("mainpath", () -> {
+            for(RenderGroup d : getActiveRenderGroups()){
+                ShaderController.useConfiguration(d.pipeline);
+                d.render(); 
+            }
+        });
+        paths.add(path);
+    }
+    
     public static void checkForGLErrors(){
         int i = 0;
         while((i = glGetError()) != GL_NO_ERROR){
@@ -104,6 +116,10 @@ public class RenderEngine {
     
     public static String getGLVersion(){
         return glGetInteger(GL_MAJOR_VERSION) + "." + glGetInteger(GL_MINOR_VERSION);
+    }
+    
+    public Framebuffer getSceneFramebuffer(){
+        return sceneTex;
     }
     
     public static void setWireframe(boolean wf){
@@ -125,8 +141,58 @@ public class RenderEngine {
         groups.add(r);
     }
     
-    public List<RenderGroup> getRenderGroups(){
+    public RenderGroup getRenderGroup(String name){
+        for(RenderGroup r : groups)
+            if(r.name.equals(name)) return r;
+        
+        return null;
+    }
+    
+    public static List<RenderGroup> getRenderGroups(){
         return groups;
+    }
+    
+    public static List<RenderGroup> getActiveRenderGroups(){
+        ArrayList<RenderGroup> list = new ArrayList<>();
+        
+        for(RenderGroup r : groups)
+            if(r.enabled)
+                list.add(r);
+        
+        return list;
+    }
+    
+    public static void removeRenderGroup(RenderGroup r){
+        groups.remove(r);
+    }
+    
+    public static void addRenderPath(RenderPath r){
+        paths.add(r);
+    }
+    
+    public static RenderPath getRenderPath(String name){
+        for(RenderPath r : paths)
+            if(r.name.equals(name)) return r;
+        
+        return null;
+    }
+    
+    public static List<RenderPath> getRenderPaths(){
+        return paths;
+    }
+    
+    public static List<RenderPath> getActiveRenderPaths(){
+        ArrayList<RenderPath> list = new ArrayList<>();
+        
+        for(RenderPath r : paths)
+            if(r.enabled)
+                list.add(r);
+        
+        return list;
+    }
+    
+    public static void removeRenderPath(RenderPath r){
+        paths.remove(r);
     }
     
     public static void addRenderable(Renderable r){
@@ -229,11 +295,11 @@ public class RenderEngine {
         useLights();
         resetConfig();
         
-        for(RenderGroup d : groups){
-            ShaderController.useConfiguration(d.pipeline);
-            d.render(); 
+        for(RenderPath path : getActiveRenderPaths()){
+            path.render();
+            resetConfig();
         }
-        
+                
         glDisable(GL_STENCIL_TEST);
         
         if(shadVolumes){
