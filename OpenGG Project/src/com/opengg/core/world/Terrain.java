@@ -6,6 +6,7 @@
 package com.opengg.core.world;
 
 import com.opengg.core.engine.GGConsole;
+import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.render.drawn.DrawnObject;
@@ -27,8 +28,9 @@ import org.lwjgl.system.MemoryUtil;
  */
 public class Terrain {
     Drawable d;
-    public float[][] map;
-    public float sizex, sizez;
+    float[][] map;
+    float sizex, sizez;
+    float xsquarewidth, zsquarewidth;
 
     private Terrain(int gridx, int gridz) {
         sizex = gridx;
@@ -39,12 +41,16 @@ public class Terrain {
         
         Terrain t = new Terrain(1, 1);
         t.generateTexture(mappath);
+        t.xsquarewidth = 1/(float)t.map.length;
+        t.zsquarewidth = 1/(float)t.map[0].length;
         return t;
     }
     
     public static Terrain generateProcedural(HeightsGenerator generator, int gridx, int gridz){
         Terrain t = new Terrain(1, 1);
         t.genProcedural(generator, gridx, gridz);
+        t.xsquarewidth = 1/(float)t.map.length;
+        t.zsquarewidth = 1/(float)t.map[0].length;
         return t;
     }
     
@@ -58,7 +64,7 @@ public class Terrain {
             
             for (int i = 0; i < image.getWidth(); i+=1) {
                 for (int j = 0; j < image.getHeight(); j+=1) {
-                    map[i][j] = getHeight(i, j, image) ;        
+                    map[i][j] = generateHeight(i, j, image) ;        
                 }
             }
         } catch (FileNotFoundException ex) {
@@ -72,11 +78,11 @@ public class Terrain {
         map = new float[gx][gz];
          for (int i = 0; i < gx; i+=1) {
             for (int j = 0; j < gz; j+=1) {
-                map[i][j] = getHeight(i,j,gen);
+                map[i][j] = generateHeight(i,j,gen);
             }    
         }
     }
-    private float getHeight(int x, int z, BufferedImage image) {
+    private float generateHeight(int x, int z, BufferedImage image) {
         float height = 0;
         if (x < 0 || x > image.getWidth() || z < 0 || z > image.getHeight()) {
             return 0;
@@ -95,7 +101,7 @@ public class Terrain {
         return (float) (((height/100000)*(0.001*10)));
     }
     
-    private float getHeight(int x,int z,HeightsGenerator generator){
+    private float generateHeight(int x,int z,HeightsGenerator generator){
         return generator.getHeight(x,z)*6f;
     }
 
@@ -107,7 +113,7 @@ public class Terrain {
         float heightu = map[x][z + 1];
         
         Vector3f normal = new Vector3f(heightl - heightr, 2f, heightd - heightu);
-        normal.normalize();
+        normal = normal.normalize();
         return normal;
     }
 
@@ -134,10 +140,10 @@ public class Terrain {
         
         for(int i = 0; i < map.length; i++){
             for(int i2 = 0; i2 < map[0].length; i2++){
-                float x = ((float) i / (float) map.length) * (float) sizex;
+                float x = ((float) i * xsquarewidth);
                 float y = map[i][i2];
-                float z = ((float) i2 / (float) map[0].length) * (float) sizez;
-                
+                float z = ((float) i2 * zsquarewidth);
+                                
                 float u = (float) i / (float) map.length;
                 float v = (float) i2 / (float) map[0].length;
                 
@@ -157,6 +163,45 @@ public class Terrain {
         bf.flip();
         indices.flip();
         d = new DrawnObject(bf, indices);
-        return d;
+              return d;
+    }
+    
+    public Vector3f getNormalAt(float x, float z){
+        int gridx = (int) Math.floor(x / xsquarewidth);
+        int gridz = (int) Math.floor(z / zsquarewidth);
+        
+        if(gridx >= map.length-1 || gridx <= 0 || gridz >= map[0].length-1 || gridz <= 0)
+            return null;
+        
+        return calculateNormal(gridx,gridz);
+    }
+    
+    public float getHeight(float x, float z){
+        int gridx = (int) Math.floor(x / xsquarewidth);
+        int gridz = (int) Math.floor(z / zsquarewidth);
+        
+        if(gridx >= map.length-1 || gridx <= 0 || gridz >= map[0].length-1 || gridz <= 0)
+            return 12345;
+        
+        float xCoord = (x % xsquarewidth) / xsquarewidth;
+        float zCoord = (z % zsquarewidth) / zsquarewidth;
+        
+        float answer = 0;
+        if(xCoord <= (1-zCoord))
+            answer = barycenterCompute(new Vector3f(0,map[gridx][gridz],0), new Vector3f(1, map[gridx+1][gridz],0),
+                    new Vector3f(0,map[gridx][gridz+1],1), new Vector2f(xCoord,zCoord));
+        else
+            answer = barycenterCompute(new Vector3f(1,map[gridx+1][gridz],0), new Vector3f(1, map[gridx+1][gridz+1],1),
+                    new Vector3f(0,map[gridx][gridz+1],1), new Vector2f(xCoord,zCoord));
+
+        return answer;
+    }
+    
+    public float barycenterCompute(Vector3f p1, Vector3f p2, Vector3f p3, Vector2f pos){
+        float det = (p2.z - p3.z) * (p1.x - p3.x) + (p3.x - p2.x) * (p1.z - p3.z);
+        float l1 = ((p2.z - p3.z) * (pos.x - p3.x) + (p3.x - p2.x) * (pos.y - p3.z))/det;
+        float l2 = ((p3.z - p1.z) * (pos.x - p3.x) + (p1.x - p3.x) * (pos.y - p3.z))/det;
+        float l3 = 1f - l1 - l2;
+        return l1 * p1.y + l2 * p2.y + l3 * p3.y;
     }
 }

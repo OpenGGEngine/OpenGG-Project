@@ -13,14 +13,14 @@ import com.opengg.core.math.Vector3f;
 import com.opengg.core.world.Action;
 import com.opengg.core.world.ActionType;
 import com.opengg.core.world.Actionable;
+import com.opengg.core.world.collision.BoundingBox;
+import com.opengg.core.world.collision.CylinderCollider;
 import com.opengg.core.world.components.CameraComponent;
 import com.opengg.core.world.components.ComponentHolder;
 import com.opengg.core.world.components.UserControlComponent;
 import com.opengg.core.world.components.WorldObject;
+import com.opengg.core.world.components.physics.CollisionComponent;
 import com.opengg.core.world.components.physics.PhysicsComponent;
-import com.opengg.core.world.components.physics.collision.BoundingBox;
-import com.opengg.core.world.components.physics.collision.CollisionComponent;
-import com.opengg.core.world.components.physics.collision.CylinderCollider;
 
 /**
  *
@@ -53,6 +53,10 @@ public class TestPlayerComponent extends ComponentHolder implements Actionable{
         controller = new UserControlComponent();
         playerphysics = new PhysicsComponent();
         playerphysics.addCollider(new CollisionComponent(new BoundingBox(new Vector3f(),10,6,10), new CylinderCollider(1,2)));
+        playerphysics.setAbsoluteOffset(true);
+        playerphysics.mass = 60f;
+        playerphysics.bounciness = 0;
+        playerphysics.frictionCoefficient = 0.8f;
         gun = new GunComponent();
         gun.setPositionOffset(weaponpos);
         gun.setRotationOffset(new Quaternionf(new Vector3f(0,90,0)));
@@ -79,7 +83,7 @@ public class TestPlayerComponent extends ComponentHolder implements Actionable{
         playerphysics.velocity.x = movement.x;
         playerphysics.velocity.z = movement.z;
             
-        if((control.y == 1) && (getPosition().y <= getWorld().floorLev + 0.001f))
+        if((control.y == 1) && playerphysics.grounded)
             playerphysics.velocity.y += 5;
         
         if(aim)

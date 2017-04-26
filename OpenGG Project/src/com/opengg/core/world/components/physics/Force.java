@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package com.opengg.core.world.components.physics.collision;
+package com.opengg.core.world.components.physics;
 
 import com.opengg.core.math.Vector3f;
 
@@ -12,10 +12,8 @@ import com.opengg.core.math.Vector3f;
  *
  * @author Javier
  */
-public class CollisionData{
-    CollisionData(){};
-    public CollisionComponent collider1, collider2;
-    public Vector3f collisionNormal;
-    public Vector3f collisionPoint;
-    
+public class Force {
+    public Vector3f force = new Vector3f();
+    public float velLimit = 0;
+    public boolean frictionDisable = false;
 }

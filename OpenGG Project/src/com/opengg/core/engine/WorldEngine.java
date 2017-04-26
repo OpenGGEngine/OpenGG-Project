@@ -8,11 +8,12 @@ package com.opengg.core.engine;
 import com.opengg.core.render.Renderable;
 import com.opengg.core.util.Time;
 import com.opengg.core.world.World;
+import com.opengg.core.world.collision.Collision;
+import com.opengg.core.world.collision.CollisionHandler;
 import com.opengg.core.world.components.Component;
 import com.opengg.core.world.components.ComponentHolder;
+import com.opengg.core.world.components.physics.CollisionComponent;
 import com.opengg.core.world.components.physics.PhysicsComponent;
-import com.opengg.core.world.components.physics.collision.CollisionComponent;
-import com.opengg.core.world.components.physics.collision.CollisionData;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -39,29 +40,9 @@ public class WorldEngine{
     public static void removeCollider(CollisionComponent c){
         colliders.remove(c);
     }
-    
-    static void processCollision(List<CollisionData> collisions){
-        CollisionData data = collisions.get(0);
-        PhysicsComponent component1 = data.collider1.getPhysicsComponent();
-        PhysicsComponent component2 = data.collider2.getPhysicsComponent();
 
-        if(component1 != null){
-            component1.velocity = component1.velocity.reflect(data.collisionNormal);
-        }
-        if(component2 != null){
-            component2.velocity = component2.velocity.reflect(data.collisionNormal);
-        }
-    }
-    
-    public static void checkColliders(){
-        for(int i = 0; i < colliders.size(); i++){
-            for(int j = i + 1; j < colliders.size(); j++){
-                List<CollisionData> info = colliders.get(i).testForCollision(colliders.get(j));
-                if(info == null || !info.isEmpty()){
-                    processCollision(info);
-                }
-            }
-        }
+    public static List<CollisionComponent> getColliders(){
+        return colliders;
     }
     
     public static void markForRemoval(Component c){
@@ -90,7 +71,7 @@ public class WorldEngine{
     }
     
     public static void update(){
-        checkColliders();
+        CollisionHandler.clearCollisions();
         removeMarked();
         float delta = t.getDeltaMs();
         Iterator<Component> iterator = OpenGG.curworld.getChildren().iterator();

@@ -19,7 +19,7 @@ import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.world.components.Component;
 import com.opengg.core.world.components.ComponentHolder;
 import com.opengg.core.world.components.RenderComponent;
-import com.opengg.core.world.components.physics.collision.CollisionComponent;
+import com.opengg.core.world.components.physics.CollisionComponent;
 import java.util.LinkedList;
 import java.util.List;
 

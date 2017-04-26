@@ -19,6 +19,13 @@ public class Vector4f {
     public float z;
     public float w;
     
+    public Vector4f(Vector3f v){
+        this.x = v.x;
+        this.y = v.y;
+        this.z = v.z;
+        this.w = 1;
+    }
+    
     public Vector4f set(float x, float y, float z, float w) {
         this.x = x;
         this.y = y;
@@ -97,7 +104,10 @@ public class Vector4f {
         this.w /= w;
 
         return this;
-
+    }
+    
+    public Vector4f div(Matrix4f m){
+        return this.mul(m.invert());
     }
     
     public float distance(Vector4f v) {
@@ -128,5 +138,10 @@ public class Vector4f {
             buffer.flip();
             return buffer;
         }
+    }
+    
+    @Override
+    public String toString(){
+        return x + ", " + y + ", " + z + ", " + w; 
     }
 }

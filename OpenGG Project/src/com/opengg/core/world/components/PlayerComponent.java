@@ -13,10 +13,10 @@ import com.opengg.core.world.Action;
 import com.opengg.core.world.ActionType;
 import com.opengg.core.world.Actionable;
 import com.opengg.core.world.components.physics.PhysicsComponent;
-import com.opengg.core.world.components.physics.collision.BoundingBox;
-import com.opengg.core.world.components.physics.collision.CollisionComponent;
-import com.opengg.core.world.components.physics.collision.CylinderCollider;
-import com.opengg.core.world.components.physics.collision.SphereCollider;
+import com.opengg.core.world.collision.BoundingBox;
+import com.opengg.core.world.components.physics.CollisionComponent;
+import com.opengg.core.world.collision.CylinderCollider;
+import com.opengg.core.world.collision.SphereCollider;
 import static java.lang.Math.abs;
 
 /**

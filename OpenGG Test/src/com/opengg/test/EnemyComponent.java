@@ -10,9 +10,9 @@ import com.opengg.core.math.Vector3f;
 import com.opengg.core.model.ModelLoader;
 import com.opengg.core.world.components.ComponentHolder;
 import com.opengg.core.world.components.ModelRenderComponent;
-import com.opengg.core.world.components.physics.collision.BoundingBox;
-import com.opengg.core.world.components.physics.collision.CollisionComponent;
-import com.opengg.core.world.components.physics.collision.CylinderCollider;
+import com.opengg.core.world.collision.BoundingBox;
+import com.opengg.core.world.components.physics.CollisionComponent;
+import com.opengg.core.world.collision.CylinderCollider;
 
 /**
  *

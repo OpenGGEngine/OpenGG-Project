@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package com.opengg.core.world.components.physics.collision;
+package com.opengg.core.world.collision;
 
 /**
  *
@@ -19,14 +19,14 @@ public class CylinderCollider extends Collider{
     }
     
     @Override
-    public CollisionData isColliding(Collider c) {
-        if(c instanceof SphereCollider){
+    public Collision isColliding(Collider c) {
+        if(c instanceof SphereCollider)
             return CollisionUtil.SphereCylinder((SphereCollider)c, this);
-        }
-        
-        if(c instanceof CylinderCollider){
+        else if(c instanceof CylinderCollider)
             return CollisionUtil.CylinderCylinder((CylinderCollider)c, this);
-        }
+        else if(c instanceof TerrainCollider)
+            return CollisionUtil.CylinderTerrain(this, (TerrainCollider)c);
+        
         return null;
     }
     

@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package com.opengg.core.world.components.physics.collision;
+package com.opengg.core.world.collision;
 
 import com.opengg.core.math.Vector3f;
 
@@ -25,10 +25,11 @@ public class SphereCollider extends Collider{
     }
     
     @Override
-    public CollisionData isColliding(Collider c) {
-        if(c instanceof SphereCollider){
+    public Collision isColliding(Collider c) {
+        if(c instanceof SphereCollider)
             return CollisionUtil.SphereSphere(this, (SphereCollider)c);
-        }
+        else if(c instanceof TerrainCollider)
+            return CollisionUtil.SphereTerrain(this, (TerrainCollider)c);
         return null;
     }
     

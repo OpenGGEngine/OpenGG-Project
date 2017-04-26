@@ -4,8 +4,9 @@
  * and open the template in the editor.
  */
 
-package com.opengg.core.world.components.physics.collision;
+package com.opengg.core.world.collision;
 
+import com.opengg.core.world.components.physics.CollisionComponent;
 import com.opengg.core.math.Vector3f;
 
 /**
@@ -15,7 +16,7 @@ import com.opengg.core.math.Vector3f;
 public abstract class Collider {
     CollisionComponent parent;
     Vector3f offset = new Vector3f();
-    public abstract CollisionData isColliding(Collider c);
+    public abstract Collision isColliding(Collider c);
     
     public Vector3f getPosition(){
         return offset.add(parent.getPosition());

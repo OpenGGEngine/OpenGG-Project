@@ -13,7 +13,7 @@ import com.opengg.core.render.drawn.Drawable;
  *
  * @author Javier
  */
-public class RenderComponent extends Component implements Renderable{
+public class RenderComponent extends ComponentHolder implements Renderable{
     Drawable g;
     Matrix4f m = new Matrix4f();
     
@@ -32,7 +32,6 @@ public class RenderComponent extends Component implements Renderable{
             g.setMatrix(m);
             g.render();
         }
-
     }
 
     @Override

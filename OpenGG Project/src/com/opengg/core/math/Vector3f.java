@@ -54,6 +54,12 @@ public class Vector3f implements Serializable{
         this.y = v.y;
         this.z = v.z;
     }
+    
+    public Vector3f(Vector4f v) {
+        this.x = v.x;
+        this.y = v.y;
+        this.z = v.z;
+    }
 
     public Vector3f add(Vector3f v){
         return new Vector3f(this).addThis(v);
@@ -171,6 +177,17 @@ public class Vector3f implements Serializable{
     public Vector3f divideThis(float scalar) {
         if (scalar == 0) throw new ArithmeticException("Divide by 0");
         return multiplyThis(1f / scalar);
+    }
+    
+    public Vector3f divide(Vector3f vector) {
+        //if (scalar == 0) throw new ArithmeticException("Divide by 0");
+        return divideThis(vector);
+    }
+    
+    public Vector3f divideThis(Vector3f vector) {
+        //if (scalar == 0) throw new ArithmeticException("Divide by 0");
+        set(x / vector.x, y / vector.y, z / vector.z);
+        return this;
     }
     
     public Vector3f divide(Matrix3f m) {

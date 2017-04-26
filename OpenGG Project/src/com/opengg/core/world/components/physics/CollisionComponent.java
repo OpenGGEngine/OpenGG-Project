@@ -3,10 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.opengg.core.world.components.physics.collision;
+package com.opengg.core.world.components.physics;
 
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.world.components.physics.PhysicsComponent;
+import com.opengg.core.world.collision.BoundingBox;
+import com.opengg.core.world.collision.Collider;
+import com.opengg.core.world.collision.Collision;
 import com.opengg.core.world.components.triggers.Trigger;
 import com.opengg.core.world.components.triggers.TriggerInfo;
 import static com.opengg.core.world.components.triggers.TriggerInfo.SINGLE;
@@ -23,6 +26,7 @@ public class CollisionComponent extends Trigger{
     BoundingBox main;
     List<Collider> boxes = new ArrayList<>();
     boolean lastcollided = false;
+    boolean forcetest = false;
 
     public CollisionComponent(BoundingBox main, Collection<Collider> all) {
         this.main = main;
@@ -36,6 +40,10 @@ public class CollisionComponent extends Trigger{
         setColliderParent();
     }
     
+    public void setForceTest(boolean test){
+        forcetest = test;
+    }
+    
     private void setColliderParent(){
         for(Collider c : boxes){
             c.setParent(this);
@@ -46,25 +54,24 @@ public class CollisionComponent extends Trigger{
         boxes.add(bb);
     }
 
-    public List<CollisionData> testForCollision(CollisionComponent other) {
-        List<CollisionData> dataList = new ArrayList<>();
-        if (!main.isColliding(other.main))
-            return dataList;
+    public List<Collision> testForCollision(CollisionComponent other) {
+        List<Collision> dataList = new ArrayList<>();
         
+        if (!main.isColliding(other.main) && !(this.forcetest || other.forcetest))
+            return dataList;
+
         boolean collided = false;
         for (Collider x: this.boxes) {
             for(Collider y: other.boxes) {
-                CollisionData data = x.isColliding(y);
+                Collision data = x.isColliding(y);
                 if ((data) != null){
                     collided = true;
-                    data.collider1 = this;
-                    data.collider2 = other;
+                    data.thiscollider = this;
+                    data.other = other;
                     dataList.add(data);
                 }
             }
         }
-
-        
         
         return dataList;
     }
@@ -82,7 +89,7 @@ public class CollisionComponent extends Trigger{
         main.recenter(fpos);
     }
     
-    public void collisionTrigger(List<CollisionData> data){
+    public void collisionTrigger(List<Collision> data){
         if(lastcollided == false){
             TriggerInfo ti = new TriggerInfo();
             ti.info = "collision";

@@ -14,9 +14,9 @@ import com.opengg.core.render.light.Light;
 import com.opengg.core.world.components.ComponentHolder;
 import com.opengg.core.world.components.ModelRenderComponent;
 import com.opengg.core.world.components.physics.PhysicsComponent;
-import com.opengg.core.world.components.physics.collision.BoundingBox;
-import com.opengg.core.world.components.physics.collision.CollisionComponent;
-import com.opengg.core.world.components.physics.collision.CylinderCollider;
+import com.opengg.core.world.collision.BoundingBox;
+import com.opengg.core.world.components.physics.CollisionComponent;
+import com.opengg.core.world.collision.CylinderCollider;
 
 /**
  *
@@ -41,8 +41,10 @@ public class BulletComponent extends ComponentHolder{
         attach(bullet);
 
         physics = new PhysicsComponent();
-        physics.velocity = getRotationOffset().transform(new Vector3f(100,0,0));
+        physics.velocity = getRotationOffset().transform(new Vector3f(400,0,0));
         physics.addCollider(new CollisionComponent(new BoundingBox(new Vector3f(-1,-1,-1),1,1,1), new CylinderCollider(0.1f,0.1f)));
+        physics.bounciness = 0.9f;
+        physics.frictionCoefficient = 0;
         attach(physics);
 
         l = new Light(getPositionOffset(), new Vector3f(1,0.3f,0.3f),800,300);
@@ -57,7 +59,7 @@ public class BulletComponent extends ComponentHolder{
         l.setPosition(getPositionOffset());
         
         timeSinceFire += delta / 1000;
-        if(timeSinceFire > 0.1f){
+        if(timeSinceFire > 1f){
             RenderEngine.removeLight(l);
         }
         

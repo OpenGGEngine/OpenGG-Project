@@ -24,7 +24,7 @@ import com.opengg.core.render.window.WindowOptions;
 import static com.opengg.core.render.window.WindowOptions.GLFW;
 import com.opengg.core.world.Terrain;
 import com.opengg.core.world.World;
-import com.opengg.core.world.components.RenderComponent;
+import com.opengg.core.world.components.TerrainComponent;
 import com.opengg.core.world.generators.SmoothPerlinGenerator;
 import java.io.File;
 import java.io.IOException;
@@ -41,14 +41,15 @@ public class OpenGGTest extends GGApplication{
     public static void main(String[] args) throws IOException, Exception {
         WindowInfo w = new WindowInfo();
         w.displaymode = WindowOptions.WINDOWED;
-        w.height = 1024;
         w.width = 1280;
+        w.height = 1024;
         w.resizable = false;
         w.type = GLFW;
         w.vsync = true;
         OpenGG.initialize(new OpenGGTest(), w);
     }
     private GUIText g;
+    private TerrainComponent world;
 
     @Override
     public  void setup(){
@@ -69,7 +70,7 @@ public class OpenGGTest extends GGApplication{
         base2 = f.loadText(g);
 
         World w = WorldEngine.getCurrent();
-        w.setFloor(2);
+        w.setFloor(-10);
         
         //WorldObject terrain = new WorldObject();
         /*
@@ -79,10 +80,10 @@ public class OpenGGTest extends GGApplication{
         terrain.setPositionOffset(new Vector3f(0, 0, -550f));
         terrain.attach(island);
         terrain.attach(water);*/
-        
-        Terrain t = Terrain.generateProcedural(new SmoothPerlinGenerator(6,0.2,10), 200,200);
-        RenderComponent world = new RenderComponent(t.getDrawable());
-        world.setScale(new Vector3f(500,1,500));
+       
+        world = new TerrainComponent(Terrain.generateProcedural(new SmoothPerlinGenerator(6,0.2,10), 500,500));
+        world.setScale(new Vector3f(1000,1,1000));
+        //world.setPositionOffset(new Vector3f(5,0,5));
         
         player = new TestPlayerComponent();
         player.use();
@@ -91,8 +92,11 @@ public class OpenGGTest extends GGApplication{
         
         //w.attach(cc);
         //w.attach(terrain);
+        
         w.attach(player);
         w.attach(world);
+        world.enableRendering();
+        world.enableCollider();
         
         WorldEngine.useWorld(w);
         
@@ -112,7 +116,7 @@ public class OpenGGTest extends GGApplication{
         
         RenderEngine.addLight(l);
         RenderEngine.setSkybox(ObjectCreator.createCube(1500f), Cubemap.get("C:\\res\\skybox\\majestic"));
-        RenderEngine.setCulling(false);    
+        RenderEngine.setCulling(false);  
     }
     
     @Override

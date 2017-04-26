@@ -282,6 +282,56 @@ public class Matrix4f {
 
         return ortho;
     }
+    
+    public Matrix4f invert() {
+        float a = m00 * m11 - m01 * m10;
+        float b = m00 * m12 - m02 * m10;
+        float c = m00 * m13 - m03 * m10;
+        float d = m01 * m12 - m02 * m11;
+        float e = m01 * m13 - m03 * m11;
+        float f = m02 * m13 - m03 * m12;
+        float g = m20 * m31 - m21 * m30;
+        float h = m20 * m32 - m22 * m30;
+        float i = m20 * m33 - m23 * m30;
+        float j = m21 * m32 - m22 * m31;
+        float k = m21 * m33 - m23 * m31;
+        float l = m22 * m33 - m23 * m32;
+        float det = a * l - b * k + c * j + d * i - e * h + f * g;
+        det = 1.0f / det;
+        float nm00 = ( m11 * l - m12 * k + m13 * j) * det;
+        float nm01 = (-m01 * l + m02 * k - m03 * j) * det;
+        float nm02 = ( m31 * f - m32 * e + m33 * d) * det;
+        float nm03 = (-m21 * f + m22 * e - m23 * d) * det;
+        float nm10 = (-m10 * l + m12 * i - m13 * h) * det;
+        float nm11 = ( m00 * l - m02 * i + m03 * h) * det;
+        float nm12 = (-m30 * f + m32 * c - m33 * b) * det;
+        float nm13 = ( m20 * f - m22 * c + m23 * b) * det;
+        float nm20 = ( m10 * k - m11 * i + m13 * g) * det;
+        float nm21 = (-m00 * k + m01 * i - m03 * g) * det;
+        float nm22 = ( m30 * e - m31 * c + m33 * a) * det;
+        float nm23 = (-m20 * e + m21 * c - m23 * a) * det;
+        float nm30 = (-m10 * j + m11 * h - m12 * g) * det;
+        float nm31 = ( m00 * j - m01 * h + m02 * g) * det;
+        float nm32 = (-m30 * d + m31 * b - m32 * a) * det;
+        float nm33 = ( m20 * d - m21 * b + m22 * a) * det;
+        m00 = nm00;
+        m01 = nm01;
+        m02 = nm02;
+        m03 = nm03;
+        m10 = nm10;
+        m11 = nm11;
+        m12 = nm12;
+        m13 = nm13;
+        m20 = nm20;
+        m21 = nm21;
+        m22 = nm22;
+        m23 = nm23;
+        m30 = nm30;
+        m31 = nm31;
+        m32 = nm32;
+        m33 = nm33;
+        return this;
+    }
 
     public float[][] getArray() {
         float[][] arr = {{m00, m01, m02, m03},
