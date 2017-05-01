@@ -6,6 +6,8 @@
 
 package com.opengg.core.render.window;
 
+import com.opengg.core.math.Vector2f;
+
 /**
  *
  * @author Javier
@@ -22,4 +24,5 @@ public interface Window {
     public int getType();
     public void setIcon(String path) throws Exception;
     public void setVSync(boolean vsync);
+    public Vector2f getMousePosition();
 }

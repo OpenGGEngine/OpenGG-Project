@@ -32,5 +32,7 @@ public class GUITexture extends GUIItem {
         Buffer[] b = ObjectCreator.createQuadPrismBuffers(new Vector3f(0, 0, 0), new Vector3f(size.x, size.y, 0));
         this.d = new TexturedDrawnObject((FloatBuffer) b[0], (IntBuffer) b[1], g);
     }
+    
+    
 
 }

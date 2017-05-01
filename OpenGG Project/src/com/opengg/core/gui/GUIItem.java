@@ -24,6 +24,9 @@ public class GUIItem {
     public void setPos(Vector2f screenlocalpos) {
         this.screenlocalpos = screenlocalpos;
     }
+    public Vector2f getPos() {
+        return this.screenlocalpos;
+    }
     
     public GUIItem(Drawable d,Vector2f screenpos){
         this.d = d;
@@ -32,7 +35,9 @@ public class GUIItem {
   
     
     public void render(Vector2f local){
-        ShaderController.setModel(Matrix4f.translate(this.screenlocalpos.x + local.x
+       // ShaderController.setModel(Matrix4f.translate(this.screenlocalpos.x + local.x
+       //         , this.screenlocalpos.y + local.y, 0));
+        d.setMatrix(Matrix4f.translate(this.screenlocalpos.x + local.x
                 , this.screenlocalpos.y + local.y, 0));
         d.render();
     }

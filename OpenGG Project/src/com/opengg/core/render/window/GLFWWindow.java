@@ -7,15 +7,18 @@ import com.opengg.core.io.input.keyboard.KeyboardController;
 import com.opengg.core.io.input.mouse.GLFWMouseButtonHandler;
 import com.opengg.core.io.input.mouse.GLFWMousePosHandler;
 import com.opengg.core.io.input.mouse.MouseController;
+import com.opengg.core.math.Vector2f;
 import static com.opengg.core.render.window.WindowOptions.*;
 import com.opengg.core.util.FileUtil;
 import java.nio.ByteBuffer;
+import java.nio.DoubleBuffer;
 import java.nio.IntBuffer;
 import org.lwjgl.glfw.*;
 import static org.lwjgl.glfw.GLFW.*;
 import org.lwjgl.opengl.*;
 import static org.lwjgl.opengl.GL11.*;
 import org.lwjgl.stb.STBImage;
+import org.lwjgl.system.MemoryUtil;
 import static org.lwjgl.system.MemoryUtil.*;
 
 public class GLFWWindow implements Window {
@@ -258,4 +261,14 @@ public class GLFWWindow implements Window {
     public void setVSync(boolean vsync) {
         glfwSwapInterval(vsync ? 1 : 0);
     }
+
+    @Override
+    public Vector2f getMousePosition() {
+        DoubleBuffer xBuffer = MemoryUtil.memAllocDouble(1);
+        DoubleBuffer yBuffer = MemoryUtil.memAllocDouble(1);
+        glfwGetCursorPos(window, xBuffer, yBuffer);
+        return new Vector2f((float)xBuffer.get(0),(float)yBuffer.get(0));
+    }
+    
+    
 }

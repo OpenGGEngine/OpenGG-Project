@@ -15,6 +15,7 @@ import java.util.Map;
  */
 public class GUIGroup {
     
+    public boolean active = true;
     public GUIGroup parent;
     
     public Vector2f pos;
@@ -35,14 +36,20 @@ public class GUIGroup {
         group.parent = this;
         groups.put(name, group);
     }
-    
+    public GUIItem getItem(String name){
+        return items.get(name);
+    }
+    public GUIGroup getGroup(String name){
+        return groups.get(name);
+    }
     public void render(Vector2f local){
-        
+        if(active){
         for(GUIGroup group: groups.values()){
             group.render(new Vector2f(local.x + pos.x, local.y + pos.y));
         }
         for(GUIItem item: items.values()){
             item.render(new Vector2f(local.x + pos.x,local.y + pos.y));
+        }
         }
     }
 }
