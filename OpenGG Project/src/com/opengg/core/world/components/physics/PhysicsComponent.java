@@ -60,7 +60,6 @@ public class PhysicsComponent extends ComponentHolder {
     public void update(float delta) {
         pos = parent.getPosition();
         rot = parent.getRotation();
-        delta /= 1000;
         
         float floor = getWorld().floorLev;
         

@@ -13,6 +13,8 @@ import com.opengg.core.math.Vector3f;
 import com.opengg.core.world.Action;
 import com.opengg.core.world.ActionType;
 import com.opengg.core.world.Actionable;
+import com.opengg.core.world.MovementTransition;
+import com.opengg.core.world.TransitionEngine;
 import com.opengg.core.world.collision.BoundingBox;
 import com.opengg.core.world.collision.CylinderCollider;
 import com.opengg.core.world.components.CameraComponent;
@@ -70,11 +72,9 @@ public class TestPlayerComponent extends ComponentHolder implements Actionable{
     
     @Override
     public void update(float delta){
-        float deltasec = delta / 1000;
-        
-        currot.x += controlrot.x * rotspeed * deltasec;
-        currot.y += controlrot.y * rotspeed * deltasec;
-        currot.z += controlrot.z * rotspeed * deltasec;
+        currot.x += controlrot.x * rotspeed * delta;
+        currot.y += controlrot.y * rotspeed * delta;
+        currot.z += controlrot.z * rotspeed * delta;
                 
         this.setRotationOffset(new Quaternionf(currot));      
         Vector3f movement = new Vector3f(control.x  * speed, 0 ,control.z  *speed);
@@ -101,7 +101,7 @@ public class TestPlayerComponent extends ComponentHolder implements Actionable{
             Vector3f init = new Vector3f();
             Vector3f fin = new Vector3f(0,0.5f,0);
             
-            bob += playerphysics.velocity.length() * bobspeed * deltasec;
+            bob += playerphysics.velocity.length() * bobspeed * delta;
             
             Vector3f fpos = cweaponpos.add(Vector3f.lerp(init, fin, FastMath.sinDeg(bob)));
             fpos = fpos.subtract(new Vector3f(0,2,0));

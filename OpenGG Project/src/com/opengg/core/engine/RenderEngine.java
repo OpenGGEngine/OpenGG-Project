@@ -280,17 +280,6 @@ public class RenderEngine {
     public static void draw(){
         ShaderController.setView(camera.getMatrix());
         sceneTex.startTexRender();
-        if(shadVolumes){
-            writeToDepth();   
-            cullShadowFaces();
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            glStencilFunc(GL_EQUAL, 0x0, 0xFF);
-            glStencilOpSeparate(GL_BACK, GL_KEEP, GL_KEEP, GL_KEEP);
-            glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_KEEP, GL_KEEP);
-        }else{
-            glDisable(GL_STENCIL_TEST);
-        }
-        
         sceneTex.enableColorAttachments();
         useLights();
         resetConfig();
@@ -299,23 +288,7 @@ public class RenderEngine {
             path.render();
             resetConfig();
         }
-                
-        glDisable(GL_STENCIL_TEST);
-        
-        if(shadVolumes){
-            glDepthFunc(GL_LESS);
-            
-            glBlendEquation(GL_MAX);
-            glBlendFunc(GL_ONE, GL_ONE);
 
-            for(RenderGroup d : groups){
-                ShaderController.useConfiguration(d.pipeline);
-                d.render(); 
-            }
-        }
-        
-        resetConfig();
-        
         glDisable(GL_CULL_FACE); 
         ShaderController.useConfiguration("sky");
         skytex.use(0);

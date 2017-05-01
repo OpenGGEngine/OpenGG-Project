@@ -16,7 +16,6 @@ import com.opengg.core.world.components.physics.PhysicsComponent;
 import com.opengg.core.world.collision.BoundingBox;
 import com.opengg.core.world.components.physics.CollisionComponent;
 import com.opengg.core.world.collision.CylinderCollider;
-import com.opengg.core.world.collision.SphereCollider;
 import static java.lang.Math.abs;
 
 /**
@@ -32,7 +31,7 @@ public class PlayerComponent extends ComponentHolder implements Actionable{
     Vector3f controlrot = new Vector3f();
     public Vector3f currot = new Vector3f();
     float speed = 80;
-    float rotspeed = 1;
+    float rotspeed = 1000;
     
     public PlayerComponent(){
         camera = new CameraComponent();
@@ -46,22 +45,21 @@ public class PlayerComponent extends ComponentHolder implements Actionable{
     
     @Override
     public void update(float delta){
-        float deltasec = delta / 1000;
         
-        currot.x += controlrot.x * rotspeed * deltasec;
-        currot.y += controlrot.y * rotspeed * deltasec;
-        currot.z += controlrot.z * rotspeed * deltasec;
+        currot.x += controlrot.x * rotspeed * delta;
+        currot.y += controlrot.y * rotspeed * delta;
+        currot.z += controlrot.z * rotspeed * delta;
         
         this.setRotationOffset(new Quaternionf(currot));
         
-        float xvel = control.x * deltasec * speed;
+        float xvel = control.x * delta * speed;
         if((abs(playerphysics.velocity.x) < 20))
             playerphysics.velocity.x += xvel;
         
         if(control.x == 0)
             playerphysics.velocity.x /= 2;
         
-        float zvel = control.z * deltasec * speed;
+        float zvel = control.z * delta * speed;
         if(abs(playerphysics.velocity.z) < 20)
             playerphysics.velocity.z += zvel; 
         

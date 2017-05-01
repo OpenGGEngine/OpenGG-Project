@@ -148,7 +148,7 @@ public abstract class Component implements Serializable{
     
     /**
      * Called once by WorldEngine per update cycle, override for functionality
-     * @param delta Delta time since last update cycle in milliseconds
+     * @param delta Delta time since last update cycle in seconds
      */
     public void update(float delta){
         
