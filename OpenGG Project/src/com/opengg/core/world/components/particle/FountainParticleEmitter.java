@@ -24,7 +24,7 @@ public class FountainParticleEmitter extends ParticleEmitter{
     
     public FountainParticleEmitter(float pps, float speed, float lifeLength, Texture t) {
         super((InstancedDrawnObject)ObjectCreator.createInstancedQuadPrism(new Vector3f(0,0,0), new Vector3f(1,0,1)), t);
-        this.particleobject.setAdjacency(false);
+        ((InstancedDrawnObject)this.getDrawable()).setAdjacency(false);
         this.pps = pps;
         this.speed = speed;
         this.gravityComplient = -0.027f;

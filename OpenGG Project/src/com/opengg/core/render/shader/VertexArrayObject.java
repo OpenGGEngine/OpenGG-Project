@@ -23,6 +23,10 @@ public class VertexArrayObject {
         findAttributes();
     }
     
+    public VertexArrayFormat getFormat(){
+        return format;
+    }
+    
     public void applyFormat(GLBuffer... buffers){
         vao.bind();
         int lastloc = 0;

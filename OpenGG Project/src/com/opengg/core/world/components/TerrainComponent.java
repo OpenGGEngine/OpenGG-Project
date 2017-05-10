@@ -26,7 +26,7 @@ public class TerrainComponent extends RenderComponent{
     
     public void enableRendering(){
         this.setDrawable(t.getDrawable());
-        this.getWorld().addRenderable(g);
+        this.getWorld().addRenderable(this);
     }
     
     public void enableCollider(){

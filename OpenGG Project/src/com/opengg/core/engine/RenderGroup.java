@@ -21,6 +21,7 @@ public class RenderGroup {
     VertexArrayObject vao;
     String pipeline = "object";
     String name = "default";
+    boolean adjacency = false;
     boolean transparency = false;
     boolean shadows = false;
     boolean enabled = true;
@@ -36,6 +37,18 @@ public class RenderGroup {
         vao = new VertexArrayObject(format);
     }
   
+    public VertexArrayFormat getFormat(){
+        return vao.getFormat();
+    }
+    
+    public boolean hasAdjacency(){
+        return adjacency;
+    }
+    
+    public void setAdjacency(boolean adj){
+        this.adjacency = adj;
+    }
+    
     public boolean isTransparent() {
         return transparency;
     }

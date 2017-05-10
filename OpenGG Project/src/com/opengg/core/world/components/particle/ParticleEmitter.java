@@ -6,10 +6,9 @@
 package com.opengg.core.world.components.particle;
 
 import com.opengg.core.math.Vector3f;
-import com.opengg.core.render.Renderable;
 import com.opengg.core.render.drawn.InstancedDrawnObject;
 import com.opengg.core.render.texture.Texture;
-import com.opengg.core.world.components.Component;
+import com.opengg.core.world.components.RenderComponent;
 import java.nio.FloatBuffer;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -21,14 +20,13 @@ import java.util.List;
  * 
  * This represents a group of particles
  */
-public abstract class ParticleEmitter extends Component implements Renderable{
+public abstract class ParticleEmitter extends RenderComponent{
     List<Particle> particles = new LinkedList<>();
-    InstancedDrawnObject particleobject;
     Texture t;
     
     public ParticleEmitter(InstancedDrawnObject drawn, Texture t){
-        this.particleobject = drawn;
-        this.particleobject.setAdjacency(false);
+        this.setDrawable(drawn);
+        drawn.setAdjacency(true);
         this.t = t;
     }
     
@@ -52,16 +50,12 @@ public abstract class ParticleEmitter extends Component implements Renderable{
                 screwconcurrent.remove();             
             }
         }
-        particleobject.setPositions(createParticleVBO(),particles.size());
+        ((InstancedDrawnObject)getDrawable()).setPositions(createParticleVBO(),particles.size());
     }
     
     @Override
     public void render(){
         t.useTexture(0);
-        particleobject.render();
-    }
-    
-    public void destroy(){
-        particleobject.destroy();
+        super.render();
     }
 }

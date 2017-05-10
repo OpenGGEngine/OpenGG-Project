@@ -20,6 +20,7 @@ import com.opengg.core.world.components.Component;
 import com.opengg.core.world.components.ComponentHolder;
 import com.opengg.core.world.components.RenderComponent;
 import com.opengg.core.world.components.physics.CollisionComponent;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -30,8 +31,7 @@ import java.util.List;
 public class World extends ComponentHolder{
     public float floorLev = 0;
     public Vector3f gravityVector = new Vector3f(0,-9.81f,0);
-    public RenderGroup group = new RenderGroup("world");
-    public RenderGroup groupnoadj = new RenderGroup("worldadj");
+    public List<RenderGroup> groups = new ArrayList<>();
     
     public void setFloor(float floor){
         floorLev = floor;
@@ -57,35 +57,47 @@ public class World extends ComponentHolder{
     }
     
     public void useRenderables(){
-        group.setPipeline("adjobject");
-        groupnoadj.setPipeline("object");
         for(Component c : getAll()){
-            if(c instanceof Renderable){
-                addRenderable((Renderable)c);
+            if(c instanceof RenderComponent){
+                addRenderable((RenderComponent)c);
             }
         }
-
-        
-        RenderEngine.addRenderGroup(group);
-        RenderEngine.addRenderGroup(groupnoadj);
     }
     
-    public void addRenderable(Renderable r){
+    public void addRenderable(RenderComponent r){
         if(OpenGG.hasExecutables())
             processExecutables();
         
-        if(r instanceof RenderComponent){
-            if(((Drawable)(((RenderComponent)r).getDrawable())).hasAdjacency()){
-                group.add(r);
-                return;
-            }
+        boolean found = false;
+        for(RenderGroup rg : groups){
+            if(rg.hasAdjacency() == r.hasAdjacency()){
+                if(rg.isTransparent() == r.isTransparent()){
+                    if(rg.getPipeline().equals(r.getShader())){
+                        if(rg.getFormat().equals(r.getFormat())){
+                            found = true;
+                            rg.add(r);
+                            break;
+                        }
+                    }
+                }
+            }            
         }
-        groupnoadj.add(r);
+        
+        if(!found){
+            RenderGroup group = new RenderGroup("world " + r.getShader(), r.getFormat());
+            group.add(r);
+            group.setAdjacency(r.hasAdjacency());
+            group.setTransparent(r.isTransparent());
+            group.setPipeline(r.getShader());
+            groups.add(group);
+            RenderEngine.addRenderGroup(group);
+        }
     }
     
-    public void removeRenderable(Renderable r){
-        group.remove(r);
-        groupnoadj.remove(r);
+    public void removeRenderable(RenderComponent r){
+        for(RenderGroup rg : groups){
+            rg.remove(r);
+        }
     }
     
     public LinkedList<CollisionComponent> useColliders() {

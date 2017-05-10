@@ -48,4 +48,29 @@ public class VertexArrayFormat {
         return l;
         
     }
+    
+    @Override
+    public boolean equals(Object o){
+        if(!(o instanceof VertexArrayFormat))
+            return false;
+        VertexArrayFormat form = (VertexArrayFormat)o;
+        
+        boolean match = false;
+        init : for(VertexArrayAttribute vaa : attribs){
+            for(VertexArrayAttribute vaa2 : form.attribs){
+                if(vaa.equals(vaa2))
+                    continue init;
+            }
+            return false;
+        }
+        
+        init : for(VertexArrayAttribute vaa : form.attribs){
+            for(VertexArrayAttribute vaa2 : attribs){
+                if(vaa.equals(vaa2))
+                    continue init;
+            }
+            return false;
+        }   
+        return true;
+    }
 }

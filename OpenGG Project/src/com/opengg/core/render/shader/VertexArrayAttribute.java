@@ -24,4 +24,22 @@ public class VertexArrayAttribute {
         this.arrayindex = index;
         this.divisor = divisor;
     }
+    
+    @Override
+    public boolean equals(Object o){
+        if(!(o instanceof VertexArrayAttribute))
+            return false;
+        VertexArrayAttribute other = (VertexArrayAttribute)o;
+        if(this.size != other.size)
+            return false;
+        if(this.arrayindex != other.arrayindex)
+            return false;
+        if(this.divisor != other.divisor)
+            return false;
+        if(this.offset != other.offset)
+            return false;
+        if(!(this.name.equals(other.name)))
+            return false;
+        return true;
+    }
 }

@@ -5,9 +5,11 @@
  */
 package com.opengg.core.world.components;
 
+import com.opengg.core.engine.RenderEngine;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.render.Renderable;
 import com.opengg.core.render.drawn.Drawable;
+import com.opengg.core.render.shader.VertexArrayFormat;
 
 /**
  *
@@ -16,13 +18,20 @@ import com.opengg.core.render.drawn.Drawable;
 public class RenderComponent extends ComponentHolder implements Renderable{
     Drawable g;
     Matrix4f m = new Matrix4f();
+    String shader;
+    VertexArrayFormat format;
+    boolean adjacency;
+    boolean transparent;
     
     public RenderComponent(){
         super();
+        format = RenderEngine.getDefaultFormat();
+        shader = "object";
+        adjacency = false;
     };
     
     public RenderComponent(Drawable g){
-        super();
+        this();
         this.g = g;
     }
 
@@ -37,6 +46,38 @@ public class RenderComponent extends ComponentHolder implements Renderable{
     @Override
     public void update(float delta){
         m = new Matrix4f().translate(getPosition()).rotateQuat(getRotation()).scale(getScale());
+    }
+    
+    public String getShader() {
+        return shader;
+    }
+
+    public void setShader(String shader) {
+        this.shader = shader;
+    }
+
+    public VertexArrayFormat getFormat() {
+        return format;
+    }
+
+    public void setFormat(VertexArrayFormat format) {
+        this.format = format;
+    }
+
+    public boolean hasAdjacency() {
+        return adjacency;
+    }
+
+    public void setAdjacency(boolean adjacency) {
+        this.adjacency = adjacency;
+    }
+    
+    public boolean isTransparent() {
+        return transparent;
+    }
+
+    public void setTransparency(boolean trans) {
+        this.transparent = trans;
     }
     
     public void setDrawable(Drawable d){

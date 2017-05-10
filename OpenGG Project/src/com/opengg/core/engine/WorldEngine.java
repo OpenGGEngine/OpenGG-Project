@@ -12,9 +12,9 @@ import com.opengg.core.world.World;
 import com.opengg.core.world.collision.CollisionHandler;
 import com.opengg.core.world.components.Component;
 import com.opengg.core.world.components.ComponentHolder;
+import com.opengg.core.world.components.RenderComponent;
 import com.opengg.core.world.components.physics.CollisionComponent;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -54,8 +54,8 @@ public class WorldEngine{
     
     public static void removeMarked(){
         for(Component c : removal){
-            if(c instanceof Renderable)
-                c.getWorld().removeRenderable((Renderable)c);
+            if(c instanceof RenderComponent)
+                c.getWorld().removeRenderable((RenderComponent)c);
             
             if(c instanceof CollisionComponent)
                 colliders.remove((CollisionComponent)c);

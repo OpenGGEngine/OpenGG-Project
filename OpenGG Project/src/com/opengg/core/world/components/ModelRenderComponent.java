@@ -20,7 +20,7 @@ import com.opengg.core.world.Serializer;
  */
 public class ModelRenderComponent extends RenderComponent{
     Model model;
-    String name;
+    String mname;
     boolean frame = false;
     
     public static ModelRenderComponent getFramework(String name){
@@ -31,15 +31,17 @@ public class ModelRenderComponent extends RenderComponent{
     
     private ModelRenderComponent(String name){
         frame = true;
-        this.name = name;
+        this.mname = name;
     }
 
     public ModelRenderComponent(Model model){
         super();
         OpenGG.addExecutable(() -> {
-            this.g = model.getDrawable();
+            setModel(model);
         });
-        this.model = model;
+        this.adjacency = true;
+        this.shader = "adjobject";
+        this.transparent = true;
     }
     
     public Model getModel(){
