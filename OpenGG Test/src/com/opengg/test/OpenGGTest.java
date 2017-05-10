@@ -25,6 +25,7 @@ import static com.opengg.core.render.window.WindowOptions.GLFW;
 import com.opengg.core.world.Terrain;
 import com.opengg.core.world.World;
 import com.opengg.core.world.components.TerrainComponent;
+import com.opengg.core.world.components.particle.FountainParticleEmitter;
 import com.opengg.core.world.generators.SmoothPerlinGenerator;
 import java.io.File;
 import java.io.IOException;
@@ -83,21 +84,21 @@ public class OpenGGTest extends GGApplication{
        
         world = new TerrainComponent(Terrain.generateProcedural(new SmoothPerlinGenerator(6,0.2,10), 500,500));
         world.setScale(new Vector3f(1000,1,1000));
-        //world.setPositionOffset(new Vector3f(5,0,5));
         
         player = new TestPlayerComponent();
         player.use();
 
         //EnemySpawnerComponent cc = new EnemySpawnerComponent();
-        
         //w.attach(cc);
         //w.attach(terrain);
+        FountainParticleEmitter particle = new FountainParticleEmitter(10,2,5,t3);
         
         w.attach(player);
         w.attach(world);
+        //w.attach(particle);
         world.enableRendering();
         world.enableCollider();
-        
+
         WorldEngine.useWorld(w);
         
         BindController.addBind(ControlType.KEYBOARD, "forward", KEY_W);

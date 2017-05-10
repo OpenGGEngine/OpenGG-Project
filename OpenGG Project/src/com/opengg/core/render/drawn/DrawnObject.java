@@ -5,9 +5,11 @@
  */
 package com.opengg.core.render.drawn;
 
+import com.opengg.core.engine.RenderEngine;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.render.GLBuffer;
 import com.opengg.core.render.shader.ShaderController;
+import com.opengg.core.render.shader.VertexArrayFormat;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.List;
@@ -30,35 +32,36 @@ public class DrawnObject implements Drawable {
     FloatBuffer b;
     IntBuffer ind; 
     boolean adj = false;
+    boolean vbexist = false, evbexist = false;
     int limit;
     int vertLimit;
     
     Matrix4f model = Matrix4f.translate(0, 0, 0);
    
-    DrawnObject(FloatBuffer b, int vertSize){
+    DrawnObject(FloatBuffer b, VertexArrayFormat format){
        
         limit = b.limit();
-        vertLimit = limit/vertSize;
+        vertLimit = limit/format.getVertexLength();
         
         ind = MemoryUtil.memAllocInt(vertLimit);
-        for(long i = 0; i < vertLimit; i++){
-            ind.put((int) i);
+        for(int i = 0; i < vertLimit; i++){
+            ind.put(i);
         }
-        ind.flip();
         
+        ind.flip();
         defBuffers(b, ind);
     }
     
     public DrawnObject(FloatBuffer b){
-        this(b, 12);
+        this(b, RenderEngine.getDefaultFormat());
     }
     
-    DrawnObject(List<FloatBuffer> buffers, int vertSize){
+    DrawnObject(List<FloatBuffer> buffers, VertexArrayFormat format){
       
         for(FloatBuffer b: buffers){
         
             limit = b.limit();
-            vertLimit = limit/vertSize;
+            vertLimit = limit/format.getVertexLength();
 
             ind = MemoryUtil.memAllocInt(vertLimit);
             for(long i = 0; i < vertLimit; i++){
@@ -73,35 +76,25 @@ public class DrawnObject implements Drawable {
     }
     
     public DrawnObject(List<FloatBuffer> buffers){
-        this(buffers, 12);
+        this(buffers, RenderEngine.getDefaultFormat());
     }
     
     public DrawnObject(FloatBuffer b, IntBuffer index){
         
         limit = b.limit();
-        vertLimit = limit/12;
         ind = index;
         
         defBuffers(b, ind);
-
     }
-    
+          
     private void defBuffers(FloatBuffer b, IntBuffer ind ){
         vbo = new GLBuffer(GL_ARRAY_BUFFER, GL_STATIC_DRAW);
         vbo.bind();
         vbo.uploadData(b);
-        
+
         evbo = new GLBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW);
         evbo.bind();
         evbo.uploadData(ind);
-    }
-    
-    private void pointAttrib(){
-        ShaderController.pointVertexAttributes();
-    }
-    
-    private void defAttrib(){
-        ShaderController.defVertexAttributes();
     }
     
     public void setAdjacency(boolean adj){
@@ -128,7 +121,7 @@ public class DrawnObject implements Drawable {
         defBuffers(b, ind);
     }    
     
-    public FloatBuffer getBuffer(){
+    public FloatBuffer getVertexBuffer(){
         return b;
     }
     
@@ -136,14 +129,21 @@ public class DrawnObject implements Drawable {
         return ind;
     }
     
+    public GLBuffer getGLVertexBuffer(){
+        return vbo;
+    }
+    
+    public GLBuffer getGLElementBuffer(){
+        return evbo;
+    }
+    
     @Override
     public void render(){    
         ShaderController.setModel(model);  
+        RenderEngine.getCurrentVAO().applyFormat(vbo);
         vbo.bind();
         evbo.bind();
-        defAttrib();
-        pointAttrib();
-        glDrawElements(adj ? GL_TRIANGLES_ADJACENCY : GL_TRIANGLES, ind.limit(), GL_UNSIGNED_INT, 0);     
+        glDrawElements(adj ? GL_TRIANGLES_ADJACENCY : GL_TRIANGLES, ind.limit(), GL_UNSIGNED_INT, 0);  
     }
     
     @Override

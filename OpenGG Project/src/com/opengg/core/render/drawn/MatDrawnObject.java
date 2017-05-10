@@ -9,6 +9,7 @@ package com.opengg.core.render.drawn;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.model.Material;
 import com.opengg.core.render.shader.ShaderController;
+import com.opengg.core.render.shader.VertexArrayFormat;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.List;
@@ -35,12 +36,12 @@ public class MatDrawnObject implements Drawable {
         m.loadTextures();
     }
     
-    public MatDrawnObject(FloatBuffer b, int vertsize){
-        d = new DrawnObject(b,vertsize);
+    public MatDrawnObject(FloatBuffer b, VertexArrayFormat format){
+        d = new DrawnObject(b, format);
     }
     
-    public MatDrawnObject(List<FloatBuffer> buffers, int vertSize){
-        d = new DrawnObject(buffers,vertSize);
+    public MatDrawnObject(List<FloatBuffer> buffers, VertexArrayFormat format){
+        d = new DrawnObject(buffers, format);
     }
     
     public MatDrawnObject(FloatBuffer b, IntBuffer index, Material m){

@@ -11,11 +11,13 @@ import com.opengg.core.gui.GUIItem;
 import com.opengg.core.model.ModelManager;
 import com.opengg.core.render.GLBuffer;
 import com.opengg.core.render.Renderable;
-import com.opengg.core.render.VertexArrayObject;
 import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.render.light.Light;
 import com.opengg.core.render.postprocess.PostProcessPipeline;
 import com.opengg.core.render.shader.ShaderController;
+import com.opengg.core.render.shader.VertexArrayAttribute;
+import com.opengg.core.render.shader.VertexArrayFormat;
+import com.opengg.core.render.shader.VertexArrayObject;
 import com.opengg.core.render.texture.Cubemap;
 import com.opengg.core.render.texture.Framebuffer;
 import com.opengg.core.render.texture.TextureManager;
@@ -28,7 +30,6 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL14.GL_DECR_WRAP;
 import static org.lwjgl.opengl.GL14.GL_FUNC_ADD;
 import static org.lwjgl.opengl.GL14.GL_INCR_WRAP;
-import static org.lwjgl.opengl.GL14.GL_MAX;
 import static org.lwjgl.opengl.GL14.glBlendEquation;
 import static org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW;
 import static org.lwjgl.opengl.GL20.glStencilOpSeparate;
@@ -55,20 +56,28 @@ public class RenderEngine {
     static Cubemap skytex;
     static boolean initialized;
     static Framebuffer sceneTex;
-    static VertexArrayObject vao;
+    static VertexArrayFormat vaoformat;
     static boolean cull = true;
     static int lightoffset;
     static Camera camera;
+    static VertexArrayObject currentvao;
+    static VertexArrayObject defaultvao;
     
     static boolean init(){
-        vao = new VertexArrayObject();
-        vao.bind();
         ShaderController.initialize();
+        
+        vaoformat = new VertexArrayFormat();
+        vaoformat.addAttribute(new VertexArrayAttribute("position", 3, 0, 0, false));
+        vaoformat.addAttribute(new VertexArrayAttribute("color", 4, 3, 0, false));
+        vaoformat.addAttribute(new VertexArrayAttribute("normal", 3, 7, 0, false));
+        vaoformat.addAttribute(new VertexArrayAttribute("texcoord", 2, 10, 0, false));
+        
         TextureManager.initialize();
         ModelManager.initialize();
         sceneTex = Framebuffer.getFramebuffer(OpenGG.window.getWidth(), OpenGG.window.getHeight(), 2);
         PostProcessPipeline.initialize(sceneTex);
-             
+        
+        defaultvao = new VertexArrayObject(vaoformat);
         lightobj = new GLBuffer(GL_UNIFORM_BUFFER, 800, GL_DYNAMIC_DRAW);
         lightobj.bindBase(ShaderController.getUniqueUniformBufferLocation());
         ShaderController.setUniformBlockLocation(lightobj, "LightBuffer");
@@ -76,7 +85,6 @@ public class RenderEngine {
         enableDefaultGroups();
         
         lightoffset = (MemoryUtil.memAllocFloat(Light.bfsize).capacity()) << 2;
-               
         groups.add(dlist);
         groups.add(adjdlist);
         
@@ -86,8 +94,6 @@ public class RenderEngine {
         
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LEQUAL);
-        
-        glEnable(GL_TEXTURE_2D);
         glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
         glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
         return true;
@@ -118,8 +124,22 @@ public class RenderEngine {
         return glGetInteger(GL_MAJOR_VERSION) + "." + glGetInteger(GL_MINOR_VERSION);
     }
     
-    public Framebuffer getSceneFramebuffer(){
+    public static VertexArrayFormat getDefaultFormat(){
+        return vaoformat;
+    }
+    
+    public static Framebuffer getSceneFramebuffer(){
         return sceneTex;
+    }
+    
+    public static VertexArrayObject getCurrentVAO(){
+        return currentvao;
+    }
+    
+    public static void setVAO(VertexArrayObject vao){
+        currentvao = vao;
+        if(vao == null)
+            currentvao = defaultvao;
     }
     
     public static void setWireframe(boolean wf){

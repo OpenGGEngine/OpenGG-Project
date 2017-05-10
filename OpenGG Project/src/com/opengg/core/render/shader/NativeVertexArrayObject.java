@@ -3,34 +3,34 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.opengg.core.render;
+package com.opengg.core.render.shader;
 
 import static org.lwjgl.opengl.GL30.*;
 
 
-public class VertexArrayObject {
+public class NativeVertexArrayObject {
 
     /**
-     * Stores the handle of the VAO.
+     * Stores the handle of the NativeVertexArrayObject.
      */
     private final int id;
 
     /**
      * Creates a Vertex Array Object (VAO).
      */
-    public VertexArrayObject() {
+    public NativeVertexArrayObject() {
         id = glGenVertexArrays();
     }
 
     /**
-     * Binds the VAO.
+     * Binds the NativeVertexArrayObject.
      */
     public void bind() {
         glBindVertexArray(id);
     }
 
     /**
-     * Deletes the VAO.
+     * Deletes the NativeVertexArrayObject.
      */
     public void delete() {
         glDeleteVertexArrays(id);
@@ -39,13 +39,13 @@ public class VertexArrayObject {
     /**
      * Getter for the Vertex Array Object ID.
      *
-     * @return Handle of the VAO
+     * @return Handle of the NativeVertexArrayObject
      */
     public int getID() {
         return id;
     }
     /**
-     * Unbinds VAO
+     * Unbinds NativeVertexArrayObject
      */
     public void unbind(){
         glBindVertexArray(0);

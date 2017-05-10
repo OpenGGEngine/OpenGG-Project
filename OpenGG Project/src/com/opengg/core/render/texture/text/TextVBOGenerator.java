@@ -5,6 +5,7 @@
  */
 package com.opengg.core.render.texture.text;
 
+import com.opengg.core.engine.RenderEngine;
 import com.opengg.core.gui.GUIText;
 import com.opengg.core.model.Material;
 import com.opengg.core.render.drawn.MatDrawnObject;
@@ -30,7 +31,7 @@ public class TextVBOGenerator {
 	protected MatDrawnObject createTextData(GUIText text) {
 		List<TextLine> lines = createStructure(text);
 		FloatBuffer data = createQuadVertices(text, lines);
-                MatDrawnObject t = new MatDrawnObject(data, 12);     
+                MatDrawnObject t = new MatDrawnObject(data, RenderEngine.getDefaultFormat());     
                 t.setM(Material.defaultmaterial);
                 t.getMaterial().Kd = text.font.texture;
 		return t;

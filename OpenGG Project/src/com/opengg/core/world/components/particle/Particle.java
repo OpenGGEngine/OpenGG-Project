@@ -21,15 +21,15 @@ public class Particle {
     }
     private Vector3f velocity;
     private Vector3f gravity;
-    private float timeAlive = 0;
-    private float timeOfLife;
+    private float lifelength = 0;
+    private float lifespan;
     private float scale;
     
     public Particle(Vector3f position, Vector3f velocity, Vector3f gravity, float lifeLength, float scale) {
         this.position = position;
         this.velocity = velocity;
         this.gravity = gravity;
-        this.timeOfLife = lifeLength;
+        this.lifespan = lifeLength;
         this.scale = scale;
     }
     
@@ -37,11 +37,7 @@ public class Particle {
         velocity = velocity.add(gravity);
         position = position.add(velocity);
 
-        timeAlive++;
-        return timeAlive > timeOfLife;
-    }
-    
-    
-    
-    
+        lifelength++;
+        return lifelength > lifespan;
+    } 
 }

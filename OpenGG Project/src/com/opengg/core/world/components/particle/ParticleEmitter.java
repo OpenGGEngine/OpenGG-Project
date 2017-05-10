@@ -1,0 +1,67 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.opengg.core.world.components.particle;
+
+import com.opengg.core.math.Vector3f;
+import com.opengg.core.render.Renderable;
+import com.opengg.core.render.drawn.InstancedDrawnObject;
+import com.opengg.core.render.texture.Texture;
+import com.opengg.core.world.components.Component;
+import java.nio.FloatBuffer;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+
+/**
+ *
+ * @author Warren
+ * 
+ * This represents a group of particles
+ */
+public abstract class ParticleEmitter extends Component implements Renderable{
+    List<Particle> particles = new LinkedList<>();
+    InstancedDrawnObject particleobject;
+    Texture t;
+    
+    public ParticleEmitter(InstancedDrawnObject drawn, Texture t){
+        this.particleobject = drawn;
+        this.particleobject.setAdjacency(false);
+        this.t = t;
+    }
+    
+    private FloatBuffer createParticleVBO(){
+        Vector3f[] vs = new Vector3f[particles.size()];
+        int i = 0;
+        for(Particle ps : particles){
+            vs[i] = ps.getPosition();
+            i++;
+        }
+        return Vector3f.listToBuffer(vs);
+    }
+    
+    
+    @Override
+    public void update(float delta) {
+        Iterator<Particle> screwconcurrent = particles.iterator();
+        while(screwconcurrent.hasNext()){
+            Particle p2 = screwconcurrent.next();
+            if(p2.update()){
+                screwconcurrent.remove();             
+            }
+        }
+        particleobject.setPositions(createParticleVBO(),particles.size());
+    }
+    
+    @Override
+    public void render(){
+        t.useTexture(0);
+        particleobject.render();
+    }
+    
+    public void destroy(){
+        particleobject.destroy();
+    }
+}

@@ -30,7 +30,6 @@ public class PostProcessPipeline {
     public static void initialize(Framebuffer initial){
         PostProcessPipeline.initial = initial;
         sceneQuad = new DrawnObject(ObjectBuffers.getSquareUI(-1, 1, -1, 1, 1f, 1, false));
-        
         set = new Stage("texture");
         add = new Stage("add");
         

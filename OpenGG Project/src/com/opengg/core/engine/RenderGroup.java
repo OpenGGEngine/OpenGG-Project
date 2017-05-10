@@ -7,6 +7,8 @@
 package com.opengg.core.engine;
 
 import com.opengg.core.render.Renderable;
+import com.opengg.core.render.shader.VertexArrayFormat;
+import com.opengg.core.render.shader.VertexArrayObject;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +18,7 @@ import java.util.List;
  */
 public class RenderGroup {
     List<Renderable> items = new ArrayList<>();
-    
+    VertexArrayObject vao;
     String pipeline = "object";
     String name = "default";
     boolean transparency = false;
@@ -26,6 +28,12 @@ public class RenderGroup {
 
     public RenderGroup(String name){
         this.name = name;
+        vao = new VertexArrayObject(RenderEngine.getDefaultFormat());
+    }
+    
+    public RenderGroup(String name, VertexArrayFormat format){
+        this.name = name;
+        vao = new VertexArrayObject(format);
     }
   
     public boolean isTransparent() {
@@ -62,6 +70,7 @@ public class RenderGroup {
     }
     
     public RenderGroup add(Renderable r){
+        
         if(!items.contains(r))
             items.add(r);
         return this;
@@ -72,7 +81,9 @@ public class RenderGroup {
     }
     
     public void render(){
+        vao.bind();
         items.stream().forEach(Renderable::render);
+        vao.unbind();
     }
     
     public void clear(){

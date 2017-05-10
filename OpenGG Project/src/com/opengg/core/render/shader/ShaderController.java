@@ -14,14 +14,11 @@ import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.model.Material;
 import com.opengg.core.render.GLBuffer;
-import com.opengg.core.render.NativeGLBuffer;
-import com.opengg.core.render.light.Light;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 
 /**
  *
@@ -32,7 +29,8 @@ public class ShaderController {
     private static HashMap<String, Program> programs = new HashMap<>();
     private static HashMap<String, Pipeline> pipelines = new HashMap<>(); 
     private static HashMap<String, String> rnames = new HashMap<>();
-    private static List<String> searched = new ArrayList<>();
+    private static List<String> searchedUniforms = new ArrayList<>();
+    private static List<String> searchedAttribs = new ArrayList<>();
     private static String curv, curg, curf;
     private static int currentBind = 0;
     
@@ -91,7 +89,6 @@ public class ShaderController {
         use("passthroughvert", "passthroughgeom", "addfrag");
         saveCurrentConfiguration("add");
         
-        initVertexAttributes();
         GGConsole.log("Default shaders loaded and validated");
 
         /* Set shader variables */
@@ -185,46 +182,7 @@ public class ShaderController {
         
         findUniform("material.hascolormap");
         setUniform("material.hascolormap", false);
-    }
-    
-    public static void initVertexAttributes() {
-        findAttribLocation("position");
-        findAttribLocation("color");      
-        findAttribLocation("normal");       
-        findAttribLocation("texcoord"); 
-    }
-    
-    public static void defVertexAttributes(){
-        enableVertexAttribute("position");
-        enableVertexAttribute("color");      
-        enableVertexAttribute("normal"); 
-        enableVertexAttribute("texcoord");   
-        setVertexAttribDivisor("color", 0);
-    }
-    
-    public static void pointVertexAttributes(){
-        pointVertexAttribute("position", 3, 12 * Float.BYTES, 0);
-        pointVertexAttribute("color", 4, 12 * Float.BYTES, 3 * Float.BYTES);
-        pointVertexAttribute("normal", 3, 12 * Float.BYTES, 7 * Float.BYTES);
-        pointVertexAttribute("texcoord", 2, 12 * Float.BYTES, 10 * Float.BYTES);     
-    }
-    
-    public static void defInstancedVertexAttributes(NativeGLBuffer b){
-        enableVertexAttribute("position");
-        pointVertexAttribute("position", 3, 12 * Float.BYTES, 0);
-
-        enableVertexAttribute("normal");
-        pointVertexAttribute("normal", 3, 12 * Float.BYTES, 7 * Float.BYTES);
-        
-        enableVertexAttribute("texcoord");
-        pointVertexAttribute("texcoord", 2, 12 * Float.BYTES, 10 * Float.BYTES);
-        
-        b.bind(GL_ARRAY_BUFFER);
-        
-        enableVertexAttribute("color");
-        pointVertexAttribute("color", 4, 3 * Float.BYTES, 0);
-        setVertexAttribDivisor("color", 1);
-    }
+    }  
     
     public static void setLightPos(Vector3f pos){ 
         setUniform("light.lightpos", pos);
@@ -284,9 +242,15 @@ public class ShaderController {
     }
     
     public static void findAttribLocation(String loc){
+        for(String s : searchedAttribs)
+            if(s.equals(loc))
+                return;
+
         programs.values().stream().filter((p) -> (p.type == Program.VERTEX)).forEach((p) -> {
             p.findAttributeLocation(loc);
         });
+        
+        searchedAttribs.add(loc);
     }
     
     public static void enableVertexAttribute(String loc){
@@ -306,10 +270,12 @@ public class ShaderController {
     }
     
     public static void findUniform(String loc){
+        if(searchedUniforms.contains(loc))
+            return;
         for(Program p : programs.values()){
             p.findUniformLocation(loc);
         }
-        searched.add(loc);
+        searchedUniforms.add(loc);
     }
     
     public static void setUniform(String s, Vector3f v3){
@@ -447,7 +413,7 @@ public class ShaderController {
     public static void useConfiguration(String name){
         String id = rnames.get(name);
         Pipeline p = pipelines.get(id);
-        
+               
         curv = p.vert.name;
         curg = p.geom.name;
         curf = p.frag.name;
@@ -468,7 +434,7 @@ public class ShaderController {
             CharSequence sec = FileStringLoader.loadStringSequence(URLDecoder.decode(loc, "UTF-8"));
             programs.put(name, new Program(type, sec, name));
             Program p = programs.get(name);
-            for(String s : searched){
+            for(String s : searchedUniforms){
                 p.findUniformLocation(s);
             }
             p.checkStatus();
