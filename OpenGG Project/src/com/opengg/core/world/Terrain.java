@@ -10,6 +10,8 @@ import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.render.drawn.DrawnObject;
+import com.opengg.core.render.texture.ArrayTexture;
+import com.opengg.core.render.texture.Texture;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,6 +30,8 @@ import org.lwjgl.system.MemoryUtil;
  */
 public class Terrain {
     Drawable d;
+    public Texture blotmap = Texture.blank;
+    public ArrayTexture wow;
     float[][] map;
     float sizex, sizez;
     float xsquarewidth, zsquarewidth;
@@ -35,6 +39,7 @@ public class Terrain {
     private Terrain(int gridx, int gridz) {
         sizex = gridx;
         sizez = gridz;
+        
     }
 
     public static Terrain generate(String mappath){

@@ -20,8 +20,10 @@ public class TerrainComponent extends RenderComponent{
     Terrain t;
     CollisionComponent c;
     
+    
     public TerrainComponent(Terrain t){
         this.t = t;
+        this.shader = "terrain";
     }
     
     public void enableRendering(){
@@ -33,5 +35,11 @@ public class TerrainComponent extends RenderComponent{
         c = new CollisionComponent(new BoundingBox(new Vector3f(-3000,-3000,-3000), 6000,6000,6000), new TerrainCollider(t));
         c.setForceTest(true);
         this.attach(c);
+    }
+    @Override
+    public void render(){
+        t.blotmap.useTexture(1);
+        t.wow.useTexture(0);
+        super.render();
     }
 }
