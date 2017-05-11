@@ -51,6 +51,7 @@ public class RenderEngine {
     static GLBuffer lightobj;
     static RenderGroup dlist;
     static RenderGroup adjdlist;
+    static RenderGroup terrainlist;
     static boolean shadVolumes = false;
     static Drawable skybox;
     static Cubemap skytex;
@@ -102,8 +103,10 @@ public class RenderEngine {
     public static void enableDefaultGroups(){
         dlist = new RenderGroup("default");
         adjdlist = new RenderGroup("adjdefault");
+        terrainlist = new RenderGroup("terrain");
         dlist.setPipeline("object");
         adjdlist.setPipeline("adjobject");
+        terrainlist.setPipeline("terrain");
         RenderPath path = new RenderPath("mainpath", () -> {
             for(RenderGroup d : getActiveRenderGroups()){
                 ShaderController.useConfiguration(d.pipeline);
@@ -317,7 +320,7 @@ public class RenderEngine {
         
         PostProcessPipeline.process();
         
-        ShaderController.useConfiguration("object");
+        ShaderController.useConfiguration("texture");
         ShaderController.setDistanceField(true);
         GUI.render();
         ShaderController.setDistanceField(false);

@@ -49,7 +49,8 @@ public class ShaderController {
         loadShader("ssaofrag", Resource.getShaderPath("ssao.frag"), Program.FRAGMENT);  
         loadShader("cubemapfrag", Resource.getShaderPath("cubemap.frag"), Program.FRAGMENT); 
         loadShader("ambientfrag", Resource.getShaderPath("ambient.frag"), Program.FRAGMENT); 
-        loadShader("texturefrag", Resource.getShaderPath("texture.frag"), Program.FRAGMENT);  
+        loadShader("texturefrag", Resource.getShaderPath("texture.frag"), Program.FRAGMENT);
+        loadShader("terrainfrag", Resource.getShaderPath("terrainmulti.frag"), Program.FRAGMENT);
         //loadShader("bloomfrag", Resource.getShaderPath("bloom.frag"), Program.FRAGMENT);  
         loadShader("addfrag", Resource.getShaderPath("add.frag"), Program.FRAGMENT);  
         
@@ -58,6 +59,9 @@ public class ShaderController {
         
         use("mainvert", "mainadjgeom", "mainfrag");
         saveCurrentConfiguration("adjobject");
+        
+        use("mainvert", "maingeom", "terrainfrag");
+        saveCurrentConfiguration("terrain");
         
         use("mainvert", "passthroughgeom", "ambientfrag");
         saveCurrentConfiguration("ambient");

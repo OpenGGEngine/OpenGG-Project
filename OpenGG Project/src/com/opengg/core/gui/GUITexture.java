@@ -29,7 +29,7 @@ public class GUITexture extends GUIItem {
 
         super(dummy, screenpos);
         this.screenlocalpos = screenpos;
-        Buffer[] b = ObjectCreator.createQuadPrismBuffers(new Vector3f(0, 0, 0), new Vector3f(size.x, size.y, 0));
+        Buffer[] b = ObjectCreator.createQuadPrismBuffers(new Vector3f(0, 0, 0), new Vector3f(size.x, size.y, -1));
         this.d = new TexturedDrawnObject((FloatBuffer) b[0], (IntBuffer) b[1], g);
     }
     
