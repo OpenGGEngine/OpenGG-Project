@@ -22,10 +22,11 @@ import static org.lwjgl.opengl.GL30.*;
  */
 public class Texture {
     
-    protected int texture;
+    int texture;
     public static Texture blank;
     int width;
     int height;
+    int type;
     private int offset;
     //ByteBuffer buffer; 
     
@@ -53,50 +54,50 @@ public class Texture {
     
     public void useTexture(int loc){
         glActiveTexture(GL_TEXTURE0 + loc);
-        glBindTexture(GL_TEXTURE_2D, texture);
+        glBindTexture(type, texture);
     }  
     
     public void setLODBias(int bias){
         glActiveTexture(GL_TEXTURE9);
-        glBindTexture(GL_TEXTURE_2D, texture);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS, bias);
+        glBindTexture(type, texture);
+        glTexParameteri(type, GL_TEXTURE_LOD_BIAS, bias);
         glActiveTexture(GL_TEXTURE0);
     }
     
     public void setMagFilter(int filter){
         glActiveTexture(GL_TEXTURE9);
-        glBindTexture(GL_TEXTURE_2D, texture);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
+        glBindTexture(type, texture);
+        glTexParameteri(type, GL_TEXTURE_MAG_FILTER, filter);
         glActiveTexture(GL_TEXTURE0);
     }
     
     public void setMinFilter(int filter){
         glActiveTexture(GL_TEXTURE9);
-        glBindTexture(GL_TEXTURE_2D, texture);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
+        glBindTexture(type, texture);
+        glTexParameteri(type, GL_TEXTURE_MIN_FILTER, filter);
         glActiveTexture(GL_TEXTURE0);
     }
     
     public int loadFromBuffer(ByteBuffer b, int fwidth, int fheight){
         texture = glGenTextures();
-        glBindTexture(GL_TEXTURE_2D, texture);
-        glGenerateMipmap(GL_TEXTURE_2D);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glBindTexture(type, texture);
+        glGenerateMipmap(type);
+        glTexParameteri(type, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(type, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(type, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(type, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         
         width = fwidth;
         height = fheight;
         
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, fwidth, fheight, 0, GL_RGBA, GL_UNSIGNED_BYTE, b);
-        glBindTexture(GL_TEXTURE_2D, 0);
+        glTexImage2D(type, 0, GL_RGBA8, fwidth, fheight, 0, GL_RGBA, GL_UNSIGNED_BYTE, b);
+        glBindTexture(type, 0);
         
         return texture;
     } 
     
     public int forceLoadTexture(String path, boolean flipped){
-        
+        type = GL_TEXTURE_2D;
         try{
             TextureData data = TextureBufferGenerator.getFastBuffer(path, flipped);
             

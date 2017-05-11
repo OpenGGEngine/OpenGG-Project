@@ -42,7 +42,6 @@ public class Cubemap {
     }
     
     private int loadTexture(String path){
-        
         String[] endings = new String[6];
         endings[0] = "_ft.png";
         endings[1] = "_bk.png";
