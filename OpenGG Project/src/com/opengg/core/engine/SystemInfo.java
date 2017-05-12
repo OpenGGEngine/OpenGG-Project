@@ -6,6 +6,8 @@
 
 package com.opengg.core.engine;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -42,31 +44,31 @@ public class SystemInfo {
                 String line;
                 while((line = br.readLine()) != null){
                     if(line.trim().startsWith("Operating System:"))
-                        info.put(os, line.trim());
+                        sysinfo.put("Operating System", line.trim());
                     if(line.trim().startsWith("Processor:"))
-                        info.put(cpu, line.trim());
+                        sysinfo.put("Processor", line.trim());
                     if(line.trim().startsWith("Card name:"))
-                        info.put(gpu, line.trim());
+                        sysinfo.put("Card name", line.trim());
                     if(line.trim().startsWith("Current Mode:"))
-                        info.put(monitormode, line.trim());
+                        glinfo.put("Current Mode", line.trim());
                     if(line.trim().startsWith("Native Mode:"))
-                        info.put(nativemode, line.trim());
+                        glinfo.put("Native Mode", line.trim());
                     if(line.trim().startsWith("Display Memory:"))
-                        info.put(vram, line.trim());
+                        sysinfo.put("Display Memory", line.trim());
                     if(line.trim().startsWith("Dedicated Memory:"))
-                        info.put(dvram, line.trim());
+                        sysinfo.put("Dedicated Memory", line.trim());
                     if(line.trim().startsWith("Shared Memory:"))
-                        info.put(svram, line.trim());
+                        sysinfo.put("Shared Memory", line.trim());
                     if(line.trim().startsWith("Memory:"))
-                        info.put(totmem, line.trim());
+                        sysinfo.put("Memory", line.trim());
                     if(line.trim().startsWith("System Model:"))
-                        info.put(pcname, line.trim());
+                        sysinfo.put("System Model", line.trim());
                 }
             } catch (IOException ex) {
                 GGConsole.warning("Failed to open generated DxDiag file, Java information may be inaccurate");
             }
         }
-                */
+         */       
         
     }
     

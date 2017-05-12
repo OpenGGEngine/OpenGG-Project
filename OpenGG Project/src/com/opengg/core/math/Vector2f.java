@@ -45,20 +45,24 @@ public class Vector2f {
         this.x = v.x;
         this.y = v.y;
     }
+    
+    public Vector2f add(Vector2f other){
+        return new Vector2f(this).addThis(other);
+    }
+    
+    public Vector2f addThis(Vector2f other){
+        this.x += other.x;
+        this.y += other.y;
+        return this;
+    }
+    
     /**
      * Gets the distance between two vectors.
      * @param v
      * @return 
      */
-    
     public float getDistance(Vector2f v){
         return (float) Math.sqrt(Math.pow((this.x - v.x), 2)+Math.pow((this.y - v.y), 2));  
-    }
-    
-    @Override
-    public String toString(){
-        String s = String.valueOf(this.x) + ", " + String.valueOf(this.y);
-        return s;
     }
     
     /**
@@ -110,5 +114,11 @@ public class Vector2f {
     
     public static Vector2f getFromByteArray(byte[] vector){
         return new Vector2f(1,1);
+    }
+    
+    @Override
+    public String toString(){
+        String s = String.valueOf(this.x) + ", " + String.valueOf(this.y);
+        return s;
     }
 }

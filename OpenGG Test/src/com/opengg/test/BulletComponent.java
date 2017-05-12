@@ -41,7 +41,7 @@ public class BulletComponent extends ComponentHolder{
         attach(bullet);
 
         physics = new PhysicsComponent();
-        physics.velocity = getRotationOffset().transform(new Vector3f(400,0,0));
+        physics.velocity = getRotationOffset().transform(new Vector3f(500,0,0));
         physics.addCollider(new CollisionComponent(new BoundingBox(new Vector3f(-1,-1,-1),1,1,1), new CylinderCollider(0.1f,0.1f)));
         physics.bounciness = 0.9f;
         physics.frictionCoefficient = 0;

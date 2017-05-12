@@ -16,40 +16,55 @@ import java.util.Map;
 public class GUIGroup {
     
     public boolean active = true;
-    public GUIGroup parent;
+    GUIGroup parent;
     
-    public Vector2f pos;
+    Vector2f pos;
     
-    private Map<String,GUIItem> items = new HashMap<>();
-    private Map<String, GUIGroup> groups = new HashMap<>();
+    Map<String,VisualGUIItem> items = new HashMap<>();
+    Map<String, GUIGroup> groups = new HashMap<>();
     
     public GUIGroup(Vector2f pos){
         this.pos = pos;
     }
 
-    public void addItem(String name, GUIItem item){
-        item.parent = this;
+    public void addItem(String name, VisualGUIItem item){
+        item.setParent(this);
         items.put(name, item);
     }
     
     public void addGroup(String name, GUIGroup group){
-        group.parent = this;
+        group.setParent(this);
         groups.put(name, group);
     }
-    public GUIItem getItem(String name){
+    
+    public VisualGUIItem getItem(String name){
         return items.get(name);
     }
+    
     public GUIGroup getGroup(String name){
         return groups.get(name);
     }
-    public void render(Vector2f local){
+    
+    public void setParent(GUIGroup group){
+        this.parent = group;
+    }
+    
+    public void render(){
         if(active){
-        for(GUIGroup group: groups.values()){
-            group.render(new Vector2f(local.x + pos.x, local.y + pos.y));
+            for(GUIGroup group: groups.values()){
+                group.render();
+            }
+        
+            for(VisualGUIItem item: items.values()){
+                item.render();
+            }
         }
-        for(GUIItem item: items.values()){
-            item.render(new Vector2f(local.x + pos.x,local.y + pos.y));
-        }
-        }
+    }
+    
+    public Vector2f getPosition(){
+        if(parent == null)
+            return pos;
+        
+        return pos.add(parent.getPosition());
     }
 }

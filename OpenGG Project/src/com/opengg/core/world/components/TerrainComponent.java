@@ -7,6 +7,8 @@
 package com.opengg.core.world.components;
 
 import com.opengg.core.math.Vector3f;
+import com.opengg.core.render.texture.ArrayTexture;
+import com.opengg.core.render.texture.Texture;
 import com.opengg.core.world.Terrain;
 import com.opengg.core.world.collision.BoundingBox;
 import com.opengg.core.world.components.physics.CollisionComponent;
@@ -19,7 +21,8 @@ import com.opengg.core.world.collision.TerrainCollider;
 public class TerrainComponent extends RenderComponent{
     Terrain t;
     CollisionComponent c;
-    
+    public Texture blotmap = Texture.blank;
+    public ArrayTexture wow;
     
     public TerrainComponent(Terrain t){
         this.t = t;
@@ -36,10 +39,19 @@ public class TerrainComponent extends RenderComponent{
         c.setForceTest(true);
         this.attach(c);
     }
+    
+    public void setGroundArray(ArrayTexture tex){
+        this.wow = tex;
+    }
+    
+    public void setBlotmap(Texture tex){
+        this.blotmap = tex;
+    }
+    
     @Override
     public void render(){
-        t.blotmap.useTexture(1);
-        t.wow.useTexture(0);
+        blotmap.useTexture(1);
+        wow.useTexture(0);
         super.render();
     }
 }

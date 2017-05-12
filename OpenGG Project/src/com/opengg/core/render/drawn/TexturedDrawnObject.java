@@ -33,6 +33,7 @@ public class TexturedDrawnObject implements Drawable{
         object = new DrawnObject(b,i);
         this.tex = t;
     }
+    
     @Override
     public void render() {
         tex.useTexture(0);

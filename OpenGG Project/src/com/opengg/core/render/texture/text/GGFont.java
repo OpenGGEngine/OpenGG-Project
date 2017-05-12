@@ -5,9 +5,8 @@
  */
 package com.opengg.core.render.texture.text;
 
-import com.opengg.core.gui.GUIText;
+import com.opengg.core.render.Text;
 import com.opengg.core.render.drawn.MatDrawnObject;
-import com.opengg.core.render.drawn.TexturedDrawnObject;
 import com.opengg.core.render.texture.Texture;
 import java.io.File;
 
@@ -24,7 +23,7 @@ public class GGFont {
 	this.texture = texture;
 	this.badname = new TextVBOGenerator(fontFile);
     }
-    public MatDrawnObject loadText(GUIText text) {
-        return badname.createTextData(text);
+    public MatDrawnObject loadText(Text text) {
+        return badname.createTextData(text, this);
     }
 }

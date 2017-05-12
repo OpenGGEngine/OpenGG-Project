@@ -53,6 +53,7 @@ public class ShaderController {
         loadShader("terrainfrag", Resource.getShaderPath("terrainmulti.frag"), Program.FRAGMENT);
         //loadShader("bloomfrag", Resource.getShaderPath("bloom.frag"), Program.FRAGMENT);  
         loadShader("addfrag", Resource.getShaderPath("add.frag"), Program.FRAGMENT);  
+        loadShader("guifrag", Resource.getShaderPath("gui.frag"), Program.FRAGMENT);  
         
         use("mainvert", "maingeom", "mainfrag");
         saveCurrentConfiguration("object");
@@ -92,6 +93,9 @@ public class ShaderController {
         
         use("passthroughvert", "passthroughgeom", "addfrag");
         saveCurrentConfiguration("add");
+        
+        use("passthroughvert", "passthroughgeom", "guifrag");
+        saveCurrentConfiguration("gui");
         
         GGConsole.log("Default shaders loaded and validated");
 

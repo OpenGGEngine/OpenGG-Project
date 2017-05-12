@@ -168,13 +168,16 @@ public class OpenGG implements ConsoleListener{
         while (!window.shouldClose() && !end) {
             startFrame();
             app.render();
-            app.update();
-            processExecutables();
-            WorldEngine.update();
-            RenderEngine.checkForGLErrors();
             endFrame();
+            RenderEngine.checkForGLErrors();
+            
+            processExecutables();
+            app.update();
+            WorldEngine.update();
+
             //GGConsole.pollInput();
         }
+        System.out.println("here");
         end = true;
         if(!force){
             closeEngine();

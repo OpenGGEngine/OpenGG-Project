@@ -7,7 +7,7 @@
 package com.opengg.core.engine;
 
 import com.opengg.core.gui.GUI;
-import com.opengg.core.gui.GUIItem;
+import com.opengg.core.gui.VisualGUIItem;
 import com.opengg.core.model.ModelManager;
 import com.opengg.core.render.GLBuffer;
 import com.opengg.core.render.Renderable;
@@ -231,7 +231,7 @@ public class RenderEngine {
         skytex = c;
     }    
     
-    public static void addGUIItem(String name, GUIItem g){
+    public static void addGUIItem(String name, VisualGUIItem g){
         GUI.addItem(name, g);
     }
     
@@ -319,11 +319,8 @@ public class RenderEngine {
         GUI.startGUIPos();
         
         PostProcessPipeline.process();
-        
-        ShaderController.useConfiguration("texture");
-        ShaderController.setDistanceField(true);
+
         GUI.render();
-        ShaderController.setDistanceField(false);
         
     }
     

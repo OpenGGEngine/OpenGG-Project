@@ -8,8 +8,9 @@ import com.opengg.core.engine.OpenGG;
 import com.opengg.core.engine.RenderEngine;
 import com.opengg.core.engine.WorldEngine;
 import com.opengg.core.gui.GUI;
-import com.opengg.core.gui.GUIItem;
+import com.opengg.core.gui.VisualGUIItem;
 import com.opengg.core.gui.GUIText;
+import com.opengg.core.render.Text;
 import com.opengg.core.gui.GUITexture;
 import com.opengg.core.io.ControlType;
 import static com.opengg.core.io.input.keyboard.Key.*;
@@ -35,8 +36,9 @@ import java.io.File;
 import java.io.IOException;
 
 public class OpenGGTest extends GGApplication{
-    private MatDrawnObject base2;
-    private GGFont f;
+    private GGFont font;
+    private Text text;
+    private TerrainComponent world;
     private Texture t2, t3;
     private Sound so, so2;
     private AudioListener as;
@@ -53,8 +55,6 @@ public class OpenGGTest extends GGApplication{
         w.vsync = true;
         OpenGG.initialize(new OpenGGTest(), w);
     }
-    private GUIText g;
-    private TerrainComponent world;
 
     @Override
     public  void setup(){
@@ -63,20 +63,17 @@ public class OpenGGTest extends GGApplication{
         
         t3 = Texture.get("C:/res/deer.png");
         t2 = Texture.get("C:/res/test.png");
-        Texture blotmap = Texture.get("C:/res/blendMap.png");
 
-        f = new GGFont(t2, new File("C:/res/test.fnt"));
-        g = new GUIText("Turmoil has engulfed the Galactic Republic. The taxation of trade routes to outlying star systems is in dispute. \n\n"
+        font = new GGFont(t2, new File("C:/res/test.fnt"));
+        text = new Text("Turmoil has engulfed the Galactic Republic. The taxation of trade routes to outlying star systems is in dispute. \n\n"
                 + " Hoping to resolve the matter with a blockade of deadly battleships, "
                 + " the greedy Trade Federation has stopped all shipping to the small planet of Naboo. \n\n"
                 + " While the congress of the Republic endlessly debates this alarming chain of events,"
                 + " the Supreme Chancellor has secretly dispatched two Jedi Knights,"
-                + " the guardians of peace and justice in the galaxy, to settle the conflict...", f, 1f, new Vector2f(), 0.5f, false);
-
-        base2 = f.loadText(g);
+                + " the guardians of peace and justice in the galaxy, to settle the conflict...", 1f, new Vector2f(), 0.5f, false);
 
         World w = WorldEngine.getCurrent();
-        w.setFloor(30);
+        w.setFloor(-10);
         
         //WorldObject terrain = new WorldObject();
         /*
@@ -86,12 +83,11 @@ public class OpenGGTest extends GGApplication{
         terrain.setPositionOffset(new Vector3f(0, 0, -550f));
         terrain.attach(island);
         terrain.attach(water);*/
-       Terrain op = Terrain.generateProcedural(new SmoothPerlinGenerator(7,0.2,10), 500,500);
-        op.blotmap = blotmap;
-        //a 
-        op.wow = ArrayTexture.get("C:/res/smhd/grass.png", "C:/res/smhd/dirt.png","C:/res/smhd/flower2.png","C:/res/smhd/road.png");
-        world = new TerrainComponent(op);
+
+        world = new TerrainComponent(Terrain.generateProcedural(new SmoothPerlinGenerator(7,0.2,10), 500,500));
         world.setScale(new Vector3f(800,1,800));
+        world.setGroundArray(ArrayTexture.get("C:/res/smhd/grass.png", "C:/res/smhd/dirt.png","C:/res/smhd/flower2.png","C:/res/smhd/road.png"));
+        world.setBlotmap(Texture.get("C:/res/blendMap.png"));
         
         player = new TestPlayerComponent();
         player.use();
@@ -127,8 +123,8 @@ public class OpenGGTest extends GGApplication{
         RenderEngine.setSkybox(ObjectCreator.createCube(1500f), Cubemap.get("C:\\res\\skybox\\majestic"));
         RenderEngine.setCulling(false);  
         
-        GUI.root.addItem("text", new GUITexture(t3, new Vector2f(0,0), new Vector2f(1000,1000)));
-        GUI.root.addItem("aids",new GUIItem(base2,new Vector2f(0,0)));
+        //GUI.addItem("text", new GUITexture(t3, new Vector2f(0,0), new Vector2f(1,1)));
+        GUI.addItem("aids", new GUIText(text, font, new Vector2f(0,0)));
     }
     
     @Override

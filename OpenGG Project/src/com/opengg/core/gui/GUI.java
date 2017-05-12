@@ -23,10 +23,11 @@ public class GUI {
     }
 
     public static void render(){
-        root.render(root.pos);
+        ShaderController.useConfiguration("gui");
+        root.render();
     }
     
-    public static void addItem(String name, GUIItem item){
+    public static void addItem(String name, VisualGUIItem item){
         root.addItem(name, item);
     }
 }
