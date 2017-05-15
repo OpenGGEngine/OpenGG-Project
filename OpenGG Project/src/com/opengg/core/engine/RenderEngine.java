@@ -33,6 +33,7 @@ import static org.lwjgl.opengl.GL14.GL_INCR_WRAP;
 import static org.lwjgl.opengl.GL14.glBlendEquation;
 import static org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW;
 import static org.lwjgl.opengl.GL20.glStencilOpSeparate;
+import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER_SRGB;
 import static org.lwjgl.opengl.GL30.GL_MAJOR_VERSION;
 import static org.lwjgl.opengl.GL30.GL_MINOR_VERSION;
 import static org.lwjgl.opengl.GL31.GL_UNIFORM_BUFFER;
@@ -302,6 +303,7 @@ public class RenderEngine {
     
     public static void draw(){
         ShaderController.setView(camera.getMatrix());
+        ShaderController.setUniform("camerapos", camera.getPos());
         sceneTex.startTexRender();
         sceneTex.enableColorAttachments();
         useLights();
@@ -317,7 +319,6 @@ public class RenderEngine {
         skytex.use(0);
         skybox.render();    
         GUI.startGUIPos();
-        
         PostProcessPipeline.process();
 
         GUI.render();

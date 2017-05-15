@@ -33,12 +33,15 @@ import static org.lwjgl.opengl.GL11.glGenTextures;
 import static org.lwjgl.opengl.GL11.glGenTextures;
 import static org.lwjgl.opengl.GL11.glGenTextures;
 import static org.lwjgl.opengl.GL11.glGenTextures;
+import static org.lwjgl.opengl.GL11.glTexParameterf;
 import static org.lwjgl.opengl.GL11.glTexParameteri;
 import static org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE;
 import static org.lwjgl.opengl.GL12.glTexSubImage3D;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
+import static org.lwjgl.opengl.GL14.GL_TEXTURE_LOD_BIAS;
 import static org.lwjgl.opengl.GL30.GL_TEXTURE_2D_ARRAY;
+import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 import static org.lwjgl.opengl.GL42.glTexStorage3D;
 import org.lwjgl.system.MemoryUtil;
 
@@ -92,11 +95,12 @@ public class ArrayTexture extends Texture{
         
         glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, 0, width, height, layers, GL_RGBA, GL_UNSIGNED_BYTE, full);
         
-        glTexParameteri(GL_TEXTURE_2D_ARRAY,GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D_ARRAY,GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D_ARRAY,GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D_ARRAY,GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+        glTexParameterf(GL_TEXTURE_2D_ARRAY,GL_TEXTURE_LOD_BIAS, -0.4f );
         glTexParameteri(GL_TEXTURE_2D_ARRAY,GL_TEXTURE_WRAP_S,GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D_ARRAY,GL_TEXTURE_WRAP_T,GL_REPEAT);
-        
+        glGenerateMipmap( GL_TEXTURE_2D_ARRAY );
         
     }
 }

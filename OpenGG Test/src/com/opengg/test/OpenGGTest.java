@@ -120,15 +120,18 @@ public class OpenGGTest extends GGApplication{
         l = new Light(new Vector3f(10,200,0), new Vector3f(1,1,1), 4000f, 0);
         
         RenderEngine.addLight(l);
-        RenderEngine.setSkybox(ObjectCreator.createCube(1500f), Cubemap.get("C:\\res\\skybox\\majestic"));
+        RenderEngine.setSkybox(ObjectCreator.createCube(1500f), Cubemap.get("C:\\res\\skybox\\yellowcloud"));
         RenderEngine.setCulling(false);  
         
         //GUI.addItem("text", new GUITexture(t3, new Vector2f(0,0), new Vector2f(1,1)));
         GUI.addItem("aids", new GUIText(text, font, new Vector2f(0,0)));
     }
-    
+    float wow = 1f;
     @Override
     public void render() {
+        wow += 0.03f;
+        
+        //ShaderController.setUniform("exposure", 2*(float)Math.sin(wow));
         ShaderController.setPerspective(90, OpenGG.window.getRatio(), 0.2f, 3000f);
         RenderEngine.draw();
     }

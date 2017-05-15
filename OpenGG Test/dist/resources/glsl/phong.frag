@@ -68,6 +68,8 @@ vec3 n;
 float visibility = 1f;
 vec3 eyedir;
 
+in vec3 reflectedVector;
+
 mat3 cotangent_frame( vec3 N, vec3 p, vec2 uv ){
     // get edge vectors of the pixel triangle
     vec3 dp1 = dFdx( p );
@@ -185,7 +187,7 @@ void main() {
 		col += shadify(lights[i]);
 	}
 	
-	fcolor = vec4(col + ambient, color.a);
+	//fcolor = vec4(col + ambient, color.a);
 	
 	float brightness = (fcolor.r + fcolor.g + fcolor.z) / 3.0;
 	if(brightness > bloomMin){
@@ -193,5 +195,11 @@ void main() {
 	}else{
 		bright = vec4(0,0,0,1);
 	}
+	float cheating = max(dot(-vec3(1),normalize(norm)),0.0) + 0.3;
+	vec4 reflectedColor = texture(cubemap,reflectedVector);
+	fcolor = mix(vec4(0.3,1,0.17,1) * cheating,reflectedColor,0.5);
+	fcolor  = fcolor +col;
+	fcolor.a = 1;
+
 }
 

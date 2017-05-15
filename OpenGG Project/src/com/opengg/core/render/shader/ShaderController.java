@@ -53,7 +53,8 @@ public class ShaderController {
         loadShader("terrainfrag", Resource.getShaderPath("terrainmulti.frag"), Program.FRAGMENT);
         //loadShader("bloomfrag", Resource.getShaderPath("bloom.frag"), Program.FRAGMENT);  
         loadShader("addfrag", Resource.getShaderPath("add.frag"), Program.FRAGMENT);  
-        loadShader("guifrag", Resource.getShaderPath("gui.frag"), Program.FRAGMENT);  
+        loadShader("guifrag", Resource.getShaderPath("gui.frag"), Program.FRAGMENT); 
+        loadShader("hdrfrag", Resource.getShaderPath("hdr.frag"), Program.FRAGMENT); 
         
         use("mainvert", "maingeom", "mainfrag");
         saveCurrentConfiguration("object");
@@ -73,8 +74,11 @@ public class ShaderController {
         use("passthroughvert", "passthroughgeom", "ssaofrag");
         saveCurrentConfiguration("ssao");
         
-        //use("passthroughvert", "passthroughgeom", "bloomfrag");
-        //saveCurrentConfiguration("bloom");
+       // use("passthroughvert", "passthroughgeom", "bloomfrag");
+      //  saveCurrentConfiguration("bloom");
+        
+        use("passthroughvert", "passthroughgeom", "hdrfrag");
+        saveCurrentConfiguration("hdr");
 
         use("passthroughvert", "passthroughgeom", "passthroughfrag");
         saveCurrentConfiguration("passthrough");
@@ -142,6 +146,10 @@ public class ShaderController {
         
         findUniform("billboard");
         setUniform("billboard", false);
+        findUniform("exposure");
+        setUniform("exposure", 0.5f);
+        findUniform("camerapos");
+        setUniform("camerapos", new Vector3f());
         
         setMatLinks();
 

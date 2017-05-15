@@ -26,16 +26,19 @@ public class PostProcessPipeline {
     static List<StageSet> sets = new ArrayList<>();
     static Drawable sceneQuad;
     static Stage current;
-    static Stage add, mult, set;
+    static Stage add, mult, set,hdr;
     public static void initialize(Framebuffer initial){
         PostProcessPipeline.initial = initial;
         sceneQuad = new DrawnObject(ObjectBuffers.getSquareUI(-1, 1, -1, 1, 1f, 1, false));
-        set = new Stage("texture");
-        add = new Stage("add");
-        
+       // set = new Stage("texture");
+        //add = new Stage("add");
+        //add.shader = "add";
+        hdr = new Stage("hdr");
         StageSet bloom = new StageSet(StageSet.SET, 1);
-        bloom.addStage(new Stage("bloom"));
-        //sets.add(bloom);
+        hdr.shader = "hdr";
+        //blooms = new Stage("bloom");
+        bloom.addStage(hdr);
+        addStage(bloom);
     }
     
     public static void addStage(StageSet s){
@@ -46,7 +49,7 @@ public class PostProcessPipeline {
         glDisable(GL_CULL_FACE);
         
         initial.endTexRender();
-        initial.useTexture(0, 1);
+        initial.useTexture(0, 0);
         initial.useDepthTexture(1);
         for(StageSet ss : sets){
             ss.render();
