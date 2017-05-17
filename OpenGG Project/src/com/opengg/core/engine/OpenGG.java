@@ -177,7 +177,6 @@ public class OpenGG implements ConsoleListener{
 
             //GGConsole.pollInput();
         }
-        System.out.println("here");
         end = true;
         if(!force){
             closeEngine();

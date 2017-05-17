@@ -10,13 +10,19 @@ import com.opengg.core.math.Vector3f;
 import com.opengg.core.world.Deserializer;
 import com.opengg.core.world.Serializer;
 import com.opengg.core.world.World;
-import java.io.Serializable;
 
 /**
- * Represents any object attachable to another Component that links with the WorldEngine for updating and serializing
+ * Represents any object attachable to another Component that links with the WorldEngine for updating and serializing<br><br>
+ * 
+ * This class is the core class of the World system, which is what a developer would interact the most during development. All component
+ * have a position, scale, and rotation, regardless of whether or not they are used. In addition they have a unique ID, a name which may
+ * or may not be unique depending on developer preference, and only one parent, where if it this is a top level component, the parent would be the 
+ * corresponding World. <br><br>
+ * To create a custom component, first extend this class. This class itself, while it has no practical use by itself, contains all of the
+ * code that should be needed to use the features described above, so take care when overriding these default classes. the 
  * @author Javier
  */
-public abstract class Component implements Serializable{
+public abstract class Component{
     public static int curid = 0;
     public int id;
     public boolean absoluteOffset = false;

@@ -65,6 +65,7 @@ public class GGFontFile {
 
     protected GGCharacter getCharacter(int ascii) {
         return metaData.get(ascii);
+        
     }
 
     /**

@@ -37,13 +37,13 @@ layout (std140) uniform LightBuffer {
 };
 
 uniform int numLights;
-uniform float time;
 uniform int text;
 uniform mat4 shmvp;
 uniform mat4 view;
 uniform mat4 model;
 uniform float uvmultx;
 uniform float uvmulty;
+uniform vec3 camera;
 uniform sampler2D Kd;
 uniform sampler2D Ka;
 uniform sampler2D Ks;
@@ -58,17 +58,16 @@ const float gradient = 2.32;
 float bloomMin = 0.9;
 float vis = 1;
 
-vec4 color;
-vec3 diffuse;
 float trans;
-vec3 ambient;
-vec3 specular;
 float specpow;
-vec3 n;
 float visibility = 1f;
 vec3 eyedir;
-
-in vec3 reflectedVector;
+vec3 reflectedcolor;
+vec3 n;
+vec3 ambient;
+vec3 specular;
+vec3 diffuse;
+vec4 color;
 
 mat3 cotangent_frame( vec3 N, vec3 p, vec2 uv ){
     // get edge vectors of the pixel triangle
@@ -171,14 +170,20 @@ void process(){
     }else{
         specular = material.ks;
     }
-	n = normalize(( view * model * vec4(norm,0.0f)).xyz);
+	n = normalize((model * vec4(norm,0.0f)).xyz);
     
     if(material.hasnormmap){
        n = calculatenormal(n,eyedir,textureCoord);
     }
+	
+	reflectedcolor = texture(cubemap, 
+		normalize(reflect(pos.xyz - camera, 
+			normalize(model * vec4(norm, 0.0f)).xyz))).xyz;
+	
 }
 
 void main() {   
+
 	genPhong();
 	process();
 	vec3 col = vec3(0,0,0);
@@ -186,20 +191,6 @@ void main() {
 	for(int i = 0; i < numLights; i++){
 		col += shadify(lights[i]);
 	}
-	
-	//fcolor = vec4(col + ambient, color.a);
-	
-	float brightness = (fcolor.r + fcolor.g + fcolor.z) / 3.0;
-	if(brightness > bloomMin){
-		bright = fcolor;
-	}else{
-		bright = vec4(0,0,0,1);
-	}
-	float cheating = max(dot(-vec3(1),normalize(norm)),0.0) + 0.3;
-	vec4 reflectedColor = texture(cubemap,reflectedVector);
-	fcolor = mix(vec4(0.3,1,0.17,1) * cheating,reflectedColor,0.5);
-	fcolor  = fcolor +col;
-	fcolor.a = 1;
-
+	fcolor = vec4(col + ambient, color.a);
 }
 

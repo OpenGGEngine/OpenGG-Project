@@ -7,7 +7,6 @@
 package com.opengg.core.engine;
 
 import com.opengg.core.gui.GUI;
-import com.opengg.core.gui.VisualGUIItem;
 import com.opengg.core.model.ModelManager;
 import com.opengg.core.render.GLBuffer;
 import com.opengg.core.render.Renderable;
@@ -33,7 +32,6 @@ import static org.lwjgl.opengl.GL14.GL_INCR_WRAP;
 import static org.lwjgl.opengl.GL14.glBlendEquation;
 import static org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW;
 import static org.lwjgl.opengl.GL20.glStencilOpSeparate;
-import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER_SRGB;
 import static org.lwjgl.opengl.GL30.GL_MAJOR_VERSION;
 import static org.lwjgl.opengl.GL30.GL_MINOR_VERSION;
 import static org.lwjgl.opengl.GL31.GL_UNIFORM_BUFFER;
@@ -89,6 +87,9 @@ public class RenderEngine {
         lightoffset = (MemoryUtil.memAllocFloat(Light.bfsize).capacity()) << 2;
         groups.add(dlist);
         groups.add(adjdlist);
+        
+        Camera c = new Camera();
+        useCamera(c);
         
         glEnable(GL_BLEND);
         glBlendEquation(GL_FUNC_ADD);
@@ -232,10 +233,6 @@ public class RenderEngine {
         skytex = c;
     }    
     
-    public static void addGUIItem(String name, VisualGUIItem g){
-        GUI.addItem(name, g);
-    }
-    
     public static void setShadowVolumes(boolean vol){
         shadVolumes = vol;
     }
@@ -303,7 +300,7 @@ public class RenderEngine {
     
     public static void draw(){
         ShaderController.setView(camera.getMatrix());
-        ShaderController.setUniform("camerapos", camera.getPos());
+        ShaderController.setUniform("camera", camera.getPos().inverse());
         sceneTex.startTexRender();
         sceneTex.enableColorAttachments();
         useLights();

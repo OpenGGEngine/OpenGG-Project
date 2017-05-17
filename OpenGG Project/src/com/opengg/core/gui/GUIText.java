@@ -14,15 +14,21 @@ import com.opengg.core.render.texture.text.GGFont;
  *
  * @author Javier
  */
-public class GUIText extends VisualGUIItem{
+public class GUIText extends GUIRenderable{
     Text text;
     GGFont font;
     public GUIText(Text text, GGFont font, Vector2f pos){
         this.text = text;
         this.font = font;
-        this.setPos(pos);
+        this.setPositionOffset(pos);
         this.setDrawable(text.getDrawable(font));
-        this.setPos(this.pos);
+    }
+    
+    public GUIText(GGFont font, Vector2f pos){
+        this.text = new Text();
+        this.font = font;
+        this.setPositionOffset(pos);
+        this.setDrawable(text.getDrawable(font));
     }
     
     public void setText(String ntext){

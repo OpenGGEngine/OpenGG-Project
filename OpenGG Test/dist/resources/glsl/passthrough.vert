@@ -27,6 +27,6 @@ void main() {
     textureCoords = texcoord;
     poss = (model * vec4(position, 1.0f) ).xyz;
     norms = normal;
-    vec4 P = view * vec4(position,1);
+    vec4 P = view * vec4(poss,1);
     gl_Position = projection * P;
 };

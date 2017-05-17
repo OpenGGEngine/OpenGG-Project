@@ -27,7 +27,7 @@ public class GUI {
         root.render();
     }
     
-    public static void addItem(String name, VisualGUIItem item){
+    public static void addItem(String name, GUIRenderable item){
         root.addItem(name, item);
     }
 }

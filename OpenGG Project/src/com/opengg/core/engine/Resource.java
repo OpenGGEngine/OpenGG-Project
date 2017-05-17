@@ -58,4 +58,13 @@ public class Resource {
         }
         return null;
     }
+    
+    public static String getFontPath(String name){
+        try {
+            return new File("resources\\font\\" +  name + ".fnt").getCanonicalPath();
+        } catch (IOException ex) {
+            GGConsole.warning("Failed to load " + name + "!");
+        }
+        return null;
+    }
 }

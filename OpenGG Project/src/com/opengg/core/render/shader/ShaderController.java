@@ -134,6 +134,9 @@ public class ShaderController {
 
         findUniform("rot");
         setUniform("rot", new Vector3f(0,0,0));
+        
+        findUniform("camera");
+        setUniform("camera", new Vector3f(0,0,0));
 
         findUniform("view");
         setUniform("view", new Matrix4f());
@@ -146,10 +149,12 @@ public class ShaderController {
         
         findUniform("billboard");
         setUniform("billboard", false);
+        
         findUniform("exposure");
         setUniform("exposure", 0.5f);
-        findUniform("camerapos");
-        setUniform("camerapos", new Vector3f());
+        
+        findUniform("gamma");
+        setUniform("gamma", 2.2f);
         
         setMatLinks();
 

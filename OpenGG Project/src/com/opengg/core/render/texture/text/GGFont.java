@@ -19,10 +19,17 @@ public class GGFont {
     //The textvbogenerator is what the name says it is. Every font has its own generator with specific parameters
     public Texture texture;
     public TextVBOGenerator badname;
-    public GGFont(Texture texture, File fontFile) {
-	this.texture = texture;
-	this.badname = new TextVBOGenerator(fontFile);
+    
+    public GGFont(String texture, String fontFile) {
+	this.texture = Texture.get(texture);
+	this.badname = new TextVBOGenerator(new File(fontFile));
     }
+    
+    public GGFont(Texture texture, String fontFile) {
+	this.texture = texture;
+	this.badname = new TextVBOGenerator(new File(fontFile));
+    }
+    
     public MatDrawnObject loadText(Text text) {
         return badname.createTextData(text, this);
     }

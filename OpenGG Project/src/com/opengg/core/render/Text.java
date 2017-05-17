@@ -24,7 +24,7 @@ public class Text{
     private int vertexCount;
     private Vector3f colour = new Vector3f(0f, 0f, 0f);
 
-    private Vector2f position;
+    private Vector2f position = new Vector2f();
     private float lineMaxSize;
     private int numberOfLines;
 
@@ -39,7 +39,7 @@ public class Text{
 
     Drawable textDraw;
     
-    public Text(String text, float fontSize, Vector2f position, float maxLineLength, boolean centered) {
+    public Text(String text, Vector2f position, float fontSize, float maxLineLength, boolean centered) {
         this.fontSize = fontSize;
         this.position = position;
         this.lineMaxSize = maxLineLength;
@@ -47,12 +47,23 @@ public class Text{
         this.textString = text;
     }
     
+    public Text(String text){
+        this(text, new Vector2f(0,0), 10, 100, false);
+    }
+    
+    public Text(){
+        this("");
+    }
+    
+    public Text copyFormat(String newtext){
+        return new Text(newtext, position, fontSize, lineMaxSize, centerText);
+    }
+    
     public void remove() {
         //TextMaster.removeText(this);
     }
     
     public void setText(String text){
-        System.out.println(text);
         this.textString = text;
     }
     

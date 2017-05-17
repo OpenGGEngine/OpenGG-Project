@@ -50,8 +50,8 @@ public class TerrainComponent extends RenderComponent{
     
     @Override
     public void render(){
-        blotmap.useTexture(1);
-        wow.useTexture(0);
+        this.blotmap.useTexture(1);
+        this.wow.useTexture(0);
         super.render();
     }
 }

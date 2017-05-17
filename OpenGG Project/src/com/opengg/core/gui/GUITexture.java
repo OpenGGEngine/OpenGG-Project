@@ -18,10 +18,10 @@ import java.nio.IntBuffer;
  *
  * @author Warren
  */
-public class GUITexture extends VisualGUIItem {
+public class GUITexture extends GUIRenderable {
     public GUITexture(Texture tex, Vector2f screenpos, Vector2f size) {
         Buffer[] b = ObjectCreator.createQuadPrismBuffers(new Vector3f(0, 0, 0), new Vector3f(size.x, size.y, 0));
         this.setDrawable(new TexturedDrawnObject((FloatBuffer) b[0], (IntBuffer) b[1], tex));
-        this.setPos(pos);
+        this.setPositionOffset(screenpos);
     }
 }

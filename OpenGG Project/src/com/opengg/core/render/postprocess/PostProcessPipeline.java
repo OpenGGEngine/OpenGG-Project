@@ -30,13 +30,9 @@ public class PostProcessPipeline {
     public static void initialize(Framebuffer initial){
         PostProcessPipeline.initial = initial;
         sceneQuad = new DrawnObject(ObjectBuffers.getSquareUI(-1, 1, -1, 1, 1f, 1, false));
-       // set = new Stage("texture");
-        //add = new Stage("add");
-        //add.shader = "add";
         hdr = new Stage("hdr");
         StageSet bloom = new StageSet(StageSet.SET, 1);
         hdr.shader = "hdr";
-        //blooms = new Stage("bloom");
         bloom.addStage(hdr);
         addStage(bloom);
     }
