@@ -8,7 +8,6 @@ package com.opengg.core.render.postprocess;
 import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.render.drawn.DrawnObject;
 import com.opengg.core.render.objects.ObjectBuffers;
-import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.texture.Framebuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,15 +25,20 @@ public class PostProcessPipeline {
     static List<StageSet> sets = new ArrayList<>();
     static Drawable sceneQuad;
     static Stage current;
-    static Stage add, mult, set,hdr;
+    static Stage add, mult, set;
     public static void initialize(Framebuffer initial){
         PostProcessPipeline.initial = initial;
         sceneQuad = new DrawnObject(ObjectBuffers.getSquareUI(-1, 1, -1, 1, 1f, 1, false));
-        hdr = new Stage("hdr");
-        StageSet bloom = new StageSet(StageSet.SET, 1);
-        hdr.shader = "hdr";
-        bloom.addStage(hdr);
-        addStage(bloom);
+        
+        Stage ssao = new Stage("ssao");
+        StageSet ssaostage = new StageSet(StageSet.SET, 0);
+        ssaostage.addStage(ssao);
+        //addStage(ssaostage);
+        
+        Stage hdr = new Stage("hdr");
+        StageSet hdrstage = new StageSet(StageSet.SET, 0);
+        hdrstage.addStage(hdr);
+        addStage(hdrstage);
     }
     
     public static void addStage(StageSet s){
@@ -51,7 +55,6 @@ public class PostProcessPipeline {
             ss.render();
             if(ss.func == StageSet.ADD){
                 add.use();
-                
                 add.finalizeAtLoc(0);
             }
         }

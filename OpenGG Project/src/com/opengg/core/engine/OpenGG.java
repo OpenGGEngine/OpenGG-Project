@@ -98,18 +98,8 @@ public class OpenGG implements ConsoleListener{
         startTime = Calendar.getInstance().getTime();
         head = client;
         
-        GGConsole.log("Loading native libraries...");
-        if(System.getProperty("os.name").contains("Windows")){
-            System.setProperty("org.lwjgl.librarypath", new File("natives\\windows").getAbsolutePath());
-        }else if(System.getProperty("os.name").contains("OS X")){
-           System.setProperty("org.lwjgl.librarypath", new File("natives\\osx").getAbsolutePath());
-        }else if(System.getProperty("os.name").contains("Linux")){
-            System.setProperty("org.lwjgl.librarypath", new File("natives\\linux").getAbsolutePath());
-        }else{
-            GGConsole.error("OpenGG is not supported on " + System.getProperty("os.name") + ", exiting...");
-            writeLog();
-            System.exit(0);
-        }
+        linkLWJGL();
+        
         SystemInfo.querySystemInfo();
         Config.reloadConfigs();
         lwjglinit = true;
@@ -224,6 +214,21 @@ public class OpenGG implements ConsoleListener{
             Logger.getLogger(OpenGG.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(OpenGG.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public static void linkLWJGL(){
+        GGConsole.log("Loading native libraries...");
+        if(System.getProperty("os.name").contains("Windows")){
+            System.setProperty("org.lwjgl.librarypath", new File("natives\\windows").getAbsolutePath());
+        }else if(System.getProperty("os.name").contains("OS X")){
+           System.setProperty("org.lwjgl.librarypath", new File("natives\\osx").getAbsolutePath());
+        }else if(System.getProperty("os.name").contains("Linux")){
+            System.setProperty("org.lwjgl.librarypath", new File("natives\\linux").getAbsolutePath());
+        }else{
+            GGConsole.error("OpenGG is not supported on " + System.getProperty("os.name") + ", exiting...");
+            writeLog();
+            System.exit(0);
         }
     }
     

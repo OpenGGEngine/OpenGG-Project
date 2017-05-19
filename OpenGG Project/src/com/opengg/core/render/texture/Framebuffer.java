@@ -27,6 +27,7 @@ public class Framebuffer extends Texture {
     protected int fb;
     protected int depthbuffer;
     protected List<Integer> textures = new ArrayList<>();
+    int colortype;
     int x, y;
 
     public void enableColorAttachments() {
@@ -72,14 +73,16 @@ public class Framebuffer extends Texture {
                 GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT, GL_NEAREST);
     }
 
-    public static Framebuffer getFramebuffer(int sizex, int sizey) {
+    public static Framebuffer getFramebuffer(int sizex, int sizey, int colortype) {
         Framebuffer t = new Framebuffer();
+        t.colortype = colortype;
         t.setupFramebuffer(sizex, sizey, 1);
         return t;
     }
 
-    public static Framebuffer getFramebuffer(int sizex, int sizey, int attachmentCount) {
+    public static Framebuffer getFramebuffer(int sizex, int sizey, int attachmentCount,int colortype) {
         Framebuffer t = new Framebuffer();
+        t.colortype = colortype;
         t.setupFramebuffer(sizex, sizey, attachmentCount);
         return t;
     }
@@ -87,9 +90,7 @@ public class Framebuffer extends Texture {
     public void addColorTarget(int attachment) {
         int texture = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, texture);
-        //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, x, y, 0, GL_RGBA,
-          //      GL_UNSIGNED_BYTE, (ByteBuffer) null);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, x, y, 0, GL_RGBA,
+        glTexImage2D(GL_TEXTURE_2D, 0, colortype, x, y, 0, GL_RGBA,
                 GL_FLOAT, (ByteBuffer) null);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);

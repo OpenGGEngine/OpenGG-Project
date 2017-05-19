@@ -63,7 +63,7 @@ vec3 shadify(Light light){
     vec3 fdif = diffuse * light.color * cosTheta * attenuation;
 	
     float cosAlpha = clamp(max(dot(n, halfwayDir), 0.0), 0, 1);
-	vec3 fspec = specular * light.color * pow(cosAlpha, specpow) * attenuation * reflectedcolor;
+	vec3 fspec = specular * light.color * pow(cosAlpha, specpow) * attenuation;
 	
     vec3 fragColor = fdif + fspec;
 	
@@ -77,7 +77,7 @@ void process(){
     
     specpow = 1;
 
-    specular = vec3(1);
+    specular = vec3(0);
     
 	n = normalize(( model * vec4(norm,1.0f)).xyz);
 
@@ -85,7 +85,7 @@ void process(){
 		normalize(reflect(pos.xyz - camera, 
 			normalize(model * vec4(norm, 0.0f)).xyz))).xyz;
 	
-	
+	//ambient = ambient * reflectedcolor;
 }
 
 vec4 getTex(sampler2D tname){

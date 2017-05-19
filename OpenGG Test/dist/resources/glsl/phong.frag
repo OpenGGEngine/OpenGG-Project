@@ -157,7 +157,7 @@ void process(){
     
     specular = vec3(1,1,1);
     
-    specpow = 1;
+    specpow = 32;
     if(material.hasspecpow){
         vec4 specpowvec = getTex(Ns);
         specpow = specpowvec.r * 32;
@@ -170,11 +170,13 @@ void process(){
     }else{
         specular = material.ks;
     }
-	n = normalize((model * vec4(norm,0.0f)).xyz);
+	
     
     if(material.hasnormmap){
-       n = calculatenormal(n,eyedir,textureCoord);
-    }
+		n = calculatenormal(normalize(norm),pos.xyz-camera,textureCoord);
+    }else{
+		n = normalize((model * vec4(norm,0.0f)).xyz);
+	}
 	
 	reflectedcolor = texture(cubemap, 
 		normalize(reflect(pos.xyz - camera, 
