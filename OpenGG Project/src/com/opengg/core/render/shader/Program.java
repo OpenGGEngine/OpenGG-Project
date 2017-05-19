@@ -9,7 +9,10 @@ package com.opengg.core.render.shader;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 import java.util.HashMap;
+import static org.lwjgl.opengl.ARBSeparateShaderObjects.glProgramUniformMatrix4fv;
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL11.GL_TRUE;
 import static org.lwjgl.opengl.GL11.glGetError;
@@ -20,22 +23,70 @@ import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glGetAttribLocation;
 import static org.lwjgl.opengl.GL20.glGetAttribLocation;
+import static org.lwjgl.opengl.GL20.glGetAttribLocation;
+import static org.lwjgl.opengl.GL20.glGetAttribLocation;
+import static org.lwjgl.opengl.GL20.glGetAttribLocation;
+import static org.lwjgl.opengl.GL20.glGetAttribLocation;
+import static org.lwjgl.opengl.GL20.glGetAttribLocation;
+import static org.lwjgl.opengl.GL20.glGetAttribLocation;
+import static org.lwjgl.opengl.GL20.glGetProgramInfoLog;
+import static org.lwjgl.opengl.GL20.glGetProgramInfoLog;
+import static org.lwjgl.opengl.GL20.glGetProgramInfoLog;
+import static org.lwjgl.opengl.GL20.glGetProgramInfoLog;
+import static org.lwjgl.opengl.GL20.glGetProgramInfoLog;
+import static org.lwjgl.opengl.GL20.glGetProgramInfoLog;
 import static org.lwjgl.opengl.GL20.glGetProgramInfoLog;
 import static org.lwjgl.opengl.GL20.glGetProgramInfoLog;
 import static org.lwjgl.opengl.GL20.glGetProgrami;
 import static org.lwjgl.opengl.GL20.glGetUniformLocation;
 import static org.lwjgl.opengl.GL20.glGetUniformLocation;
+import static org.lwjgl.opengl.GL20.glGetUniformLocation;
+import static org.lwjgl.opengl.GL20.glGetUniformLocation;
+import static org.lwjgl.opengl.GL20.glGetUniformLocation;
+import static org.lwjgl.opengl.GL20.glGetUniformLocation;
+import static org.lwjgl.opengl.GL20.glGetUniformLocation;
+import static org.lwjgl.opengl.GL20.glGetUniformLocation;
 import static org.lwjgl.opengl.GL20.glUseProgram;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
+import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
+import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
+import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
+import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
+import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
+import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import static org.lwjgl.opengl.GL30.glBindFragDataLocation;
 import static org.lwjgl.opengl.GL30.glBindFragDataLocation;
+import static org.lwjgl.opengl.GL30.glBindFragDataLocation;
+import static org.lwjgl.opengl.GL30.glBindFragDataLocation;
+import static org.lwjgl.opengl.GL30.glBindFragDataLocation;
+import static org.lwjgl.opengl.GL30.glBindFragDataLocation;
+import static org.lwjgl.opengl.GL30.glBindFragDataLocation;
+import static org.lwjgl.opengl.GL30.glBindFragDataLocation;
+import static org.lwjgl.opengl.GL31.glGetUniformBlockIndex;
+import static org.lwjgl.opengl.GL31.glGetUniformBlockIndex;
+import static org.lwjgl.opengl.GL31.glGetUniformBlockIndex;
+import static org.lwjgl.opengl.GL31.glGetUniformBlockIndex;
+import static org.lwjgl.opengl.GL31.glGetUniformBlockIndex;
+import static org.lwjgl.opengl.GL31.glGetUniformBlockIndex;
 import static org.lwjgl.opengl.GL31.glGetUniformBlockIndex;
 import static org.lwjgl.opengl.GL31.glGetUniformBlockIndex;
 import static org.lwjgl.opengl.GL31.glUniformBlockBinding;
 import static org.lwjgl.opengl.GL32.GL_GEOMETRY_SHADER;
 import static org.lwjgl.opengl.GL33.glVertexAttribDivisor;
-import static org.lwjgl.opengl.GL41.*;
+import static org.lwjgl.opengl.GL41.glCreateShaderProgramv;
+import static org.lwjgl.opengl.GL41.glCreateShaderProgramv;
+import static org.lwjgl.opengl.GL41.glCreateShaderProgramv;
+import static org.lwjgl.opengl.GL41.glCreateShaderProgramv;
+import static org.lwjgl.opengl.GL41.glCreateShaderProgramv;
+import static org.lwjgl.opengl.GL41.glCreateShaderProgramv;
+import static org.lwjgl.opengl.GL41.glCreateShaderProgramv;
+import static org.lwjgl.opengl.GL41.glGetProgramBinary;
+import static org.lwjgl.opengl.GL41.glProgramUniform1f;
+import static org.lwjgl.opengl.GL41.glProgramUniform1i;
+import static org.lwjgl.opengl.GL41.glProgramUniform2fv;
+import static org.lwjgl.opengl.GL41.glProgramUniform3fv;
+import org.lwjgl.system.MemoryUtil;
 
 /**
  *
@@ -186,6 +237,20 @@ public class Program {
         int index = glGetUniformBlockIndex(id, name);
         glUniformBlockBinding(id, index, bind);
         glGetError(); //CATCH 1281 FROM MISSING INDEX
+    }
+    
+    public ByteBuffer getProgramBinary(){
+        IntBuffer length = MemoryUtil.memAllocInt(1);
+        IntBuffer type = MemoryUtil.memAllocInt(1);
+        ByteBuffer data = MemoryUtil.memAlloc(128*1024);
+        glGetProgramBinary(id, length, type, data);
+        int length2 = length.get();
+        ByteBuffer finaldata = MemoryUtil.memAlloc(length2);
+        for(int i = 0; i < length2; i++){
+            finaldata.put(data.get());
+        }
+        finaldata.flip();
+        return finaldata;
     }
     
     public void checkStatus() {

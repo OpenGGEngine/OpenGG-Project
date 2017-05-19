@@ -20,14 +20,12 @@ public class RenderComponent extends ComponentHolder implements Renderable{
     Matrix4f m = new Matrix4f();
     String shader;
     VertexArrayFormat format;
-    boolean adjacency;
     boolean transparent;
     
     public RenderComponent(){
         super();
         format = RenderEngine.getDefaultFormat();
         shader = "object";
-        adjacency = false;
     };
     
     public RenderComponent(Drawable g){
@@ -62,14 +60,6 @@ public class RenderComponent extends ComponentHolder implements Renderable{
 
     public void setFormat(VertexArrayFormat format) {
         this.format = format;
-    }
-
-    public boolean hasAdjacency() {
-        return adjacency;
-    }
-
-    public void setAdjacency(boolean adjacency) {
-        this.adjacency = adjacency;
     }
     
     public boolean isTransparent() {

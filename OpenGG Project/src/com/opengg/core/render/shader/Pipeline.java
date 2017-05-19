@@ -18,12 +18,16 @@ import static org.lwjgl.opengl.GL41.*;
  */
 public class Pipeline {
     int id = 0;
-    Program vert, frag, geom;
+    String vert, frag, geom;
     
     public Pipeline(Program vert, Program geom, Program frag){
-        this.vert = vert;
-        this.geom = geom;
-        this.frag = frag;
+        this.vert = vert.name;
+        if(geom != null)
+            this.geom = geom.name;
+        else
+            this.geom = "";
+        this.frag = frag.name;
+        
         glUseProgram(0);
         id = glGenProgramPipelines();
         bind();
@@ -32,7 +36,8 @@ public class Pipeline {
             return;
         }
         glUseProgramStages(id, GL_VERTEX_SHADER_BIT, vert.id);
-        glUseProgramStages(id, GL_GEOMETRY_SHADER_BIT, geom.id);
+        if(geom != null)
+            glUseProgramStages(id, GL_GEOMETRY_SHADER_BIT, geom.id);
         glUseProgramStages(id, GL_FRAGMENT_SHADER_BIT, frag.id);
         validate();
         unbind();

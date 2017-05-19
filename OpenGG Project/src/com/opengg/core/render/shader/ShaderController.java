@@ -8,6 +8,7 @@ package com.opengg.core.render.shader;
 
 import com.opengg.core.engine.GGConsole;
 import com.opengg.core.engine.Resource;
+import com.opengg.core.exceptions.InvalidShaderException;
 import com.opengg.core.io.FileStringLoader;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Vector2f;
@@ -55,50 +56,41 @@ public class ShaderController {
         loadShader("addfrag", Resource.getShaderPath("add.frag"), Program.FRAGMENT);  
         loadShader("guifrag", Resource.getShaderPath("gui.frag"), Program.FRAGMENT); 
         loadShader("hdrfrag", Resource.getShaderPath("hdr.frag"), Program.FRAGMENT); 
+          
+        use("mainvert", "mainfrag");
+        saveCurrentConfiguration("object");       
         
-        use("mainvert", "maingeom", "mainfrag");
-        saveCurrentConfiguration("object");
-        
-        use("mainvert", "mainadjgeom", "mainfrag");
-        saveCurrentConfiguration("adjobject");
-        
-        use("mainvert", "maingeom", "terrainfrag");
+        use("mainvert", "terrainfrag");
         saveCurrentConfiguration("terrain");
         
-        use("mainvert", "passthroughgeom", "ambientfrag");
-        saveCurrentConfiguration("ambient");
+        use("mainvert", "ambientfrag");
+        saveCurrentConfiguration("ambient");     
         
-        use("mainvert", "passthroughadjgeom", "ambientfrag");
-        saveCurrentConfiguration("adjambient");
-        
-        use("passthroughvert", "passthroughgeom", "ssaofrag");
+        use("passthroughvert", "ssaofrag");
         saveCurrentConfiguration("ssao");
         
-       // use("passthroughvert", "passthroughgeom", "bloomfrag");
-      //  saveCurrentConfiguration("bloom");
+       // use("passthroughvert", "bloomfrag");
+       // saveCurrentConfiguration("bloom");
         
-        use("passthroughvert", "passthroughgeom", "hdrfrag");
+        use("passthroughvert", "hdrfrag");
         saveCurrentConfiguration("hdr");
 
-        use("passthroughvert", "passthroughgeom", "passthroughfrag");
+        use("passthroughvert", "passthroughfrag");
         saveCurrentConfiguration("passthrough");
-        
-        use("passthroughvert", "passthroughadjgeom", "passthroughfrag");
-        saveCurrentConfiguration("adjpassthrough");
-        
-        use("passthroughvert", "passthroughgeom", "cubemapfrag");
+             
+        use("passthroughvert", "cubemapfrag");
         saveCurrentConfiguration("sky");
         
-        use("passthroughvert", "volumegeom", "passthroughfrag");
+        use("passthroughvert", "passthroughfrag");
         saveCurrentConfiguration("volume");
         
-        use("passthroughvert", "passthroughgeom", "texturefrag");
+        use("passthroughvert", "texturefrag");
         saveCurrentConfiguration("texture");
         
-        use("passthroughvert", "passthroughgeom", "addfrag");
+        use("passthroughvert", "addfrag");
         saveCurrentConfiguration("add");
         
-        use("passthroughvert", "passthroughgeom", "guifrag");
+        use("passthroughvert", "guifrag");
         saveCurrentConfiguration("gui");
         
         GGConsole.log("Default shaders loaded and validated");
@@ -399,7 +391,12 @@ public class ShaderController {
     }
     
     private static void use(Program v, Program g, Program f){
-        String st = Integer.toString(v.id) + Integer.toString(g.id) + Integer.toString(f.id);
+        String st;
+        if(g == null)
+            st = v.id + ";;" + f.id;
+        else
+            st = v.id + ";" + g.id + ";" + f.id;
+        
         Pipeline p;
         if((p = pipelines.get(st)) != null){
             p.bind();
@@ -417,27 +414,51 @@ public class ShaderController {
         use(programs.get(v), programs.get(g), programs.get(f));
     }
     
+    public static void use(String v, String f){
+        curv = v;
+        curg = "";
+        curf = f;
+        use(programs.get(v), null, programs.get(f));
+    }
+    
     public static void saveConfiguration(String v, String g, String f, String name){
         Program vp = programs.get(v);
         Program gp = programs.get(g);
         Program fp = programs.get(f);
         
-        String st = Integer.toString(vp.id) + Integer.toString(gp.id) + Integer.toString(fp.id);
+        String st = vp.id + ";" + gp.id + ";" + fp.id;
+        
+        rnames.put(name, st);
+    }
+    
+    public static void saveConfiguration(String v, String f, String name){
+        Program vp = programs.get(v);
+        Program fp = programs.get(f);
+        
+        String st = vp.id + ";;" + fp.id;
         
         rnames.put(name, st);
     }
     
     public static void saveCurrentConfiguration(String name){
-        saveConfiguration(curv, curg, curf, name);
+        if(!curg.equals(""))
+            saveConfiguration(curv, curg, curf, name);
+        else
+            saveConfiguration(curv,curf,name);
     }
     
     public static void useConfiguration(String name){
         String id = rnames.get(name);
         Pipeline p = pipelines.get(id);
                
-        curv = p.vert.name;
-        curg = p.geom.name;
-        curf = p.frag.name;
+        if(p == null){
+            GGConsole.error("A shader configuration named " + name + " tried to be used, but no appropriate pipeline was found!");
+            throw new InvalidShaderException("Failed to find pipeline named " + name);
+        }
+        
+        curv = p.vert;
+        curg = p.geom;
+        curf = p.frag;
         
         p.bind();
     }
@@ -448,6 +469,10 @@ public class ShaderController {
         }
         pipelines.clear();
         pipelines = new HashMap<>();
+    }
+    
+    public static Program getProgram(String program){
+        return programs.get(program);
     }
     
     public static boolean loadShader(String name, String loc, int type){

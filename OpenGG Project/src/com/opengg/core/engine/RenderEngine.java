@@ -21,7 +21,6 @@ import com.opengg.core.render.texture.Cubemap;
 import com.opengg.core.render.texture.Framebuffer;
 import com.opengg.core.render.texture.TextureManager;
 import com.opengg.core.world.Camera;
-import com.opengg.core.world.components.ModelRenderComponent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,6 +33,7 @@ import static org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW;
 import static org.lwjgl.opengl.GL20.glStencilOpSeparate;
 import static org.lwjgl.opengl.GL30.GL_MAJOR_VERSION;
 import static org.lwjgl.opengl.GL30.GL_MINOR_VERSION;
+import static org.lwjgl.opengl.GL30.GL_RGBA16F;
 import static org.lwjgl.opengl.GL31.GL_UNIFORM_BUFFER;
 import static org.lwjgl.opengl.GL32.GL_DEPTH_CLAMP;
 import static org.lwjgl.opengl.GL32.GL_TEXTURE_CUBE_MAP_SEAMLESS;
@@ -49,9 +49,6 @@ public class RenderEngine {
     static List<RenderPath> paths = new ArrayList<>();
     static GLBuffer lightobj;
     static RenderGroup dlist;
-    static RenderGroup adjdlist;
-    static RenderGroup terrainlist;
-    static boolean shadVolumes = false;
     static Drawable skybox;
     static Cubemap skytex;
     static boolean initialized;
@@ -74,7 +71,7 @@ public class RenderEngine {
         
         TextureManager.initialize();
         ModelManager.initialize();
-        sceneTex = Framebuffer.getFramebuffer(OpenGG.window.getWidth(), OpenGG.window.getHeight(), 2);
+        sceneTex = Framebuffer.getFramebuffer(OpenGG.window.getWidth(), OpenGG.window.getHeight(), 4, GL_RGBA16F);
         PostProcessPipeline.initialize(sceneTex);
         
         defaultvao = new VertexArrayObject(vaoformat);
@@ -86,7 +83,6 @@ public class RenderEngine {
         
         lightoffset = (MemoryUtil.memAllocFloat(Light.bfsize).capacity()) << 2;
         groups.add(dlist);
-        groups.add(adjdlist);
         
         Camera c = new Camera();
         useCamera(c);
@@ -104,11 +100,7 @@ public class RenderEngine {
     
     public static void enableDefaultGroups(){
         dlist = new RenderGroup("default");
-        adjdlist = new RenderGroup("adjdefault");
-        terrainlist = new RenderGroup("terrain");
         dlist.setPipeline("object");
-        adjdlist.setPipeline("adjobject");
-        terrainlist.setPipeline("terrain");
         RenderPath path = new RenderPath("mainpath", () -> {
             for(RenderGroup d : getActiveRenderGroups()){
                 ShaderController.useConfiguration(d.pipeline);
@@ -221,28 +213,16 @@ public class RenderEngine {
     }
     
     public static void addRenderable(Renderable r){
-        if(r instanceof ModelRenderComponent){
-            adjdlist.add(r);
-        }else{
-            dlist.add(r);
-        }
+        dlist.add(r);
     }
     
     public static void setSkybox(Drawable sky, Cubemap c){
         skybox = sky;
         skytex = c;
     }    
-    
-    public static void setShadowVolumes(boolean vol){
-        shadVolumes = vol;
-    }
-    
+
     public static void setCulling(boolean enable){
         cull = enable;
-    }
-    
-    public static boolean getShadowsEnabled(){
-        return shadVolumes;
     }
     
     public static void useCamera(Camera c){

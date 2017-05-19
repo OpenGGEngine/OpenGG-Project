@@ -70,14 +70,12 @@ public class World extends ComponentHolder{
         
         boolean found = false;
         for(RenderGroup rg : groups){
-            if(rg.hasAdjacency() == r.hasAdjacency()){
-                if(rg.isTransparent() == r.isTransparent()){
-                    if(rg.getPipeline().equals(r.getShader())){
-                        if(rg.getFormat().equals(r.getFormat())){
-                            found = true;
-                            rg.add(r);
-                            break;
-                        }
+            if(rg.isTransparent() == r.isTransparent()){
+                if(rg.getPipeline().equals(r.getShader())){
+                    if(rg.getFormat().equals(r.getFormat())){
+                        found = true;
+                        rg.add(r);
+                        break;
                     }
                 }
             }            
@@ -86,7 +84,6 @@ public class World extends ComponentHolder{
         if(!found){
             RenderGroup group = new RenderGroup("world " + r.getShader(), r.getFormat());
             group.add(r);
-            group.setAdjacency(r.hasAdjacency());
             group.setTransparent(r.isTransparent());
             group.setPipeline(r.getShader());
             groups.add(group);

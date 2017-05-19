@@ -39,8 +39,6 @@ public class ModelRenderComponent extends RenderComponent{
         OpenGG.addExecutable(() -> {
             setModel(model);
         });
-        this.adjacency = true;
-        this.shader = "adjobject";
         this.transparent = true;
     }
     
