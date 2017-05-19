@@ -25,7 +25,7 @@ public class Material {
     public int illumModel = 0;
     public boolean dHalo = false;
     public double dFactor = 0.0;
-    public double nsExponent = 16;
+    public double nsExponent = 32;
     public double sharpnessValue = 0.0;
     public double niOpticalDensity = 0.0;
     public String mapKaFilename = null;

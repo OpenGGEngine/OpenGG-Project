@@ -30,7 +30,7 @@ public class ModelLoader {
      * 
      * This method does not generate a {@link com.opengg.core.render.drawn.Drawable Drawable} for the model, so it is multithreading safe as it does not call OpenGL<br><br>
      * 
-     * If the model cannot be found or fails to load, this method will load the default model instead. If that fails, an IOException is thrown.
+     * If the model cannot be found or fails to load, this method will load the default model instead. If that fails, an Exception is thrown.
      * @param path Path for the model to be loaded, also used as the identifier for the ModelManager
      * @return Loaded/retrieved model
      */
@@ -55,7 +55,7 @@ public class ModelLoader {
     
     /**
      * Creates a new Model object from the given path. Unless you know that a new object is needed, calls to {@link #loadModel(java.lang.String) loadModel()} should suffice<br>
-     * Note: This method does not create the Drawable, so it is thread safe
+     * Note: This method does not create the Drawable, so it is OpenGL safe
      * @param path Path of the model
      * @return Loaded model
      * @throws FileNotFoundException Throws if the model is not found
@@ -240,5 +240,18 @@ public class ModelLoader {
         Model m = new Model(getFileName(path), meshes);
         GGConsole.log("Done Parsing " + path + ", got " +m.getName());
         return m;
+    }
+    
+    public String readString(DataInputStream in) throws IOException{
+        int len = in.readInt();
+        String string = "";
+        if (len != 0) { 
+            for (int i = 0; i < len; i++) {
+                string += in.readChar();
+            }
+        } else {
+            string = "";
+        }
+        return string;
     }
 }

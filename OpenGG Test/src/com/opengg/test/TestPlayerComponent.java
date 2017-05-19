@@ -35,13 +35,13 @@ public class TestPlayerComponent extends ComponentHolder implements Actionable{
     Vector3f control = new Vector3f();
     Vector3f controlrot = new Vector3f();
     Vector3f currot = new Vector3f();
-    Vector3f weaponpos = new Vector3f(0.5f,1.2f,-2f);
-    Vector3f aweaponpos = new Vector3f(0f,1.36f,-2f);
+    Vector3f weaponpos = new Vector3f(0.5f,1.1f,-2f);
+    Vector3f aweaponpos = new Vector3f(0f,1.2f,-2f);
     Vector3f cweaponpos = weaponpos;
     float speed = 20;
     float rotspeed = 30;
     float bobspeed = 30;
-    boolean weaponbob = true;
+    boolean weaponbob = false;
     boolean aim = false;
     float bob = 0;
     
@@ -59,6 +59,7 @@ public class TestPlayerComponent extends ComponentHolder implements Actionable{
         playerphysics.frictionCoefficient = 0.8f;
         gun = new GunComponent();
         gun.setPositionOffset(weaponpos);
+        gun.setScale(new Vector3f(0.3f,0.3f,0.3f));
         gun.setRotationOffset(new Quaternionf(new Vector3f(0,90,0)));
         
         head.attach(camera);

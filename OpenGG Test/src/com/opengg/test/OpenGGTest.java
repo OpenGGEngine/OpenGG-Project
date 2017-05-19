@@ -11,7 +11,6 @@ import com.opengg.core.gui.GUI;
 import com.opengg.core.gui.GUIText;
 import com.opengg.core.io.ControlType;
 import static com.opengg.core.io.input.keyboard.Key.*;
-import static com.opengg.core.math.FastMath.sin;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.Text;
@@ -27,7 +26,6 @@ import com.opengg.core.render.window.WindowOptions;
 import static com.opengg.core.render.window.WindowOptions.GLFW;
 import com.opengg.core.world.Terrain;
 import com.opengg.core.world.World;
-import com.opengg.core.world.components.FreeFlyComponent;
 import com.opengg.core.world.components.TerrainComponent;
 import com.opengg.core.world.components.particle.FountainParticleEmitter;
 import com.opengg.core.world.generators.SmoothPerlinGenerator;
@@ -86,8 +84,8 @@ public class OpenGGTest extends GGApplication{
         world.setGroundArray(ArrayTexture.get("C:/res/smhd/grass.png", "C:/res/smhd/dirt.png","C:/res/smhd/flower2.png","C:/res/smhd/road.png"));
         world.setBlotmap(Texture.get("C:/res/blendMap.png"));
         
-        FreeFlyComponent player = new FreeFlyComponent();
-        //PlayerControlComponent player = new PlayerControlComponent();
+        //FreeFlyComponent player = new FreeFlyComponent();
+        TestPlayerComponent player = new TestPlayerComponent();
         player.use();
 
         //EnemySpawnerComponent cc = new EnemySpawnerComponent();
@@ -123,7 +121,7 @@ public class OpenGGTest extends GGApplication{
         RenderEngine.setCulling(false);  
         
         //GUI.addItem("text", new GUITexture(t3, new Vector2f(0,0), new Vector2f(1,1)));
-        GUI.addItem("aids", new GUIText(text, font, new Vector2f(4,0)));
+        GUI.addItem("aids", new GUIText(text, font, new Vector2f(0,0)));
     }
     float wow = 1f;
     
