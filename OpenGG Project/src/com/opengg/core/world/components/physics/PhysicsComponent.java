@@ -58,8 +58,8 @@ public class PhysicsComponent extends ComponentHolder {
 
     @Override
     public void update(float delta) {
-        pos = parent.getPosition();
-        rot = parent.getRotation();
+        Vector3f pos = parent.getPosition();
+        Quaternionf rot = parent.getRotation();
         
         float floor = getWorld().floorLev;
         
@@ -70,6 +70,18 @@ public class PhysicsComponent extends ComponentHolder {
         
         velocity.addThis(acceleration.multiply(delta));
         pos.addThis(velocity.multiply(delta));
+        
+        rotforce = finalRotForce();
+        angaccel = rotforce.divide(mass);
+        angvelocity.addThis(angaccel.multiply(delta));
+        
+        if(pos.y < floor){ 
+            pos.y = floor;
+            velocity.y = -velocity.y * bounciness;
+            grounded = true;
+            touched = true;
+        }
+        
         if(collider != null){
             List<Collision> collisions = CollisionHandler.testForCollisions(collider);
             for(Collision c : collisions){
@@ -80,18 +92,7 @@ public class PhysicsComponent extends ComponentHolder {
                 pos.subtractThis(c.overshoot);
             }
         }      
-        
-        rotforce = finalRotForce();
-        angaccel = rotforce.divide(mass);
-        angvelocity.addThis(angaccel.multiply(delta));
-
-        if(pos.y < floor){ 
-            pos.y = floor;
-            velocity.y = -velocity.y * bounciness;
-            grounded = true;
-            touched = true;
-        }
-        
+     
         if(touched && !overrideFriction){
             velocity.multiplyThis(1-frictionCoefficient*delta);
         }

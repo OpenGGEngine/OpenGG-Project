@@ -56,30 +56,34 @@ public class CollisionUtil {
     }
     
     public static Collision SphereTerrain(SphereCollider c1, TerrainCollider c2){
-        Vector3f np = c1.getPosition().subtract(c2.getPosition()).divide(c2.parent.getScale()).divide(2);
+        Vector3f np = c1.getPosition().subtract(c2.getPosition()).divide(c2.parent.getScale());
         float height = c2.t.getHeight(np.x, np.z);
         if(height == 12345)
             return null;
-        if(!(c1.getPosition().y < (height + c2.getPosition().y) * c2.parent.getScale().y))
+        height += c2.getPosition().y;
+        height *= c2.parent.getScale().y;
+        if(!(c1.getPosition().y < height))
             return null;
         Collision data = new Collision();
         data.collisionPoint = new Vector3f(c1.getPosition().x, height, c1.getPosition().z);
         data.collisionNormal = c2.t.getNormalAt(np.x, np.z);
-        data.overshoot = new Vector3f(0,c2.getPosition().y-height+c2.getPosition().y,0);
+        data.overshoot = new Vector3f(0,c1.getPosition().y-height,0);
         return data;
     }
     
     public static Collision CylinderTerrain(CylinderCollider c1, TerrainCollider c2){
-        Vector3f np = c1.getPosition().subtract(c2.getPosition()).divide(c2.parent.getScale()).divide(2);
+        Vector3f np = c1.getPosition().subtract(c2.getPosition()).divide(c2.parent.getScale());
         float height = c2.t.getHeight(np.x, np.z);
         if(height == 12345)
             return null;
-        if(c1.getPosition().y > (height * 2 + c2.getPosition().y) * c2.parent.getScale().y)
+        height += c2.getPosition().y;
+        height *= c2.parent.getScale().y;
+        if(!(c1.getPosition().y < height))
             return null;
         Collision data = new Collision();
-        data.collisionPoint = new Vector3f(c1.getPosition().x, height*2, c1.getPosition().z);
+        data.collisionPoint = new Vector3f(c1.getPosition().x, height, c1.getPosition().z);
         data.collisionNormal = c2.t.getNormalAt(np.x, np.z);
-        data.overshoot = new Vector3f(0,c1.getPosition().y-height*2+c2.getPosition().y,0);
+        data.overshoot = new Vector3f(0,c1.getPosition().y-height,0);
         return data;
     }
 }

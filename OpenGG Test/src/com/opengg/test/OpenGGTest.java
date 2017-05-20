@@ -28,7 +28,7 @@ import com.opengg.core.world.Terrain;
 import com.opengg.core.world.World;
 import com.opengg.core.world.components.TerrainComponent;
 import com.opengg.core.world.components.particle.FountainParticleEmitter;
-import com.opengg.core.world.generators.SmoothPerlinGenerator;
+import com.opengg.core.world.generators.DiamondSquare;
 import java.io.IOException;
 
 public class OpenGGTest extends GGApplication{
@@ -79,8 +79,8 @@ public class OpenGGTest extends GGApplication{
         terrain.attach(island);
         terrain.attach(water);*/
 
-        world = new TerrainComponent(Terrain.generateProcedural(new SmoothPerlinGenerator(7,0.2,10), 500,500));
-        world.setScale(new Vector3f(800,1,800));
+        world = new TerrainComponent(Terrain.generateProcedural(new DiamondSquare(7,20,20,4), 700, 700));
+        world.setScale(new Vector3f(800,10,800));
         world.setGroundArray(ArrayTexture.get("C:/res/smhd/grass.png", "C:/res/smhd/dirt.png","C:/res/smhd/flower2.png","C:/res/smhd/road.png"));
         world.setBlotmap(Texture.get("C:/res/blendMap.png"));
         

@@ -96,12 +96,9 @@ vec3 calculatenormal( vec3 N, vec3 V, vec2 texcoord ){
 
 
 void genPhong(){
-    vec3 positionRelativeToCam = (view * model * vec4(pos.xyz, 1.0f)).xyz;
-    
-    vec3 posCameraspace = (positionRelativeToCam);
-    eyedir = vec3(0,0,0) - posCameraspace;
+    eyedir = normalize(camera - pos.xyz);
 
-    float distance = length(positionRelativeToCam.xyz);
+    float distance = length(camera - pos);
 
     visibility = exp(-pow((distance*density),gradient));
     visibility = clamp(visibility,0.0,1.0);
@@ -123,7 +120,7 @@ vec4 getTex(sampler2D tname){
 vec3 shadify(Light light){
 
 	float distance = length( light.lightpos - pos.xyz ); 
-	float attenuation =  clamp((1.0 - distance/light.lightdistance), 0.0, 1.0);
+	float attenuation =  clamp((1.0 - (distance/light.lightdistance) * (distance/light.lightdistance)), 0.0, 10.0);
 	attenuation = attenuation * attenuation;
 
 	vec3 lightDir = normalize(light.lightpos - pos.xyz);
