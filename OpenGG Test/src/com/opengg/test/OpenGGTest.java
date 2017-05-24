@@ -9,6 +9,7 @@ import com.opengg.core.engine.RenderEngine;
 import com.opengg.core.engine.WorldEngine;
 import com.opengg.core.gui.GUI;
 import com.opengg.core.gui.GUIText;
+import com.opengg.core.gui.GUITexture;
 import com.opengg.core.io.ControlType;
 import static com.opengg.core.io.input.keyboard.Key.*;
 import com.opengg.core.math.Vector2f;
@@ -26,6 +27,7 @@ import com.opengg.core.render.window.WindowOptions;
 import static com.opengg.core.render.window.WindowOptions.GLFW;
 import com.opengg.core.world.Terrain;
 import com.opengg.core.world.World;
+import com.opengg.core.world.components.FreeFlyComponent;
 import com.opengg.core.world.components.TerrainComponent;
 import com.opengg.core.world.components.particle.FountainParticleEmitter;
 import com.opengg.core.world.generators.DiamondSquare;
@@ -39,13 +41,14 @@ public class OpenGGTest extends GGApplication{
     private Sound so, so2;
     private AudioListener as;
     private Light l;
+    public Sun sun;
     
     public static void main(String[] args) throws IOException, Exception {
         WindowInfo w = new WindowInfo();
         w.displaymode = WindowOptions.WINDOWED;
         w.width = 1280;
         w.height = 1024;
-        w.resizable = false;
+        w.resizable = true;
         w.type = GLFW;
         w.vsync = true;
         OpenGG.initialize(new OpenGGTest(), w);
@@ -56,7 +59,7 @@ public class OpenGGTest extends GGApplication{
         so = new Sound(OpenGGTest.class.getResource("res/gay.wav"));
         so2 = new Sound(OpenGGTest.class.getResource("res/mgs.wav"));
         
-        t3 = Texture.get("C:/res/deer.png");
+        t3 = Texture.get("C:/res/dvdlogo.png");
         t2 = Texture.get("C:/res/test.png");
 
         font = new GGFont("C:/res/test.png", "C:/res/test.fnt");
@@ -79,7 +82,7 @@ public class OpenGGTest extends GGApplication{
         terrain.attach(island);
         terrain.attach(water);*/
 
-        world = new TerrainComponent(Terrain.generateProcedural(new DiamondSquare(7,20,20,4), 700, 700));
+        world = new TerrainComponent(Terrain.generateProcedural(new DiamondSquare(7,20,20,5.5f), 700, 700));
         world.setScale(new Vector3f(800,10,800));
         world.setGroundArray(ArrayTexture.get("C:/res/smhd/grass.png", "C:/res/smhd/dirt.png","C:/res/smhd/flower2.png","C:/res/smhd/road.png"));
         world.setBlotmap(Texture.get("C:/res/blendMap.png"));
@@ -95,10 +98,14 @@ public class OpenGGTest extends GGApplication{
         
         w.attach(player);
         w.attach(world);
+         Vector3f lightDir = new Vector3f(0.55f, -0.34f, 1);
+         sun = new Sun(Texture.get("C:/res/sun.png"),200f);
+         sun.setDirection(0.55f, -0.34f, 1);
+        w.attach(new SunComponent(sun));
         //w.attach(particle);
         world.enableRendering();
         world.enableCollider();
-
+        
         WorldEngine.useWorld(w);
         
         BindController.addBind(ControlType.KEYBOARD, "forward", KEY_W);
@@ -116,21 +123,34 @@ public class OpenGGTest extends GGApplication{
         
         l = new Light(new Vector3f(10,200,0), new Vector3f(1,1,1), 4000f, 0);
         
-        RenderEngine.addLight(l);
-        RenderEngine.setSkybox(ObjectCreator.createCube(1500f), Cubemap.get("C:\\res\\skybox\\majestic"));
+        //RenderEngine.addLight(l);
+        RenderEngine.setSkybox(ObjectCreator.createCube(1500f), Cubemap.get("C:\\res\\skybox\\yellowcloud"));
         RenderEngine.setCulling(false);  
         
-        //GUI.addItem("text", new GUITexture(t3, new Vector2f(0,0), new Vector2f(1,1)));
-        GUI.addItem("aids", new GUIText(text, font, new Vector2f(0,0)));
+        GUI.addItem("text", new GUITexture(t3, new Vector2f(-1,0f), new Vector2f(0.3f,0.2f)));
+        GUI.addItem("aids", new GUIText(text, font, new Vector2f(1f,0)));
+        
     }
-    float wow = 1f;
+    float wow = 0f;
     
     @Override
     public void render() {
         ShaderController.setPerspective(90, OpenGG.window.getRatio(), 0.2f, 3000f);
         RenderEngine.draw();
     }
-
+    Vector2f velocity = new Vector2f(0.002f,0.002f);
+    float bold = 0f;
     @Override
-    public void update() {}
+    public void update() {
+        Vector2f vf = GUI.root.getItem("text").getPositionOffset();
+        GUI.root.getItem("text").setPositionOffset(vf.add(velocity));
+        if( GUI.root.getItem("text").getPositionOffset().x > 0.9f || GUI.root.getItem("text").getPositionOffset().x < -1f){
+            velocity.x *= -1;
+        }
+         if( GUI.root.getItem("text").getPositionOffset().y < -0.9f || GUI.root.getItem("text").getPositionOffset().y > 1){
+            velocity.y *= -1;
+        }
+         bold-= 0.001f;
+         sun.setDirection(bold, bold,1);
+        }
 }

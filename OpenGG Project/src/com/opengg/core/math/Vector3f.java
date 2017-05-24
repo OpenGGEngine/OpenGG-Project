@@ -143,7 +143,12 @@ public class Vector3f implements Serializable{
         set(this.x * -1, this.y * -1, this.z * -1);
         return this;
     }
-    
+    public Vector3f negate() {
+		this.x = -this.x;
+		this.y = -this.y;
+		this.z = -this.z;
+		return this;
+	}
     public Vector3f reciprocal(){
         return new Vector3f(this).reciprocateThis();
     }
@@ -248,9 +253,9 @@ public class Vector3f implements Serializable{
         float length = length();
         float azimuth = getAzimuth();
         
-        x = (float) (length * Math.sin(Math.toRadians(deg)) * Math.cos(Math.toRadians(azimuth)));
-        y = (float) (length * Math.sin(Math.toRadians(deg)) * Math.sin(Math.toRadians(azimuth)));
-        z = (float) (length * Math.cos(Math.toRadians(deg)));
+        x = (float) (length * FastMath.sinDeg(deg) * Math.cos(Math.toRadians(azimuth)));
+        y = (float) (length * FastMath.sinDeg(deg) * Math.sin(Math.toRadians(azimuth)));
+        z = (float) (length * FastMath.cosDeg(deg));
     }
     
     public void setAzimuth(float deg){
