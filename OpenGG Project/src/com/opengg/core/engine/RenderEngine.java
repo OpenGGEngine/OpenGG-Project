@@ -361,6 +361,5 @@ public class RenderEngine {
     
     static void destroy(){
         TextureManager.destroy();
-        GGConsole.log("Render engine has finalized");
     }
 }

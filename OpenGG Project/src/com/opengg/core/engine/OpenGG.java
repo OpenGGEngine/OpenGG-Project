@@ -14,6 +14,7 @@ import static com.opengg.core.render.window.RenderUtil.startFrame;
 import com.opengg.core.render.window.Window;
 import com.opengg.core.render.window.WindowInfo;
 import static com.opengg.core.render.window.WindowOptions.GLFW;
+import com.opengg.core.thread.ThreadManager;
 import com.opengg.core.world.Deserializer;
 import com.opengg.core.world.Serializer;
 import com.opengg.core.world.World;
@@ -36,8 +37,8 @@ import java.util.logging.Logger;
  * Primary controller of all functionality in the OpenGG Engine
  * @author Javier
  */
-public class OpenGG implements ConsoleListener{
-    public static String version = "0.0.1a1";
+public class OpenGG{
+    public static final String version = "0.0.1a1";
     
     public static Window window;
     public static GGApplication app;
@@ -51,6 +52,8 @@ public class OpenGG implements ConsoleListener{
     static boolean verbose = false;
     static boolean test = false;
       
+    private OpenGG(){}
+    
     /**
      * Initializes an instance of the OpenGG Engine. This gives full runtime control of the program to OpenGG, so no code will run past this call until the engine closes
      * @param app Instance of the OpenGG-driven application
@@ -100,10 +103,11 @@ public class OpenGG implements ConsoleListener{
         head = client;
         
         linkLWJGL();
+        lwjglinit = true;
         
+        ThreadManager.initialize();
         SystemInfo.querySystemInfo();
         Config.reloadConfigs();
-        lwjglinit = true;
         
         String verb = System.getProperty("gg.verbose");
         String stest = System.getProperty("gg.istest");
@@ -115,6 +119,8 @@ public class OpenGG implements ConsoleListener{
             if(stest.equals("true"))
                 test = true;
         
+        ThreadManager.runRunnable(new GGConsole(), "consolethread");
+        GGConsole.addListener(new OpenGGCommandExtender());
         GGConsole.log("OpenGG initializing, running on " + System.getProperty("os.name") + ", " + System.getProperty("os.arch"));
         
         OpenGG.app = app;
@@ -124,6 +130,7 @@ public class OpenGG implements ConsoleListener{
         
         curworld = new World();
 
+        GGConsole.log("Application setup beginning");
         app.setup();
         GGConsole.log("Application setup complete");
         if(client)
@@ -141,7 +148,6 @@ public class OpenGG implements ConsoleListener{
             }
             executables.clear();
             try {
-                //GGConsole.pollInput();
                 Thread.sleep(20);
             } catch (InterruptedException ex) {
                 Logger.getLogger(OpenGG.class.getName()).log(Level.SEVERE, null, ex);
@@ -149,7 +155,6 @@ public class OpenGG implements ConsoleListener{
         }
         end = true;
         if(!force){
-            GGConsole.destroy();
             GGConsole.log("OpenGG has closed gracefully, application can now be ended");
         }
         writeLog();
@@ -166,7 +171,6 @@ public class OpenGG implements ConsoleListener{
             app.update();
             WorldEngine.update();
             SoundtrackHandler.update();
-            //GGConsole.pollInput();
         }
         end = true;
         if(!force){
@@ -190,6 +194,7 @@ public class OpenGG implements ConsoleListener{
     }
     
     public static void saveState(){
+        GGConsole.log("Saving state...");
         try(DataOutputStream dos = new DataOutputStream(new FileOutputStream(Resource.getLocal("dump.sav")))) {
             byte[] world = Serializer.serialize(curworld);
             dos.writeInt(world.length);
@@ -200,6 +205,7 @@ public class OpenGG implements ConsoleListener{
         } catch (IOException ex) {
             Logger.getLogger(OpenGG.class.getName()).log(Level.SEVERE, null, ex);
         }
+        GGConsole.log("State has been saved");
     }
     
     public static void loadState(){
@@ -231,13 +237,16 @@ public class OpenGG implements ConsoleListener{
             writeLog();
             System.exit(0);
         }
+        GGConsole.log("LWJGL has been loaded");
     }
     
     public static void endApplication(){
+        GGConsole.log("Application end has been requested");
         end = true;
     }
     
     public static void forceEnd(){
+        GGConsole.warning("Application has been asked to force quit");
         force = true;
         end = true;
     }
@@ -248,9 +257,12 @@ public class OpenGG implements ConsoleListener{
     
     private static void closeEngine(){
         RenderEngine.destroy();      
+        GGConsole.log("Render engine has finalized");
         AudioController.destroy();
+        GGConsole.log("Audio controller has been finalized");
         window.destroy();
-        GGConsole.destroy();
+        ThreadManager.destroy();
+        GGConsole.log("Thread Manager has closed all remaining threads");
         GGConsole.log("OpenGG has closed gracefully, application can now be ended");
     }
     
@@ -278,15 +290,5 @@ public class OpenGG implements ConsoleListener{
             e.execute();
         }
         executables.clear();
-    }
-    
-    @Override
-    public void onConsoleInput(String s) {
-        if(s.equalsIgnoreCase("quit")){
-            endApplication();
-        }
-        if(s.equalsIgnoreCase("forcequit")){
-            forceEnd();
-        }
     }
 }

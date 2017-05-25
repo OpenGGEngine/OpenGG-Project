@@ -58,8 +58,8 @@ public class OpenGGTest extends GGApplication{
         Soundtrack track = new Soundtrack();
         track.addSong("C:\\res\\gun.ogg");
         track.addSong("C:\\res\\mgs.ogg");
-        track.play();
-        SoundtrackHandler.setSoundtrack(track);
+        //track.play();
+        //SoundtrackHandler.setSoundtrack(track);
         
         t2 = Texture.get("C:/res/test.png");
         font = new GGFont("C:/res/test.png", "C:/res/test.fnt");

@@ -25,6 +25,7 @@ public class SoundtrackHandler {
     }
     
     public static void update(){
-        current.update();
+        if(current != null)
+            current.update();
     }
 }

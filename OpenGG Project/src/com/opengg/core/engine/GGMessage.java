@@ -12,20 +12,20 @@ import java.util.Calendar;
  *
  * @author Javier
  */
-public class Message {
+public class GGMessage {
     String message;
     String sender;
     String time;
     Level level;
     
-    public Message(String message, Class sender, Level level){
+    public GGMessage(String message, Class sender, Level level){
         this.message = message;
         this.sender = sender.getSimpleName();
         this.level = level;
         this.time = Calendar.getInstance().getTime().toString();
     }
     
-    public Message(String message, String sender, Level level){
+    public GGMessage(String message, String sender, Level level){
         this.message = message;
         this.sender = sender;
         this.level = level;

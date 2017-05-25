@@ -6,30 +6,37 @@
 
 package com.opengg.core.engine;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Scanner;
+import java.util.logging.Logger;
 
 /**
  *
  * @author Javier
  */
-public class GGConsole {
-    static List<Message> messages = new LinkedList<>();
-    static List<ConsoleListener> listeners = new ArrayList<>();
-    static Scanner in = new Scanner(System.in);
+public class GGConsole implements Runnable{
+    private static List<GGMessage> messages = new LinkedList<>();
+    private static List<ConsoleListener> listeners = new ArrayList<>();
+    private static BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+    private static boolean running = true;
     
-    public static List<Message> getAllMessages(){
+    public static List<GGMessage> getAllMessages(){
         return messages;
     }
     
-    public static Message getMostRecent(){
+    public static GGMessage getMostRecent(){
         return messages.get(messages.size()-1);
     }
     
@@ -47,7 +54,7 @@ public class GGConsole {
     
     
     private static void write(String message, Level level){
-        Message m = new Message(message, getSender(), level);
+        GGMessage m = new GGMessage(message, getSender(), level);
         messages.add(m);
         System.out.println(m);
     } 
@@ -61,15 +68,6 @@ public class GGConsole {
         listeners.add(listener);
     }
     
-    public static void pollInput(){
-        if(in.hasNext()){
-            String s = in.next();
-            listeners.stream().forEach((l) -> {
-                l.onConsoleInput(s);
-            });
-        }
-    }
-    
     public static void writeLog(Date date){
         String dates = DateFormat.getDateTimeInstance().format(date);
         dates = dates.replace(":", "-");
@@ -78,7 +76,7 @@ public class GGConsole {
     
     public static void writeLog(Date date, String error, String name){
         try(PrintWriter writer = new PrintWriter(new FileOutputStream(Resource.getLocal("logs\\" + name + ".log")))) {
-            for(Message m : messages){
+            for(GGMessage m : messages){
                 writer.println(m.toString());
             }
             writer.println(error);
@@ -86,8 +84,28 @@ public class GGConsole {
             GGConsole.error("Could not create log file!");
         }
     }
-    
-    static void destroy(){
-        in.close();
+
+    @Override
+    public void run() {
+        try{
+            while(!Thread.interrupted()){
+                if(in.ready()){
+                    String s = "d";
+                    try {s = in.readLine();} catch (IOException ex) {}
+                    UserCommand command = new UserCommand();
+                    command.time = Calendar.getInstance().getTime();
+                    String[] strings = s.split(" ");
+                    command.command = strings[0];
+                    command.argCount = strings.length - 1;
+                    command.args = Arrays.copyOfRange(strings, 1, strings.length);
+                    for(ConsoleListener listener : listeners){
+                        listener.onConsoleInput(command);
+                    }
+                }
+                Thread.sleep(5);
+            }
+        }catch(IOException e){
+            GGConsole.error("Console failed to access the default input, thread will be forced to close");
+        } catch (InterruptedException ex) {}
     }
 }

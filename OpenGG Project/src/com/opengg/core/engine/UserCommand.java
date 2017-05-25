@@ -4,15 +4,17 @@
  * and open the template in the editor.
  */
 
-package com.opengg.core.thread;
+package com.opengg.core.engine;
+
+import java.util.Date;
 
 /**
  *
  * @author Javier
  */
-public interface GameThreaded {
-    public void update(long delta);
-    public void render();
-    public void setup();
-    public void end();
+public class UserCommand {
+    Date time;
+    String command;
+    String[] args;
+    int argCount;
 }

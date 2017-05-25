@@ -76,5 +76,6 @@ public class AudioController {
         sources.stream().forEach((source) -> {
             source.remove();
         });
+        ALC.destroy();
     }
 }
