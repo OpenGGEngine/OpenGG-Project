@@ -16,7 +16,7 @@ import com.opengg.core.world.Actionable;
 import com.opengg.core.world.collision.BoundingBox;
 import com.opengg.core.world.collision.CylinderCollider;
 import com.opengg.core.world.components.CameraComponent;
-import com.opengg.core.world.components.ComponentHolder;
+import com.opengg.core.world.components.Component;
 import com.opengg.core.world.components.UserControlComponent;
 import com.opengg.core.world.components.WorldObject;
 import com.opengg.core.world.components.physics.CollisionComponent;
@@ -26,7 +26,7 @@ import com.opengg.core.world.components.physics.PhysicsComponent;
  *
  * @author Javier
  */
-public class TestPlayerComponent extends ComponentHolder implements Actionable{
+public class TestPlayerComponent extends Component implements Actionable{
     private final PhysicsComponent playerphysics;
     private final UserControlComponent controller;
     private final CameraComponent camera;

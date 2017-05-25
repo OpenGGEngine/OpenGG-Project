@@ -5,13 +5,11 @@
  */
 package com.opengg.core.engine;
 
-import com.opengg.core.render.Renderable;
 import com.opengg.core.util.Time;
 import com.opengg.core.world.TransitionEngine;
 import com.opengg.core.world.World;
 import com.opengg.core.world.collision.CollisionHandler;
 import com.opengg.core.world.components.Component;
-import com.opengg.core.world.components.ComponentHolder;
 import com.opengg.core.world.components.RenderComponent;
 import com.opengg.core.world.components.physics.CollisionComponent;
 import java.util.ArrayList;
@@ -80,10 +78,8 @@ public class WorldEngine{
     
     private static void traverseUpdate(Component c, float delta){
         c.update(delta);
-        if(c instanceof ComponentHolder){
-            for(Component c2 : ((ComponentHolder)c).getChildren()){
-                traverseUpdate(c2, delta);
-            }
+        for(Component c2 : ((Component)c).getChildren()){
+            traverseUpdate(c2, delta);
         }
     }
     

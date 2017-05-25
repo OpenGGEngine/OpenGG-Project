@@ -5,6 +5,7 @@
  */
 package com.opengg.core.render.drawn;
 
+import com.opengg.core.engine.RenderEngine;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.render.GLBuffer;
 import com.opengg.core.render.shader.ShaderController;
@@ -14,6 +15,7 @@ import java.util.List;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
+import static org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW;
 import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
 import static org.lwjgl.opengl.GL31.glDrawElementsInstanced;
 import static org.lwjgl.opengl.GL32.GL_TRIANGLES_ADJACENCY;
@@ -74,7 +76,7 @@ public class InstancedDrawnObject extends DrawnObject implements Drawable {
     }
 
     public void defInstanceBuffer(FloatBuffer data){
-        ivbo = new GLBuffer(GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+        ivbo = new GLBuffer(GL_ARRAY_BUFFER, GL_DYNAMIC_DRAW);
         ivbo.bind();
         ivbo.uploadData(data);
     }
@@ -87,11 +89,9 @@ public class InstancedDrawnObject extends DrawnObject implements Drawable {
     @Override
     public void render(){    
         ShaderController.setModel(model);
-        vbo.bind();
+        RenderEngine.getCurrentVAO().applyFormat(vbo, ivbo);
         evbo.bind();       
-        ShaderController.setInstanced(true);
         glDrawElementsInstanced(adj ? GL_TRIANGLES_ADJACENCY : GL_TRIANGLES, ind.limit(), GL_UNSIGNED_INT, 0, instnum);
-        ShaderController.setInstanced(false);
     }
     
     public void removeBuffer(){

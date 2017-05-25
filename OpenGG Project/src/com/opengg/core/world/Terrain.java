@@ -10,11 +10,14 @@ import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.render.drawn.DrawnObject;
+import com.opengg.core.render.texture.Texture;
+import com.opengg.core.render.texture.TextureData;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.logging.Level;
@@ -40,11 +43,11 @@ public class Terrain {
     }
 
     public static Terrain generate(String mappath){
-        
         Terrain t = new Terrain(1, 1);
         t.generateTexture(mappath);
         t.xsquarewidth = 1/(float)t.map.length;
         t.zsquarewidth = 1/(float)t.map[0].length;
+        t.normalize();
         return t;
     }
     
@@ -53,6 +56,7 @@ public class Terrain {
         t.genProcedural(generator, gridx, gridz);
         t.xsquarewidth = 1/(float)t.map.length;
         t.zsquarewidth = 1/(float)t.map[0].length;
+        t.normalize();
         return t;
     }
     
@@ -208,5 +212,43 @@ public class Terrain {
         float l2 = ((p3.z - p1.z) * (pos.x - p3.x) + (p1.x - p3.x) * (pos.y - p3.z))/det;
         float l3 = 1f - l1 - l2;
         return l1 * p1.y + l2 * p2.y + l3 * p3.y;
+    }
+    
+    private void normalize(){
+        float min = Float.MAX_VALUE;
+        float max = Float.MIN_VALUE;
+        
+        for(float[] row : map){
+            for(float val : row){
+                if(val > max)
+                    max = val;
+                if(val < min)
+                    min = val;
+            }
+        }
+        
+        for(float [] row : map){
+            for(float val : row){
+                val -= min;
+                val /= max - min;
+            }
+        }
+    }
+    
+    public ByteBuffer getHeightmapBuffer(){
+        ByteBuffer texBuffer = MemoryUtil.memAlloc(map.length * map[0].length * 4);
+        for(int j = 0; j < map.length; j++){
+            for(int i = 0; i < map.length; i++){
+                byte val2 = (byte) (map[i][j] * 16);
+                texBuffer.put(val2).put(val2).put(val2).put((byte)0xFF);
+            }
+        }
+        texBuffer.flip();
+        return texBuffer;
+    }
+    
+    public Texture getHeightmap(){
+        TextureData data = new TextureData(map.length, map[0].length, getHeightmapBuffer());
+        return Texture.get(data);
     }
 }

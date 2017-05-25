@@ -5,11 +5,14 @@
  */
 package com.opengg.core.world.components;
 
+import com.opengg.core.engine.WorldEngine;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.world.Deserializer;
 import com.opengg.core.world.Serializer;
 import com.opengg.core.world.World;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Represents any object attachable to another Component that links with the WorldEngine for updating and serializing<br><br>
@@ -26,11 +29,13 @@ public abstract class Component{
     public static int curid = 0;
     public int id;
     public boolean absoluteOffset = false;
+    public boolean enabled = true;
     public String name = "";
-    public ComponentHolder parent;
+    public Component parent;
     public Vector3f pos = new Vector3f();
     public Quaternionf rot = new Quaternionf();
     public Vector3f scale = new Vector3f(1,1,1);
+    protected List<Component> children = new ArrayList<>();
     
     
     /**
@@ -61,7 +66,7 @@ public abstract class Component{
      * Set the parent of the component, should rarely be called directly
      * @param parent The object that represents the new parent to this component
      */
-    public void setParentInfo(ComponentHolder parent){
+    public void setParentInfo(Component parent){
         this.parent = parent;
     }
     
@@ -156,9 +161,7 @@ public abstract class Component{
      * Called once by WorldEngine per update cycle, override for functionality
      * @param delta Delta time since last update cycle in seconds
      */
-    public void update(float delta){
-        
-    }
+    public void update(float delta){}
     
     /**
      * Called by various sources for serialization of the component, and by default only serialized position, rotation, and scale offsets<br><br>
@@ -197,6 +200,24 @@ public abstract class Component{
      */
     public World getWorld(){
         return parent.getWorld();
+    }
+    
+    public void attach(Component c) {
+        c.setParentInfo((Component)this);
+        WorldEngine.addObjects(c);
+        children.add(c);
+    }  
+    
+    public List<Component> getChildren(){
+        return children;
+    }
+    
+    public void remove(int i){
+        children.remove(i);
+    }
+    
+    public void remove(Component w){
+        children.remove(w);
     }
     
     /**

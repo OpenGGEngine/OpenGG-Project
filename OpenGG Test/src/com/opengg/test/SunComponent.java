@@ -5,42 +5,54 @@
  */
 package com.opengg.test;
 
-import com.opengg.core.engine.OpenGG;
-import com.opengg.core.engine.RenderEngine;
-import com.opengg.core.math.Matrix4f;
+import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.drawn.TexturedDrawnObject;
 import com.opengg.core.render.light.Light;
-import com.opengg.core.render.objects.ObjectBuffers;
+import com.opengg.core.render.objects.ObjectCreator;
 import com.opengg.core.render.shader.ShaderController;
+import com.opengg.core.render.texture.Texture;
 import com.opengg.core.world.components.LightComponent;
 import com.opengg.core.world.components.RenderComponent;
+import java.nio.Buffer;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 
 /**
  *
  * @author Warren
  */
 public class SunComponent extends RenderComponent{
-    Sun sun;
-    Light l;
-    public SunComponent(Sun sun){
-        super(new TexturedDrawnObject(ObjectBuffers.getSquareUI(0, 1, 0,1, 1, 1, false),1,sun.getTexture()));
-        this.sun = sun;
-        this.scale = new Vector3f(sun.getScale(),sun.getScale(),sun.getScale());
-       l = new Light(sun.getWorldPosition(RenderEngine.camera.getPos().inverse()), new Vector3f(1,0.3f,0.3f),100000,10000);
-       LightComponent loser = new LightComponent(l);
-       this.attach(loser);
+    int SUN_DIS = 800;
+    float rotspeed;
+    float currot;
+    Texture texture;
+    LightComponent light;
+    
+    public SunComponent(Texture texture, float scale, float rotspeed){
+        super();
+        Buffer[] buffers = ObjectCreator.createSquareBuffers(new Vector2f(0,0), new Vector2f(1,1), 0f);
+        setDrawable(new TexturedDrawnObject((FloatBuffer)buffers[0], (IntBuffer)buffers[1], texture));
+        this.rotspeed = rotspeed;
+        this.texture = texture;
+        this.scale = new Vector3f(scale);
+        light = new LightComponent(new Light(new Vector3f(), new Vector3f(1,0.3f,0.3f),100000,10000));
+        light.use();
+        this.attach(light);
     }
+    
     @Override
     public void render() {
-        sun.getTexture().useTexture(0);
+        ShaderController.setBillBoard(1);
+        texture.useTexture(0);
         super.render();
+        ShaderController.setBillBoard(0);
     }
+    
     @Override
     public void update(float delta){
-        
-        this.setRotationOffset(RenderEngine.camera.getRot().invert());
-        this.setPositionOffset(sun.getWorldPosition(RenderEngine.camera.getPos().inverse()));
-        super.update(delta);
+        currot += delta * rotspeed;
+        pos.x = (float) (SUN_DIS * Math.cos(currot));
+        pos.y = (float) (SUN_DIS * Math.sin(currot));
     }
 }

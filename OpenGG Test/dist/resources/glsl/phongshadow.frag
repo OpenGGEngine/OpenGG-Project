@@ -52,6 +52,9 @@ uniform sampler2D Ka;
 uniform sampler2D Ks;
 uniform sampler2D Ns;
 uniform sampler2D bump;
+uniform sampler2D shadowmap;
+uniform sampler2D shadowmap2;
+uniform sampler2D shadowmap3;
 uniform samplerCube cubemap;
 uniform Material material;
 
@@ -194,5 +197,6 @@ void main() {
 		col += shadify(lights[i]);
 	}
 	fcolor = vec4(col + ambient, color.a);
+	fcolor = getTex(shadowmap);
 }
 

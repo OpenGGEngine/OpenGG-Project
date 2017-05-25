@@ -37,6 +37,7 @@ public class ShaderController {
     
     public static void initialize(){
         loadShader("mainvert", Resource.getShaderPath("object.vert"), Program.VERTEX);
+        loadShader("particlevert", Resource.getShaderPath("particle.vert"), Program.VERTEX);
         loadShader("passthroughvert", Resource.getShaderPath("passthrough.vert"), Program.VERTEX);
 
         loadShader("maingeom", Resource.getShaderPath("object.geom"), Program.GEOMETRY);
@@ -46,6 +47,7 @@ public class ShaderController {
         loadShader("passthroughadjgeom", Resource.getShaderPath("passthroughadj.geom"), Program.GEOMETRY);
         
         loadShader("mainfrag", Resource.getShaderPath("phong.frag"), Program.FRAGMENT);
+        loadShader("shadowfrag", Resource.getShaderPath("phongshadow.frag"), Program.FRAGMENT);
         loadShader("passthroughfrag", Resource.getShaderPath("passthrough.frag"), Program.FRAGMENT);
         loadShader("ssaofrag", Resource.getShaderPath("ssao.frag"), Program.FRAGMENT);  
         loadShader("cubemapfrag", Resource.getShaderPath("cubemap.frag"), Program.FRAGMENT); 
@@ -58,7 +60,10 @@ public class ShaderController {
         loadShader("hdrfrag", Resource.getShaderPath("hdr.frag"), Program.FRAGMENT); 
           
         use("mainvert", "mainfrag");
-        saveCurrentConfiguration("object");       
+        saveCurrentConfiguration("object");   
+        
+        use("mainvert", "shadowfrag");
+        saveCurrentConfiguration("shadobject");   
         
         use("mainvert", "terrainfrag");
         saveCurrentConfiguration("terrain");
@@ -87,11 +92,14 @@ public class ShaderController {
         use("passthroughvert", "texturefrag");
         saveCurrentConfiguration("texture");
         
+        use("passthroughvert", "guifrag");
+        saveCurrentConfiguration("gui");
+        
         use("passthroughvert", "addfrag");
         saveCurrentConfiguration("add");
         
-        use("passthroughvert", "guifrag");
-        saveCurrentConfiguration("gui");
+        use("particlevert", "texturefrag");
+        saveCurrentConfiguration("particle");
         
         GGConsole.log("Default shaders loaded and validated");
 
@@ -101,14 +109,14 @@ public class ShaderController {
         setUniform("inst", 0);
 
         findUniform("text");
-        setUniform("text", false);
+        setUniform("text", 0);
 
         findUniform("model");
         setUniform("model", new Matrix4f());
 
         findUniform("projection");
         setUniform("projection", new Matrix4f());
-
+        
         findUniform("cubemap");
         setTextureLocation("cubemap", 2);
 
@@ -147,6 +155,15 @@ public class ShaderController {
         
         findUniform("gamma");
         setUniform("gamma", 2.2f);
+        
+        findUniform("shadowmap"); 
+        setTextureLocation("shadowmap", 6);
+
+        findUniform("shadowmap2"); 
+        setTextureLocation("shadowmap2", 7);
+        
+        findUniform("shadowmap3"); 
+        setTextureLocation("shadowmap3", 8);
         
         setMatLinks();
 
@@ -213,7 +230,7 @@ public class ShaderController {
         setUniform("view", view);
     }
     
-    public static void setDistanceField(boolean distfield){
+    public static void setDistanceField(int distfield){
         setUniform("text", distfield);
     }
     
@@ -292,38 +309,50 @@ public class ShaderController {
     }
     
     public static void setUniform(String s, Vector3f v3){
-        for(Program p : programs.values()){p.setUniform(
-                p.getUniformLocation(s), v3);
+        for(Program p : programs.values()){
+            int loc = p.getUniformLocation(s);
+            if(loc >= 0)
+                p.setUniform(loc, v3);
         }
     }
     
     public static void setUniform(String s, Vector2f v2){
-        for(Program p : programs.values()){p.setUniform(
-                p.getUniformLocation(s), v2);
+        for(Program p : programs.values()){
+            int loc = p.getUniformLocation(s);
+            if(loc >= 0)
+                p.setUniform(loc, v2);
         }
     }
     
     public static void setUniform(String s, Matrix4f m4){
         for(Program p : programs.values()){
-            p.setUniform(p.getUniformLocation(s), m4);
+            int loc = p.getUniformLocation(s);
+            if(loc >= 0)
+                p.setUniform(loc, m4);
         }
     }
     
     public static void setUniform(String s, int i){
         for(Program p : programs.values()){
-            p.setUniform(p.getUniformLocation(s), i);
+            int loc = p.getUniformLocation(s);
+            if(loc >= 0)
+                p.setUniform(loc, i);
         }
     }
     
     public static void setUniform(String s, float f){
         for(Program p : programs.values()){
-            p.setUniform(p.getUniformLocation(s), f);
+            int loc = p.getUniformLocation(s);
+            if(loc >= 0)
+                p.setUniform(loc, f);
         }
     }
     
     public static void setUniform(String s, boolean b){
         for(Program p : programs.values()){
-            p.setUniform(p.getUniformLocation(s), b);
+            int loc = p.getUniformLocation(s);
+            if(loc >= 0)
+                p.setUniform(loc, b);
         }
     }
        
@@ -386,7 +415,7 @@ public class ShaderController {
         setUniform("material.hascolormap", m.hascolmap);
     }
     
-    public static void setBillBoard(boolean yes){  
+    public static void setBillBoard(int yes){  
         setUniform("billboard", yes);
     }
     

@@ -22,7 +22,7 @@ import static java.lang.Math.abs;
  *
  * @author Javier
  */
-public class PlayerComponent extends ComponentHolder implements Actionable{
+public class PlayerComponent extends Component implements Actionable{
     private final PhysicsComponent playerphysics;
     private final UserControlComponent controller;
     private final CameraComponent camera;

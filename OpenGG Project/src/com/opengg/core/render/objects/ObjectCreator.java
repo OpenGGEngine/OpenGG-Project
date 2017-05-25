@@ -7,6 +7,7 @@
 package com.opengg.core.render.objects;
 
 import com.opengg.core.io.objloader.parser.OBJParser;
+import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.render.drawn.DrawnObject;
@@ -36,6 +37,20 @@ public class ObjectCreator {
     
     public static Buffer[] createQuadPrismBuffers(Vector3f c1, Vector3f c2){
         return ObjectBuffers.genQuadPrism(c1,c2);
+    }
+    
+    public static Drawable createSquare(Vector2f c1, Vector2f c2, float z){
+        Buffer[] b = createSquareBuffers(c1, c2, z);
+        return new DrawnObject((FloatBuffer)b[0], (IntBuffer)b[1]);
+    }
+    
+    public static Drawable createInstancedSquare(Vector2f c1, Vector2f c2, float z){
+        Buffer[] b = createSquareBuffers(c1, c2,z);
+        return new InstancedDrawnObject((FloatBuffer)b[0], (IntBuffer)b[1]);
+    }
+    
+    public static Buffer[] createSquareBuffers(Vector2f c1, Vector2f c2, float z){
+        return ObjectBuffers.getSquare(c1, c2, z, 1, false);
     }
     
     public static Drawable createCube(float size){

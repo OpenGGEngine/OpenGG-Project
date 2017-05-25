@@ -8,17 +8,17 @@ package com.opengg.test;
 
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.model.ModelLoader;
-import com.opengg.core.world.components.ComponentHolder;
-import com.opengg.core.world.components.ModelRenderComponent;
 import com.opengg.core.world.collision.BoundingBox;
-import com.opengg.core.world.components.physics.CollisionComponent;
 import com.opengg.core.world.collision.CylinderCollider;
+import com.opengg.core.world.components.Component;
+import com.opengg.core.world.components.ModelRenderComponent;
+import com.opengg.core.world.components.physics.CollisionComponent;
 
 /**
  *
  * @author Javier
  */
-public class EnemyComponent extends ComponentHolder{
+public class EnemyComponent extends Component{
     public ModelRenderComponent enemy;
     public CollisionComponent killcollider;
     public EnemyComponent(){

@@ -54,6 +54,7 @@ public class RenderEngine {
     static boolean initialized;
     static Framebuffer sceneTex;
     static VertexArrayFormat vaoformat;
+    static VertexArrayFormat particle;
     static boolean cull = true;
     static int lightoffset;
     static Camera camera;
@@ -69,19 +70,26 @@ public class RenderEngine {
         vaoformat.addAttribute(new VertexArrayAttribute("normal", 3, 7, 0, false));
         vaoformat.addAttribute(new VertexArrayAttribute("texcoord", 2, 10, 0, false));
         
+        particle = new VertexArrayFormat();
+        particle.addAttribute(new VertexArrayAttribute("position", 3, 0, 0, false));
+        particle.addAttribute(new VertexArrayAttribute("color", 3, 0, 1, true));
+        particle.addAttribute(new VertexArrayAttribute("normal", 3, 7, 0, false));
+        particle.addAttribute(new VertexArrayAttribute("texcoord", 2, 10, 0, false));
+        
         TextureManager.initialize();
         ModelManager.initialize();
         sceneTex = Framebuffer.getFramebuffer(OpenGG.window.getWidth(), OpenGG.window.getHeight(), 4, GL_RGBA16F);
         PostProcessPipeline.initialize(sceneTex);
         
         defaultvao = new VertexArrayObject(vaoformat);
-        lightobj = new GLBuffer(GL_UNIFORM_BUFFER, 800, GL_DYNAMIC_DRAW);
+        lightobj = new GLBuffer(GL_UNIFORM_BUFFER, 1600, GL_DYNAMIC_DRAW);
         lightobj.bindBase(ShaderController.getUniqueUniformBufferLocation());
         ShaderController.setUniformBlockLocation(lightobj, "LightBuffer");
         
         enableDefaultGroups();
         
-        lightoffset = (MemoryUtil.memAllocFloat(Light.bfsize).capacity()) << 2;
+        lightoffset = (MemoryUtil.memAllocFloat(Light.bfsize).capacity());// << 2;
+
         groups.add(dlist);
         
         Camera c = new Camera();
@@ -101,11 +109,42 @@ public class RenderEngine {
     public static void enableDefaultGroups(){
         dlist = new RenderGroup("default");
         dlist.setPipeline("object");
+        
         RenderPath path = new RenderPath("mainpath", () -> {
             for(RenderGroup d : getActiveRenderGroups()){
                 ShaderController.useConfiguration(d.pipeline);
                 d.render(); 
             }
+        });
+        
+        RenderPath light = new RenderPath("shadowmap", () -> {
+            ShaderController.useConfiguration("passthrough");
+            int used = 0;
+            for(int i = 0; i < lights.size() && used < 2; i++){
+                if(lights.get(i).hasShadow()){    
+                    //ShaderController.setView(lights.get(i).getView());
+                    
+                    lights.get(i).getLightbuffer().startTexRender();
+                    lights.get(i).getLightbuffer().enableColorAttachments();
+                    for(RenderGroup d : getActiveRenderGroups()){
+                        d.render();
+                    }
+                    lights.get(i).getLightbuffer().endTexRender();
+                    lights.get(i).getLightbuffer().useDepthTexture(6 + used);
+                    used++;
+                }
+            }
+            sceneTex.startTexRender();
+            
+            for(RenderGroup d : getActiveRenderGroups()){
+                ShaderController.setView(camera.getMatrix());
+                if(d.pipeline.equals("object"))
+                    ShaderController.useConfiguration("shadobject");
+                else
+                    ShaderController.useConfiguration(d.pipeline);
+                d.render(); 
+            }
+            
         });
         paths.add(path);
     }
@@ -123,6 +162,10 @@ public class RenderEngine {
     
     public static VertexArrayFormat getDefaultFormat(){
         return vaoformat;
+    }
+    
+    public static VertexArrayFormat getParticleFormat(){
+        return particle;
     }
     
     public static Framebuffer getSceneFramebuffer(){
@@ -229,6 +272,10 @@ public class RenderEngine {
         camera = c;
     }
     
+    public static Camera getCurrentCamera(){
+        return camera;
+    }
+    
     static void useLights(){
         for(int i = 0; i < lights.size(); i++){
             lightobj.uploadSubData(lights.get(i).getBuffer(), i * lightoffset);
@@ -297,9 +344,7 @@ public class RenderEngine {
         skybox.render();    
         GUI.startGUIPos();
         PostProcessPipeline.process();
-
-        GUI.render();
-        
+        GUI.render();        
     }
     
     public static void resetConfig(){

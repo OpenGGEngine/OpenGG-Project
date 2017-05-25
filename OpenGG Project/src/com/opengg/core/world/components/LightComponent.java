@@ -6,6 +6,7 @@
 
 package com.opengg.core.world.components;
 
+import com.opengg.core.engine.RenderEngine;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.light.Light;
 
@@ -26,6 +27,10 @@ public class LightComponent extends Component{
         this.l = l;
     }
 
+    public void use(){
+        RenderEngine.addLight(l);
+    }
+    
     @Override
     public void update(float delta) {
         l.setPosition(parent.getPosition());

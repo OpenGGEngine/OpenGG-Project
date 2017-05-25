@@ -5,6 +5,7 @@
  */
 package com.opengg.core.world.components.particle;
 
+import com.opengg.core.engine.RenderEngine;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.drawn.InstancedDrawnObject;
 import com.opengg.core.render.texture.Texture;
@@ -26,7 +27,8 @@ public abstract class ParticleEmitter extends RenderComponent{
     
     public ParticleEmitter(InstancedDrawnObject drawn, Texture t){
         this.setDrawable(drawn);
-        drawn.setAdjacency(true);
+        this.setFormat(RenderEngine.getParticleFormat());
+        this.setShader("particle");
         this.t = t;
     }
     
@@ -46,7 +48,7 @@ public abstract class ParticleEmitter extends RenderComponent{
         Iterator<Particle> screwconcurrent = particles.iterator();
         while(screwconcurrent.hasNext()){
             Particle p2 = screwconcurrent.next();
-            if(p2.update()){
+            if(p2.update(delta)){
                 screwconcurrent.remove();             
             }
         }

@@ -22,14 +22,14 @@ public class TexturedDrawnObject implements Drawable{
     MTLMaterial m = new MTLMaterial();
     public Texture tex;
     Drawable object;
-     public TexturedDrawnObject(FloatBuffer b,int vertSize){
+     public TexturedDrawnObject(FloatBuffer b, int vertSize){
         object = new DrawnObject(b,RenderEngine.getDefaultFormat());
     }
-    public TexturedDrawnObject(FloatBuffer b,int vertSize,Texture t){
+    public TexturedDrawnObject(FloatBuffer b, int vertSize, Texture t){
         object = new DrawnObject(b,RenderEngine.getDefaultFormat());
         this.tex = t;
     }
-    public TexturedDrawnObject(FloatBuffer b,IntBuffer i,Texture t){
+    public TexturedDrawnObject(FloatBuffer b, IntBuffer i, Texture t){
         object = new DrawnObject(b,i);
         this.tex = t;
     }

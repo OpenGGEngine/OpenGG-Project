@@ -5,9 +5,10 @@
  */
 package com.opengg.core.render.postprocess;
 
+import com.opengg.core.math.Vector2f;
+import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.drawn.Drawable;
-import com.opengg.core.render.drawn.DrawnObject;
-import com.opengg.core.render.objects.ObjectBuffers;
+import com.opengg.core.render.objects.ObjectCreator;
 import com.opengg.core.render.texture.Framebuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +29,7 @@ public class PostProcessPipeline {
     static Stage add, mult, set;
     public static void initialize(Framebuffer initial){
         PostProcessPipeline.initial = initial;
-        sceneQuad = new DrawnObject(ObjectBuffers.getSquareUI(-1, 1, -1, 1, 1f, 1, false));
+        sceneQuad = ObjectCreator.createSquare(new Vector2f(-1, -1), new Vector2f(1, 1), -0.8f);
         
         Stage ssao = new Stage("ssao");
         StageSet ssaostage = new StageSet(StageSet.SET, 0);

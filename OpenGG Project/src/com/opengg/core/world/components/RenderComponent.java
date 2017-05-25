@@ -15,7 +15,7 @@ import com.opengg.core.render.shader.VertexArrayFormat;
  *
  * @author Javier
  */
-public class RenderComponent extends ComponentHolder implements Renderable{
+public class RenderComponent extends Component implements Renderable{
     Drawable g;
     public Matrix4f m = new Matrix4f();
     String shader;

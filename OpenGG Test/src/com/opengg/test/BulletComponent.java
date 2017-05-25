@@ -11,18 +11,18 @@ import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.model.ModelLoader;
 import com.opengg.core.render.light.Light;
-import com.opengg.core.world.components.ComponentHolder;
-import com.opengg.core.world.components.ModelRenderComponent;
-import com.opengg.core.world.components.physics.PhysicsComponent;
 import com.opengg.core.world.collision.BoundingBox;
-import com.opengg.core.world.components.physics.CollisionComponent;
 import com.opengg.core.world.collision.CylinderCollider;
+import com.opengg.core.world.components.Component;
+import com.opengg.core.world.components.ModelRenderComponent;
+import com.opengg.core.world.components.physics.CollisionComponent;
+import com.opengg.core.world.components.physics.PhysicsComponent;
 
 /**
  *
  * @author Javier
  */
-public class BulletComponent extends ComponentHolder{
+public class BulletComponent extends Component{
     float timeSinceFire;
     Light l;
     private GunComponent source;
@@ -47,7 +47,7 @@ public class BulletComponent extends ComponentHolder{
         physics.frictionCoefficient = 0;
         attach(physics);
 
-        l = new Light(getPositionOffset(), new Vector3f(1,0.3f,0.3f),800,300);
+        l = new Light(getPositionOffset(), new Vector3f(1,0.3f,0.3f),200,300);
         RenderEngine.addLight(l);
         
         WorldEngine.getCurrent().addRenderable(bullet);

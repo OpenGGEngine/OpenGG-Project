@@ -17,7 +17,7 @@ import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.Renderable;
 import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.world.components.Component;
-import com.opengg.core.world.components.ComponentHolder;
+import com.opengg.core.world.components.Component;
 import com.opengg.core.world.components.RenderComponent;
 import com.opengg.core.world.components.physics.CollisionComponent;
 import java.util.ArrayList;
@@ -28,7 +28,7 @@ import java.util.List;
  *
  * @author Javier
  */
-public class World extends ComponentHolder{
+public class World extends Component{
     public float floorLev = 0;
     public Vector3f gravityVector = new Vector3f(0,-9.81f,0);
     public List<RenderGroup> groups = new ArrayList<>();
@@ -121,8 +121,8 @@ public class World extends ComponentHolder{
     private Component traverseFind(Component c, int i){
         if(c.id == i)
             return c;
-        if(c instanceof ComponentHolder){
-            for(Component comp : ((ComponentHolder)c).getChildren()){
+        if(c instanceof Component){
+            for(Component comp : ((Component)c).getChildren()){
                 Component fc = traverseFind(comp, i);
                 if(fc != null)
                     return fc;           
@@ -133,8 +133,8 @@ public class World extends ComponentHolder{
     
     private void traverseGet(Component c, List<Component> list){
         list.add(c);
-        if(c instanceof ComponentHolder){
-            for(Component comp : ((ComponentHolder)c).getChildren()){
+        if(c instanceof Component){
+            for(Component comp : ((Component)c).getChildren()){
                 traverseGet(comp, list);      
             }
         }
@@ -156,7 +156,7 @@ public class World extends ComponentHolder{
     }
     
     @Override
-    public void setParentInfo(ComponentHolder parent) {
+    public void setParentInfo(Component parent) {
         throw new InvalidParentException("World must be the top level component!");
     }
     

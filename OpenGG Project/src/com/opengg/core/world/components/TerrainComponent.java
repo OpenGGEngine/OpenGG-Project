@@ -48,6 +48,10 @@ public class TerrainComponent extends RenderComponent{
         this.blotmap = tex;
     }
     
+    public Terrain getTerrain(){
+        return t;
+    }
+    
     @Override
     public void render(){
         this.blotmap.useTexture(1);

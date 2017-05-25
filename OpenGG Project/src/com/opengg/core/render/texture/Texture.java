@@ -21,20 +21,14 @@ import static org.lwjgl.opengl.GL30.*;
  * @author Javier
  */
 public class Texture {
-    
     int texture;
     public static Texture blank;
     int width;
     int height;
     int type;
     private int offset;
-    //ByteBuffer buffer; 
     
-    Texture(String path){
-        forceLoadTexture(path, true);
-    }
-    
-    Texture(){};
+    protected Texture(){};
     
     public static Texture get(String path){
         Texture t;
@@ -42,7 +36,8 @@ public class Texture {
             return t;
         }else{
             if(new File(path).exists()){
-                t = new Texture(path);
+                t = new Texture();
+                t.forceLoadTexture(path, true);
             }else{
                 t =  TextureManager.getTexture("default");  
                 GGConsole.warning("Could not find texture at " + path + ", using default instead");
@@ -50,6 +45,12 @@ public class Texture {
             TextureManager.setTexture(path, t);
             return t;
         }
+    }
+    
+    public static Texture get(TextureData data){
+        Texture t = new Texture();
+        t.getFromSource(data);
+        return t;
     }
     
     public void useTexture(int loc){
@@ -78,51 +79,36 @@ public class Texture {
         glActiveTexture(GL_TEXTURE0);
     }
     
-    public int loadFromBuffer(ByteBuffer b, int fwidth, int fheight){
-        texture = glGenTextures();
-        glBindTexture(type, texture);
-        glGenerateMipmap(type);
-        glTexParameteri(type, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(type, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        glTexParameteri(type, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(type, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        
-        width = fwidth;
-        height = fheight;
-        
-        glTexImage2D(type, 0, GL_RGBA8, fwidth, fheight, 0, GL_RGBA, GL_UNSIGNED_BYTE, b);
-        glBindTexture(type, 0);
-        
-        return texture;
-    } 
-    
     public int forceLoadTexture(String path, boolean flipped){
-        type = GL_TEXTURE_2D;
         try{
-            TextureData data = TextureBufferGenerator.getFastBuffer(path, flipped);
-            
-            width = data.width;
-            height = data.height;
-            ByteBuffer buffer = (ByteBuffer) data.buffer;
-            
-            glActiveTexture(GL_TEXTURE0);
-            texture = glGenTextures();
-            glBindTexture(GL_TEXTURE_2D, texture);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);//GL_LINEAR_MIPMAP_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS, -2);
-            glGenerateMipmap(GL_TEXTURE_2D);
-            glBindTexture(GL_TEXTURE_2D, 0);
-            buffer.clear();
-            return texture;
+            getFromSource(TextureBufferGenerator.getFastBuffer(path, flipped));
         } catch (Exception e){
             GGConsole.warning(path + " failed to load, using default texture instead");
-            forceLoadTexture(TextureManager.defPath, false);
+            TextureManager.getTexture("default");
             TextureManager.setTexture(path, this);
         }
+        return texture;
+    }
+    
+    private int getFromSource(TextureData data){
+        type = GL_TEXTURE_2D;
+        
+        ByteBuffer buffer = (ByteBuffer) data.buffer;
+        width = data.width;
+        height = data.height;
+            
+        glActiveTexture(GL_TEXTURE0);
+        texture = glGenTextures();
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS, -2);
+        glGenerateMipmap(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, 0);
+        buffer.clear();
         return texture;
     }
     
@@ -135,7 +121,6 @@ public class Texture {
             float lev = Math.min(level, glGetFloat(EXTTextureFilterAnisotropic.GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT));
             glTexParameterf(GL_TEXTURE_2D, EXTTextureFilterAnisotropic.GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, lev);
         }
-        
     }
  
     public void destroy(){

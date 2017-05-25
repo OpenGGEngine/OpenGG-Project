@@ -24,7 +24,8 @@ public class TextureManager {
             File deft = new File("resources/tex/default.png");
             if(deft.exists()){
                 defPath = deft.getCanonicalPath();
-                Texture def = new Texture(defPath);
+                Texture def = new Texture();
+                def.forceLoadTexture(defPath, false);
                 texturelist.put("default", def);
             }else{
                 throw new IOException();
@@ -35,7 +36,6 @@ public class TextureManager {
     }
     public static Texture getTexture(String path){
         Texture x = texturelist.get(path);
-        if(x == null) x = new Texture(path);
         return x;
     }
     public static void setTexture(String path, Texture t){

@@ -31,6 +31,7 @@ public class AudioController {
     static long device;
     static long context;
     static boolean initialized;
+    static float gain = 1;
     
     static ArrayList<NativeSound> sources = new ArrayList<>();
     static void init() {
@@ -49,7 +50,7 @@ public class AudioController {
     public static void setListener(AudioListener s){
         alListener3f(AL_POSITION,s.pos.x,s.pos.y,s.pos.z);
         alListener3f(AL_VELOCITY,s.vel.x,s.vel.y,s.vel.z);
-        
+
         int i = AL10.alGetError();
         if(i != AL10.AL_NO_ERROR)
             error("OpenAL Error in AudioHandler: " + i);
@@ -59,10 +60,21 @@ public class AudioController {
         sources.add(s);
     }
     
+    public static void removeAudioSource(NativeSound s){
+        sources.remove(s);
+    }
+    
+    public static void setGlobalGain(float ngain){
+        gain = ngain;
+    }
+    
+    public static float getGlobalGain(){
+        return gain;
+    }
+    
     static void destroy(){
         sources.stream().forEach((source) -> {
-            source.destroy();
+            source.remove();
         });
-        GGConsole.log("Audio controller has finalized");
     }
 }

@@ -12,7 +12,7 @@ import com.opengg.core.math.Vector3f;
  *
  * @author Javier
  */
-public class WorldObject extends ComponentHolder{
+public class WorldObject extends Component{
     
     public WorldObject(Vector3f pos, Quaternionf rot) {
         

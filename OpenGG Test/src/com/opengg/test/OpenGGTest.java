@@ -2,6 +2,8 @@ package com.opengg.test;
 
 import com.opengg.core.audio.AudioListener;
 import com.opengg.core.audio.Sound;
+import com.opengg.core.audio.Soundtrack;
+import com.opengg.core.audio.SoundtrackHandler;
 import com.opengg.core.engine.BindController;
 import com.opengg.core.engine.GGApplication;
 import com.opengg.core.engine.OpenGG;
@@ -9,7 +11,6 @@ import com.opengg.core.engine.RenderEngine;
 import com.opengg.core.engine.WorldEngine;
 import com.opengg.core.gui.GUI;
 import com.opengg.core.gui.GUIText;
-import com.opengg.core.gui.GUITexture;
 import com.opengg.core.io.ControlType;
 import static com.opengg.core.io.input.keyboard.Key.*;
 import com.opengg.core.math.Vector2f;
@@ -27,7 +28,6 @@ import com.opengg.core.render.window.WindowOptions;
 import static com.opengg.core.render.window.WindowOptions.GLFW;
 import com.opengg.core.world.Terrain;
 import com.opengg.core.world.World;
-import com.opengg.core.world.components.FreeFlyComponent;
 import com.opengg.core.world.components.TerrainComponent;
 import com.opengg.core.world.components.particle.FountainParticleEmitter;
 import com.opengg.core.world.generators.DiamondSquare;
@@ -41,7 +41,6 @@ public class OpenGGTest extends GGApplication{
     private Sound so, so2;
     private AudioListener as;
     private Light l;
-    public Sun sun;
     
     public static void main(String[] args) throws IOException, Exception {
         WindowInfo w = new WindowInfo();
@@ -56,12 +55,13 @@ public class OpenGGTest extends GGApplication{
 
     @Override
     public  void setup(){
-        so = new Sound(OpenGGTest.class.getResource("res/gay.wav"));
-        so2 = new Sound(OpenGGTest.class.getResource("res/mgs.wav"));
+        Soundtrack track = new Soundtrack();
+        track.addSong("C:\\res\\gun.ogg");
+        track.addSong("C:\\res\\mgs.ogg");
+        track.play();
+        SoundtrackHandler.setSoundtrack(track);
         
-        t3 = Texture.get("C:/res/dvdlogo.png");
         t2 = Texture.get("C:/res/test.png");
-
         font = new GGFont("C:/res/test.png", "C:/res/test.fnt");
         text = new Text("Turmoil has engulfed the Galactic Republic. The taxation of trade routes to outlying star systems is in dispute. \n\n"
                 + " Hoping to resolve the matter with a blockade of deadly battleships, "
@@ -91,18 +91,13 @@ public class OpenGGTest extends GGApplication{
         TestPlayerComponent player = new TestPlayerComponent();
         player.use();
 
-        //EnemySpawnerComponent cc = new EnemySpawnerComponent();
-        //w.attach(cc);
-        //w.attach(terrain);
-        FountainParticleEmitter particle = new FountainParticleEmitter(10,2,5,t3);
+        FountainParticleEmitter particle = new FountainParticleEmitter(8,5,1,Texture.get("C:\\res\\emak.png"));
         
         w.attach(player);
         w.attach(world);
-         Vector3f lightDir = new Vector3f(0.55f, -0.34f, 1);
-         sun = new Sun(Texture.get("C:/res/sun.png"),200f);
-         sun.setDirection(0.55f, -0.34f, 1);
-        w.attach(new SunComponent(sun));
-        //w.attach(particle);
+        w.attach(particle);
+        w.attach(new SunComponent(Texture.get("C:\\res\\emak.png"), 500, 0.1f));
+       
         world.enableRendering();
         world.enableCollider();
         
@@ -124,10 +119,8 @@ public class OpenGGTest extends GGApplication{
         l = new Light(new Vector3f(10,200,0), new Vector3f(1,1,1), 4000f, 0);
         
         //RenderEngine.addLight(l);
-        RenderEngine.setSkybox(ObjectCreator.createCube(1500f), Cubemap.get("C:\\res\\skybox\\yellowcloud"));
+        RenderEngine.setSkybox(ObjectCreator.createCube(1500f), Cubemap.get("C:\\res\\skybox\\majestic"));
         RenderEngine.setCulling(false);  
-        
-        GUI.addItem("text", new GUITexture(t3, new Vector2f(-1,0f), new Vector2f(0.3f,0.2f)));
         GUI.addItem("aids", new GUIText(text, font, new Vector2f(1f,0)));
         
     }
@@ -138,19 +131,7 @@ public class OpenGGTest extends GGApplication{
         ShaderController.setPerspective(90, OpenGG.window.getRatio(), 0.2f, 3000f);
         RenderEngine.draw();
     }
-    Vector2f velocity = new Vector2f(0.002f,0.002f);
-    float bold = 0f;
+
     @Override
-    public void update() {
-        Vector2f vf = GUI.root.getItem("text").getPositionOffset();
-        GUI.root.getItem("text").setPositionOffset(vf.add(velocity));
-        if( GUI.root.getItem("text").getPositionOffset().x > 0.9f || GUI.root.getItem("text").getPositionOffset().x < -1f){
-            velocity.x *= -1;
-        }
-         if( GUI.root.getItem("text").getPositionOffset().y < -0.9f || GUI.root.getItem("text").getPositionOffset().y > 1){
-            velocity.y *= -1;
-        }
-         bold-= 0.001f;
-         sun.setDirection(bold, bold,1);
-        }
+    public void update() {}
 }

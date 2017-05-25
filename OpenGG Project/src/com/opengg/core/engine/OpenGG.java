@@ -6,6 +6,7 @@
 
 package com.opengg.core.engine;
 
+import com.opengg.core.audio.SoundtrackHandler;
 import com.opengg.core.exceptions.IncompatibleWindowFormatException;
 import com.opengg.core.render.window.GLFWWindow;
 import static com.opengg.core.render.window.RenderUtil.endFrame;
@@ -164,7 +165,7 @@ public class OpenGG implements ConsoleListener{
             processExecutables();
             app.update();
             WorldEngine.update();
-
+            SoundtrackHandler.update();
             //GGConsole.pollInput();
         }
         end = true;

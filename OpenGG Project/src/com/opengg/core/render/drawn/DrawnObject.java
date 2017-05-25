@@ -141,7 +141,6 @@ public class DrawnObject implements Drawable {
     public void render(){    
         ShaderController.setModel(model);  
         RenderEngine.getCurrentVAO().applyFormat(vbo);
-        vbo.bind();
         evbo.bind();
         glDrawElements(adj ? GL_TRIANGLES_ADJACENCY : GL_TRIANGLES, ind.limit(), GL_UNSIGNED_INT, 0);  
     }

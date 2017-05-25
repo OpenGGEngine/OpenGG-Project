@@ -11,7 +11,7 @@ import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.world.components.Component;
-import com.opengg.core.world.components.ComponentHolder;
+import com.opengg.core.world.components.Component;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteBuffer;
 import java.util.LinkedList;
@@ -53,8 +53,8 @@ public class Deserializer {
             
             for(SerialHolder sh2 : ds.components){
                 if(sh2.c.id == sh.parent){
-                    if(sh2.c instanceof ComponentHolder){
-                        ((ComponentHolder)sh2.c).attach(sh.c);
+                    if(sh2.c instanceof Component){
+                        ((Component)sh2.c).attach(sh.c);
                         continue upper;
                     }else{
                         GGConsole.warning("Component " + sh.c.id + " has invalid parent, will not be added");
@@ -84,7 +84,7 @@ public class Deserializer {
                 ch.type = c;
                 ds.components.add(ch);
                 
-                if(comp instanceof ComponentHolder){
+                if(comp instanceof Component){
                     doList(ds);
                 }
             } catch (ClassNotFoundException ex) {

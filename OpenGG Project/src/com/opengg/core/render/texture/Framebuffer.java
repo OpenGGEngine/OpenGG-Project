@@ -94,6 +94,8 @@ public class Framebuffer extends Texture {
                 GL_FLOAT, (ByteBuffer) null);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
         glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + attachment, texture, 0);
         textures.add(texture);
         if (attachment == 0) {
@@ -104,7 +106,7 @@ public class Framebuffer extends Texture {
     public void addDepthStencilTexture() {
         depthbuffer = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, depthbuffer);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH32F_STENCIL8, x, y, 0, GL_DEPTH_STENCIL,
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, x, y, 0, GL_DEPTH_STENCIL,
                 GL_UNSIGNED_INT_24_8, (ByteBuffer) null);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -116,8 +118,12 @@ public class Framebuffer extends Texture {
         glBindTexture(GL_TEXTURE_2D, depthbuffer);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, x, y, 0, GL_DEPTH_COMPONENT,
                 GL_FLOAT, (ByteBuffer) null);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
         glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthbuffer, 0);
     }
 
@@ -142,7 +148,7 @@ public class Framebuffer extends Texture {
             addColorTarget(i);
         }
 
-        addDepthStencilTexture();
+        addDepthTexture();
 
         try {
             int i = glCheckFramebufferStatus(GL_FRAMEBUFFER);

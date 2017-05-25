@@ -23,11 +23,10 @@ public class FountainParticleEmitter extends ParticleEmitter{
     private float timeSinceLast = 0f;
     
     public FountainParticleEmitter(float pps, float speed, float lifeLength, Texture t) {
-        super((InstancedDrawnObject)ObjectCreator.createInstancedQuadPrism(new Vector3f(0,0,0), new Vector3f(1,0,1)), t);
-        ((InstancedDrawnObject)this.getDrawable()).setAdjacency(false);
+        super((InstancedDrawnObject)ObjectCreator.createInstancedQuadPrism(new Vector3f(0,0,0), new Vector3f(1,1,1)), t);
         this.pps = pps;
         this.speed = speed;
-        this.gravityComplient = -0.027f;
+        this.gravityComplient = -9.81f;
         this.lifeLength = lifeLength;
     }
     
@@ -44,7 +43,9 @@ public class FountainParticleEmitter extends ParticleEmitter{
     public void update(float delta){
         super.update(delta);
         timeSinceLast += delta;
-        if(timeSinceLast > 1f/pps)
+        if(timeSinceLast > 1f/pps){
             emitParticle(this.getPosition());
+            timeSinceLast = 0;
+        }
     }
 }

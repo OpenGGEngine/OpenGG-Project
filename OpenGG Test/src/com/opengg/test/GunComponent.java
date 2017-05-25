@@ -10,14 +10,14 @@ import com.opengg.core.engine.WorldEngine;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.model.ModelLoader;
-import com.opengg.core.world.components.ComponentHolder;
+import com.opengg.core.world.components.Component;
 import com.opengg.core.world.components.ModelRenderComponent;
 
 /**
  *
  * @author Javier
  */
-public class GunComponent extends ComponentHolder{
+public class GunComponent extends Component{
     Sound gunfire;
     
     public GunComponent(){
@@ -25,7 +25,7 @@ public class GunComponent extends ComponentHolder{
         ModelRenderComponent beretta = new ModelRenderComponent(ModelLoader.loadModel("C:\\res\\mp7\\mp7.bmf"));
         beretta.setRotationOffset(new Quaternionf(new Vector3f(0,180,0)));
         attach(beretta);
-        gunfire = new Sound(OpenGGTest.class.getResource("res/45acp.wav"));
+        gunfire = new Sound("C:\\res\\othergun.ogg");
     }
     
     public void fire(){

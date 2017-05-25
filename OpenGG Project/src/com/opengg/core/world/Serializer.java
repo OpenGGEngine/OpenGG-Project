@@ -10,7 +10,7 @@ import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.world.components.Component;
-import com.opengg.core.world.components.ComponentHolder;
+import com.opengg.core.world.components.Component;
 import java.nio.ByteBuffer;
 import java.util.LinkedList;
 import java.util.List;
@@ -39,8 +39,8 @@ public class Serializer {
             serializer.add(component.id);
             serializer.add(component.parent.id);
             component.serialize(serializer);
-            if(component instanceof ComponentHolder){
-                traverse(((ComponentHolder) component).getChildren());
+            if(component instanceof Component){
+                traverse(((Component) component).getChildren());
             }
         }
     }

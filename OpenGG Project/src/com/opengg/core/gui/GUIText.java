@@ -48,8 +48,8 @@ public class GUIText extends GUIRenderable{
     
     @Override
     public void render(){
-        ShaderController.setDistanceField(true);
+        ShaderController.setDistanceField(1);
         super.render();
-        ShaderController.setDistanceField(false);
+        ShaderController.setDistanceField(0);
     }
 }

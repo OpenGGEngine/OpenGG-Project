@@ -33,11 +33,11 @@ public class Particle {
         this.scale = scale;
     }
     
-    public boolean update(){
-        velocity = velocity.add(gravity);
-        position = position.add(velocity);
+    public boolean update(float delta){
+        velocity = velocity.add(gravity.multiply(delta));
+        position = position.add(velocity.multiply(delta));
 
-        lifelength++;
+        lifelength += delta;
         return lifelength > lifespan;
     } 
 }

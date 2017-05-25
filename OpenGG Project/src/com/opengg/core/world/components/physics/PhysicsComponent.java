@@ -12,7 +12,7 @@ import com.opengg.core.world.Serializer;
 import com.opengg.core.world.collision.Collision;
 import com.opengg.core.world.collision.CollisionHandler;
 import com.opengg.core.world.components.Component;
-import com.opengg.core.world.components.ComponentHolder;
+import com.opengg.core.world.components.Component;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -21,7 +21,7 @@ import java.util.List;
  *
  * @author ethachu19
  */
-public class PhysicsComponent extends ComponentHolder {
+public class PhysicsComponent extends Component {
     public boolean gravEffect = true;
     public boolean grounded = false;
     public boolean touched = false;

@@ -5,10 +5,11 @@
  */
 package com.opengg.core.render.objects;
 
-import com.opengg.core.math.Vector3f;
 import com.opengg.core.io.objloader.parser.OBJFace;
 import com.opengg.core.io.objloader.parser.OBJMesh;
 import com.opengg.core.io.objloader.parser.OBJModel;
+import com.opengg.core.math.Vector2f;
+import com.opengg.core.math.Vector3f;
 import java.nio.Buffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -265,42 +266,23 @@ public class ObjectBuffers {
        return buffets;
         
     }
-    public static FloatBuffer getSquareUI(float x1, float x2, float y1, float y2, float z1 ,float transparency, boolean flippedTex){
-        FloatBuffer sq = MemoryUtil.memAllocFloat(6*12);
+    
+    public static Buffer[] getSquare(Vector2f v1, Vector2f v2, float z1 ,float transparency, boolean flippedTex){
+        FloatBuffer sq = MemoryUtil.memAllocFloat(4*12);
+
         
-        int i, i2;
-        if(flippedTex){
-            i = 1;
-            i2 = 0;
-            
-        }else{
-            i = 0;
-            i2 = 1;
-        }
-        
-        sq.put(x1).put(y1).put(z1).put(1).put(0).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(0).put(i);
-        sq.put(x1).put(y2).put(z1).put(0).put(1).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(0).put(i2);
-        sq.put(x2).put(y1).put(z1).put(0).put(0).put(1).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(1).put(i);
-        sq.put(x2).put(y1).put(z1).put(0).put(1).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(1).put(i);
-        sq.put(x2).put(y2).put(z1).put(0).put(0).put(1).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(1).put(i2);
-        sq.put(x1).put(y2).put(z1).put(1).put(0).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(0).put(i2);
-        
+        sq.put(v1.x).put(v1.y).put(z1).put(1).put(0).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(0).put(0);
+        sq.put(v1.x).put(v2.y).put(z1).put(0).put(1).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(0).put(1);
+        sq.put(v2.x).put(v2.y).put(z1).put(0).put(0).put(1).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(1).put(1);   
+        sq.put(v2.x).put(v1.y).put(z1).put(0).put(0).put(1).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(1).put(0);           
         sq.flip();
-        return sq;
-    }
-    static FloatBuffer getSquare(float x1, float z1, float x2, float z2, float y, float transparency){
-        FloatBuffer sq = MemoryUtil.memAllocFloat(6*12);
         
-        sq.put(x1).put(y).put(z1).put(1).put(0).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(1).put(0);
-        sq.put(x1).put(y).put(z2).put(0).put(1).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(1).put(1);
-        sq.put(x2).put(y).put(z1).put(0).put(0).put(1).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(0).put(0);
-        sq.put(x2).put(y).put(z1).put(0).put(1).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(0).put(0);
-        
-        sq.put(x1).put(y).put(z2).put(1).put(0).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(1).put(1);
-        sq.put(x2).put(y).put(z2).put(0).put(0).put(1).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(0).put(1);
-        sq.flip();
-        return sq;
+        IntBuffer indices = MemoryUtil.memAllocInt(6);
+        indices.put(new int[]{0,1,2,2,3,0});
+        indices.flip();
+        return new Buffer[]{sq, indices};
     }
+
     static FloatBuffer getSquare(float x1, float z1, float x2, float z2, float y1,float y2, float y3, float y4,  float transparency,boolean flippedTex){
         FloatBuffer sq = MemoryUtil.memAllocFloat(6*12);
         int i, i2;
@@ -407,12 +389,14 @@ public class ObjectBuffers {
         d.put(c2.x).put(c1.y).put(c2.z).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0).put(1);
         d.put(c2.x).put(c2.y).put(c2.z).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0);
         d.put(c2.x).put(c2.y).put(c1.z).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0).put(0);
+        d.flip();
         
         IntBuffer d2 = MemoryUtil.memAllocInt(12*3);
-        d2.put(1).put(2).put(4).put(2).put(3).put(4);
-        d2.put(5).put(7).put(8).put(6).put(7).put(8);
-        d2.put(1).put(2).put(5).put(2).put(6).put(5);
-        d2.put(3).put(4).put(7).put(4).put(8).put(7);
+        d2.put(0).put(1).put(3).put(1).put(2).put(3);
+        d2.put(4).put(6).put(7).put(5).put(6).put(7);
+        d2.put(0).put(1).put(4).put(1).put(5).put(4);
+        d2.put(2).put(3).put(6).put(3).put(7).put(6);
+        d2.flip();
         return new Buffer[]{d,d2};
     }
 }

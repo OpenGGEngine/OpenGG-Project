@@ -17,7 +17,7 @@ import com.opengg.core.world.Actionable;
  *
  * @author Javier
  */
-public class FreeFlyComponent extends ComponentHolder implements Actionable{
+public class FreeFlyComponent extends Component implements Actionable{
     private UserControlComponent pcontrol;
     private CameraComponent view;
     
