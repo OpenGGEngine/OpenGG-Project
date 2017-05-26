@@ -153,10 +153,11 @@ public class OpenGG{
                 Logger.getLogger(OpenGG.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        end = true;
+        
         if(!force){
             GGConsole.log("OpenGG has closed gracefully, application can now be ended");
         }
+        
         writeLog();
     }
     

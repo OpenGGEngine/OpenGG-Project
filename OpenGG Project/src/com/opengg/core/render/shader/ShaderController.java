@@ -58,6 +58,7 @@ public class ShaderController {
         loadShader("addfrag", Resource.getShaderPath("add.frag"), Program.FRAGMENT);  
         loadShader("guifrag", Resource.getShaderPath("gui.frag"), Program.FRAGMENT); 
         loadShader("hdrfrag", Resource.getShaderPath("hdr.frag"), Program.FRAGMENT); 
+        loadShader("waterfrag", Resource.getShaderPath("water.frag"), Program.FRAGMENT); 
           
         use("mainvert", "mainfrag");
         saveCurrentConfiguration("object");   
@@ -70,6 +71,9 @@ public class ShaderController {
         
         use("mainvert", "ambientfrag");
         saveCurrentConfiguration("ambient");     
+        
+        use("mainvert", "waterfrag");
+        saveCurrentConfiguration("water"); 
         
         use("passthroughvert", "ssaofrag");
         saveCurrentConfiguration("ssao");
@@ -392,11 +396,11 @@ public class ShaderController {
     }
     
     public static void setUVMultX(float f){
-        setUniform("uvx", (float)f);
+        setUniform("uvmultx", (float)f);
     }
     
     public static void setUVMultY(float f){
-        setUniform("uvy", (float)f);
+        setUniform("uvmulty", (float)f);
     }
     
     public static void setInstanced(boolean instanced){

@@ -21,6 +21,7 @@ import com.opengg.core.render.texture.Cubemap;
 import com.opengg.core.render.texture.Framebuffer;
 import com.opengg.core.render.texture.TextureManager;
 import com.opengg.core.world.Camera;
+import com.opengg.core.world.Skybox;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -49,8 +50,7 @@ public class RenderEngine {
     static List<RenderPath> paths = new ArrayList<>();
     static GLBuffer lightobj;
     static RenderGroup dlist;
-    static Drawable skybox;
-    static Cubemap skytex;
+    static Skybox skybox;
     static boolean initialized;
     static Framebuffer sceneTex;
     static VertexArrayFormat vaoformat;
@@ -259,9 +259,12 @@ public class RenderEngine {
         dlist.add(r);
     }
     
-    public static void setSkybox(Drawable sky, Cubemap c){
-        skybox = sky;
-        skytex = c;
+    public static Skybox getSkybox(){
+        return skybox;
+    }
+    
+    public static void setSkybox(Skybox box){
+        skybox = box;
     }    
 
     public static void setCulling(boolean enable){
@@ -340,8 +343,8 @@ public class RenderEngine {
 
         glDisable(GL_CULL_FACE); 
         ShaderController.useConfiguration("sky");
-        skytex.use(0);
-        skybox.render();    
+        skybox.getCubemap().use(0);
+        skybox.getDrawable().render();    
         GUI.startGUIPos();
         PostProcessPipeline.process();
         GUI.render();        

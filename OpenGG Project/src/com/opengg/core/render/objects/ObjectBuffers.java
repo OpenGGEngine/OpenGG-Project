@@ -271,10 +271,10 @@ public class ObjectBuffers {
         FloatBuffer sq = MemoryUtil.memAllocFloat(4*12);
 
         
-        sq.put(v1.x).put(v1.y).put(z1).put(1).put(0).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(0).put(0);
-        sq.put(v1.x).put(v2.y).put(z1).put(0).put(1).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(0).put(1);
-        sq.put(v2.x).put(v2.y).put(z1).put(0).put(0).put(1).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(1).put(1);   
-        sq.put(v2.x).put(v1.y).put(z1).put(0).put(0).put(1).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(1).put(0);           
+        sq.put(v1.x).put(v1.y).put(z1).put(1).put(0).put(0).put(transparency).put(0.f).put(1f).put(0f).put(0).put(0);
+        sq.put(v1.x).put(v2.y).put(z1).put(0).put(1).put(0).put(transparency).put(0.f).put(1f).put(0f).put(0).put(1);
+        sq.put(v2.x).put(v2.y).put(z1).put(0).put(0).put(1).put(transparency).put(0.f).put(1f).put(0f).put(1).put(1);   
+        sq.put(v2.x).put(v1.y).put(z1).put(0).put(0).put(1).put(transparency).put(0.f).put(1f).put(0f).put(1).put(0);           
         sq.flip();
         
         IntBuffer indices = MemoryUtil.memAllocInt(6);
@@ -295,12 +295,12 @@ public class ObjectBuffers {
             i2 = 1;
         }
         
-        sq.put(x1).put(y1).put(z1).put(1).put(0).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(1).put(i);
-        sq.put(x1).put(y2).put(z2).put(0).put(1).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(1).put(i2);
-        sq.put(x2).put(y3).put(z1).put(0).put(0).put(1).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(0).put(i);
-        sq.put(x2).put(y3).put(z1).put(0).put(1).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(0).put(i);
-        sq.put(x2).put(y4).put(z2).put(0).put(0).put(1).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(0).put(i2);
-        sq.put(x1).put(y2).put(z2).put(1).put(0).put(0).put(transparency).put(0.1f).put(0.1f).put(0.1f).put(1).put(i2);
+        sq.put(x1).put(y1).put(z1).put(1).put(0).put(0).put(transparency).put(0f).put(0f).put(1f).put(1).put(i);
+        sq.put(x1).put(y2).put(z2).put(0).put(1).put(0).put(transparency).put(0f).put(0f).put(1f).put(1).put(i2);
+        sq.put(x2).put(y3).put(z1).put(0).put(0).put(1).put(transparency).put(0f).put(0f).put(1f).put(0).put(i);
+        sq.put(x2).put(y3).put(z1).put(0).put(1).put(0).put(transparency).put(0f).put(0f).put(1f).put(0).put(i);
+        sq.put(x2).put(y4).put(z2).put(0).put(0).put(1).put(transparency).put(0f).put(0f).put(1f).put(0).put(i2);
+        sq.put(x1).put(y2).put(z2).put(1).put(0).put(0).put(transparency).put(0f).put(0f).put(1f).put(1).put(i2);
         
         sq.flip();
         return sq;

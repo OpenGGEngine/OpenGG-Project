@@ -19,6 +19,14 @@ public class Skybox {
     Cubemap cube;
     public Skybox(Cubemap c, float size){
         d = ObjectCreator.createCube(size);
-        
+        cube = c;
+    }
+    
+    public Cubemap getCubemap(){
+        return cube;
+    }
+    
+    public Drawable getDrawable(){
+        return d;
     }
 }

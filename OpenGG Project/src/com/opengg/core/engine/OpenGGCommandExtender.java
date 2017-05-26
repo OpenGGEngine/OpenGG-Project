@@ -12,7 +12,7 @@ import static com.opengg.core.engine.OpenGG.*;
  *
  * @author Javier
  */
-public class OpenGGCommandExtender  implements ConsoleListener{
+public class OpenGGCommandExtender implements ConsoleListener{
     @Override
     public void onConsoleInput(UserCommand command) {
         if(command.command.equalsIgnoreCase("quit")){

@@ -79,11 +79,10 @@ void process(){
 
     specular = vec3(0);
     
-	n = normalize(( model * vec4(norm,1.0f)).xyz);
+	n = normalize(( model * vec4(norm,0.0f)).xyz);
 
 	reflectedcolor = texture(cubemap, 
-		normalize(reflect(pos.xyz - camera, 
-			normalize(model * vec4(norm, 0.0f)).xyz))).xyz;
+		normalize(reflect(pos.xyz - camera, n))).xyz;
 	
 	//ambient = ambient * reflectedcolor;
 }
