@@ -67,4 +67,13 @@ public class Resource {
         }
         return null;
     }
+    
+    public static String getSoundPath(String name){
+        try {
+            return new File("resources\\audio\\" +  name).getCanonicalPath();
+        } catch (IOException ex) {
+            GGConsole.warning("Failed to load " + name + "!");
+        }
+        return null;
+    }
 }
