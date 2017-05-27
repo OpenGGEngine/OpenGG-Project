@@ -21,7 +21,7 @@ public class GUIGroup extends GUIItem{
         this.setPositionOffset(position);
     }
 
-    public void addItem(String name, GUIRenderable item){
+    public void addItem(String name, GUIItem item){
         item.setParent(this);
         items.put(name, item);
     }

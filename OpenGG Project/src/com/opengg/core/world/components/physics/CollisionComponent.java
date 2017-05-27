@@ -7,7 +7,7 @@ package com.opengg.core.world.components.physics;
 
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.world.components.physics.PhysicsComponent;
-import com.opengg.core.world.collision.BoundingBox;
+import com.opengg.core.world.collision.AABB;
 import com.opengg.core.world.collision.Collider;
 import com.opengg.core.world.collision.Collision;
 import com.opengg.core.world.components.triggers.Trigger;
@@ -23,18 +23,18 @@ import java.util.List;
  * @author ethachu19
  */
 public class CollisionComponent extends Trigger{
-    BoundingBox main;
+    AABB main;
     List<Collider> boxes = new ArrayList<>();
     boolean lastcollided = false;
     boolean forcetest = false;
 
-    public CollisionComponent(BoundingBox main, Collection<Collider> all) {
+    public CollisionComponent(AABB main, Collection<Collider> all) {
         this.main = main;
         boxes.addAll(all);
         setColliderParent();
     }
     
-    public CollisionComponent(BoundingBox main, Collider... all) {
+    public CollisionComponent(AABB main, Collider... all) {
         this.main = main;
         boxes.addAll(Arrays.asList(all));
         setColliderParent();
