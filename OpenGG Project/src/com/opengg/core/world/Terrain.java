@@ -119,7 +119,11 @@ public class Terrain {
         float heightu = map[x][z + 1];
         
         Vector3f normal = new Vector3f(heightl - heightr, 2f, heightd - heightu);
-        normal = normal.normalize();
+        try{
+            normal = normal.normalize();
+        }catch(Exception e){
+            normal = new Vector3f(1,0,0);
+        }
         return normal;
     }
 

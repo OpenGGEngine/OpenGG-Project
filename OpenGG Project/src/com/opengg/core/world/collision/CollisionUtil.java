@@ -46,10 +46,13 @@ public class CollisionUtil {
         if(c2.getPosition().y > c1.height + c1.getPosition().y - COLLISION_OFFSET) ctype = 1;
         Collision data = new Collision();
         
-        if(ctype == 1) data.collisionNormal = new Vector3f(0,1,0);
-        else{
+        if(ctype == 1){ 
+            data.collisionNormal = new Vector3f(0,1,0);
+            data.overshoot = new Vector3f(0, (c1.getPosition().y - c2.getPosition().y)/2, 0);
+        }else{
             Vector3f tnormal = c1.getPosition().subtract(c2.getPosition());
-            data.collisionNormal = new Vector3f(tnormal.x, 0, tnormal.z).normalize();
+            data.collisionNormal = new Vector3f(tnormal.x, 0.1f, tnormal.z).normalize();
+            data.overshoot = new Vector3f(c1.getPosition().x - c2.getPosition().x,0,c1.getPosition().z - c2.getPosition().z).divideThis(2);
         }    
         
         return data;

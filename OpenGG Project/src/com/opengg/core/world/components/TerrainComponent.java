@@ -6,12 +6,12 @@
 
 package com.opengg.core.world.components;
 
+import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.texture.ArrayTexture;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.world.Terrain;
 import com.opengg.core.world.collision.AABB;
-import com.opengg.core.world.collision.BoundingBox;
 import com.opengg.core.world.components.physics.CollisionComponent;
 import com.opengg.core.world.collision.TerrainCollider;
 
@@ -36,7 +36,7 @@ public class TerrainComponent extends RenderComponent{
     }
     
     public void enableCollider(){
-        c = new CollisionComponent(new AABB(new Vector3f(-3000,-3000,-3000), 6000,6000,6000), new TerrainCollider(t));
+        c = new CollisionComponent(new AABB(new Vector3f(-15000,-15000,-15000), 15000,15000,15000), new TerrainCollider(t));
         c.setForceTest(true);
         this.attach(c);
     }
@@ -51,6 +51,12 @@ public class TerrainComponent extends RenderComponent{
     
     public Terrain getTerrain(){
         return t;
+    }
+    
+    public float getHeightAt(Vector3f pos){
+        Vector3f np = pos.divide(getScale());
+        float height = t.getHeight(np.x, np.z);
+        return (height + getPosition().y) * getScale().y;
     }
     
     @Override

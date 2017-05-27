@@ -12,7 +12,6 @@ import com.opengg.core.world.Serializer;
 import com.opengg.core.world.collision.Collision;
 import com.opengg.core.world.collision.CollisionHandler;
 import com.opengg.core.world.components.Component;
-import com.opengg.core.world.components.Component;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;

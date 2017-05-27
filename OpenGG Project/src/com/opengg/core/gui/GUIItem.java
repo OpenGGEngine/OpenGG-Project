@@ -13,7 +13,7 @@ import com.opengg.core.math.Vector2f;
  * @author Javier
  */
 public abstract class GUIItem {
-    boolean enabled = true;
+    public boolean enabled = true;
     String name = "";
     Vector2f position = new Vector2f();
     float layer = 0f;

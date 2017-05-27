@@ -20,7 +20,7 @@ import com.opengg.core.render.texture.Texture;
  * @author Javier
  */
 public class WaterComponent extends RenderComponent{
-    static float size = 2000;
+    static float size = 9000;
     float movespeed;
     float current;
     float tscale;
