@@ -7,6 +7,7 @@
 package com.opengg.core.audio;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import static org.lwjgl.openal.AL10.AL_PAUSED;
 import static org.lwjgl.openal.AL10.AL_STOPPED;
@@ -57,5 +58,9 @@ public class Soundtrack {
     public void update(){
         if(current.getSoundSource().getState() == AL_STOPPED)
             next();
+    }
+    
+    public void shuffle(){
+        Collections.shuffle(soundtrack);
     }
 }
