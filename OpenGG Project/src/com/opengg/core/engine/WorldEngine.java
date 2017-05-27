@@ -71,12 +71,12 @@ public class WorldEngine{
         removeMarked();
         float delta = t.getDeltaSec();
         TransitionEngine.update(delta);
-        for(Component c : OpenGG.curworld.getChildren()){
-            traverseUpdate(c, delta);
-        }
+        traverseUpdate(WorldEngine.getCurrent(), delta);
     }
     
     private static void traverseUpdate(Component c, float delta){
+        if(!c.isEnabled())
+            return;
         c.update(delta);
         for(Component c2 : ((Component)c).getChildren()){
             traverseUpdate(c2, delta);

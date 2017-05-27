@@ -202,6 +202,14 @@ public abstract class Component{
         return parent.getWorld();
     }
     
+    public boolean isEnabled(){
+        return enabled;
+    }
+    
+    public void setEnabled(boolean enabled){
+        this.enabled = enabled;
+    }
+    
     public void attach(Component c) {
         c.setParentInfo((Component)this);
         WorldEngine.addObjects(c);

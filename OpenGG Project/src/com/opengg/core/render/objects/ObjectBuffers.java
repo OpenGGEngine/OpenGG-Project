@@ -271,10 +271,10 @@ public class ObjectBuffers {
         FloatBuffer sq = MemoryUtil.memAllocFloat(4*12);
 
         
-        sq.put(v1.x).put(v1.y).put(z1).put(1).put(0).put(0).put(transparency).put(0.f).put(1f).put(0f).put(0).put(0);
-        sq.put(v1.x).put(v2.y).put(z1).put(0).put(1).put(0).put(transparency).put(0.f).put(1f).put(0f).put(0).put(1);
-        sq.put(v2.x).put(v2.y).put(z1).put(0).put(0).put(1).put(transparency).put(0.f).put(1f).put(0f).put(1).put(1);   
-        sq.put(v2.x).put(v1.y).put(z1).put(0).put(0).put(1).put(transparency).put(0.f).put(1f).put(0f).put(1).put(0);           
+        sq.put(v1.x).put(v1.y).put(z1).put(1).put(0).put(0).put(transparency).put(1f).put(0f).put(0f).put(0).put(0);
+        sq.put(v1.x).put(v2.y).put(z1).put(0).put(1).put(0).put(transparency).put(1f).put(0f).put(0f).put(0).put(1);
+        sq.put(v2.x).put(v2.y).put(z1).put(0).put(0).put(1).put(transparency).put(1f).put(0f).put(0f).put(1).put(1);   
+        sq.put(v2.x).put(v1.y).put(z1).put(0).put(0).put(1).put(transparency).put(1f).put(0f).put(0f).put(1).put(0);           
         sq.flip();
         
         IntBuffer indices = MemoryUtil.memAllocInt(6);

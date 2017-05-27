@@ -35,6 +35,7 @@ public class RenderComponent extends Component implements Renderable{
 
     @Override
     public void render() {
+        m = new Matrix4f().translate(getPosition()).rotateQuat(getRotation()).scale(getScale());
         if(g != null){
             g.setMatrix(m);
             g.render();
@@ -43,7 +44,7 @@ public class RenderComponent extends Component implements Renderable{
 
     @Override
     public void update(float delta){
-        m = new Matrix4f().translate(getPosition()).rotateQuat(getRotation()).scale(getScale());
+        
     }
     
     public String getShader() {

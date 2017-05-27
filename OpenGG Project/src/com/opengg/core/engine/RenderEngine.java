@@ -10,14 +10,12 @@ import com.opengg.core.gui.GUI;
 import com.opengg.core.model.ModelManager;
 import com.opengg.core.render.GLBuffer;
 import com.opengg.core.render.Renderable;
-import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.render.light.Light;
 import com.opengg.core.render.postprocess.PostProcessPipeline;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.shader.VertexArrayAttribute;
 import com.opengg.core.render.shader.VertexArrayFormat;
 import com.opengg.core.render.shader.VertexArrayObject;
-import com.opengg.core.render.texture.Cubemap;
 import com.opengg.core.render.texture.Framebuffer;
 import com.opengg.core.render.texture.TextureManager;
 import com.opengg.core.world.Camera;
@@ -336,15 +334,20 @@ public class RenderEngine {
         useLights();
         resetConfig();
         
+        defaultvao.bind();
+        
+        
+        
         for(RenderPath path : getActiveRenderPaths()){
             path.render();
             resetConfig();
         }
-
-        glDisable(GL_CULL_FACE); 
+        
         ShaderController.useConfiguration("sky");
         skybox.getCubemap().use(0);
-        skybox.getDrawable().render();    
+        skybox.getDrawable().render(); 
+        glDisable(GL_CULL_FACE); 
+        
         GUI.startGUIPos();
         PostProcessPipeline.process();
         GUI.render();        

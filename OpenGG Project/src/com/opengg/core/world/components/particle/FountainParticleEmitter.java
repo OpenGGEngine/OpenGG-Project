@@ -6,6 +6,7 @@
 
 package com.opengg.core.world.components.particle;
 
+import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.drawn.InstancedDrawnObject;
 import com.opengg.core.render.objects.ObjectCreator;
@@ -23,7 +24,7 @@ public class FountainParticleEmitter extends ParticleEmitter{
     private float timeSinceLast = 0f;
     
     public FountainParticleEmitter(float pps, float speed, float lifeLength, Texture t) {
-        super((InstancedDrawnObject)ObjectCreator.createInstancedQuadPrism(new Vector3f(0,0,0), new Vector3f(1,1,1)), t);
+        super((InstancedDrawnObject)ObjectCreator.createInstancedSquare(new Vector2f(0,0), new Vector2f(1,1), 0), t);
         this.pps = pps;
         this.speed = speed;
         this.gravityComplient = -9.81f;

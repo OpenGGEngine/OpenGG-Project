@@ -135,6 +135,12 @@ public class ShaderController {
 
         findUniform("uvmulty");
         setUniform("uvmulty", (float)1f);
+        
+        findUniform("uvoffsetx");
+        setUniform("uvoffsetx", (float)0f);
+
+        findUniform("uvoffsety");
+        setUniform("uvoffsety", (float)0f);
 
         findUniform("rot");
         setUniform("rot", new Vector3f(0,0,0));
