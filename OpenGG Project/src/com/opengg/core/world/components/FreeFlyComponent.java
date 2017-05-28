@@ -25,7 +25,7 @@ public class FreeFlyComponent extends Component implements Actionable{
     Vector3f controlrot = new Vector3f();
     Vector3f currot = new Vector3f();
     float rotspeed = 30;
-    float speed = 15;
+    float speed = 30;
     
     public FreeFlyComponent(){
         pcontrol = new UserControlComponent();
@@ -119,7 +119,7 @@ public class FreeFlyComponent extends Component implements Actionable{
     }
     
     public void use(){
-        BindController.addController(pcontrol);
+        BindController.setOnlyController(pcontrol);
         view.use();
     }
 }

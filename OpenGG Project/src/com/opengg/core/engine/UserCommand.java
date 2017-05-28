@@ -13,8 +13,8 @@ import java.util.Date;
  * @author Javier
  */
 public class UserCommand {
-    Date time;
-    String command;
-    String[] args;
-    int argCount;
+    public Date time;
+    public String command;
+    public String[] args;
+    public int argCount;
 }
