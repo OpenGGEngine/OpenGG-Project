@@ -57,6 +57,7 @@ public class ShaderController {
         //loadShader("bloomfrag", Resource.getShaderPath("bloom.frag"), Program.FRAGMENT);  
         loadShader("addfrag", Resource.getShaderPath("add.frag"), Program.FRAGMENT);  
         loadShader("guifrag", Resource.getShaderPath("gui.frag"), Program.FRAGMENT); 
+        loadShader("barfrag", Resource.getShaderPath("bar.frag"), Program.FRAGMENT); 
         loadShader("hdrfrag", Resource.getShaderPath("hdr.frag"), Program.FRAGMENT); 
         loadShader("waterfrag", Resource.getShaderPath("water.frag"), Program.FRAGMENT); 
           
@@ -99,6 +100,9 @@ public class ShaderController {
         use("passthroughvert", "guifrag");
         saveCurrentConfiguration("gui");
         
+        use("passthroughvert", "barfrag");
+        saveCurrentConfiguration("bar");
+        
         use("passthroughvert", "addfrag");
         saveCurrentConfiguration("add");
         
@@ -129,6 +133,9 @@ public class ShaderController {
 
         findUniform("divAmount");
         setUniform("divAmount", 1f);
+        
+        findUniform("percent");
+        setUniform("percent", 1f);
 
         findUniform("uvmultx");
         setUniform("uvmultx", (float)1f);
