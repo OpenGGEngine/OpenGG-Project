@@ -18,7 +18,7 @@ public class GUIRenderable extends GUIItem{
     
     public GUIRenderable(Drawable d,Vector2f screenpos){
         this.d = d;
-        this.setPositionOffset(position);
+        this.setPositionOffset(screenpos);
     }
   
     public GUIRenderable(){}
