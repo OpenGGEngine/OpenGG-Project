@@ -73,6 +73,9 @@ public class CollisionComponent extends Trigger{
             }
         }
         
+        this.collisionTrigger(dataList);
+        other.collisionTrigger(dataList);
+        
         return dataList;
     }
 
@@ -90,14 +93,12 @@ public class CollisionComponent extends Trigger{
     }
     
     public void collisionTrigger(List<Collision> data){
-        if(lastcollided == false){
-            TriggerInfo ti = new TriggerInfo();
-            ti.info = "collision";
-            ti.type = SINGLE;
-            ti.source = this;
-            ti.data = data;
-            trigger(ti);
-            lastcollided = true;
-        }
+        TriggerInfo ti = new TriggerInfo();
+        ti.info = "collision";
+        ti.type = SINGLE;
+        ti.source = this;
+        ti.data = data;
+        trigger(ti);
+        lastcollided = true;
     }
 }
