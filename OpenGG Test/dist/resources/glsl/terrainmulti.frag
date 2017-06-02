@@ -33,7 +33,7 @@ uniform samplerCube cubemap;
 
 float trans;
 float specpow;
-float visibility = 1f;
+float visibility = 1.0f;
 vec3 eyedir;
 vec3 reflectedcolor;
 vec3 n;
@@ -109,4 +109,4 @@ void main() {
 	}
 
 	fcolor = vec4(col + ambient, 1);
-};
+}

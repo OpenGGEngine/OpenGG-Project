@@ -11,4 +11,4 @@ in vertexData{
 
 void main() {   
     fcolor = vec4(1,1,1,1);
-};
+}

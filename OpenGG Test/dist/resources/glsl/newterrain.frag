@@ -33,7 +33,7 @@ uniform samplerCube cubemap;
 
 float trans;
 float specpow;
-float visibility = 1f;
+float visibility = 1.0f;
 vec3 eyedir;
 vec3 reflectedcolor;
 vec3 n;
@@ -103,15 +103,15 @@ void main() {
 	if(blend < 0.2f)
 		tcolor = wcolor;
 	else if(blend < 0.3f)
-		tcolor = mix(wcolor, wcolorr, (blend - 0.2f) * 10f);
+		tcolor = mix(wcolor, wcolorr, (blend - 0.2f) * 10.0f);
 	else if(blend < 0.5f)
 		tcolor = wcolorr;
 	else if(blend < 0.6f)
-		tcolor = mix(wcolorr, wcolorg, (blend - 0.5f) * 10f);
+		tcolor = mix(wcolorr, wcolorg, (blend - 0.5f) * 10.0f);
 	else if(blend < 0.7f)
 		tcolor = wcolorg;
 	else if(blend < 0.8f)
-		tcolor = mix(wcolorg, wcolorb, (blend - 0.7f) * 10f);
+		tcolor = mix(wcolorg, wcolorb, (blend - 0.7f) * 10.0f);
 	else
 		tcolor = wcolorb;
 	
@@ -126,4 +126,4 @@ void main() {
 	}
 
 	fcolor = vec4(col + ambient, 1);
-};
+}

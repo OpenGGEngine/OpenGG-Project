@@ -99,4 +99,4 @@ void main() {
 	}
 
 	fcolor = vec4(col + ambient, 0.7f);
-};
+}

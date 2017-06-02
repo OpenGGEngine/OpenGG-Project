@@ -28,4 +28,4 @@ void main() {
 	}
 	if(fcolor.a < 0.1f)
 		discard;
-};
+}

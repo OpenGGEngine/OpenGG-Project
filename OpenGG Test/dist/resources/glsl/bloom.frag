@@ -19,8 +19,8 @@ vec4 getTex(sampler2D tname){
 void main() {   
 	vec4 blur = getTex(Ka);
 	
-	if(blur.length > 0.9)
+	if(length(blur) > 0.9)
 		blur = vec4(0,0,0,1);
 	
     fcolor = blur;
-};
+}

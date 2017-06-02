@@ -18,4 +18,4 @@ vec4 getCube(){
 
 void main() {   
     fcolor = getCube();
-};
+}

@@ -32,4 +32,4 @@ void main() {
     norm = normal;
     vec4 P = view * vec4(pos,1);
     gl_Position = projection * P;
-};
+}
