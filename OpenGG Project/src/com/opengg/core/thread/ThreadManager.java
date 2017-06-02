@@ -8,6 +8,7 @@ package com.opengg.core.thread;
 
 import com.opengg.core.engine.GGConsole;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -31,6 +32,18 @@ public class ThreadManager {
         thread.setName(name);
         thread.start();
         running.add(thread);
+    }
+    
+    public static void update(){
+        List<Thread> kill = new LinkedList<>();
+        for(Thread thread : running){
+            if(!thread.isAlive())
+                kill.add(thread);
+        }
+        
+        for(Thread thread : kill){
+            running.remove(thread);
+        }
     }
     
     public static void destroy(){

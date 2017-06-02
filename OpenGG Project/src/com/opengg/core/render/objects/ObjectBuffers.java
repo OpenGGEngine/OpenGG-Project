@@ -278,7 +278,8 @@ public class ObjectBuffers {
         sq.flip();
         
         IntBuffer indices = MemoryUtil.memAllocInt(6);
-        indices.put(new int[]{0,1,2,2,3,0});
+        indices.put(new int[]{0,1,2,
+            2,3,0});
         indices.flip();
         return new Buffer[]{sq, indices};
     }
@@ -305,21 +306,7 @@ public class ObjectBuffers {
         sq.flip();
         return sq;
     }
-    static FloatBuffer getSquareTerrain(float x1, float z1, float x2, float z2, float y1,float y2, float y3, float y4, float transparency, float v1, float u1, float v2, float u2, Vector3f n1, Vector3f n2, Vector3f n3, Vector3f n4){
-        FloatBuffer sq = MemoryUtil.memAllocFloat(6*12);
-        
-        sq.put(x1).put(y1).put(z1).put(1).put(1).put(1).put(transparency).put(n1.x).put(n1.y).put(n1.z).put(v1).put(u1);
-        sq.put(x2).put(y2).put(z1).put(1).put(1).put(1).put(transparency).put(n2.x).put(n2.y).put(n2.z).put(v2).put(u1);
-        sq.put(x2).put(y3).put(z2).put(1).put(1).put(1).put(transparency).put(n3.x).put(n3.y).put(n3.z).put(v2).put(u2);
-        
-        sq.put(x2).put(y3).put(z2).put(1).put(1).put(1).put(transparency).put(n3.x).put(n3.y).put(n3.z).put(v2).put(u2);
-        sq.put(x1).put(y4).put(z2).put(1).put(1).put(1).put(transparency).put(n4.x).put(n4.y).put(n4.z).put(v1).put(u2);
-        sq.put(x1).put(y1).put(z1).put(1).put(1).put(1).put(transparency).put(n1.x).put(n1.y).put(n1.z).put(v1).put(u1);
-        
-        sq.flip();
-        
-        return sq;
-    }
+
     static FloatBuffer createDefaultBufferData(int size){
         FloatBuffer f = MemoryUtil.memAllocFloat(size);
         for(int i = 0; i < size; i++){
@@ -328,55 +315,55 @@ public class ObjectBuffers {
         f.flip();
         return f;
     }
-    static FloatBuffer genCube(float size){
-        FloatBuffer sq = MemoryUtil.memAllocFloat(6*6*12);
+    
+    static Buffer[] genCube(float size){
+        FloatBuffer sq = MemoryUtil.memAllocFloat(8*12);
         
-        sq.put(-size).put(size).put(size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0).put(0);
-        sq.put(-size).put(-size).put(size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0).put(1);
-        sq.put(size).put(-size).put(size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0);
-        sq.put(size).put(-size).put(size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0);
-        sq.put(size).put(size).put(size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);
-        sq.put(-size).put(size).put(size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0).put(1);
+        sq.put(new float[]{-size,-size,-size});
+        sq.put(new float[]{1,1,1,1,1,1,1,1,1});
         
-        sq.put(-size).put(size).put(-size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0).put(0);
-        sq.put(-size).put(-size).put(-size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0).put(1);
-        sq.put(size).put(-size).put(-size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0);
-        sq.put(size).put(-size).put(-size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0);
-        sq.put(size).put(size).put(-size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);
-        sq.put(-size).put(size).put(-size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0).put(1);
+        sq.put(new float[]{size,-size,-size});
+        sq.put(new float[]{1,1,1,1,1,1,1,1,1});
         
+        sq.put(new float[]{size,size,-size});
+        sq.put(new float[]{1,1,1,1,1,1,1,1,1});
         
-        sq.put(-size).put(-size).put(size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0).put(0);
-        sq.put(-size).put(-size).put(-size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0).put(1);
-        sq.put(-size).put(size).put(-size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0);
-        sq.put(-size).put(size).put(-size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0);
-        sq.put(-size).put(size).put(size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);
-        sq.put(-size).put(-size).put(size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0).put(1);
+        sq.put(new float[]{-size,size,-size});
+        sq.put(new float[]{1,1,1,1,1,1,1,1,1});
         
-        sq.put(size).put(-size).put(size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0).put(0);
-        sq.put(size).put(-size).put(-size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0).put(1);
-        sq.put(size).put(size).put(-size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0);
-        sq.put(size).put(size).put(-size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0);
-        sq.put(size).put(size).put(size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);
-        sq.put(size).put(-size).put(size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0).put(1);
+        sq.put(new float[]{-size,-size,size});
+        sq.put(new float[]{1,1,1,1,1,1,1,1,1});
         
+        sq.put(new float[]{size,-size,size});
+        sq.put(new float[]{1,1,1,1,1,1,1,1,1});
         
-        sq.put(-size).put(size).put(size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0).put(0);
-        sq.put(-size).put(size).put(-size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0).put(1);
-        sq.put(size).put(size).put(-size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0);
-        sq.put(size).put(size).put(-size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0);
-        sq.put(size).put(size).put(size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);
-        sq.put(-size).put(size).put(size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0).put(1);
+        sq.put(new float[]{size,size,size});
+        sq.put(new float[]{1,1,1,1,1,1,1,1,1});
         
-        sq.put(-size).put(-size).put(size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0).put(0);
-        sq.put(-size).put(-size).put(-size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0).put(1);
-        sq.put(size).put(-size).put(-size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0);
-        sq.put(size).put(-size).put(-size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0);
-        sq.put(size).put(-size).put(size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);
-        sq.put(-size).put(-size).put(size).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0).put(1);
+        sq.put(new float[]{-size,size,size});
+        sq.put(new float[]{1,1,1,1,1,1,1,1,1});
         
         sq.flip();
-        return sq;
+        
+        IntBuffer ib = MemoryUtil.memAllocInt(6 * 6);
+        
+        ib.put(new int[]{
+                1,2,0,
+                2,3,0,
+                6,2,1,
+                1,5,6,
+                6,5,4,
+                4,7,6,
+                6,3,2,
+                7,3,6,
+                3,7,0,
+                7,4,0,
+                5,1,0,
+                4,5,0
+               });
+        ib.flip();
+        
+        return new Buffer[]{sq,ib};
     }
     static Buffer[] genQuadPrism(Vector3f c1, Vector3f c2){
         FloatBuffer d = MemoryUtil.memAllocFloat(8*12);
@@ -391,11 +378,14 @@ public class ObjectBuffers {
         d.put(c2.x).put(c2.y).put(c1.z).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0).put(0);
         d.flip();
         
-        IntBuffer d2 = MemoryUtil.memAllocInt(12*3);
-        d2.put(0).put(1).put(3).put(1).put(2).put(3);
-        d2.put(4).put(6).put(7).put(5).put(6).put(7);
+        IntBuffer d2 = MemoryUtil.memAllocInt(6*4);
+        d2.put(new int[]{0,1,3,1,2,3});
+        d2.put(new int[]{4,6,7,5,6,7});
+        
         d2.put(0).put(1).put(4).put(1).put(5).put(4);
         d2.put(2).put(3).put(6).put(3).put(7).put(6);
+        
+        
         d2.flip();
         return new Buffer[]{d,d2};
     }

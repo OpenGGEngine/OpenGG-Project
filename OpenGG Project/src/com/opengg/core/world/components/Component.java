@@ -30,6 +30,7 @@ public abstract class Component{
     public int id;
     public boolean absoluteOffset = false;
     public boolean enabled = true;
+    public float updatedistance = 0;
     public String name = "";
     public Component parent;
     public Vector3f pos = new Vector3f();

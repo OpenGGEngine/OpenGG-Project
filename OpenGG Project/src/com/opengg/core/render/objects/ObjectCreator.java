@@ -54,8 +54,8 @@ public class ObjectCreator {
     }
     
     public static Drawable createCube(float size){
-        FloatBuffer b = ObjectBuffers.genCube(size);
-        return new DrawnObject(b);
+        Buffer[] b = ObjectBuffers.genCube(size);
+        return new DrawnObject((FloatBuffer)b[0],(IntBuffer)b[1]);
     }
     
     public static Drawable createOldModel(URL model){

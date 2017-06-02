@@ -43,12 +43,12 @@ public class Cubemap {
     
     private int loadTexture(String path){
         String[] endings = new String[6];
-        endings[0] = "_ft.jpg";
-        endings[1] = "_bk.jpg";
-        endings[2] = "_up.jpg";
-        endings[3] = "_dn.jpg";
-        endings[4] = "_rt.jpg";
-        endings[5] = "_lf.jpg";
+        endings[0] = "_ft.png";
+        endings[1] = "_bk.png";
+        endings[2] = "_up.png";
+        endings[3] = "_dn.png";
+        endings[4] = "_rt.png";
+        endings[5] = "_lf.png";
         
         try {
             

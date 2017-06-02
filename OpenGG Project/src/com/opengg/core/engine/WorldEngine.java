@@ -21,9 +21,9 @@ import java.util.List;
  * @author Javier Coindreau
  */
 public class WorldEngine{
-    static LinkedList<CollisionComponent> colliders = new LinkedList<>();
-    static ArrayList<Component> objs = new ArrayList<>();
-    static ArrayList<Component> removal = new ArrayList<>();
+    static List<CollisionComponent> colliders = new LinkedList<>();
+    static List<Component> objs = new ArrayList<>();
+    static List<Component> removal = new LinkedList<>();
     static Time t;
     
     static{
@@ -75,7 +75,7 @@ public class WorldEngine{
     }
     
     private static void traverseUpdate(Component c, float delta){
-        if(!c.isEnabled())
+        if(!c.isEnabled() || ((c.updatedistance > c.getPosition().subtract(RenderEngine.camera.getPos()).length()) && c.updatedistance != 0))
             return;
         c.update(delta);
         for(Component c2 : ((Component)c).getChildren()){
