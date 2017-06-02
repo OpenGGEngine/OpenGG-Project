@@ -23,6 +23,8 @@ layout (std140) uniform LightBuffer {
 };
 
 uniform float uvmultx;
+uniform float uvoffsetx;
+uniform float uvoffsety;
 uniform int numLights;
 uniform mat4 view;
 uniform mat4 model;
@@ -42,10 +44,9 @@ vec4 color;
 vec4 finalcolor;
 
 void genPhong(){
-    vec3 positionRelativeToCam = (view * model * vec4(pos.xyz, 1.0f)).xyz;
-    
-    vec3 posCameraspace = (positionRelativeToCam);
-    eyedir = vec3(0,0,0) - posCameraspace;
+    eyedir = normalize(camera - pos.xyz);
+
+    float distance = length(camera - pos.xyz);
 }
 
 vec3 shadify(Light light){
@@ -69,7 +70,7 @@ vec3 shadify(Light light){
 }
 
 vec4 getTex(sampler2D tname){
-    return texture(tname, textureCoord * uvmultx);
+    return texture(tname, textureCoord * uvmultx + vec2(uvoffsetx, uvoffsety));
 }
 
 void process(){
@@ -77,14 +78,13 @@ void process(){
 
     ambient = 0.2f * diffuse;
     
-    specpow = 10;
+    specpow = 150;
 
-    specular = vec3(1,1,1);
+    specular = vec3(0.6f,0.6f,1);
     
 	n = normalize(( model * vec4(norm,0.0f)).xyz);
 
-	reflectedcolor = texture(cubemap, 
-		normalize(reflect(pos.xyz - camera, n))).xyz;
+	reflectedcolor = texture(cubemap, normalize(reflect(eyedir,n))).xyz;
 	
 	ambient = ambient * reflectedcolor;
 }
@@ -98,5 +98,5 @@ void main() {
 		col += shadify(lights[i]);
 	}
 
-	fcolor = vec4(col + ambient, 0.5f);
+	fcolor = vec4(col + ambient, 0.7f);
 };

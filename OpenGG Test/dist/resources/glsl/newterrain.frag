@@ -92,13 +92,30 @@ vec4 getTex(sampler2D tname){
 
 void main() {  
 	vec4 blendMapColor = getTex(Ka);
-	float backTextureAmount = 1- (blendMapColor.r + blendMapColor.b +blendMapColor.g);
-    vec2 tiledMapEditor = textureCoord * 40;
-    vec4 wcolor = texture(Kd, vec3(tiledMapEditor,0)) * backTextureAmount;
-    vec4 wcolorr = texture(Kd,vec3(tiledMapEditor,1)) * blendMapColor.r;
-    vec4 wcolorg = texture(Kd,vec3(tiledMapEditor,2)) *blendMapColor.g;
-    vec4 wcolorb = texture(Kd, vec3(tiledMapEditor,3)) *blendMapColor.b;
-	finalcolor = wcolor + wcolorr + wcolorg + wcolorb;
+    vec2 tiledMapEditor = textureCoord * 120;
+    vec4 wcolor = texture(Kd, vec3(tiledMapEditor,0));
+    vec4 wcolorr = texture(Kd, vec3(tiledMapEditor,1));
+    vec4 wcolorg = texture(Kd, vec3(tiledMapEditor,2));
+    vec4 wcolorb = texture(Kd, vec3(tiledMapEditor,3));
+	float blend = blendMapColor.r;
+	
+	vec4 tcolor = vec4(0);
+	if(blend < 0.2f)
+		tcolor = wcolor;
+	else if(blend < 0.3f)
+		tcolor = mix(wcolor, wcolorr, (blend - 0.2f) * 10f);
+	else if(blend < 0.5f)
+		tcolor = wcolorr;
+	else if(blend < 0.6f)
+		tcolor = mix(wcolorr, wcolorg, (blend - 0.5f) * 10f);
+	else if(blend < 0.7f)
+		tcolor = wcolorg;
+	else if(blend < 0.8f)
+		tcolor = mix(wcolorg, wcolorb, (blend - 0.7f) * 10f);
+	else
+		tcolor = wcolorb;
+	
+	finalcolor = tcolor;
 	
 	genPhong();
 	process();

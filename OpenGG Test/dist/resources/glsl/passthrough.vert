@@ -9,10 +9,13 @@ out gl_PerVertex{
     vec4 gl_Position;
 };
 
-out vec4 vertexColors;
-out vec2 textureCoords;
-out vec3 poss;
-out vec3 norms;
+out vertexData{
+	vec4 vertexColor;
+	vec2 textureCoord;
+	vec3 pos;
+	vec3 norm;
+};
+
 
 uniform mat4 model;
 uniform mat4 view;
@@ -23,10 +26,10 @@ void main() {
 	
 	mat4 modelView = view * model;
 	
-    vertexColors = color;
-    textureCoords = texcoord;
-    poss = (model * vec4(position, 1.0f) ).xyz;
-    norms = normal;
-    vec4 P = view * vec4(poss,1);
+    vertexColor = color;
+    textureCoord = texcoord;
+    pos = (model * vec4(position, 1.0f) ).xyz;
+    norm = normal;
+    vec4 P = view * vec4(pos,1);
     gl_Position = projection * P;
 };
