@@ -211,7 +211,7 @@ public class RenderEngine {
     }
     
     public static List<RenderGroup> getActiveRenderGroups(){
-        ArrayList<RenderGroup> list = new ArrayList<>();
+        ArrayList<RenderGroup> list = new ArrayList<>(groups.size());
         
         for(RenderGroup r : groups)
             if(r.enabled)
@@ -283,36 +283,6 @@ public class RenderEngine {
         }
         ShaderController.setUniform("numLights", lights.size());
     }
-     
-    private static void writeToDepth(){
-        glDepthMask(true);
-        glDrawBuffer(GL_NONE);
-        ShaderController.useConfiguration("adjpassthrough");
-        groups.stream().forEach((group) -> {
-            group.render();
-        });
-    }
-    
-    private static void cullShadowFaces(){
-        glEnable(GL_STENCIL_TEST);
-
-        glDepthMask(false);
-        glEnable(GL_DEPTH_CLAMP); 
-        glDisable(GL_CULL_FACE);
-        
-        glStencilFunc(GL_ALWAYS, 0, 0xff);
-        glStencilOpSeparate(GL_BACK, GL_KEEP, GL_INCR_WRAP, GL_KEEP);
-        glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_DECR_WRAP, GL_KEEP); 
-        
-        ShaderController.useConfiguration("volume");
-        groups.stream().forEach((group) -> {
-            group.render();
-        });
-
-        glDisable(GL_DEPTH_CLAMP);
-        glEnable(GL_CULL_FACE); 
-        
-    }
     
     public static void sortOrders(){
         groups = groups.stream().sorted((RenderGroup o1, RenderGroup o2) -> {
@@ -335,8 +305,6 @@ public class RenderEngine {
         resetConfig();
         
         defaultvao.bind();
-        
-        
         
         for(RenderPath path : getActiveRenderPaths()){
             path.render();
@@ -362,7 +330,7 @@ public class RenderEngine {
         glBlendEquation(GL_FUNC_ADD);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         
-        glDisable(GL_CULL_FACE);
+        glEnable(GL_CULL_FACE);
     }
     
     static void destroy(){

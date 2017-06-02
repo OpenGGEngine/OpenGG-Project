@@ -165,6 +165,7 @@ public class OpenGG{
         while (!window.shouldClose() && !end) {
             startFrame();
             app.render();
+            RenderEngine.draw();
             endFrame();
             RenderEngine.checkForGLErrors();
             
