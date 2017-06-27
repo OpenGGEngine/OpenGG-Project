@@ -14,7 +14,6 @@ import com.opengg.core.world.Action;
 import com.opengg.core.world.ActionType;
 import com.opengg.core.world.Actionable;
 import com.opengg.core.world.collision.AABB;
-import com.opengg.core.world.collision.BoundingBox;
 import com.opengg.core.world.collision.CylinderCollider;
 import com.opengg.core.world.components.CameraComponent;
 import com.opengg.core.world.components.Component;
@@ -61,7 +60,6 @@ public class TestPlayerComponent extends Component implements Actionable{
         playerphysics.frictionCoefficient = 0.8f;
         gun = new GunComponent();
         gun.setPositionOffset(weaponpos);
-        gun.setScale(new Vector3f(0.3f,0.3f,0.3f));
         gun.setRotationOffset(new Quaternionf(new Vector3f(0,90,0)));
         
         head.attach(camera);

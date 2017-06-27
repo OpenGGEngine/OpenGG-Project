@@ -1,9 +1,6 @@
 package com.opengg.test;
 
 import com.opengg.core.audio.AudioListener;
-import com.opengg.core.audio.Sound;
-import com.opengg.core.audio.Soundtrack;
-import com.opengg.core.audio.SoundtrackHandler;
 import com.opengg.core.engine.BindController;
 import com.opengg.core.engine.GGApplication;
 import com.opengg.core.engine.OpenGG;
@@ -17,7 +14,6 @@ import static com.opengg.core.io.input.keyboard.Key.*;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.Text;
-import com.opengg.core.render.light.Light;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.texture.ArrayTexture;
 import com.opengg.core.render.texture.Cubemap;
@@ -29,7 +25,7 @@ import static com.opengg.core.render.window.WindowOptions.GLFW;
 import com.opengg.core.world.Skybox;
 import com.opengg.core.world.Terrain;
 import com.opengg.core.world.World;
-import com.opengg.core.world.components.FreeFlyComponent;
+import com.opengg.core.world.components.SunComponent;
 import com.opengg.core.world.components.TerrainComponent;
 import com.opengg.core.world.components.WaterComponent;
 import com.opengg.core.world.components.particle.FountainParticleEmitter;
