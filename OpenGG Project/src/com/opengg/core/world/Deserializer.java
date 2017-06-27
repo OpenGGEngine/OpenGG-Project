@@ -7,15 +7,15 @@
 package com.opengg.core.world;
 
 import com.opengg.core.engine.GGConsole;
-import com.opengg.core.math.Quaternionf;
-import com.opengg.core.math.Vector2f;
-import com.opengg.core.math.Vector3f;
+import com.opengg.core.util.GGByteInputStream;
 import com.opengg.core.world.components.Component;
-import com.opengg.core.world.components.Component;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteBuffer;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -23,19 +23,22 @@ import java.util.List;
  */
 public class Deserializer {
     public static Deserializer ds;
-    public ByteBuffer b;
+    public GGByteInputStream b;
     public List<SerialHolder> components = new LinkedList<>();
     public World w;
     
     public static World deserialize(ByteBuffer b){
         ds = new Deserializer();
-        ds.b = b;
+        ds.b = new GGByteInputStream(b);
+        try {
+            ds.w = new World();
+            ds.w.deserialize(ds.b);
+            ds.w.id = 0;
         
-        ds.w = new World();
-        ds.w.deserialize(ds);
-        ds.w.id = 0;
-        
-        doList(ds);
+            doList(ds);
+        } catch (IOException ex) {
+            GGConsole.error("IOException thrown during deserialization of world!");
+        }
         
         if(ds.w == null)
             return null;
@@ -66,16 +69,16 @@ public class Deserializer {
         return ds.w;
     }
     
-    public static void doList(Deserializer ds){
-        int l = ds.getInt();
+    public static void doList(Deserializer ds) throws IOException{
+        int l = ds.b.readInt();
         for(int i = 0; i < l; i++){
-            String classname = ds.getString();
+            String classname = ds.b.readString();
             try {
-                int id = ds.getInt();
-                int pid = ds.getInt();
+                int id = ds.b.readInt();
+                int pid = ds.b.readInt();
                 Class c = Class.forName(classname);
                 Component comp = (Component)c.getConstructor().newInstance();
-                comp.deserialize(ds);
+                comp.deserialize(ds.b);
                 comp.id = id;
                 
                 SerialHolder ch = new SerialHolder();
@@ -105,86 +108,5 @@ public class Deserializer {
                 return;
             }
         }
-    }
-    
-    public Vector3f getVector3f(){
-        Vector3f v = new Vector3f();
-        v.x = getFloat();
-        v.y = getFloat();
-        v.z = getFloat();
-        return v;
-    }
-    
-    public Vector2f getVector2f(){
-        Vector2f v = new Vector2f();
-        v.x = getFloat();
-        v.y = getFloat();
-        return v;
-    }
-    
-    public Quaternionf getQuaternionf(){
-        Quaternionf f = new Quaternionf();
-        f.x = getFloat();
-        f.y = getFloat();
-        f.z = getFloat();
-        f.w = getFloat();
-        return f;
-    }
-    
-    public int getInt(){
-        ByteBuffer b = ByteBuffer.allocate(Integer.BYTES).put(getByteArray(Integer.BYTES));
-        b.flip();
-        return b.getInt();
-    }
-    
-    public float getFloat(){
-        ByteBuffer b = ByteBuffer.allocate(Float.BYTES).put(getByteArray(Float.BYTES));
-        b.flip();
-        return b.getFloat();
-    }
-    
-    public boolean getBoolean(){
-        byte b = getByte();
-        
-        return b == 1;
-    }
-    
-    public byte[] getByteArray(int size){
-        byte[] b = new byte[size];
-        for(int i = 0; i < size; i++){
-            b[i] = getByte();
-        }
-        return b;
-    }
-    
-    public byte getByte(){
-        return b.get();
-    }
-    
-    public char getChar(){
-        ByteBuffer b = ByteBuffer.allocate(Character.BYTES).put(getByteArray(Character.BYTES));
-        b.flip();
-        return (char)b.getShort();
-    }
-    
-    public String getString(){
-        String s = "";
-        int len = getInt();
-        for(int i = 0; i < len; i++){
-            s += getChar();
-        }
-        return s;
-    }
-    
-    public Vector2f getNormalizedVector2f(){
-        return getVector2f();
-    }
-    
-    public Vector3f getNormalizedVector3f(){
-        return getVector3f();
-    }
-    
-    public Quaternionf getNormalizedQuaternionf(){
-        return new Quaternionf();
     }
 }

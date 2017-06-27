@@ -21,7 +21,7 @@ import java.nio.IntBuffer;
  * @author Warren
  */
 public class SunComponent extends RenderComponent{
-    int SUN_DIS = 800;
+    int SUN_DIS = 5000;
     float rotspeed;
     float currot;
     Texture texture;

@@ -6,10 +6,12 @@
 
 package com.opengg.core.online;
 
+import com.opengg.core.engine.GGConsole;
 import com.opengg.core.engine.WorldEngine;
-import com.opengg.core.world.Deserializer;
-import com.opengg.core.world.Serializer;
+import com.opengg.core.util.GGByteInputStream;
+import com.opengg.core.util.GGByteOutputStream;
 import com.opengg.core.world.components.Component;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Calendar;
 import java.util.List;
@@ -20,30 +22,41 @@ import java.util.List;
  */
 public class NetworkSerializer {
     public static byte[] serializeUpdate(List<Component> components){
-        Serializer serializer = new Serializer();
-        serializer.add(Calendar.getInstance().getTimeInMillis());
-        serializer.add(components.size());
-        for(Component c : components){
-            serializer.add(c.id);
-            c.serialize(serializer);
+        try {
+            GGByteOutputStream out = new GGByteOutputStream();
+            out.write(Calendar.getInstance().getTimeInMillis());
+            out.write(components.size());
+            for(Component c : components){
+                out.write(c.id);
+                c.serialize(out);
+            }
+            
+            return out.getArray();
+        } catch (IOException ex) {
+            GGConsole.error("Error occured during serialization of packet!");
         }
-        
-        return serializer.getByteArray();
+        return null;
     }
     
     public static void deserializeUpdate(byte[] bytes){
-        Deserializer ds = new Deserializer();
-        ds.b = ByteBuffer.wrap(bytes);
-        ds.b.rewind();
-        long time = ds.b.getLong();
-        int amount = ds.b.getInt();
-        List<Component> components = WorldEngine.getCurrent().getAll();
-                
-        for(int i = 0; i < amount; i++){
-            int id = ds.b.getInt();
-            components.stream().filter((c) -> (c.id == id)).forEach((c) -> {
-                c.deserialize(ds);
-            });
+        try {
+            GGByteInputStream ds = new GGByteInputStream(ByteBuffer.wrap(bytes));
+            //long time = ds.readLong();
+            int amount = ds.readInt();
+            List<Component> components = WorldEngine.getCurrent().getAll();
+            
+            for(int i = 0; i < amount; i++){
+                int id = ds.readInt();
+                components.stream().filter((c) -> (c.id == id)).forEach((c) -> {
+                    try {
+                        c.deserialize(ds);
+                    } catch (IOException ex) {
+                        GGConsole.error("Error occured during deserialization of packet!");
+                    }
+                });
+            }
+        } catch (IOException ex) {
+            GGConsole.error("Error occured during deserialization of packet!");
         }
     }
 }
