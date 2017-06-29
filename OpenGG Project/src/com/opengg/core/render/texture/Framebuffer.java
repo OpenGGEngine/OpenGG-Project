@@ -31,6 +31,7 @@ public class Framebuffer extends Texture {
     int x, y;
 
     public void enableColorAttachments() {
+        glBindFramebuffer(GL_FRAMEBUFFER, fb);
         int[] attachments = new int[textures.size()];
         for (int i = 0; i < textures.size(); i++) {
             attachments[i] = GL_COLOR_ATTACHMENT0 + i;
@@ -61,7 +62,7 @@ public class Framebuffer extends Texture {
         glBindFramebuffer(GL_READ_FRAMEBUFFER, fb); // Make sure your multisampled FBO is the read framebuffer
         glDrawBuffer(GL_BACK);                       // Set the back buffer as the draw buffer
         glBlitFramebuffer(0, 0, x, y,
-                0, 0, OpenGG.window.getWidth(), OpenGG.window.getHeight(),
+                0, 0, OpenGG.getWindow().getWidth(), OpenGG.getWindow().getHeight(),
                 GL_COLOR_BUFFER_BIT, GL_LINEAR);
     }
 
@@ -140,6 +141,7 @@ public class Framebuffer extends Texture {
     public void setupFramebuffer(int sizex, int sizey, int attachmentCount) {
         x = sizex;
         y = sizey;
+        type = GL_TEXTURE_2D;
         fb = glGenFramebuffers();
         glBindFramebuffer(GL_FRAMEBUFFER, fb);
         glDrawBuffer(GL_COLOR_ATTACHMENT0);
@@ -156,7 +158,7 @@ public class Framebuffer extends Texture {
                 if (i == GL_FRAMEBUFFER_UNSUPPORTED) {
                     GGConsole.error("Framebuffer generation failed: Framebuffer unsupported");
                 }
-                throw new Exception("Buffer failed to generate!");
+                throw new Exception("Buffer failed to generate (Error " + i + ")");
 
             }
         } catch (Exception e) {
@@ -176,6 +178,6 @@ public class Framebuffer extends Texture {
     public void endTexRender() {
         glFlush();
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        glViewport(0, 0, OpenGG.window.getWidth(), OpenGG.window.getHeight());
+        glViewport(0, 0, OpenGG.getWindow().getWidth(), OpenGG.getWindow().getHeight());
     }
 }

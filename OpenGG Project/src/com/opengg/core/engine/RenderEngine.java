@@ -24,17 +24,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL14.GL_DECR_WRAP;
 import static org.lwjgl.opengl.GL14.GL_FUNC_ADD;
-import static org.lwjgl.opengl.GL14.GL_INCR_WRAP;
 import static org.lwjgl.opengl.GL14.glBlendEquation;
 import static org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW;
-import static org.lwjgl.opengl.GL20.glStencilOpSeparate;
 import static org.lwjgl.opengl.GL30.GL_MAJOR_VERSION;
 import static org.lwjgl.opengl.GL30.GL_MINOR_VERSION;
 import static org.lwjgl.opengl.GL30.GL_RGBA16F;
 import static org.lwjgl.opengl.GL31.GL_UNIFORM_BUFFER;
-import static org.lwjgl.opengl.GL32.GL_DEPTH_CLAMP;
 import static org.lwjgl.opengl.GL32.GL_TEXTURE_CUBE_MAP_SEAMLESS;
 import org.lwjgl.system.MemoryUtil;
 
@@ -76,7 +72,7 @@ public class RenderEngine {
         
         TextureManager.initialize();
         ModelManager.initialize();
-        sceneTex = Framebuffer.getFramebuffer(OpenGG.window.getWidth(), OpenGG.window.getHeight(), 4, GL_RGBA16F);
+        sceneTex = Framebuffer.getFramebuffer(OpenGG.window.getWidth(), OpenGG.getWindow().getHeight(), 4, GL_RGBA16F);
         PostProcessPipeline.initialize(sceneTex);
         
         defaultvao = new VertexArrayObject(vaoformat);
@@ -299,26 +295,28 @@ public class RenderEngine {
     public static void draw(){
         ShaderController.setView(camera.getMatrix());
         ShaderController.setUniform("camera", camera.getPos().inverse());
+
         sceneTex.startTexRender();
         sceneTex.enableColorAttachments();
         useLights();
         resetConfig();
-        
+
         defaultvao.bind();
-        
+
         for(RenderPath path : getActiveRenderPaths()){
             path.render();
             resetConfig();
         }
-        
         ShaderController.useConfiguration("sky");
-        skybox.getCubemap().use(0);
-        skybox.getDrawable().render(); 
+        if(skybox != null){
+            skybox.getCubemap().use(0);
+            skybox.getDrawable().render(); 
+        }
         glDisable(GL_CULL_FACE); 
         
         GUI.startGUIPos();
         PostProcessPipeline.process();
-        GUI.render();        
+        GUI.render();   
     }
     
     public static void resetConfig(){

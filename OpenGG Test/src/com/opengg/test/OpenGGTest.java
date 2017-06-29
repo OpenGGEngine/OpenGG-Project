@@ -21,7 +21,6 @@ import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.texture.text.GGFont;
 import com.opengg.core.render.window.WindowInfo;
 import com.opengg.core.render.window.WindowOptions;
-import static com.opengg.core.render.window.WindowOptions.GLFW;
 import com.opengg.core.world.Skybox;
 import com.opengg.core.world.Terrain;
 import com.opengg.core.world.World;
@@ -45,7 +44,7 @@ public class OpenGGTest extends GGApplication{
         w.width = 1280;
         w.height = 1024;
         w.resizable = true;
-        w.type = GLFW;
+        w.type = "GLFW";
         w.vsync = true;
         OpenGG.initialize(new OpenGGTest(), w);
     }
@@ -127,7 +126,7 @@ public class OpenGGTest extends GGApplication{
     
     @Override
     public void render() {
-        ShaderController.setPerspective(90, OpenGG.window.getRatio(), 0.2f, 3000f);
+        ShaderController.setPerspective(90, OpenGG.getWindow().getRatio(), 0.2f, 3000f);
     }
 
     @Override

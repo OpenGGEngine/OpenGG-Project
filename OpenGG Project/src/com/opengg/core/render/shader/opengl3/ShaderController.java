@@ -134,7 +134,7 @@ public class ShaderController {
         program.setUniform(billboard,false);
         program.checkStatus();
 
-        ViewUtil.setPerspective(80, OpenGG.window.getRatio(), 0.3f, 3000f, program);
+        //ViewUtil.setPerspective(80, OpenGG.window.getRatio(), 0.3f, 3000f, program);
         
     }
     

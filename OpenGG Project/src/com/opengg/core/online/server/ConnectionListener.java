@@ -67,7 +67,7 @@ public class ConnectionListener implements Runnable{
                 
                 GGConsole.log(ip + " connected to server, sending game state");
                 
-                byte[] bytes = Serializer.serialize(OpenGG.curworld);
+                byte[] bytes = Serializer.serialize(OpenGG.getCurrentWorld());
                 
                 out.println(bytes.length);
                 

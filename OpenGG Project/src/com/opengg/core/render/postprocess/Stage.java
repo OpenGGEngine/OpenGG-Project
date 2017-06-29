@@ -19,7 +19,7 @@ public class Stage {
     Framebuffer buffer;
     
     public Stage(String shader){
-        buffer = Framebuffer.getFramebuffer(OpenGG.window.getWidth(), OpenGG.window.getHeight(), GL_RGBA16F);
+        buffer = Framebuffer.getFramebuffer(OpenGG.getWindow().getWidth(), OpenGG.getWindow().getHeight(), GL_RGBA16F);
         this.shader = shader;
     }
     
@@ -32,6 +32,6 @@ public class Stage {
     
     public void finalizeAtLoc(int end){
         buffer.endTexRender();
-        buffer.useTexture(end);
+        buffer.useTexture(end);     
     }
 }

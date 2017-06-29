@@ -12,7 +12,5 @@ package com.opengg.core.render.window;
 public final class WindowOptions {
     public static final int FULLSCREEN = 1,
             WINDOWED = 2,
-            BORDERLESS = 3,
-            GLFW = 100,
-            SWT = 101;
+            BORDERLESS = 3;
 }

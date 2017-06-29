@@ -6,13 +6,13 @@
 
 package com.opengg.core.render.window;
 
-import com.opengg.core.math.Vector2f;
 
 /**
  *
  * @author Javier
  */
 public interface Window {
+    public void setup(WindowInfo info);
     public void endFrame();
     public float getRatio();
     public boolean shouldClose();
@@ -21,8 +21,7 @@ public interface Window {
     public int getWidth();
     public int getHeight();
     public boolean getSuccessfulConstruction();
-    public int getType();
+    public String getType();
     public void setIcon(String path) throws Exception;
     public void setVSync(boolean vsync);
-    public Vector2f getMousePosition();
 }

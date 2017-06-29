@@ -112,7 +112,7 @@ public class World extends Component{
     }
     
     public void addCollider(CollisionComponent c){
-        if(this != OpenGG.curworld)
+        if(this != OpenGG.getCurrentWorld())
             return;
         WorldEngine.addCollider(c);
     }

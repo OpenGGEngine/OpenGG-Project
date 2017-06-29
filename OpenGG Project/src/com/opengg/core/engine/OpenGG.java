@@ -7,13 +7,14 @@
 package com.opengg.core.engine;
 
 import com.opengg.core.audio.SoundtrackHandler;
-import com.opengg.core.exceptions.IncompatibleWindowFormatException;
+import com.opengg.core.extension.Extension;
+import com.opengg.core.extension.ExtensionManager;
 import com.opengg.core.render.window.GLFWWindow;
 import static com.opengg.core.render.window.RenderUtil.endFrame;
 import static com.opengg.core.render.window.RenderUtil.startFrame;
 import com.opengg.core.render.window.Window;
 import com.opengg.core.render.window.WindowInfo;
-import static com.opengg.core.render.window.WindowOptions.GLFW;
+import com.opengg.core.render.window.WindowTypeRegister;
 import com.opengg.core.thread.ThreadManager;
 import com.opengg.core.world.Deserializer;
 import com.opengg.core.world.Serializer;
@@ -40,10 +41,10 @@ import java.util.logging.Logger;
 public class OpenGG{
     public static final String version = "0.0.1a1";
     
-    public static Window window;
-    public static GGApplication app;
-    public static World curworld;
-    public static boolean lwjglinit = false;
+    static Window window;
+    static GGApplication app;
+    static World curworld;
+    static boolean lwjglinit = false;
     static List<Executable> executables = new LinkedList<>();
     static Date startTime;
     static boolean head = false;
@@ -83,10 +84,13 @@ public class OpenGG{
     }
     
     private static void initializeGraphics(WindowInfo windowinfo){       
-        if(windowinfo.type == GLFW)
-            window = new GLFWWindow(windowinfo);
-        else
-            throw new IncompatibleWindowFormatException("Window type passed in is unknown!");
+        WindowTypeRegister.registerWindowType("GLFW", new GLFWWindow());
+        
+        
+        Window twin = WindowTypeRegister.getRegisteredWindow(windowinfo.type);
+        GGConsole.log("Window registered under the name " + windowinfo.type + " requested and found, creating instance...");
+        twin.setup(windowinfo);
+        window = twin;
         
         SystemInfo.queryOpenGLInfo();
         GGConsole.log("Window generation successful, using OpenGL context version " + RenderEngine.getGLVersion());
@@ -96,11 +100,15 @@ public class OpenGG{
         
         initializeAudioController();      
         BindController.initialize();
+        
+        ExtensionManager.loadStep(Extension.GRAPHICS);
     }
     
     private static void initializeLocal(GGApplication app, WindowInfo info, boolean client){
         startTime = Calendar.getInstance().getTime();
         head = client;
+        
+        ExtensionManager.loadStep(Extension.NONE);
         
         linkLWJGL();
         lwjglinit = true;
@@ -108,7 +116,7 @@ public class OpenGG{
         ThreadManager.initialize();
         SystemInfo.querySystemInfo();
         Config.reloadConfigs();
-        
+          
         String verb = System.getProperty("gg.verbose");
         String stest = System.getProperty("gg.istest");
         if(verb != null)
@@ -124,6 +132,8 @@ public class OpenGG{
         GGConsole.log("OpenGG initializing, running on " + System.getProperty("os.name") + ", " + System.getProperty("os.arch"));
         
         OpenGG.app = app;
+        
+        ExtensionManager.loadStep(Extension.LWJGL);
         
         if(client)
             initializeGraphics(info);
@@ -253,8 +263,24 @@ public class OpenGG{
         end = true;
     }
     
+    public static Window getWindow() {
+        return window;
+    }
+
+    public static GGApplication getApp() {
+        return app;
+    }
+
+    public static World getCurrentWorld() {
+        return curworld;
+    }
+    
     public static boolean getEnded(){
         return end;
+    }
+    
+    public static boolean lwjglInitialized(){
+        return lwjglinit;
     }
     
     private static void closeEngine(){
@@ -270,7 +296,7 @@ public class OpenGG{
     
     private static void writeLog(){
         if(test) return;
-        GGConsole.writeLog(startTime);
+        //GGConsole.writeLog(startTime);
     }
     
     private static void writeErrorLog(){
