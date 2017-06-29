@@ -13,28 +13,28 @@ import java.util.Map;
  *
  * @author Warren
  */
-public class GUIGroup extends GUIItem{
-    
+public class GUIGroup extends GUIItem {
+
     Map<String, GUIItem> items = new HashMap<>();
-    
-    public GUIGroup(Vector2f pos){
+
+    public GUIGroup(Vector2f pos) {
         this.setPositionOffset(position);
     }
 
-    public void addItem(String name, GUIItem item){
+    public void addItem(String name, GUIItem item) {
         item.setParent(this);
         items.put(name, item);
     }
-    
-    public GUIItem getItem(String name){
+
+    public GUIItem getItem(String name) {
         return items.get(name);
     }
-    
+
     @Override
-    public void render(){
-        if(enabled){      
-            for(GUIItem item: items.values()){
-                item.render();
+    public void render(float x, float y) {
+        if (enabled) {
+            for (GUIItem item : items.values()) {
+                item.render(x + this.position.x, y + this.position.y);
             }
         }
     }
