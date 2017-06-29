@@ -24,7 +24,7 @@ public class GUI {
 
     public static void render(){
         ShaderController.useConfiguration("gui");
-        root.render();
+        root.render(0,0);
     }
     
     public static void addItem(String name, GUIRenderable item){

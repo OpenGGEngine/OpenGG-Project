@@ -14,42 +14,44 @@ import com.opengg.core.render.texture.text.GGFont;
  *
  * @author Javier
  */
-public class GUIText extends GUIRenderable{
+public class GUIText extends GUIRenderable {
+
     Text text;
     GGFont font;
-    public GUIText(Text text, GGFont font, Vector2f pos){
+
+    public GUIText(Text text, GGFont font, Vector2f pos) {
         this.text = text;
         this.font = font;
         this.setPositionOffset(pos);
         this.setDrawable(text.getDrawable(font));
     }
-    
-    public GUIText(GGFont font, Vector2f pos){
+
+    public GUIText(GGFont font, Vector2f pos) {
         this.text = new Text();
         this.font = font;
         this.setPositionOffset(pos);
         this.setDrawable(text.getDrawable(font));
     }
-    
-    public void setText(String ntext){
+
+    public void setText(String ntext) {
         this.text.setText(ntext);
         this.setDrawable(text.getDrawable(font));
     }
-    
-    public void setText(Text text){
+
+    public void setText(Text text) {
         this.text = text;
         this.setDrawable(text.getDrawable(font));
     }
-    
-    public void setFont(GGFont font){
+
+    public void setFont(GGFont font) {
         this.font = font;
         this.setDrawable(text.getDrawable(font));
     }
-    
+
     @Override
-    public void render(){
+    public void render(float x, float y) {
         ShaderController.setDistanceField(1);
-        super.render();
+        super.render((this.position.x + x), (this.position.y + y));
         ShaderController.setDistanceField(0);
     }
 }
