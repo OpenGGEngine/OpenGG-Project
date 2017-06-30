@@ -15,8 +15,6 @@ import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.Text;
 import com.opengg.core.render.shader.ShaderController;
-import com.opengg.core.render.texture.ArrayTexture;
-import com.opengg.core.render.texture.Cubemap;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.texture.text.GGFont;
 import com.opengg.core.render.window.WindowInfo;
@@ -80,7 +78,7 @@ public class OpenGGTest extends GGApplication{
         world = new TerrainComponent(Terrain.generateProcedural(new DiamondSquare(7,20,20,5.5f), 700, 700));
         world.setScale(new Vector3f(800,10,800));
         world.setPositionOffset(new Vector3f(-400, -20,-400));
-        world.setGroundArray(ArrayTexture.get(Resource.getTexturePath("grass.png"),
+        world.setGroundArray(Texture.getArrayTexture(Resource.getTexturePath("grass.png"),
                 Resource.getTexturePath("dirt.png"),
                 Resource.getTexturePath("flower2.png"),
                 Resource.getTexturePath("road.png")));
@@ -118,7 +116,13 @@ public class OpenGGTest extends GGApplication{
         BindController.addBind(ControlType.KEYBOARD, "fire", KEY_L);
         BindController.addBind(ControlType.KEYBOARD, "aim", KEY_K);
         
-        RenderEngine.setSkybox(new Skybox(Cubemap.get(Resource.getTexturePath("skybox\\majestic")), 1500f)); 
+        RenderEngine.setSkybox(new Skybox(Texture.getCubemap(
+                Resource.getTexturePath("skybox\\majestic_ft.png"),
+                Resource.getTexturePath("skybox\\majestic_bk.png"),
+                Resource.getTexturePath("skybox\\majestic_up.png"),
+                Resource.getTexturePath("skybox\\majestic_dn.png"),
+                Resource.getTexturePath("skybox\\majestic_rt.png"),
+                Resource.getTexturePath("skybox\\majestic_lf.png")), 1500f));
         GUI.addItem("aids", new GUIText(text, font, new Vector2f(0f,0)));
         
     }

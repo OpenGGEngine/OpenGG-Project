@@ -17,12 +17,12 @@ import org.lwjgl.system.MemoryStack;
  *
  * @author Javier
  */
-public class TextureBufferGenerator {
-    public static TextureData getFastBuffer(String path) throws IOException{
-        return getFastBuffer(path,false);
+public class TextureLoader {
+    public static TextureData loadTexture(String path) throws IOException{
+        return loadTexture(path,false);
     }
     
-    public static TextureData getFastBuffer(String path, boolean flip) throws IOException{
+    public static TextureData loadTexture(String path, boolean flip) throws IOException{
         try(MemoryStack stack = MemoryStack.stackPush()){
             IntBuffer w = stack.callocInt(1);
             IntBuffer h = stack.callocInt(1);

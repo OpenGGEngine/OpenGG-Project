@@ -22,7 +22,7 @@ import static org.lwjgl.opengl.GL32.glFramebufferTexture;
  *
  * @author Javier
  */
-public class Framebuffer extends Texture {
+public class Framebuffer{
 
     protected int fb;
     protected int depthbuffer;
@@ -99,9 +99,6 @@ public class Framebuffer extends Texture {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
         glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + attachment, texture, 0);
         textures.add(texture);
-        if (attachment == 0) {
-            this.texture = texture;
-        }
     }
 
     public void addDepthStencilTexture() {
@@ -141,7 +138,6 @@ public class Framebuffer extends Texture {
     public void setupFramebuffer(int sizex, int sizey, int attachmentCount) {
         x = sizex;
         y = sizey;
-        type = GL_TEXTURE_2D;
         fb = glGenFramebuffers();
         glBindFramebuffer(GL_FRAMEBUFFER, fb);
         glDrawBuffer(GL_COLOR_ATTACHMENT0);

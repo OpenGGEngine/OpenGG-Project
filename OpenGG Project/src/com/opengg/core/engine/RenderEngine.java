@@ -295,7 +295,7 @@ public class RenderEngine {
     public static void draw(){
         ShaderController.setView(camera.getMatrix());
         ShaderController.setUniform("camera", camera.getPos().inverse());
-
+        
         sceneTex.startTexRender();
         sceneTex.enableColorAttachments();
         useLights();
@@ -306,17 +306,17 @@ public class RenderEngine {
         for(RenderPath path : getActiveRenderPaths()){
             path.render();
             resetConfig();
-        }
+        }       
         ShaderController.useConfiguration("sky");
         if(skybox != null){
             skybox.getCubemap().use(0);
             skybox.getDrawable().render(); 
         }
-        glDisable(GL_CULL_FACE); 
         
+        glDisable(GL_CULL_FACE); 
         GUI.startGUIPos();
         PostProcessPipeline.process();
-        GUI.render();   
+        GUI.render();  
     }
     
     public static void resetConfig(){
@@ -332,6 +332,6 @@ public class RenderEngine {
     }
     
     static void destroy(){
-        TextureManager.destroy();
+        //TextureManager.destroy();
     }
 }

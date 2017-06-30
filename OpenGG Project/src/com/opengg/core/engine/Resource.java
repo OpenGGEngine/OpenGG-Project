@@ -92,7 +92,7 @@ public class Resource {
     }
     
     public static Texture getTexture(String name){
-        return Texture.get(getTexturePath(name));
+        return Texture.get2DTexture(getTexturePath(name));
     }
     
     public static GGFont getFont(String fname, String ftexname){

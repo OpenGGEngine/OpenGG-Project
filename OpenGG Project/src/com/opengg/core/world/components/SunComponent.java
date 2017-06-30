@@ -43,7 +43,7 @@ public class SunComponent extends RenderComponent{
     @Override
     public void render() {
         ShaderController.setBillBoard(1);
-        texture.useTexture(0);
+        texture.use(0);
         super.render();
         ShaderController.setBillBoard(0);
     }

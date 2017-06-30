@@ -61,13 +61,13 @@ public class MatDrawnObject implements Drawable {
     @Override
     public void render() {
         if(m.Kd != null)
-            m.Kd.useTexture(0); 
+            m.Kd.use(0); 
         if(m.norm != null) 
-            m.norm.useTexture(3);
+            m.norm.use(3);
         if(m.Ks != null) 
-            m.Ks.useTexture(4); 
+            m.Ks.use(4); 
         if(m.Ns != null)
-            m.Ns.useTexture(5);
+            m.Ns.use(5);
         ShaderController.passMaterial(m);
         d.render();
     }

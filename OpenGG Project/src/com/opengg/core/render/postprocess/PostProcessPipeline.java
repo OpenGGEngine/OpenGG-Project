@@ -60,11 +60,11 @@ public class PostProcessPipeline {
             }
         }
 
-        if(current != null)
+        if(current != null){
             current.buffer.blitToBack();
-        else
+        }else{
             initial.blitToBack();
-        
+        }
         glDrawBuffer(GL_BACK);
     }
 }

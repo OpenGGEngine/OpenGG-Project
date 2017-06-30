@@ -32,6 +32,6 @@ public class Stage {
     
     public void finalizeAtLoc(int end){
         buffer.endTexRender();
-        buffer.useTexture(end);     
+        buffer.useTexture(end,0);     
     }
 }
