@@ -11,7 +11,7 @@ import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.texture.Framebuffer;
 import java.nio.FloatBuffer;
 import static org.lwjgl.opengl.GL11.GL_RGBA8;
-import static org.lwjgl.opengl.GL30.GL_RGBA16F;
+import static org.lwjgl.opengl.GL30.GL_COLOR_ATTACHMENT0;
 import org.lwjgl.system.MemoryUtil;
 
 /**
@@ -49,7 +49,8 @@ public class Light {
         this.view = view;
         this.perspective = perspective;
         
-        lightbuffer = Framebuffer.getFramebuffer(xres, yres, GL_RGBA16F);
+        lightbuffer = Framebuffer.generateFramebuffer();
+        lightbuffer.attachRenderbuffer(xres, yres, GL_RGBA8, GL_COLOR_ATTACHMENT0);
     }
 
     public FloatBuffer getBuffer(){

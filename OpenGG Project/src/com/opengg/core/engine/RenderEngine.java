@@ -29,7 +29,6 @@ import static org.lwjgl.opengl.GL14.glBlendEquation;
 import static org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW;
 import static org.lwjgl.opengl.GL30.GL_MAJOR_VERSION;
 import static org.lwjgl.opengl.GL30.GL_MINOR_VERSION;
-import static org.lwjgl.opengl.GL30.GL_RGBA16F;
 import static org.lwjgl.opengl.GL31.GL_UNIFORM_BUFFER;
 import static org.lwjgl.opengl.GL32.GL_TEXTURE_CUBE_MAP_SEAMLESS;
 import org.lwjgl.system.MemoryUtil;
@@ -72,9 +71,12 @@ public class RenderEngine {
         
         TextureManager.initialize();
         ModelManager.initialize();
-        sceneTex = Framebuffer.getFramebuffer(OpenGG.window.getWidth(), OpenGG.getWindow().getHeight(), 4, GL_RGBA16F);
-        PostProcessPipeline.initialize(sceneTex);
         
+        sceneTex = Framebuffer.generateFramebuffer();
+        sceneTex.attachColorTexture(OpenGG.window.getWidth(), OpenGG.getWindow().getHeight(), 0);
+        sceneTex.attachDepthStencilTexture(OpenGG.window.getWidth(), OpenGG.getWindow().getHeight());
+        PostProcessPipeline.initialize(sceneTex);
+
         defaultvao = new VertexArrayObject(vaoformat);
         lightobj = new GLBuffer(GL_UNIFORM_BUFFER, 1600, GL_DYNAMIC_DRAW);
         lightobj.bindBase(ShaderController.getUniqueUniformBufferLocation());
@@ -118,17 +120,18 @@ public class RenderEngine {
                 if(lights.get(i).hasShadow()){    
                     //ShaderController.setView(lights.get(i).getView());
                     
-                    lights.get(i).getLightbuffer().startTexRender();
-                    lights.get(i).getLightbuffer().enableColorAttachments();
+                    lights.get(i).getLightbuffer().enableRendering();
+                    lights.get(i).getLightbuffer().useEnabledAttachments();
                     for(RenderGroup d : getActiveRenderGroups()){
                         d.render();
                     }
-                    lights.get(i).getLightbuffer().endTexRender();
-                    lights.get(i).getLightbuffer().useDepthTexture(6 + used);
+                    lights.get(i).getLightbuffer().disableRendering();
+                    lights.get(i).getLightbuffer().useTexture(6 + used, Framebuffer.DEPTH);
                     used++;
                 }
             }
-            sceneTex.startTexRender();
+            
+            sceneTex.enableRendering();
             
             for(RenderGroup d : getActiveRenderGroups()){
                 ShaderController.setView(camera.getMatrix());
@@ -296,13 +299,13 @@ public class RenderEngine {
         ShaderController.setView(camera.getMatrix());
         ShaderController.setUniform("camera", camera.getPos().inverse());
         
-        sceneTex.startTexRender();
-        sceneTex.enableColorAttachments();
+        sceneTex.enableRendering();
+        sceneTex.useEnabledAttachments();
         useLights();
         resetConfig();
 
         defaultvao.bind();
-
+        
         for(RenderPath path : getActiveRenderPaths()){
             path.render();
             resetConfig();
@@ -312,7 +315,7 @@ public class RenderEngine {
             skybox.getCubemap().use(0);
             skybox.getDrawable().render(); 
         }
-        
+
         glDisable(GL_CULL_FACE); 
         GUI.startGUIPos();
         PostProcessPipeline.process();

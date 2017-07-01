@@ -7,6 +7,7 @@ package com.opengg.core.render.texture;
 
 import java.nio.ByteBuffer;
 import static org.lwjgl.opengl.GL11.glBindTexture;
+import static org.lwjgl.opengl.GL11.glDeleteTextures;
 import static org.lwjgl.opengl.GL11.glGenTextures;
 import static org.lwjgl.opengl.GL11.glTexImage2D;
 import static org.lwjgl.opengl.GL11.glTexParameterf;
@@ -72,5 +73,13 @@ public class NativeGLTexture {
     
     public void generateMipmap(int type){
         glGenerateMipmap(type);
+    }
+    
+    public int getID(){
+        return id;
+    }
+    
+    public void delete(){
+        glDeleteTextures(id);
     }
 }
