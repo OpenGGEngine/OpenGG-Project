@@ -16,12 +16,12 @@ public class WindowInfo {
     public int width = 640, 
             height = 480, 
             displaymode = WINDOWED,
-            type = GLFW, 
             rbit = 8, 
             gbit = 8, 
             bbit = 8, 
             samples = 4;
     public String name= "An OpenGG Application";
+    public String type = "GLFW";
     public boolean resizable = false,
             vsync = false;
 }

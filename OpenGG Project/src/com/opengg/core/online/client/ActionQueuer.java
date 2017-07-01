@@ -36,7 +36,7 @@ public class ActionQueuer implements ActionTransmitter{
         t = new Time();
         lastTime = Calendar.getInstance().getTimeInMillis();
     }
-    
+    /*
     public static byte[] generatePacket(){
         Serializer s = new Serializer();
         t.getDeltaMs();
@@ -50,7 +50,7 @@ public class ActionQueuer implements ActionTransmitter{
         lastTime = Calendar.getInstance().getTimeInMillis();
         return s.getByteArray();
     }
-    
+    */
     @Override
     public void doAction(Action action) {
         

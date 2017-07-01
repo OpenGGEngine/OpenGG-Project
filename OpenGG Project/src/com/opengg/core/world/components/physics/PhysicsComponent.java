@@ -7,11 +7,14 @@ package com.opengg.core.world.components.physics;
 
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
+import com.opengg.core.util.GGByteInputStream;
+import com.opengg.core.util.GGByteOutputStream;
 import com.opengg.core.world.Deserializer;
 import com.opengg.core.world.Serializer;
 import com.opengg.core.world.collision.Collision;
 import com.opengg.core.world.collision.CollisionHandler;
 import com.opengg.core.world.components.Component;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -171,16 +174,16 @@ public class PhysicsComponent extends Component {
     }
     
     @Override
-    public void serialize(Serializer s){
-        super.serialize(s);
-        s.add(mass);
-        s.add(density);
+    public void serialize(GGByteOutputStream out) throws IOException{
+        super.serialize(out);
+        out.write(mass);
+        out.write(density);
     }
     
     @Override
-    public void deserialize(Deserializer s){
-        super.deserialize(s);
-        mass = s.getFloat();
-        density = s.getFloat();
+    public void deserialize(GGByteInputStream in) throws IOException{
+        super.deserialize(in);
+        mass = in.readFloat();
+        density = in.readFloat();
     }
 }

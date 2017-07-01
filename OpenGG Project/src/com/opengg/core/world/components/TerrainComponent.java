@@ -6,10 +6,9 @@
 
 package com.opengg.core.world.components;
 
-import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
-import com.opengg.core.render.texture.ArrayTexture;
 import com.opengg.core.render.texture.Texture;
+import com.opengg.core.render.texture.TextureManager;
 import com.opengg.core.world.Terrain;
 import com.opengg.core.world.collision.AABB;
 import com.opengg.core.world.components.physics.CollisionComponent;
@@ -22,8 +21,8 @@ import com.opengg.core.world.collision.TerrainCollider;
 public class TerrainComponent extends RenderComponent{
     Terrain t;
     CollisionComponent c;
-    public Texture blotmap = Texture.blank;
-    public ArrayTexture wow;
+    public Texture blotmap = Texture.get2DTexture(TextureManager.getDefault());
+    public Texture wow;
     
     public TerrainComponent(Terrain t){
         this.t = t;
@@ -41,7 +40,7 @@ public class TerrainComponent extends RenderComponent{
         this.attach(c);
     }
     
-    public void setGroundArray(ArrayTexture tex){
+    public void setGroundArray(Texture tex){
         this.wow = tex;
     }
     
@@ -54,15 +53,21 @@ public class TerrainComponent extends RenderComponent{
     }
     
     public float getHeightAt(Vector3f pos){
-        Vector3f np = pos.divide(getScale());
+        Vector3f np = pos.subtract(getPosition()).divide(getScale());
         float height = t.getHeight(np.x, np.z);
-        return (height + getPosition().y) * getScale().y;
+        return (height + getPosition().y) * getScale().y;  
+    }
+    
+    public Vector3f getNormalAt(Vector3f pos){
+        Vector3f np = pos.subtract(getPosition()).divide(getScale());
+        Vector3f normal = t.getNormalAt(np.x, np.z);
+        return normal;
     }
     
     @Override
     public void render(){
-        this.blotmap.useTexture(1);
-        this.wow.useTexture(0);
+        this.blotmap.use(1);
+        this.wow.use(0);
         super.render();
     }
 }

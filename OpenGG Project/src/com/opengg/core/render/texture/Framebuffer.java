@@ -7,175 +7,183 @@ package com.opengg.core.render.texture;
 
 import com.opengg.core.engine.GGConsole;
 import com.opengg.core.engine.OpenGG;
-import java.nio.ByteBuffer;
+import com.opengg.core.math.Tuple;
 import java.util.ArrayList;
 import java.util.List;
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
-import static org.lwjgl.opengl.GL13.glActiveTexture;
-import static org.lwjgl.opengl.GL14.GL_DEPTH_COMPONENT32;
+import static org.lwjgl.opengl.GL11.GL_BACK;
+import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_COMPONENT;
+import static org.lwjgl.opengl.GL11.GL_FLOAT;
+import static org.lwjgl.opengl.GL11.GL_LINEAR;
+import static org.lwjgl.opengl.GL11.GL_NEAREST;
+import static org.lwjgl.opengl.GL11.GL_RGBA;
+import static org.lwjgl.opengl.GL11.GL_RGBA8;
+import static org.lwjgl.opengl.GL11.GL_STENCIL_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE;
+import static org.lwjgl.opengl.GL11.glBindTexture;
+import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.opengl.GL11.glDrawBuffer;
+import static org.lwjgl.opengl.GL11.glFlush;
+import static org.lwjgl.opengl.GL11.glViewport;
 import static org.lwjgl.opengl.GL20.glDrawBuffers;
-import static org.lwjgl.opengl.GL30.*;
-import static org.lwjgl.opengl.GL32.glFramebufferTexture;
+import static org.lwjgl.opengl.GL30.GL_COLOR_ATTACHMENT0;
+import static org.lwjgl.opengl.GL30.GL_DEPTH24_STENCIL8;
+import static org.lwjgl.opengl.GL30.GL_DEPTH_ATTACHMENT;
+import static org.lwjgl.opengl.GL30.GL_DEPTH_STENCIL;
+import static org.lwjgl.opengl.GL30.GL_DRAW_FRAMEBUFFER;
+import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER;
+import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER_COMPLETE;
+import static org.lwjgl.opengl.GL30.GL_READ_FRAMEBUFFER;
+import static org.lwjgl.opengl.GL30.GL_RGBA16F;
+import static org.lwjgl.opengl.GL30.GL_UNSIGNED_INT_24_8;
+import static org.lwjgl.opengl.GL30.glBindFramebuffer;
 
 /**
  *
  * @author Javier
  */
-public class Framebuffer extends Texture {
-
-    protected int fb;
-    protected int depthbuffer;
-    protected List<Integer> textures = new ArrayList<>();
-    int colortype;
-    int x, y;
-
-    public void enableColorAttachments() {
-        int[] attachments = new int[textures.size()];
-        for (int i = 0; i < textures.size(); i++) {
-            attachments[i] = GL_COLOR_ATTACHMENT0 + i;
+public class Framebuffer {
+    public static final int DEPTH = GL_DEPTH_ATTACHMENT;
+    NativeGLFramebuffer fb;
+    List<Integer> usedAttachments = new ArrayList<>();
+    List<Tuple<Texture, Integer>> textures = new ArrayList<>();
+    List<NativeGLRenderbuffer> renderbuffers = new ArrayList<>();
+    int lx, ly;
+    
+    private Framebuffer(){
+        fb = new NativeGLFramebuffer();
+    }
+    
+    public void bind(){
+        fb.bind(GL_FRAMEBUFFER);
+    }
+    
+    public void bindToRead(){
+        fb.bind(GL_READ_FRAMEBUFFER);
+    }
+    
+    public void bindToWrite(){
+        fb.bind(GL_DRAW_FRAMEBUFFER);
+    }
+    
+    public void useEnabledAttachments(){
+        fb.bind(GL_FRAMEBUFFER);
+       
+        int[] attachments = new int[usedAttachments.size()];
+        for(int i = 0; i < attachments.length; i++){
+            if(usedAttachments.get(i) == GL_DEPTH_ATTACHMENT) continue;
+            attachments[i] = usedAttachments.get(i);
         }
+        
         glDrawBuffers(attachments);
     }
-
-    public void useTexture(int loc, int attachment) {
-        glActiveTexture(GL_TEXTURE0 + loc);
-        glBindTexture(GL_TEXTURE_2D, textures.get(attachment));
-    }
-
-    public void useDepthTexture(int loc) {
-        glActiveTexture(GL_TEXTURE0 + loc);
-        glBindTexture(GL_TEXTURE_2D, depthbuffer);
-    }
-
-    public void blitBuffer(Framebuffer b) {
-        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, b.fb);   // Make sure no FBO is set as the draw framebuffer
-        glBindFramebuffer(GL_READ_FRAMEBUFFER, fb); // Make sure your multisampled FBO is the read framebuffer
-        glBlitFramebuffer(0, 0, x, y,
-                0, 0, b.x, b.y,
-                GL_COLOR_BUFFER_BIT, GL_LINEAR);
-    }
-
-    public void blitToBack() {
-        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);   // Make sure no FBO is set as the draw framebuffer
-        glBindFramebuffer(GL_READ_FRAMEBUFFER, fb); // Make sure your multisampled FBO is the read framebuffer
-        glDrawBuffer(GL_BACK);                       // Set the back buffer as the draw buffer
-        glBlitFramebuffer(0, 0, x, y,
-                0, 0, OpenGG.window.getWidth(), OpenGG.window.getHeight(),
-                GL_COLOR_BUFFER_BIT, GL_LINEAR);
-    }
-
-    public void blitWithDepth(Framebuffer b) {
-        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, b.fb);   // Make sure no FBO is set as the draw framebuffer
-        glBindFramebuffer(GL_READ_FRAMEBUFFER, fb); // Make sure your multisampled FBO is the read framebuffer
-        glBlitFramebuffer(0, 0, x, y,
-                0, 0, b.x, b.y,
-                GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT, GL_NEAREST);
-    }
-
-    public static Framebuffer getFramebuffer(int sizex, int sizey, int colortype) {
-        Framebuffer t = new Framebuffer();
-        t.colortype = colortype;
-        t.setupFramebuffer(sizex, sizey, 1);
-        return t;
-    }
-
-    public static Framebuffer getFramebuffer(int sizex, int sizey, int attachmentCount,int colortype) {
-        Framebuffer t = new Framebuffer();
-        t.colortype = colortype;
-        t.setupFramebuffer(sizex, sizey, attachmentCount);
-        return t;
-    }
-
-    public void addColorTarget(int attachment) {
-        int texture = glGenTextures();
-        glBindTexture(GL_TEXTURE_2D, texture);
-        glTexImage2D(GL_TEXTURE_2D, 0, colortype, x, y, 0, GL_RGBA,
-                GL_FLOAT, (ByteBuffer) null);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + attachment, texture, 0);
-        textures.add(texture);
-        if (attachment == 0) {
-            this.texture = texture;
-        }
-    }
-
-    public void addDepthStencilTexture() {
-        depthbuffer = glGenTextures();
-        glBindTexture(GL_TEXTURE_2D, depthbuffer);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, x, y, 0, GL_DEPTH_STENCIL,
-                GL_UNSIGNED_INT_24_8, (ByteBuffer) null);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, depthbuffer, 0);
-    }
-
-    public void addDepthTexture() {
-        depthbuffer = glGenTextures();
-        glBindTexture(GL_TEXTURE_2D, depthbuffer);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, x, y, 0, GL_DEPTH_COMPONENT,
-                GL_FLOAT, (ByteBuffer) null);
-        
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-        glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthbuffer, 0);
-    }
-
-    public void addDepthTarget() {
-        depthbuffer = glGenRenderbuffers();
-        glBindRenderbuffer(GL_RENDERBUFFER, depthbuffer);
-        glRenderbufferStorage(GL_RENDERBUFFER,
-                GL_DEPTH_COMPONENT32, x, y);
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER,
-                GL_DEPTH_ATTACHMENT,
-                GL_RENDERBUFFER, depthbuffer);
-    }
-
-    public void setupFramebuffer(int sizex, int sizey, int attachmentCount) {
-        x = sizex;
-        y = sizey;
-        fb = glGenFramebuffers();
-        glBindFramebuffer(GL_FRAMEBUFFER, fb);
-        glDrawBuffer(GL_COLOR_ATTACHMENT0);
-
-        for (int i = 0; i < attachmentCount; i++) {
-            addColorTarget(i);
-        }
-
-        addDepthTexture();
-
-        try {
-            int i = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-            if (i != GL_FRAMEBUFFER_COMPLETE) {
-                if (i == GL_FRAMEBUFFER_UNSUPPORTED) {
-                    GGConsole.error("Framebuffer generation failed: Framebuffer unsupported");
+    
+    public void useTexture(int loc, int attachment){
+        for(Tuple<Texture, Integer> textuple : textures){
+            if(attachment == DEPTH){
+                if(textuple.y == DEPTH){
+                    textuple.x.use(loc);
                 }
-                throw new Exception("Buffer failed to generate!");
-
+            }else if(textuple.y == GL_COLOR_ATTACHMENT0 + attachment){
+                textuple.x.use(loc);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
-        glBindTexture(GL_TEXTURE_2D, 0);
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
+    
+    public void attachColorTexture(int width, int height, int attachment){
+        attachTexture(width, height, GL_RGBA, GL_RGBA8, GL_UNSIGNED_BYTE,  GL_COLOR_ATTACHMENT0 + attachment);
+    }
+    
+    public void attachFloatingPointTexture(int width, int height, int attachment){
+        attachTexture(width, height, GL_RGBA, GL_RGBA16F, GL_FLOAT, GL_COLOR_ATTACHMENT0 + attachment);
+    }
+    
+    public void attachDepthStencilTexture(int width, int height){
+        attachTexture(width, height, GL_DEPTH_STENCIL, GL_DEPTH24_STENCIL8, GL_UNSIGNED_INT_24_8, GL_DEPTH_ATTACHMENT);
+    }
+    
+    public void attachDepthRenderbuffer(int width, int height){
+        attachRenderbuffer(width, height, GL_DEPTH_COMPONENT, GL_DEPTH_ATTACHMENT);
+    }
+    
+    public void attachRenderbuffer(int width, int height, int storage, int attachment){
+        NativeGLRenderbuffer rb = new NativeGLRenderbuffer();
+        rb.bind();
+        rb.createStorage(storage, width, height);
+        
+        fb.bind(GL_FRAMEBUFFER);
+        fb.attachRenderbuffer(attachment, rb.id);
+        checkForCompletion();
+        
+        renderbuffers.add(rb);
+        usedAttachments.add(attachment);
+        
+        if(lx < width) lx = width;
+        if(ly < height) ly = height;
+    }
+    
+    private void attachTexture(int width, int height, int format, int intformat, int input, int attachment){ 
+        Texture tex = new Texture(GL_TEXTURE_2D, format, intformat, input);
+        tex.bind();
+        tex.set2DData(new TextureData(width, height, null));
+        
+        fb.bind(GL_FRAMEBUFFER);
+        fb.attachTexture(attachment, tex.getID(), 0);
+        checkForCompletion();
 
-    public void startTexRender() {
+        textures.add(new Tuple(tex, attachment));
+        usedAttachments.add(attachment);
+
+        if(lx < width) lx = width;
+        if(ly < height) ly = height;
+    }
+    
+    public void blitTo(Framebuffer target){
+        bindToRead();
+        target.bindToWrite();  
+        fb.blit(0, 0, lx, ly, 0, 0, target.lx, target.ly, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+    }
+    
+    public void blitToWithDepth(Framebuffer target){
+        bindToRead();
+        target.bindToWrite();  
+        fb.blit(0, 0, lx, ly, 0, 0, target.lx, target.ly, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT, GL_NEAREST);
+    }
+    
+    public void blitToBack(){
+        bindToRead();
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+        glDrawBuffer(GL_BACK);
+        fb.blit(0, 0, lx, ly, 0, 0, OpenGG.getWindow().getWidth(), OpenGG.getWindow().getHeight(), GL_COLOR_BUFFER_BIT, GL_LINEAR);
+    }
+    
+    public void enableRendering(){
         glBindTexture(GL_TEXTURE_2D, 0);
-        glBindFramebuffer(GL_FRAMEBUFFER, fb);
+        fb.bind(GL_FRAMEBUFFER);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-        glViewport(0, 0, x, y);
+        glViewport(0, 0, lx, ly);
     }
-
-    public void endTexRender() {
+    
+    public void disableRendering(){
         glFlush();
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        glViewport(0, 0, OpenGG.window.getWidth(), OpenGG.window.getHeight());
+        glViewport(0, 0, OpenGG.getWindow().getWidth(), OpenGG.getWindow().getHeight());
+        
     }
+    
+    public void checkForCompletion(){
+        int comp;
+        if((comp = fb.checkCompleteness()) != GL_FRAMEBUFFER_COMPLETE){
+            GGConsole.error("Framebuffer failed to complete, GL error " + comp);
+        }
+    }
+    
+    public static Framebuffer generateFramebuffer(){
+        Framebuffer nframe = new Framebuffer();
+        return nframe;
+    }
+    
+
 }

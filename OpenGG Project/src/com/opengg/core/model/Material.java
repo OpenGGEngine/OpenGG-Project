@@ -59,27 +59,27 @@ public class Material {
     public void loadTextures(){
         if(mapKdFilename != null){
             hascolmap = true;
-            Kd = Texture.get(mapKdFilename);
+            Kd = Texture.get2DTexture(mapKdFilename);
         }
         if(mapKaFilename != null){
             hasreflmap = true;
-            Ka = Texture.get(mapKaFilename);
+            Ka = Texture.get2DTexture(mapKaFilename);
         }
         if(mapKsFilename != null){
             hasspecmap = true;
-            Ks = Texture.get(mapKsFilename);
+            Ks = Texture.get2DTexture(mapKsFilename);
         }
         if(mapNsFilename != null){
             hasspecpow = true;
-            Ns = Texture.get(mapNsFilename);
+            Ns = Texture.get2DTexture(mapNsFilename);
         }
         if(mapDFilename != null){
             hastrans = true;
-            D = Texture.get(mapDFilename);
+            D = Texture.get2DTexture(mapDFilename);
         }
         if(bumpFilename != null){
             hasnormmap = true;
-            norm = Texture.get(bumpFilename);
+            norm = Texture.get2DTexture(bumpFilename);
         }
     }
     

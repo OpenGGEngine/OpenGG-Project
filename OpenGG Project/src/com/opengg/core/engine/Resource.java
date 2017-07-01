@@ -6,6 +6,12 @@
 
 package com.opengg.core.engine;
 
+import com.opengg.core.audio.AudioLoader;
+import com.opengg.core.audio.SoundData;
+import com.opengg.core.model.Model;
+import com.opengg.core.model.ModelLoader;
+import com.opengg.core.render.texture.Texture;
+import com.opengg.core.render.texture.text.GGFont;
 import java.io.File;
 import java.io.IOException;
 
@@ -76,4 +82,24 @@ public class Resource {
         }
         return null;
     }
+    
+    public static SoundData getSoundData(String name){
+        return AudioLoader.loadVorbis(getSoundPath(name));
+    }
+    
+    public static Model getModel(String name){
+        return ModelLoader.loadModel(getModelPath(name));
+    }
+    
+    public static Texture getTexture(String name){
+        return Texture.get2DTexture(getTexturePath(name));
+    }
+    
+    public static GGFont getFont(String fname, String ftexname){
+        String fpath = getFontPath(fname);
+        String tpath = getTexturePath(ftexname);
+        return new GGFont(tpath,fpath);
+    }
+    
+    
 }

@@ -21,7 +21,7 @@ public class GGFont {
     public TextVBOGenerator badname;
     
     public GGFont(String texture, String fontFile) {
-	this.texture = Texture.get(texture);
+	this.texture = Texture.get2DTexture(texture);
 	this.badname = new TextVBOGenerator(new File(fontFile));
     }
     

@@ -57,7 +57,7 @@ public abstract class ParticleEmitter extends RenderComponent{
     
     @Override
     public void render(){
-        t.useTexture(0);
+        t.use(0);
         super.render();
     }
 }

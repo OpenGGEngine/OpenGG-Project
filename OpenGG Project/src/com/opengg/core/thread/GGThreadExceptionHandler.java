@@ -19,5 +19,6 @@ public class GGThreadExceptionHandler implements UncaughtExceptionHandler{
     public void uncaughtException(Thread t, Throwable e) {
         GGConsole.error("Thread " + t.getName() + " with ID " +  t.getId() + " has encountered an uncaught exception");
         GGConsole.error("Caught " + e.getClass().getSimpleName() + " with message " + e.getMessage() + ": Encountered in " + e.getStackTrace()[0].getClassName());
+        e.printStackTrace();
     } 
 }

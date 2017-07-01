@@ -134,10 +134,10 @@ vec4 ssao(){
 	ao+=compareDepths(depth,d)/aoscale;
         
 	ao/=16.0;
-        ao = clamp(ao, 0f, 0.5f);
+    ao = clamp(ao, 0.0f, 0.5f);
 	return vec4(1-ao) * texture(Kd,textureCoord) * 2;
 }
 
 void main() {   
     fcolor = ssao();
-};
+}

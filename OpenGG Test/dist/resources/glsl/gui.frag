@@ -29,4 +29,4 @@ void main() {
     fcolor = getTex(Kd);
 	if(fcolor.a < 0.1f)
 		discard;
-};
+}

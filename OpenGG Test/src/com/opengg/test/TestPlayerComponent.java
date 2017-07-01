@@ -13,7 +13,7 @@ import com.opengg.core.math.Vector3f;
 import com.opengg.core.world.Action;
 import com.opengg.core.world.ActionType;
 import com.opengg.core.world.Actionable;
-import com.opengg.core.world.collision.BoundingBox;
+import com.opengg.core.world.collision.AABB;
 import com.opengg.core.world.collision.CylinderCollider;
 import com.opengg.core.world.components.CameraComponent;
 import com.opengg.core.world.components.Component;
@@ -44,22 +44,22 @@ public class TestPlayerComponent extends Component implements Actionable{
     boolean weaponbob = false;
     boolean aim = false;
     float bob = 0;
+    private final WorldObject head;
     
     public TestPlayerComponent(){
-        WorldObject head = new WorldObject();
+        head = new WorldObject();
         camera = new CameraComponent();
         head.setPositionOffset(new Vector3f(0,2f,0));
         head.setAbsoluteOffset(true);
         controller = new UserControlComponent();
         playerphysics = new PhysicsComponent();
-        playerphysics.addCollider(new CollisionComponent(new BoundingBox(new Vector3f(),10,6,10), new CylinderCollider(1,2)));
+        playerphysics.addCollider(new CollisionComponent(new AABB(new Vector3f(),10,6,10), new CylinderCollider(1,2)));
         playerphysics.setAbsoluteOffset(true);
         playerphysics.mass = 60f;
         playerphysics.bounciness = 0;
         playerphysics.frictionCoefficient = 0.8f;
         gun = new GunComponent();
         gun.setPositionOffset(weaponpos);
-        gun.setScale(new Vector3f(0.3f,0.3f,0.3f));
         gun.setRotationOffset(new Quaternionf(new Vector3f(0,90,0)));
         
         head.attach(camera);
@@ -75,9 +75,11 @@ public class TestPlayerComponent extends Component implements Actionable{
         currot.y += controlrot.y * rotspeed * delta;
         currot.z += controlrot.z * rotspeed * delta;
                 
-        this.setRotationOffset(new Quaternionf(currot));      
+        this.setRotationOffset(new Quaternionf(new Vector3f(0,currot.y,currot.z)));      
         Vector3f movement = new Vector3f(control.x  * speed, 0 ,control.z  *speed);
         movement = getRotation().transform(movement);
+        
+        head.setRotationOffset(new Quaternionf(new Vector3f(currot.x,0,0)));
         
         playerphysics.velocity.x = movement.x;
         playerphysics.velocity.z = movement.z;
@@ -130,10 +132,10 @@ public class TestPlayerComponent extends Component implements Actionable{
                     control.y += 1;
                     break;
                 case "lookright":
-                    controlrot.y += 1;
+                    controlrot.y -= 1;
                     break;
                 case "lookleft":
-                    controlrot.y -= 1;
+                    controlrot.y += 1;
                     break;
                  case "lookup":
                     controlrot.x += 1;
@@ -166,10 +168,10 @@ public class TestPlayerComponent extends Component implements Actionable{
                     control.y -= 1;
                     break;
                 case "lookright":
-                    controlrot.y -= 1;
+                    controlrot.y += 1;
                     break;
                 case "lookleft":
-                    controlrot.y += 1;
+                    controlrot.y -= 1;
                     break;
                 case "lookup":
                     controlrot.x -= 1;

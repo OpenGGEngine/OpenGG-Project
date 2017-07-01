@@ -8,9 +8,12 @@ package com.opengg.core.world.components;
 import com.opengg.core.engine.WorldEngine;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
+import com.opengg.core.util.GGByteInputStream;
+import com.opengg.core.util.GGByteOutputStream;
 import com.opengg.core.world.Deserializer;
 import com.opengg.core.world.Serializer;
 import com.opengg.core.world.World;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +33,7 @@ public abstract class Component{
     public int id;
     public boolean absoluteOffset = false;
     public boolean enabled = true;
+    public float updatedistance = 0;
     public String name = "";
     public Component parent;
     public Vector3f pos = new Vector3f();
@@ -170,12 +174,12 @@ public abstract class Component{
      * In addition, any object that overrides this must also override the {@link #Component() default constructor} for the serializer to function<br><br>
      * 
      * It is recommended to allow for complete recreation of the object using these two methods
-     * @param s Serializer object used for writing objects to the buffer
+     * @param out Output stream used for writing objects to the buffer
      */
-    public void serialize(Serializer s){
-        s.add(pos);
-        s.add(rot);
-        s.add(scale);
+    public void serialize(GGByteOutputStream out) throws IOException{
+        out.write(pos);
+        out.write(rot);
+        out.write(scale);
     }
     
     /**
@@ -186,12 +190,12 @@ public abstract class Component{
      * 
      * As this method is normally run on a separate thread, any methods that have OpenGL calls have to be run in an {@link com.opengg.core.engine.Executable executable} to be run in the main thread. <br>
      * It is recommended to allow for complete recreation of the object using these methods
-     * @param d Deserializer object used for reading objects from the buffer
+     * @param in Input steam used for reading objects from the buffer
      */
-    public void deserialize(Deserializer d){
-        pos = d.getVector3f();
-        rot = d.getQuaternionf();
-        scale = d.getVector3f();
+    public void deserialize(GGByteInputStream in) throws IOException{
+        pos = in.readVector3f();
+        rot = in.readQuaternionf();
+        scale = in.readVector3f();
     }
     
     /**

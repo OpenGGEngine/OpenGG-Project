@@ -122,7 +122,7 @@ public class ModelUtil {
         }
 
         FloatBuffer verticeAttributes;
-        if(OpenGG.lwjglinit){
+        if(OpenGG.lwjglInitialized()){
             verticeAttributes = MemoryUtil.memAllocFloat(faceVertexList.size() * 12);
         }else{
             verticeAttributes = FloatBuffer.allocate(faceVertexList.size() * 12);
@@ -150,7 +150,7 @@ public class ModelUtil {
         int indicesCount = mesh.faces.size() * 6;
         
         IntBuffer indices;
-        if(OpenGG.lwjglinit){
+        if(OpenGG.lwjglInitialized()){
             indices = MemoryUtil.memAllocInt(indicesCount);
         }else{
             indices = IntBuffer.allocate(indicesCount);
@@ -214,7 +214,7 @@ public class ModelUtil {
         }       
         
         FloatBuffer verticeAttributes;
-        if(OpenGG.lwjglinit){
+        if(OpenGG.lwjglInitialized()){
             verticeAttributes = MemoryUtil.memAllocFloat(faceVertexList.size() * 12);
         }else{
             verticeAttributes = FloatBuffer.allocate(faceVertexList.size() * 12);
@@ -243,7 +243,7 @@ public class ModelUtil {
         
         int indicesCount = mesh.faces.size() * 3;
         IntBuffer indices;
-        if(OpenGG.lwjglinit){
+        if(OpenGG.lwjglInitialized()){
             indices = MemoryUtil.memAllocInt(indicesCount);
         }else{
             indices = IntBuffer.allocate(indicesCount);

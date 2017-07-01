@@ -1,24 +1,20 @@
 package com.opengg.core.render.window;
 
-import com.opengg.core.engine.OpenGG;
 import com.opengg.core.exceptions.WindowCreationException;
 import com.opengg.core.io.input.keyboard.GLFWKeyboardHandler;
 import com.opengg.core.io.input.keyboard.KeyboardController;
 import com.opengg.core.io.input.mouse.GLFWMouseButtonHandler;
 import com.opengg.core.io.input.mouse.GLFWMousePosHandler;
 import com.opengg.core.io.input.mouse.MouseController;
-import com.opengg.core.math.Vector2f;
 import static com.opengg.core.render.window.WindowOptions.*;
 import com.opengg.core.util.FileUtil;
 import java.nio.ByteBuffer;
-import java.nio.DoubleBuffer;
 import java.nio.IntBuffer;
 import org.lwjgl.glfw.*;
 import static org.lwjgl.glfw.GLFW.*;
 import org.lwjgl.opengl.*;
 import static org.lwjgl.opengl.GL11.*;
 import org.lwjgl.stb.STBImage;
-import org.lwjgl.system.MemoryUtil;
 import static org.lwjgl.system.MemoryUtil.*;
 
 public class GLFWWindow implements Window {
@@ -37,7 +33,8 @@ public class GLFWWindow implements Window {
     GLFWCursorPosCallback mouseCallback;
     GLFWMouseButtonCallback mouseButtonCallback;
 
-    public GLFWWindow(WindowInfo winfo) {
+    @Override
+    public void setup(WindowInfo winfo) {
         glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
         HEIGHT = winfo.height;
         WIDTH = winfo.width;
@@ -103,7 +100,6 @@ public class GLFWWindow implements Window {
         GL.createCapabilities();
         if (glGetError() == GL_NO_ERROR) {
             success = true;
-            OpenGG.window = this;
         } else {
             throw new WindowCreationException("OpenGL initialization during window creation failed");
         }
@@ -253,22 +249,12 @@ public class GLFWWindow implements Window {
     }
 
     @Override
-    public int getType() {
-        return GLFW;
+    public String getType() {
+        return "GLFW";
     }
 
     @Override
     public void setVSync(boolean vsync) {
         glfwSwapInterval(vsync ? 1 : 0);
-    }
-
-    @Override
-    public Vector2f getMousePosition() {
-        DoubleBuffer xBuffer = MemoryUtil.memAllocDouble(1);
-        DoubleBuffer yBuffer = MemoryUtil.memAllocDouble(1);
-        glfwGetCursorPos(window, xBuffer, yBuffer);
-        return new Vector2f((float)xBuffer.get(0),(float)yBuffer.get(0));
-    }
-    
-    
+    }      
 }

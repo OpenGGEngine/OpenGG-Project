@@ -24,6 +24,7 @@ public class Config {
     public static void reloadConfigs(){
         File cfgdir = new File("config\\");
         File[] cfgs = cfgdir.listFiles();
+        
         for(File f : cfgs){
             try {
                 Properties p = new Properties();

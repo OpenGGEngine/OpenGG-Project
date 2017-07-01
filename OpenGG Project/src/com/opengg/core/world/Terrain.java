@@ -141,13 +141,14 @@ public class Terrain {
                 int topRight = topLeft + 1;
                 int bottomLeft = ((i + 1) * map.length) + i2;
                 int bottomRight = bottomLeft + 1;
-
+                
+                indices.put(topRight);
+                indices.put(bottomLeft);
                 indices.put(topLeft);
-                indices.put(bottomLeft);
-                indices.put(topRight);
-                indices.put(topRight);
-                indices.put(bottomLeft);
+                
                 indices.put(bottomRight);
+                indices.put(bottomLeft);
+                indices.put(topRight); 
             }
         }
         
@@ -253,6 +254,6 @@ public class Terrain {
     
     public Texture getHeightmap(){
         TextureData data = new TextureData(map.length, map[0].length, getHeightmapBuffer());
-        return Texture.get(data);
+        return Texture.get2DTexture(data);
     }
 }

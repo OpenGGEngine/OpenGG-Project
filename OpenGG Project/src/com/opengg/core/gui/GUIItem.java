@@ -61,5 +61,5 @@ public abstract class GUIItem {
         this.parent = parent;
     }
 
-    public abstract void render();
+    public abstract void render(float x,float y);
 }

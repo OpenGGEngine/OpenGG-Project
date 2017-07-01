@@ -16,10 +16,13 @@ import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.Renderable;
 import com.opengg.core.render.drawn.Drawable;
+import com.opengg.core.util.GGByteInputStream;
+import com.opengg.core.util.GGByteOutputStream;
 import com.opengg.core.world.components.Component;
 import com.opengg.core.world.components.Component;
 import com.opengg.core.world.components.RenderComponent;
 import com.opengg.core.world.components.physics.CollisionComponent;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -109,7 +112,7 @@ public class World extends Component{
     }
     
     public void addCollider(CollisionComponent c){
-        if(this != OpenGG.curworld)
+        if(this != OpenGG.getCurrentWorld())
             return;
         WorldEngine.addCollider(c);
     }
@@ -161,17 +164,17 @@ public class World extends Component{
     }
     
     @Override
-    public void serialize(Serializer s){
-        super.serialize(s);
-        s.add(gravityVector);
-        s.add(floorLev);
+    public void serialize(GGByteOutputStream out) throws IOException{
+        super.serialize(out);
+        out.write(gravityVector);
+        out.write(floorLev);
     }
     
     @Override
-    public void deserialize(Deserializer ds){
-        super.deserialize(ds);
-        gravityVector = ds.getVector3f();
-        floorLev = ds.getFloat();
+    public void deserialize(GGByteInputStream in) throws IOException{
+        super.deserialize(in);
+        gravityVector = in.readVector3f();
+        floorLev = in.readFloat();
     }
     
     @Override

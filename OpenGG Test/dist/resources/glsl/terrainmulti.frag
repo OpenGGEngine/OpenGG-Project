@@ -33,7 +33,7 @@ uniform samplerCube cubemap;
 
 float trans;
 float specpow;
-float visibility = 1f;
+float visibility = 1.0f;
 vec3 eyedir;
 vec3 reflectedcolor;
 vec3 n;
@@ -81,8 +81,7 @@ void process(){
     
 	n = normalize(( model * vec4(norm,0.0f)).xyz);
 
-	reflectedcolor = texture(cubemap, 
-		normalize(reflect(pos.xyz - camera, n))).xyz;
+	reflectedcolor = texture(cubemap, normalize(reflect(eyedir,n))).xyz;
 	
 	//ambient = ambient * reflectedcolor;
 }
@@ -110,4 +109,4 @@ void main() {
 	}
 
 	fcolor = vec4(col + ambient, 1);
-};
+}

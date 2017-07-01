@@ -1,13 +1,11 @@
 package com.opengg.test;
 
 import com.opengg.core.audio.AudioListener;
-import com.opengg.core.audio.Sound;
-import com.opengg.core.audio.Soundtrack;
-import com.opengg.core.audio.SoundtrackHandler;
 import com.opengg.core.engine.BindController;
 import com.opengg.core.engine.GGApplication;
 import com.opengg.core.engine.OpenGG;
 import com.opengg.core.engine.RenderEngine;
+import com.opengg.core.engine.Resource;
 import com.opengg.core.engine.WorldEngine;
 import com.opengg.core.gui.GUI;
 import com.opengg.core.gui.GUIText;
@@ -16,19 +14,15 @@ import static com.opengg.core.io.input.keyboard.Key.*;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.Text;
-import com.opengg.core.render.light.Light;
 import com.opengg.core.render.shader.ShaderController;
-import com.opengg.core.render.texture.ArrayTexture;
-import com.opengg.core.render.texture.Cubemap;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.texture.text.GGFont;
 import com.opengg.core.render.window.WindowInfo;
 import com.opengg.core.render.window.WindowOptions;
-import static com.opengg.core.render.window.WindowOptions.GLFW;
 import com.opengg.core.world.Skybox;
 import com.opengg.core.world.Terrain;
 import com.opengg.core.world.World;
-import com.opengg.core.world.components.FreeFlyComponent;
+import com.opengg.core.world.components.SunComponent;
 import com.opengg.core.world.components.TerrainComponent;
 import com.opengg.core.world.components.WaterComponent;
 import com.opengg.core.world.components.particle.FountainParticleEmitter;
@@ -48,7 +42,7 @@ public class OpenGGTest extends GGApplication{
         w.width = 1280;
         w.height = 1024;
         w.resizable = true;
-        w.type = GLFW;
+        w.type = "GLFW";
         w.vsync = true;
         OpenGG.initialize(new OpenGGTest(), w);
     }
@@ -61,8 +55,7 @@ public class OpenGGTest extends GGApplication{
         //track.play();
         //SoundtrackHandler.setSoundtrack(track);
         
-        t2 = Texture.get("C:/res/test.png");
-        font = new GGFont("C:/res/test.png", "C:/res/test.fnt");
+        font = Resource.getFont("test", "test.png");
         text = new Text("Turmoil has engulfed the Galactic Republic. The taxation of trade routes to outlying star systems is in dispute. \n\n"
                 + " Hoping to resolve the matter with a blockade of deadly battleships, "
                 + " the greedy Trade Federation has stopped all shipping to the small planet of Naboo. \n\n"
@@ -85,21 +78,24 @@ public class OpenGGTest extends GGApplication{
         world = new TerrainComponent(Terrain.generateProcedural(new DiamondSquare(7,20,20,5.5f), 700, 700));
         world.setScale(new Vector3f(800,10,800));
         world.setPositionOffset(new Vector3f(-400, -20,-400));
-        world.setGroundArray(ArrayTexture.get("C:/res/smhd/grass.png", "C:/res/smhd/dirt.png","C:/res/smhd/flower2.png","C:/res/smhd/road.png"));
-        world.setBlotmap(Texture.get("C:/res/blendMap.png"));
+        world.setGroundArray(Texture.getArrayTexture(Resource.getTexturePath("grass.png"),
+                Resource.getTexturePath("dirt.png"),
+                Resource.getTexturePath("flower2.png"),
+                Resource.getTexturePath("road.png")));
+        world.setBlotmap(Resource.getTexture("blendMap.png"));
         
-        FreeFlyComponent player = new FreeFlyComponent();
-        //TestPlayerComponent player = new TestPlayerComponent();
+        //FreeFlyComponent player = new FreeFlyComponent();
+        TestPlayerComponent player = new TestPlayerComponent();
         player.use();
 
-        FountainParticleEmitter particle = new FountainParticleEmitter(8,5,1,Texture.get("C:\\res\\emak.png"));
-        WaterComponent water = new WaterComponent(Texture.get("C:\\res\\water.jpg"), 0.1f, 100f);
+        FountainParticleEmitter particle = new FountainParticleEmitter(8,5,1,Resource.getTexture("emak.png"));
+        WaterComponent water = new WaterComponent(Resource.getTexture("water.jpg"), 0.1f, 100f);
         water.setPositionOffset(new Vector3f(0,10,0));
         
         w.attach(player);
         w.attach(world);
         w.attach(particle);
-        w.attach(new SunComponent(Texture.get("C:\\res\\emak.png"), 500, 1f));
+        w.attach(new SunComponent(Resource.getTexture("emak.png"), 500, 1f));
         w.attach(water);
        
         world.enableRendering();
@@ -113,24 +109,28 @@ public class OpenGGTest extends GGApplication{
         BindController.addBind(ControlType.KEYBOARD, "right", KEY_D);
         BindController.addBind(ControlType.KEYBOARD, "up", KEY_SPACE);
         BindController.addBind(ControlType.KEYBOARD, "down", KEY_LEFT_SHIFT);
-        BindController.addBind(ControlType.KEYBOARD, "lookright", KEY_Q);
-        BindController.addBind(ControlType.KEYBOARD, "lookleft", KEY_E);
-        BindController.addBind(ControlType.KEYBOARD, "lookup", KEY_R);
-        BindController.addBind(ControlType.KEYBOARD, "lookdown", KEY_F);
+        BindController.addBind(ControlType.KEYBOARD, "lookright", KEY_RIGHT);
+        BindController.addBind(ControlType.KEYBOARD, "lookleft", KEY_LEFT);
+        BindController.addBind(ControlType.KEYBOARD, "lookup", KEY_UP);
+        BindController.addBind(ControlType.KEYBOARD, "lookdown", KEY_DOWN);
         BindController.addBind(ControlType.KEYBOARD, "fire", KEY_L);
         BindController.addBind(ControlType.KEYBOARD, "aim", KEY_K);
         
-        RenderEngine.setSkybox(new Skybox(Cubemap.get("C:\\res\\skybox\\majestic"), 1500f));
-        RenderEngine.setCulling(false);  
-        GUI.addItem("aids", new GUIText(text, font, new Vector2f(1f,0)));
+        RenderEngine.setSkybox(new Skybox(Texture.getCubemap(
+                Resource.getTexturePath("skybox\\majestic_ft.png"),
+                Resource.getTexturePath("skybox\\majestic_bk.png"),
+                Resource.getTexturePath("skybox\\majestic_up.png"),
+                Resource.getTexturePath("skybox\\majestic_dn.png"),
+                Resource.getTexturePath("skybox\\majestic_rt.png"),
+                Resource.getTexturePath("skybox\\majestic_lf.png")), 1500f));
+        GUI.addItem("aids", new GUIText(text, font, new Vector2f(0f,0)));
         
     }
     float wow = 0f;
     
     @Override
     public void render() {
-        ShaderController.setPerspective(90, OpenGG.window.getRatio(), 0.2f, 3000f);
-        RenderEngine.draw();
+        ShaderController.setPerspective(90, OpenGG.getWindow().getRatio(), 0.2f, 3000f);
     }
 
     @Override

@@ -6,6 +6,7 @@
 package com.opengg.core.render.texture;
 
 import com.opengg.core.engine.GGConsole;
+import com.opengg.core.engine.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -16,45 +17,28 @@ import java.util.Map;
  * @author Warren
  */
 public class TextureManager {
-    private static Map<String,Texture> texturelist = new HashMap<>();
-    public static int repsave = 0;
-    public static String defPath;
+    private static Map<String, TextureData> texturelist = new HashMap<>();
+    private static TextureData defaultdata;
+    
     public static void initialize(){
         try {
-            File deft = new File("resources/tex/default.png");
+            File deft = new File(Resource.getTexturePath("default.png"));
             if(deft.exists()){
-                defPath = deft.getCanonicalPath();
-                Texture def = new Texture();
-                def.forceLoadTexture(defPath, false);
-                texturelist.put("default", def);
+                String defPath = deft.getCanonicalPath();
+                defaultdata = TextureLoader.loadTexture(defPath);
             }else{
-                throw new IOException();
+                GGConsole.error("Failed to load the default texture, any missing textures will crash the game!");
             }
         } catch (IOException ex) {
-            GGConsole.error("Failed to load default texture, nonexistent textures may crash the program!");
+            GGConsole.error("Failed to load the default texture, nonexistent textures may crash the program!");
         }
     }
-    public static Texture getTexture(String path){
-        Texture x = texturelist.get(path);
-        return x;
+
+    public static TextureData getTextureData(String name){
+        return texturelist.getOrDefault(name, defaultdata);
     }
-    public static void setTexture(String path, Texture t){
-        if(texturelist.containsKey(path)){
-            texturelist.replace(path, t);
-        }else{
-            texturelist.put(path, t);
-        }
-    }
-    public static int numTextures(){
-        return texturelist.size();
-    }
-    public static void releaseTexture(String s){
-        texturelist.remove(s);
-    }
-    public static void destroy(){
-        texturelist.values().stream().forEach((t) -> {
-            t.destroy();
-        });
-        texturelist.clear();
+    
+    public static TextureData getDefault(){
+        return defaultdata;
     }
 }

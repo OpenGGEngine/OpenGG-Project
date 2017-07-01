@@ -66,7 +66,7 @@ float vis = 1;
 
 float trans;
 float specpow;
-float visibility = 1f;
+float visibility = 1.0f;
 vec3 eyedir;
 vec3 reflectedcolor;
 vec3 n;
@@ -104,7 +104,7 @@ vec3 calculatenormal( vec3 N, vec3 V, vec2 texcoord ){
 void genPhong(){
     eyedir = normalize(camera - pos.xyz);
 
-    float distance = length(camera - pos);
+    float distance = length(camera - pos.xyz);
 
     visibility = exp(-pow((distance*density),gradient));
     visibility = clamp(visibility,0.0,1.0);
@@ -181,9 +181,7 @@ void process(){
 		n = normalize((model * vec4(norm,0.0f)).xyz);
 	}
 	
-	reflectedcolor = texture(cubemap, 
-		normalize(reflect(pos.xyz - camera, 
-			normalize(model * vec4(norm, 0.0f)).xyz))).xyz;
+	reflectedcolor = texture(cubemap, normalize(reflect(eyedir,n))).xyz;
 	
 }
 

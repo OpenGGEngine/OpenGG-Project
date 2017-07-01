@@ -9,8 +9,11 @@ import com.opengg.core.engine.OpenGG;
 import com.opengg.core.engine.Resource;
 import com.opengg.core.model.Model;
 import com.opengg.core.model.ModelLoader;
+import com.opengg.core.util.GGByteInputStream;
+import com.opengg.core.util.GGByteOutputStream;
 import com.opengg.core.world.Deserializer;
 import com.opengg.core.world.Serializer;
+import java.io.IOException;
 
 /**
  *
@@ -52,19 +55,19 @@ public class ModelRenderComponent extends RenderComponent{
     }
     
     @Override
-    public void serialize(Serializer s){
-        super.serialize(s);
+    public void serialize(GGByteOutputStream out) throws IOException{
+        super.serialize(out);
         if(frame){
-            s.add(name);
+            out.write(name);
         }else{
-            s.add(model.getName());
+            out.write(model.getName());
         }
     }
     
     @Override
-    public void deserialize(Deserializer s){
-        super.deserialize(s);
-        String path = s.getString();
+    public void deserialize(GGByteInputStream in) throws IOException{
+        super.deserialize(in);
+        String path = in.readString();
         if(model == null){
             model = ModelLoader.loadModel(Resource.getModelPath(path));
             OpenGG.addExecutable(() -> {

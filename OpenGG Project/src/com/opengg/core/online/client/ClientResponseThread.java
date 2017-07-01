@@ -26,8 +26,8 @@ public class ClientResponseThread implements Runnable{
     @Override
     public void run() {
         while(!end && !OpenGG.getEnded()){
-            byte[] actions = ActionQueuer.generatePacket();
-            Packet.send(client.udpsocket, actions, client.servIP, client.port);
+            //byte[] actions = ActionQueuer.generatePacket();
+            //Packet.send(client.udpsocket, actions, client.servIP, client.port);
             
             try {
                 Thread.sleep(1000/30);

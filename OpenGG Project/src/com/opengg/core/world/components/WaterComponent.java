@@ -42,14 +42,14 @@ public class WaterComponent extends RenderComponent{
     
     @Override
     public void render(){
-        texture.useTexture(0);
+        texture.use(0);
         ShaderController.setUVMultX(tscale);
         ShaderController.setUniform("uvoffsetx", FastMath.sin(current)/4);
         ShaderController.setUniform("uvoffsety", FastMath.sin(current)/4);
         RenderEngine.getSkybox().getCubemap().use(2);
         super.render();
-        ShaderController.setUniform("uvoffsetx", 0);
-        ShaderController.setUniform("uvoffsety", 0);
+        ShaderController.setUniform("uvoffsetx", 0f);
+        ShaderController.setUniform("uvoffsety", 0f);
         ShaderController.setUVMultX(1);
     }
 }

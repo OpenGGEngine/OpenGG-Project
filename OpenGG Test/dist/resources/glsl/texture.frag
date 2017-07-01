@@ -11,9 +11,6 @@ in vertexData{
 
 uniform sampler2D Kd;
 
-vec4 getTex(sampler2D tname){
-    return texture(tname, textureCoord);
-}
 void main() {   
-    fcolor = getTex(Kd);
-};
+    fcolor = texture(Kd, textureCoord);
+}

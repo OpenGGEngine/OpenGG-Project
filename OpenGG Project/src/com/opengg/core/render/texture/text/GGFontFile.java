@@ -50,7 +50,7 @@ public class GGFontFile {
      * @param file - the font file.
      */
     protected GGFontFile(File file) {
-        this.aspectRatio = (double) OpenGG.window.getWidth()/ (double) OpenGG.window.getHeight();
+        this.aspectRatio = OpenGG.getWindow().getRatio();
         openFile(file);
         loadPaddingData();
         loadLineSizes();

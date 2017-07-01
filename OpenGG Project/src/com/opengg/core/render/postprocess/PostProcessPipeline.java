@@ -6,7 +6,6 @@
 package com.opengg.core.render.postprocess;
 
 import com.opengg.core.math.Vector2f;
-import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.render.objects.ObjectCreator;
 import com.opengg.core.render.texture.Framebuffer;
@@ -39,7 +38,7 @@ public class PostProcessPipeline {
         Stage hdr = new Stage("hdr");
         StageSet hdrstage = new StageSet(StageSet.SET, 0);
         hdrstage.addStage(hdr);
-        addStage(hdrstage);
+        //addStage(hdrstage);
     }
     
     public static void addStage(StageSet s){
@@ -48,10 +47,10 @@ public class PostProcessPipeline {
     
     public static void process(){
         glDisable(GL_CULL_FACE);
-        
-        initial.endTexRender();
+
+        initial.disableRendering();
         initial.useTexture(0, 0);
-        initial.useDepthTexture(1);
+        initial.useTexture(1, Framebuffer.DEPTH);
         for(StageSet ss : sets){
             ss.render();
             if(ss.func == StageSet.ADD){
@@ -59,12 +58,12 @@ public class PostProcessPipeline {
                 add.finalizeAtLoc(0);
             }
         }
-        
-        if(current != null)
+
+        if(current != null){
             current.buffer.blitToBack();
-        else
+        }else{
             initial.blitToBack();
-        
+        }
         glDrawBuffer(GL_BACK);
     }
 }

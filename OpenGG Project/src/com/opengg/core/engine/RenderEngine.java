@@ -24,17 +24,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL14.GL_DECR_WRAP;
 import static org.lwjgl.opengl.GL14.GL_FUNC_ADD;
-import static org.lwjgl.opengl.GL14.GL_INCR_WRAP;
 import static org.lwjgl.opengl.GL14.glBlendEquation;
 import static org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW;
-import static org.lwjgl.opengl.GL20.glStencilOpSeparate;
 import static org.lwjgl.opengl.GL30.GL_MAJOR_VERSION;
 import static org.lwjgl.opengl.GL30.GL_MINOR_VERSION;
-import static org.lwjgl.opengl.GL30.GL_RGBA16F;
 import static org.lwjgl.opengl.GL31.GL_UNIFORM_BUFFER;
-import static org.lwjgl.opengl.GL32.GL_DEPTH_CLAMP;
 import static org.lwjgl.opengl.GL32.GL_TEXTURE_CUBE_MAP_SEAMLESS;
 import org.lwjgl.system.MemoryUtil;
 
@@ -76,9 +71,12 @@ public class RenderEngine {
         
         TextureManager.initialize();
         ModelManager.initialize();
-        sceneTex = Framebuffer.getFramebuffer(OpenGG.window.getWidth(), OpenGG.window.getHeight(), 4, GL_RGBA16F);
-        PostProcessPipeline.initialize(sceneTex);
         
+        sceneTex = Framebuffer.generateFramebuffer();
+        sceneTex.attachColorTexture(OpenGG.window.getWidth(), OpenGG.getWindow().getHeight(), 0);
+        sceneTex.attachDepthStencilTexture(OpenGG.window.getWidth(), OpenGG.getWindow().getHeight());
+        PostProcessPipeline.initialize(sceneTex);
+
         defaultvao = new VertexArrayObject(vaoformat);
         lightobj = new GLBuffer(GL_UNIFORM_BUFFER, 1600, GL_DYNAMIC_DRAW);
         lightobj.bindBase(ShaderController.getUniqueUniformBufferLocation());
@@ -122,17 +120,18 @@ public class RenderEngine {
                 if(lights.get(i).hasShadow()){    
                     //ShaderController.setView(lights.get(i).getView());
                     
-                    lights.get(i).getLightbuffer().startTexRender();
-                    lights.get(i).getLightbuffer().enableColorAttachments();
+                    lights.get(i).getLightbuffer().enableRendering();
+                    lights.get(i).getLightbuffer().useEnabledAttachments();
                     for(RenderGroup d : getActiveRenderGroups()){
                         d.render();
                     }
-                    lights.get(i).getLightbuffer().endTexRender();
-                    lights.get(i).getLightbuffer().useDepthTexture(6 + used);
+                    lights.get(i).getLightbuffer().disableRendering();
+                    lights.get(i).getLightbuffer().useTexture(6 + used, Framebuffer.DEPTH);
                     used++;
                 }
             }
-            sceneTex.startTexRender();
+            
+            sceneTex.enableRendering();
             
             for(RenderGroup d : getActiveRenderGroups()){
                 ShaderController.setView(camera.getMatrix());
@@ -211,7 +210,7 @@ public class RenderEngine {
     }
     
     public static List<RenderGroup> getActiveRenderGroups(){
-        ArrayList<RenderGroup> list = new ArrayList<>();
+        ArrayList<RenderGroup> list = new ArrayList<>(groups.size());
         
         for(RenderGroup r : groups)
             if(r.enabled)
@@ -283,36 +282,6 @@ public class RenderEngine {
         }
         ShaderController.setUniform("numLights", lights.size());
     }
-     
-    private static void writeToDepth(){
-        glDepthMask(true);
-        glDrawBuffer(GL_NONE);
-        ShaderController.useConfiguration("adjpassthrough");
-        groups.stream().forEach((group) -> {
-            group.render();
-        });
-    }
-    
-    private static void cullShadowFaces(){
-        glEnable(GL_STENCIL_TEST);
-
-        glDepthMask(false);
-        glEnable(GL_DEPTH_CLAMP); 
-        glDisable(GL_CULL_FACE);
-        
-        glStencilFunc(GL_ALWAYS, 0, 0xff);
-        glStencilOpSeparate(GL_BACK, GL_KEEP, GL_INCR_WRAP, GL_KEEP);
-        glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_DECR_WRAP, GL_KEEP); 
-        
-        ShaderController.useConfiguration("volume");
-        groups.stream().forEach((group) -> {
-            group.render();
-        });
-
-        glDisable(GL_DEPTH_CLAMP);
-        glEnable(GL_CULL_FACE); 
-        
-    }
     
     public static void sortOrders(){
         groups = groups.stream().sorted((RenderGroup o1, RenderGroup o2) -> {
@@ -329,28 +298,28 @@ public class RenderEngine {
     public static void draw(){
         ShaderController.setView(camera.getMatrix());
         ShaderController.setUniform("camera", camera.getPos().inverse());
-        sceneTex.startTexRender();
-        sceneTex.enableColorAttachments();
+        
+        sceneTex.enableRendering();
+        sceneTex.useEnabledAttachments();
         useLights();
         resetConfig();
-        
+
         defaultvao.bind();
-        
-        
         
         for(RenderPath path : getActiveRenderPaths()){
             path.render();
             resetConfig();
-        }
-        
+        }       
         ShaderController.useConfiguration("sky");
-        skybox.getCubemap().use(0);
-        skybox.getDrawable().render(); 
+        if(skybox != null){
+            skybox.getCubemap().use(0);
+            skybox.getDrawable().render(); 
+        }
+
         glDisable(GL_CULL_FACE); 
-        
         GUI.startGUIPos();
         PostProcessPipeline.process();
-        GUI.render();        
+        GUI.render();  
     }
     
     public static void resetConfig(){
@@ -362,10 +331,10 @@ public class RenderEngine {
         glBlendEquation(GL_FUNC_ADD);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         
-        glDisable(GL_CULL_FACE);
+        glEnable(GL_CULL_FACE);
     }
     
     static void destroy(){
-        TextureManager.destroy();
+        //TextureManager.destroy();
     }
 }
