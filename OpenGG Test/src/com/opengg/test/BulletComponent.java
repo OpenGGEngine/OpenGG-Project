@@ -11,6 +11,7 @@ import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.model.ModelLoader;
 import com.opengg.core.render.light.Light;
+import com.opengg.core.world.collision.AABB;
 import com.opengg.core.world.collision.BoundingBox;
 import com.opengg.core.world.collision.CylinderCollider;
 import com.opengg.core.world.components.Component;
@@ -42,7 +43,7 @@ public class BulletComponent extends Component{
 
         physics = new PhysicsComponent();
         physics.velocity = getRotationOffset().transform(new Vector3f(500,0,0));
-        physics.addCollider(new CollisionComponent(new BoundingBox(new Vector3f(-1,-1,-1),1,1,1), new CylinderCollider(0.1f,0.1f)));
+        physics.addCollider(new CollisionComponent(new AABB(new Vector3f(-1,-1,-1),1,1,1), new CylinderCollider(0.1f,0.1f)));
         physics.bounciness = 0.9f;
         physics.frictionCoefficient = 0;
         attach(physics);
