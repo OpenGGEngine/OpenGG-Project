@@ -54,4 +54,12 @@ public class Tuple<X, Y> {
         }
         return res;
     }
+    
+    public X getFirst() {
+        return x;
+    }
+    
+    public Y getSecond() {
+        return y;
+    }
 }

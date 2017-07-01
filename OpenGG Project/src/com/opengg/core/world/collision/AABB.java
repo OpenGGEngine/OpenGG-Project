@@ -13,9 +13,9 @@ import com.opengg.core.math.Vector3f;
  */
 public class AABB {
     public static final int MAX = 1, MIN = 0;
-    private float length, width, height;
+    float length, width, height;
     private Vector3f[] vertices = {new Vector3f(), new Vector3f()};
-    private Vector3f pos = new Vector3f();
+    Vector3f pos = new Vector3f();
     
     public AABB(Vector3f pos, float length, float width, float height) {
         this.length = length;
