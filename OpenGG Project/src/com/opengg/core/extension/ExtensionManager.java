@@ -28,8 +28,23 @@ public class ExtensionManager {
                     GGConsole.log("Loading extension " + pair.x.extname + "...");
                     pair.x.loadExtension();
                     GGConsole.log("Loaded " + pair.x.extname + " into OpenGG successfully");
+                    pair.y = true;
                 }
             }
         }
     }
+    
+    public static void update(){
+        for(Tuple<Extension, Boolean> pair : extensions){
+            if(pair.y == true)
+                pair.x.update();
+        }
+    }
+    public static void render(){
+        for(Tuple<Extension, Boolean> pair : extensions){
+            if(pair.y == true)
+                pair.x.render();
+        }
+    }
+    
 }

@@ -62,7 +62,7 @@ public class OpenGGTest extends GGApplication{
                 + " While the congress of the Republic endlessly debates this alarming chain of events,"
                 + " the Supreme Chancellor has secretly dispatched two Jedi Knights,"
                 + " the guardians of peace and justice in the galaxy, to settle the conflict...", new Vector2f(), 1f, 0.5f, false);
-
+        GUI.addItem("aids", new GUIText(text, font, new Vector2f(0f,0)));
         World w = WorldEngine.getCurrent();
         w.setFloor(10);
         
@@ -123,7 +123,7 @@ public class OpenGGTest extends GGApplication{
                 Resource.getTexturePath("skybox\\majestic_dn.png"),
                 Resource.getTexturePath("skybox\\majestic_rt.png"),
                 Resource.getTexturePath("skybox\\majestic_lf.png")), 1500f));
-        GUI.addItem("aids", new GUIText(text, font, new Vector2f(0f,0)));
+        
         
     }
     float wow = 0f;

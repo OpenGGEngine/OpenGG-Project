@@ -170,6 +170,7 @@ public class OpenGG{
         while (!getWindow().shouldClose() && !end) {
             startFrame();
             app.render();
+            ExtensionManager.render();
             RenderEngine.draw();
             endFrame();
             RenderEngine.checkForGLErrors();
@@ -177,6 +178,7 @@ public class OpenGG{
             WindowController.update();
             processExecutables();
             app.update();
+            ExtensionManager.update();
             WorldEngine.update();
             SoundtrackHandler.update();
         }

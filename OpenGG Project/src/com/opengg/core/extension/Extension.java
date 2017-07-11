@@ -16,4 +16,8 @@ public abstract class Extension {
     public int requirement = GRAPHICS;
     
     public abstract void loadExtension();
+    
+    public void update(){}
+    
+    public void render(){}
 }
