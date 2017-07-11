@@ -1,3 +1,4 @@
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -41,7 +42,6 @@ import java.util.logging.Logger;
 public class OpenGG{
     public static final String version = "0.0.1a1";
     
-    static Window window;
     static GGApplication app;
     static World curworld;
     static boolean lwjglinit = false;
@@ -84,16 +84,11 @@ public class OpenGG{
     }
     
     private static void initializeGraphics(WindowInfo windowinfo){       
-        WindowTypeRegister.registerWindowType("GLFW", new GLFWWindow());
-        
-        
-        Window twin = WindowTypeRegister.getRegisteredWindow(windowinfo.type);
-        GGConsole.log("Window registered under the name " + windowinfo.type + " requested and found, creating instance...");
-        twin.setup(windowinfo);
-        window = twin;
+        WindowController.setup(windowinfo);
+        GGConsole.log("Window generation successful, using OpenGL context version " + RenderEngine.getGLVersion());
         
         SystemInfo.queryOpenGLInfo();
-        GGConsole.log("Window generation successful, using OpenGL context version " + RenderEngine.getGLVersion());
+        GGConsole.log("System info queried");
         
         initializeRenderEngine();  
         RenderEngine.checkForGLErrors();
@@ -172,13 +167,14 @@ public class OpenGG{
     }
     
     public static void run(){
-        while (!window.shouldClose() && !end) {
+        while (!getWindow().shouldClose() && !end) {
             startFrame();
             app.render();
             RenderEngine.draw();
             endFrame();
             RenderEngine.checkForGLErrors();
             
+            WindowController.update();
             processExecutables();
             app.update();
             WorldEngine.update();
@@ -192,14 +188,14 @@ public class OpenGG{
     }
     
     private static void initializeRenderEngine(){
-        if(window.getSuccessfulConstruction() && RenderEngine.initialized == false){
+        if(getWindow().getSuccessfulConstruction() && RenderEngine.initialized == false){
             RenderEngine.init();
             GGConsole.log("Render engine initialized");
         }
     }
     
     private static void initializeAudioController(){
-       if(window.getSuccessfulConstruction() && AudioController.initialized == false){
+       if(getWindow().getSuccessfulConstruction() && AudioController.initialized == false){
             AudioController.init();
             GGConsole.log("Audio controller initialized");
         }   
@@ -264,7 +260,7 @@ public class OpenGG{
     }
     
     public static Window getWindow() {
-        return window;
+        return WindowController.getWindow();
     }
 
     public static GGApplication getApp() {
@@ -288,7 +284,7 @@ public class OpenGG{
         GGConsole.log("Render engine has finalized");
         AudioController.destroy();
         GGConsole.log("Audio controller has been finalized");
-        window.destroy();
+        WindowController.destroy();
         ThreadManager.destroy();
         GGConsole.log("Thread Manager has closed all remaining threads");
         GGConsole.log("OpenGG has closed gracefully, application can now be ended");

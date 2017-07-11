@@ -48,7 +48,6 @@ public class PostProcessPipeline {
     public static void process(){
         glDisable(GL_CULL_FACE);
 
-        initial.disableRendering();
         initial.useTexture(0, 0);
         initial.useTexture(1, Framebuffer.DEPTH);
         for(StageSet ss : sets){

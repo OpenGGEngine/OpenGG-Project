@@ -47,13 +47,14 @@ import static org.lwjgl.opengl.GL30.glBindFramebuffer;
 public class Framebuffer {
     public static final int DEPTH = GL_DEPTH_ATTACHMENT;
     NativeGLFramebuffer fb;
-    List<Integer> usedAttachments = new ArrayList<>();
-    List<Tuple<Texture, Integer>> textures = new ArrayList<>();
-    List<NativeGLRenderbuffer> renderbuffers = new ArrayList<>();
+    List<Integer> usedAttachments;
+    List<Tuple<Texture, Integer>> textures;
+    List<NativeGLRenderbuffer> renderbuffers;
     int lx, ly;
     
-    private Framebuffer(){
+    protected Framebuffer(){
         fb = new NativeGLFramebuffer();
+        refresh();
     }
     
     public void bind(){
@@ -76,7 +77,7 @@ public class Framebuffer {
             if(usedAttachments.get(i) == GL_DEPTH_ATTACHMENT) continue;
             attachments[i] = usedAttachments.get(i);
         }
-        
+
         glDrawBuffers(attachments);
     }
     
@@ -159,6 +160,14 @@ public class Framebuffer {
         fb.blit(0, 0, lx, ly, 0, 0, OpenGG.getWindow().getWidth(), OpenGG.getWindow().getHeight(), GL_COLOR_BUFFER_BIT, GL_LINEAR);
     }
     
+    public void refresh(){
+        textures = new ArrayList<>();
+        renderbuffers = new ArrayList<>();
+        usedAttachments = new ArrayList<>();
+        lx = 0;
+        ly = 0;
+    }
+    
     public void enableRendering(){
         glBindTexture(GL_TEXTURE_2D, 0);
         fb.bind(GL_FRAMEBUFFER);
@@ -184,6 +193,4 @@ public class Framebuffer {
         Framebuffer nframe = new Framebuffer();
         return nframe;
     }
-    
-
 }

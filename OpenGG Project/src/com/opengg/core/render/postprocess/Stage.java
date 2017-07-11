@@ -5,9 +5,9 @@
  */
 package com.opengg.core.render.postprocess;
 
-import com.opengg.core.engine.OpenGG;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.texture.Framebuffer;
+import com.opengg.core.render.texture.WindowFramebuffer;
 
 /**
  *
@@ -18,16 +18,15 @@ public class Stage {
     Framebuffer buffer;
     
     public Stage(String shader){
-        buffer = Framebuffer.generateFramebuffer();
-        buffer.attachColorTexture(OpenGG.getWindow().getWidth(), OpenGG.getWindow().getHeight(), 0);
+        buffer = WindowFramebuffer.getWindowFramebuffer(1);
         this.shader = shader;
     }
     
     public void use(){
         PostProcessPipeline.current = this;
         ShaderController.useConfiguration(shader);
-        buffer.useEnabledAttachments();
         buffer.enableRendering();
+        buffer.useEnabledAttachments();
     }
     
     public void finalizeAtLoc(int end){

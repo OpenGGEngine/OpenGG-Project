@@ -18,6 +18,7 @@ import com.opengg.core.render.shader.VertexArrayFormat;
 import com.opengg.core.render.shader.VertexArrayObject;
 import com.opengg.core.render.texture.Framebuffer;
 import com.opengg.core.render.texture.TextureManager;
+import com.opengg.core.render.texture.WindowFramebuffer;
 import com.opengg.core.world.Camera;
 import com.opengg.core.world.Skybox;
 import java.util.ArrayList;
@@ -72,9 +73,7 @@ public class RenderEngine {
         TextureManager.initialize();
         ModelManager.initialize();
         
-        sceneTex = Framebuffer.generateFramebuffer();
-        sceneTex.attachColorTexture(OpenGG.window.getWidth(), OpenGG.getWindow().getHeight(), 0);
-        sceneTex.attachDepthStencilTexture(OpenGG.window.getWidth(), OpenGG.getWindow().getHeight());
+        sceneTex = WindowFramebuffer.getWindowFramebuffer(1);
         PostProcessPipeline.initialize(sceneTex);
 
         defaultvao = new VertexArrayObject(vaoformat);
@@ -298,28 +297,28 @@ public class RenderEngine {
     public static void draw(){
         ShaderController.setView(camera.getMatrix());
         ShaderController.setUniform("camera", camera.getPos().inverse());
-        
+
         sceneTex.enableRendering();
         sceneTex.useEnabledAttachments();
         useLights();
         resetConfig();
 
         defaultvao.bind();
-        
+
         for(RenderPath path : getActiveRenderPaths()){
             path.render();
             resetConfig();
         }       
-        ShaderController.useConfiguration("sky");
+
         if(skybox != null){
             skybox.getCubemap().use(0);
             skybox.getDrawable().render(); 
         }
 
-        glDisable(GL_CULL_FACE); 
+        sceneTex.disableRendering();
         GUI.startGUIPos();
         PostProcessPipeline.process();
-        GUI.render();  
+        GUI.render(); 
     }
     
     public static void resetConfig(){

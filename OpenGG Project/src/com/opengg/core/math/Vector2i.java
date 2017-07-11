@@ -5,25 +5,24 @@
  */
 package com.opengg.core.math;
 
-import static com.opengg.core.math.FastMath.isEqual;
 import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import org.lwjgl.system.MemoryUtil;
 
 /**
  *
  * @author Javier
  */
-public class Vector2f {
-    public float x;
-    public float y;
+public class Vector2i {
+    public int x;
+    public int y;
 
     /**
      * Creates a default 2d vector with all values set to 0.
      */
-    public Vector2f() {
-        this.x = 0f;
-        this.y = 0f;
+    public Vector2i() {
+        this.x = 0;
+        this.y = 0;
     }
     
     /**
@@ -31,7 +30,7 @@ public class Vector2f {
      * @param x
      * @param y
      */
-    public Vector2f(float x, float y) {
+    public Vector2i(int x, int y) {
         this.x = x;
         this.y = y;
     }
@@ -41,21 +40,16 @@ public class Vector2f {
      * Creates a new 2d vector based off another.
      * @param v Vector to be copied
      */
-    public Vector2f(Vector2f v){
+    public Vector2i(Vector2i v){
         this.x = v.x;
         this.y = v.y;
     }
     
-    public Vector2f(Vector2i v){
-        this.x = v.x;
-        this.y = v.y;
+    public Vector2i add(Vector2i other){
+        return new Vector2i(this).addThis(other);
     }
     
-    public Vector2f add(Vector2f other){
-        return new Vector2f(this).addThis(other);
-    }
-    
-    public Vector2f addThis(Vector2f other){
+    public Vector2i addThis(Vector2i other){
         this.x += other.x;
         this.y += other.y;
         return this;
@@ -66,7 +60,7 @@ public class Vector2f {
      * @param v
      * @return 
      */
-    public float getDistance(Vector2f v){
+    public float getDistance(Vector2i v){
         return (float) Math.sqrt(Math.pow((this.x - v.x), 2)+Math.pow((this.y - v.y), 2));  
     }
     
@@ -91,8 +85,8 @@ public class Vector2f {
      * Returns a FloatBuffer representation of the vector
      * @return FloatBuffer representation of the vector
      */
-    public FloatBuffer getBuffer(){
-        FloatBuffer b = MemoryUtil.memAllocFloat(2);
+    public IntBuffer getBuffer(){
+        IntBuffer b = MemoryUtil.memAllocInt(2);
         return b.put(x).put(y);
     }
     /**
@@ -100,25 +94,25 @@ public class Vector2f {
      * @return Byte array containing the vector
      */
     public byte[] getByteArray() {
-        ByteBuffer b = MemoryUtil.memAlloc(8);
-        return b.putFloat(x).putFloat(y).array();
+        ByteBuffer b = MemoryUtil.memAlloc(Integer.BYTES * 2);
+        return b.putInt(x).putInt(y).array();
     }
     
     @Override
     public boolean equals(Object ot){
-        if(ot instanceof Vector2f){
-            Vector2f o = (Vector2f) ot;
-            if(!isEqual(o.x, this.x))
+        if(ot instanceof Vector2i){
+            Vector2i o = (Vector2i) ot;
+            if(x != o.x)
                 return false;
-            if(!isEqual(o.y, this.y))
+            if(y != o.y)
                 return false;
             return true;
         }   
         return false;
     }
     
-    public static Vector2f getFromByteArray(byte[] vector){
-        return new Vector2f(1,1);
+    public static Vector2i getFromByteArray(byte[] vector){
+        return new Vector2i(1,1);
     }
     
     @Override

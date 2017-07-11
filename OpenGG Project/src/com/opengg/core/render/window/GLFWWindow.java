@@ -15,6 +15,7 @@ import static org.lwjgl.glfw.GLFW.*;
 import org.lwjgl.opengl.*;
 import static org.lwjgl.opengl.GL11.*;
 import org.lwjgl.stb.STBImage;
+import org.lwjgl.system.MemoryUtil;
 import static org.lwjgl.system.MemoryUtil.*;
 
 public class GLFWWindow implements Window {
@@ -22,7 +23,7 @@ public class GLFWWindow implements Window {
     int WIDTH = 300;
     int HEIGHT = 300;
 
-    public static long window;
+    long window;
 
     boolean success;
     GLFWVidMode mode;
@@ -235,12 +236,18 @@ public class GLFWWindow implements Window {
 
     @Override
     public int getWidth() {
-        return WIDTH;
+        IntBuffer w = MemoryUtil.memAllocInt(1);
+        IntBuffer h = MemoryUtil.memAllocInt(1);
+        glfwGetFramebufferSize(window, w, h);
+        return w.get();
     }
 
     @Override
     public int getHeight() {
-        return HEIGHT;
+        IntBuffer w = MemoryUtil.memAllocInt(1);
+        IntBuffer h = MemoryUtil.memAllocInt(1);
+        glfwGetFramebufferSize(window, w, h);
+        return h.get();
     }
 
     @Override
