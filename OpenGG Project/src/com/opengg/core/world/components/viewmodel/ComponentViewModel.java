@@ -88,8 +88,16 @@ public abstract class ComponentViewModel {
         this.component = c;
     }
     
+    public Component getComponent(){
+        return component;
+    }
+    
     public List<ViewModelElement> getElements(){
         return elements;
+    }
+    
+    public final void fireEvent(ViewModelElement element){
+        onChangeLocal(element);
     }
     
     final void onChangeLocal(ViewModelElement element){
@@ -121,14 +129,14 @@ public abstract class ComponentViewModel {
     
     public abstract void onChange(ViewModelElement element);
     
-    final void updateLocal(){
+    public final void updateLocal(){
         for(ViewModelElement element : elements){
             switch (element.internalname) {
                 case "pos":
                     element.value = component.getPositionOffset();
                     break;
                 case "rot":
-                    element.value = component.getRotationOffset();
+                    element.value = component.getRotationOffset().toEuler();
                     break;
                 case "scale":
                     element.value = component.getScale();
@@ -146,6 +154,7 @@ public abstract class ComponentViewModel {
             updateViews();
         }
     }
+    
     
     public abstract void updateViews();
 }

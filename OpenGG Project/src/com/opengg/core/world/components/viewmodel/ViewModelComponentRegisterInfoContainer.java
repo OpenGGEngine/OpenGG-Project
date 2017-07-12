@@ -10,6 +10,6 @@ package com.opengg.core.world.components.viewmodel;
  * @author Javier
  */
 public class ViewModelComponentRegisterInfoContainer {
-    Class component;
-    Class viewmodel;
+    public Class component;
+    public Class viewmodel;
 }

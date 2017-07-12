@@ -5,6 +5,7 @@
  */
 package com.opengg.core.world.components.viewmodel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -12,5 +13,5 @@ import java.util.List;
  * @author Javier
  */
 public class ViewModelInitializer {
-    public List<ViewModelElement> elements;
+    public List<ViewModelElement> elements = new ArrayList<>();
 }

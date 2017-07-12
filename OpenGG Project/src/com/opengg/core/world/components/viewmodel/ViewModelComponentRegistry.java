@@ -88,4 +88,8 @@ public class ViewModelComponentRegistry {
         }
         return null;
     }
+    
+    public static List<ViewModelComponentRegisterInfoContainer> getAllRegistries(){
+        return registered;
+    }
 }
