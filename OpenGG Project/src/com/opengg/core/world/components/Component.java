@@ -10,9 +10,8 @@ import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.util.GGByteInputStream;
 import com.opengg.core.util.GGByteOutputStream;
-import com.opengg.core.world.Deserializer;
-import com.opengg.core.world.Serializer;
 import com.opengg.core.world.World;
+import com.opengg.core.world.components.viewmodel.ComponentViewModel;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +19,7 @@ import java.util.List;
 /**
  * Represents any object attachable to another Component that links with the WorldEngine for updating and serializing<br><br>
  * 
- * This class is the core class of the World system, which is what a developer would interact the most during development. All component
+ * This class is the core class of the World system, which is what a developer would interact the most with during development. All component
  * have a position, scale, and rotation, regardless of whether or not they are used. In addition they have a unique ID, a name which may
  * or may not be unique depending on developer preference, and only one parent, where if it this is a top level component, the parent would be the 
  * corresponding World. <br><br>
@@ -29,7 +28,7 @@ import java.util.List;
  * @author Javier
  */
 public abstract class Component{
-    public static int curid = 0;
+    private static int curid = 0;
     public int id;
     public boolean absoluteOffset = false;
     public boolean enabled = true;
@@ -205,7 +204,7 @@ public abstract class Component{
     public World getWorld(){
         return parent.getWorld();
     }
-    
+      
     public boolean isEnabled(){
         return enabled;
     }

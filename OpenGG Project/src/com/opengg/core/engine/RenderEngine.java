@@ -311,10 +311,11 @@ public class RenderEngine {
         }       
 
         if(skybox != null){
+            ShaderController.useConfiguration("sky");
             skybox.getCubemap().use(0);
             skybox.getDrawable().render(); 
         }
-
+        
         sceneTex.disableRendering();
         GUI.startGUIPos();
         PostProcessPipeline.process();

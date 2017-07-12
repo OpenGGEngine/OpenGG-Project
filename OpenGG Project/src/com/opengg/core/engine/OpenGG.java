@@ -10,13 +10,12 @@ package com.opengg.core.engine;
 import com.opengg.core.audio.SoundtrackHandler;
 import com.opengg.core.extension.Extension;
 import com.opengg.core.extension.ExtensionManager;
-import com.opengg.core.render.window.GLFWWindow;
 import static com.opengg.core.render.window.RenderUtil.endFrame;
 import static com.opengg.core.render.window.RenderUtil.startFrame;
 import com.opengg.core.render.window.Window;
 import com.opengg.core.render.window.WindowInfo;
-import com.opengg.core.render.window.WindowTypeRegister;
 import com.opengg.core.thread.ThreadManager;
+import com.opengg.core.world.components.viewmodel.ViewModelComponentRegistry;
 import com.opengg.core.world.Deserializer;
 import com.opengg.core.world.Serializer;
 import com.opengg.core.world.World;
@@ -127,6 +126,8 @@ public class OpenGG{
         GGConsole.log("OpenGG initializing, running on " + System.getProperty("os.name") + ", " + System.getProperty("os.arch"));
         
         OpenGG.app = app;
+               
+        ViewModelComponentRegistry.initialize();
         
         ExtensionManager.loadStep(Extension.LWJGL);
         

@@ -26,12 +26,15 @@ public class FreeFlyComponent extends Component implements Actionable{
     Vector3f currot = new Vector3f();
     float rotspeed = 30;
     float speed = 30;
+    private final WorldObject head;
     
     public FreeFlyComponent(){
         pcontrol = new UserControlComponent();
         view = new CameraComponent();
+        head = new WorldObject();
         attach(pcontrol);
-        attach(view);
+        attach(head);
+        head.attach(view);
     }
     
     @Override
@@ -39,8 +42,9 @@ public class FreeFlyComponent extends Component implements Actionable{
         currot.x += controlrot.x * rotspeed * delta;
         currot.y += controlrot.y * rotspeed * delta;
         currot.z += controlrot.z * rotspeed * delta;
-        this.setRotationOffset(new Quaternionf(currot));   
-        
+        this.setRotationOffset(new Quaternionf(new Vector3f(0,currot.y,currot.z)));    
+        head.setRotationOffset(new Quaternionf(new Vector3f(currot.x,0,0)));
+       
         Vector3f nvector = control.multiply(delta * 15);
         nvector = this.getRotation().transform(nvector);
         this.pos.addThis(nvector);
@@ -69,10 +73,10 @@ public class FreeFlyComponent extends Component implements Actionable{
                     control.y -= 1;
                     break;
                 case "lookright":
-                    controlrot.y += 1;
+                    controlrot.y -= 1;
                     break;
                 case "lookleft":
-                    controlrot.y -= 1;
+                    controlrot.y += 1;
                     break;
                  case "lookup":
                     controlrot.x += 1;
@@ -102,10 +106,10 @@ public class FreeFlyComponent extends Component implements Actionable{
                     control.y += 1;
                     break;
                 case "lookright":
-                    controlrot.y -= 1;
+                    controlrot.y += 1;
                     break;
                 case "lookleft":
-                    controlrot.y += 1;
+                    controlrot.y -= 1;
                     break;
                 case "lookup":
                     controlrot.x -= 1;

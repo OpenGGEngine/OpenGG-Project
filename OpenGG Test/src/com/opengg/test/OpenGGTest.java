@@ -22,6 +22,7 @@ import com.opengg.core.render.window.WindowOptions;
 import com.opengg.core.world.Skybox;
 import com.opengg.core.world.Terrain;
 import com.opengg.core.world.World;
+import com.opengg.core.world.components.FreeFlyComponent;
 import com.opengg.core.world.components.SunComponent;
 import com.opengg.core.world.components.TerrainComponent;
 import com.opengg.core.world.components.WaterComponent;
@@ -84,13 +85,13 @@ public class OpenGGTest extends GGApplication{
                 Resource.getTexturePath("road.png")));
         world.setBlotmap(Resource.getTexture("blendMap.png"));
         
-        //FreeFlyComponent player = new FreeFlyComponent();
-        TestPlayerComponent player = new TestPlayerComponent();
+        FreeFlyComponent player = new FreeFlyComponent();
+        //TestPlayerComponent player = new TestPlayerComponent();
         player.use();
 
         FountainParticleEmitter particle = new FountainParticleEmitter(8,5,1,Resource.getTexture("emak.png"));
         WaterComponent water = new WaterComponent(Resource.getTexture("water.jpg"), 0.1f, 100f);
-        water.setPositionOffset(new Vector3f(0,10,0));
+        //water.setPositionOffset(new Vector3f(0,10,0));
         
         w.attach(player);
         w.attach(world);
@@ -98,8 +99,8 @@ public class OpenGGTest extends GGApplication{
         w.attach(new SunComponent(Resource.getTexture("emak.png"), 500, 1f));
         w.attach(water);
        
-        world.enableRendering();
-        world.enableCollider();
+        //world.enableRendering();
+        //world.enableCollider();
         
         WorldEngine.useWorld(w);
         
