@@ -57,4 +57,9 @@ public class ModelRenderComponentViewModel extends ComponentViewModel{
         
         elements.add(modelpath);
     }
+
+    @Override
+    public void updateViews() {
+       
+    }
 }

@@ -14,8 +14,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteBuffer;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -33,7 +31,7 @@ public class Deserializer {
         try {
             ds.w = new World();
             ds.w.deserialize(ds.b);
-            ds.w.id = 0;
+            ds.w.setId(0);
         
             doList(ds);
         } catch (IOException ex) {
@@ -45,8 +43,8 @@ public class Deserializer {
         
         int maxid = 0;
         upper : for(SerialHolder sh : ds.components){
-            if(sh.c.id > maxid){
-                maxid = sh.c.id;
+            if(sh.c.getId() > maxid){
+                maxid = sh.c.getId();
             }
             
             if(sh.parent == 0){
@@ -55,16 +53,16 @@ public class Deserializer {
             }
             
             for(SerialHolder sh2 : ds.components){
-                if(sh2.c.id == sh.parent){
+                if(sh2.c.getId() == sh.parent){
                     if(sh2.c instanceof Component){
                         ((Component)sh2.c).attach(sh.c);
                         continue upper;
                     }else{
-                        GGConsole.warning("Component " + sh.c.id + " has invalid parent, will not be added");
+                        GGConsole.warning("Component " + sh.c.getId() + " has invalid parent, will not be added");
                     }   
                 }
             }
-            GGConsole.warning("Component " + sh.c.id + " has invalid parent, will not be added");
+            GGConsole.warning("Component " + sh.c.getId()+ " has invalid parent, will not be added");
         }
         return ds.w;
     }
@@ -79,7 +77,7 @@ public class Deserializer {
                 Class c = Class.forName(classname);
                 Component comp = (Component)c.getConstructor().newInstance();
                 comp.deserialize(ds.b);
-                comp.id = id;
+                comp.setId(id);
                 
                 SerialHolder ch = new SerialHolder();
                 ch.c = comp;

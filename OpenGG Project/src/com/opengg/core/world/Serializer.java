@@ -38,8 +38,8 @@ public class Serializer {
         serializer.stream.write(components.size());
         for(Component component : components){
             serializer.stream.write(component.getClass().getName());
-            serializer.stream.write(component.id);
-            serializer.stream.write(component.parent.id);
+            serializer.stream.write(component.getId());
+            serializer.stream.write(component.parent.getId());
             component.serialize(serializer.stream);
             if(component instanceof Component){
                 traverse(((Component) component).getChildren());

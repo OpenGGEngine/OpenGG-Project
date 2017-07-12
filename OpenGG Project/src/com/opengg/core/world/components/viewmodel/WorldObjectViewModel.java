@@ -6,32 +6,37 @@
 package com.opengg.core.world.components.viewmodel;
 
 import com.opengg.core.world.components.Component;
+import com.opengg.core.world.components.WorldObject;
 
 /**
  *
  * @author Javier
  */
-public class GenericComponentViewModel extends ComponentViewModel{
+public class WorldObjectViewModel extends ComponentViewModel{
 
     @Override
-    public void createMainViewModel() {}
+    public void createMainViewModel() {
+        
+    }
 
     @Override
     public ViewModelInitializer getInitializer() {
-        throw new UnsupportedOperationException("Cannot create a generic viewmodel initializer, this class is only usable for emergency support for components without custom ViewModels");
+        return new ViewModelInitializer();
     }
 
     @Override
     public Component getFromInitializer(ViewModelInitializer init) {
-        throw new UnsupportedOperationException("Cannot create a generic viewmodel, this class is only usable for emergency support for components without custom ViewModels");
+        return new WorldObject();
     }
 
     @Override
-    public void onChange(ViewModelElement element) {}
+    public void onChange(ViewModelElement element) {
+        
+    }
 
     @Override
     public void updateViews() {
-        
+       
     }
     
 }

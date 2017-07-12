@@ -80,4 +80,12 @@ public class ViewModelComponentRegistry {
         viewmodels.clear();
         registered.clear();
     }
+    
+    public static Class findViewModel(Class component){
+        for(ViewModelComponentRegisterInfoContainer container : registered){
+            if(container.component.equals(component))
+                return container.viewmodel;
+        }
+        return null;
+    }
 }

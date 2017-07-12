@@ -8,6 +8,7 @@ package com.opengg.core.world.components.viewmodel;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.world.components.Component;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,7 +17,7 @@ import java.util.List;
  */
 public abstract class ComponentViewModel {
     Component component;
-    List<ViewModelElement> elements;
+    List<ViewModelElement> elements = new ArrayList<>();
     
     public ComponentViewModel(){
         ViewModelElement pos = new ViewModelElement();
@@ -87,6 +88,10 @@ public abstract class ComponentViewModel {
         this.component = c;
     }
     
+    public List<ViewModelElement> getElements(){
+        return elements;
+    }
+    
     final void onChangeLocal(ViewModelElement element){
         if(component != null){
             switch (element.internalname) {
@@ -115,4 +120,32 @@ public abstract class ComponentViewModel {
     }
     
     public abstract void onChange(ViewModelElement element);
+    
+    final void updateLocal(){
+        for(ViewModelElement element : elements){
+            switch (element.internalname) {
+                case "pos":
+                    element.value = component.getPositionOffset();
+                    break;
+                case "rot":
+                    element.value = component.getRotationOffset();
+                    break;
+                case "scale":
+                    element.value = component.getScale();
+                    break;
+                case "name":
+                    element.value = component.getName();
+                    break;
+                case "enabled":
+                    element.value = component.isEnabled();
+                    break;
+                case "abs":
+                    element.value = component.isAbsoluteOffset();
+                    break;
+            }
+            updateViews();
+        }
+    }
+    
+    public abstract void updateViews();
 }

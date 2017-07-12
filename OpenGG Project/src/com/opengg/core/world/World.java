@@ -122,7 +122,7 @@ public class World extends Component{
     }
     
     private Component traverseFind(Component c, int i){
-        if(c.id == i)
+        if(c.getId() == i)
             return c;
         if(c instanceof Component){
             for(Component comp : ((Component)c).getChildren()){

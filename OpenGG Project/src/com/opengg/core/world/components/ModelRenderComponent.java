@@ -56,7 +56,7 @@ public class ModelRenderComponent extends RenderComponent{
     public void serialize(GGByteOutputStream out) throws IOException{
         super.serialize(out);
         if(frame){
-            out.write(name);
+            out.write(mname);
         }else{
             out.write(model.getName());
         }

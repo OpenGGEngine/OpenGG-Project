@@ -20,12 +20,12 @@ public class ViewModelElement {
             QUATERNIONF = 7,
             BOOLEAN = 8;
     
-    String name;
-    String internalname;
-    boolean autoupdate;
-    int type;
-    Object value;
-    boolean visible;
+    public String name;
+    public String internalname;
+    public boolean autoupdate;
+    public int type;
+    public Object value;
+    public boolean visible;
     
     ComponentViewModel cmv;
 }

@@ -11,7 +11,6 @@ import com.opengg.core.math.Vector3f;
 import com.opengg.core.util.GGByteInputStream;
 import com.opengg.core.util.GGByteOutputStream;
 import com.opengg.core.world.World;
-import com.opengg.core.world.components.viewmodel.ComponentViewModel;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,19 +20,19 @@ import java.util.List;
  * 
  * This class is the core class of the World system, which is what a developer would interact the most with during development. All component
  * have a position, scale, and rotation, regardless of whether or not they are used. In addition they have a unique ID, a name which may
- * or may not be unique depending on developer preference, and only one parent, where if it this is a top level component, the parent would be the 
+ * or may not be unique depending on developer preference, and only one parent, and if it this is a top level component, the parent would be the 
  * corresponding World. <br><br>
  * To create a custom component, first extend this class. This class itself, while it has no practical use by itself, contains all of the
- * code that should be needed to use the features described above, so take care when overriding these default classes. the 
+ * code that should be needed to use the features described above, so take care when overriding these default classes.
  * @author Javier
  */
 public abstract class Component{
     private static int curid = 0;
-    public int id;
+    private int id;
     public boolean absoluteOffset = false;
     public boolean enabled = true;
     public float updatedistance = 0;
-    public String name = "";
+    private String name = "";
     public Component parent;
     public Vector3f pos = new Vector3f();
     public Quaternionf rot = new Quaternionf();
@@ -64,6 +63,14 @@ public abstract class Component{
     public String getName(){
         return name;
     }
+    
+    public int getId(){
+        return id;
+    }
+    public void setId(int id){
+        this.id = id;
+    }
+    
     
     /**
      * Set the parent of the component, should rarely be called directly
@@ -167,7 +174,7 @@ public abstract class Component{
     public void update(float delta){}
     
     /**
-     * Called by various sources for serialization of the component, and by default only serialized position, rotation, and scale offsets<br><br>
+     * Called by various sources for serialization of the component, and by default only serializes position, rotation, and scale offsets<br><br>
      * 
      * For correct functionality, the variables serialized here must match the variables deserialized in {@link #deserialize(com.opengg.core.world.Deserializer) deserialize()}<br>
      * In addition, any object that overrides this must also override the {@link #Component() default constructor} for the serializer to function<br><br>
@@ -182,7 +189,7 @@ public abstract class Component{
     }
     
     /**
-     * Called for deserialization of a byte stream to a component, and by default only deserialized position, rotation, and scale<br><br>
+     * Called for deserialization of a byte stream to a component, and by default only deserializes position, rotation, and scale<br><br>
      * 
      * For correct functionality, variable deserialization here must match the variables serialized in {@link #serialize(com.opengg.core.world.Serializer) serialize()}<br>
      * In addition, any object that overrides this must also override the {@link #Component() default constructor} for the deserializer to function<br><br>

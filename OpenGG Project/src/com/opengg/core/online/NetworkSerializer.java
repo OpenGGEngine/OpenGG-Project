@@ -27,7 +27,7 @@ public class NetworkSerializer {
             out.write(Calendar.getInstance().getTimeInMillis());
             out.write(components.size());
             for(Component c : components){
-                out.write(c.id);
+                out.write(c.getId());
                 c.serialize(out);
             }
             
@@ -47,7 +47,7 @@ public class NetworkSerializer {
             
             for(int i = 0; i < amount; i++){
                 int id = ds.readInt();
-                components.stream().filter((c) -> (c.id == id)).forEach((c) -> {
+                components.stream().filter((c) -> (c.getId() == id)).forEach((c) -> {
                     try {
                         c.deserialize(ds);
                     } catch (IOException ex) {
