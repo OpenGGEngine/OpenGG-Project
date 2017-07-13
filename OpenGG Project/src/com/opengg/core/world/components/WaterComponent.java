@@ -20,13 +20,16 @@ import com.opengg.core.render.texture.Texture;
  * @author Javier
  */
 public class WaterComponent extends RenderComponent{
-    static float size = 9000;
     float movespeed;
     float current;
     float tscale;
     Texture texture;
     
-    public WaterComponent(Texture texture, float movespeed, float tscale){
+    public WaterComponent(Texture tex, float size){
+        this(tex, 0.1f, 100, size);
+    }
+    
+    public WaterComponent(Texture texture, float movespeed, float tscale, float size){
         super(ObjectCreator.createSquare(new Vector2f(-size,-size), new Vector2f(size,size), 0));
         this.texture = texture;
         this.tscale = tscale;
@@ -51,5 +54,29 @@ public class WaterComponent extends RenderComponent{
         ShaderController.setUniform("uvoffsetx", 0f);
         ShaderController.setUniform("uvoffsety", 0f);
         ShaderController.setUVMultX(1);
+    }
+    
+    public float getMovespeed() {
+        return movespeed;
+    }
+
+    public void setMovespeed(float movespeed) {
+        this.movespeed = movespeed;
+    }
+
+    public float getTscale() {
+        return tscale;
+    }
+
+    public void setTscale(float tscale) {
+        this.tscale = tscale;
+    }
+    
+    public Texture getTexture() {
+        return texture;
+    }
+
+    public void setTexture(Texture texture) {
+        this.texture = texture;
     }
 }

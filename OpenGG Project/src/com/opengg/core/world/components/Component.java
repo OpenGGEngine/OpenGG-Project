@@ -221,6 +221,8 @@ public abstract class Component{
     }
     
     public void attach(Component c) {
+        if(c.getParent() != null)
+            c.getParent().remove(c);
         c.setParentInfo((Component)this);
         WorldEngine.addObjects(c);
         children.add(c);
@@ -228,6 +230,10 @@ public abstract class Component{
     
     public List<Component> getChildren(){
         return children;
+    }
+    
+    public Component getParent(){
+        return parent;
     }
     
     public void remove(int i){

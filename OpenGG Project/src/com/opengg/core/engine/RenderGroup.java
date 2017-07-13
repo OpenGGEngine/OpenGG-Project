@@ -11,7 +11,6 @@ import com.opengg.core.render.shader.VertexArrayFormat;
 import com.opengg.core.render.shader.VertexArrayObject;
 import java.util.ArrayList;
 import java.util.List;
-import static org.lwjgl.opengl.GL11.glGetError;
 
 /**
  *

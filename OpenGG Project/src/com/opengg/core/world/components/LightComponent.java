@@ -19,7 +19,7 @@ public class LightComponent extends Component{
     
     public LightComponent(){
         super();
-        l = new Light(new Vector3f(0,0,0),new Vector3f(0,0,0),0,0);
+        l = new Light(new Vector3f(0,0,0),new Vector3f(1,1,1),100,0);
     }
     
     public LightComponent(Light l){
@@ -35,4 +35,8 @@ public class LightComponent extends Component{
     public void update(float delta) {
         l.setPosition(parent.getPosition());
     }    
+    
+    public Light getLight(){
+        return l;
+    }
 }

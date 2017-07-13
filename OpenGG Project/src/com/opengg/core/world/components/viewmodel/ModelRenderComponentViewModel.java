@@ -13,33 +13,32 @@ import com.opengg.core.world.components.ModelRenderComponent;
  *
  * @author Javier
  */
-public class ModelRenderComponentViewModel extends ComponentViewModel{
+public class ModelRenderComponentViewModel extends ViewModel{
     
     @Override
-    public ViewModelInitializer getInitializer() {
-        ViewModelInitializer initializer = new ViewModelInitializer();
+    public Initializer getInitializer() {
+        Initializer initializer = new Initializer();
         
-        ViewModelElement modelpath = new ViewModelElement();
+        Element modelpath = new Element();
         modelpath.autoupdate = false;
-        modelpath.type = ViewModelElement.STRING;
+        modelpath.type = Element.STRING;
         modelpath.name = "Model Path";
         modelpath.internalname = "path";
         modelpath.value = "";
-        modelpath.cmv = this;
         
         initializer.elements.add(modelpath);
         return initializer;
     }
 
     @Override
-    public Component getFromInitializer(ViewModelInitializer init) {
+    public Component getFromInitializer(Initializer init) {
         String path = (String) init.elements.get(0).value;
         ModelRenderComponent ncomponent = new ModelRenderComponent(ModelLoader.loadModel(path));
         return ncomponent;
     }
 
     @Override
-    public void onChange(ViewModelElement element) {
+    public void onChange(Element element) {
         if(element.internalname.equals("path")){
             ((ModelRenderComponent)component).setModel(ModelLoader.loadModel((String)element.value));
         }
@@ -47,13 +46,12 @@ public class ModelRenderComponentViewModel extends ComponentViewModel{
 
     @Override
     public void createMainViewModel() {
-        ViewModelElement modelpath = new ViewModelElement();
+        Element modelpath = new Element();
         modelpath.autoupdate = false;
-        modelpath.type = ViewModelElement.STRING;
+        modelpath.type = Element.STRING;
         modelpath.name = "Model Path";
         modelpath.internalname = "path";
         modelpath.value = "";
-        modelpath.cmv = this;
         
         elements.add(modelpath);
     }

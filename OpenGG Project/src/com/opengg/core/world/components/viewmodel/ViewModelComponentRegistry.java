@@ -32,7 +32,7 @@ public class ViewModelComponentRegistry {
     
     public static void register(Class component, boolean error){
         boolean iscomponent = ClassUtil.childOf(component, Component.class);
-        boolean isviewmodel = ClassUtil.childOf(component, ComponentViewModel.class);     
+        boolean isviewmodel = ClassUtil.childOf(component, ViewModel.class);     
         
         if(iscomponent){
             components.add(component);

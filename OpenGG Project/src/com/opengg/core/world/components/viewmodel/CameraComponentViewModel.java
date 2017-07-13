@@ -5,33 +5,32 @@
  */
 package com.opengg.core.world.components.viewmodel;
 
+import com.opengg.core.world.components.CameraComponent;
 import com.opengg.core.world.components.Component;
 
 /**
  *
  * @author Javier
  */
-public class GenericComponentViewModel extends ViewModel{
+public class CameraComponentViewModel extends ViewModel{
 
     @Override
     public void createMainViewModel() {}
 
     @Override
     public Initializer getInitializer() {
-        throw new UnsupportedOperationException("Cannot create a generic viewmodel initializer, this class is only usable for emergency support for components without custom ViewModels");
+        return new Initializer();
     }
 
     @Override
     public Component getFromInitializer(Initializer init) {
-        throw new UnsupportedOperationException("Cannot create a generic viewmodel, this class is only usable for emergency support for components without custom ViewModels");
+        return new CameraComponent();
     }
 
     @Override
     public void onChange(Element element) {}
 
     @Override
-    public void updateViews() {
-        
-    }
+    public void updateViews() {}
     
 }

@@ -15,58 +15,54 @@ import java.util.List;
  *
  * @author Javier
  */
-public abstract class ComponentViewModel {
+public abstract class ViewModel {
     Component component;
-    List<ViewModelElement> elements = new ArrayList<>();
+    List<Element> elements = new ArrayList<>();
     
-    public ComponentViewModel(){
-        ViewModelElement pos = new ViewModelElement();
+    public ViewModel(){
+        Element pos = new Element();
         pos.autoupdate = true;
-        pos.type = ViewModelElement.VECTOR3F;
+        pos.type = Element.VECTOR3F;
         pos.name = "Position";
         pos.internalname = "pos";
         pos.value = new Vector3f(0,0,0);
-        pos.cmv = this;
         
-        ViewModelElement rot = new ViewModelElement();
+        Element rot = new Element();
         rot.autoupdate = true;
-        rot.type = ViewModelElement.VECTOR3F;
+        rot.type = Element.VECTOR3F;
         rot.name = "Rotation";
         rot.internalname = "rot";
         rot.value = new Vector3f(0,0,0);
-        rot.cmv = this;
         
-        ViewModelElement scale = new ViewModelElement();
+        Element scale = new Element();
         scale.autoupdate = true;
-        scale.type = ViewModelElement.VECTOR3F;
+        scale.type = Element.VECTOR3F;
         scale.name = "Scale";
         scale.internalname = "scale";
         scale.value = new Vector3f(1,1,1);
-        scale.cmv = this;
         
-        ViewModelElement name = new ViewModelElement();
+        Element name = new Element();
         name.autoupdate = false;
-        name.type = ViewModelElement.STRING;
+        name.type = Element.STRING;
         name.name = "Name";
         name.internalname = "name";
         name.value = "default";
-        name.cmv = this;
         
-        ViewModelElement update = new ViewModelElement();
+        Element update = new Element();
         update.autoupdate = true;
-        update.type = ViewModelElement.BOOLEAN;
+        update.type = Element.BOOLEAN;
         update.name = "Enabled";
         update.internalname = "enabled";
         update.value = true;
-        update.cmv = this;
+        update.forceupdate = true;
         
-        ViewModelElement abs = new ViewModelElement();
+        Element abs = new Element();
         abs.autoupdate = true;
-        abs.type = ViewModelElement.BOOLEAN;
-        abs.name = "Should use absolute position";
+        abs.type = Element.BOOLEAN;
+        abs.name = "Is position absolute";
         abs.internalname = "abs";
         abs.value = false;
-        abs.cmv = this;
+        abs.forceupdate = true;
         
         elements.add(pos);
         elements.add(rot);
@@ -80,9 +76,9 @@ public abstract class ComponentViewModel {
     
     public abstract void createMainViewModel();
     
-    public abstract ViewModelInitializer getInitializer();
+    public abstract Initializer getInitializer();
     
-    public abstract Component getFromInitializer(ViewModelInitializer init);
+    public abstract Component getFromInitializer(Initializer init);
     
     public void setComponent(Component c){
         this.component = c;
@@ -92,15 +88,15 @@ public abstract class ComponentViewModel {
         return component;
     }
     
-    public List<ViewModelElement> getElements(){
+    public List<Element> getElements(){
         return elements;
     }
     
-    public final void fireEvent(ViewModelElement element){
+    public final void fireEvent(Element element){
         onChangeLocal(element);
     }
     
-    final void onChangeLocal(ViewModelElement element){
+    final void onChangeLocal(Element element){
         if(component != null){
             switch (element.internalname) {
                 case "pos":
@@ -127,10 +123,10 @@ public abstract class ComponentViewModel {
         }
     }
     
-    public abstract void onChange(ViewModelElement element);
+    public abstract void onChange(Element element);
     
     public final void updateLocal(){
-        for(ViewModelElement element : elements){
+        for(Element element : elements){
             switch (element.internalname) {
                 case "pos":
                     element.value = component.getPositionOffset();
@@ -141,20 +137,28 @@ public abstract class ComponentViewModel {
                 case "scale":
                     element.value = component.getScale();
                     break;
-                case "name":
-                    element.value = component.getName();
-                    break;
                 case "enabled":
                     element.value = component.isEnabled();
                     break;
                 case "abs":
                     element.value = component.isAbsoluteOffset();
                     break;
-            }
-            updateViews();
+                case "name":
+                    element.value = component.getName();
+                    break;
+            }        
         }
+        
+        updateViews();
     }
     
-    
     public abstract void updateViews();
+    
+    public final Element getByName(String name){
+        for(Element e : elements){
+            if(e.internalname.equalsIgnoreCase(name))
+                return e;
+        }
+        return null;
+    }
 }

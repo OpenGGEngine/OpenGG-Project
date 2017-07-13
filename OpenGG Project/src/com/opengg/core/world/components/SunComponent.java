@@ -26,14 +26,17 @@ public class SunComponent extends RenderComponent{
     float currot;
     Texture texture;
     LightComponent light;
+
+    public SunComponent(Texture texture){
+        this(texture, 0.01f);
+    }
     
-    public SunComponent(Texture texture, float scale, float rotspeed){
+    public SunComponent(Texture texture, float rotspeed){
         super();
         Buffer[] buffers = ObjectCreator.createSquareBuffers(new Vector2f(0,0), new Vector2f(1,1), 0f);
         setDrawable(new TexturedDrawnObject((FloatBuffer)buffers[0], (IntBuffer)buffers[1], texture));
         this.rotspeed = rotspeed;
         this.texture = texture;
-        this.scale = new Vector3f(scale);
         light = new LightComponent(new Light(new Vector3f(), new Vector3f(1,0.3f,0.3f),100000,10000));
         light.use();
         this.attach(light);
@@ -53,5 +56,29 @@ public class SunComponent extends RenderComponent{
         currot += delta * rotspeed;
         pos.x = (float) (SUN_DIS * Math.cos(currot));
         pos.y = (float) (SUN_DIS * Math.sin(currot));
+    }
+    
+    public float getRotationSpeed() {
+        return rotspeed;
+    }
+
+    public void setRotationSpeed(float rotspeed) {
+        this.rotspeed = rotspeed;
+    }
+
+    public float getCurrentRotation() {
+        return currot;
+    }
+
+    public void setCurrentRotation(float currot) {
+        this.currot = currot;
+    }
+
+    public Texture getTexture() {
+        return texture;
+    }
+
+    public void setTexture(Texture texture) {
+        this.texture = texture;
     }
 }

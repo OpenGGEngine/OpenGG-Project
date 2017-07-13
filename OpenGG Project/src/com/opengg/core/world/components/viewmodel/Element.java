@@ -9,7 +9,7 @@ package com.opengg.core.world.components.viewmodel;
  *
  * @author Javier
  */
-public class ViewModelElement {
+public class Element {
     public static final int INTEGER = 0, 
             FLOAT = 1, 
             STRING = 2, 
@@ -20,12 +20,11 @@ public class ViewModelElement {
             QUATERNIONF = 7,
             BOOLEAN = 8;
     
-    public String name;
+    public String name = "Default";
     public String internalname;
-    public boolean autoupdate;
+    public boolean autoupdate = true;
     public int type;
     public Object value;
-    public boolean visible;
-    
-    ComponentViewModel cmv;
+    public boolean visible = true;
+    public boolean forceupdate = false;
 }

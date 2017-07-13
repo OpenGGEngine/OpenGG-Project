@@ -117,4 +117,12 @@ public class Light {
     public void setLightbuffer(Framebuffer lightbuffer) {
         this.lightbuffer = lightbuffer;
     }
+    public float getDistance() {
+        return distance;
+    }
+
+    public void setDistance(float distance) {
+        this.distance = distance;
+    }
+    
 }

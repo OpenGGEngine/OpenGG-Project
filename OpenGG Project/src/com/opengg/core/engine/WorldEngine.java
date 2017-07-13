@@ -47,7 +47,8 @@ public class WorldEngine{
     }
     
     public static void addObjects(Component e){
-        objs.add(e);
+        if(!objs.contains(e))
+            objs.add(e);
     }
     
     public static void removeMarked(){

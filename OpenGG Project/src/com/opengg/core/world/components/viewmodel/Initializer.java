@@ -12,6 +12,10 @@ import java.util.List;
  *
  * @author Javier
  */
-public class ViewModelInitializer {
-    public List<ViewModelElement> elements = new ArrayList<>();
+public class Initializer {
+    public List<Element> elements = new ArrayList<>();
+    
+    public void addElement(Element e){
+        elements.add(e);
+    }
 }
