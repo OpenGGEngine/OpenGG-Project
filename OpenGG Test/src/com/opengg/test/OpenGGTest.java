@@ -90,13 +90,13 @@ public class OpenGGTest extends GGApplication{
         player.use();
 
         FountainParticleEmitter particle = new FountainParticleEmitter(8,5,1,Resource.getTexture("emak.png"));
-        WaterComponent water = new WaterComponent(Resource.getTexture("water.jpg"), 0.1f, 100f);
+        WaterComponent water = new WaterComponent(Resource.getTexture("water.jpg"), 0.1f, 100f, 9000f);
         //water.setPositionOffset(new Vector3f(0,10,0));
         
         w.attach(player);
-        w.attach(world);
-        w.attach(particle);
-        w.attach(new SunComponent(Resource.getTexture("emak.png"), 500, 1f));
+        //w.attach(world);
+        //w.attach(particle);
+        w.attach(new SunComponent(Resource.getTexture("emak.png"), 1f));
         w.attach(water);
        
         //world.enableRendering();
