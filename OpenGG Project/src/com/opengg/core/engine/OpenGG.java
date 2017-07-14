@@ -15,6 +15,7 @@ import static com.opengg.core.render.window.RenderUtil.startFrame;
 import com.opengg.core.render.window.Window;
 import com.opengg.core.render.window.WindowInfo;
 import com.opengg.core.thread.ThreadManager;
+import com.opengg.core.util.Time;
 import com.opengg.core.world.components.viewmodel.ViewModelComponentRegistry;
 import com.opengg.core.world.Deserializer;
 import com.opengg.core.world.Serializer;
@@ -28,6 +29,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -44,13 +46,14 @@ public class OpenGG{
     static GGApplication app;
     static World curworld;
     static boolean lwjglinit = false;
-    static List<Executable> executables = new LinkedList<>();
+    static List<Executable> executables = Collections.synchronizedList(new LinkedList<>());
     static Date startTime;
     static boolean head = false;
     static boolean end = false;
     static boolean force = false;
     static boolean verbose = false;
     static boolean test = false;
+    static Time time = new Time();
       
     private OpenGG(){}
     
@@ -103,6 +106,7 @@ public class OpenGG{
         head = client;
         
         ExtensionManager.loadStep(Extension.NONE);
+        Resource.initialize();
         
         linkLWJGL();
         lwjglinit = true;
@@ -139,6 +143,8 @@ public class OpenGG{
         GGConsole.log("Application setup beginning");
         app.setup();
         GGConsole.log("Application setup complete");
+        GGConsole.log("OpenGG initialized in " + time.getDeltaMs() + " milliseconds");
+        
         if(client)
             run();
         else
@@ -147,8 +153,9 @@ public class OpenGG{
     
     public static void runHeadless(){
         while(!end){
-            app.update();
-            WorldEngine.update();
+            float delta = time.getDeltaSec();
+            app.update(delta);
+            WorldEngine.update(delta);
             for(Executable e : executables){
                     e.execute();
             }
@@ -169,20 +176,22 @@ public class OpenGG{
     
     public static void run(){
         while (!getWindow().shouldClose() && !end) {
+            processExecutables();
+            WindowController.update();
             startFrame();
             app.render();
             ExtensionManager.render();
             RenderEngine.draw();
             endFrame();
             RenderEngine.checkForGLErrors();
-            
-            WindowController.update();
-            processExecutables();
-            app.update();
+
+            float delta = time.getDeltaSec();
+            app.update(delta);
             ExtensionManager.update();
-            WorldEngine.update();
+            WorldEngine.update(delta);
             SoundtrackHandler.update();
         }
+        GGConsole.log("OpenGG closing...");
         end = true;
         if(!force){
             closeEngine();
@@ -313,9 +322,15 @@ public class OpenGG{
     }
     
     public static void processExecutables(){
-        for(Executable e : executables){
-            e.execute();
+        while(!executables.isEmpty()){
+            List<Executable> tempex = new LinkedList<>();
+            for(Executable ex : executables)
+                tempex.add(ex);
+            executables.clear();
+            
+            for(Executable e : tempex)
+                e.execute();
         }
-        executables.clear();
+        
     }
 }

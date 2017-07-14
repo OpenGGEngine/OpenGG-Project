@@ -18,7 +18,9 @@ public class Element {
             VECTOR2F = 5, 
             VECTOR4F = 6, 
             QUATERNIONF = 7,
-            BOOLEAN = 8;
+            BOOLEAN = 8,
+            TEXTURE = 9,
+            MODEL = 10;
     
     public String name = "Default";
     public String internalname;

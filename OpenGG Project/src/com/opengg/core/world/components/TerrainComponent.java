@@ -27,11 +27,7 @@ public class TerrainComponent extends RenderComponent{
     public TerrainComponent(Terrain t){
         this.t = t;
         this.shader = "terrain";
-    }
-    
-    public void enableRendering(){
         this.setDrawable(t.getDrawable());
-        this.getWorld().addRenderable(this);
     }
     
     public void enableCollider(){

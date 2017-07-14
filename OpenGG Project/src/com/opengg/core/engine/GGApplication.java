@@ -15,5 +15,5 @@ public abstract class GGApplication{
     public long applicationID;
     public abstract void setup();
     public abstract void render();
-    public abstract void update();
+    public abstract void update(float delta);
 }

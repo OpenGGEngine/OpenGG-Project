@@ -6,6 +6,8 @@
 package com.opengg.core.world.components.viewmodel;
 
 import com.opengg.core.render.texture.Texture;
+import com.opengg.core.render.texture.TextureData;
+import com.opengg.core.render.texture.TextureManager;
 import com.opengg.core.world.components.Component;
 import com.opengg.core.world.components.SunComponent;
 
@@ -20,9 +22,9 @@ public class SunComponentViewModel extends ViewModel{
         
         Element tex = new Element();
         tex.autoupdate = false;
-        tex.type = Element.STRING;
+        tex.type = Element.TEXTURE;
         tex.name = "Sun Texture";
-        tex.value = "";
+        tex.value = TextureManager.getDefault();
         tex.internalname = "suntex";
         
         Element speed = new Element();
@@ -46,20 +48,20 @@ public class SunComponentViewModel extends ViewModel{
     public Initializer getInitializer() {
         Initializer init = new Initializer();
         
-        Element e = new Element();
-        e.autoupdate = false;
-        e.type = Element.STRING;
-        e.name = "Sun Texture";
-        e.value = "";
-        e.internalname = "suntex";
+        Element tex = new Element();
+        tex.autoupdate = false;
+        tex.type = Element.TEXTURE;
+        tex.name = "Sun Texture";
+        tex.value = TextureManager.getDefault();
+        tex.internalname = "suntex";
         
-        init.addElement(e);
+        init.addElement(tex);
         return init;
     }
 
     @Override
     public Component getFromInitializer(Initializer init) {
-        SunComponent sun = new SunComponent(Texture.get2DTexture((String)init.elements.get(0).value));
+        SunComponent sun = new SunComponent(Texture.get2DTexture((TextureData)init.elements.get(0).value));
         return sun;
     }
 
@@ -72,7 +74,7 @@ public class SunComponentViewModel extends ViewModel{
             ((SunComponent)component).setCurrentRotation((Float)element.value);
         
         if(element.internalname.equals("tex"))
-            ((SunComponent)component).setTexture(Texture.get2DTexture((String)element.value));
+            ((SunComponent)component).setTexture(Texture.get2DTexture((TextureData)element.value));
         
     }
 

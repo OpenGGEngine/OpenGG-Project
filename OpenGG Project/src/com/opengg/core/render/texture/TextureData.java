@@ -13,13 +13,20 @@ import java.nio.Buffer;
  * @author Javier
  */
 public class TextureData {
-    int width;
-    int height;
-    Buffer buffer;
+    public int width;
+    public int height;
+    public Buffer buffer;
+    public String source;
+    public boolean complete = false;
     
-    public TextureData(int width, int height, Buffer buffer) {
+    public TextureData(int width, int height, Buffer buffer, String source) {
         this.width = width;
         this.height = height;
         this.buffer = buffer;
+        this.source = source;
+    }
+    
+    public void setComplete(){
+        complete = true;
     }
 }

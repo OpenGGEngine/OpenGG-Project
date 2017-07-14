@@ -42,7 +42,7 @@ public abstract class ViewModel {
         scale.value = new Vector3f(1,1,1);
         
         Element name = new Element();
-        name.autoupdate = false;
+        name.autoupdate = true;
         name.type = Element.STRING;
         name.name = "Name";
         name.internalname = "name";

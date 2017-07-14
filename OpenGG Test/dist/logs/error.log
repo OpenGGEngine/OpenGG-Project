@@ -1,32 +1,48 @@
-[Fri May 26 14:18:35 EDT 2017] INFO (OpenGG): Loading native libraries...
-[Fri May 26 14:18:35 EDT 2017] INFO (OpenGG): OpenGG initializing, running on Windows 10, amd64
-[Fri May 26 14:18:36 EDT 2017] INFO (OpenGG): Window generation successful, using OpenGL context version 4.1
-[Fri May 26 14:18:36 EDT 2017] INFO (ShaderController): Default shaders loaded and validated
-[Fri May 26 14:18:36 EDT 2017] INFO (ModelLoader): Loading model at C:\Users\Javier\Documents\NetBeansProjects\OpenGG-Project\OpenGG Test\dist\resources\models\default\default.bmf...
-[Fri May 26 14:18:36 EDT 2017] WARNING (ModelLoader): Failed to load model at C:\Users\Javier\Documents\NetBeansProjects\OpenGG-Project\OpenGG Test\dist\resources\models\default\default.bmf, using default model instead
-[Fri May 26 14:18:36 EDT 2017] INFO (OpenGG): Render engine initialized
-[Fri May 26 14:18:37 EDT 2017] INFO (OpenGG): Audio controller initialized
-[Fri May 26 14:18:38 EDT 2017] WARNING (ModelLoader): Couldn't find model at C:\res\smithwesson\smithwesson.bmf, using default model instead
-[Fri May 26 14:18:38 EDT 2017] ERROR (OpenGG): Uncaught exception: null
-[Fri May 26 14:18:38 EDT 2017] INFO (RenderEngine): Render engine has finalized
-[Fri May 26 14:18:38 EDT 2017] INFO (AudioController): Audio controller has finalized
-[Fri May 26 14:18:38 EDT 2017] INFO (OpenGG): OpenGG has closed gracefully, application can now be ended
+[Thu Jul 13 22:05:37 EDT 2017] INFO (OpenGG): Loading native libraries...
+[Thu Jul 13 22:05:37 EDT 2017] INFO (OpenGG): LWJGL has been loaded
+[Thu Jul 13 22:05:37 EDT 2017] INFO (OpenGG): OpenGG initializing, running on Windows 10, amd64
+[Thu Jul 13 22:05:37 EDT 2017] INFO (ExtensionManager): Loading extension SWT Window Support...
+[Thu Jul 13 22:05:37 EDT 2017] INFO (WindowTypeRegister): Registered a window type named SWT
+[Thu Jul 13 22:05:37 EDT 2017] INFO (ExtensionManager): Loaded SWT Window Support into OpenGG successfully
+[Thu Jul 13 22:05:37 EDT 2017] INFO (WindowTypeRegister): Registered a window type named GLFW
+[Thu Jul 13 22:05:37 EDT 2017] INFO (WindowController): Window registered under the name SWT requested and found, creating instance...
+[Thu Jul 13 22:05:38 EDT 2017] INFO (OpenGG): Window generation successful, using OpenGL context version 4.1
+[Thu Jul 13 22:05:38 EDT 2017] INFO (OpenGG): System info queried
+[Thu Jul 13 22:05:38 EDT 2017] INFO (ShaderController): Default shaders loaded and validated
+[Thu Jul 13 22:05:38 EDT 2017] INFO (ModelLoader): Loading model at E:\Users\Javier\Documents\NetBeansProjects\WorldEditor\WorldEditor\dist\resources\models\default\default.bmf...
+[Thu Jul 13 22:05:38 EDT 2017] WARNING (ModelLoader): Failed to load model at E:\Users\Javier\Documents\NetBeansProjects\WorldEditor\WorldEditor\dist\resources\models\default\default.bmf, using default model instead
+[Thu Jul 13 22:05:38 EDT 2017] INFO (OpenGG): Render engine initialized
+[Thu Jul 13 22:05:38 EDT 2017] INFO (OpenGG): Audio controller initialized
+[Thu Jul 13 22:05:38 EDT 2017] INFO (OpenGG): Application setup beginning
+[Thu Jul 13 22:05:38 EDT 2017] INFO (ViewModelComponentRegistry): Created and matched viewmodel registries, found 7 component types with viewmodels and 14 without
+[Thu Jul 13 22:05:39 EDT 2017] INFO (OpenGG): Application setup complete
+[Thu Jul 13 22:05:39 EDT 2017] INFO (OpenGG): OpenGG initialized in 1760.0 milliseconds
+[Thu Jul 13 22:05:51 EDT 2017] WARNING (TextureManager): Failed to load texture at E:\Users\Javier\Documents\NetBeansProjects\WorldEditor\WorldEditor\dist\resources\tex\heightmap.png, using default instead
+[Thu Jul 13 22:06:21 EDT 2017] WARNING (TextureManager): Failed to load texture at E:\Users\Javier\Documents\NetBeansProjects\OpenGG-Project\OpenGG Test\dist\resources\tex\blendMap.jpg, using default instead
+[Thu Jul 13 22:07:13 EDT 2017] INFO (Terrain): Generating terrain from E:\Users\Javier\Documents\NetBeansProjects\OpenGG-Project\OpenGG Test\dist\resources\tex\heightmap.jpg
+[Thu Jul 13 22:08:21 EDT 2017] WARNING (ModelLoader): Couldn't find model at C:\res\anakin\anakin.png, using default model instead
+[Thu Jul 13 22:08:21 EDT 2017] ERROR (OpenGG): Uncaught exception: null
+[Thu Jul 13 22:08:21 EDT 2017] INFO (OpenGG): Render engine has finalized
+[Thu Jul 13 22:08:21 EDT 2017] INFO (OpenGG): Audio controller has been finalized
+[Thu Jul 13 22:08:21 EDT 2017] INFO (GGConsole): Console thread closure requested
+[Thu Jul 13 22:08:22 EDT 2017] INFO (OpenGG): Thread Manager has closed all remaining threads
+[Thu Jul 13 22:08:22 EDT 2017] INFO (OpenGG): OpenGG has closed gracefully, application can now be ended
 OpenGG Engine Version: 0.0.1a1
 
 System Information
 Operating System: Windows 10
 OS Architecture: amd64
-Processor: Intel64 Family 6 Model 69 Stepping 1, GenuineIntel
-CPU Count: 4
+Processor: Intel64 Family 6 Model 45 Stepping 7, GenuineIntel
+CPU Count: 12
 
 Java Information
-Java Version: 1.8.0_102
+Java Version: 1.8.0_112
 JVM Name: Java HotSpot(TM) 64-Bit Server VM
 JVM Vendor: Oracle Corporation
-Maximum Runtime Memory: 934281216
-Used Runtime Memory: 64487424
-Free Runtime Memory: 62470920
-JVM CPU Availability: 4
+Maximum Runtime Memory: 3801088000
+Used Runtime Memory: 452460544
+Free Runtime Memory: 435872048
+JVM CPU Availability: 12
 
 Engine Information
 

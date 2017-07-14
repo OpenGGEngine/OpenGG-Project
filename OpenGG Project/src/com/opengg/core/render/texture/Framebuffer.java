@@ -7,6 +7,7 @@ package com.opengg.core.render.texture;
 
 import com.opengg.core.engine.GGConsole;
 import com.opengg.core.engine.OpenGG;
+import com.opengg.core.engine.WindowController;
 import com.opengg.core.math.Tuple;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +27,6 @@ import static org.lwjgl.opengl.GL11.glBindTexture;
 import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glDrawBuffer;
 import static org.lwjgl.opengl.GL11.glFlush;
-import static org.lwjgl.opengl.GL11.glGetError;
 import static org.lwjgl.opengl.GL11.glViewport;
 import static org.lwjgl.opengl.GL20.glDrawBuffers;
 import static org.lwjgl.opengl.GL30.GL_COLOR_ATTACHMENT0;
@@ -129,7 +129,7 @@ public class Framebuffer {
     private void attachTexture(int width, int height, int format, int intformat, int input, int attachment){ 
         Texture tex = new Texture(GL_TEXTURE_2D, format, intformat, input);
         tex.bind();
-        tex.set2DData(new TextureData(width, height, null));
+        tex.set2DData(new TextureData(width, height, null, "none"));
         
         fb.bind(GL_FRAMEBUFFER);
         fb.attachTexture(attachment, tex.getID(), 0);
@@ -158,7 +158,7 @@ public class Framebuffer {
         bindToRead();
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
         glDrawBuffer(GL_BACK);
-        fb.blit(0, 0, lx, ly, 0, 0, OpenGG.getWindow().getWidth(), OpenGG.getWindow().getHeight(), GL_COLOR_BUFFER_BIT, GL_LINEAR);
+        fb.blit(0, 0, lx, ly, 0, 0, WindowController.getWidth(), WindowController.getHeight(), GL_COLOR_BUFFER_BIT, GL_LINEAR);
     }
     
     public void refresh(){

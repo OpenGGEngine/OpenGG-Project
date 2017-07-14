@@ -29,8 +29,9 @@ public class WindowFramebuffer extends Framebuffer implements WindowResizeListen
     private void regen(int targets){
         this.fb = new NativeGLFramebuffer();
         refresh();
-        Vector2i size = new Vector2i(WindowController.getWindow().getWidth(),
-                WindowController.getWindow().getHeight());
+        Vector2i size = new Vector2i(WindowController.getWidth(),
+                WindowController.getHeight());
+        
         bind();
         for(int i = 0; i < targets; i++){
             attachColorTexture(size.x, size.y, i);

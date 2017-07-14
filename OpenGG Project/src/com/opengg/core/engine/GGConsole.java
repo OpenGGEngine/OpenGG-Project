@@ -6,7 +6,6 @@
 
 package com.opengg.core.engine;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -20,7 +19,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Logger;
 
 /**
  *
@@ -48,7 +46,7 @@ public class GGConsole implements Runnable{
         if(OpenGG.verbose)
             write(message, Level.INFO);
     }
-    
+            
     public static void warning(String message){
         write(message, Level.WARNING);
     }
@@ -115,6 +113,8 @@ public class GGConsole implements Runnable{
             }
         }catch(IOException e){
             GGConsole.error("Console failed to access the default input, thread will be forced to close");
-        } catch (InterruptedException ex) {}
+        } catch (InterruptedException ex) {
+            GGConsole.log("Console thread closure requested");
+        }
     }
 }

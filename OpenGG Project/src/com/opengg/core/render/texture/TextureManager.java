@@ -33,12 +33,38 @@ public class TextureManager {
             GGConsole.error("Failed to load the default texture, nonexistent textures may crash the program!");
         }
     }
+    
+    public static void addTexture(TextureData data){
+        texturelist.put(data.source, data);
+    }
 
     public static TextureData getTextureData(String name){
         return texturelist.getOrDefault(name, defaultdata);
     }
     
     public static TextureData getDefault(){
+        defaultdata.buffer.rewind();
         return defaultdata;
+    }
+    
+    public static Map<String, TextureData> getData(){
+        return texturelist;
+    }
+    
+    public static TextureData loadTexture(String path){
+        return loadTexture(path, false);
+    }
+    
+    public static TextureData loadTexture(String path, boolean flip){
+        if(texturelist.get(path) != null)
+            return texturelist.get(path);
+        try{
+            TextureData data = TextureLoader.loadTexture(path, flip);
+            addTexture(data);
+            return data;
+        }catch(IOException e){
+            GGConsole.warn("Failed to load texture at " + path + ", using default instead");
+            return defaultdata;
+        }
     }
 }

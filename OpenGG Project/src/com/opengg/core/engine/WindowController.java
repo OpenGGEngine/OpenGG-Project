@@ -49,14 +49,31 @@ public class WindowController {
     }
     
     public static void update(){
-        Vector2i nsize = new Vector2i(window.getWidth(), window.getHeight());
-        if(!nsize.equals(oldsize)){
-            resize(nsize);
+        Vector2i newsize = new Vector2i(window.getWidth(), window.getHeight());
+        if(!newsize.equals(oldsize)){
+            oldsize = newsize;
+            resize(newsize);
         }
-        oldsize = nsize;
+        oldsize = newsize;
     }
             
     public static void destroy(){
         window.destroy();
+    }
+    
+    public static Vector2i getSize(){
+        return oldsize;
+    }
+    
+    public static int getWidth(){
+        return oldsize.x;
+    }
+    
+    public static int getHeight(){
+        return oldsize.y;
+    }
+    
+    public static float getRatio(){
+        return (float)oldsize.x/(float)oldsize.y;
     }
 }

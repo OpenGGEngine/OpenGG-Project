@@ -303,18 +303,19 @@ public class RenderEngine {
         useLights();
         resetConfig();
 
+        if(skybox != null){
+            defaultvao.bind();
+            ShaderController.useConfiguration("sky");
+            skybox.getCubemap().use(2);
+            skybox.getDrawable().render(); 
+        }
+        
         defaultvao.bind();
 
         for(RenderPath path : getActiveRenderPaths()){
             path.render();
             resetConfig();
         }       
-
-        if(skybox != null){
-            ShaderController.useConfiguration("sky");
-            skybox.getCubemap().use(0);
-            skybox.getDrawable().render(); 
-        }
         
         sceneTex.disableRendering();
         GUI.startGUIPos();

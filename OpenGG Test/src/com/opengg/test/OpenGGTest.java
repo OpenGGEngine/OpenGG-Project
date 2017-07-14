@@ -94,13 +94,11 @@ public class OpenGGTest extends GGApplication{
         //water.setPositionOffset(new Vector3f(0,10,0));
         
         w.attach(player);
-        //w.attach(world);
+        w.attach(world);
         //w.attach(particle);
         w.attach(new SunComponent(Resource.getTexture("emak.png"), 1f));
         w.attach(water);
-       
-        //world.enableRendering();
-        //world.enableCollider();
+
         
         WorldEngine.useWorld(w);
         
@@ -135,5 +133,5 @@ public class OpenGGTest extends GGApplication{
     }
 
     @Override
-    public void update() {}
+    public void update(float delta) {}
 }

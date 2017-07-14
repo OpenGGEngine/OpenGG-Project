@@ -20,9 +20,19 @@ import java.io.IOException;
  * @author Javier
  */
 public class Resource {
+    static String current;
+    
+    public static void initialize(){
+        try{
+            current = new File("").getCanonicalPath();
+        } catch (IOException ex) {
+            GGConsole.error("Failed to get default path!");
+        }
+    }
+    
     public static String getLocal(String name){
         try {
-            return new File(name).getCanonicalPath();
+            return new File(current, name).getCanonicalPath();
         } catch (IOException ex) {
             GGConsole.warning("Failed to load " + name + "!");
         }
@@ -31,7 +41,7 @@ public class Resource {
     
     public static String getModelPath(String name){
         try {
-            return new File("resources\\models\\" +  name + "\\" + name + ".bmf").getCanonicalPath();
+            return new File(current, "resources\\models\\" +  name + "\\" + name + ".bmf").getCanonicalPath();
         } catch (IOException ex) {
             GGConsole.warning("Failed to load " + name + "!");
         }
@@ -40,7 +50,7 @@ public class Resource {
     
     public static String getConfigPath(String name){
         try {
-            return new File("config\\" +  name + ".cfg").getCanonicalPath();
+            return new File(current, "config\\" +  name + ".cfg").getCanonicalPath();
         } catch (IOException ex) {
             GGConsole.warning("Failed to load " + name + "!");
         }
@@ -49,7 +59,7 @@ public class Resource {
     
     public static String getShaderPath(String name){
         try {
-            return new File("resources\\glsl\\" +  name).getCanonicalPath();
+            return new File(current, "resources\\glsl\\" +  name).getCanonicalPath();
         } catch (IOException ex) {
             GGConsole.warning("Failed to load " + name + "!");
         }
@@ -58,7 +68,7 @@ public class Resource {
     
     public static String getTexturePath(String name){
         try {
-            return new File("resources\\tex\\" +  name).getCanonicalPath();
+            return new File(current, "resources\\tex\\" +  name).getCanonicalPath();
         } catch (IOException ex) {
             GGConsole.warning("Failed to load " + name + "!");
         }
@@ -67,7 +77,7 @@ public class Resource {
     
     public static String getFontPath(String name){
         try {
-            return new File("resources\\font\\" +  name + ".fnt").getCanonicalPath();
+            return new File(current, "resources\\font\\" +  name + ".fnt").getCanonicalPath();
         } catch (IOException ex) {
             GGConsole.warning("Failed to load " + name + "!");
         }
@@ -76,7 +86,7 @@ public class Resource {
     
     public static String getSoundPath(String name){
         try {
-            return new File("resources\\audio\\" +  name).getCanonicalPath();
+            return new File(current, "resources\\audio\\" +  name).getCanonicalPath();
         } catch (IOException ex) {
             GGConsole.warning("Failed to load " + name + "!");
         }
@@ -101,5 +111,7 @@ public class Resource {
         return new GGFont(tpath,fpath);
     }
     
-    
+    public static void setDefaultPath(String path){
+        current = path;
+    }
 }

@@ -6,6 +6,8 @@
 package com.opengg.core.world.components.viewmodel;
 
 import com.opengg.core.render.texture.Texture;
+import com.opengg.core.render.texture.TextureData;
+import com.opengg.core.render.texture.TextureManager;
 import com.opengg.core.world.components.Component;
 import com.opengg.core.world.components.WaterComponent;
 
@@ -18,11 +20,11 @@ public class WaterComponentViewModel extends ViewModel{
     @Override
     public void createMainViewModel() {
         Element tex = new Element();
-        tex.type = Element.STRING;
+        tex.type = Element.TEXTURE;
         tex.internalname = "tex";
         tex.name = "Water Texture";
-        tex.autoupdate = false;
-        tex.value = "";
+        tex.autoupdate = true;
+        tex.value = TextureManager.getDefault();
         
         Element texsize = new Element();
         texsize.type = Element.FLOAT;
@@ -46,18 +48,18 @@ public class WaterComponentViewModel extends ViewModel{
         Initializer init = new Initializer();
         
         Element tex = new Element();
-        tex.type = Element.STRING;
+        tex.type = Element.TEXTURE;
         tex.internalname = "tex";
         tex.name = "Water Texture";
-        tex.autoupdate = false;
-        tex.value = "";
+        tex.autoupdate = true;
+        tex.value = TextureManager.getDefault();
         init.addElement(tex);
         
         Element size = new Element();
         size.type = Element.FLOAT;
         size.internalname = "size";
         size.name = "Water Mesh Size";
-        size.autoupdate = false;
+        size.autoupdate = true;
         size.value = 100f;
         init.addElement(size);
         
@@ -66,7 +68,7 @@ public class WaterComponentViewModel extends ViewModel{
 
     @Override
     public Component getFromInitializer(Initializer init) {
-        WaterComponent wc = new WaterComponent(Texture.get2DTexture((String)init.elements.get(0).value), (Float)init.elements.get(1).value);
+        WaterComponent wc = new WaterComponent(Texture.get2DTexture((TextureData)init.elements.get(0).value), (Float)init.elements.get(1).value);
         return wc;
     }
 
@@ -79,7 +81,7 @@ public class WaterComponentViewModel extends ViewModel{
             ((WaterComponent)component).setMovespeed((Float)element.value);
         
         if(element.internalname.equals("tex"))
-            ((WaterComponent)component).setTexture(Texture.get2DTexture((String)element.value));
+            ((WaterComponent)component).setTexture(Texture.get2DTexture((TextureData)element.value));
         
     }
 

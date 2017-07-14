@@ -6,8 +6,6 @@
 package com.opengg.core.render.texture;
 
 import com.opengg.core.engine.GGConsole;
-import java.io.File;
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import org.lwjgl.opengl.EXTTextureFilterAnisotropic;
 import org.lwjgl.opengl.GL;
@@ -190,7 +188,7 @@ public class Texture {
     }
     
     public static Texture get2DTexture(String path){
-        return get2DTexture(getOrDefault(path, true));
+        return get2DTexture(TextureManager.loadTexture(path, true));
     }
     
     public static Texture get2DTexture(TextureData data){
@@ -207,12 +205,12 @@ public class Texture {
     }
     
     public static Texture getCubemap(String path1, String path2, String path3, String path4, String path5, String path6){
-        TextureData data1 = getOrDefault(path1);
-        TextureData data2 = getOrDefault(path2);
-        TextureData data3 = getOrDefault(path3);
-        TextureData data4 = getOrDefault(path4);
-        TextureData data5 = getOrDefault(path5);
-        TextureData data6 = getOrDefault(path6);
+        TextureData data1 = TextureManager.loadTexture(path1);
+        TextureData data2 = TextureManager.loadTexture(path2);
+        TextureData data3 = TextureManager.loadTexture(path3);
+        TextureData data4 = TextureManager.loadTexture(path4);
+        TextureData data5 = TextureManager.loadTexture(path5);
+        TextureData data6 = TextureManager.loadTexture(path6);
         
         Texture texture = new Texture(GL_TEXTURE_CUBE_MAP);
         texture.setActiveTexture(0);
@@ -228,7 +226,11 @@ public class Texture {
     
     public static Texture getArrayTexture(String... paths){
         TextureData[] datums = new TextureData[paths.length];
-        for(int i = 0; i < paths.length; i++) datums[i] = getOrDefault(paths[i]);
+        for(int i = 0; i < paths.length; i++) datums[i] = TextureManager.loadTexture(paths[i]);
+        return  getArrayTexture(datums);
+    }
+    
+    public static Texture getArrayTexture(TextureData... datums){
         Texture texture = new Texture(GL_TEXTURE_2D_ARRAY);
         texture.setActiveTexture(0);
         texture.bind();
@@ -240,29 +242,5 @@ public class Texture {
         texture.generateMipmaps();
         texture.unbind();
         return texture;
-    }
-    
-    public static TextureData getOrDefault(String path){
-        return getOrDefault(path, false);
-    }
-    
-    public static TextureData getOrDefault(String path, boolean flip){
-        TextureData tempdata = TextureManager.getTextureData(path);
-        if(tempdata == null || tempdata == TextureManager.getDefault()){
-            File file = new File(path);
-            if(file.exists()){
-                try {
-                    TextureData newdata = TextureLoader.loadTexture(path, flip);
-                    return newdata;
-                } catch (IOException ex) {
-                    GGConsole.warning("Failed to load texture at " + path + ", using default instead");
-                    return TextureManager.getDefault();
-                }
-            }else{
-                GGConsole.warning("Failed to find texture at " + path + ", using default instead");
-                return TextureManager.getDefault();
-            }
-        }
-        return tempdata;
     }
 }

@@ -27,7 +27,7 @@ public class LightComponentViewModel extends ViewModel{
         distance.type = Element.FLOAT;
         distance.internalname = "distance";
         distance.name = "Light Distance";
-        distance.value = 100;
+        distance.value = 100f;
         
         elements.add(color);
         elements.add(distance);

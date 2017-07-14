@@ -12,7 +12,10 @@ import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.render.drawn.DrawnObject;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.texture.TextureData;
+import com.opengg.core.render.texture.TextureManager;
+import com.opengg.core.util.BufferUtils;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -42,9 +45,13 @@ public class Terrain {
         
     }
 
-    public static Terrain generate(String mappath){
+    public static Terrain generate(TextureData data){
+        return generate(data.source);
+    }
+    
+    public static Terrain generate(String data){
         Terrain t = new Terrain(1, 1);
-        t.generateTexture(mappath);
+        t.generateTexture(data);
         t.xsquarewidth = 1/(float)t.map.length;
         t.zsquarewidth = 1/(float)t.map[0].length;
         t.normalize();
@@ -63,6 +70,7 @@ public class Terrain {
     private void generateTexture(String path){
         try {
             BufferedImage image = ImageIO.read(new FileInputStream(new File(path)));
+
             int gx = image.getWidth();
             int gz = image.getHeight();
             map = new float[gx][gz];
@@ -253,7 +261,7 @@ public class Terrain {
     }
     
     public Texture getHeightmap(){
-        TextureData data = new TextureData(map.length, map[0].length, getHeightmapBuffer());
+        TextureData data = new TextureData(map.length, map[0].length, getHeightmapBuffer(), "autogen");
         return Texture.get2DTexture(data);
     }
 }

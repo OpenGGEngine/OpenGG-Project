@@ -67,10 +67,10 @@ public class WorldEngine{
         removal.clear();
     }
     
-    public static void update(){
+    public static void update(float delta){
         CollisionHandler.clearCollisions();
         removeMarked();
-        float delta = t.getDeltaSec();
+        
         TransitionEngine.update(delta);
         traverseUpdate(WorldEngine.getCurrent(), delta);
     }
