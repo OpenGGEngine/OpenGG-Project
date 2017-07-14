@@ -213,37 +213,6 @@ public class OpenGG{
         }   
     }
     
-    public static void saveState(){
-        GGConsole.log("Saving state...");
-        try(DataOutputStream dos = new DataOutputStream(new FileOutputStream(Resource.getLocal("dump.sav")))) {
-            byte[] world = Serializer.serialize(curworld);
-            dos.writeInt(world.length);
-            dos.write(world);
-            dos.flush();
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(OpenGG.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(OpenGG.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        GGConsole.log("State has been saved");
-    }
-    
-    public static void loadState(){
-        try (DataInputStream dis = new DataInputStream(new FileInputStream(Resource.getLocal("dump.sav")))){
-            int worldsize = dis.readInt();
-            byte[] worlddata = new byte[worldsize];
-            for(int i = 0; i < worlddata.length; i++){
-                worlddata[i] = dis.readByte();
-            }
-            World w = Deserializer.deserialize(ByteBuffer.wrap(worlddata));
-            curworld = w;
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(OpenGG.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(OpenGG.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    
     public static void linkLWJGL(){
         GGConsole.log("Loading native libraries...");
         if(System.getProperty("os.name").contains("Windows")){

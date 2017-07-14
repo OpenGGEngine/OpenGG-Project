@@ -7,6 +7,8 @@ package com.opengg.core.render.texture;
 
 import com.opengg.core.engine.GGConsole;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
 import org.lwjgl.opengl.EXTTextureFilterAnisotropic;
 import org.lwjgl.opengl.GL;
 import static org.lwjgl.opengl.GL11.GL_LINEAR;
@@ -44,6 +46,7 @@ import org.lwjgl.system.MemoryUtil;
  */
 public class Texture { 
     NativeGLTexture tex;
+    List<TextureData> tdata = new ArrayList<>();
     int type;
     int colorformat;
     int internalformat;
@@ -104,6 +107,7 @@ public class Texture {
         x = data.width;
         y = data.height;
         tex.setImageData(type, 0, internalformat, data.width, data.height, 0, colorformat, datatype, (ByteBuffer)data.buffer);
+        tdata.add(data);
     }
     
     public void set2DSubData(int xoffset, int yoffset, TextureData data){
@@ -119,6 +123,12 @@ public class Texture {
         tex.setImageData(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, internalformat, data4.width, data4.height, 0, colorformat, datatype, (ByteBuffer)data4.buffer);
         tex.setImageData(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, internalformat, data5.width, data5.height, 0, colorformat, datatype, (ByteBuffer)data5.buffer);
         tex.setImageData(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, internalformat, data6.width, data6.height, 0, colorformat, datatype, (ByteBuffer)data6.buffer);
+        tdata.add(data1);
+        tdata.add(data2);
+        tdata.add(data3);
+        tdata.add(data4);
+        tdata.add(data5);
+        tdata.add(data6);
     }
     
     public void set3DData(TextureData[] datums){
@@ -128,6 +138,8 @@ public class Texture {
         for(TextureData data : datums) full.put((ByteBuffer)data.buffer);
         
         tex.setImageData(type, 0, internalformat, datums[0].width, datums[0].height, datums.length, 0, colorformat, datatype, full);
+        for(TextureData datum : datums)
+            tdata.add(datum);
     }
     
     public void set3DSubData(int xoffset, int yoffset, int zoffset, TextureData[] datums){
@@ -177,6 +189,10 @@ public class Texture {
         tex.setParameteri(type, GL_TEXTURE_WRAP_S, wtype);
         tex.setParameteri(type, GL_TEXTURE_WRAP_T, wtype);
         tex.setParameteri(type, GL_TEXTURE_WRAP_R, wtype);
+    }
+    
+    public List<TextureData> getData(){
+        return tdata;
     }
     
     public int getID(){

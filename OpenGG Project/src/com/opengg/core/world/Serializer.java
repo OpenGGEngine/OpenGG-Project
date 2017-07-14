@@ -22,10 +22,12 @@ public class Serializer {
     
     public static byte[] serialize(World w){
         try {
+
             serializer = new Serializer();
+            serializer.stream = new GGByteOutputStream();
             
             w.serialize(serializer.stream);
-            traverse(w.getChildren());
+            traverse(w.getChildren());          
             
             return serializer.stream.getArray();
         } catch (IOException ex) {
@@ -41,9 +43,7 @@ public class Serializer {
             serializer.stream.write(component.getId());
             serializer.stream.write(component.parent.getId());
             component.serialize(serializer.stream);
-            if(component instanceof Component){
-                traverse(((Component) component).getChildren());
-            }
+            traverse(component.getChildren());
         }
     }
 }

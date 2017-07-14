@@ -6,6 +6,7 @@
 
 package com.opengg.core.world.components;
 
+import com.opengg.core.engine.OpenGG;
 import com.opengg.core.engine.RenderEngine;
 import com.opengg.core.math.FastMath;
 import com.opengg.core.math.Quaternionf;
@@ -14,6 +15,10 @@ import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.objects.ObjectCreator;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.texture.Texture;
+import com.opengg.core.render.texture.TextureManager;
+import com.opengg.core.util.GGByteInputStream;
+import com.opengg.core.util.GGByteOutputStream;
+import java.io.IOException;
 
 /**
  *
@@ -23,7 +28,10 @@ public class WaterComponent extends RenderComponent{
     float movespeed;
     float current;
     float tscale;
+    float size;
     Texture texture;
+    
+    public WaterComponent(){}
     
     public WaterComponent(Texture tex, float size){
         this(tex, 0.1f, 100, size);
@@ -31,6 +39,7 @@ public class WaterComponent extends RenderComponent{
     
     public WaterComponent(Texture texture, float movespeed, float tscale, float size){
         super(ObjectCreator.createSquare(new Vector2f(-size,-size), new Vector2f(size,size), 0));
+        this.size = size;
         this.texture = texture;
         this.tscale = tscale;
         this.movespeed = movespeed;
@@ -78,5 +87,28 @@ public class WaterComponent extends RenderComponent{
 
     public void setTexture(Texture texture) {
         this.texture = texture;
+    }
+    
+    @Override
+    public void serialize(GGByteOutputStream out) throws IOException{
+        super.serialize(out);
+        out.write(size);
+        out.write(movespeed);
+        out.write(current);
+        out.write(tscale);
+        out.write(texture.getData().get(0).source);
+    }
+    
+    @Override
+    public void deserialize(GGByteInputStream in) throws IOException{
+        super.deserialize(in);
+        size = in.readFloat();
+        movespeed = in.readFloat();
+        current = in.readFloat();
+        tscale = in.readFloat();
+        texture = Texture.get2DTexture(TextureManager.loadTexture(in.readString()));
+        OpenGG.addExecutable(() -> {
+            super.setDrawable(ObjectCreator.createSquare(new Vector2f(-size,-size), new Vector2f(size,size), 0));
+        });
     }
 }

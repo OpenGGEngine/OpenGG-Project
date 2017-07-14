@@ -6,15 +6,25 @@
 package com.opengg.core.engine;
 
 import com.opengg.core.util.Time;
+import com.opengg.core.world.Deserializer;
+import com.opengg.core.world.Serializer;
 import com.opengg.core.world.TransitionEngine;
 import com.opengg.core.world.World;
 import com.opengg.core.world.collision.CollisionHandler;
 import com.opengg.core.world.components.Component;
 import com.opengg.core.world.components.RenderComponent;
 import com.opengg.core.world.components.physics.CollisionComponent;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  *
@@ -82,6 +92,40 @@ public class WorldEngine{
         for(Component c2 : ((Component)c).getChildren()){
             traverseUpdate(c2, delta);
         }
+    }
+    
+    public static World loadWorld(String worldname){
+        GGConsole.log("Loading world " + worldname + "...");
+        try (DataInputStream dis = new DataInputStream(new FileInputStream(Resource.getLocal("resources\\worlds\\" + worldname + ".bwf")))){
+            int worldsize = dis.readInt();
+            byte[] worlddata = new byte[worldsize];
+            for(int i = 0; i < worlddata.length; i++){
+                worlddata[i] = dis.readByte();
+            }
+            World w = Deserializer.deserialize(ByteBuffer.wrap(worlddata));
+            GGConsole.log("World " + worldname + " has been successfully loaded");
+            return w;
+        } catch (FileNotFoundException ex) {
+            GGConsole.error("Failed to find world named " + worldname + " located at " + Resource.getLocal("resources\\worlds\\" + worldname + ".bwf"));
+        } catch (IOException ex) {
+            GGConsole.error("Failed to access file named " + Resource.getLocal("resources\\worlds\\" + worldname + ".bwf"));
+        }
+        return null;
+    }
+    
+    public static void saveWorld(World world, String worldname){
+        GGConsole.log("Saving world " + worldname + "...");
+        try(DataOutputStream dos = new DataOutputStream(new FileOutputStream(Resource.getLocal("resources\\worlds\\" + worldname + ".bwf")))) {
+            byte[] bworld = Serializer.serialize(world);
+            dos.writeInt(bworld.length);
+            dos.write(bworld);
+            dos.flush();
+        } catch (FileNotFoundException ex) {
+            GGConsole.error("Failed to create file named " + Resource.getLocal("resources\\worlds\\" + worldname + ".bwf"));
+        } catch (IOException ex) {
+            Logger.getLogger("Failed to write to file named " + Resource.getLocal("resources\\worlds\\" + worldname + ".bwf"));
+        }
+        GGConsole.log("World " + worldname + " has been saved");
     }
     
     public static void useWorld(World w){

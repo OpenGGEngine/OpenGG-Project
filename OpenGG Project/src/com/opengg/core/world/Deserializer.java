@@ -32,7 +32,6 @@ public class Deserializer {
             ds.w = new World();
             ds.w.deserialize(ds.b);
             ds.w.setId(0);
-        
             doList(ds);
         } catch (IOException ex) {
             GGConsole.error("IOException thrown during deserialization of world!");
@@ -85,9 +84,7 @@ public class Deserializer {
                 ch.type = c;
                 ds.components.add(ch);
                 
-                if(comp instanceof Component){
-                    doList(ds);
-                }
+                doList(ds);
             } catch (ClassNotFoundException ex) {
                 GGConsole.error("Failed to load world, class " + classname + " is missing!");
                 ds.w = null;

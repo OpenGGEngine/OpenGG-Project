@@ -12,6 +12,10 @@ import com.opengg.core.render.light.Light;
 import com.opengg.core.render.objects.ObjectCreator;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.texture.Texture;
+import com.opengg.core.render.texture.TextureManager;
+import com.opengg.core.util.GGByteInputStream;
+import com.opengg.core.util.GGByteOutputStream;
+import java.io.IOException;
 import java.nio.Buffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -27,6 +31,10 @@ public class SunComponent extends RenderComponent{
     Texture texture;
     LightComponent light;
 
+    public SunComponent(){
+        this(Texture.get2DTexture(TextureManager.getDefault()), 0.01f);
+    }
+    
     public SunComponent(Texture texture){
         this(texture, 0.01f);
     }
@@ -80,5 +88,23 @@ public class SunComponent extends RenderComponent{
 
     public void setTexture(Texture texture) {
         this.texture = texture;
+    }
+    
+    @Override
+    public void serialize(GGByteOutputStream stream) throws IOException{
+        super.serialize(stream);
+        stream.write((int)SUN_DIS);
+        stream.write((float)rotspeed);
+        stream.write((float)currot);
+        stream.write(texture.getData().get(0).source);
+    }
+    
+    @Override
+    public void deserialize(GGByteInputStream stream) throws IOException{
+        super.deserialize(stream);
+        SUN_DIS = stream.readInt();
+        rotspeed = stream.readFloat();
+        currot = stream.readFloat();
+        texture = Texture.get2DTexture(stream.readString());
     }
 }

@@ -7,7 +7,10 @@
 package com.opengg.core.world.components;
 
 import com.opengg.core.engine.RenderEngine;
+import com.opengg.core.util.GGByteInputStream;
+import com.opengg.core.util.GGByteOutputStream;
 import com.opengg.core.world.Camera;
+import java.io.IOException;
 
 /**
  *
@@ -28,5 +31,19 @@ public class CameraComponent extends Component{
     public void update(float delta){
         camera.setPos(getPosition().inverse());
         camera.setRot(getRotation().invert());
+    }
+    
+    @Override
+    public void serialize(GGByteOutputStream out) throws IOException{
+        super.serialize(out);
+        out.write(RenderEngine.getCurrentCamera() == camera);
+    }
+    
+    @Override
+    public void deserialize(GGByteInputStream in) throws IOException{
+        super.deserialize(in);
+        camera = new Camera();
+        if(in.readBoolean())
+            use();
     }
 }

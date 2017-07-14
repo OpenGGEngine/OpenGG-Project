@@ -6,9 +6,13 @@
 
 package com.opengg.core.world.components;
 
+import com.opengg.core.engine.OpenGG;
 import com.opengg.core.engine.RenderEngine;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.light.Light;
+import com.opengg.core.util.GGByteInputStream;
+import com.opengg.core.util.GGByteOutputStream;
+import java.io.IOException;
 
 /**
  *
@@ -38,5 +42,24 @@ public class LightComponent extends Component{
     
     public Light getLight(){
         return l;
+    }
+    
+    @Override
+    public void serialize(GGByteOutputStream stream) throws IOException{
+        super.serialize(stream);
+        stream.write(l.getColor());
+        stream.write(l.getDistance());
+        stream.write(RenderEngine.getLights().contains(l));
+    }
+    
+    @Override
+    public void deserialize(GGByteInputStream stream) throws IOException{
+        super.deserialize(stream);
+        l = new Light(new Vector3f(), stream.readVector3f(), stream.readFloat(), 0);
+        boolean use = stream.readBoolean();
+        
+        OpenGG.addExecutable(() -> {
+            if(use) use();
+        });
     }
 }

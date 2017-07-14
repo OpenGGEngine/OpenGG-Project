@@ -60,14 +60,13 @@ public class GGByteOutputStream extends OutputStream{
         write(b ? 1 : 0);
     }
     
+    @Override
     public void write(byte[] b) throws IOException{
-        for(byte by : b){
-            write(by);
-        }
+        baos.write(b);
     }
     
     public void write(byte b) throws IOException{
-        
+        baos.write(b);
     }
     
     public void write(char c) throws IOException{

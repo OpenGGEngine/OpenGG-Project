@@ -12,6 +12,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 /**
  *
@@ -73,15 +74,13 @@ public class GGByteInputStream extends InputStream{
     }
     
     public boolean readBoolean() throws IOException{
-        byte b = readByte();
+        int b = readInt();
         return b == 1;
     }
     
     public byte[] readByteArray(int size) throws IOException{
         byte[] b = new byte[size];
-        for(int i = 0; i < size; i++){
-            b[i] = readByte();
-        }
+        bais.read(b);
         return b;
     }
     

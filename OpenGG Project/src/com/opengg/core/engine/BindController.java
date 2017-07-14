@@ -51,6 +51,10 @@ public class BindController implements KeyboardListener, MouseButtonListener{
         controllers.add(controller);
     }
     
+    public static List<ActionTransmitter> getBindControllers(){
+        return controllers;
+    }
+    
     @Override
     public void keyPressed(int key) {
         for(Bind bind : binds){    

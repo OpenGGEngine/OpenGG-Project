@@ -193,6 +193,10 @@ public class RenderEngine {
         lights.remove(l);
     }
     
+    public static List<Light> getLights(){
+        return lights;
+    }
+    
     public static void addRenderGroup(RenderGroup r){
         groups.add(r);
     }

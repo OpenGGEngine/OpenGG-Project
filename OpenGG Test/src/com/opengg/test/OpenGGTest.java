@@ -64,26 +64,19 @@ public class OpenGGTest extends GGApplication{
                 + " the Supreme Chancellor has secretly dispatched two Jedi Knights,"
                 + " the guardians of peace and justice in the galaxy, to settle the conflict...", new Vector2f(), 1f, 0.5f, false);
         GUI.addItem("aids", new GUIText(text, font, new Vector2f(0f,0)));
-        World w = WorldEngine.getCurrent();
-        w.setFloor(10);
-        
-        //WorldObject terrain = new WorldObject();
         /*
-        ModelRenderComponent island = new ModelRenderComponent(ModelLoader.loadModel("C:\\res\\island\\Island.bmf"));
-        ModelRenderComponent water = new ModelRenderComponent(ModelLoader.loadModel("C:\\res\\island\\Sea.bmf"));
-        terrain.setScale(new Vector3f(0.04f,0.04f,0.04f));
-        terrain.setPositionOffset(new Vector3f(0, 0, -550f));
-        terrain.attach(island);
-        terrain.attach(water);*/
+        World w = WorldEngine.getCurrent();
+        
+        w.setFloor(10);
 
-        world = new TerrainComponent(Terrain.generateProcedural(new DiamondSquare(7,20,20,5.5f), 700, 700));
-        world.setScale(new Vector3f(800,10,800));
-        world.setPositionOffset(new Vector3f(-400, -20,-400));
-        world.setGroundArray(Texture.getArrayTexture(Resource.getTexturePath("grass.png"),
-                Resource.getTexturePath("dirt.png"),
-                Resource.getTexturePath("flower2.png"),
-                Resource.getTexturePath("road.png")));
-        world.setBlotmap(Resource.getTexture("blendMap.png"));
+//        world = new TerrainComponent(Terrain.generateProcedural(new DiamondSquare(7,20,20,5.5f), 700, 700));
+//        world.setScale(new Vector3f(800,10,800));
+//        world.setPositionOffset(new Vector3f(-400, -20,-400));
+//        world.setGroundArray(Texture.getArrayTexture(Resource.getTexturePath("grass.png"),
+//                Resource.getTexturePath("dirt.png"),
+//                Resource.getTexturePath("flower2.png"),
+//                Resource.getTexturePath("road.png")));
+//        world.setBlotmap(Resource.getTexture("blendMap.png"));
         
         FreeFlyComponent player = new FreeFlyComponent();
         //TestPlayerComponent player = new TestPlayerComponent();
@@ -94,14 +87,16 @@ public class OpenGGTest extends GGApplication{
         //water.setPositionOffset(new Vector3f(0,10,0));
         
         w.attach(player);
-        w.attach(world);
+        //w.attach(world);
         //w.attach(particle);
         w.attach(new SunComponent(Resource.getTexture("emak.png"), 1f));
         w.attach(water);
-
-        
+        WorldEngine.saveWorld(w, "testworld");
         WorldEngine.useWorld(w);
+        */
         
+        WorldEngine.useWorld(WorldEngine.loadWorld("testworld"));
+                
         BindController.addBind(ControlType.KEYBOARD, "forward", KEY_W);
         BindController.addBind(ControlType.KEYBOARD, "backward", KEY_S);
         BindController.addBind(ControlType.KEYBOARD, "left", KEY_A);

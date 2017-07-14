@@ -178,6 +178,8 @@ public class PhysicsComponent extends Component {
         super.serialize(out);
         out.write(mass);
         out.write(density);
+        out.write(frictionCoefficient);
+        out.write(bounciness);
     }
     
     @Override
@@ -185,5 +187,7 @@ public class PhysicsComponent extends Component {
         super.deserialize(in);
         mass = in.readFloat();
         density = in.readFloat();
+        frictionCoefficient = in.readFloat();
+        bounciness = in.readFloat();
     }
 }

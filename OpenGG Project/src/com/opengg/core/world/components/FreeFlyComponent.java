@@ -7,11 +7,15 @@
 package com.opengg.core.world.components;
 
 import com.opengg.core.engine.BindController;
+import com.opengg.core.engine.OpenGG;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
+import com.opengg.core.util.GGByteInputStream;
+import com.opengg.core.util.GGByteOutputStream;
 import com.opengg.core.world.Action;
 import com.opengg.core.world.ActionType;
 import com.opengg.core.world.Actionable;
+import java.io.IOException;
 
 /**
  *
@@ -125,5 +129,25 @@ public class FreeFlyComponent extends Component implements Actionable{
     public void use(){
         BindController.setOnlyController(pcontrol);
         view.use();
+    }
+    
+    @Override
+    public void serialize(GGByteOutputStream stream) throws IOException{
+        super.serialize(stream);
+        stream.write(rotspeed);
+        stream.write(speed);
+        stream.write(BindController.getBindControllers().contains(pcontrol));
+    }
+    
+    @Override
+    public void deserialize(GGByteInputStream stream) throws IOException{
+        super.deserialize(stream);
+        rotspeed = stream.readFloat();
+        speed = stream.readFloat();
+        boolean use = stream.readBoolean();
+        OpenGG.addExecutable(() -> {
+            if(use) use();
+        });
+        
     }
 }
