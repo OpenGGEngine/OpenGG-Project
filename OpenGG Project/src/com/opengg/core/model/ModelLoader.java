@@ -68,8 +68,6 @@ public class ModelLoader {
         try (DataInputStream in = new DataInputStream(new BufferedInputStream(new FileInputStream(path)))) {
             String texpath = path.substring(0, path.lastIndexOf("\\") + 1) + "tex\\";
             
-            //int ver = in.readInt();
-            //System.out.println(ver);
             int id =  in.readInt();
             for (int si = 0; si < id; si++) {     
                 int fbcap = in.readInt();
