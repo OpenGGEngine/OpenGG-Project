@@ -73,6 +73,10 @@ public class RenderGroup {
         this.pipeline = pipeline;
     }
     
+    public void setEnabled(boolean enabled){
+        this.enabled = enabled;
+    }
+    
     public RenderGroup add(Renderable r){
         
         if(!items.contains(r))

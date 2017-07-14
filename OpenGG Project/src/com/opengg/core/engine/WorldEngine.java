@@ -5,7 +5,6 @@
  */
 package com.opengg.core.engine;
 
-import com.opengg.core.util.Time;
 import com.opengg.core.world.Deserializer;
 import com.opengg.core.world.Serializer;
 import com.opengg.core.world.TransitionEngine;
@@ -34,11 +33,7 @@ public class WorldEngine{
     static List<CollisionComponent> colliders = new LinkedList<>();
     static List<Component> objs = new ArrayList<>();
     static List<Component> removal = new LinkedList<>();
-    static Time t;
-    
-    static{
-        t = new Time();
-    }
+    static boolean enabled = true;
     
     public static void addCollider(CollisionComponent c) {
         colliders.add(c);
@@ -61,6 +56,10 @@ public class WorldEngine{
             objs.add(e);
     }
     
+    public static void shouldUpdate(boolean update){
+        enabled = update;
+    }
+    
     public static void removeMarked(){
         for(Component c : removal){
             if(c instanceof RenderComponent)
@@ -80,9 +79,10 @@ public class WorldEngine{
     public static void update(float delta){
         CollisionHandler.clearCollisions();
         removeMarked();
-        
-        TransitionEngine.update(delta);
-        traverseUpdate(WorldEngine.getCurrent(), delta);
+        if(enabled){
+            TransitionEngine.update(delta);
+            traverseUpdate(WorldEngine.getCurrent(), delta);
+        }
     }
     
     private static void traverseUpdate(Component c, float delta){
@@ -96,7 +96,7 @@ public class WorldEngine{
     
     public static World loadWorld(String worldname){
         GGConsole.log("Loading world " + worldname + "...");
-        try (DataInputStream dis = new DataInputStream(new FileInputStream(Resource.getLocal("resources\\worlds\\" + worldname + ".bwf")))){
+        try (DataInputStream dis = new DataInputStream(new FileInputStream(worldname))){
             int worldsize = dis.readInt();
             byte[] worlddata = new byte[worldsize];
             for(int i = 0; i < worlddata.length; i++){
@@ -106,30 +106,31 @@ public class WorldEngine{
             GGConsole.log("World " + worldname + " has been successfully loaded");
             return w;
         } catch (FileNotFoundException ex) {
-            GGConsole.error("Failed to find world named " + worldname + " located at " + Resource.getLocal("resources\\worlds\\" + worldname + ".bwf"));
+            GGConsole.error("Failed to find world named " + worldname);
         } catch (IOException ex) {
-            GGConsole.error("Failed to access file named " + Resource.getLocal("resources\\worlds\\" + worldname + ".bwf"));
+            GGConsole.error("Failed to access file named " + worldname);
         }
         return null;
     }
     
     public static void saveWorld(World world, String worldname){
         GGConsole.log("Saving world " + worldname + "...");
-        try(DataOutputStream dos = new DataOutputStream(new FileOutputStream(Resource.getLocal("resources\\worlds\\" + worldname + ".bwf")))) {
+        try(DataOutputStream dos = new DataOutputStream(new FileOutputStream(worldname))) {
             byte[] bworld = Serializer.serialize(world);
             dos.writeInt(bworld.length);
             dos.write(bworld);
             dos.flush();
         } catch (FileNotFoundException ex) {
-            GGConsole.error("Failed to create file named " + Resource.getLocal("resources\\worlds\\" + worldname + ".bwf"));
+            GGConsole.error("Failed to create file named " + worldname);
         } catch (IOException ex) {
-            Logger.getLogger("Failed to write to file named " + Resource.getLocal("resources\\worlds\\" + worldname + ".bwf"));
+            Logger.getLogger("Failed to write to file named " + worldname);
         }
         GGConsole.log("World " + worldname + " has been saved");
     }
     
-    public static void useWorld(World w){
-        OpenGG.curworld = w;
+    public static void useWorld(World world){
+        OpenGG.curworld.disableRenderables();
+        OpenGG.curworld = world;
         rescanCurrent();
     }
     

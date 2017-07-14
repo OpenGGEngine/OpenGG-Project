@@ -6,7 +6,7 @@
 package com.opengg.core.model;
 
 import com.opengg.core.engine.GGConsole;
-import static com.opengg.core.util.FileUtil.getFileName;
+import com.opengg.core.engine.Resource;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.File;
@@ -22,35 +22,10 @@ import org.lwjgl.system.MemoryUtil;
  * Static handler for loading and processing BMF Model files
  * @author Warren
  */
-public class ModelLoader {
+public class ModelLoader { 
     
-    /**
-     * Loads a model in the BMF format from the specified path<br>
-     * If the model has already been loaded, it returns that object instead. If you require a fresh copy, call {@link #forceLoadModel(java.lang.String) forceLoadModel()} instead<br><br>
-     * 
-     * This method does not generate a {@link com.opengg.core.render.drawn.Drawable Drawable} for the model, so it is multithreading safe as it does not call OpenGL<br><br>
-     * 
-     * If the model cannot be found or fails to load, this method will load the default model instead. If that fails, an Exception is thrown.
-     * @param path Path for the model to be loaded, also used as the identifier for the ModelManager
-     * @return Loaded/retrieved model
-     */
-    public static Model loadModel (String path){
-        Model m;
-        if((m = ModelManager.getModel(path)) != null){
-            return m;
-        }else if(new File(path).exists()){
-            try {
-                m = forceLoadModel(path);
-                ModelManager.setModel(path, m);
-                return m;
-            } catch (IOException ex) {
-                GGConsole.warning("Failed to load model at " + path + ", using default model instead");
-                return ModelManager.getModel("default");
-            }
-        }else{
-            GGConsole.warning("Couldn't find model at " + path + ", using default model instead");
-                return ModelManager.getModel("default");
-        }
+    public static Model loadModel(String name){
+        return ModelManager.loadModel(name);
     }
     
     /**
@@ -64,9 +39,14 @@ public class ModelLoader {
     public static Model forceLoadModel(String path) throws FileNotFoundException, IOException {
         
         GGConsole.log("Loading model at " + path + "...");
+        
+        String fpath = path;
+            if(!new File(path).isAbsolute())
+                fpath = Resource.getAbsoluteFromLocal(path);
+        
         ArrayList<Mesh> meshes = new ArrayList<>();
-        try (DataInputStream in = new DataInputStream(new BufferedInputStream(new FileInputStream(path)))) {
-            String texpath = path.substring(0, path.lastIndexOf("\\") + 1) + "tex\\";
+        try (DataInputStream in = new DataInputStream(new BufferedInputStream(new FileInputStream(fpath)))) {
+            String texpath = fpath.substring(0, fpath.lastIndexOf("\\") + 1) + "tex\\";
             
             int id =  in.readInt();
             for (int si = 0; si < id; si++) {     
@@ -235,8 +215,8 @@ public class ModelLoader {
             }
         }
         
-        Model m = new Model(getFileName(path), meshes);
-        GGConsole.log("Done Parsing " + path + ", got " +m.getName());
+        Model m = new Model(path, meshes);
+        GGConsole.log("Done Parsing " + path + ", got " + m.getName());
         return m;
     }
     

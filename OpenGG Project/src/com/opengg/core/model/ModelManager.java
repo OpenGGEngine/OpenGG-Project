@@ -7,7 +7,6 @@
 package com.opengg.core.model;
 
 import com.opengg.core.engine.GGConsole;
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,41 +18,56 @@ import java.util.Map;
 public class ModelManager {
 
     private static Map<String,Model> modellist = new HashMap<>();
+    private static Model defaultm;
     public static int repsave = 0;
-    public static String defPath;
+    
     public static void initialize(){
         try {
-            File deft = new File("resources/models/default/default.bmf");
-            if(deft.exists()){
-                defPath = deft.getCanonicalPath();
-                Model def = ModelLoader.loadModel(defPath);
-                modellist.put("default", def);
-            }else{
-                throw new IOException();
-            }
+            defaultm = ModelLoader.forceLoadModel("resources/models/default/default.bmf");
         } catch (IOException ex) {
             GGConsole.error("Failed to load default model, nonexistent models may crash the program!");
         }
+    }  
+    
+    public static void addModel( Model model){
+        modellist.put(model.getName(), model);
+
     }
+    
     public static Model getModel(String path){
         return modellist.get(path);
     }
-    public static void setModel(String path, Model t){
-        if(modellist.containsKey(path)){
-            modellist.replace(path, t);
-        }else{
-            modellist.put(path, t);
+    
+    public static Model getDefaultModel(){
+        return defaultm;
+    }
+    
+    public static Model loadModel(String path){
+        Model model = modellist.get(path);
+        if(model != null)
+            return model;
+        try{
+            model = ModelLoader.forceLoadModel(path);
+            if(model != null){
+                addModel(model);
+                return model;
+            }else{
+                GGConsole.warn("Failed to load model at" + path + ", using default model instead");
+            }
+        }catch(Exception e){
+            GGConsole.warn("Failed to load model at" + path + ", using default model instead");
         }
+        return defaultm;
     }
-    public static int numModels(){
-        return modellist.size();
+    
+    public static Map<String,Model> getModelList(){
+        return modellist;
     }
-    public static void releaseModel(String s){
-        modellist.remove(s);
-    }
+    
     public static void destroy(){
-        modellist.values().stream().forEach((t) -> {
-        });
+        for(Model model : modellist.values()){
+            
+        }
         modellist.clear();
     }
 }

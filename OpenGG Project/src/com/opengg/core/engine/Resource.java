@@ -9,7 +9,7 @@ package com.opengg.core.engine;
 import com.opengg.core.audio.AudioLoader;
 import com.opengg.core.audio.SoundData;
 import com.opengg.core.model.Model;
-import com.opengg.core.model.ModelLoader;
+import com.opengg.core.model.ModelManager;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.texture.text.GGFont;
 import java.io.File;
@@ -30,7 +30,7 @@ public class Resource {
         }
     }
     
-    public static String getLocal(String name){
+    public static String getAbsoluteFromLocal(String name){
         try {
             return new File(current, name).getCanonicalPath();
         } catch (IOException ex) {
@@ -40,57 +40,31 @@ public class Resource {
     }
     
     public static String getModelPath(String name){
-        try {
-            return new File(current, "resources\\models\\" +  name + "\\" + name + ".bmf").getCanonicalPath();
-        } catch (IOException ex) {
-            GGConsole.warning("Failed to load " + name + "!");
-        }
-        return null;
+        return "resources\\models\\" +  name + "\\" + name + ".bmf";
     }
     
     public static String getConfigPath(String name){
-        try {
-            return new File(current, "config\\" +  name + ".cfg").getCanonicalPath();
-        } catch (IOException ex) {
-            GGConsole.warning("Failed to load " + name + "!");
-        }
-        return null;
+        return "cfg\\" +  name + ".cfg";
     }
     
     public static String getShaderPath(String name){
-        try {
-            return new File(current, "resources\\glsl\\" +  name).getCanonicalPath();
-        } catch (IOException ex) {
-            GGConsole.warning("Failed to load " + name + "!");
-        }
-        return null;
+        return "resources\\glsl\\" +  name;
     }
     
     public static String getTexturePath(String name){
-        try {
-            return new File(current, "resources\\tex\\" +  name).getCanonicalPath();
-        } catch (IOException ex) {
-            GGConsole.warning("Failed to load " + name + "!");
-        }
-        return null;
+        return "resources\\tex\\" +  name;
     }
     
     public static String getFontPath(String name){
-        try {
-            return new File(current, "resources\\font\\" +  name + ".fnt").getCanonicalPath();
-        } catch (IOException ex) {
-            GGConsole.warning("Failed to load " + name + "!");
-        }
-        return null;
+        return "resources\\font\\" +  name + ".fnt";
     }
     
     public static String getSoundPath(String name){
-        try {
-            return new File(current, "resources\\audio\\" +  name).getCanonicalPath();
-        } catch (IOException ex) {
-            GGConsole.warning("Failed to load " + name + "!");
-        }
-        return null;
+        return "resources\\audio\\" +  name;
+    }
+    
+    public static String getWorldPath(String name){
+        return "resources\\worlds\\" +  name + ".bwf";
     }
     
     public static SoundData getSoundData(String name){
@@ -98,7 +72,7 @@ public class Resource {
     }
     
     public static Model getModel(String name){
-        return ModelLoader.loadModel(getModelPath(name));
+        return ModelManager.loadModel(getModelPath(name));
     }
     
     public static Texture getTexture(String name){

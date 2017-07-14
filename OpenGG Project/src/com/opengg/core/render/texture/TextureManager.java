@@ -7,7 +7,6 @@ package com.opengg.core.render.texture;
 
 import com.opengg.core.engine.GGConsole;
 import com.opengg.core.engine.Resource;
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,13 +21,7 @@ public class TextureManager {
     
     public static void initialize(){
         try {
-            File deft = new File(Resource.getTexturePath("default.png"));
-            if(deft.exists()){
-                String defPath = deft.getCanonicalPath();
-                defaultdata = TextureLoader.loadTexture(defPath);
-            }else{
-                GGConsole.error("Failed to load the default texture, any missing textures will crash the game!");
-            }
+            defaultdata = TextureLoader.loadTexture(Resource.getTexturePath("default.png"));
         } catch (IOException ex) {
             GGConsole.error("Failed to load the default texture, nonexistent textures may crash the program!");
         }
@@ -52,7 +45,7 @@ public class TextureManager {
     }
     
     public static TextureData loadTexture(String path){
-        return loadTexture(path, false);
+        return loadTexture(path, true);
     }
     
     public static TextureData loadTexture(String path, boolean flip){

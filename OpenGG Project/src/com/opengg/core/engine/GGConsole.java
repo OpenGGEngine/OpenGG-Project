@@ -82,7 +82,7 @@ public class GGConsole implements Runnable{
     }
     
     public static void writeLog(Date date, String error, String name){
-        try(PrintWriter writer = new PrintWriter(new FileOutputStream(Resource.getLocal("logs\\" + name + ".log")))) {
+        try(PrintWriter writer = new PrintWriter(new FileOutputStream(Resource.getAbsoluteFromLocal("logs\\" + name + ".log")))) {
             for(GGMessage m : messages){
                 writer.println(m.toString());
             }

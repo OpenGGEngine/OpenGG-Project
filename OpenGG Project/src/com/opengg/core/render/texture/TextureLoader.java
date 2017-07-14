@@ -6,6 +6,8 @@
 
 package com.opengg.core.render.texture;
 
+import com.opengg.core.engine.Resource;
+import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
@@ -19,7 +21,7 @@ import org.lwjgl.system.MemoryStack;
  */
 public class TextureLoader {
     public static TextureData loadTexture(String path) throws IOException{
-        return loadTexture(path,false);
+        return loadTexture(path,true);
     }
     
     public static TextureData loadTexture(String path, boolean flip) throws IOException{
@@ -29,7 +31,12 @@ public class TextureLoader {
             IntBuffer comp = stack.callocInt(1);
             
             stbi_set_flip_vertically_on_load(flip);
-            ByteBuffer image = stbi_load(path, w, h, comp, 4);
+            
+            String fpath = path;
+            if(!new File(path).isAbsolute())
+                fpath = Resource.getAbsoluteFromLocal(path);
+            
+            ByteBuffer image = stbi_load(fpath, w, h, comp, 4);
             if (image == null) {
                 throw new IOException("Failed to load texture!");
             }

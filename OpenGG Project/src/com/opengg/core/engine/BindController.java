@@ -51,6 +51,10 @@ public class BindController implements KeyboardListener, MouseButtonListener{
         controllers.add(controller);
     }
     
+    public static void clearControllers(){
+        controllers.clear();
+    }
+    
     public static List<ActionTransmitter> getBindControllers(){
         return controllers;
     }

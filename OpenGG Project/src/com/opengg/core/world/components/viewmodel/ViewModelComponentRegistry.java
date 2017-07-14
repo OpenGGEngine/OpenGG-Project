@@ -23,7 +23,7 @@ public class ViewModelComponentRegistry {
     static List<Class> viewmodels = new ArrayList<>();
     
     public static void initialize(){
-        registerAllFromJar(Resource.getLocal("lib\\OpenGG.jar"));
+        registerAllFromJar(Resource.getAbsoluteFromLocal("lib\\OpenGG.jar"));
     }
     
     public static void register(Class component){

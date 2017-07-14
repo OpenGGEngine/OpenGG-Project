@@ -204,7 +204,7 @@ public class Texture {
     }
     
     public static Texture get2DTexture(String path){
-        return get2DTexture(TextureManager.loadTexture(path, true));
+        return get2DTexture(TextureManager.loadTexture(path));
     }
     
     public static Texture get2DTexture(TextureData data){
@@ -221,12 +221,16 @@ public class Texture {
     }
     
     public static Texture getCubemap(String path1, String path2, String path3, String path4, String path5, String path6){
-        TextureData data1 = TextureManager.loadTexture(path1);
-        TextureData data2 = TextureManager.loadTexture(path2);
-        TextureData data3 = TextureManager.loadTexture(path3);
-        TextureData data4 = TextureManager.loadTexture(path4);
-        TextureData data5 = TextureManager.loadTexture(path5);
-        TextureData data6 = TextureManager.loadTexture(path6);
+        TextureData data1 = TextureManager.loadTexture(path1, false);
+        TextureData data2 = TextureManager.loadTexture(path2, false);
+        TextureData data3 = TextureManager.loadTexture(path3, false);
+        TextureData data4 = TextureManager.loadTexture(path4, false);
+        TextureData data5 = TextureManager.loadTexture(path5, false);
+        TextureData data6 = TextureManager.loadTexture(path6, false);
+        return getCubemap(data1,data2,data3,data4,data5,data6);
+    }
+    
+   public static Texture getCubemap(TextureData data1, TextureData data2, TextureData data3, TextureData data4, TextureData data5, TextureData data6){
         
         Texture texture = new Texture(GL_TEXTURE_CUBE_MAP);
         texture.setActiveTexture(0);

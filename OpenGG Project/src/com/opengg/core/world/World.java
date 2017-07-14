@@ -14,11 +14,8 @@ import com.opengg.core.engine.WorldEngine;
 import com.opengg.core.exceptions.InvalidParentException;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
-import com.opengg.core.render.Renderable;
-import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.util.GGByteInputStream;
 import com.opengg.core.util.GGByteOutputStream;
-import com.opengg.core.world.components.Component;
 import com.opengg.core.world.components.Component;
 import com.opengg.core.world.components.RenderComponent;
 import com.opengg.core.world.components.physics.CollisionComponent;
@@ -76,27 +73,39 @@ public class World extends Component{
             if(rg.isTransparent() == r.isTransparent()){
                 if(rg.getPipeline().equals(r.getShader())){
                     if(rg.getFormat().equals(r.getFormat())){
+                        if(!rg.getList().contains(r)){
+                            rg.add(r);
+                            break;
+                        }
                         found = true;
-                        rg.add(r);
-                        break;
                     }
                 }
             }            
         }
         
         if(!found){
-            RenderGroup group = new RenderGroup("world " + r.getShader(), r.getFormat());
+            RenderGroup group = new RenderGroup("world " + getId() + r.getShader(), r.getFormat());
             group.add(r);
             group.setTransparent(r.isTransparent());
             group.setPipeline(r.getShader());
             groups.add(group);
             RenderEngine.addRenderGroup(group);
         }
+        
+        for(RenderGroup rg : groups){
+            rg.setEnabled(true);
+        }
     }
     
     public void removeRenderable(RenderComponent r){
         for(RenderGroup rg : groups){
             rg.remove(r);
+        }
+    }
+    
+    public void disableRenderables(){
+        for(RenderGroup group : groups){
+            group.setEnabled(false);
         }
     }
     

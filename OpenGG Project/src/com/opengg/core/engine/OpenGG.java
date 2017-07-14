@@ -17,17 +17,8 @@ import com.opengg.core.render.window.WindowInfo;
 import com.opengg.core.thread.ThreadManager;
 import com.opengg.core.util.Time;
 import com.opengg.core.world.components.viewmodel.ViewModelComponentRegistry;
-import com.opengg.core.world.Deserializer;
-import com.opengg.core.world.Serializer;
 import com.opengg.core.world.World;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -105,9 +96,10 @@ public class OpenGG{
         startTime = Calendar.getInstance().getTime();
         head = client;
         
-        ExtensionManager.loadStep(Extension.NONE);
         Resource.initialize();
         
+        ExtensionManager.loadStep(Extension.NONE);
+
         linkLWJGL();
         lwjglinit = true;
         
