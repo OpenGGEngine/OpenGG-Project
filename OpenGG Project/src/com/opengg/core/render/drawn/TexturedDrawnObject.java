@@ -5,10 +5,12 @@
  */
 package com.opengg.core.render.drawn;
 
-import com.opengg.core.Matrix4f;
+import com.opengg.core.engine.RenderEngine;
 import com.opengg.core.io.objloader.parser.MTLMaterial;
+import com.opengg.core.math.Matrix4f;
 import com.opengg.core.render.texture.Texture;
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 
 /**
  *
@@ -18,30 +20,24 @@ public class TexturedDrawnObject implements Drawable{
     Texture normalmap;
     Texture specularmap;
     MTLMaterial m = new MTLMaterial();
-    Texture tex;
-    DrawnObject object;
-     public TexturedDrawnObject(FloatBuffer b,int vertSize){
-        object = new DrawnObject(b,vertSize);
+    public Texture tex;
+    Drawable object;
+     public TexturedDrawnObject(FloatBuffer b, int vertSize){
+        object = new DrawnObject(b,RenderEngine.getDefaultFormat());
     }
-    public TexturedDrawnObject(FloatBuffer b,int vertSize,Texture t){
-        object = new DrawnObject(b,vertSize);
+    public TexturedDrawnObject(FloatBuffer b, int vertSize, Texture t){
+        object = new DrawnObject(b,RenderEngine.getDefaultFormat());
         this.tex = t;
     }
-    @Override
-    public void draw() {
-        tex.useTexture(0);
-        object.draw();
+    public TexturedDrawnObject(FloatBuffer b, IntBuffer i, Texture t){
+        object = new DrawnObject(b,i);
+        this.tex = t;
     }
-
+    
     @Override
-    public void drawPoints() {
-        tex.useTexture(0);
-        object.drawPoints();
-    }
-
-    @Override
-    public void saveShadowMVP() {
-        object.saveShadowMVP();
+    public void render() {
+        tex.use(0);
+        object.render();
     }
 
     @Override
@@ -51,7 +47,7 @@ public class TexturedDrawnObject implements Drawable{
 
     @Override
     public Matrix4f getMatrix() {
-       return object.model;
+       return object.getMatrix();
     }
     
     @Override
@@ -74,8 +70,9 @@ public class TexturedDrawnObject implements Drawable{
     public void setTexture(Texture tex) {
         this.tex = tex;
     }
-     public void setShaderMatrix(Matrix4f m){
-        object.shadeModel = m;
-    }
     
+    @Override
+    public boolean hasAdjacency(){
+        return object.hasAdjacency();
+    }
 }

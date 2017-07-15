@@ -5,6 +5,7 @@
  */
 package com.opengg.core.render.texture.text;
 
+import com.opengg.core.engine.GGConsole;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +33,7 @@ public class Word {
                         character.xAdvance 
                         * fontSize;
             }catch(NullPointerException e){
-                System.out.println("Null Pointer, " + character.sizeX);
+                GGConsole.warning("Null Pointer, " + character.sizeX);
             }
         }
 }

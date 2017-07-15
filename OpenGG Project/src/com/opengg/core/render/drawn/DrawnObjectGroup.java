@@ -5,8 +5,9 @@
  */
 package com.opengg.core.render.drawn;
 
-import com.opengg.core.Matrix4f;
+import com.opengg.core.math.Matrix4f;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -14,49 +15,38 @@ import java.util.ArrayList;
  */
 public class DrawnObjectGroup implements Drawable {
 
-    ArrayList<Drawable> objs = new ArrayList<>();
+    List<Drawable> objs = new ArrayList<>();
 
-    //The list of materials are in order so the nth value in list objs
-    //corresponds to the nth value in list materials
+
     
-
-    public DrawnObjectGroup(ArrayList<Drawable> objs) {
+    public DrawnObjectGroup(){
+        
+    }
+    
+    public DrawnObjectGroup(List<Drawable> objs) {
         this.objs = objs;
     }
     
-
-    @Override
-    public void saveShadowMVP() {
-        objs.stream().forEach((d) -> {
-            d.saveShadowMVP();
-        });
+    public void add(Drawable d){
+        objs.add(d);
     }
 
-    public void setShaderMatrix(Matrix4f m) {
-//        objs.stream().forEach((d) -> {
-//            d.setShaderMatrix(m);
-//        });
+    public void remove(Drawable d){
+        objs.remove(d);
     }
 
     @Override
-    public void draw() {
-        objs.stream().forEach((d) -> {
-            d.draw();
-        });
-    }
-
-    @Override
-    public void drawPoints() {
-        objs.stream().forEach((d) -> {
-            d.drawPoints();
-        });
+    public void render() {
+        for(Drawable d : objs){
+            d.render();
+        }
     }
 
     @Override
     public void setMatrix(Matrix4f model) {
-        objs.stream().forEach((d) -> {
+        for(Drawable d : objs){
             d.setMatrix(model);
-        });
+        }
     }
 
     @Override
@@ -66,9 +56,17 @@ public class DrawnObjectGroup implements Drawable {
 
     @Override
     public void destroy() {
-        objs.stream().forEach((d) -> {
+        for(Drawable d : objs){
             d.destroy();
-        });
+        }
     }
-
+    
+    @Override
+    public boolean hasAdjacency() {
+        boolean adj = false;
+        for(Drawable d : objs){
+            adj = adj || d.hasAdjacency();
+        }
+        return adj;
+    }
 }

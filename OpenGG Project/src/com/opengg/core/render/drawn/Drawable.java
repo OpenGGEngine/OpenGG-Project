@@ -6,17 +6,16 @@
 
 package com.opengg.core.render.drawn;
 
-import com.opengg.core.Matrix4f;
+import com.opengg.core.math.Matrix4f;
+import com.opengg.core.render.Renderable;
 
 /**
  *
  * @author Javier
  */
-public interface Drawable {
-    public void draw();
-    public void drawPoints();
-    public void saveShadowMVP();
+public interface Drawable extends Renderable{
     public void setMatrix(Matrix4f m);
     public Matrix4f getMatrix();
+    public boolean hasAdjacency();
     public void destroy();
 }

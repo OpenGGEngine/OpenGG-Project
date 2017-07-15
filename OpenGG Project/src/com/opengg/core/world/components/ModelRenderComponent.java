@@ -5,63 +5,54 @@
  */
 package com.opengg.core.world.components;
 
-import com.opengg.core.Matrix4f;
-import com.opengg.core.Vector3f;
-import com.opengg.core.render.drawn.Drawable;
+import com.opengg.core.engine.OpenGG;
+import com.opengg.core.model.Model;
+import com.opengg.core.model.ModelLoader;
+import com.opengg.core.util.GGByteInputStream;
+import com.opengg.core.util.GGByteOutputStream;
+import java.io.IOException;
 
 /**
  *
  * @author Warren
+ * 
+ * This Component Renders a Drawable
  */
-public class ModelRenderComponent extends ComponentHolder implements Renderable{
-    Drawable g;
-    private Vector3f offset = new Vector3f(0,0,0);
-    private Vector3f rotationoffset = new Vector3f(0,0,0);
-    Positioned w;
-   
-    public ModelRenderComponent(Drawable g){
-        this.g = g;
-    }
-
-    @Override
-    public void render() {
-        Matrix4f m = Matrix4f.translate(w.getPosition().x + offset.x, w.getPosition().y + offset.y, w.getPosition().z + offset.z);
-        
-        g.setMatrix(m);
-        g.draw();
-        
-        for(Renderable r : this.renderable){
-            
-        }
-    }
-
-    @Override
-    public void setPosition(Vector3f pos) {
-        offset = pos;
-    }
-
-    @Override
-    public void setRotation(Vector3f rot) {
-        rotationoffset = rot;
-    }
-
-    @Override
-    public void setParentInfo(Component parent) {
-        if(parent instanceof Positioned){
-            w = (Positioned) parent;
-        }
-    }
-
-    @Override
-    public Vector3f getPosition() {
-        return new Vector3f(w.getPosition().x + offset.x, w.getPosition().y + offset.y, w.getPosition().z + offset.z);
-    }
-
-    @Override
-    public Vector3f getRotation() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
+public class ModelRenderComponent extends RenderComponent{
+    Model model;
     
+    public ModelRenderComponent(){}
+
+    public ModelRenderComponent(Model model){
+        super();
+        setModel(model);
+        this.transparent = true;
+    }
     
+    public Model getModel(){
+        return model;
+    }
+    
+    public void setModel(Model model){
+        this.model = model;
+        OpenGG.addExecutable(() -> {
+            setDrawable(model.getDrawable());
+        });
+    }
+    
+    @Override
+    public void serialize(GGByteOutputStream out) throws IOException{
+        super.serialize(out);
+        out.write(model.getName());
+    }
+    
+    @Override
+    public void deserialize(GGByteInputStream in) throws IOException{
+        super.deserialize(in);
+        String path = in.readString();
+        model = ModelLoader.loadModel(path);
+        OpenGG.addExecutable(() -> {
+            this.g = model.getDrawable();
+        });
+    }
 }

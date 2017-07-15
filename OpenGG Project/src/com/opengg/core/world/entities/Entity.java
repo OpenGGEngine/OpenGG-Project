@@ -5,13 +5,11 @@
  */
 package com.opengg.core.world.entities;
 
-import com.opengg.core.Quaternion4f;
-import com.opengg.core.Vector3f;
+import com.opengg.core.math.Quaternionf;
+import com.opengg.core.math.Vector3f;
 import com.opengg.core.io.objloader.parser.OBJModel;
-import static com.opengg.core.util.GlobalUtil.print;
 import com.opengg.core.world.Camera;
 import com.opengg.core.world.World;
-import com.opengg.core.engine.WorldManager;
 import static com.opengg.core.world.entities.EntityBuilder.AddStack;
 import com.opengg.core.world.entities.resources.EntityFrame;
 import com.opengg.core.world.entities.resources.EntitySupportEnums;
@@ -20,7 +18,7 @@ import com.opengg.core.world.entities.resources.EntitySupportEnums.PhysicsType;
 import com.opengg.core.world.entities.resources.EntitySupportEnums.UpdateForce;
 import com.opengg.core.world.entities.resources.EntitySupportEnums.UpdateXYZ;
 import com.opengg.core.world.entities.resources.PhysicsState;
-import static com.opengg.core.world.physics.resources.PhysicsStruct.wind;
+
 import java.io.Serializable;
 
 /**
@@ -41,7 +39,6 @@ public class Entity implements Serializable {
     /**
      * Only to be used for smooth rendering with interpolate
      *
-     * @see interpolate
      */
     public PhysicsState previous;
     public PhysicsState current;
@@ -69,10 +66,6 @@ public class Entity implements Serializable {
      *
      */
     public Entity() {
-        if (WorldManager.isEmpty()) {
-            WorldManager.getWorld(new Camera());
-        }
-        current = new PhysicsState(WorldManager.getDefaultWorld(), 10f);
         setXYZ(0f, 0f, 0f);
         setTags(PhysicsType.Physics);
         bindModel(new OBJModel());
@@ -196,7 +189,7 @@ public class Entity implements Serializable {
         this.current.velocity = new Vector3f(v);
     }
 
-    public final void setRotation(Quaternion4f q) {
+    public final void setRotation(Quaternionf q) {
         this.current.rot = q;
     }
 
@@ -246,16 +239,11 @@ public class Entity implements Serializable {
         current.switchWorld(next);
     }
 
-    public final void changeWind(Vector3f w) {
-        wind = new Vector3f(w);
-    }
-
     public void update(float t, float dt) {
         if (this.updatePosition == EntitySupportEnums.UpdateXYZ.Immovable)
             return;
         previous = new PhysicsState(current);
         current.integrate(current, t, dt);
-        print (current.momentum.toString());
         updateBoundingBox();
     }
 }

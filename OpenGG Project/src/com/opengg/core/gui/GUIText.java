@@ -5,152 +5,53 @@
  */
 package com.opengg.core.gui;
 
-import com.opengg.core.Vector2f;
-import com.opengg.core.Vector3f;
+import com.opengg.core.math.Vector2f;
+import com.opengg.core.render.Text;
+import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.texture.text.GGFont;
 
 /**
  *
- * @author Warren
+ * @author Javier
  */
-public class GUIText {
+public class GUIText extends GUIRenderable {
 
-    private String textString;
-    private float fontSize;
+    Text text;
+    GGFont font;
 
-    private int textMeshVao;
-    private int vertexCount;
-    private Vector3f colour = new Vector3f(0f, 0f, 0f);
-
-    private Vector2f position;
-    private float lineMaxSize;
-    private int numberOfLines;
-
-    public GGFont font;
-
-    private boolean centerText = false;
-
-    private float distanceFieldWidth;
-    private float distanceFieldEdge;
-    private float borderWidth;
-    private float borderEdge;
-    private Vector2f offset = new Vector2f(0f, 0f);
-    private Vector3f outlineColor = new Vector3f(0f, 0f, 0f);
-
-    public GUIText(String text, GGFont font,float fontSize,  Vector2f position, float maxLineLength,
-        boolean centered) {
-        this.textString = text;
-        this.fontSize = fontSize;
+    public GUIText(Text text, GGFont font, Vector2f pos) {
+        this.text = text;
         this.font = font;
-        this.position = position;
-        this.lineMaxSize = maxLineLength;
-        this.centerText = centered;
-        //TextMaster.loadText(this);
-    }
-    public void remove() {
-        //TextMaster.removeText(this);
-    }
-    
-    public void setText(String text){
-        
-    }
-    
-    public void setColour(float r, float g, float b) {
-        colour = new Vector3f(r, g, b);
+        this.setPositionOffset(pos);
+        this.setDrawable(text.getDrawable(font));
     }
 
-    public Vector3f getColour() {
-        return colour;
+    public GUIText(GGFont font, Vector2f pos) {
+        this.text = new Text();
+        this.font = font;
+        this.setPositionOffset(pos);
+        this.setDrawable(text.getDrawable(font));
     }
 
-    public int getNumberOfLines() {
-        return numberOfLines;
+    public void setText(String ntext) {
+        this.text.setText(ntext);
+        this.setDrawable(text.getDrawable(font));
     }
 
-    public Vector2f getPosition() {
-        return position;
+    public void setText(Text text) {
+        this.text = text;
+        this.setDrawable(text.getDrawable(font));
     }
 
-    public int getMesh() {
-        return textMeshVao;
+    public void setFont(GGFont font) {
+        this.font = font;
+        this.setDrawable(text.getDrawable(font));
     }
 
-    public void setMeshInfo(int vao, int verticesCount) {
-        this.textMeshVao = vao;
-        this.vertexCount = verticesCount;
-    }
-
-    public int getVertexCount() {
-        return this.vertexCount;
-    }
-
-    public float getFontSize() {
-        return fontSize;
-    }
-
-
-    public void setNumberOfLines(int number) {
-        this.numberOfLines = number;
-    }
-
-    public boolean isCentered() {
-        return centerText;
-    }
-
-    public float getMaxLineSize() {
-        return lineMaxSize;
-    }
-
-    public String getTextString() {
-        return textString;
-    }
-
-    public float getDistanceFieldWidth() {
-        return distanceFieldWidth;
-    }
-
-    public void setDistanceFieldWidth(float distanceFieldWidth) {
-        this.distanceFieldWidth = distanceFieldWidth;
-    }
-
-    public float getDistanceFieldEdge() {
-        return distanceFieldEdge;
-    }
-
-    public void setDistanceFieldEdge(float distanceFieldEdge) {
-        this.distanceFieldEdge = distanceFieldEdge;
-    }
-
-    public float getBorderWidth() {
-        return borderWidth;
-    }
-
-    public void setBorderWidth(float borderWidth) {
-        this.borderWidth = borderWidth;
-    }
-
-    public float getBorderEdge() {
-        return borderEdge;
-    }
-
-    public void setBorderEdge(float borderEdge) {
-        this.borderEdge = borderEdge;
-    }
-
-    public Vector2f getOffset() {
-        return offset;
-    }
-
-    public void setOffset(float x, float y) {
-        offset = new Vector2f(x, y);
-    }
-
-    public Vector3f getOutlineColour() {
-        return outlineColor;
-    }
-
-    public void setOutlineColour(float r, float g, float b) {
-        outlineColor = new Vector3f(r, g, b);
-        
+    @Override
+    public void render(float x, float y) {
+        ShaderController.setDistanceField(1);
+        super.render((this.position.x + x), (this.position.y + y));
+        ShaderController.setDistanceField(0);
     }
 }

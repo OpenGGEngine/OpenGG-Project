@@ -5,9 +5,8 @@
  */
 package com.opengg.core.world.entities;
 
-import com.opengg.core.Vector3f;
+import com.opengg.core.math.Vector3f;
 import com.opengg.core.io.objloader.parser.OBJModel;
-import static com.opengg.core.util.GlobalUtil.print;
 import com.opengg.core.world.Camera;
 import com.opengg.core.world.World;
 import com.opengg.core.world.entities.resources.EntitySupportEnums.PhysicsType;
@@ -27,8 +26,6 @@ public class PlayerEntity extends Entity{
      */
     public PlayerEntity(){
         super();
-        playerCam = new Camera(current.pos, direction);
-        current.currentWorld.addCamera(playerCam);
     }
 
     /**
@@ -43,8 +40,6 @@ public class PlayerEntity extends Entity{
      */
     public PlayerEntity(PhysicsType type, Vector3f position, Vector3f f, float mass, OBJModel model, World current){
         super(type,position, f, mass, model, current);
-        playerCam = new Camera(this.current.pos, direction);
-        current.addCamera(playerCam);
     }
 
     /**
@@ -54,16 +49,13 @@ public class PlayerEntity extends Entity{
      */
     public PlayerEntity(Entity v){
         super(v);
-        playerCam = new Camera(current.pos, direction);
-        current.currentWorld.addCamera(playerCam);
     }
     
     @Override
     public void changeWorld(World next){
         try{
-            current.currentWorld.removeCamera(playerCam);
-        } catch (NullPointerException e) { print ("CurrentWorld of Player is null");}
+            
+        } catch (NullPointerException e) {}
         current.currentWorld = next;
-        next.addCamera(playerCam);
     }
 }

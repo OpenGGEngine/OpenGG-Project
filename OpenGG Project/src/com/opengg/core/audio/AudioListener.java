@@ -6,7 +6,7 @@
 
 package com.opengg.core.audio;
 
-import com.opengg.core.Vector3f;
+import com.opengg.core.math.Vector3f;
 
 /**
  *
@@ -14,10 +14,16 @@ import com.opengg.core.Vector3f;
  */
 public class AudioListener {
     public AudioListener(){}
-    Vector3f pos = new Vector3f();
-    Vector3f rot = new Vector3f();
-    Vector3f vel = new Vector3f();
+    public Vector3f pos = new Vector3f();
+    public Vector3f rot = new Vector3f();
+    public Vector3f vel = new Vector3f();
 
+    public AudioListener(Vector3f pos, Vector3f rot, Vector3f vel){
+        this.pos = pos;
+        this.rot = rot;
+        this.vel = vel;
+    }
+    
     public Vector3f getPos() {
         return pos;
     }

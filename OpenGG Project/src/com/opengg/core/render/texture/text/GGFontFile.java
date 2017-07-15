@@ -5,7 +5,8 @@
  */
 package com.opengg.core.render.texture.text;
 
-import com.opengg.core.util.GlobalInfo;
+import com.opengg.core.engine.GGConsole;
+import com.opengg.core.engine.OpenGG;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -49,12 +50,11 @@ public class GGFontFile {
      * @param file - the font file.
      */
     protected GGFontFile(File file) {
-        this.aspectRatio = (double) GlobalInfo.window.getWidth()/ (double) GlobalInfo.window.getHeight();
+        this.aspectRatio = OpenGG.getWindow().getRatio();
         openFile(file);
         loadPaddingData();
         loadLineSizes();
         int imageWidth = getValueOfVariable("scaleW");
-        System.out.println(imageWidth);
         loadCharacterData(imageWidth);
         close();
     }
@@ -65,6 +65,7 @@ public class GGFontFile {
 
     protected GGCharacter getCharacter(int ascii) {
         return metaData.get(ascii);
+        
     }
 
     /**
@@ -122,7 +123,7 @@ public class GGFontFile {
         try {
             reader = new BufferedReader(new FileReader(file));
         } catch (Exception e) {
-            System.err.println("Couldn't load the damn file!");
+            GGConsole.warning("Couldn't load the font file!");
         }
     }
     private void loadPaddingData() {

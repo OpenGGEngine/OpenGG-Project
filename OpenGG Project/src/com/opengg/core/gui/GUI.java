@@ -6,46 +6,28 @@
 
 package com.opengg.core.gui;
 
-import com.opengg.core.Matrix4f;
-import com.opengg.core.Vector2f;
-import com.opengg.core.Vector3f;
-import com.opengg.core.render.shader.Mode;
-import com.opengg.core.util.GlobalInfo;
+import com.opengg.core.math.Vector2f;
+import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.world.Camera;
-import java.util.ArrayList;
 
 /**
  *
  * @author Javier
  */
 public class GUI {
-    Vector2f low,high;
-    private ArrayList<GUIItem> guiitems = new ArrayList<>();
-    
-    public GUI(Vector2f low, Vector2f high) {
-        this.low = low;
-        this.high = high;
-    }
-    
-    public void setupGUI(Vector2f lowBound, Vector2f highBound){
-        low = lowBound;
-        high = highBound;
-    }
+    public static GUIGroup root = new GUIGroup(new Vector2f(0,0));
+
     public static void startGUIPos(){
-        GlobalInfo.main.setOrtho(-1, 1, -1, 1, -1, 1);
-        GlobalInfo.main.setView(new Camera());
+        ShaderController.setOrtho(-1, 1, -1, 1, -1, 1);
+        ShaderController.setView(new Camera().getMatrix());
     }
-    public static void enableGUI(){
-        GlobalInfo.main.setMode(Mode.GUI);
+
+    public static void render(){
+        ShaderController.useConfiguration("gui");
+        root.render(0,0);
     }
-    public void addItem(GUIItem item){
-        guiitems.add(item);
-    }
-    public void render(){
-        for(GUIItem item: guiitems){ 
-            //GlobalInfo.main.setModel(Matrix4f.translate(item.screenlocalpos.x + low.x, item.screenlocalpos.y + low.y, 0));
-            GlobalInfo.main.setModel(Matrix4f.translate(new Vector3f(0,0,0)));
-            item.render();
-        }
+    
+    public static void addItem(String name, GUIRenderable item){
+        root.addItem(name, item);
     }
 }

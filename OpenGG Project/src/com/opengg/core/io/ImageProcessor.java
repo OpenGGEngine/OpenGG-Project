@@ -42,7 +42,7 @@ public class ImageProcessor {
 
 			if (alpha != 0x00) {
 
-				//System.out.println(alpha + ": " + Integer.toHexString(pixel));
+				//info(alpha + ": " + Integer.toHexString(pixel));
 				pixel = 0xffff00ff;
 			}
 
@@ -55,8 +55,6 @@ public class ImageProcessor {
 		image.setRGB(0, 0, w, h, pixels, 0, w);
 		try {
 			ImageIO.write(image, "PNG", new FileOutputStream("res/new_" + filename));
-
-			System.out.println("saved");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

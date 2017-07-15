@@ -6,313 +6,534 @@
 
 package com.opengg.core.render.shader;
 
-import com.opengg.core.Matrix4f;
-import com.opengg.core.Vector3f;
+import com.opengg.core.engine.GGConsole;
+import com.opengg.core.engine.Resource;
+import com.opengg.core.exceptions.InvalidShaderException;
 import com.opengg.core.io.FileStringLoader;
-import com.opengg.core.io.newobjloader.Material;
-import com.opengg.core.render.window.ViewUtil;
-import com.opengg.core.util.GlobalInfo;
-import com.opengg.core.world.Camera;
+import com.opengg.core.math.Matrix4f;
+import com.opengg.core.math.Vector2f;
+import com.opengg.core.math.Vector3f;
+import com.opengg.core.model.Material;
+import com.opengg.core.render.GLBuffer;
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
 import java.net.URLDecoder;
-import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
-import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
-import static org.lwjgl.opengl.GL32.GL_GEOMETRY_SHADER;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  *
  * @author Javier
  */
 public class ShaderController {
-    ShaderProgram program;
-    private Shader fragmentTex;
-    private Shader vertexTex;
-    private Shader geomTex;
-    public int uniModel,rotm,lightpos,div,uniView,lightdistance,lightpower,shadow,skycolor,mode,specularexponent,specularexponents,specularcolor,hasspec,uniProj,billboard;
-    float ratio;
-    Matrix4f model= new Matrix4f(), view= new Matrix4f(), proj = new Matrix4f();
-    private int uvy;
-    private int uvx;
-    private int hasnorm;
-    private int lightcolor;
-    private int posAttrib;
-    private int colAttrib;
-    private int normAttrib;
-    private int texAttrib;
-    private int inst;
-    private int text;
-    private int time;
+    private static Matrix4f model= new Matrix4f(), view= new Matrix4f(), proj = new Matrix4f();
+    private static HashMap<String, Program> programs = new HashMap<>();
+    private static HashMap<String, Pipeline> pipelines = new HashMap<>(); 
+    private static HashMap<String, String> rnames = new HashMap<>();
+    private static List<String> searchedUniforms = new ArrayList<>();
+    private static List<String> searchedAttribs = new ArrayList<>();
+    private static String curv, curg, curf;
+    private static int currentBind = 0;
     
-    public void setup(URL vert, URL frag, URL geom) throws UnsupportedEncodingException{
-        vertexTex= new Shader(GL_VERTEX_SHADER, 
-                FileStringLoader.loadStringSequence(
-                        URLDecoder.decode(
-                                vert.getFile(), "UTF-8"))); 
-        geomTex = new Shader(GL_GEOMETRY_SHADER, 
-                FileStringLoader.loadStringSequence(
-                        URLDecoder.decode(
-                                geom.getFile(), "UTF-8"))); 
-        fragmentTex = new Shader(GL_FRAGMENT_SHADER, 
-                FileStringLoader.loadStringSequence(
-                        URLDecoder.decode(
-                                frag.getFile(), "UTF-8")));
-        program = new ShaderProgram();
+    public static void initialize(){
+        loadShader("mainvert", Resource.getShaderPath("object.vert"), Program.VERTEX);
+        loadShader("particlevert", Resource.getShaderPath("particle.vert"), Program.VERTEX);
+        loadShader("passthroughvert", Resource.getShaderPath("passthrough.vert"), Program.VERTEX);
+
+        loadShader("maingeom", Resource.getShaderPath("object.geom"), Program.GEOMETRY);
+        loadShader("passthroughgeom", Resource.getShaderPath("passthrough.geom"), Program.GEOMETRY);
+        loadShader("volumegeom", Resource.getShaderPath("volume.geom"), Program.GEOMETRY);
+        loadShader("mainadjgeom", Resource.getShaderPath("objectadj.geom"), Program.GEOMETRY);
+        loadShader("passthroughadjgeom", Resource.getShaderPath("passthroughadj.geom"), Program.GEOMETRY);
         
-        program.attachShader(vertexTex);   
-        program.attachShader(geomTex);
-        program.attachShader(fragmentTex); 
-        program.link();
-        program.use();
-        program.checkStatus();
+        loadShader("mainfrag", Resource.getShaderPath("phong.frag"), Program.FRAGMENT);
+        loadShader("shadowfrag", Resource.getShaderPath("phongshadow.frag"), Program.FRAGMENT);
+        loadShader("passthroughfrag", Resource.getShaderPath("passthrough.frag"), Program.FRAGMENT);
+        loadShader("ssaofrag", Resource.getShaderPath("ssao.frag"), Program.FRAGMENT);  
+        loadShader("cubemapfrag", Resource.getShaderPath("cubemap.frag"), Program.FRAGMENT); 
+        loadShader("ambientfrag", Resource.getShaderPath("ambient.frag"), Program.FRAGMENT); 
+        loadShader("texturefrag", Resource.getShaderPath("texture.frag"), Program.FRAGMENT);
+        loadShader("terrainfrag", Resource.getShaderPath("terrainmulti.frag"), Program.FRAGMENT);
+        //loadShader("bloomfrag", Resource.getShaderPath("bloom.frag"), Program.FRAGMENT);  
+        loadShader("addfrag", Resource.getShaderPath("add.frag"), Program.FRAGMENT);  
+        loadShader("guifrag", Resource.getShaderPath("gui.frag"), Program.FRAGMENT); 
+        loadShader("barfrag", Resource.getShaderPath("bar.frag"), Program.FRAGMENT); 
+        loadShader("hdrfrag", Resource.getShaderPath("hdr.frag"), Program.FRAGMENT); 
+        loadShader("waterfrag", Resource.getShaderPath("water.frag"), Program.FRAGMENT); 
+          
+        use("mainvert", "mainfrag");
+        saveCurrentConfiguration("object");   
         
-       initVertexAttributes();        
+        use("mainvert", "shadowfrag");
+        saveCurrentConfiguration("shadobject");   
         
+        use("mainvert", "terrainfrag");
+        saveCurrentConfiguration("terrain");
+        
+        use("mainvert", "ambientfrag");
+        saveCurrentConfiguration("ambient");     
+        
+        use("mainvert", "waterfrag");
+        saveCurrentConfiguration("water"); 
+        
+        use("passthroughvert", "ssaofrag");
+        saveCurrentConfiguration("ssao");
+        
+       // use("passthroughvert", "bloomfrag");
+       // saveCurrentConfiguration("bloom");
+        
+        use("passthroughvert", "hdrfrag");
+        saveCurrentConfiguration("hdr");
+
+        use("passthroughvert", "passthroughfrag");
+        saveCurrentConfiguration("passthrough");
+             
+        use("passthroughvert", "cubemapfrag");
+        saveCurrentConfiguration("sky");
+        
+        use("passthroughvert", "passthroughfrag");
+        saveCurrentConfiguration("volume");
+        
+        use("passthroughvert", "texturefrag");
+        saveCurrentConfiguration("texture");
+        
+        use("passthroughvert", "guifrag");
+        saveCurrentConfiguration("gui");
+        
+        use("passthroughvert", "barfrag");
+        saveCurrentConfiguration("bar");
+        
+        use("passthroughvert", "addfrag");
+        saveCurrentConfiguration("add");
+        
+        use("particlevert", "texturefrag");
+        saveCurrentConfiguration("particle");
+        
+        GGConsole.log("Default shaders loaded and validated");
+
         /* Set shader variables */
-         
-        inst = program.getUniformLocation("inst");
-        program.setUniform(inst, 0);
 
-        text = program.getUniformLocation("text");
-        program.setUniform(text, false);
-       
-        uniModel = program.getUniformLocation("model"); 
-        program.setUniform(uniModel, new Matrix4f());
-        
-        uniProj = program.getUniformLocation("projection"); 
-        program.setUniform(uniProj, new Matrix4f());
-        
-        int uniTex = program.getUniformLocation("texImage"); 
-        program.setUniform(uniTex, 0);
-        
-        int uniskycolor = program.getUniformLocation("skycolor"); 
-        program.setUniform(uniskycolor, new Vector3f(0.5f,0.5f,0.5f));
+        findUniform("inst");
+        setUniform("inst", 0);
 
-        int uniShadow = program.getUniformLocation("shadeImage"); 
-        program.setUniform(uniShadow, 1);
-        
-        int uniCube = program.getUniformLocation("cubemap"); 
-        program.setUniform(uniCube, 2);
-        
-        int uniNorm = program.getUniformLocation("normImage");
-        program.setUniform(uniNorm, 3);
-        
-        int uniSpec = program.getUniformLocation("specImage"); 
-        program.setUniform(uniSpec, 4);
-        
-        lightpos = program.getUniformLocation("light.lightpos"); 
-        program.setUniform(lightpos, new Vector3f(200,50,-10));
-        
-        
-        div = program.getUniformLocation("divAmount"); 
-        program.setUniform(div, 1f);
-        
-        uvx = program.getUniformLocation("uvmultx"); 
-        program.setUniform(uvx, (float)1f);
-        
-        uvy = program.getUniformLocation("uvmulty"); 
-        program.setUniform(uvy, (float)1f);
-        
-        rotm = program.getUniformLocation("rot");    
-        program.setUniform(rotm, new Vector3f(0,0,0));  
+        findUniform("text");
+        setUniform("text", 0);
 
-        uniView = program.getUniformLocation("view"); 
-        program.setUniform(uniView, new Matrix4f());
-        
-        shadow = program.getUniformLocation("shmvp"); 
-        //program.setUniform(shadow, new Matrix4f());
-        
-        lightdistance = program.getUniformLocation("light.lightdistance"); 
-        program.setUniform(lightdistance, 60f);
-        
-        lightpower = program.getUniformLocation("light.lightpower"); 
-        program.setUniform(lightpower, 300f);
-        
-        lightcolor = program.getUniformLocation("light.color"); 
-        program.setUniform(lightcolor, new Vector3f(1,1,1));
-        
-        mode = program.getUniformLocation("mode"); 
-        program.setUniform(mode, (int) 0);
-        
-        time = program.getUniformLocation("time"); 
-        program.setUniform(time, 0f);
-        
-        specularexponent = program.getUniformLocation("material.specexponent");
-        program.setUniform(specularexponent, 0);
-        
-        specularexponents = program.getUniformLocation("material.ka");
-        program.setUniform(specularexponents, 1f);
-        
-        specularcolor = program.getUniformLocation("material.ks");
-        program.setUniform(specularcolor, new Vector3f());
-        
-        hasspec = program.getUniformLocation("material.hasspecmap");
-        program.setUniform(hasspec, false);
-        
-        hasnorm = program.getUniformLocation("material.hasnormmap");
-        program.setUniform(hasnorm, false);
-        
-        billboard = program.getUniformLocation("billboard");
-        program.setUniform(billboard,1);
-        program.checkStatus();
-        
-        GlobalInfo.main = this;
-        
-        ViewUtil.setPerspective(80, 1280/720, 0.3f, 3000f, program);    
-    }
-    
-    public void initVertexAttributes() {
-        //programv.use();
-        posAttrib = program.getAttributeLocation("position");
+        findUniform("model");
+        setUniform("model", new Matrix4f());
 
-        colAttrib = program.getAttributeLocation("color");
+        findUniform("projection");
+        setUniform("projection", new Matrix4f());
         
-        normAttrib = program.getAttributeLocation("normal"); 
-        
-        texAttrib = program.getAttributeLocation("texcoord"); 
+        findUniform("cubemap");
+        setTextureLocation("cubemap", 2);
 
-    }
-    
-    public void defVertexAttributes(){
-        program.enableVertexAttribute(posAttrib);
-        program.pointVertexAttribute(posAttrib, 3, 12 * Float.BYTES, 0);
+        findUniform("skycolor");
+        setUniform("skycolor", new Vector3f(0.5f,0.5f,0.5f));
 
-        program.enableVertexAttribute(colAttrib);
-        program.pointVertexAttribute(colAttrib, 4, 12 * Float.BYTES, 3 * Float.BYTES);
+        findUniform("divAmount");
+        setUniform("divAmount", 1f);
         
-        program.enableVertexAttribute(normAttrib);
-        program.pointVertexAttribute(normAttrib, 3, 12 * Float.BYTES, 7 * Float.BYTES);
-        
-        program.enableVertexAttribute(texAttrib);
-        program.pointVertexAttribute(texAttrib, 2, 12 * Float.BYTES, 10 * Float.BYTES);      
-        program.setVertexAttribDivisor(colAttrib, 0);
+        findUniform("percent");
+        setUniform("percent", 1f);
 
-    }
-    
-    public void defInstancedVertexAttributes1(){
-        program.enableVertexAttribute(posAttrib);
-        program.pointVertexAttribute(posAttrib, 3, 12 * Float.BYTES, 0);
+        findUniform("uvmultx");
+        setUniform("uvmultx", (float)1f);
 
-        program.enableVertexAttribute(normAttrib);
-        program.pointVertexAttribute(normAttrib, 3, 12 * Float.BYTES, 7 * Float.BYTES);
+        findUniform("uvmulty");
+        setUniform("uvmulty", (float)1f);
         
-        program.enableVertexAttribute(texAttrib);
-        program.pointVertexAttribute(texAttrib, 2, 12 * Float.BYTES, 10 * Float.BYTES);
+        findUniform("uvoffsetx");
+        setUniform("uvoffsetx", (float)0f);
 
-    }
-    public void defInstancedVertexAttributes2(){
+        findUniform("uvoffsety");
+        setUniform("uvoffsety", (float)0f);
 
-        program.enableVertexAttribute(colAttrib);
-        program.pointVertexAttribute(colAttrib, 4, 3 * Float.BYTES, 0);
-        program.setVertexAttribDivisor(colAttrib, 1);
-    }
-    
-    public void setLightPos(Vector3f pos){
+        findUniform("rot");
+        setUniform("rot", new Vector3f(0,0,0));
         
-        program.setUniform(lightpos, pos);
-    }
-    
-    public void setModel(Matrix4f model){
+        findUniform("camera");
+        setUniform("camera", new Vector3f(0,0,0));
+
+        findUniform("view");
+        setUniform("view", new Matrix4f());
         
-        program.setUniform(uniModel, model);
-    }
-    
-    public void setTimeMod(float mod){
+        findUniform("numLights");
+        setUniform("numLights", 1);
+
+        findUniform("time");
+        setUniform("time", 0f);
         
-        program.setUniform(time, mod);
-    }
-    
-    public void setView(Matrix4f view){
+        findUniform("billboard");
+        setUniform("billboard", false);
         
-        program.setUniform(uniView, view);
-    }
-    
-    public void setDistanceField(boolean distfield){
+        findUniform("exposure");
+        setUniform("exposure", 0.5f);
         
-        program.setUniform(text, distfield);
-    }
-    
-    public void setPerspective(float fov, float aspect, float znear, float zfar){
+        findUniform("gamma");
+        setUniform("gamma", 2.2f);
         
-        ViewUtil.setPerspective(fov, aspect, znear, zfar, program);
-    }
-    
-    public void setOrtho(float left, float right, float bottom, float top, float near, float far){
+        findUniform("shadowmap"); 
+        setTextureLocation("shadowmap", 6);
+
+        findUniform("shadowmap2"); 
+        setTextureLocation("shadowmap2", 7);
         
-        ViewUtil.setOrtho(left, right, bottom, top, near, far, program);
-    }
-    
-    public void setFrustum(float left, float right, float bottom, float top, float near, float far){
+        findUniform("shadowmap3"); 
+        setTextureLocation("shadowmap3", 8);
         
-        ViewUtil.setFrustum(left, right, bottom, top, near, far, program);
+        setMatLinks();
+
+        checkError();     
     }
     
-    public ShaderProgram getProgram(){
+    private static void setMatLinks(){
+        findUniform("Kd"); 
+        setTextureLocation("Kd", 0);
         
-        return program;
+        findUniform("Ka");
+        setTextureLocation("Ka", 1);
+        
+        findUniform("bump");
+        setTextureLocation("bump", 3);
+        
+        findUniform("Ks"); 
+        setTextureLocation("Ks", 4);
+        
+        findUniform("Ns"); 
+        setTextureLocation("Ns", 5);
+        
+        findUniform("material.ka");
+        setUniform("material.ka", new Vector3f());
+        
+        findUniform("material.kd");
+        setUniform("material.kd", new Vector3f());
+        
+        findUniform("material.ks");
+        setUniform("material.ks", new Vector3f());
+        
+        findUniform("material.ns");
+        setUniform("material.ns", 0f);
+        
+        findUniform("material.hasspecmap");
+        setUniform("material.hasspecmap", false);
+        
+        findUniform("material.hasnormmap");
+        setUniform("material.hasnormmap", false);
+        
+        findUniform("material.hasambmap");
+        setUniform("material.hasambmap", false);
+        
+        findUniform("material.hasspecpow");
+        setUniform("material.hasspecpow", false);
+        
+        findUniform("material.hascolormap");
+        setUniform("material.hascolormap", false);
+    }  
+    
+    public static void setLightPos(Vector3f pos){ 
+        setUniform("light.lightpos", pos);
     }
     
-    public void setMode(Mode m){
+    public static void setModel(Matrix4f model){
+        setUniform("model", model);
+    }
+    
+    public static void setTimeMod(float mod){
+        setUniform("time", mod);
+    }
+    
+    public static void setView(Matrix4f view){
+        setUniform("view", view);
+    }
+    
+    public static void setDistanceField(int distfield){
+        setUniform("text", distfield);
+    }
+    
+    public static void setPerspective(float fov, float aspect, float znear, float zfar){
+        proj = Matrix4f.perspective(fov, aspect, znear, zfar);
+        setUniform("projection", proj);
+    }
+    
+    public static void setOrtho(float left, float right, float bottom, float top, float near, float far){
+        proj = Matrix4f.orthographic(left, right, bottom, top, near, far);
+        setUniform("projection", proj);
+    }
+    
+    public static void setFrustum(float left, float right, float bottom, float top, float near, float far){
+        proj = Matrix4f.frustum(left, right, bottom, top, near, far);
+        setUniform("projection", proj);
+    }
+    
+    public static void setMode(Mode m){
         switch(m){
             case OBJECT:
-                program.setUniform(mode, (int) 0);
-                break;
-            case OBJECT_NO_SHADOW:
-                program.setUniform(mode, (int) 1);
+                setUniform("mode", (int) 0);
                 break;
             case GUI:
-                program.setUniform(mode, (int) 2);
+                setUniform("mode", (int) 2);
                 break;
             case SKYBOX:
-                program.setUniform(mode, (int) 3);
+                setUniform("mode", (int) 3);
                 break;
             case POS_ONLY:
-                program.setUniform(mode, (int) 4);
+                setUniform("mode", (int) 4);
                 break;
             case PP:
-                program.setUniform(mode, (int) 5);
+                setUniform("mode", (int) 5);
                 break;
+            case SHADOW:
+                setUniform("mode", (int) 6);
         }
     }
     
-    public void checkError(){
+    public static void findAttribLocation(String loc){
+        for(String s : searchedAttribs)
+            if(s.equals(loc))
+                return;
+
+        programs.values().stream().filter((p) -> (p.type == Program.VERTEX)).forEach((p) -> {
+            p.findAttributeLocation(loc);
+        });
         
-        program.checkStatus();
+        searchedAttribs.add(loc);
     }
     
-    public void setShadowLightMatrix(Matrix4f m){
-        
-        program.setUniform(shadow, m);
+    public static void enableVertexAttribute(String loc){
+        programs.get(curv).enableVertexAttribute(loc);
     }
     
-    public void setView(Camera c){
+    public static void disableVertexAttribute(String loc){
+        programs.get(curv).enableVertexAttribute(loc);
+    }
+    
+    public static void pointVertexAttribute(String loc, int size, int tot, int start){
+        programs.get(curv).pointVertexAttribute(loc, size, tot, start);
+    }
+    
+    public static void setVertexAttribDivisor(String loc, int idk){
+        programs.get(curv).setVertexAttribDivisor(loc, idk);
+    }
+    
+    public static void findUniform(String loc){
+        if(searchedUniforms.contains(loc))
+            return;
+        for(Program p : programs.values()){
+            p.findUniformLocation(loc);
+        }
+        searchedUniforms.add(loc);
+    }
+    
+    public static void setUniform(String s, Vector3f v3){
+        for(Program p : programs.values()){
+            int loc = p.getUniformLocation(s);
+            if(loc >= 0)
+                p.setUniform(loc, v3);
+        }
+    }
+    
+    public static void setUniform(String s, Vector2f v2){
+        for(Program p : programs.values()){
+            int loc = p.getUniformLocation(s);
+            if(loc >= 0)
+                p.setUniform(loc, v2);
+        }
+    }
+    
+    public static void setUniform(String s, Matrix4f m4){
+        for(Program p : programs.values()){
+            int loc = p.getUniformLocation(s);
+            if(loc >= 0)
+                p.setUniform(loc, m4);
+        }
+    }
+    
+    public static void setUniform(String s, int i){
+        for(Program p : programs.values()){
+            int loc = p.getUniformLocation(s);
+            if(loc >= 0)
+                p.setUniform(loc, i);
+        }
+    }
+    
+    public static void setUniform(String s, float f){
+        for(Program p : programs.values()){
+            int loc = p.getUniformLocation(s);
+            if(loc >= 0)
+                p.setUniform(loc, f);
+        }
+    }
+    
+    public static void setUniform(String s, boolean b){
+        for(Program p : programs.values()){
+            int loc = p.getUniformLocation(s);
+            if(loc >= 0)
+                p.setUniform(loc, b);
+        }
+    }
        
-        Vector3f rot = c.getRot();       
-  
-        view = Matrix4f.rotate(rot.x,1,0,0).multiply(Matrix4f.rotate(rot.y,0,1,0).multiply(Matrix4f.rotate(rot.z,0,0,1))).multiply(Matrix4f.translate(c.getPos()));
-        
-        setView(view);
+    public static void setTextureLocation(String s, int i){
+        programs.values().stream().filter((p) -> (p.type == Program.FRAGMENT)).forEach((p) -> {
+            p.setUniform(p.getUniformLocation(s), i);
+        });
     }
     
-    public Matrix4f getMVP(){
+    public static int getUniqueUniformBufferLocation(){
+        int n = currentBind;
+        currentBind++;
+        return n;
+    }
+    
+    public static void setUniformBlockLocation(GLBuffer ubo, String name){
+        setUniformBlockLocation(ubo.getBase(), name);
+    }
+    
+    public static void setUniformBlockLocation(int bind, String name){
+        for(Program p : programs.values()){
+            p.setUniformBlockIndex(bind, name);
+        }
+    }
+    
+    public static void checkError(){
+        for(Program p : programs.values()){
+            p.checkStatus();
+        }
+        for(Pipeline p : pipelines.values()){
+            p.validate();
+        }
+    }
+
+    public static Matrix4f getMVP(){
         return proj.multiply(view).multiply(model);
     }
     
-    public void setUVMultX(float f){
-        program.setUniform(uvx, (float)f);
+    public static void setUVMultX(float f){
+        setUniform("uvmultx", (float)f);
     }
-    public void setUVMultY(float f){
-        program.setUniform(uvy, (float)f);
+    
+    public static void setUVMultY(float f){
+        setUniform("uvmulty", (float)f);
     }
-    public void setInstanced(boolean instanced){
-        program.setUniform(inst, instanced);
+    
+    public static void setInstanced(boolean instanced){
+        setUniform("inst", instanced);
     }
-    public void passMaterial(Material m,boolean specmap, boolean normmap){
-        program.setUniform(specularexponent, /*(float) m.nsExponent*/1f);
-        program.setUniform(specularexponents, new Vector3f((float)m.ka.rx,(float)m.ka.gy,(float)m.ka.bz));
-        program.setUniform(specularcolor, new Vector3f((float)m.ks.rx,(float)m.ks.gy,(float)m.ks.bz));
-        program.setUniform(hasspec, specmap);
-        program.setUniform(hasnorm, normmap);
+    
+    public static void passMaterial(Material m){
+        setUniform("material.ns", (float) m.nsExponent);
+        setUniform("material.ka", m.ka);
+        setUniform("material.kd", m.kd);
+        setUniform("material.ks", m.ks);
+        setUniform("material.hasspecmap", m.hasspecmap);
+        setUniform("material.hasnormmap", m.hasnormmap);
+        setUniform("material.hasspecpow", m.hasspecpow);
+        setUniform("material.hasambmap", m.hasreflmap);
+        setUniform("material.hascolormap", m.hascolmap);
     }
-    public void setBillBoard(int yes){  program.setUniform(billboard,yes);}
+    
+    public static void setBillBoard(int yes){  
+        setUniform("billboard", yes);
+    }
+    
+    private static void use(Program v, Program g, Program f){
+        String st;
+        if(g == null)
+            st = v.id + ";;" + f.id;
+        else
+            st = v.id + ";" + g.id + ";" + f.id;
+        
+        Pipeline p;
+        if((p = pipelines.get(st)) != null){
+            p.bind();
+            return;
+        }
+        p = new Pipeline(v,g,f);
+        pipelines.put(st, p);
+        p.bind();
+    }
+    
+    public static void use(String v, String g, String f){
+        curv = v;
+        curg = g;
+        curf = f;
+        use(programs.get(v), programs.get(g), programs.get(f));
+    }
+    
+    public static void use(String v, String f){
+        curv = v;
+        curg = "";
+        curf = f;
+        use(programs.get(v), null, programs.get(f));
+    }
+    
+    public static void saveConfiguration(String v, String g, String f, String name){
+        Program vp = programs.get(v);
+        Program gp = programs.get(g);
+        Program fp = programs.get(f);
+        
+        String st = vp.id + ";" + gp.id + ";" + fp.id;
+        
+        rnames.put(name, st);
+    }
+    
+    public static void saveConfiguration(String v, String f, String name){
+        Program vp = programs.get(v);
+        Program fp = programs.get(f);
+        
+        String st = vp.id + ";;" + fp.id;
+        
+        rnames.put(name, st);
+    }
+    
+    public static void saveCurrentConfiguration(String name){
+        if(!curg.equals(""))
+            saveConfiguration(curv, curg, curf, name);
+        else
+            saveConfiguration(curv,curf,name);
+    }
+    
+    public static void useConfiguration(String name){
+        String id = rnames.get(name);
+        Pipeline p = pipelines.get(id);
+               
+        if(p == null){
+            GGConsole.error("A shader configuration named " + name + " tried to be used, but no appropriate pipeline was found!");
+            throw new InvalidShaderException("Failed to find pipeline named " + name);
+        }
+        
+        curv = p.vert;
+        curg = p.geom;
+        curf = p.frag;
+        
+        p.bind();
+    }
+    
+    public static void clearPipelineCache(){
+        for(Pipeline p : pipelines.values()){
+            p.deletePipeline();
+        }
+        pipelines.clear();
+        pipelines = new HashMap<>();
+    }
+    
+    public static Program getProgram(String program){
+        return programs.get(program);
+    }
+    
+    public static boolean loadShader(String name, String loc, int type){
+        try {
+            CharSequence sec = FileStringLoader.loadStringSequence(URLDecoder.decode(loc, "UTF-8"));
+            programs.put(name, new Program(type, sec, name));
+            Program p = programs.get(name);
+            for(String s : searchedUniforms){
+                p.findUniformLocation(s);
+            }
+            p.checkStatus();
+            return true;
+        } catch (UnsupportedEncodingException ex) {
+            GGConsole.error("Failed to load shader: " + name);
+            return false;
+        }
+    }
 }

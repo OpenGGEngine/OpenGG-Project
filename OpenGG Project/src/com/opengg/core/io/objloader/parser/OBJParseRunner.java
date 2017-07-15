@@ -2,7 +2,7 @@
 
 package com.opengg.core.io.objloader.parser;
 
-import com.opengg.core.Vector3f;
+import com.opengg.core.math.Vector3f;
 import java.io.BufferedReader;
 import java.io.IOException;
 

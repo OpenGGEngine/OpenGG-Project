@@ -5,324 +5,262 @@
  */
 package com.opengg.core.render.texture;
 
-import com.opengg.core.util.GlobalInfo;
-import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
-import java.awt.image.BufferedImage;
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import com.opengg.core.engine.GGConsole;
 import java.nio.ByteBuffer;
-import javax.imageio.ImageIO;
-import org.lwjgl.BufferUtils;
+import java.util.ArrayList;
+import java.util.List;
 import org.lwjgl.opengl.EXTTextureFilterAnisotropic;
 import org.lwjgl.opengl.GL;
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL13.*;
-import static org.lwjgl.opengl.GL14.GL_DEPTH_COMPONENT32;
+import static org.lwjgl.opengl.GL11.GL_LINEAR;
+import static org.lwjgl.opengl.GL11.GL_NEAREST;
+import static org.lwjgl.opengl.GL11.GL_REPEAT;
+import static org.lwjgl.opengl.GL11.GL_RGBA;
+import static org.lwjgl.opengl.GL11.GL_RGBA8;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_S;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_T;
+import static org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE;
+import static org.lwjgl.opengl.GL11.glBindTexture;
+import static org.lwjgl.opengl.GL11.glGetFloat;
+import static org.lwjgl.opengl.GL12.GL_TEXTURE_MAX_LOD;
+import static org.lwjgl.opengl.GL12.GL_TEXTURE_MIN_LOD;
+import static org.lwjgl.opengl.GL12.GL_TEXTURE_WRAP_R;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP_NEGATIVE_X;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP_NEGATIVE_Y;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_X;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_Y;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_Z;
 import static org.lwjgl.opengl.GL14.GL_TEXTURE_LOD_BIAS;
-import static org.lwjgl.opengl.GL20.glDrawBuffers;
-import static org.lwjgl.opengl.GL30.*;
-import static org.lwjgl.opengl.GL32.glFramebufferTexture;
+import static org.lwjgl.opengl.GL30.GL_TEXTURE_2D_ARRAY;
+import org.lwjgl.system.MemoryUtil;
 
 
 /**
  *
  * @author Javier
  */
-public class Texture {
-    private int fb;
-    private int texture;
-    private int depthbuffer;
-    public static Texture blank;
-    int width;
-    int height;
-    int rendsizex, rendsizey;
-    private int texture2;
-     
-    public Texture(){
-        //this.loc = loc;
+public class Texture { 
+    NativeGLTexture tex;
+    List<TextureData> tdata = new ArrayList<>();
+    int type;
+    int colorformat;
+    int internalformat;
+    int datatype;
+    
+    int x;
+    int y;
+    int z;
+    
+    int minfilter;
+    int maxfilter;
+    int minlod;
+    int maxlod;
+    boolean anisotropy;
+    int lodbias;
+    int texwrap;
+    
+    boolean storage;
+
+    public Texture(int type){
+        this(type, GL_RGBA, GL_RGBA8, GL_UNSIGNED_BYTE);
     }
     
-    public void useTexture(int loc){
-        glActiveTexture(GL_TEXTURE0 + loc);
-        glBindTexture(GL_TEXTURE_2D, texture);
+    public Texture(int type, int colorformat, int internalformat, int datatype){
+        tex = new NativeGLTexture();
+        this.type = type;
+        this.colorformat = colorformat;
+        this.internalformat = internalformat;
+        this.datatype = datatype;
     }
     
-    public void useDepthTexture(int loc){
-        glActiveTexture(GL_TEXTURE0 + loc);
-        glBindTexture(GL_TEXTURE_2D, depthbuffer);       
+    public void bind(){
+        tex.bind(type);
     }
     
-    ByteBuffer buffer;
+    public void unbind(){
+        glBindTexture(type, 0);
+    }
+    
+    public void setActiveTexture(int loc){
+        tex.setActiveTexture(GL_TEXTURE0 + loc);
+    }
+    
+    public void use(int loc){
+        tex.setActiveTexture(GL_TEXTURE0 + loc);
+        tex.bind(type);
+    }
+    
+    public void set2DStorage(int width, int height){
+        tex.setImageStorage(type, 0, internalformat, width, height);
+    }
+    
+    public void set3DStorage(int width, int height, int depth){
+        tex.setImageStorage(type, 4, internalformat, width, height, depth);
+    }
+    
+    public void set2DData(TextureData data){
+        x = data.width;
+        y = data.height;
+        tex.setImageData(type, 0, internalformat, data.width, data.height, 0, colorformat, datatype, (ByteBuffer)data.buffer);
+        tdata.add(data);
+    }
+    
+    public void set2DSubData(int xoffset, int yoffset, TextureData data){
+        tex.setSubImageData(type, 0, xoffset, yoffset, data.width, data.height, colorformat, datatype, (ByteBuffer)data.buffer);
+    }
+    
+    public void setCubemapData(TextureData data1, TextureData data2, TextureData data3, TextureData data4, TextureData data5, TextureData data6){
+        x = data1.width;
+        y = data1.height;
+        tex.setImageData(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, internalformat, data1.width, data1.height, 0, colorformat, datatype, (ByteBuffer)data1.buffer);
+        tex.setImageData(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, internalformat, data2.width, data2.height, 0, colorformat, datatype, (ByteBuffer)data2.buffer);
+        tex.setImageData(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, internalformat, data3.width, data3.height, 0, colorformat, datatype, (ByteBuffer)data3.buffer);
+        tex.setImageData(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, internalformat, data4.width, data4.height, 0, colorformat, datatype, (ByteBuffer)data4.buffer);
+        tex.setImageData(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, internalformat, data5.width, data5.height, 0, colorformat, datatype, (ByteBuffer)data5.buffer);
+        tex.setImageData(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, internalformat, data6.width, data6.height, 0, colorformat, datatype, (ByteBuffer)data6.buffer);
+        tdata.add(data1);
+        tdata.add(data2);
+        tdata.add(data3);
+        tdata.add(data4);
+        tdata.add(data5);
+        tdata.add(data6);
+    }
+    
+    public void set3DData(TextureData[] datums){
+        long blength = 0;
+        for(int i = 0; i < datums.length; i++) blength += datums[i].buffer.limit();
+        ByteBuffer full = MemoryUtil.memAlloc((int) blength);
+        for(TextureData data : datums) full.put((ByteBuffer)data.buffer);
+        
+        tex.setImageData(type, 0, internalformat, datums[0].width, datums[0].height, datums.length, 0, colorformat, datatype, full);
+        for(TextureData datum : datums)
+            tdata.add(datum);
+    }
+    
+    public void set3DSubData(int xoffset, int yoffset, int zoffset, TextureData[] datums){
+        long blength = 0;
+        for(int i = 0; i < datums.length; i++) blength += datums[i].buffer.limit();
+        ByteBuffer full = MemoryUtil.memAlloc((int) blength);
+        for(TextureData data : datums) full.put((ByteBuffer)data.buffer);
+        full.flip();
+        
+        tex.setSubImageData(type, 0, xoffset, yoffset, zoffset, datums[0].width, datums[0].height, datums.length, GL_RGBA, datatype, full);
+    }
+    
+    public void generateMipmaps(){
+        tex.generateMipmap(type);
+    }
+    
+    public void setMinimumLOD(int mlod){
+        tex.setParameteri(type, GL_TEXTURE_MIN_LOD, mlod);
+    }
+    
+    public void setMaximumLOD(int mlod){
+        tex.setParameteri(type, GL_TEXTURE_MAX_LOD, mlod);
+    }
+    
+    public void setMinimumFilterType(int ftype){
+        tex.setParameteri(type, GL_TEXTURE_MIN_FILTER, ftype);
+    }
+    
+    public void setMaximumFilterType(int ftype){
+        tex.setParameteri(type, GL_TEXTURE_MAG_FILTER, ftype);
+    }
+    
+    public void setAnisotropyLevel(int level){
+        if(GL.getCapabilities().GL_EXT_texture_filter_anisotropic){
+            float lev = Math.min(level, glGetFloat(EXTTextureFilterAnisotropic.GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT));
+            tex.setParameterf(GL_TEXTURE_2D, EXTTextureFilterAnisotropic.GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, lev);
+        }else{
+            GGConsole.warning("Anisotropy is not available on this device");
+        }
+    }
     
     public void setLODBias(int bias){
-        glActiveTexture(GL_TEXTURE9);
-        glBindTexture(GL_TEXTURE_2D, texture);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS, bias);
-        glActiveTexture(GL_TEXTURE0);
+        tex.setParameteri(type, GL_TEXTURE_LOD_BIAS, bias);
     }
     
-    public void setMagFilter(int filter){
-        glActiveTexture(GL_TEXTURE9);
-        glBindTexture(GL_TEXTURE_2D, texture);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
-        glActiveTexture(GL_TEXTURE0);
+    public void setTextureWrapType(int wtype){
+        tex.setParameteri(type, GL_TEXTURE_WRAP_S, wtype);
+        tex.setParameteri(type, GL_TEXTURE_WRAP_T, wtype);
+        tex.setParameteri(type, GL_TEXTURE_WRAP_R, wtype);
     }
     
-    public void setMinFilter(int filter){
-        glActiveTexture(GL_TEXTURE9);
-        glBindTexture(GL_TEXTURE_2D, texture);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
-        glActiveTexture(GL_TEXTURE0);
+    public List<TextureData> getData(){
+        return tdata;
     }
     
-    public void blitBuffer(){
-        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);   // Make sure no FBO is set as the draw framebuffer
-          glBindFramebuffer(GL_READ_FRAMEBUFFER, fb); // Make sure your multisampled FBO is the read framebuffer
-          glDrawBuffer(GL_BACK);                       // Set the back buffer as the draw buffer
-          glBlitFramebuffer(0, 0, GlobalInfo.window.getWidth(), GlobalInfo.window.getHeight(), 0, 0, GlobalInfo.window.getWidth(), GlobalInfo.window.getHeight(), GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    public int getID(){
+        return tex.getID();
     }
     
-    public int setupTexToBuffer(int sizex, int sizey){
-        //glActiveTexture(GL_TEXTURE0 + loc);
-        rendsizex = sizex;
-        rendsizey = sizey;
-        fb = glGenFramebuffers();
-        glBindFramebuffer(GL_FRAMEBUFFER, fb);
-        glDrawBuffers(GL_COLOR_ATTACHMENT0);
-        
-        
-        texture = glGenTextures();
-        glBindTexture(GL_TEXTURE_2D, texture);
-        glTexImage2D(GL_TEXTURE_2D, 0,GL_RGB, sizex, sizey, 0,GL_RGB, 
-                GL_UNSIGNED_BYTE, (ByteBuffer) null);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texture, 0);
-        
-        texture2 = glGenTextures();
-        glBindTexture(GL_TEXTURE_2D, texture2);
-        glTexImage2D(GL_TEXTURE_2D, 0,GL_RGB, sizex, sizey, 0,GL_RGB, 
-                GL_UNSIGNED_BYTE, (ByteBuffer) null);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, texture2, 0);
-        
-        depthbuffer = glGenTextures();
-        glBindTexture(GL_TEXTURE_2D, depthbuffer);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, sizex, sizey, 0, GL_DEPTH_COMPONENT, 
-                GL_FLOAT, (ByteBuffer) null);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        
-        glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthbuffer, 0);
-        
-
-        try{
-            if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE){
-                throw new Exception("Buffer failed to generate!");
-                
-            }
-        }catch(Exception e){
-            e.printStackTrace();
-        } 
-        glBindTexture(GL_TEXTURE_2D, 0);
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);    
+    public void delete(){
+        tex.delete();
+    }
+    
+    public static Texture get2DTexture(String path){
+        return get2DTexture(TextureManager.loadTexture(path));
+    }
+    
+    public static Texture get2DTexture(TextureData data){
+        Texture texture = new Texture(GL_TEXTURE_2D);
+        texture.setActiveTexture(0);
+        texture.bind();
+        texture.set2DData(data);
+        texture.setTextureWrapType(GL_REPEAT);
+        texture.setMinimumFilterType(GL_LINEAR);
+        texture.setMaximumFilterType(GL_NEAREST);
+        texture.generateMipmaps();
+        texture.unbind();
         return texture;
     }
     
-    public void startTexRender(){
-        //glActiveTexture(GL_TEXTURE0 + loc);
-        glBindTexture(GL_TEXTURE_2D, 0);
-        glBindFramebuffer(GL_FRAMEBUFFER, fb);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glViewport(0,0,rendsizex, rendsizey); 
+    public static Texture getCubemap(String path1, String path2, String path3, String path4, String path5, String path6){
+        TextureData data1 = TextureManager.loadTexture(path1, false);
+        TextureData data2 = TextureManager.loadTexture(path2, false);
+        TextureData data3 = TextureManager.loadTexture(path3, false);
+        TextureData data4 = TextureManager.loadTexture(path4, false);
+        TextureData data5 = TextureManager.loadTexture(path5, false);
+        TextureData data6 = TextureManager.loadTexture(path6, false);
+        return getCubemap(data1,data2,data3,data4,data5,data6);
     }
     
-    public void endTexRender(){
-        glFlush();
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        glViewport(0,0,GlobalInfo.window.getWidth(),GlobalInfo.window.getHeight());
-    }
-    
-    public int loadFromBuffer(ByteBuffer b, int fwidth, int fheight){
-        //glActiveTexture(GL_TEXTURE0 + loc);
+   public static Texture getCubemap(TextureData data1, TextureData data2, TextureData data3, TextureData data4, TextureData data5, TextureData data6){
         
-        texture = glGenTextures();
-        glBindTexture(GL_TEXTURE_2D, texture);
-        glGenerateMipmap(GL_TEXTURE_2D);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        
-        buffer = b;
-        
-        width = fwidth;
-        height = fheight;
-        
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, fwidth, fheight, 0, GL_RGBA, GL_UNSIGNED_BYTE, b);
-        glBindTexture(GL_TEXTURE_2D, 0);
-        
+        Texture texture = new Texture(GL_TEXTURE_CUBE_MAP);
+        texture.setActiveTexture(0);
+        texture.bind();
+        texture.setCubemapData(data1, data2, data3, data4, data5, data6);
+        texture.setTextureWrapType(GL_REPEAT);
+        texture.setMinimumFilterType(GL_LINEAR);
+        texture.setMaximumFilterType(GL_NEAREST);
+        texture.generateMipmaps();
+        texture.unbind();
         return texture;
     }
     
-    public int loadTexture(String path, boolean flipped){
-        glActiveTexture(GL_TEXTURE0);
-        texture = glGenTextures();
-        glBindTexture(GL_TEXTURE_2D, texture);
-        
-
-        try{
-            
-            BufferedImage image = new BufferedImage(1,1,1);
-            if(path.substring(path.lastIndexOf(".")).equals(".tga")){
-                loadtga(path);
-            }else{
-                InputStream in;
-                ByteBuffer buffer;
-
-                in = new FileInputStream(path);
-                image = ImageIO.read(in);
-            }
-            AffineTransform transform = AffineTransform.getScaleInstance(1f, -1f);
-            transform.translate(0, -image.getHeight());
-            AffineTransformOp operation = new AffineTransformOp(transform, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
-            image = operation.filter(image, null);
-
-            int width = image.getWidth();
-            int height = image.getHeight();
-
-            int[] pixels = new int[width * height];
-            image.getRGB(0, 0, width, height, pixels, 0, width);
-            buffer = BufferUtils.createByteBuffer(width * height * 4);
-            for (int y = 0; y < height; y++) {
-                for(int x = 0; x < width; x++){
-                //for (int x = width-1; x > 0; x--) {
-                    /* Pixel as RGBA: 0xAARRGGBB */
-                    int pixel;
-                    if(flipped){
-                        pixel = pixels[y * width + x];
-                    }else{
-                        pixel = pixels[height - y  * width + x];
-                    }
-                    /* Red component 0xAARRGGBB >> (4 * 4) = 0x0000AARR */
-                    buffer.put((byte) ((pixel >> 16) & 0xFF));
-
-                    /* Green component 0xAARRGGBB >> (2 * 4) = 0x00AARRGG */
-                    buffer.put((byte) ((pixel >> 8) & 0xFF));
-
-                    /* Blue component 0xAARRGGBB >> 0 = 0xAARRGGBB */
-                    buffer.put((byte) (pixel & 0xFF));
-
-                    /* Alpha component 0xAARRGGBB >> (6 * 4) = 0x000000AA */
-                    buffer.put((byte) ((pixel >> 24) & 0xFF));
-                }
-            }
-
-            buffer.flip();
-            //buffer = TexBufferGen.genTex(path);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);//GL_LINEAR_MIPMAP_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS, -2);
-            glGenerateMipmap(GL_TEXTURE_2D);
-            glBindTexture(GL_TEXTURE_2D, 0);
-            
-        } catch (FileNotFoundException ex) {
-            //Logger.getLogger(Texture.class.getName()).severe("File not found!");
-            ex.printStackTrace();
-        }  catch (Exception e){
-            e.printStackTrace();
-        }
+    public static Texture getArrayTexture(String... paths){
+        TextureData[] datums = new TextureData[paths.length];
+        for(int i = 0; i < paths.length; i++) datums[i] = TextureManager.loadTexture(paths[i]);
+        return  getArrayTexture(datums);
+    }
+    
+    public static Texture getArrayTexture(TextureData... datums){
+        Texture texture = new Texture(GL_TEXTURE_2D_ARRAY);
+        texture.setActiveTexture(0);
+        texture.bind();
+        texture.set3DStorage(datums[0].width, datums[0].height, datums.length);
+        texture.set3DSubData(0, 0, 0, datums);
+        texture.setTextureWrapType(GL_REPEAT);
+        texture.setMinimumFilterType(GL_LINEAR);
+        texture.setMaximumFilterType(GL_LINEAR);
+        texture.generateMipmaps();
+        texture.unbind();
         return texture;
     }
-    public ByteBuffer getData(){
-        return buffer;
-    }
-    public void setAnisotropy(int level){
-        if(GL.getCapabilities().GL_EXT_texture_filter_anisotropic){
-            System.out.println("Passed");
-            float lev = Math.min(level, glGetFloat(EXTTextureFilterAnisotropic.GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT));
-            glTexParameterf(GL_TEXTURE_2D, EXTTextureFilterAnisotropic.GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, lev);
-        }
-        
-    }
-    private int offset;
-    
-    private BufferedImage loadtga(String filename) throws IOException{
-        File f = new File(filename);
-        byte[] buf = new byte[(int)f.length()];
-        BufferedInputStream bis = new BufferedInputStream(new FileInputStream(f));
-        bis.read(buf);
-        bis.close();
-        return decode(buf);
-
-    }
-    private static int btoi(byte b)
-        {
-                int a = b;
-                return (a<0?256+a:a);
-        }
-
-        private int read(byte[] buf)
-        {
-                return btoi(buf[offset++]);
-        }
-
-        public BufferedImage decode(byte[] buf) throws IOException
-        {
-                offset = 0;
-
-                // Reading header
-                for (int i=0;i<12;i++)
-                        read(buf);
-                int width = read(buf)+(read(buf)<<8);
-                int height = read(buf)+(read(buf)<<8);
-                read(buf);
-                read(buf);
-
-                // Reading data
-                int n = width*height;
-                int[] pixels = new int[n];
-                int idx=0;
-
-                while (n>0)
-                {
-                        int nb = read(buf);
-                        if ((nb&0x80)==0)
-                        {
-                                for (int i=0;i<=nb;i++)
-                                {
-                                        int b = read(buf);
-                                        int g = read(buf);
-                                        int r = read(buf);
-                                        pixels[idx++] = 0xff000000 | (r<<16) | (g<<8) | b;
-                                }
-                        }
-                        else
-                        {
-                                nb &= 0x7f;
-                                int b = read(buf);
-                                int g = read(buf);
-                                int r = read(buf);
-                                int v = 0xff000000 | (r<<16) | (g<<8) | b;
-                                for (int i=0;i<=nb;i++)
-                                        pixels[idx++] = v;
-                        }
-                        n-=nb+1;
-                }
-
-                BufferedImage bimg = new BufferedImage(width,height,BufferedImage.TYPE_INT_ARGB);
-                bimg.setRGB(0,0,width,height,pixels,0,width);
-                return bimg;
-        }
-
 }
-

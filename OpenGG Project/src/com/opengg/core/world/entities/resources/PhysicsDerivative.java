@@ -5,8 +5,8 @@
  */
 package com.opengg.core.world.entities.resources;
 
-import com.opengg.core.Quaternion4f;
-import com.opengg.core.Vector3f;
+import com.opengg.core.math.Quaternionf;
+import com.opengg.core.math.Vector3f;
 
 /**
  *
@@ -17,7 +17,7 @@ public class PhysicsDerivative {
 
     Vector3f velocity = new Vector3f();
     Vector3f force = new Vector3f();
-    Quaternion4f spin = new Quaternion4f();
+    Quaternionf spin = new Quaternionf();
     Vector3f torque = new Vector3f();
 
     public static PhysicsDerivative evaluate(PhysicsState state, float t) {
@@ -29,10 +29,10 @@ public class PhysicsDerivative {
     }
 
     public static PhysicsDerivative evaluate(PhysicsState state, float t, float dt, PhysicsDerivative derivative) {
-        state.pos.addEquals(derivative.velocity.multiply(dt));
-        state.momentum.addEquals(derivative.force.multiply(dt));
+        state.pos.addThis(derivative.velocity.multiply(dt));
+        state.momentum.addThis(derivative.force.multiply(dt));
         state.rot.addEquals(derivative.spin.multiply(dt));
-        state.angularMomentum.addEquals(derivative.torque.multiply(dt));
+        state.angularMomentum.addThis(derivative.torque.multiply(dt));
         state.recalculate();
 
         PhysicsDerivative output = new PhysicsDerivative();

@@ -1,371 +1,132 @@
 package com.opengg.test;
 
-import com.opengg.core.Matrix4f;
-import com.opengg.core.Vector2f;
-import com.opengg.core.Vector3f;
-import com.opengg.core.audio.AudioHandler;
 import com.opengg.core.audio.AudioListener;
-import com.opengg.core.audio.AudioSource;
-import com.opengg.core.engine.WorldManager;
+import com.opengg.core.engine.BindController;
+import com.opengg.core.engine.GGApplication;
+import com.opengg.core.engine.OpenGG;
+import com.opengg.core.engine.RenderEngine;
+import com.opengg.core.engine.Resource;
+import com.opengg.core.engine.WorldEngine;
 import com.opengg.core.gui.GUI;
 import com.opengg.core.gui.GUIText;
-import com.opengg.core.io.input.KeyboardEventHandler;
-import com.opengg.core.io.input.KeyboardListener;
-import com.opengg.core.io.objloader.parser.OBJModel;
-import com.opengg.core.io.objloader.parser.OBJParser;
-import com.opengg.core.model.OBJ;
-import com.opengg.core.movement.MovementLoader;
-import com.opengg.core.render.VertexArrayObject;
-import com.opengg.core.render.buffer.ObjectBuffers;
-import com.opengg.core.render.drawn.DrawnObject;
-import com.opengg.core.render.drawn.DrawnObjectGroup;
-import com.opengg.core.render.drawn.InstancedDrawnObject;
-import com.opengg.core.render.drawn.MatDrawnObject;
-import static com.opengg.core.render.gl.GLOptions.enable;
-import com.opengg.core.render.shader.Mode;
+import com.opengg.core.io.ControlType;
+import static com.opengg.core.io.input.keyboard.Key.*;
+import com.opengg.core.math.Vector2f;
+import com.opengg.core.math.Vector3f;
+import com.opengg.core.render.Text;
 import com.opengg.core.render.shader.ShaderController;
-import com.opengg.core.render.texture.Cubemap;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.texture.text.GGFont;
-import com.opengg.core.render.window.DisplayMode;
-import com.opengg.core.render.window.GLFWWindow;
-import static com.opengg.core.render.window.RenderUtil.endFrame;
-import static com.opengg.core.render.window.RenderUtil.startFrame;
-import com.opengg.core.util.GlobalInfo;
-import com.opengg.core.util.Time;
-import com.opengg.core.world.Camera;
+import com.opengg.core.render.window.WindowInfo;
+import com.opengg.core.render.window.WindowOptions;
+import com.opengg.core.world.Skybox;
+import com.opengg.core.world.Terrain;
 import com.opengg.core.world.World;
-import com.opengg.core.world.WorldObject;
-import com.opengg.core.world.components.ModelRenderComponent;
-import com.opengg.core.world.components.PhysicsComponent;
-import java.io.File;
-import java.io.FileNotFoundException;
+import com.opengg.core.world.components.FreeFlyComponent;
+import com.opengg.core.world.components.SunComponent;
+import com.opengg.core.world.components.TerrainComponent;
+import com.opengg.core.world.components.WaterComponent;
+import com.opengg.core.world.components.particle.FountainParticleEmitter;
+import com.opengg.core.world.generators.DiamondSquare;
 import java.io.IOException;
-import java.net.URL;
-import java.nio.FloatBuffer;
-import org.lwjgl.BufferUtils;
-import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL32.GL_TEXTURE_CUBE_MAP_SEAMLESS;
 
-public class OpenGGTest implements KeyboardListener {
-
-    static long window;
-    GLFWWindow win;
-    private float ratio;
-    private float sens = 0.25f;
-    private float sav;
-    public float xrot, yrot;
-    public boolean lock = false;
-    public float rot1 = 0, rot2 = 0;
-    Vector3f rot = new Vector3f(0, 0, 0);
-    Vector3f pos = new Vector3f(0, -10, -30);
-    WorldObject terrain;
-    WorldObject drawnobject;
-    
-    World w;
+public class OpenGGTest extends GGApplication{
+    private GGFont font;
+    private Text text;
+    private TerrainComponent world;
+    private Texture t2;
+    private AudioListener as;
     
     public static void main(String[] args) throws IOException, Exception {
-        new OpenGGTest();
+        WindowInfo w = new WindowInfo();
+        w.displaymode = WindowOptions.WINDOWED;
+        w.width = 1280;
+        w.height = 1024;
+        w.resizable = true;
+        w.type = "GLFW";
+        w.vsync = true;
+        OpenGG.initialize(new OpenGGTest(), w);
     }
 
-    private VertexArrayObject vao;
-
-    Camera c;
-    Texture t1 = new Texture();
-    Texture t2 = new Texture();
-    Texture ppbf = new Texture();
-    InstancedDrawnObject flashbang;
-    DrawnObject test5,sky;
-    DrawnObjectGroup test6;
-    MatDrawnObject awp3, base2;
-    GGFont f;
-
-    OBJModel m;
-    OBJModel m2;
-    private Texture t3 = new Texture();
-    private Cubemap cb = new Cubemap();
-    private ShaderController s = new ShaderController();
-    private Time t;
-    WorldObject w1, w2;
-    private AudioSource so,so2,so3;
-    private AudioListener as;
-    private DrawnObject ppsht;
-    private WorldObject awps;
-    private PhysicsComponent bad;
-    
-    public OpenGGTest() throws IOException, Exception {
-        KeyboardEventHandler.addToPool(this);
-
-   
-        try {
-            win = new GLFWWindow(1280, 960, "Test", DisplayMode.WINDOWED);
-            
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
-        setup();
-        while (!win.shouldClose()) {
-            startFrame();
-
-            update();
-            render();
-            endFrame(win);
-        }
+    @Override
+    public  void setup(){
+        //Soundtrack track = new Soundtrack();
+        //track.addSong("C:\\res\\gun.ogg");
+        //track.addSong("C:\\res\\mgs.ogg");
+        //track.play();
+        //SoundtrackHandler.setSoundtrack(track);
         
-        exit();
-    }
-
-    FloatBuffer base, test2, test;
-
-    public void setup() throws FileNotFoundException, IOException, Exception {
-        MovementLoader.setup(window, 80);
-        
-        vao = new VertexArrayObject();
-        vao.bind();
-        
-        URL verts = OpenGGTest.class.getResource("res/shaders/shader.vert");
-        URL frags = OpenGGTest.class.getResource("res/shaders/shader.frag");
-        URL geoms = OpenGGTest.class.getResource("res/shaders/shader.geom");
-        
-        s.setup(verts, frags, geoms);
-        
-        c = new Camera(pos, rot);
-        c.setPos(pos);
-        c.setRot(rot);
-
-        System.out.println("Shader/VAO Loading and Generation Complete");
-        
-        AudioHandler.init(1);
-        so = AudioHandler.loadSound(OpenGGTest.class.getResource("res/maw.wav"));
-
-        so2 = AudioHandler.loadSound(OpenGGTest.class.getResource("res/mgs.wav"));
-        
-        so3 = AudioHandler.loadSound(OpenGGTest.class.getResource("res/stal.wav"));
-
-        
-        t1.setupTexToBuffer(2000,2000);
-        ppbf.setupTexToBuffer(win.getWidth(), win.getHeight());
-        t3.loadTexture("C:/res/deer.png", true);
-        t2.loadTexture("C:/res/test.png", true);
-        f = new GGFont(t2, new File("C:/res/test.fnt"));
-        GUIText g = new GUIText("It is a period of civil war. Rebel spaceships, striking from a hidden base,"
-                + " have won their first victory against the evil Galactic Empire. During the battle,"
-                + " Rebel spies managed to steal secret plans to the Empires ultimate weapon, the DEATH STAR,"
-                + " an armored space station with enough power to destroy an entire planet. \n\n"
-                + " Pursued by the Empires sinister agents, Princess Leia races home aboard her starship,"
-                + " custodian of the stolen plans that can save her people and restore freedom to the galaxy...", f, 20f, new Vector2f(), 10, false);
-        awp3 = f.loadText(g);
-        
-        g = new GUIText("Turmoil has engulfed the Galactic Republic. The taxation of trade routes to outlying star systems is in dispute. \n" 
-                + "\n" 
+        font = Resource.getFont("test", "test.png");
+        text = new Text("Turmoil has engulfed the Galactic Republic. The taxation of trade routes to outlying star systems is in dispute. \n\n"
                 + " Hoping to resolve the matter with a blockade of deadly battleships, "
-                + "the greedy Trade Federation has stopped all shipping to the small planet of Naboo. \n" 
-                + "\n" 
+                + " the greedy Trade Federation has stopped all shipping to the small planet of Naboo. \n\n"
                 + " While the congress of the Republic endlessly debates this alarming chain of events,"
                 + " the Supreme Chancellor has secretly dispatched two Jedi Knights,"
-                + " the guardians of peace and justice in the galaxy, to settle the conflict...", f, 2f, new Vector2f(), 1, false);
+                + " the guardians of peace and justice in the galaxy, to settle the conflict...", new Vector2f(), 1f, 0.5f, false);
+        GUI.addItem("aids", new GUIText(text, font, new Vector2f(0f,0)));
+        /*
+        World w = WorldEngine.getCurrent();
         
-        base2 = f.loadText(g);
-        base2.setMatrix(Matrix4f.translate(0,0,0).multiply(Matrix4f.scale(1f, 1f, 1)));
-        
-        t2.useTexture(0);
-        cb.loadTexture("C:/res/skybox/majestic");
-        
-        URL path = OpenGGTest.class.getResource("res/models/deer.obj");
-        URL path2 = OpenGGTest.class.getResource("res/models/awp3.obj");
-        m = new OBJParser().parse(path);
-        m2 = new OBJParser().parse(path2);
-        
-        test = ObjectBuffers.genBuffer(m, 1f, 0.2f, new Vector3f());
-        test2 = ObjectBuffers.genBuffer(m2, 1f, 1f, new Vector3f());
-        test6 = OBJ.getDrawableModel("C:/res/3DSMusicPark/3DSMusicPark.obj");
-        
-        FloatBuffer b = BufferUtils.createFloatBuffer(12);
-        b.put(20).put(20).put(20).put(20).put(40).put(40)
-                .put(40).put(40).put(60).put(60).put(60).put(60);
-        b.flip();
-        
-        flashbang = new InstancedDrawnObject(test2, b);
+        w.setFloor(10);
 
-        ppsht = new DrawnObject(ObjectBuffers.getSquareUI(-1, 1, -1, 1, 1f, 1, false),12);
-        test2 = ObjectBuffers.genSkyCube();
-        sky = new DrawnObject(test2, 12);
+//        world = new TerrainComponent(Terrain.generateProcedural(new DiamondSquare(7,20,20,5.5f), 700, 700));
+//        world.setScale(new Vector3f(800,10,800));
+//        world.setPositionOffset(new Vector3f(-400, -20,-400));
+//        world.setGroundArray(Texture.getArrayTexture(Resource.getTexturePath("grass.png"),
+//                Resource.getTexturePath("dirt.png"),
+//                Resource.getTexturePath("flower2.png"),
+//                Resource.getTexturePath("road.png")));
+//        world.setBlotmap(Resource.getTexture("blendMap.png"));
         
-        System.out.println("Model and Texture Loading Completed");
-        
-        w = WorldManager.getDefaultWorld();
-        GlobalInfo.curworld = w;
-        w.floorLev = -10;
-        w.addObject(w1 = new WorldObject(awp3));
-        w.addObject(w2 = new WorldObject(flashbang));
-        flashbang.removeBuffer();
-        
-        ModelRenderComponent m = new ModelRenderComponent(test6);
-        ModelRenderComponent l = new ModelRenderComponent(flashbang);
+        FreeFlyComponent player = new FreeFlyComponent();
+        //TestPlayerComponent player = new TestPlayerComponent();
+        player.use();
 
-        l.setPosition(new Vector3f(10,30,0));
-
-        terrain = new WorldObject();
-        awps = new WorldObject();
-        awps.attach(l);
-        terrain.attach(m);
+        FountainParticleEmitter particle = new FountainParticleEmitter(8,5,1,Resource.getTexture("emak.png"));
+        WaterComponent water = new WaterComponent(Resource.getTexture("water.jpg"), 0.1f, 100f, 9000f);
+        //water.setPositionOffset(new Vector3f(0,10,0));
         
-        bad = new PhysicsComponent();
-        terrain.attach(bad);
-        ratio = win.getRatio();
+        w.attach(player);
+        //w.attach(world);
+        //w.attach(particle);
+        w.attach(new SunComponent(Resource.getTexture("emak.png"), 1f));
+        w.attach(water);
+        WorldEngine.saveWorld(w, "testworld");
+        WorldEngine.useWorld(w);
+        */
         
-        t = new Time();
+        WorldEngine.useWorld(WorldEngine.loadWorld("testworld"));
+                
+        BindController.addBind(ControlType.KEYBOARD, "forward", KEY_W);
+        BindController.addBind(ControlType.KEYBOARD, "backward", KEY_S);
+        BindController.addBind(ControlType.KEYBOARD, "left", KEY_A);
+        BindController.addBind(ControlType.KEYBOARD, "right", KEY_D);
+        BindController.addBind(ControlType.KEYBOARD, "up", KEY_SPACE);
+        BindController.addBind(ControlType.KEYBOARD, "down", KEY_LEFT_SHIFT);
+        BindController.addBind(ControlType.KEYBOARD, "lookright", KEY_RIGHT);
+        BindController.addBind(ControlType.KEYBOARD, "lookleft", KEY_LEFT);
+        BindController.addBind(ControlType.KEYBOARD, "lookup", KEY_UP);
+        BindController.addBind(ControlType.KEYBOARD, "lookdown", KEY_DOWN);
+        BindController.addBind(ControlType.KEYBOARD, "fire", KEY_L);
+        BindController.addBind(ControlType.KEYBOARD, "aim", KEY_K);
         
-        as = new AudioListener();
-        AudioHandler.setListener(as);
+        RenderEngine.setSkybox(new Skybox(Texture.getCubemap(
+                Resource.getTexturePath("skybox\\majestic_ft.png"),
+                Resource.getTexturePath("skybox\\majestic_bk.png"),
+                Resource.getTexturePath("skybox\\majestic_up.png"),
+                Resource.getTexturePath("skybox\\majestic_dn.png"),
+                Resource.getTexturePath("skybox\\majestic_rt.png"),
+                Resource.getTexturePath("skybox\\majestic_lf.png")), 1500f));
         
-        enable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-        enable(GL_DEPTH_TEST);
-        glDepthFunc(GL_LEQUAL);
-
-        enable(GL_TEXTURE_2D);
-
-        enable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
-
-        glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
-        System.out.println("Setup Complete");
+        
     }
-
-    public void exit() {
-       
-        AudioHandler.destroy();
-        vao.delete();
-    }
-
-    public void render() {
-        rot = new Vector3f(yrot, xrot, 0);
-        if(lock){
-            rot = MovementLoader.processRotation(sens, false);
-        }
-        pos = MovementLoader.processMovement(pos, rot);
-        
-        as.setPos(pos);
-        as.setRot(rot);
-        AudioHandler.setListener(as);
-        
-        //glEnable(GL_CULL_FACE);
-        c.setPos(new Vector3f(15, -40, -10));
-        c.setRot(new Vector3f(60, 50, 0));
-
-        s.setLightPos(new Vector3f(40, 80, 40));
-        s.setView(c);
-        ppbf.startTexRender();
-        
-        s.setPerspective(90, ratio, 4, 300f);      
-        s.setMode(Mode.POS_ONLY);
-
-        c.setPos(pos);
-        c.setRot(rot);
-
-        s.setView(c);
-        s.setPerspective(90, ratio, 0.3f, 2500f);
-        
-        s.setMode(Mode.SKYBOX);
-        cb.use(2);
-        sky.draw();
-        s.setMode(Mode.OBJECT);
-        terrain.render();
-        t3.useTexture(0);
-        flashbang.draw();
-        s.setDistanceField(true);
-        awp3.draw();
-        ppbf.endTexRender();
-        glDisable(GL_CULL_FACE);
-        GUI.startGUIPos();
-        s.setMode(Mode.PP);
-        ppbf.useTexture(0);
-        ppbf.useDepthTexture(1);
-        ppsht.draw();
-        GUI.enableGUI();
-        base2.draw();
-        s.setDistanceField(false);
-    }
+    float wow = 0f;
     
-    float i = 0;
-    boolean flipsd = false;
-    public void update() {
-        float delta = t.getDeltaSec();
-        
-        if(i > 1){
-            flipsd = true;
-        }
-        if(i < -1){
-            flipsd = false;
-        }
-        if(flipsd){
-            i -= delta;
-        }else{
-            i += delta;
-        }
-        s.setTimeMod(i);
-        terrain.update(delta);
-        xrot -= rot1 * 7;
-        yrot -= rot2 * 7;
-
+    @Override
+    public void render() {
+        ShaderController.setPerspective(90, OpenGG.getWindow().getRatio(), 0.2f, 3000f);
     }
 
     @Override
-    public void keyPressed(int key) {
-
-        if (key == GLFW_KEY_M) {
-            win.setCursorLock(lock = !lock);
-        }
-        if (key == GLFW_KEY_Q) {
-            rot1 += 0.3;
-
-        }
-        if (key == GLFW_KEY_E) {
-            rot1 -= 0.3;
-
-        }
-        if (key == GLFW_KEY_R) {
-            rot2 += 0.3;
-
-        }
-        if (key == GLFW_KEY_F) {
-            rot2 -= 0.3;
-
-        }
-        if (key == GLFW_KEY_G) {
-            bad.velocity = new Vector3f(0,20,0);
-
-        }
-        if (key == GLFW_KEY_P) {
-            if(so3.isPaused()){
-                so3.play();
-            }else{
-                so3.pause();
-            }
-        }
-
-    }
-
-    @Override
-    public void keyReleased(int key) {
-        if (key == GLFW_KEY_Q) {
-            rot1 -= 0.3;
-
-        }
-        if (key == GLFW_KEY_E) {
-            rot1 += 0.3;
-
-        }
-        if (key == GLFW_KEY_R) {
-            rot2 -= 0.3;
-
-        }
-        if (key == GLFW_KEY_F) {
-            rot2 += 0.3;
-
-        }
-    }
+    public void update(float delta) {}
 }

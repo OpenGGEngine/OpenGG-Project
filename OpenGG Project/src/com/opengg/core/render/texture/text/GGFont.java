@@ -5,9 +5,8 @@
  */
 package com.opengg.core.render.texture.text;
 
-import com.opengg.core.gui.GUIText;
+import com.opengg.core.render.Text;
 import com.opengg.core.render.drawn.MatDrawnObject;
-import com.opengg.core.render.drawn.TexturedDrawnObject;
 import com.opengg.core.render.texture.Texture;
 import java.io.File;
 
@@ -20,11 +19,18 @@ public class GGFont {
     //The textvbogenerator is what the name says it is. Every font has its own generator with specific parameters
     public Texture texture;
     public TextVBOGenerator badname;
-    public GGFont(Texture texture, File fontFile) {
-	this.texture = texture;
-	this.badname = new TextVBOGenerator(fontFile);
+    
+    public GGFont(String texture, String fontFile) {
+	this.texture = Texture.get2DTexture(texture);
+	this.badname = new TextVBOGenerator(new File(fontFile));
     }
-    public MatDrawnObject loadText(GUIText text) {
-        return badname.createTextData(text);
+    
+    public GGFont(Texture texture, String fontFile) {
+	this.texture = texture;
+	this.badname = new TextVBOGenerator(new File(fontFile));
+    }
+    
+    public MatDrawnObject loadText(Text text) {
+        return badname.createTextData(text, this);
     }
 }

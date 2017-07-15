@@ -6,11 +6,10 @@
 
 package com.opengg.core.render.drawn;
 
-import com.opengg.core.Matrix4f;
-import com.opengg.core.io.newobjloader.Material;
-import com.opengg.core.render.VertexBufferObject;
-import com.opengg.core.render.texture.Texture;
-import com.opengg.core.util.GlobalInfo;
+import com.opengg.core.math.Matrix4f;
+import com.opengg.core.model.Material;
+import com.opengg.core.render.shader.ShaderController;
+import com.opengg.core.render.shader.VertexArrayFormat;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.List;
@@ -20,64 +19,57 @@ import java.util.List;
  * @author Javier
  */
 public class MatDrawnObject implements Drawable {
-    DrawnObject d;
-
+    Drawable d;
+    Material m = Material.defaultmaterial;
+    
     public void setM(Material m) {
         this.m = m;
-        d.hasmat = true;
-    }
-    Material m = Material.defaultmaterial;
-    Texture tex;
-    private Texture normalmap;
-    private boolean hasNormalMap = false;
-    private Texture specmap;
-    private boolean hasSpecMap = false;
-    
-    public MatDrawnObject(FloatBuffer b, int vertsize){
-        d = new DrawnObject(b,vertsize);
-    }
-    
-    public MatDrawnObject(List<FloatBuffer> buffers, VertexBufferObject vbo2, int vertSize){
-        d = new DrawnObject(buffers,vbo2,vertSize);
-    }
-    
-    public MatDrawnObject(FloatBuffer b, VertexBufferObject vbo2, IntBuffer index){
-        d = new DrawnObject(b,vbo2,index);
-    }
-    
-
-    public void setTexture(Texture d){
-        this.tex = d;
-    }
-    public void setNormalMap(Texture d){
-        this.normalmap = d;
-        this.hasNormalMap = true;
-        
-    }
-    public void setSpecularMap(Texture d){
-        this.specmap = d;
-        this.hasSpecMap = true;   
-    }
-    public void setShaderMatrix(Matrix4f m){
-        d.setShaderMatrix(m);
-    }
-    @Override
-    public void draw() {
-        if(tex != null)tex.useTexture(0);
-        if(hasSpecMap) specmap.useTexture(4);   
-        if(hasNormalMap) normalmap.useTexture(3);
-        GlobalInfo.main.passMaterial(m,hasSpecMap, hasNormalMap);
-        d.draw();
     }
 
-    @Override
-    public void drawPoints() {
-        d.drawPoints();
+    public MatDrawnObject(Drawable d){
+        this.d = d;
     }
-
+    
+    public MatDrawnObject(Drawable d, Material m){
+        this.d = d;
+        this.m = m;
+        m.loadTextures();
+    }
+    
+    public MatDrawnObject(FloatBuffer b, VertexArrayFormat format){
+        d = new DrawnObject(b, format);
+    }
+    
+    public MatDrawnObject(List<FloatBuffer> buffers, VertexArrayFormat format){
+        d = new DrawnObject(buffers, format);
+    }
+    
+    public MatDrawnObject(FloatBuffer b, IntBuffer index, Material m){
+        d = new DrawnObject(b,index);
+        this.m = m;
+        m.loadTextures();
+    }
+    
+    public MatDrawnObject(FloatBuffer b, IntBuffer index){
+        this(b, index, Material.defaultmaterial);
+    }
+    
+    public Material getMaterial(){
+        return m;
+    }
+    
     @Override
-    public void saveShadowMVP() {
-       d.saveShadowMVP();
+    public void render() {
+        if(m.Kd != null)
+            m.Kd.use(0); 
+        if(m.norm != null) 
+            m.norm.use(3);
+        if(m.Ks != null) 
+            m.Ks.use(4); 
+        if(m.Ns != null)
+            m.Ns.use(5);
+        ShaderController.passMaterial(m);
+        d.render();
     }
 
     @Override
@@ -95,4 +87,8 @@ public class MatDrawnObject implements Drawable {
         d.destroy();
     }
     
+    @Override
+    public boolean hasAdjacency(){
+        return d.hasAdjacency();
+    }
 }

@@ -5,14 +5,15 @@
  */
 package com.opengg.core.render.texture.text;
 
-import com.opengg.core.gui.GUIText;
-import com.opengg.core.io.newobjloader.Material;
+import com.opengg.core.engine.RenderEngine;
+import com.opengg.core.render.Text;
+import com.opengg.core.model.Material;
 import com.opengg.core.render.drawn.MatDrawnObject;
 import java.io.File;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
-import org.lwjgl.BufferUtils;
+import org.lwjgl.system.MemoryUtil;
 
 /**
  *
@@ -27,16 +28,16 @@ public class TextVBOGenerator {
 		metaData = new GGFontFile(metaFile);
 	}
 
-	protected MatDrawnObject createTextData(GUIText text) {
+	protected MatDrawnObject createTextData(Text text, GGFont f) {
 		List<TextLine> lines = createStructure(text);
 		FloatBuffer data = createQuadVertices(text, lines);
-                MatDrawnObject t = new MatDrawnObject(data, 12);     
+                MatDrawnObject t = new MatDrawnObject(data, RenderEngine.getDefaultFormat());     
                 t.setM(Material.defaultmaterial);
-                t.setTexture(text.font.texture);
+                t.getMaterial().Kd = f.texture;
 		return t;
 	}
 
-	private List<TextLine> createStructure(GUIText text) {
+	private List<TextLine> createStructure(Text text) {
 		char[] chars = text.getTextString().toCharArray();
 		List<TextLine> lines = new ArrayList<>();
 		TextLine currentLine = new TextLine(metaData.getSpaceWidth(), text.getFontSize(), text.getMaxLineSize());
@@ -67,7 +68,7 @@ public class TextVBOGenerator {
 		return lines;
 	}
 
-	private void completeStructure(List<TextLine> lines, TextLine currentLine, Word currentWord, GUIText text) {
+	private void completeStructure(List<TextLine> lines, TextLine currentLine, Word currentWord, Text text) {
 		boolean added = currentLine.addWord(currentWord);
 		if (!added) {
 			lines.add(currentLine);
@@ -77,7 +78,7 @@ public class TextVBOGenerator {
 		lines.add(currentLine);
 	}
 
-	private FloatBuffer createQuadVertices(GUIText text, List<TextLine> lines) {
+	private FloatBuffer createQuadVertices(Text text, List<TextLine> lines) {
 		text.setNumberOfLines(lines.size());
 		double curserX = 0f;
 		double curserY = 0f;
@@ -99,7 +100,7 @@ public class TextVBOGenerator {
 			curserX = 0;
 			curserY += LINE_HEIGHT * text.getFontSize();
 		}
-                FloatBuffer f = BufferUtils.createFloatBuffer(vertices.size() *12);
+                FloatBuffer f = MemoryUtil.memAllocFloat(vertices.size() *12);
                 int texpointer = 0;
                 for(int i =0;i<vertices.size();i+=3){
                     //vertices
@@ -172,9 +173,7 @@ public class TextVBOGenerator {
             
                 maxX += x;
                 maxY = y - maxY;
-                System.out.println(x+","+y);
-                System.out.println(maxX+","+maxY);
-                System.out.println("------------------------");
+
                 texCoords.add((float) x);
 		texCoords.add((float) y);
                 
