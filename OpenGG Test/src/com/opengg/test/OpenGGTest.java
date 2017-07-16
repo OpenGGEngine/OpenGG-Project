@@ -19,10 +19,8 @@ import com.opengg.core.render.texture.text.GGFont;
 import com.opengg.core.render.window.WindowInfo;
 import com.opengg.core.render.window.WindowOptions;
 import com.opengg.core.world.Skybox;
-import com.opengg.core.world.collision.SphereCollider;
 import com.opengg.core.world.components.FreeFlyComponent;
 import com.opengg.core.world.components.TerrainComponent;
-import com.opengg.core.world.components.physics.CollisionComponent;
 import java.io.IOException;
 
 public class OpenGGTest extends GGApplication{
