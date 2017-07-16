@@ -6,22 +6,23 @@
 
 package com.opengg.core.world.collision;
 
-import com.opengg.core.math.Vector3f;
+import com.opengg.core.util.GGByteInputStream;
+import com.opengg.core.util.GGByteOutputStream;
+import java.io.IOException;
 
 /**
  *
  * @author Javier
  */
 public class SphereCollider extends Collider{
-    double radius;
+    float radius;
     
-    public SphereCollider(double radius){
-        this(radius, new Vector3f());
+    public SphereCollider(){
+        this(1);
     }
     
-    public SphereCollider(double radius, Vector3f offset){
+    public SphereCollider(float radius){
         this.radius = radius;
-        this.offset = offset;
     }
     
     @Override
@@ -33,4 +34,15 @@ public class SphereCollider extends Collider{
         return null;
     }
     
+    @Override
+    public void serialize(GGByteOutputStream stream) throws IOException{
+        super.serialize(stream);
+        stream.write(radius);
+    }
+    
+    @Override
+    public void deserialize(GGByteInputStream stream) throws IOException{
+        super.deserialize(stream);
+        radius = stream.readFloat();
+    }
 }

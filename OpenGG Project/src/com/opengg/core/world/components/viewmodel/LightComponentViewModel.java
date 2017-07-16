@@ -50,7 +50,7 @@ public class LightComponentViewModel extends ViewModel{
         
         if(element.internalname.equals("distance"))
             ((LightComponent)component).getLight().setDistance((Float)element.value);
-        
+        ((LightComponent)component).update(0);
     }
 
     @Override

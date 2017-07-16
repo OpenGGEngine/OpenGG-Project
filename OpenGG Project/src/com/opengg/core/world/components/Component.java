@@ -33,12 +33,14 @@ public abstract class Component{
     public boolean enabled = true;
     public float updatedistance = 0;
     private String name = "";
-    public Component parent;
-    public Vector3f pos = new Vector3f();
-    public Quaternionf rot = new Quaternionf();
-    public Vector3f scale = new Vector3f(1,1,1);
+    private Component parent;
+    private Vector3f posoffset = new Vector3f();
+    private Quaternionf rotoffset = new Quaternionf();
+    private Vector3f scale = new Vector3f(1,1,1);
     protected List<Component> children = new ArrayList<>();
-    
+    private Vector3f pos = new Vector3f();
+    private Quaternionf rot = new Quaternionf();
+    private boolean serialize = true;
     
     /**
      * Creates a component with a new ID
@@ -67,10 +69,10 @@ public abstract class Component{
     public int getId(){
         return id;
     }
+    
     public void setId(int id){
         this.id = id;
     }
-    
     
     /**
      * Set the parent of the component, should rarely be called directly
@@ -78,22 +80,30 @@ public abstract class Component{
      */
     public void setParentInfo(Component parent){
         this.parent = parent;
+        regenPos();
+        for(Component c : children) c.regenPos();
+        regenRot();
+        for(Component c : children) c.regenRot();
     }
     
     /**
      * Sets the local position offset of the object relative to the parent
-     * @param pos New position offset
+     * @param npos New position offset
      */
-    public void setPositionOffset(Vector3f pos){
-        this.pos = pos;
+    public void setPositionOffset(Vector3f npos){
+        this.posoffset = npos;
+        regenPos();
+        for(Component c : children) c.regenPos();
     }
     
     /**
      * Sets the local rotation offset of the object relative to the parent
-     * @param rot New rotation offset
+     * @param nrot New rotation offset
      */
-    public void setRotationOffset(Quaternionf rot){
-        this.rot = rot;
+    public void setRotationOffset(Quaternionf nrot){
+        this.rotoffset = nrot;
+        regenRot();
+        for(Component c : children) c.regenRot();
     }
     
     /**
@@ -128,11 +138,7 @@ public abstract class Component{
      * @return World position of this component
      */
     public Vector3f getPosition(){
-        if(absoluteOffset){
-            return parent.getPosition().add(pos);
-        }else{
-            return parent.getPosition().add(parent.getRotation().transform(pos));
-        }
+        return pos;
     }
     
     /**
@@ -140,7 +146,20 @@ public abstract class Component{
      * @return Position offset of the component
      */
     public Vector3f getPositionOffset(){
-        return pos;
+        return posoffset;
+    }
+    
+    private void regenPos(){
+        if(parent != null){
+            if(absoluteOffset){
+                pos =  parent.getPosition().add(posoffset);
+            }else{
+                pos = parent.getPosition().add(parent.getRotation().transform(posoffset));
+            }
+        }else{
+            pos = posoffset;
+        }
+        for(Component c : children) c.regenPos();
     }
     
     /**
@@ -148,7 +167,7 @@ public abstract class Component{
      * @return Final rotation direction
      */
     public Quaternionf getRotation(){
-        return parent.getRotation().multiply(rot);
+        return rot;
     }
     
     /**
@@ -156,7 +175,16 @@ public abstract class Component{
      * @return Rotation offset of the component
      */
     public Quaternionf getRotationOffset(){
-        return rot;
+        return rotoffset;
+    }
+    
+    private void regenRot(){
+        if(parent != null){
+            rot = parent.getRotation().multiply(rotoffset);
+        }else{
+            rot = rotoffset;
+        }
+        for(Component c : children) c.regenRot();
     }
     
     /**
@@ -183,9 +211,13 @@ public abstract class Component{
      * @param out Output stream used for writing objects to the buffer
      */
     public void serialize(GGByteOutputStream out) throws IOException{
-        out.write(pos);
-        out.write(rot);
+        out.write(posoffset);
+        out.write(rotoffset);
         out.write(scale);
+        out.write(name);
+        out.write(enabled);
+        out.write(absoluteOffset);
+        out.write(updatedistance);
     }
     
     /**
@@ -199,9 +231,13 @@ public abstract class Component{
      * @param in Input steam used for reading objects from the buffer
      */
     public void deserialize(GGByteInputStream in) throws IOException{
-        pos = in.readVector3f();
-        rot = in.readQuaternionf();
+        posoffset = in.readVector3f();
+        rotoffset = in.readQuaternionf();
         scale = in.readVector3f();
+        name = in.readString();
+        enabled = in.readBoolean();
+        absoluteOffset = in.readBoolean();
+        updatedistance = in.readInt();
     }
     
     /**
@@ -218,6 +254,14 @@ public abstract class Component{
     
     public void setEnabled(boolean enabled){
         this.enabled = enabled;
+    }
+    
+    public boolean shouldSerialize(){
+        return serialize;
+    }
+    
+    public void setSerializable(boolean serialize){
+        this.serialize = serialize;
     }
     
     public void attach(Component c) {

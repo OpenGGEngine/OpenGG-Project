@@ -8,6 +8,7 @@ package com.opengg.core.render.texture;
 import com.opengg.core.engine.GGConsole;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.lwjgl.opengl.EXTTextureFilterAnisotropic;
 import org.lwjgl.opengl.GL;
@@ -148,7 +149,7 @@ public class Texture {
         ByteBuffer full = MemoryUtil.memAlloc((int) blength);
         for(TextureData data : datums) full.put((ByteBuffer)data.buffer);
         full.flip();
-        
+        tdata.addAll(Arrays.asList(datums));
         tex.setSubImageData(type, 0, xoffset, yoffset, zoffset, datums[0].width, datums[0].height, datums.length, GL_RGBA, datatype, full);
     }
     
@@ -208,6 +209,7 @@ public class Texture {
     }
     
     public static Texture get2DTexture(TextureData data){
+        data.buffer.rewind();
         Texture texture = new Texture(GL_TEXTURE_2D);
         texture.setActiveTexture(0);
         texture.bind();

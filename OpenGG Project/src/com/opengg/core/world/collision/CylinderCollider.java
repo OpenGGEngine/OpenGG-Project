@@ -6,12 +6,20 @@
 
 package com.opengg.core.world.collision;
 
+import com.opengg.core.util.GGByteInputStream;
+import com.opengg.core.util.GGByteOutputStream;
+import java.io.IOException;
+
 /**
  *
  * @author Javier
  */
 public class CylinderCollider extends Collider{
     float radius, height;
+    
+    public CylinderCollider(){
+        this(1,1);
+    }
     
     public CylinderCollider(float radius, float height){
         this.radius = radius;
@@ -30,4 +38,18 @@ public class CylinderCollider extends Collider{
         return null;
     }
     
+    @Override
+    public void serialize(GGByteOutputStream stream) throws IOException{
+        super.serialize(stream);
+        stream.write(radius);
+        stream.write(height);
+        
+    }
+    
+    @Override
+    public void deserialize(GGByteInputStream stream) throws IOException{
+        super.deserialize(stream);
+        radius = stream.readFloat();
+        height = stream.readFloat();
+    }
 }

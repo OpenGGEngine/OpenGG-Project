@@ -23,7 +23,7 @@ public class UserControlComponent extends Component implements ActionTransmitter
     
     @Override
     public void doAction(Action action){
-        ((Actionable)parent).onAction(action);
+        ((Actionable)getParent()).onAction(action);
     }
     
     @Override

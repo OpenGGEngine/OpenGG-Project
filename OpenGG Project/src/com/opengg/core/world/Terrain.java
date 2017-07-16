@@ -6,17 +6,14 @@
 package com.opengg.core.world;
 
 import com.opengg.core.engine.GGConsole;
+import com.opengg.core.engine.Resource;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.render.drawn.DrawnObject;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.texture.TextureData;
-import com.opengg.core.render.texture.TextureManager;
-import com.opengg.core.util.BufferUtils;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -38,6 +35,7 @@ public class Terrain {
     float[][] map;
     float sizex, sizez;
     float xsquarewidth, zsquarewidth;
+    String source;
 
     private Terrain(int gridx, int gridz) {
         sizex = gridx;
@@ -54,6 +52,7 @@ public class Terrain {
         t.generateTexture(data);
         t.xsquarewidth = 1/(float)t.map.length;
         t.zsquarewidth = 1/(float)t.map[0].length;
+        t.source = data;
         t.normalize();
         return t;
     }
@@ -63,13 +62,14 @@ public class Terrain {
         t.genProcedural(generator, gridx, gridz);
         t.xsquarewidth = 1/(float)t.map.length;
         t.zsquarewidth = 1/(float)t.map[0].length;
+        t.source = "auto";
         t.normalize();
         return t;
     }
     
     private void generateTexture(String path){
         try {
-            BufferedImage image = ImageIO.read(new FileInputStream(new File(path)));
+            BufferedImage image = ImageIO.read(new FileInputStream(Resource.getAbsoluteFromLocal(path)));
 
             int gx = image.getWidth();
             int gz = image.getHeight();
@@ -263,5 +263,9 @@ public class Terrain {
     public Texture getHeightmap(){
         TextureData data = new TextureData(map.length, map[0].length, getHeightmapBuffer(), "autogen");
         return Texture.get2DTexture(data);
+    }
+    
+    public String getSource(){
+        return source;
     }
 }

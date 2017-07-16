@@ -69,7 +69,7 @@ public class WorldEngine{
                 colliders.remove((CollisionComponent)c);
             
             TransitionEngine.remove(c);
-            c.parent.remove(c);
+            c.getParent().remove(c);
             objs.remove(c);         
             c.remove();
         }

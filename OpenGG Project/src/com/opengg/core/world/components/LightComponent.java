@@ -24,6 +24,7 @@ public class LightComponent extends Component{
     public LightComponent(){
         super();
         l = new Light(new Vector3f(0,0,0),new Vector3f(1,1,1),100,0);
+        use();
     }
     
     public LightComponent(Light l){
@@ -37,7 +38,7 @@ public class LightComponent extends Component{
     
     @Override
     public void update(float delta) {
-        l.setPosition(parent.getPosition());
+        l.setPosition(getPosition());
     }    
     
     public Light getLight(){

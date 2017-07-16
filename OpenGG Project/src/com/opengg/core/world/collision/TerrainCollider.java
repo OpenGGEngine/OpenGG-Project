@@ -17,6 +17,7 @@ public class TerrainCollider extends Collider{
 
     public TerrainCollider(Terrain t){
         this.t = t;
+        this.serializable = false;
     }
     
     @Override

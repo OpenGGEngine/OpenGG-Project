@@ -51,4 +51,12 @@ public class AABB {
                   vertices[MIN].y > x.vertices[MAX].y ||
                   vertices[MIN].z > x.vertices[MAX].z);
     }
+    
+    public Vector3f getPos(){
+        return pos;
+    }
+    
+    public Vector3f getLWH(){
+        return new Vector3f(length, width, height);
+    }
 }

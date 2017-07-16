@@ -37,13 +37,23 @@ public class Serializer {
     }
     
     private static void traverse(List<Component> components) throws IOException{
-        serializer.stream.write(components.size());
+        serializer.stream.write(getAllSerializable(components));
         for(Component component : components){
-            serializer.stream.write(component.getClass().getName());
-            serializer.stream.write(component.getId());
-            serializer.stream.write(component.parent.getId());
-            component.serialize(serializer.stream);
-            traverse(component.getChildren());
+            if(component.shouldSerialize()){
+                serializer.stream.write(component.getClass().getName());
+                serializer.stream.write(component.getId());
+                serializer.stream.write(component.getParent().getId());
+                component.serialize(serializer.stream);
+                traverse(component.getChildren());
+            }
         }
+    }
+    
+    private static int getAllSerializable(List<Component> components){
+        int i = 0;
+        for(Component c : components)
+            if(c.shouldSerialize())
+                i++;
+        return i;
     }
 }

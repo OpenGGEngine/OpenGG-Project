@@ -5,17 +5,20 @@
  */
 package com.opengg.core.world.components.physics;
 
+import com.opengg.core.engine.GGConsole;
 import com.opengg.core.math.Vector3f;
-import com.opengg.core.world.components.physics.PhysicsComponent;
+import com.opengg.core.util.GGByteInputStream;
+import com.opengg.core.util.GGByteOutputStream;
 import com.opengg.core.world.collision.AABB;
 import com.opengg.core.world.collision.Collider;
 import com.opengg.core.world.collision.Collision;
 import com.opengg.core.world.components.triggers.Trigger;
 import com.opengg.core.world.components.triggers.TriggerInfo;
 import static com.opengg.core.world.components.triggers.TriggerInfo.SINGLE;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -24,20 +27,22 @@ import java.util.List;
  */
 public class CollisionComponent extends Trigger{
     AABB main;
-    List<Collider> boxes = new ArrayList<>();
+    List<Collider> colliders = new ArrayList<>();
     boolean lastcollided = false;
     boolean forcetest = false;
 
-    public CollisionComponent(AABB main, Collection<Collider> all) {
+    public CollisionComponent(){
+        this(new AABB(new Vector3f(0,0,0),1,1,1), new ArrayList<>());
+    }
+    
+    public CollisionComponent(AABB main, List<Collider> all) {
         this.main = main;
-        boxes.addAll(all);
+        colliders.addAll(all);
         setColliderParent();
     }
     
     public CollisionComponent(AABB main, Collider... all) {
-        this.main = main;
-        boxes.addAll(Arrays.asList(all));
-        setColliderParent();
+        this(main, Arrays.asList(all));
     }
     
     public void setForceTest(boolean test){
@@ -45,13 +50,13 @@ public class CollisionComponent extends Trigger{
     }
     
     private void setColliderParent(){
-        for(Collider c : boxes){
+        for(Collider c : colliders){
             c.setParent(this);
         }
     }
     
-    public void addBoundingBox(Collider bb) {
-        boxes.add(bb);
+    public void addCollider(Collider bb) {
+        colliders.add(bb);
     }
 
     public List<Collision> testForCollision(CollisionComponent other) {
@@ -61,8 +66,8 @@ public class CollisionComponent extends Trigger{
             return dataList;
 
         boolean collided = false;
-        for (Collider x: this.boxes) {
-            for(Collider y: other.boxes) {
+        for (Collider x: this.colliders) {
+            for(Collider y: other.colliders) {
                 Collision data = x.isColliding(y);
                 if ((data) != null){
                     collided = true;
@@ -80,8 +85,8 @@ public class CollisionComponent extends Trigger{
     }
 
     public PhysicsComponent getPhysicsComponent(){
-        if(parent instanceof PhysicsComponent){
-            return (PhysicsComponent)parent;
+        if(getParent() instanceof PhysicsComponent){
+            return (PhysicsComponent)getParent();
         }
         return null;
     }
@@ -100,5 +105,51 @@ public class CollisionComponent extends Trigger{
         ti.data = data;
         trigger(ti);
         lastcollided = true;
+    }
+    
+    @Override
+    public void serialize(GGByteOutputStream stream) throws IOException{
+        super.serialize(stream);
+        stream.write(main.getPos());
+        stream.write(main.getLWH());
+        stream.write(getAllSerializable());
+        for(Collider collider : colliders){
+            if(collider.isSerializable()){
+                stream.write(collider.getClass().getName());
+                collider.serialize(stream);
+            }
+        }
+    }
+    
+    @Override
+    public void deserialize(GGByteInputStream stream) throws IOException{
+        super.deserialize(stream);
+        Vector3f mpos = stream.readVector3f();
+        Vector3f lwh = stream.readVector3f();
+        main = new AABB(mpos, lwh.x, lwh.y, lwh.z);
+        int size = stream.readInt();
+        System.out.println(size);
+        for(int i = 0; i < size; i++){
+            try {
+                String clazzname = stream.readString();
+                System.out.println(clazzname);
+                Class clazz = Class.forName(clazzname);
+                Collider collider = (Collider)clazz.getConstructor().newInstance();
+                collider.deserialize(stream);
+                colliders.add(collider);
+            } catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+                GGConsole.error("Failed to load world, unable to instantiate colliders");
+                ex.printStackTrace();
+            }
+        }
+        setColliderParent();
+    }
+    
+    private int getAllSerializable(){
+        int i = 0;
+        for(Collider c : colliders)
+            if(c.isSerializable())
+                i++;
+        return i;
     }
 }

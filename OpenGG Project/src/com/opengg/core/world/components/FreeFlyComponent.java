@@ -51,7 +51,7 @@ public class FreeFlyComponent extends Component implements Actionable{
        
         Vector3f nvector = control.multiply(delta * 15);
         nvector = this.getRotation().transform(nvector);
-        this.pos.addThis(nvector);
+        setPositionOffset(getPositionOffset().add(nvector));
     }
     
     @Override

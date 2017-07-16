@@ -9,8 +9,6 @@ import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.util.GGByteInputStream;
 import com.opengg.core.util.GGByteOutputStream;
-import com.opengg.core.world.Deserializer;
-import com.opengg.core.world.Serializer;
 import com.opengg.core.world.collision.Collision;
 import com.opengg.core.world.collision.CollisionHandler;
 import com.opengg.core.world.components.Component;
@@ -29,8 +27,6 @@ public class PhysicsComponent extends Component {
     public boolean touched = false;
     public boolean overrideFriction = false;
     
-    CollisionComponent collider;
-    
     public List<Force> forces = new LinkedList<>();
     public List<Vector3f> rotforces = new LinkedList<>();
     
@@ -43,7 +39,7 @@ public class PhysicsComponent extends Component {
     public Vector3f velocity = new Vector3f();
     public Vector3f angvelocity = new Vector3f();
 
-    public float mass = 1f;
+    public float mass = 100f;
     public float density = 1f;
     public float frictionCoefficient = 0.5f;
     public float bounciness = 0.5f;
@@ -60,8 +56,8 @@ public class PhysicsComponent extends Component {
 
     @Override
     public void update(float delta) {
-        Vector3f pos = parent.getPosition();
-        Quaternionf rot = parent.getRotation();
+        Vector3f pos = getParent().getPosition();
+        Quaternionf rot = getParent().getRotation();
         
         float floor = getWorld().floorLev;
         
@@ -84,13 +80,13 @@ public class PhysicsComponent extends Component {
             touched = true;
         }
         
-        if(collider != null){
-            List<Collision> collisions = CollisionHandler.testForCollisions(collider);
+        if(getCollider() != null){
+            List<Collision> collisions = CollisionHandler.testForCollisions(getCollider());
             for(Collision c : collisions){
                 touched = true;
                 if(c.collisionNormal.y > 0.5f)
                     grounded = true;
-                //velocity = Vector3f.lerp(velocity, velocity.reflect(c.collisionNormal).multiply(bounciness), bounciness);
+                velocity = Vector3f.lerp(velocity, velocity.reflect(c.collisionNormal).multiply(bounciness), bounciness);
                 pos.subtractThis(c.overshoot);
             }
         }      
@@ -99,12 +95,11 @@ public class PhysicsComponent extends Component {
             velocity.multiplyThis(1-frictionCoefficient*delta);
         }
         
-        parent.setPositionOffset(pos);
-        parent.setRotationOffset(rot);
+        getParent().setPositionOffset(pos);
+        getParent().setRotationOffset(rot);
     }
     
     public void addCollider(CollisionComponent c){
-        collider = c;
         attach(c);
     }
     
@@ -162,15 +157,23 @@ public class PhysicsComponent extends Component {
     
     public static PhysicsComponent interpolate(PhysicsComponent a, PhysicsComponent b, float alpha) {
         PhysicsComponent state = b;
-        state.pos = a.pos.multiply(1 - alpha).add(b.pos.multiply(alpha));
+        state.setPositionOffset(a.getPosition().multiply(1 - alpha).add(b.getPosition().multiply(alpha)));
         state.velocity = a.velocity .multiply(1 - alpha).add(b.velocity .multiply(alpha));
         
-        state.rot = Quaternionf.slerp(a.rot, b.rot, alpha);
+        state.setRotationOffset(Quaternionf.slerp(a.getRotation(), b.getRotation(), alpha));
         state.angvelocity = a.angvelocity.multiply(1 - alpha).add(b.angvelocity.multiply(alpha));
         
         state.acceleration = a.acceleration.multiply(1 - alpha).add(b.acceleration.multiply(alpha));
         state.angaccel = a.angaccel.multiply(1 - alpha).add(b.angaccel.multiply(alpha));
         return state;
+    }
+    
+    public CollisionComponent getCollider(){
+        for(Component comp : getChildren()){
+            if(comp instanceof CollisionComponent)
+                return (CollisionComponent)comp;
+        }
+        return null;
     }
     
     @Override
@@ -180,6 +183,8 @@ public class PhysicsComponent extends Component {
         out.write(density);
         out.write(frictionCoefficient);
         out.write(bounciness);
+        out.write(velocity);
+        out.write(angvelocity);
     }
     
     @Override
@@ -189,5 +194,7 @@ public class PhysicsComponent extends Component {
         density = in.readFloat();
         frictionCoefficient = in.readFloat();
         bounciness = in.readFloat();
+        velocity = in.readVector3f();
+        angvelocity = in.readVector3f();
     }
 }

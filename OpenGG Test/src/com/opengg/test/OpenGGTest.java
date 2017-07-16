@@ -12,7 +12,6 @@ import com.opengg.core.gui.GUIText;
 import com.opengg.core.io.ControlType;
 import static com.opengg.core.io.input.keyboard.Key.*;
 import com.opengg.core.math.Vector2f;
-import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.Text;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.texture.Texture;
@@ -20,14 +19,10 @@ import com.opengg.core.render.texture.text.GGFont;
 import com.opengg.core.render.window.WindowInfo;
 import com.opengg.core.render.window.WindowOptions;
 import com.opengg.core.world.Skybox;
-import com.opengg.core.world.Terrain;
-import com.opengg.core.world.World;
+import com.opengg.core.world.collision.SphereCollider;
 import com.opengg.core.world.components.FreeFlyComponent;
-import com.opengg.core.world.components.SunComponent;
 import com.opengg.core.world.components.TerrainComponent;
-import com.opengg.core.world.components.WaterComponent;
-import com.opengg.core.world.components.particle.FountainParticleEmitter;
-import com.opengg.core.world.generators.DiamondSquare;
+import com.opengg.core.world.components.physics.CollisionComponent;
 import java.io.IOException;
 
 public class OpenGGTest extends GGApplication{
@@ -64,39 +59,23 @@ public class OpenGGTest extends GGApplication{
                 + " the Supreme Chancellor has secretly dispatched two Jedi Knights,"
                 + " the guardians of peace and justice in the galaxy, to settle the conflict...", new Vector2f(), 1f, 0.5f, false);
         GUI.addItem("aids", new GUIText(text, font, new Vector2f(0f,0)));
-        /*
-        World w = WorldEngine.getCurrent();
         
-        w.setFloor(10);
-
-//        world = new TerrainComponent(Terrain.generateProcedural(new DiamondSquare(7,20,20,5.5f), 700, 700));
-//        world.setScale(new Vector3f(800,10,800));
-//        world.setPositionOffset(new Vector3f(-400, -20,-400));
-//        world.setGroundArray(Texture.getArrayTexture(Resource.getTexturePath("grass.png"),
-//                Resource.getTexturePath("dirt.png"),
-//                Resource.getTexturePath("flower2.png"),
-//                Resource.getTexturePath("road.png")));
-//        world.setBlotmap(Resource.getTexture("blendMap.png"));
-        
+        WorldEngine.useWorld(WorldEngine.loadWorld(Resource.getWorldPath("towermeet")));
+        WorldEngine.getCurrent().setEnabled(true);
+          
         FreeFlyComponent player = new FreeFlyComponent();
-        //TestPlayerComponent player = new TestPlayerComponent();
         player.use();
-
-        FountainParticleEmitter particle = new FountainParticleEmitter(8,5,1,Resource.getTexture("emak.png"));
-        WaterComponent water = new WaterComponent(Resource.getTexture("water.jpg"), 0.1f, 100f, 9000f);
-        //water.setPositionOffset(new Vector3f(0,10,0));
+        WorldEngine.getCurrent().attach(player);
+        /*
+        CollisionComponent collider = new CollisionComponent();
+        collider.addCollider(new SphereCollider(10));
         
-        w.attach(player);
-        //w.attach(world);
-        //w.attach(particle);
-        w.attach(new SunComponent(Resource.getTexture("emak.png"), 1f));
-        w.attach(water);
-        WorldEngine.saveWorld(w, "testworld");
-        WorldEngine.useWorld(w);
+        WorldEngine.getCurrent().attach(collider);
+        WorldEngine.getCurrent().attach(player);
+        WorldEngine.rescanCurrent();
+        
+        WorldEngine.saveWorld(WorldEngine.getCurrent(), Resource.getWorldPath("testworld4"));
         */
-        
-        WorldEngine.useWorld(WorldEngine.loadWorld("testworld"));
-                
         BindController.addBind(ControlType.KEYBOARD, "forward", KEY_W);
         BindController.addBind(ControlType.KEYBOARD, "backward", KEY_S);
         BindController.addBind(ControlType.KEYBOARD, "left", KEY_A);

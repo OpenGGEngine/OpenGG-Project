@@ -5,8 +5,6 @@
  */
 package com.opengg.core.world.components;
 
-import com.opengg.core.math.Quaternionf;
-import com.opengg.core.math.Vector3f;
 import com.opengg.core.util.GGByteInputStream;
 import com.opengg.core.util.GGByteOutputStream;
 import java.io.IOException;
@@ -16,17 +14,8 @@ import java.io.IOException;
  * @author Javier
  */
 public class WorldObject extends Component{
-    
-    public WorldObject(Vector3f pos, Quaternionf rot) {
-        
-        this.pos = pos;
-        this.rot = rot;
-    }
-
     public WorldObject() {
         super();
-        pos = new Vector3f(0, 0, 0);  
-        rot = new Quaternionf();
     }
 
     @Override
