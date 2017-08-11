@@ -6,11 +6,15 @@
 package com.opengg.core.world.components.particle;
 
 import com.opengg.core.engine.RenderEngine;
+import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.drawn.InstancedDrawnObject;
+import com.opengg.core.render.objects.ObjectCreator;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.world.components.RenderComponent;
+import java.nio.Buffer;
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -25,11 +29,18 @@ public abstract class ParticleEmitter extends RenderComponent{
     List<Particle> particles = new LinkedList<>();
     Texture t;
     
-    public ParticleEmitter(InstancedDrawnObject drawn, Texture t){
-        this.setDrawable(drawn);
+    public ParticleEmitter(Texture t){
+        createDrawable();
         this.setFormat(RenderEngine.getParticleFormat());
         this.setShader("particle");
         this.t = t;
+    }
+    
+    private void createDrawable(){
+        Buffer[] buffers = ObjectCreator.createSquareBuffers(new Vector2f(0,0), new Vector2f(1,1), 0);
+        FloatBuffer fb = (FloatBuffer) buffers[0];
+        IntBuffer ib = (IntBuffer) buffers[1];
+        this.setDrawable(new InstancedDrawnObject(fb,ib));
     }
     
     private FloatBuffer createParticleVBO(){

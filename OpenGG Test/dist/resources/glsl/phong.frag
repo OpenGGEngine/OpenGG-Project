@@ -173,7 +173,7 @@ void process(){
 	
     
     if(material.hasnormmap){
-		n = calculatenormal(normalize(norm),pos.xyz-camera,textureCoord);
+		n = calculatenormal(normalize((model * vec4(norm,0.0f)).xyz),pos.xyz-camera,textureCoord);
     }else{
 		n = normalize((model * vec4(norm,0.0f)).xyz);
 	}

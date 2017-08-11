@@ -9,7 +9,6 @@ package com.opengg.core.audio;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import static org.lwjgl.openal.AL10.AL_PAUSED;
 import static org.lwjgl.openal.AL10.AL_STOPPED;
 
 /**
@@ -25,6 +24,18 @@ public class Soundtrack {
     
     public void addSong(String path){
         soundtrack.add(new Sound(path));
+        if(current == null)
+            current = soundtrack.get(0);
+    }
+    
+    public void addSong(SoundData data){
+        soundtrack.add(new Sound(data));
+        if(current == null)
+            current = soundtrack.get(0);
+    }
+    
+    public void addSong(Sound sound){
+        soundtrack.add(sound);
         if(current == null)
             current = soundtrack.get(0);
     }

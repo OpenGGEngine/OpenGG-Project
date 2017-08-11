@@ -1,6 +1,8 @@
 package com.opengg.test;
 
 import com.opengg.core.audio.AudioListener;
+import com.opengg.core.audio.Soundtrack;
+import com.opengg.core.audio.SoundtrackHandler;
 import com.opengg.core.engine.BindController;
 import com.opengg.core.engine.GGApplication;
 import com.opengg.core.engine.OpenGG;
@@ -11,6 +13,7 @@ import com.opengg.core.gui.GUI;
 import com.opengg.core.gui.GUIText;
 import com.opengg.core.io.ControlType;
 import static com.opengg.core.io.input.keyboard.Key.*;
+import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.Text;
@@ -25,6 +28,7 @@ import com.opengg.core.world.components.FreeFlyComponent;
 import com.opengg.core.world.components.LightComponent;
 import com.opengg.core.world.components.ModelRenderComponent;
 import com.opengg.core.world.components.TerrainComponent;
+import com.opengg.core.world.components.particle.FountainParticleEmitter;
 import java.io.IOException;
 
 public class OpenGGTest extends GGApplication{
@@ -49,11 +53,11 @@ public class OpenGGTest extends GGApplication{
 
     @Override
     public  void setup(){
-        //Soundtrack track = new Soundtrack();
-        //track.addSong("C:\\res\\gun.ogg");
-        //track.addSong("C:\\res\\mgs.ogg");
-        //track.play();
-        //SoundtrackHandler.setSoundtrack(track);
+        Soundtrack track = new Soundtrack();
+        track.addSong(Resource.getSoundData("windgarden.ogg"));
+        track.addSong(Resource.getSoundData("battlerock.ogg"));
+        track.play();
+        SoundtrackHandler.setSoundtrack(track);
         
         font = Resource.getFont("test", "test.png");
         text = new Text("Turmoil has engulfed the Galactic Republic. The taxation of trade routes to outlying star systems is in dispute. \n\n"
@@ -65,6 +69,11 @@ public class OpenGGTest extends GGApplication{
         GUI.addItem("aids", new GUIText(text, font, new Vector2f(0f,0)));
         
         WorldEngine.getCurrent().attach(new ModelRenderComponent(Resource.getModel("anakin")));
+        ModelRenderComponent comp = new ModelRenderComponent(Resource.getModel("stormtrooper"));
+        comp.setRotationOffset(new Quaternionf(new Vector3f(0,180,0)));
+        comp.setPositionOffset(new Vector3f(0,0,4));
+        WorldEngine.getCurrent().attach(comp);
+        WorldEngine.getCurrent().attach(new FountainParticleEmitter(6,100,4,Resource.getTexture("emak.png")));
         WorldEngine.getCurrent().attach(new LightComponent(new Light(new Vector3f(0,2,2), new Vector3f(1,1,1), 100, 0)));
         WorldEngine.rescanCurrent();
           

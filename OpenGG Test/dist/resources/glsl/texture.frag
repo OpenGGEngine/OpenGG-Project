@@ -13,4 +13,6 @@ uniform sampler2D Kd;
 
 void main() {   
     fcolor = texture(Kd, textureCoord);
+	if(fcolor.a == 0)
+		discard;
 }

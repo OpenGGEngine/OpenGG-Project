@@ -65,8 +65,8 @@ public class RenderEngine {
         vaoformat.addAttribute(new VertexArrayAttribute("texcoord", 2, 12, GL_FLOAT, 10, 0, false));
         
         particle = new VertexArrayFormat();
-        particle.addAttribute(new VertexArrayAttribute("position", 12, GL_FLOAT, 3, 0, 0, false));
-        particle.addAttribute(new VertexArrayAttribute("color", 3, 12, GL_FLOAT, 0, 1, true));
+        particle.addAttribute(new VertexArrayAttribute("position", 3, 12, GL_FLOAT, 0, 0, false));
+        particle.addAttribute(new VertexArrayAttribute("offset", 3, 3, GL_FLOAT, 0, 1, true));
         particle.addAttribute(new VertexArrayAttribute("normal", 3, 12, GL_FLOAT, 7, 0, false));
         particle.addAttribute(new VertexArrayAttribute("texcoord", 2, 12, GL_FLOAT, 10, 0, false));
         

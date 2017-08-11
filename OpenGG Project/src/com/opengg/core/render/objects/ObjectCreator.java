@@ -44,11 +44,6 @@ public class ObjectCreator {
         return new DrawnObject((FloatBuffer)b[0], (IntBuffer)b[1]);
     }
     
-    public static Drawable createInstancedSquare(Vector2f c1, Vector2f c2, float z){
-        Buffer[] b = createSquareBuffers(c1, c2,z);
-        return new InstancedDrawnObject((FloatBuffer)b[0], (IntBuffer)b[1]);
-    }
-    
     public static Buffer[] createSquareBuffers(Vector2f c1, Vector2f c2, float z){
         return ObjectBuffers.getSquare(c1, c2, z, 1, false);
     }

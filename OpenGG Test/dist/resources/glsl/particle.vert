@@ -2,7 +2,7 @@
 
 in vec2 texcoord;
 in vec3 normal;
-in vec4 color;
+in vec3 offset;
 in vec3 position;
             
 out gl_PerVertex{
@@ -23,17 +23,21 @@ uniform mat4 projection;
 uniform vec3 rot;
 uniform int mode;
 uniform float divAmount;
+uniform vec3 camera;
 
 void main() {
-
-    mat4 modelView = view * model;
-    vertexColor = color;
+    vertexColor = vec4(1,1,1,1);
     textureCoord = texcoord;
+	norm = normal;
+
+    vec3 right = vec3(view[0][0], view[1][0], view[2][0]);
+	vec3 up = vec3(view[0][1], view[1][1], view[2][1]);
 	
-	pos = ( model * vec4(position.x + color.x, position.y + color.y, position.z + color.z, 1) ).xyz;
+	pos = 
+		(model * vec4(offset,1)).xyz +
+		right * position.x +
+		up * position.y;
 	
-    norm = normal;
-	
-    vec4 P = view * vec4(pos.xyz,1);
+    vec4 P = view * vec4(pos.xyz, 1);
     gl_Position = projection * P;
 }

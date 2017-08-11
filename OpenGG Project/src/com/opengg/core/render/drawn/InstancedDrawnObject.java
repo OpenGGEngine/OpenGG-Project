@@ -14,6 +14,7 @@ import java.nio.IntBuffer;
 import java.util.List;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
+import static org.lwjgl.opengl.GL11.glGetError;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW;
 import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
@@ -90,7 +91,7 @@ public class InstancedDrawnObject extends DrawnObject implements Drawable {
     public void render(){    
         ShaderController.setModel(model);
         RenderEngine.getCurrentVAO().applyFormat(vbo, ivbo);
-        evbo.bind();       
+        evbo.bind();
         glDrawElementsInstanced(adj ? GL_TRIANGLES_ADJACENCY : GL_TRIANGLES, ind.limit(), GL_UNSIGNED_INT, 0, instnum);
     }
     
