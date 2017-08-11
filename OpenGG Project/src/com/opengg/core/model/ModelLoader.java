@@ -47,9 +47,6 @@ public class ModelLoader {
         ArrayList<Mesh> meshes = new ArrayList<>();
         try (DataInputStream in = new DataInputStream(new BufferedInputStream(new FileInputStream(fpath)))) {
             String texpath = fpath.substring(0, fpath.lastIndexOf("\\") + 1) + "tex\\";
-            int temp = in.readInt();
-            int r = temp;
-            System.out.println(temp);
             int id =  in.readInt();
             for (int si = 0; si < id; si++) {     
                 int fbcap = in.readInt();
@@ -66,13 +63,13 @@ public class ModelLoader {
                     inb.put(in.readInt());
                 }
                 inb.flip();
-/*
+
                 int fam = in.readInt();
                 int[] adjs = new int[fam * 3];
                 for(int i = 0; i < fam * 3; i++){
                     adjs[i] = in.readInt();
                 }
-                */
+                
                 int len = in.readInt();
                 String name = "";
                 for (int i = 0; i < len; i++) {
@@ -213,7 +210,7 @@ public class ModelLoader {
                     m.reflFilename = null;
                 }
                 
-                meshes.add(new Mesh(f, inb, m));
+                meshes.add(new Mesh(f, inb, m, adjs));
             }
         }
         GGConsole.log("Loaded model, generating any missing data...");

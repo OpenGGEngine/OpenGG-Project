@@ -12,7 +12,6 @@ import com.opengg.core.gui.GUIText;
 import com.opengg.core.io.ControlType;
 import static com.opengg.core.io.input.keyboard.Key.*;
 import com.opengg.core.math.Vector2f;
-import com.opengg.core.model.ModelLoader;
 import com.opengg.core.render.Text;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.texture.Texture;
@@ -21,7 +20,6 @@ import com.opengg.core.render.window.WindowInfo;
 import com.opengg.core.render.window.WindowOptions;
 import com.opengg.core.world.Skybox;
 import com.opengg.core.world.components.FreeFlyComponent;
-import com.opengg.core.world.components.ModelRenderComponent;
 import com.opengg.core.world.components.TerrainComponent;
 import java.io.IOException;
 
@@ -40,6 +38,8 @@ public class OpenGGTest extends GGApplication{
         w.resizable = true;
         w.type = "GLFW";
         w.vsync = true;
+        w.glmajor = 4;
+        w.glminor = 3;
         OpenGG.initialize(new OpenGGTest(), w);
     }
 
@@ -60,12 +60,13 @@ public class OpenGGTest extends GGApplication{
                 + " the guardians of peace and justice in the galaxy, to settle the conflict...", new Vector2f(), 1f, 0.5f, false);
         GUI.addItem("aids", new GUIText(text, font, new Vector2f(0f,0)));
         
-        WorldEngine.getCurrent().attach(new ModelRenderComponent(ModelLoader.loadModel("C:\\res\\cube.bmf")));
+        WorldEngine.useWorld(WorldEngine.loadWorld(Resource.getWorldPath("towermeet")));
+        
+        WorldEngine.getCurrent().setEnabled(true);
           
         FreeFlyComponent player = new FreeFlyComponent();
         player.use();
         WorldEngine.getCurrent().attach(player);
-        WorldEngine.rescanCurrent();
         /*
         CollisionComponent collider = new CollisionComponent();
         collider.addCollider(new SphereCollider(10));
