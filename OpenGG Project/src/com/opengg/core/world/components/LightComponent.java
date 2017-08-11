@@ -30,6 +30,8 @@ public class LightComponent extends Component{
     public LightComponent(Light l){
         super();
         this.l = l;
+        this.setPositionOffset(l.getPosition());
+        use();
     }
 
     public void use(){
