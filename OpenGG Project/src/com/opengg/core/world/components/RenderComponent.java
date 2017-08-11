@@ -99,6 +99,8 @@ public class RenderComponent extends Component implements Renderable{
             out.write(attrib.name);
             out.write(attrib.offset);
             out.write(attrib.size);
+            out.write(attrib.buflength);
+            out.write(attrib.type);
         }
     }
     
@@ -116,7 +118,9 @@ public class RenderComponent extends Component implements Renderable{
             String name = in.readString();
             int offset = in.readInt();
             int size = in.readInt();
-            VertexArrayAttribute attrib = new VertexArrayAttribute(name, size, offset, index, divisor);
+            int buflength = in.readInt();
+            int type = in.readInt();
+            VertexArrayAttribute attrib = new VertexArrayAttribute(name, size, buflength, type, offset, index, divisor);
             format.addAttribute(attrib);
         }
     }

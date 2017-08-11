@@ -7,16 +7,12 @@
 package com.opengg.core.render.shader.opengl3;
 
 import com.opengg.core.engine.GGConsole;
-import com.opengg.core.engine.OpenGG;
 import com.opengg.core.io.FileStringLoader;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.model.Material;
 import com.opengg.core.render.NativeGLBuffer;
-import com.opengg.core.render.light.Light;
-import com.opengg.core.render.shader.Mode;
-import com.opengg.core.render.window.ViewUtil;
 import com.opengg.core.world.Camera;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
@@ -262,28 +258,7 @@ public class ShaderController {
         
         return program;
     }
-    
-    public static void setMode(Mode m){
-        switch(m){
-            case OBJECT:
-                program.setUniform(mode, (int) 0);
-                break;
-            case GUI:
-                program.setUniform(mode, (int) 2);
-                break;
-            case SKYBOX:
-                program.setUniform(mode, (int) 3);
-                break;
-            case POS_ONLY:
-                program.setUniform(mode, (int) 4);
-                break;
-            case PP:
-                program.setUniform(mode, (int) 5);
-                break;
-            case SHADOW:
-                program.setUniform(mode, (int) 6);
-        }
-    }
+
     
     public static void checkError(){
         

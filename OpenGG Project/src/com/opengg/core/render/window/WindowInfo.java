@@ -19,7 +19,9 @@ public class WindowInfo {
             rbit = 8, 
             gbit = 8, 
             bbit = 8, 
-            samples = 4;
+            samples = 4,
+            glmajor = 4,
+            glminor = 3;
     public String name= "An OpenGG Application";
     public String type = "GLFW";
     public boolean resizable = false,

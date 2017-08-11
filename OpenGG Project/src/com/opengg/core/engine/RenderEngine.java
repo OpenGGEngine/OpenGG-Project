@@ -59,16 +59,16 @@ public class RenderEngine {
         ShaderController.initialize();
         
         vaoformat = new VertexArrayFormat();
-        vaoformat.addAttribute(new VertexArrayAttribute("position", 3, 0, 0, false));
-        vaoformat.addAttribute(new VertexArrayAttribute("color", 4, 3, 0, false));
-        vaoformat.addAttribute(new VertexArrayAttribute("normal", 3, 7, 0, false));
-        vaoformat.addAttribute(new VertexArrayAttribute("texcoord", 2, 10, 0, false));
+        vaoformat.addAttribute(new VertexArrayAttribute("position", 3, 12, GL_FLOAT, 0, 0, false));
+        vaoformat.addAttribute(new VertexArrayAttribute("color", 4, 12, GL_FLOAT, 3, 0, false));
+        vaoformat.addAttribute(new VertexArrayAttribute("normal", 3, 12, GL_FLOAT, 7, 0, false));
+        vaoformat.addAttribute(new VertexArrayAttribute("texcoord", 2, 12, GL_FLOAT, 10, 0, false));
         
         particle = new VertexArrayFormat();
-        particle.addAttribute(new VertexArrayAttribute("position", 3, 0, 0, false));
-        particle.addAttribute(new VertexArrayAttribute("color", 3, 0, 1, true));
-        particle.addAttribute(new VertexArrayAttribute("normal", 3, 7, 0, false));
-        particle.addAttribute(new VertexArrayAttribute("texcoord", 2, 10, 0, false));
+        particle.addAttribute(new VertexArrayAttribute("position", 12, GL_FLOAT, 3, 0, 0, false));
+        particle.addAttribute(new VertexArrayAttribute("color", 3, 12, GL_FLOAT, 0, 1, true));
+        particle.addAttribute(new VertexArrayAttribute("normal", 3, 12, GL_FLOAT, 7, 0, false));
+        particle.addAttribute(new VertexArrayAttribute("texcoord", 2, 12, GL_FLOAT, 10, 0, false));
         
         TextureManager.initialize();
         ModelManager.initialize();
@@ -311,7 +311,7 @@ public class RenderEngine {
             defaultvao.bind();
             ShaderController.useConfiguration("sky");
             skybox.getCubemap().use(2);
-            skybox.getDrawable().render(); 
+            skybox.getDrawable().render();
         }
         
         defaultvao.bind();
@@ -320,11 +320,11 @@ public class RenderEngine {
             path.render();
             resetConfig();
         }       
-        
+
         sceneTex.disableRendering();
         GUI.startGUIPos();
         PostProcessPipeline.process();
-        GUI.render(); 
+        GUI.render();
     }
     
     public static void resetConfig(){
@@ -336,7 +336,7 @@ public class RenderEngine {
         glBlendEquation(GL_FUNC_ADD);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         
-        glEnable(GL_CULL_FACE);
+        glDisable(GL_CULL_FACE);
     }
     
     static void destroy(){

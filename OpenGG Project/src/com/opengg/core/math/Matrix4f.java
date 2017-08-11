@@ -135,8 +135,8 @@ public class Matrix4f {
 
     public Matrix4f rotate(float angle, float x, float y, float z) {
         Matrix4f rotation = new Matrix4f();
-        float c = (float) Math.cos(Math.toRadians(angle));
-        float s = (float) Math.sin(Math.toRadians(angle));
+        float c = (float) FastMath.cosDeg(angle);
+        float s = (float) FastMath.sinDeg(angle);
         Vector3f vec = new Vector3f(x, y, z);
         if (vec.length() != 1f) {
             vec = vec.normalize();

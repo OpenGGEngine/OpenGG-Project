@@ -27,8 +27,8 @@ import java.util.List;
  */
 public class ShaderController {
     private static Matrix4f model= new Matrix4f(), view= new Matrix4f(), proj = new Matrix4f();
-    private static HashMap<String, Program> programs = new HashMap<>();
-    private static HashMap<String, Pipeline> pipelines = new HashMap<>(); 
+    private static HashMap<String, ShaderProgram> programs = new HashMap<>();
+    private static HashMap<String, ShaderPipeline> pipelines = new HashMap<>(); 
     private static HashMap<String, String> rnames = new HashMap<>();
     private static List<String> searchedUniforms = new ArrayList<>();
     private static List<String> searchedAttribs = new ArrayList<>();
@@ -36,30 +36,30 @@ public class ShaderController {
     private static int currentBind = 0;
     
     public static void initialize(){
-        loadShader("mainvert", Resource.getShaderPath("object.vert"), Program.VERTEX);
-        loadShader("particlevert", Resource.getShaderPath("particle.vert"), Program.VERTEX);
-        loadShader("passthroughvert", Resource.getShaderPath("passthrough.vert"), Program.VERTEX);
+        loadShader("mainvert", Resource.getShaderPath("object.vert"), ShaderProgram.VERTEX);
+        loadShader("particlevert", Resource.getShaderPath("particle.vert"), ShaderProgram.VERTEX);
+        loadShader("passthroughvert", Resource.getShaderPath("passthrough.vert"), ShaderProgram.VERTEX);
 
-        loadShader("maingeom", Resource.getShaderPath("object.geom"), Program.GEOMETRY);
-        loadShader("passthroughgeom", Resource.getShaderPath("passthrough.geom"), Program.GEOMETRY);
-        loadShader("volumegeom", Resource.getShaderPath("volume.geom"), Program.GEOMETRY);
-        loadShader("mainadjgeom", Resource.getShaderPath("objectadj.geom"), Program.GEOMETRY);
-        loadShader("passthroughadjgeom", Resource.getShaderPath("passthroughadj.geom"), Program.GEOMETRY);
+        loadShader("maingeom", Resource.getShaderPath("object.geom"), ShaderProgram.GEOMETRY);
+        loadShader("passthroughgeom", Resource.getShaderPath("passthrough.geom"), ShaderProgram.GEOMETRY);
+        loadShader("volumegeom", Resource.getShaderPath("volume.geom"), ShaderProgram.GEOMETRY);
+        loadShader("mainadjgeom", Resource.getShaderPath("objectadj.geom"), ShaderProgram.GEOMETRY);
+        loadShader("passthroughadjgeom", Resource.getShaderPath("passthroughadj.geom"), ShaderProgram.GEOMETRY);
         
-        loadShader("mainfrag", Resource.getShaderPath("phong.frag"), Program.FRAGMENT);
-        loadShader("shadowfrag", Resource.getShaderPath("phongshadow.frag"), Program.FRAGMENT);
-        loadShader("passthroughfrag", Resource.getShaderPath("passthrough.frag"), Program.FRAGMENT);
-        loadShader("ssaofrag", Resource.getShaderPath("ssao.frag"), Program.FRAGMENT);  
-        loadShader("cubemapfrag", Resource.getShaderPath("cubemap.frag"), Program.FRAGMENT); 
-        loadShader("ambientfrag", Resource.getShaderPath("ambient.frag"), Program.FRAGMENT); 
-        loadShader("texturefrag", Resource.getShaderPath("texture.frag"), Program.FRAGMENT);
-        loadShader("terrainfrag", Resource.getShaderPath("terrainmulti.frag"), Program.FRAGMENT);
-        //loadShader("bloomfrag", Resource.getShaderPath("bloom.frag"), Program.FRAGMENT);  
-        loadShader("addfrag", Resource.getShaderPath("add.frag"), Program.FRAGMENT);  
-        loadShader("guifrag", Resource.getShaderPath("gui.frag"), Program.FRAGMENT); 
-        loadShader("barfrag", Resource.getShaderPath("bar.frag"), Program.FRAGMENT); 
-        loadShader("hdrfrag", Resource.getShaderPath("hdr.frag"), Program.FRAGMENT); 
-        loadShader("waterfrag", Resource.getShaderPath("water.frag"), Program.FRAGMENT); 
+        loadShader("mainfrag", Resource.getShaderPath("phong.frag"), ShaderProgram.FRAGMENT);
+        loadShader("shadowfrag", Resource.getShaderPath("phongshadow.frag"), ShaderProgram.FRAGMENT);
+        loadShader("passthroughfrag", Resource.getShaderPath("passthrough.frag"), ShaderProgram.FRAGMENT);
+        loadShader("ssaofrag", Resource.getShaderPath("ssao.frag"), ShaderProgram.FRAGMENT);  
+        loadShader("cubemapfrag", Resource.getShaderPath("cubemap.frag"), ShaderProgram.FRAGMENT); 
+        loadShader("ambientfrag", Resource.getShaderPath("ambient.frag"), ShaderProgram.FRAGMENT); 
+        loadShader("texturefrag", Resource.getShaderPath("texture.frag"), ShaderProgram.FRAGMENT);
+        loadShader("terrainfrag", Resource.getShaderPath("terrainmulti.frag"), ShaderProgram.FRAGMENT);
+        //loadShader("bloomfrag", Resource.getShaderPath("bloom.frag"), ShaderProgram.FRAGMENT);  
+        loadShader("addfrag", Resource.getShaderPath("add.frag"), ShaderProgram.FRAGMENT);  
+        loadShader("guifrag", Resource.getShaderPath("gui.frag"), ShaderProgram.FRAGMENT); 
+        loadShader("barfrag", Resource.getShaderPath("bar.frag"), ShaderProgram.FRAGMENT); 
+        loadShader("hdrfrag", Resource.getShaderPath("hdr.frag"), ShaderProgram.FRAGMENT); 
+        loadShader("waterfrag", Resource.getShaderPath("water.frag"), ShaderProgram.FRAGMENT); 
           
         use("mainvert", "mainfrag");
         saveCurrentConfiguration("object");   
@@ -266,34 +266,12 @@ public class ShaderController {
         setUniform("projection", proj);
     }
     
-    public static void setMode(Mode m){
-        switch(m){
-            case OBJECT:
-                setUniform("mode", (int) 0);
-                break;
-            case GUI:
-                setUniform("mode", (int) 2);
-                break;
-            case SKYBOX:
-                setUniform("mode", (int) 3);
-                break;
-            case POS_ONLY:
-                setUniform("mode", (int) 4);
-                break;
-            case PP:
-                setUniform("mode", (int) 5);
-                break;
-            case SHADOW:
-                setUniform("mode", (int) 6);
-        }
-    }
-    
     public static void findAttribLocation(String loc){
         for(String s : searchedAttribs)
             if(s.equals(loc))
                 return;
 
-        programs.values().stream().filter((p) -> (p.type == Program.VERTEX)).forEach((p) -> {
+        programs.values().stream().filter((p) -> (p.type == ShaderProgram.VERTEX)).forEach((p) -> {
             p.findAttributeLocation(loc);
         });
         
@@ -308,8 +286,8 @@ public class ShaderController {
         programs.get(curv).enableVertexAttribute(loc);
     }
     
-    public static void pointVertexAttribute(String loc, int size, int tot, int start){
-        programs.get(curv).pointVertexAttribute(loc, size, tot, start);
+    public static void pointVertexAttribute(String loc, int size, int type, int tot, int start){
+        programs.get(curv).pointVertexAttribute(loc, size, type, tot, start);
     }
     
     public static void setVertexAttribDivisor(String loc, int idk){
@@ -319,14 +297,14 @@ public class ShaderController {
     public static void findUniform(String loc){
         if(searchedUniforms.contains(loc))
             return;
-        for(Program p : programs.values()){
+        for(ShaderProgram p : programs.values()){
             p.findUniformLocation(loc);
         }
         searchedUniforms.add(loc);
     }
     
     public static void setUniform(String s, Vector3f v3){
-        for(Program p : programs.values()){
+        for(ShaderProgram p : programs.values()){
             int loc = p.getUniformLocation(s);
             if(loc >= 0)
                 p.setUniform(loc, v3);
@@ -334,7 +312,7 @@ public class ShaderController {
     }
     
     public static void setUniform(String s, Vector2f v2){
-        for(Program p : programs.values()){
+        for(ShaderProgram p : programs.values()){
             int loc = p.getUniformLocation(s);
             if(loc >= 0)
                 p.setUniform(loc, v2);
@@ -342,7 +320,7 @@ public class ShaderController {
     }
     
     public static void setUniform(String s, Matrix4f m4){
-        for(Program p : programs.values()){
+        for(ShaderProgram p : programs.values()){
             int loc = p.getUniformLocation(s);
             if(loc >= 0)
                 p.setUniform(loc, m4);
@@ -350,7 +328,7 @@ public class ShaderController {
     }
     
     public static void setUniform(String s, int i){
-        for(Program p : programs.values()){
+        for(ShaderProgram p : programs.values()){
             int loc = p.getUniformLocation(s);
             if(loc >= 0)
                 p.setUniform(loc, i);
@@ -358,7 +336,7 @@ public class ShaderController {
     }
     
     public static void setUniform(String s, float f){
-        for(Program p : programs.values()){
+        for(ShaderProgram p : programs.values()){
             int loc = p.getUniformLocation(s);
             if(loc >= 0)
                 p.setUniform(loc, f);
@@ -366,7 +344,7 @@ public class ShaderController {
     }
     
     public static void setUniform(String s, boolean b){
-        for(Program p : programs.values()){
+        for(ShaderProgram p : programs.values()){
             int loc = p.getUniformLocation(s);
             if(loc >= 0)
                 p.setUniform(loc, b);
@@ -374,7 +352,7 @@ public class ShaderController {
     }
        
     public static void setTextureLocation(String s, int i){
-        programs.values().stream().filter((p) -> (p.type == Program.FRAGMENT)).forEach((p) -> {
+        programs.values().stream().filter((p) -> (p.type == ShaderProgram.FRAGMENT)).forEach((p) -> {
             p.setUniform(p.getUniformLocation(s), i);
         });
     }
@@ -390,16 +368,16 @@ public class ShaderController {
     }
     
     public static void setUniformBlockLocation(int bind, String name){
-        for(Program p : programs.values()){
+        for(ShaderProgram p : programs.values()){
             p.setUniformBlockIndex(bind, name);
         }
     }
     
     public static void checkError(){
-        for(Program p : programs.values()){
+        for(ShaderProgram p : programs.values()){
             p.checkStatus();
         }
-        for(Pipeline p : pipelines.values()){
+        for(ShaderPipeline p : pipelines.values()){
             p.validate();
         }
     }
@@ -436,19 +414,19 @@ public class ShaderController {
         setUniform("billboard", yes);
     }
     
-    private static void use(Program v, Program g, Program f){
+    private static void use(ShaderProgram v, ShaderProgram g, ShaderProgram f){
         String st;
         if(g == null)
-            st = v.id + ";;" + f.id;
+            st = v.getId() + ";;" + f.getId();
         else
-            st = v.id + ";" + g.id + ";" + f.id;
+            st = v.getId() + ";" + g.getId() + ";" + f.getId();
         
-        Pipeline p;
+        ShaderPipeline p;
         if((p = pipelines.get(st)) != null){
             p.bind();
             return;
         }
-        p = new Pipeline(v,g,f);
+        p = new ShaderPipeline(v,g,f);
         pipelines.put(st, p);
         p.bind();
     }
@@ -468,20 +446,20 @@ public class ShaderController {
     }
     
     public static void saveConfiguration(String v, String g, String f, String name){
-        Program vp = programs.get(v);
-        Program gp = programs.get(g);
-        Program fp = programs.get(f);
+        ShaderProgram vp = programs.get(v);
+        ShaderProgram gp = programs.get(g);
+        ShaderProgram fp = programs.get(f);
         
-        String st = vp.id + ";" + gp.id + ";" + fp.id;
+        String st = vp.getId() + ";" + gp.getId() + ";" + fp.getId();
         
         rnames.put(name, st);
     }
     
     public static void saveConfiguration(String v, String f, String name){
-        Program vp = programs.get(v);
-        Program fp = programs.get(f);
+        ShaderProgram vp = programs.get(v);
+        ShaderProgram fp = programs.get(f);
         
-        String st = vp.id + ";;" + fp.id;
+        String st = vp.getId() + ";;" + fp.getId();
         
         rnames.put(name, st);
     }
@@ -495,7 +473,7 @@ public class ShaderController {
     
     public static void useConfiguration(String name){
         String id = rnames.get(name);
-        Pipeline p = pipelines.get(id);
+        ShaderPipeline p = pipelines.get(id);
                
         if(p == null){
             GGConsole.error("A shader configuration named " + name + " tried to be used, but no appropriate pipeline was found!");
@@ -510,22 +488,22 @@ public class ShaderController {
     }
     
     public static void clearPipelineCache(){
-        for(Pipeline p : pipelines.values()){
+        for(ShaderPipeline p : pipelines.values()){
             p.deletePipeline();
         }
         pipelines.clear();
         pipelines = new HashMap<>();
     }
     
-    public static Program getProgram(String program){
+    public static ShaderProgram getProgram(String program){
         return programs.get(program);
     }
     
     public static boolean loadShader(String name, String loc, int type){
         try {
             CharSequence sec = FileStringLoader.loadStringSequence(URLDecoder.decode(loc, "UTF-8"));
-            programs.put(name, new Program(type, sec, name));
-            Program p = programs.get(name);
+            programs.put(name, new ShaderProgram(type, sec, name));
+            ShaderProgram p = programs.get(name);
             for(String s : searchedUniforms){
                 p.findUniformLocation(s);
             }

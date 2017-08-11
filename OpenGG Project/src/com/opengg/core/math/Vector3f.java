@@ -237,9 +237,9 @@ public class Vector3f implements Serializable{
         float inclination = getInclination();
         float azimuth = getAzimuth();
 
-        this.x = (float) (radi * Math.sin(Math.toRadians(inclination)) * Math.cos(Math.toRadians(azimuth)));
-        this.z = (float) (radi * Math.sin(Math.toRadians(inclination)) * Math.sin(Math.toRadians(azimuth)));
-        this.y = (float) (radi * Math.cos(Math.toRadians(inclination)));
+        this.x = (float) (radi * FastMath.sinDeg(inclination) * FastMath.cosDeg(azimuth));
+        this.z = (float) (radi * FastMath.sinDeg(inclination) * FastMath.sinDeg(azimuth));
+        this.y = (float) (radi * FastMath.cosDeg(inclination));
     }
 
     public float getInclination() {
@@ -254,8 +254,8 @@ public class Vector3f implements Serializable{
         float length = length();
         float azimuth = getAzimuth();
         
-        x = (float) (length * FastMath.sinDeg(deg) * Math.cos(Math.toRadians(azimuth)));
-        y = (float) (length * FastMath.sinDeg(deg) * Math.sin(Math.toRadians(azimuth)));
+        x = (float) (length * FastMath.sinDeg(deg) * FastMath.cosDeg(azimuth));
+        y = (float) (length * FastMath.sinDeg(deg) * FastMath.sinDeg(azimuth));
         z = (float) (length * FastMath.cosDeg(deg));
     }
     
@@ -263,8 +263,8 @@ public class Vector3f implements Serializable{
         float length = length();
         float inclination = getInclination();
         
-        x = (float) (length * Math.sin(Math.toRadians(inclination)) * Math.cos(Math.toRadians(deg)));
-        z = (float) (length * Math.sin(Math.toRadians(inclination)) * Math.sin(Math.toRadians(deg)));
+        x = (float) (length * FastMath.sinDeg(inclination) * FastMath.cosDeg(deg));
+        z = (float) (length * FastMath.sinDeg(inclination) * FastMath.sinDeg(deg));
     }
     
     public Vector3f closertoZero(float f){

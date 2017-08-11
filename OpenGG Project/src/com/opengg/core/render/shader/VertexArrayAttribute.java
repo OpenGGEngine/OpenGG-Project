@@ -15,14 +15,18 @@ public class VertexArrayAttribute {
     public int size;
     public int offset;
     public int arrayindex;
+    public int type;
+    public int buflength;
     public boolean divisor;
     
-    public VertexArrayAttribute(String name, int size, int offset, int index, boolean divisor){
+    public VertexArrayAttribute(String name, int size, int buflength, int type, int offset, int index, boolean divisor){
         this.name = name;
         this.size = size;
         this.offset = offset;
         this.arrayindex = index;
         this.divisor = divisor;
+        this.buflength = buflength;
+        this.type = type;
     }
     
     @Override

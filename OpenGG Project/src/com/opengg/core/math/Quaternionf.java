@@ -172,7 +172,7 @@ public class Quaternionf implements Serializable{
         while (res < 0) {
             res += 360;
         }
-        w = FastMath.cos((float)Math.toRadians((res) / 2));
+        w = FastMath.cosDeg((res) / 2);
     }
     
     public final void setAngle(float degrees) {
@@ -182,7 +182,7 @@ public class Quaternionf implements Serializable{
         while (degrees < 0) {
             degrees += 360;
         }
-        w = FastMath.cos((float)Math.toRadians((degrees) / 2));
+        w = FastMath.cosDeg((degrees) / 2);
     }
 
     public final void setAxis(Vector3f axis){
@@ -209,9 +209,9 @@ public class Quaternionf implements Serializable{
         }
 
         float theta = (float) Math.acos(cosine);
-        float sine = (float) Math.sin(theta);
-        float beta = (float) Math.sin((1 - t) * theta) / sine;
-        float alpha = (float) Math.sin(t * theta) / sine * flip;
+        float sine = (float) sin(theta);
+        float beta = (float) sin((1 - t) * theta) / sine;
+        float alpha = (float) sin(t * theta) / sine * flip;
 
         return a.multiply(beta).add(b.multiply(alpha));
     }

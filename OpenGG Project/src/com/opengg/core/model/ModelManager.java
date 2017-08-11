@@ -22,11 +22,13 @@ public class ModelManager {
     public static int repsave = 0;
     
     public static void initialize(){
+        /*
         try {
             defaultm = ModelLoader.forceLoadModel("resources/models/default/default.bmf");
         } catch (IOException ex) {
             GGConsole.error("Failed to load default model, nonexistent models may crash the program!");
         }
+                */
     }  
     
     public static void addModel( Model model){

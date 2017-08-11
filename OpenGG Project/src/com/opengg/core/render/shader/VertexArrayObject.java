@@ -8,6 +8,10 @@ package com.opengg.core.render.shader;
 
 import com.opengg.core.engine.RenderEngine;
 import com.opengg.core.render.GLBuffer;
+import static org.lwjgl.opengl.GL11.GL_BYTE;
+import static org.lwjgl.opengl.GL11.GL_FLOAT;
+import static org.lwjgl.opengl.GL11.GL_INT;
+import static org.lwjgl.opengl.GL11.glGetError;
 
 /**
  *
@@ -36,9 +40,13 @@ public class VertexArrayObject {
                 lastloc = attrib.arrayindex;
                 buffers[lastloc].bind();
             }
+            int bytes = 1;
+            if(attrib.type == GL_FLOAT) bytes = Float.BYTES;
+            if(attrib.type == GL_INT) bytes = Integer.BYTES;
+            if(attrib.type == GL_BYTE) bytes = 1;
 
             ShaderController.enableVertexAttribute(attrib.name);
-            ShaderController.pointVertexAttribute(attrib.name, attrib.size, 12 * Float.BYTES, attrib.offset * Float.BYTES);
+            ShaderController.pointVertexAttribute(attrib.name, attrib.size, attrib.type, attrib.buflength * Float.BYTES, attrib.offset * bytes);
             ShaderController.setVertexAttribDivisor(attrib.name, attrib.divisor ? 1 : 0);
         }
     }
