@@ -106,42 +106,63 @@ public class Quaternionf implements Serializable{
         return new Quaternionf(this.w - q.w, this.x - q.x, this.y - q.y, this.z - q.z);
     }
 
-    public Quaternionf multiply(Quaternionf q) {
+    public Quaternionf multiply(Quaternionf q){
+        return new Quaternionf(this).multiplyThis(q);
+    }
+    
+    public Quaternionf multiplyThis(Quaternionf q) {
         set(w * q.x + x * q.w + y * q.z - z * q.y,
                  w * q.y - x * q.z + y * q.w + z * q.x,
                  w * q.z + x * q.y - y * q.x + z * q.w,
                  w * q.w - x * q.x - y * q.y - z * q.z);
-        return new Quaternionf(this);
+        return this;
     }
 
-    public Quaternionf multiply(final float scalar) {
-        return multiply(new Quaternionf(scalar,scalar,scalar,scalar));
+    public Quaternionf multiply(final float scalar){
+        return new Quaternionf(this).multiplyThis(scalar);
+    }
+    
+    public Quaternionf multiplyThis(final float scalar) {
+        return multiplyThis(new Quaternionf(scalar,scalar,scalar,scalar));
     }
 
-    public Quaternionf divide(final Quaternionf q) {
+    public Quaternionf divide(Quaternionf divisor){
+        return new Quaternionf(this).divideThis(divisor);
+    }
+    
+    public Quaternionf divideThis(final Quaternionf q) {
         if (q.w == 0 || q.x == 0 || q.y == 0 || q.z == 0) {
             throw new ArithmeticException("Divide by zero in quaternion");
         }
-        return new Quaternionf(this.w / q.w, this.x / q.x, this.y / q.y, this.z / q.z);
+        return set(this.w / q.w, this.x / q.x, this.y / q.y, this.z / q.z);
     }
 
-    public Quaternionf divide(final float scalar) {
-        if (scalar == 0) {
+    public Quaternionf divide(final float divisor){
+        return new Quaternionf(this).divideThis(divisor);
+    }
+    
+    public Quaternionf divideThis(final float divisor) {
+        if (divisor == 0) {
             throw new ArithmeticException("Divide by zero");
         }
-        return new Quaternionf(this.w / scalar, this.x / scalar, this.y / scalar, this.z / scalar);
+        return set(this.w / divisor, this.x / divisor, this.y / divisor, this.z / divisor);
     }
 
     public float length() {
         return (float) Math.sqrt(w * w + x * x + y * y + z * z);
     }
 
-    public void normalize() {
+    public Quaternionf normalize(){
+        return new Quaternionf(this).normalizeThis();
+    }
+    
+    public Quaternionf normalizeThis() {
         float magnitude = length();
         w /= magnitude;
         x /= magnitude;
         y /= magnitude;
         z /= magnitude;
+        return this;
     }
 
     public Matrix4f convertMatrix() {

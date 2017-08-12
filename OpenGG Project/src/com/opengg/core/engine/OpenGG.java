@@ -134,6 +134,7 @@ public class OpenGG{
 
         GGConsole.log("Application setup beginning");
         app.setup();
+        WorldEngine.rescanCurrent();
         GGConsole.log("Application setup complete");
         GGConsole.log("OpenGG initialized in " + time.getDeltaMs() + " milliseconds");
         
