@@ -6,6 +6,7 @@
 
 package com.opengg.core.world.components.particle;
 
+import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.texture.Texture;
 
@@ -16,34 +17,41 @@ import com.opengg.core.render.texture.Texture;
 public class FountainParticleEmitter extends ParticleEmitter{
     private float pps;
     private float speed;
-    private float gravityComplient;
-    private float lifeLength;
     private float timeSinceLast = 0f;
+    private float deviation;
+    private Vector3f angle;
+    private boolean paused;
     
-    public FountainParticleEmitter(float pps, float speed, float lifeLength, Texture t) {
-        super(t);
+    public FountainParticleEmitter(float pps, float speed, float lifeLength, float deviation, Vector3f angle, Texture t) {
+        super(t, lifeLength, -9.81f);
         this.pps = pps;
         this.speed = speed;
-        this.gravityComplient = -9.81f;
         this.lifeLength = lifeLength;
+        this.deviation = deviation;
+        this.angle = angle.normalize();
     }
     
-    private void emitParticle(Vector3f center){
-        float dirX = (float) Math.random() * 2f - 1f;
-        float dirZ = (float) Math.random() * 2f - 1f;
-        Vector3f velocity = new Vector3f(dirX, 1, dirZ);
-        velocity.normalize();
-        velocity.multiply(speed);
-        particles.add(new Particle(center, velocity, new Vector3f(0,gravityComplient,0), lifeLength,1f));
+    private void emitParticle(){
+        float offx = (float) Math.random() * deviation * 2 - deviation;
+        float offy = (float) Math.random() * deviation * 2 - deviation;
+        float offz = (float) Math.random() * deviation * 2 - deviation;
+        
+        Quaternionf offset = new Quaternionf(new Vector3f(offx, offy, offz));
+        
+        Vector3f finalv = offset.transform(angle);
+        finalv.multiplyThis(speed);
+        
+        addParticle(new Particle(getPosition(), finalv, new Vector3f(0,gravityComplient,0), lifeLength,1f));
     }
     
     @Override
     public void update(float delta){
         super.update(delta);
         timeSinceLast += delta;
-        if(timeSinceLast > 1f/pps){
-            emitParticle(this.getPosition());
-            timeSinceLast = 0;
+        while(!(timeSinceLast < 1f/pps)){
+            if(!paused)
+                emitParticle();
+            timeSinceLast -= 1f/pps;
         }
     }
 }

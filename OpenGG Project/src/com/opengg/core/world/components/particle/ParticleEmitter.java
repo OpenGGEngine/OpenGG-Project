@@ -28,8 +28,10 @@ import java.util.List;
 public abstract class ParticleEmitter extends RenderComponent{
     List<Particle> particles = new LinkedList<>();
     Texture t;
+    float gravityComplient;
+    float lifeLength;
     
-    public ParticleEmitter(Texture t){
+    public ParticleEmitter(Texture t, float lifelength, float gravityComplement){
         createDrawable();
         this.setFormat(RenderEngine.getParticleFormat());
         this.setShader("particle");
@@ -37,7 +39,7 @@ public abstract class ParticleEmitter extends RenderComponent{
     }
     
     private void createDrawable(){
-        Buffer[] buffers = ObjectCreator.createSquareBuffers(new Vector2f(0,0), new Vector2f(1,1), 0);
+        Buffer[] buffers = ObjectCreator.createSquareBuffers(new Vector2f(-0.5f,-0.5f), new Vector2f(0.5f,0.5f), 0);
         FloatBuffer fb = (FloatBuffer) buffers[0];
         IntBuffer ib = (IntBuffer) buffers[1];
         this.setDrawable(new InstancedDrawnObject(fb,ib));
@@ -53,6 +55,10 @@ public abstract class ParticleEmitter extends RenderComponent{
         return Vector3f.listToBuffer(vs);
     }
     
+    public void addParticle(Particle p){
+        particles.add(p);
+    }
+    
     
     @Override
     public void update(float delta) {
@@ -63,11 +69,11 @@ public abstract class ParticleEmitter extends RenderComponent{
                 screwconcurrent.remove();             
             }
         }
-        ((InstancedDrawnObject)getDrawable()).setPositions(createParticleVBO(),particles.size());
     }
     
     @Override
     public void render(){
+        ((InstancedDrawnObject)getDrawable()).setPositions(createParticleVBO(),particles.size());
         t.use(0);
         super.render();
     }
