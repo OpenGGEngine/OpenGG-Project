@@ -6,6 +6,8 @@
 
 package com.opengg.core.audio;
 
+import java.io.File;
+import java.io.IOException;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 import static org.lwjgl.openal.AL10.AL_FORMAT_MONO16;
@@ -18,9 +20,11 @@ import org.lwjgl.system.MemoryUtil;
  * @author Javier
  */
 public class AudioLoader {
-    public static SoundData loadVorbis(String path){
+    public static SoundData loadVorbis(String path) throws IOException{
         IntBuffer samplerate= MemoryUtil.memAllocInt(1);
         IntBuffer channels = MemoryUtil.memAllocInt(1);
+        if(!(new File(path).exists()))
+            throw new IOException();
         ShortBuffer buffer = stb_vorbis_decode_filename(path, channels, samplerate);
         
         SoundData data = new SoundData();
@@ -28,6 +32,7 @@ public class AudioLoader {
         data.samplerate = samplerate.get();
         data.format = data.channels == 2 ? AL_FORMAT_STEREO16 : AL_FORMAT_MONO16;
         data.data = buffer;
+        data.origin = path;
         return data;
     }
 }

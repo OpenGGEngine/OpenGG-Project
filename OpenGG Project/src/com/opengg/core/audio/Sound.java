@@ -57,8 +57,8 @@ public class Sound{
         so.setGain(gain * AudioController.getGlobalGain());
     }
     
-    public void setSound(String u){
-        setSound(AudioLoader.loadVorbis(u));
+    public void setSound(String path){
+        setSound(SoundManager.loadSound(path));
     }
     
     public void setSound(SoundData data){

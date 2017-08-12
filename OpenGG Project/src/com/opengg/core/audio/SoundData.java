@@ -15,6 +15,7 @@ import java.nio.ShortBuffer;
  */
 public class SoundData {
     ShortBuffer data;
+    String origin;
     int channels;
     int format;
     int samplerate;

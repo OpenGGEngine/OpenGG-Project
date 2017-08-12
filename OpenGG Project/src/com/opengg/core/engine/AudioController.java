@@ -8,6 +8,7 @@ package com.opengg.core.engine;
 
 import com.opengg.core.audio.AudioListener;
 import com.opengg.core.audio.NativeSound;
+import com.opengg.core.audio.SoundManager;
 import static com.opengg.core.engine.GGConsole.error;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
@@ -45,6 +46,8 @@ public class AudioController {
             error("OpenAL Error in initialization: " + AL10.alGetError());
         else
             initialized = true;
+        
+        SoundManager.initialize();
     }
     
     public static void setListener(AudioListener s){

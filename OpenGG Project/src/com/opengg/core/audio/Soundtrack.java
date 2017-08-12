@@ -72,6 +72,9 @@ public class Soundtrack {
     }
     
     public void shuffle(){
+        stop();
+        current.rewind();
         Collections.shuffle(soundtrack);
+        current = soundtrack.get(0);
     }
 }

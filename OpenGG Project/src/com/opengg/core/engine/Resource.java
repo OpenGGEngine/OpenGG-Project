@@ -8,6 +8,7 @@ package com.opengg.core.engine;
 
 import com.opengg.core.audio.AudioLoader;
 import com.opengg.core.audio.SoundData;
+import com.opengg.core.audio.SoundManager;
 import com.opengg.core.model.Model;
 import com.opengg.core.model.ModelManager;
 import com.opengg.core.render.texture.Texture;
@@ -68,7 +69,7 @@ public class Resource {
     }
     
     public static SoundData getSoundData(String name){
-        return AudioLoader.loadVorbis(getSoundPath(name));
+        return SoundManager.loadSound(getSoundPath(name));
     }
     
     public static Model getModel(String name){
