@@ -17,6 +17,7 @@ import static org.lwjgl.opengl.GL20.GL_LINK_STATUS;
 import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glGetAttribLocation;
+import static org.lwjgl.opengl.GL20.glGetProgramInfoLog;
 import static org.lwjgl.opengl.GL20.glGetProgrami;
 import static org.lwjgl.opengl.GL20.glGetUniformLocation;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
@@ -176,5 +177,9 @@ public class NativeGLProgram {
     
     public int checkStatus() {
         return glGetProgrami(id, GL_LINK_STATUS);
+    }
+    
+    public String getProgramInfoLog(){
+        return glGetProgramInfoLog(id);
     }
 }

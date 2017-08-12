@@ -7,6 +7,7 @@
 package com.opengg.core.render.shader;
 
 import com.opengg.core.engine.GGConsole;
+import com.opengg.core.exceptions.ShaderException;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
@@ -166,8 +167,9 @@ public class ShaderProgram {
     
     public void checkStatus() {
         int i;
-        while((i = program.checkStatus()) != GL_TRUE){
+        if((i = program.checkStatus()) != GL_TRUE){
             GGConsole.error("Shader " + name + " threw an error on status check: "  + i);
+            throw new ShaderException(("From shader " + name + " with error code " + i + ": " + program.getProgramInfoLog()));
         }
     }
     

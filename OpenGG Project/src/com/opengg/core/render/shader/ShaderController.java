@@ -8,7 +8,7 @@ package com.opengg.core.render.shader;
 
 import com.opengg.core.engine.GGConsole;
 import com.opengg.core.engine.Resource;
-import com.opengg.core.exceptions.InvalidShaderException;
+import com.opengg.core.exceptions.ShaderException;
 import com.opengg.core.io.FileStringLoader;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Vector2f;
@@ -477,7 +477,7 @@ public class ShaderController {
                
         if(p == null){
             GGConsole.error("A shader configuration named " + name + " tried to be used, but no appropriate pipeline was found!");
-            throw new InvalidShaderException("Failed to find pipeline named " + name);
+            throw new ShaderException("Failed to find pipeline named " + name);
         }
         
         curv = p.vert;

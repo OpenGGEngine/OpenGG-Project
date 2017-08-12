@@ -10,23 +10,23 @@ package com.opengg.core.exceptions;
  *
  * @author Javier
  */
-public class InvalidShaderException
+public class ShaderException
     extends RuntimeException{
     private static final long serialVersionUID = 1L;
 	
-    public InvalidShaderException() {
+    public ShaderException() {
             super();
     }
 
-    public InvalidShaderException (String message) {
+    public ShaderException (String message) {
             super(message);
     }
 
-    public InvalidShaderException (Throwable ex) {
+    public ShaderException (Throwable ex) {
             super(ex);
     }
 
-    public InvalidShaderException (String message, Throwable ex) {
+    public ShaderException (String message, Throwable ex) {
             super(message, ex);
     }
 }
