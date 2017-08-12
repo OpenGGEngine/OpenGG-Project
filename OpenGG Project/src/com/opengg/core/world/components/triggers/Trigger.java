@@ -13,26 +13,24 @@ import java.util.ArrayList;
  *
  * @author Javier
  */
-public abstract class Trigger extends Component{
+public class Trigger extends Component implements ITrigger{
     ArrayList<Triggerable> subscribers = new ArrayList<>();
-    boolean enabled;
     
+    @Override
     public void addSubscriber(Triggerable dest){
         subscribers.add(dest);
         dest.onSubscribe(this);
     }
     
-    public boolean getTriggerState(){
-        return enabled;
-    }
-    
-    public ArrayList<Triggerable> getTriggerables(){
-        return subscribers;
-    }
-    
+    @Override
     public void trigger(TriggerInfo ti){
         for(Triggerable t : subscribers){
             t.onTrigger(this, ti);
         }
+    }
+
+    @Override
+    public ArrayList<Triggerable> getSubscribers() {
+        return subscribers;
     }
 }

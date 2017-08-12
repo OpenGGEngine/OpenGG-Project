@@ -15,7 +15,6 @@ import java.util.ArrayList;
 public interface ITrigger {
     
     public void addSubscriber(Triggerable dest); 
-    public boolean getTriggerState();
     public ArrayList<Triggerable> getSubscribers();
     public void trigger(TriggerInfo ti);
 }
