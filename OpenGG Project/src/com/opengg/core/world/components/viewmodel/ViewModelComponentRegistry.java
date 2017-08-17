@@ -69,9 +69,13 @@ public class ViewModelComponentRegistry {
     }
     
     public static void registerAllFromJar(String jarpath){
-        List<Class> classes = JarClassUtil.loadAllClassesFromJar(jarpath);
-        for(Class clazz : classes){
-            register(clazz, false);
+        try{
+            List<Class> classes = JarClassUtil.loadAllClassesFromJar(jarpath);
+            for(Class clazz : classes){
+                register(clazz, false);
+            }
+        }catch(Exception e){
+            GGConsole.warn("Failed to load jarfile at " + jarpath + ", viewmodels for classes in that jar may be missing!");
         }
     }
     
