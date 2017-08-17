@@ -17,18 +17,14 @@ import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.Text;
-import com.opengg.core.render.light.Light;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.texture.text.GGFont;
 import com.opengg.core.render.window.WindowInfo;
 import com.opengg.core.render.window.WindowOptions;
 import com.opengg.core.world.Skybox;
-import com.opengg.core.world.components.FreeFlyComponent;
-import com.opengg.core.world.components.LightComponent;
 import com.opengg.core.world.components.ModelRenderComponent;
 import com.opengg.core.world.components.TerrainComponent;
-import com.opengg.core.world.components.particle.FountainParticleEmitter;
 import java.io.IOException;
 
 public class OpenGGTest extends GGApplication{
@@ -56,7 +52,14 @@ public class OpenGGTest extends GGApplication{
         Soundtrack track = new Soundtrack();
         track.addSong(Resource.getSoundData("windgarden.ogg"));
         track.addSong(Resource.getSoundData("battlerock.ogg"));
-        track.play();
+        track.addSong(Resource.getSoundData("floaterland.ogg"));
+        track.addSong(Resource.getSoundData("hell.ogg"));
+        track.addSong(Resource.getSoundData("intogalaxy.ogg"));
+        track.addSong(Resource.getSoundData("koopa.ogg"));
+        track.addSong(Resource.getSoundData("megaleg.ogg"));
+        track.addSong(Resource.getSoundData("stardust.ogg"));
+        track.shuffle();
+        track.play();   
         SoundtrackHandler.setSoundtrack(track);
         
         font = Resource.getFont("test", "test.png");
@@ -73,23 +76,12 @@ public class OpenGGTest extends GGApplication{
         comp.setRotationOffset(new Quaternionf(new Vector3f(0,180,0)));
         comp.setPositionOffset(new Vector3f(0,0,4));
         WorldEngine.getCurrent().attach(comp);
-        WorldEngine.getCurrent().attach(new FountainParticleEmitter(6,100,4,Resource.getTexture("emak.png")));
-        WorldEngine.getCurrent().attach(new LightComponent(new Light(new Vector3f(0,2,2), new Vector3f(1,1,1), 100, 0)));
-        WorldEngine.rescanCurrent();
+        //WorldEngine.getCurrent().attach(new LightComponent(new Light(new Vector3f(0,2,2), new Vector3f(1,1,1), 100, 0))); 
           
-        FreeFlyComponent player = new FreeFlyComponent();
+        TestPlayerComponent player = new TestPlayerComponent();
         player.use();
         WorldEngine.getCurrent().attach(player);
-        /*
-        CollisionComponent collider = new CollisionComponent();
-        collider.addCollider(new SphereCollider(10));
-        
-        WorldEngine.getCurrent().attach(collider);
-        WorldEngine.getCurrent().attach(player);
-        WorldEngine.rescanCurrent();
-        
-        WorldEngine.saveWorld(WorldEngine.getCurrent(), Resource.getWorldPath("testworld4"));
-        */
+
         BindController.addBind(ControlType.KEYBOARD, "forward", KEY_W);
         BindController.addBind(ControlType.KEYBOARD, "backward", KEY_S);
         BindController.addBind(ControlType.KEYBOARD, "left", KEY_A);

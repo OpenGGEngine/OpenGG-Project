@@ -12,9 +12,9 @@ import com.opengg.core.math.Vector3f;
 import com.opengg.core.model.ModelLoader;
 import com.opengg.core.render.light.Light;
 import com.opengg.core.world.collision.AABB;
-import com.opengg.core.world.collision.BoundingBox;
 import com.opengg.core.world.collision.CylinderCollider;
 import com.opengg.core.world.components.Component;
+import com.opengg.core.world.components.LightComponent;
 import com.opengg.core.world.components.ModelRenderComponent;
 import com.opengg.core.world.components.physics.CollisionComponent;
 import com.opengg.core.world.components.physics.PhysicsComponent;
@@ -25,14 +25,14 @@ import com.opengg.core.world.components.physics.PhysicsComponent;
  */
 public class BulletComponent extends Component{
     float timeSinceFire;
-    Light l;
     private GunComponent source;
     private ModelRenderComponent bullet;
     private PhysicsComponent physics;
+    private LightComponent lc;
     
     public BulletComponent(GunComponent source){
         this.source = source;
-        this.setPositionOffset(source.getPosition().subtract(new Vector3f(0,0,0)));
+        this.setPositionOffset(source.getPosition().add(source.getRotation().transform(new Vector3f(0,0.5f,0))));
         this.setRotationOffset(source.getRotation());
         
         this.attach(new PhysicsComponent());
@@ -42,14 +42,14 @@ public class BulletComponent extends Component{
         attach(bullet);
 
         physics = new PhysicsComponent();
-        physics.velocity = getRotationOffset().transform(new Vector3f(500,0,0));
+        physics.velocity = getRotation().transform(new Vector3f(5,0,0));
         physics.addCollider(new CollisionComponent(new AABB(new Vector3f(-1,-1,-1),1,1,1), new CylinderCollider(0.1f,0.1f)));
         physics.bounciness = 0.9f;
         physics.frictionCoefficient = 0;
         attach(physics);
 
-        l = new Light(getPositionOffset(), new Vector3f(1,0.3f,0.3f),200,300);
-        RenderEngine.addLight(l);
+        lc = new LightComponent(new Light(new Vector3f(), new Vector3f(1,0.3f,0.3f),200,300));
+        attach(lc);
         
         WorldEngine.getCurrent().addRenderable(bullet);
         WorldEngine.getCurrent().addCollider(physics.getColliders().get(0));
@@ -57,15 +57,13 @@ public class BulletComponent extends Component{
     
     @Override
     public void update(float delta){
-        l.setPosition(getPositionOffset());
-        
-        timeSinceFire += delta / 1000;
+        timeSinceFire += delta;
         if(timeSinceFire > 1f){
-            RenderEngine.removeLight(l);
+            RenderEngine.removeLight(lc.getLight());
         }
         
         if(this.getPosition().getDistance(source.getPosition()) > 500){
-            RenderEngine.removeLight(l);
+            RenderEngine.removeLight(lc.getLight());
             WorldEngine.markForRemoval(this);
             WorldEngine.getCurrent().removeRenderable(bullet);
         }

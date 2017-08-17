@@ -24,7 +24,10 @@ public class Config {
     public static void reloadConfigs(){
         File cfgdir = new File("config\\");
         File[] cfgs = cfgdir.listFiles();
-        
+        if(cfgs == null || cfgs.length == 0){
+            GGConsole.log("Found no configuration files, continuing without them...");
+            return;
+        }
         for(File f : cfgs){
             try {
                 Properties p = new Properties();
@@ -40,6 +43,7 @@ public class Config {
                 GGConsole.warning("Failed to load config file at " + f.getAbsolutePath() + ", is it formatted?");
             }
         }
+        GGConsole.log(cfgs.length + " config files have been loaded");
     }
     
     public static ConfigFile getConfigFile(String name){

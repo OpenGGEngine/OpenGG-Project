@@ -15,15 +15,15 @@ import com.opengg.core.render.texture.Texture;
  * @author Javier
  */
 public class FountainParticleEmitter extends ParticleEmitter{
-    private float pps;
-    private float speed;
-    private float timeSinceLast = 0f;
-    private float deviation;
-    private Vector3f angle;
-    private boolean paused;
+    float pps;
+    float speed;
+    float timeSinceLast = 0f;
+    float deviation;
+    Vector3f angle;
+    boolean paused;
     
     public FountainParticleEmitter(float pps, float speed, float lifeLength, float deviation, Vector3f angle, Texture t) {
-        super(t, lifeLength, -9.81f);
+        super(t, lifeLength);
         this.pps = pps;
         this.speed = speed;
         this.lifeLength = lifeLength;
@@ -39,6 +39,7 @@ public class FountainParticleEmitter extends ParticleEmitter{
         Quaternionf offset = new Quaternionf(new Vector3f(offx, offy, offz));
         
         Vector3f finalv = offset.transform(angle);
+        finalv = getRotation().transform(finalv);
         finalv.multiplyThis(speed);
         
         addParticle(new Particle(getPosition(), finalv, new Vector3f(0,gravityComplient,0), lifeLength,1f));

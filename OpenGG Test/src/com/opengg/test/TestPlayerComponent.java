@@ -58,6 +58,7 @@ public class TestPlayerComponent extends Component implements Actionable{
         playerphysics.mass = 60f;
         playerphysics.bounciness = 0;
         playerphysics.frictionCoefficient = 0.8f;
+        
         gun = new GunComponent();
         gun.setPositionOffset(weaponpos);
         gun.setRotationOffset(new Quaternionf(new Vector3f(0,90,0)));

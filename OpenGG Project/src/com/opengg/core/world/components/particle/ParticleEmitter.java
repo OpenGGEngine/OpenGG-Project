@@ -31,11 +31,12 @@ public abstract class ParticleEmitter extends RenderComponent{
     float gravityComplient;
     float lifeLength;
     
-    public ParticleEmitter(Texture t, float lifelength, float gravityComplement){
+    public ParticleEmitter(Texture t, float lifelength){
         createDrawable();
         this.setFormat(RenderEngine.getParticleFormat());
         this.setShader("particle");
         this.t = t;
+        this.lifeLength = lifelength;
     }
     
     private void createDrawable(){
@@ -50,7 +51,7 @@ public abstract class ParticleEmitter extends RenderComponent{
         int i = 0;
         for(Particle ps : particles){
             vs[i] = ps.getPosition();
-            i++;
+            i ++;
         }
         return Vector3f.listToBuffer(vs);
     }
