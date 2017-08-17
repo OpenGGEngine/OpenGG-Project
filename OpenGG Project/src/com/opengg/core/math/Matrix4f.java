@@ -49,20 +49,20 @@ public class Matrix4f {
             float l20, float l21, float l22, float l23,
             float l30, float l31, float l32, float l33) {
         m00 = l00;
-        m10 = l01;
-        m20 = l02;
-        m30 = l03;
-        m01 = l10;
+        m10 = l10;
+        m20 = l20;
+        m30 = l30;
+        m01 = l01;
         m11 = l11;
-        m21 = l12;
-        m31 = l13;
-        m02 = l20;
-        m12 = l21;
+        m21 = l21;
+        m31 = l31;
+        m02 = l02;
+        m12 = l12;
         m22 = l22;
-        m32 = l23;
-        m03 = l30;
-        m13 = l31;
-        m23 = l32;
+        m32 = l32;
+        m03 = l03;
+        m13 = l13;
+        m23 = l23;
         m33 = l33;
     }
 
