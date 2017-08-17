@@ -109,10 +109,10 @@ public class Matrix4f {
     public FloatBuffer getBuffer() {
         try(MemoryStack stack = MemoryStack.stackPush()){
             FloatBuffer buffer = stack.callocFloat(16);
-            buffer.put(m00).put(m10).put(m20).put(m30);
-            buffer.put(m01).put(m11).put(m21).put(m31);
-            buffer.put(m02).put(m12).put(m22).put(m32);
-            buffer.put(m03).put(m13).put(m23).put(m33);
+            buffer.put(m00).put(m01).put(m02).put(m03);
+            buffer.put(m10).put(m11).put(m12).put(m13);
+            buffer.put(m20).put(m21).put(m22).put(m23);
+            buffer.put(m30).put(m31).put(m32).put(m33);
             buffer.flip();
             return buffer;
         }
@@ -122,46 +122,20 @@ public class Matrix4f {
         return init.mul(this);
     }
     
-    public Matrix4f rotateQuat(float angle, float x, float y, float z) {
-        Quaternionf q = new Quaternionf();
-        q.setAxis(new Vector3f(x,y,z));
-        q.addDegrees(angle);
-        return this.multiply(q.convertMatrix());
-    }
-    
     public Matrix4f rotateQuat(Quaternionf q) {
         return this.multiply(q.convertMatrix());
     }
 
-    public Matrix4f rotate(float angle, float x, float y, float z) {
-        Matrix4f rotation = new Matrix4f();
-        float c = (float) FastMath.cosDeg(angle);
-        float s = (float) FastMath.sinDeg(angle);
-        Vector3f vec = new Vector3f(x, y, z);
-        if (vec.length() != 1f) {
-            vec = vec.normalize();
-            x = vec.x;
-            y = vec.y;
-            z = vec.z;
-        }
-        rotation.m00 = x * x * (1f - c) + c;
-        rotation.m10 = y * x * (1f - c) + z * s;
-        rotation.m20 = x * z * (1f - c) - y * s;
-        rotation.m01 = x * y * (1f - c) - z * s;
-        rotation.m11 = y * y * (1f - c) + c;
-        rotation.m21 = y * z * (1f - c) + x * s;
-        rotation.m02 = x * z * (1f - c) + y * s;
-        rotation.m12 = y * z * (1f - c) - x * s;
-        rotation.m22 = z * z * (1f - c) + c;
-        return this.multiply(rotation);
+    public Matrix4f rotate(float x, float y, float z) {
+        return this.multiply(new Quaternionf(new Vector3f(x,y,z)).convertMatrix());
     }
 
     public static Matrix4f translate(float x, float y, float z) {
         Matrix4f translation = new Matrix4f();
 
-        translation.m03 = x;
-        translation.m13 = y;
-        translation.m23 = z;
+        translation.m30 = x;
+        translation.m31 = y;
+        translation.m32 = z;
 
         return translation;
     }
@@ -169,9 +143,9 @@ public class Matrix4f {
     public Matrix4f translate(Vector3f p) {
         Matrix4f translation = new Matrix4f();
 
-        translation.m03 = p.x;
-        translation.m13 = p.y;
-        translation.m23 = p.z;
+        translation.m30 = p.x;
+        translation.m31 = p.y;
+        translation.m32 = p.z;
 
         return this.multiply(translation);
     }
@@ -201,29 +175,29 @@ public class Matrix4f {
 
         return result;
     }
-
+    
     public Matrix4f multiply(Matrix4f other) {
         Matrix4f result = new Matrix4f();
 
-        result.m00 = this.m00 * other.m00 + this.m01 * other.m10 + this.m02 * other.m20 + this.m03 * other.m30;
-        result.m10 = this.m10 * other.m00 + this.m11 * other.m10 + this.m12 * other.m20 + this.m13 * other.m30;
-        result.m20 = this.m20 * other.m00 + this.m21 * other.m10 + this.m22 * other.m20 + this.m23 * other.m30;
-        result.m30 = this.m30 * other.m00 + this.m31 * other.m10 + this.m32 * other.m20 + this.m33 * other.m30;
+        result.m00 = this.m00 * other.m00 + this.m10 * other.m01 + this.m20 * other.m02 + this.m30 * other.m03;
+        result.m01 = this.m01 * other.m00 + this.m11 * other.m01 + this.m21 * other.m02 + this.m31 * other.m03;
+        result.m02 = this.m02 * other.m00 + this.m12 * other.m01 + this.m22 * other.m02 + this.m32 * other.m03;
+        result.m03 = this.m03 * other.m00 + this.m13 * other.m01 + this.m23 * other.m02 + this.m33 * other.m03;
 
-        result.m01 = this.m00 * other.m01 + this.m01 * other.m11 + this.m02 * other.m21 + this.m03 * other.m31;
-        result.m11 = this.m10 * other.m01 + this.m11 * other.m11 + this.m12 * other.m21 + this.m13 * other.m31;
-        result.m21 = this.m20 * other.m01 + this.m21 * other.m11 + this.m22 * other.m21 + this.m23 * other.m31;
-        result.m31 = this.m30 * other.m01 + this.m31 * other.m11 + this.m32 * other.m21 + this.m33 * other.m31;
+        result.m10 = this.m00 * other.m10 + this.m10 * other.m11 + this.m20 * other.m12 + this.m30 * other.m13;
+        result.m11 = this.m01 * other.m10 + this.m11 * other.m11 + this.m21 * other.m12 + this.m31 * other.m13;
+        result.m12 = this.m02 * other.m10 + this.m12 * other.m11 + this.m22 * other.m12 + this.m32 * other.m13;
+        result.m13 = this.m03 * other.m10 + this.m13 * other.m11 + this.m23 * other.m12 + this.m33 * other.m13;
 
-        result.m02 = this.m00 * other.m02 + this.m01 * other.m12 + this.m02 * other.m22 + this.m03 * other.m32;
-        result.m12 = this.m10 * other.m02 + this.m11 * other.m12 + this.m12 * other.m22 + this.m13 * other.m32;
-        result.m22 = this.m20 * other.m02 + this.m21 * other.m12 + this.m22 * other.m22 + this.m23 * other.m32;
-        result.m32 = this.m30 * other.m02 + this.m31 * other.m12 + this.m32 * other.m22 + this.m33 * other.m32;
+        result.m20 = this.m00 * other.m20 + this.m10 * other.m21 + this.m20 * other.m22 + this.m33 * other.m23;
+        result.m21 = this.m01 * other.m20 + this.m11 * other.m21 + this.m21 * other.m22 + this.m31 * other.m23;
+        result.m22 = this.m02 * other.m20 + this.m12 * other.m21 + this.m22 * other.m22 + this.m32 * other.m23;
+        result.m23 = this.m03 * other.m20 + this.m13 * other.m21 + this.m23 * other.m22 + this.m33 * other.m23;
 
-        result.m03 = this.m00 * other.m03 + this.m01 * other.m13 + this.m02 * other.m23 + this.m03 * other.m33;
-        result.m13 = this.m10 * other.m03 + this.m11 * other.m13 + this.m12 * other.m23 + this.m13 * other.m33;
-        result.m23 = this.m20 * other.m03 + this.m21 * other.m13 + this.m22 * other.m23 + this.m23 * other.m33;
-        result.m33 = this.m30 * other.m03 + this.m31 * other.m13 + this.m32 * other.m23 + this.m33 * other.m33;
+        result.m30 = this.m00 * other.m30 + this.m10 * other.m31 + this.m20 * other.m32 + this.m30 * other.m33;
+        result.m31 = this.m01 * other.m30 + this.m11 * other.m31 + this.m21 * other.m32 + this.m31 * other.m33;
+        result.m32 = this.m02 * other.m30 + this.m12 * other.m31 + this.m22 * other.m32 + this.m32 * other.m33;
+        result.m33 = this.m03 * other.m30 + this.m13 * other.m31 + this.m23 * other.m32 + this.m33 * other.m33;
 
         return result;
     }
@@ -235,8 +209,8 @@ public class Matrix4f {
         perspective.m00 = f / aspect;
         perspective.m11 = f;
         perspective.m22 = (far + near) / (near - far);
-        perspective.m32 = -1f;
-        perspective.m23 = (2f * far * near) / (near - far);
+        perspective.m23 = -1f;
+        perspective.m32 = (2f * far * near) / (near - far);
         perspective.m33 = 0f;
 
         return perspective;
@@ -261,11 +235,11 @@ public class Matrix4f {
 
         frustum.m00 = (2f * near) / (right - left);
         frustum.m11 = (2f * near) / (top - bottom);
-        frustum.m02 = (right + left) / (right - left);
-        frustum.m12 = (top + bottom) / (top - bottom);
+        frustum.m20 = (right + left) / (right - left);
+        frustum.m21 = (top + bottom) / (top - bottom);
         frustum.m22 = -(far + near) / (far - near);
-        frustum.m32 = -1f;
-        frustum.m23 = -(2f * far * near) / (far - near);
+        frustum.m23 = -1f;
+        frustum.m32 = -(2f * far * near) / (far - near);
         frustum.m33 = 0f;
 
         return frustum;
@@ -276,9 +250,9 @@ public class Matrix4f {
         ortho.m00 = 2f / (right - left);
         ortho.m11 = 2f / (top - bottom);
         ortho.m22 = -2f / (far - near);
-        ortho.m03 = -(right + left) / (right - left);
-        ortho.m13 = -(top + bottom) / (top - bottom);
-        ortho.m23 = -(far + near) / (far - near);
+        ortho.m30 = -(right + left) / (right - left);
+        ortho.m31 = -(top + bottom) / (top - bottom);
+        ortho.m32 = -(far + near) / (far - near);
 
         return ortho;
     }
@@ -348,9 +322,9 @@ public class Matrix4f {
     
     @Override
     public String toString(){
-        return  m00 + ", " + m01 + ", " + m02 + ", " + m03 + ", " + "\n" +
-                m10 + ", " + m11 + ", " + m12 + ", " + m13 + ", " + "\n" +
-                m20 + ", " + m21 + ", " + m22 + ", " + m23 + ", " + "\n" + 
-                m30 + ", " + m31 + ", " + m32 + ", " + m33;
+        return  m00 + ", " + m10 + ", " + m20 + ", " + m30 + ", " + "\n" +
+                m01 + ", " + m11 + ", " + m21 + ", " + m31 + ", " + "\n" +
+                m02 + ", " + m12 + ", " + m22 + ", " + m32 + ", " + "\n" + 
+                m03 + ", " + m13 + ", " + m23 + ", " + m33;
     }
 }

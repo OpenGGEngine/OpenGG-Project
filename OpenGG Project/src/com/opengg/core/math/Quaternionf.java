@@ -168,10 +168,11 @@ public class Quaternionf implements Serializable{
     public Matrix4f convertMatrix() {
         this.normalize();
         return new Matrix4f(
-                1.0f - 2.0f * y * y - 2.0f * z * z,     2.0f * x * y - 2.0f * z * w,            2.0f * x * z + 2.0f * y * w,
-                2.0f * x * y + 2.0f * z * w,            1.0f - 2.0f * x * x - 2.0f * z * z,     2.0f * y * z - 2.0f * x * w,
-                2.0f * x * z - 2.0f * y * w,            2.0f * y * z + 2.0f * x * w,            1.0f - 2.0f * x * x - 2.0f * y * y);
+                1.0f - 2.0f * y * y - 2.0f * z * z,     2.0f * x * y + 2.0f * z * w,            2.0f * x * z - 2.0f * y * w,
+                2.0f * x * y - 2.0f * z * w,            1.0f - 2.0f * x * x - 2.0f * z * z,     2.0f * y * z + 2.0f * x * w,
+                2.0f * x * z + 2.0f * y * w,            2.0f * y * z - 2.0f * x * w,            1.0f - 2.0f * x * x - 2.0f * y * y);
     }
+    
 
     public Vector3f axis(){
         return new Vector3f(x,y,z);
