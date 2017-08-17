@@ -20,4 +20,6 @@ technical achievements are unparrelled and are best expierianced if viewed in 19
 We are already are better than Bethasda's GameByro and creation engines in terms of 
 performance. Our framerates are comparable to the Witcher 2 on ubersampling mode.
 
-Graveyard: entities, OBJLoader2, OBJLoader 1, OBJLoader 3, GlobalUtil, GlobalInfo, Universal Model Loader, Frankenshader
+Graveyard: entities, OBJLoader2, OBJLoader 1, OBJLoader 3, GlobalUtil, GlobalInfo, Universal Model Loader, Frankenshader, Matrix4f.getBuffer bug
+
+Resurrected: entities
