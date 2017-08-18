@@ -37,6 +37,7 @@ public class ShaderController {
     
     public static void initialize(){
         loadShader("mainvert", Resource.getShaderPath("object.vert"), ShaderProgram.VERTEX);
+        loadShader("animvert", Resource.getShaderPath("animobject.vert"), ShaderProgram.VERTEX);
         loadShader("particlevert", Resource.getShaderPath("particle.vert"), ShaderProgram.VERTEX);
         loadShader("passthroughvert", Resource.getShaderPath("passthrough.vert"), ShaderProgram.VERTEX);
 
@@ -63,6 +64,9 @@ public class ShaderController {
           
         use("mainvert", "mainfrag");
         saveCurrentConfiguration("object");   
+        
+         use("animvert", "mainfrag");
+        saveCurrentConfiguration("animation");  
         
         use("mainvert", "shadowfrag");
         saveCurrentConfiguration("shadobject");   
@@ -121,6 +125,9 @@ public class ShaderController {
 
         findUniform("model");
         setUniform("model", new Matrix4f());
+        
+         findUniform("jointsMatrix");
+        setUniform("jointsMatrix", new Matrix4f[50]);
 
         findUniform("projection");
         setUniform("projection", new Matrix4f());
@@ -181,6 +188,7 @@ public class ShaderController {
         
         findUniform("shadowmap3"); 
         setTextureLocation("shadowmap3", 8);
+        
         
         setMatLinks();
 
@@ -279,6 +287,7 @@ public class ShaderController {
     }
     
     public static void enableVertexAttribute(String loc){
+        System.out.println(curv);
         programs.get(curv).enableVertexAttribute(loc);
     }
     
@@ -321,6 +330,16 @@ public class ShaderController {
     
     public static void setUniform(String s, Matrix4f m4){
         for(ShaderProgram p : programs.values()){
+            int loc = p.getUniformLocation(s);
+            if(loc >= 0)
+                p.setUniform(loc, m4);
+        }
+    }
+    
+    public static void setUniform(String s, Matrix4f[] m4){
+        for(ShaderProgram p : programs.values()){
+            System.out.println("sbeast");
+            System.out.println(m4[0]);
             int loc = p.getUniformLocation(s);
             if(loc >= 0)
                 p.setUniform(loc, m4);

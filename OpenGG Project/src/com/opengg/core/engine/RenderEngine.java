@@ -43,12 +43,13 @@ public class RenderEngine {
     static List<Light> lights = new ArrayList<>();
     static List<RenderPath> paths = new ArrayList<>();
     static GLBuffer lightobj;
-    static RenderGroup dlist;
+    static RenderGroup dlist,animlist;
     static Skybox skybox;
     static boolean initialized;
     static Framebuffer sceneTex;
     static VertexArrayFormat vaoformat;
     static VertexArrayFormat particle;
+    static VertexArrayFormat animation;
     static boolean cull = true;
     static int lightoffset;
     static Camera camera;
@@ -70,6 +71,13 @@ public class RenderEngine {
         particle.addAttribute(new VertexArrayAttribute("normal", 3, 12, GL_FLOAT, 7, 0, false));
         particle.addAttribute(new VertexArrayAttribute("texcoord", 2, 12, GL_FLOAT, 10, 0, false));
         
+        animation = new VertexArrayFormat();
+        animation.addAttribute(new VertexArrayAttribute("position", 3, 20, GL_FLOAT, 0, 0, false));
+        animation.addAttribute(new VertexArrayAttribute("color", 4, 20, GL_FLOAT, 3, 0, false));
+        animation.addAttribute(new VertexArrayAttribute("normal", 3, 20, GL_FLOAT, 7, 0, false));
+        animation.addAttribute(new VertexArrayAttribute("texcoord", 2, 20, GL_FLOAT, 10, 0, false));
+        animation.addAttribute(new VertexArrayAttribute("jointindex", 4, 20, GL_FLOAT, 12, 0, false));
+        animation.addAttribute(new VertexArrayAttribute("weights", 4, 20, GL_FLOAT, 16, 0, false));
         TextureManager.initialize();
         ModelManager.initialize();
         
@@ -86,6 +94,7 @@ public class RenderEngine {
         lightoffset = (MemoryUtil.memAllocFloat(Light.bfsize).capacity());// << 2;
 
         groups.add(dlist);
+       // groups.add(animlist);
         
         Camera c = new Camera();
         useCamera(c);
@@ -162,6 +171,9 @@ public class RenderEngine {
     
     public static VertexArrayFormat getParticleFormat(){
         return particle;
+    }
+    public static VertexArrayFormat getAnimationFormat(){
+        return animation;
     }
     
     public static Framebuffer getSceneFramebuffer(){
@@ -257,6 +269,10 @@ public class RenderEngine {
     
     public static void addRenderable(Renderable r){
         dlist.add(r);
+    }
+    
+    public static void addAnim(Renderable r){
+        animlist.add(r);
     }
     
     public static Skybox getSkybox(){

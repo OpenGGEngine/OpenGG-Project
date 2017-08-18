@@ -54,7 +54,10 @@ public class ShaderProgram {
     }
     
     public void findAttributeLocation(String name) {
+        System.out.println("---"+this.name+"---");
+        System.out.println("local name " +name);
          int nid = program.findAttributeLocation(name);
+         System.out.println("nid:" +nid);
          alocs.put(name, nid);
     }
 
@@ -157,6 +160,10 @@ public class ShaderProgram {
         program.setUniform(location, value);
     }
     
+    public void setUniform(int location, Matrix4f[] matrices) {
+        program.setUniform(location, matrices);
+    }
+
     public void setUniformBlockIndex(int bind, String name){
         program.setUniformBlockIndex(bind, name);
     }

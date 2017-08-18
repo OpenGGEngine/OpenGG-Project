@@ -65,6 +65,25 @@ public class Matrix4f {
         m23 = l23;
         m33 = l33;
     }
+    
+    public Matrix4f(Matrix4f matrix){
+        m00 = matrix.m00;
+        m10 = matrix.m10;
+        m20 = matrix.m20;
+        m30 = matrix.m30;
+        m01 = matrix.m01;
+        m11 = matrix.m11;
+        m21 = matrix.m21;
+        m31 = matrix.m31;
+        m02 = matrix.m02;
+        m12 = matrix.m12;
+        m22 = matrix.m22;
+        m32 = matrix.m32;
+        m03 = matrix.m03;
+        m13 = matrix.m13;
+        m23 = matrix.m23;
+        m33 = matrix.m33;
+    }
 
     public Matrix4f(float m11, float m12, float m13,
             float m21, float m22, float m23,
@@ -189,7 +208,7 @@ public class Matrix4f {
         result.m12 = this.m02 * other.m10 + this.m12 * other.m11 + this.m22 * other.m12 + this.m32 * other.m13;
         result.m13 = this.m03 * other.m10 + this.m13 * other.m11 + this.m23 * other.m12 + this.m33 * other.m13;
 
-        result.m20 = this.m00 * other.m20 + this.m10 * other.m21 + this.m20 * other.m22 + this.m33 * other.m23;
+        result.m20 = this.m00 * other.m20 + this.m10 * other.m21 + this.m20 * other.m22 + this.m30 * other.m23;
         result.m21 = this.m01 * other.m20 + this.m11 * other.m21 + this.m21 * other.m22 + this.m31 * other.m23;
         result.m22 = this.m02 * other.m20 + this.m12 * other.m21 + this.m22 * other.m22 + this.m32 * other.m23;
         result.m23 = this.m03 * other.m20 + this.m13 * other.m21 + this.m23 * other.m22 + this.m33 * other.m23;

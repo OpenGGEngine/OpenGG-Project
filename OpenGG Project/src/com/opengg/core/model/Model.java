@@ -6,6 +6,8 @@
 package com.opengg.core.model;
 
 import com.opengg.core.engine.GGConsole;
+import com.opengg.core.render.animation.AnimatedDrawnObject;
+import com.opengg.core.render.animation.Animation;
 import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.render.drawn.DrawnObject;
 import com.opengg.core.render.drawn.DrawnObjectGroup;
@@ -18,12 +20,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+
 
 /**
  *
  * @author Warren
  */
 public class Model {
+   public Map<String, Animation> animations = new HashMap<>();
+    public boolean isanimated;
     public static int mversion = 1;
     private String name;
     private List<Mesh> meshes = new ArrayList<>();
@@ -77,10 +84,14 @@ public class Model {
         List<Drawable> draws = new ArrayList<>();
         for(Mesh mesh : meshes){
             DrawnObject dr = new DrawnObject(mesh.vbodata, mesh.inddata);
-            dr.setAdjacency(true);
+            dr.setAdjacency(false);
             draws.add(new MatDrawnObject(dr, mesh.m));
         }
+        if(this.isanimated){
+            drawable = new AnimatedDrawnObject((MatDrawnObject)draws.get(0),animations);
+        }else{
         drawable = new DrawnObjectGroup(draws);
+        }
     }
     
     public Drawable getDrawable(){
@@ -109,11 +120,11 @@ public class Model {
                     dos.writeInt(i);
                 }
                 
-                dos.writeInt(m.faces.size());
+              //  dos.writeInt(m.faces.size());
                 for(Face f : m.faces){
-                    dos.writeInt(f.adj1);
-                    dos.writeInt(f.adj2);
-                    dos.writeInt(f.adj3);
+                  //  dos.writeInt(f.adj1);
+                    //dos.writeInt(f.adj2);
+                    //dos.writeInt(f.adj3);
                 }
                 m.m.toFileFormat(dos);
             }

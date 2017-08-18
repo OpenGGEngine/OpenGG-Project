@@ -155,32 +155,33 @@ public class ModelUtil {
         }else{
             indices = IntBuffer.allocate(indicesCount);
         }
-        
+        System.out.println("Adjacency");
         for (Face face : mesh.faces) {
             
             FaceVertex vertex = face.v1;
             int index = indexMap.get(vertex);
             indices.put(index);
-            
+            System.out.println(index);
             vertex = findAdjacentVertex(face, 1, mesh.faces);
             index = indexMap.get(vertex);
             indices.put(index);
-            
+            System.out.println(index);
             vertex = face.v2;
             index = indexMap.get(vertex);
             indices.put(index);
-            
+            System.out.println(index);
             vertex = findAdjacentVertex(face, 2, mesh.faces);
             index = indexMap.get(vertex);
             indices.put(index);
-            
+            System.out.println(index);
             vertex = face.v3;
             index = indexMap.get(vertex);
             indices.put(index);
-            
+            System.out.println(index);
             vertex = findAdjacentVertex(face, 3, mesh.faces);
             index = indexMap.get(vertex);
             indices.put(index);
+            System.out.println(index);
         }     
         indices.flip();
 
@@ -249,18 +250,20 @@ public class ModelUtil {
             indices = IntBuffer.allocate(indicesCount);
         }
         
+        System.out.println("Adjacency");
         for (Face face : mesh.faces) {
             FaceVertex vertex = face.v1;
             int index = indexMap.get(vertex);
             indices.put(index);
-            
+            System.out.println(index);
             vertex = face.v2;
             index = indexMap.get(vertex);
             indices.put(index);
-            
+            System.out.println(index);
             vertex = face.v3;
             index = indexMap.get(vertex);
             indices.put(index);
+            System.out.println(index);
         }
         indices.flip();
         

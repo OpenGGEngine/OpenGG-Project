@@ -13,6 +13,7 @@ import com.opengg.core.render.shader.VertexArrayFormat;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.List;
+import static org.lwjgl.opengl.GL11.glGetError;
 
 /**
  *

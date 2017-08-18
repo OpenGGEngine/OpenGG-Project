@@ -10,6 +10,7 @@ import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import static org.lwjgl.opengl.ARBSeparateShaderObjects.glProgramUniformMatrix4fv;
 import static org.lwjgl.opengl.GL11.glGetError;
@@ -20,6 +21,7 @@ import static org.lwjgl.opengl.GL20.glGetAttribLocation;
 import static org.lwjgl.opengl.GL20.glGetProgramInfoLog;
 import static org.lwjgl.opengl.GL20.glGetProgrami;
 import static org.lwjgl.opengl.GL20.glGetUniformLocation;
+import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import static org.lwjgl.opengl.GL30.glBindFragDataLocation;
 import static org.lwjgl.opengl.GL31.glGetUniformBlockIndex;
@@ -62,7 +64,9 @@ public class NativeGLProgram {
      * @param loc Location of the vertex attribute
      */
     public void enableVertexAttribute(int loc) {
+        System.out.println("before enable "+ loc);
         glEnableVertexAttribArray(loc);
+        System.out.println("after enable "+glGetError());
     }
 
     /**
@@ -153,6 +157,27 @@ public class NativeGLProgram {
 
     public void setUniform(int location, Matrix4f value) {
         glProgramUniformMatrix4fv(id, location, false, value.getBuffer());
+    }
+    
+    public void setUniform(int location, Matrix4f[] matrices) {
+       
+            int length = matrices != null ? matrices.length : 0;
+            FloatBuffer fb = MemoryUtil.memAllocFloat(16 * length);
+            for (int i = 0; i < length; i++) {
+                //matrices[i].get(16 * i, fb);
+                Matrix4f wow = matrices[i];
+                if(wow == null){
+                    wow = new Matrix4f();
+                }
+                fb.put(wow.m00).put(wow.m01).put(wow.m02).put(wow.m03);
+            fb.put(wow.m10).put(wow.m11).put(wow.m12).put(wow.m13);
+            fb.put(wow.m20).put(wow.m21).put(wow.m22).put(wow.m23);
+            fb.put(wow.m30).put(wow.m31).put(wow.m32).put(wow.m33);
+            }
+            fb.flip();
+           
+            glProgramUniformMatrix4fv(id,location, false, fb);
+    
     }
     
     public void setUniformBlockIndex(int bind, String name){

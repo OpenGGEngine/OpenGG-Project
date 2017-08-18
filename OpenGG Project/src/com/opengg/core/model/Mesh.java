@@ -44,6 +44,15 @@ public class Mesh {
         findAdjacencies(this);
         makeadamnadjacencyvbo(this);
     }
+    public Mesh(FloatBuffer fb, IntBuffer ib, Material m,boolean overide){
+        updateVBO(fb, ib);
+        this.m = m;
+        if(overide){
+        makeadamnfacelist(this);
+        findAdjacencies(this);
+        makeadamnadjacencyvbo(this);
+        }
+    }
     
     public Mesh(FloatBuffer fb, IntBuffer ib, Material m, int[] adjacencies){
         updateVBO(fb, ib);
