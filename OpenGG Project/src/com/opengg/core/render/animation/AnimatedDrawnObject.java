@@ -20,6 +20,7 @@ import static org.lwjgl.opengl.GL11.glGetError;
 public class AnimatedDrawnObject implements Drawable {
 
     private Map<String, Animation> animations;
+    public int counter=0;
 
     private Animation currentAnimation;
 
@@ -74,7 +75,12 @@ public class AnimatedDrawnObject implements Drawable {
        
         ShaderController.setUniform("jointsMatrix", frame.getJointMatrices());
         d.render();
-        this.getCurrentAnimation().nextFrame();
+        counter++;
+        if(counter>15){
+            this.getCurrentAnimation().nextFrame();
+            counter = 0;
+        }
+        
     }
 
 }

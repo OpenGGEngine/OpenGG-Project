@@ -92,8 +92,6 @@ public class Material {
         this.niOpticalDensity = in.readDouble();
 
         int len = in.readInt();
-        System.out.println("Optical");
-        System.out.println(len);
         if (len != 0) {
             name = "";
             for (int i = 0; i < len; i++) {
@@ -111,7 +109,6 @@ public class Material {
                 name += in.readChar();
             }
             this.mapKdFilename = texpath + name;
-            System.out.println(name);
         } else {
             this.mapKdFilename = null;
         }

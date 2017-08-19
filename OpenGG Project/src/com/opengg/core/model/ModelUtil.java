@@ -7,6 +7,8 @@
 package com.opengg.core.model;
 
 import com.opengg.core.engine.OpenGG;
+import java.io.DataInputStream;
+import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
@@ -503,5 +505,18 @@ public class ModelUtil {
             adj = f.v1;
         }
         return adj;
+    }
+    
+     public static String readString(DataInputStream in) throws IOException {
+        int len = in.readInt();
+        String string = "";
+        if (len != 0) {
+            for (int i = 0; i < len; i++) {
+                string += in.readChar();
+            }
+        } else {
+            string = "";
+        }
+        return string;
     }
 }
