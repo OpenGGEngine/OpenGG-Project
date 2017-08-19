@@ -5,14 +5,15 @@
  */
 package com.opengg.core.render.animation;
 
-/**
- *
- * @author Warren
- */
+import com.opengg.core.render.animation.AnimatedFrame;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ *
+ * @author Warren
+ */
 public class Animation {
 
     private int currentFrame;
@@ -59,12 +60,13 @@ public class Animation {
             currentFrame = nextFrame;
         }
     }
-
-     public void writeBuffer(DataOutputStream ds) throws IOException{
+    
+    public void writeBuffer(DataOutputStream ds) throws IOException{
         ds.writeDouble(duration);
         ds.writeInt(frames.size());
         for (AnimatedFrame frame : frames) {
             frame.writeBuffer(ds);
         }
     }
+
 }

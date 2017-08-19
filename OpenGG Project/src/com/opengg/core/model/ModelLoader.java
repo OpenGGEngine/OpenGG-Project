@@ -103,32 +103,26 @@ public class ModelLoader {
             }
             if (isanimated) {
                 int numanimations = in.readInt();
-                System.out.println("sd: " + numanimations);
+                System.out.println("Loaded " + numanimations+" animations.");
                 for (int i = 0; i < numanimations; i++) {
                     ArrayList<AnimatedFrame> af = new ArrayList<>();
                     int stringlen = in.readInt();
                     String name = "";
                     for (int i2 = 0; i2 < stringlen; i2++) {
                         name += in.readChar();
-                        System.out.println("num: "+i2+"," +name);
                     }
-                    System.out.println(name);
                     double duration = in.readDouble();
                     int framecount = in.readInt();
                     for (int i2 = 0; i2 < framecount; i2++) {
                         
                         int matrixlength = in.readInt();
-                        System.out.println("discon: "+matrixlength);
                         Matrix4f[] joints = new Matrix4f[matrixlength];
                         for (int i3 = 0; i3 < joints.length; i3++) {
                             float l00 = in.readFloat(); float l01 = in.readFloat(); float l02 = in.readFloat(); float l03 = in.readFloat();
                             float l10 = in.readFloat(); float l11= in.readFloat(); float l12= in.readFloat(); float l13= in.readFloat();
                             float l20= in.readFloat(); float l21= in.readFloat(); float l22= in.readFloat(); float l23= in.readFloat();
                             float l30= in.readFloat(); float l31= in.readFloat(); float l32= in.readFloat(); float l33= in.readFloat();
-                            //ds.writeFloat(tes.m00);ds.writeFloat(tes.m10);ds.writeFloat(tes.m20);ds.writeFloat(tes.m30);
-          //  ds.writeFloat(tes.m01);ds.writeFloat(tes.m11);ds.writeFloat(tes.m21);ds.writeFloat(tes.m31);
-          //  ds.writeFloat(tes.m02);ds.writeFloat(tes.m12);ds.writeFloat(tes.m22);ds.writeFloat(tes.m32);
-          //  ds.writeFloat(tes.m03);ds.writeFloat(tes.m13);ds.writeFloat(tes.m23);ds.writeFloat(tes.m33);
+                          
                             Matrix4f temp = new Matrix4f();
                             temp.m00 = l00;
                             temp.m10 = l01;
@@ -151,9 +145,6 @@ public class ModelLoader {
                             temp.m33 = l33;
                             
                             
-                            
-                            System.out.println("Matrix");
-                            System.out.println(temp);
                             joints[i3] = temp;
                         }
                         AnimatedFrame am = new AnimatedFrame(joints);

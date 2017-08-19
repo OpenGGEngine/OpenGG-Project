@@ -37,7 +37,6 @@ public class VertexArrayObject {
         int lastloc = 0;
         buffers[0].bind();
         for(VertexArrayAttribute attrib : format.attribs){
-            System.out.println("Name: "+attrib.name);
             if(attrib.arrayindex != lastloc){
                 lastloc = attrib.arrayindex;
                 buffers[lastloc].bind();
@@ -46,13 +45,11 @@ public class VertexArrayObject {
             if(attrib.type == GL_FLOAT) bytes = Float.BYTES;
             if(attrib.type == GL_INT) bytes = Integer.BYTES;
             if(attrib.type == GL_BYTE) bytes = 1;
-                 System.out.println("sd15 "+glGetError());
             ShaderController.enableVertexAttribute(attrib.name);
 
             ShaderController.pointVertexAttribute(attrib.name, attrib.size, attrib.type, attrib.buflength * Float.BYTES, attrib.offset * bytes);
     
             ShaderController.setVertexAttribDivisor(attrib.name, attrib.divisor ? 1 : 0);
-System.out.println("sd45 "+glGetError());
         }
          
     }

@@ -54,10 +54,7 @@ public class ShaderProgram {
     }
     
     public void findAttributeLocation(String name) {
-        System.out.println("---"+this.name+"---");
-        System.out.println("local name " +name);
          int nid = program.findAttributeLocation(name);
-         System.out.println("nid:" +nid);
          alocs.put(name, nid);
     }
 

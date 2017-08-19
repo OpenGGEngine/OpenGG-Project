@@ -287,7 +287,6 @@ public class ShaderController {
     }
     
     public static void enableVertexAttribute(String loc){
-        System.out.println(curv);
         programs.get(curv).enableVertexAttribute(loc);
     }
     
@@ -338,8 +337,6 @@ public class ShaderController {
     
     public static void setUniform(String s, Matrix4f[] m4){
         for(ShaderProgram p : programs.values()){
-            System.out.println("sbeast");
-            System.out.println(m4[0]);
             int loc = p.getUniformLocation(s);
             if(loc >= 0)
                 p.setUniform(loc, m4);

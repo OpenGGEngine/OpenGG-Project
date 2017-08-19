@@ -64,9 +64,7 @@ public class NativeGLProgram {
      * @param loc Location of the vertex attribute
      */
     public void enableVertexAttribute(int loc) {
-        System.out.println("before enable "+ loc);
         glEnableVertexAttribArray(loc);
-        System.out.println("after enable "+glGetError());
     }
 
     /**
