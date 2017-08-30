@@ -5,6 +5,7 @@
  */
 package com.opengg.core.engine;
 
+import com.opengg.core.model.Animator;
 import com.opengg.core.world.Deserializer;
 import com.opengg.core.world.Serializer;
 import com.opengg.core.world.TransitionEngine;
@@ -79,6 +80,7 @@ public class WorldEngine{
     public static void update(float delta){
         CollisionHandler.clearCollisions();
         removeMarked();
+        Animator.update(delta);
         if(enabled){
             TransitionEngine.update(delta);
             traverseUpdate(WorldEngine.getCurrent(), delta);

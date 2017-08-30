@@ -7,8 +7,8 @@
 package com.opengg.core.world.components;
 
 import com.opengg.core.exceptions.InvalidParentException;
-import com.opengg.core.util.GGByteInputStream;
-import com.opengg.core.util.GGByteOutputStream;
+import com.opengg.core.util.GGInputStream;
+import com.opengg.core.util.GGOutputStream;
 import com.opengg.core.world.Action;
 import com.opengg.core.world.ActionTransmitter;
 import com.opengg.core.world.Actionable;
@@ -35,13 +35,13 @@ public class UserControlComponent extends Component implements ActionTransmitter
     }
     
     @Override
-    public void serialize(GGByteOutputStream out) throws IOException{
+    public void serialize(GGOutputStream out) throws IOException{
         super.serialize(out);
         out.write(userid);
     }
     
     @Override
-    public void deserialize(GGByteInputStream in) throws IOException{
+    public void deserialize(GGInputStream in) throws IOException{
         super.deserialize(in);
         userid = in.readInt();
     }

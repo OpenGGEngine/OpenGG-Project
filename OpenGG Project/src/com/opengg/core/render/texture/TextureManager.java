@@ -60,4 +60,8 @@ public class TextureManager {
             return defaultdata;
         }
     }
+    
+    public static void destroy(){
+
+    }
 }

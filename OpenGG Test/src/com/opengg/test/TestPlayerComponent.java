@@ -30,7 +30,7 @@ public class TestPlayerComponent extends Component implements Actionable{
     private final PhysicsComponent playerphysics;
     private final UserControlComponent controller;
     private final CameraComponent camera;
-    private final GunComponent gun;
+    //private final GunComponent gun;
     
     Vector3f control = new Vector3f();
     Vector3f controlrot = new Vector3f();
@@ -59,12 +59,12 @@ public class TestPlayerComponent extends Component implements Actionable{
         playerphysics.bounciness = 0;
         playerphysics.frictionCoefficient = 0.8f;
         
-        gun = new GunComponent();
-        gun.setPositionOffset(weaponpos);
-        gun.setRotationOffset(new Quaternionf(new Vector3f(0,90,0)));
+        //gun = new GunComponent();
+        //gun.setPositionOffset(weaponpos);
+        //gun.setRotationOffset(new Quaternionf(new Vector3f(0,90,0)));
         
         head.attach(camera);
-        head.attach(gun);
+        //head.attach(gun);
         attach(controller);
         attach(playerphysics);
         attach(head);
@@ -96,7 +96,7 @@ public class TestPlayerComponent extends Component implements Actionable{
         if(weaponbob){
             if(playerphysics.velocity.length() < 0.5f){
                 bob = 0;
-                gun.setPositionOffset(cweaponpos.subtract(new Vector3f(0,2,0)));
+                //gun.setPositionOffset(cweaponpos.subtract(new Vector3f(0,2,0)));
                 return;
             }
                 
@@ -107,9 +107,9 @@ public class TestPlayerComponent extends Component implements Actionable{
             
             Vector3f fpos = cweaponpos.add(Vector3f.lerp(init, fin, FastMath.sinDeg(bob)));
             fpos = fpos.subtract(new Vector3f(0,2,0));
-            gun.setPositionOffset(fpos);
+            //gun.setPositionOffset(fpos);
         }else{
-            gun.setPositionOffset(cweaponpos.subtract(new Vector3f(0,2,0)));
+            //gun.setPositionOffset(cweaponpos.subtract(new Vector3f(0,2,0)));
         }
     }
     
@@ -148,7 +148,7 @@ public class TestPlayerComponent extends Component implements Actionable{
                     aim = true;
                     break;
                 case "fire":
-                    gun.fire();
+                    //gun.fire();
                     break;
             }
         }else{

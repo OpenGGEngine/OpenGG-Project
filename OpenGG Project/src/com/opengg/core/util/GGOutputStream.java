@@ -5,27 +5,31 @@
  */
 package com.opengg.core.util;
 
+import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
+import com.opengg.core.math.Vector4f;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 
 /**
  *
  * @author Javier
  */
-public class GGByteOutputStream extends OutputStream{
-    private ByteArrayOutputStream baos;
+public class GGOutputStream extends OutputStream{
+    private OutputStream out;
     
-    public GGByteOutputStream(){
-        this.baos = new ByteArrayOutputStream();
+    public GGOutputStream(){
+        this.out = new ByteArrayOutputStream();
     }
     
-    public GGByteOutputStream(ByteArrayOutputStream baos){
-        this.baos = baos;
+    public GGOutputStream(OutputStream baos){
+        this.out = baos;
     }
     
     public void write(Vector2f v) throws IOException{
@@ -37,6 +41,17 @@ public class GGByteOutputStream extends OutputStream{
         write(v.x);
         write(v.y);
         write(v.z);
+    }
+    
+    public void write(Vector4f v) throws IOException{
+        write(v.x);
+        write(v.y);
+        write(v.z);
+        write(v.w);
+    }
+    
+    public void write(Matrix4f m) throws IOException{
+        write(m.getBuffer());
     }
     
     public void write(Quaternionf q) throws IOException{       
@@ -55,6 +70,9 @@ public class GGByteOutputStream extends OutputStream{
     public void write(float f) throws IOException{
         write(ByteBuffer.allocate(Float.BYTES).putFloat(f).array());
     }
+    public void write(double f) throws IOException{
+        write(ByteBuffer.allocate(Double.BYTES).putDouble(f).array());
+    }
     
     public void write(boolean b) throws IOException{
         write(b ? 1 : 0);
@@ -62,11 +80,11 @@ public class GGByteOutputStream extends OutputStream{
     
     @Override
     public void write(byte[] b) throws IOException{
-        baos.write(b);
+        out.write(b);
     }
     
     public void write(byte b) throws IOException{
-        baos.write(b);
+        out.write(b);
     }
     
     public void write(char c) throws IOException{
@@ -78,6 +96,20 @@ public class GGByteOutputStream extends OutputStream{
         for(char c : s.toCharArray()){
             write(c);
         }
+    }
+    
+    public void write(FloatBuffer fb) throws IOException{
+        fb.rewind();
+        write(fb.limit());
+        while(fb.hasRemaining())
+            write(fb.get());
+    }
+    
+    public void write(IntBuffer ib) throws IOException{
+        ib.rewind();
+        write(ib.limit());
+        while(ib.hasRemaining())
+            write(ib.get());
     }
     
     public void writeNormalized(Vector2f v) throws IOException{
@@ -98,7 +130,17 @@ public class GGByteOutputStream extends OutputStream{
         write(q.w);
     }
     
-    public byte[] getArray(){
-        return baos.toByteArray();
+    public OutputStream getStream(){
+        return out;
+    }
+    
+    @Override
+    public void flush() throws IOException{
+        out.flush();
+    }
+    
+    @Override
+    public void close() throws IOException{
+        out.close();
     }
 }

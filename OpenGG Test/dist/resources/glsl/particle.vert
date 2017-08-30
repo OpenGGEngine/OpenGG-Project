@@ -34,7 +34,7 @@ void main() {
 	vec3 up = vec3(view[0][1], view[1][1], view[2][1]);
 	
 	pos = 
-		(model * vec4(offset,1)).xyz +
+		offset +
 		right * position.x +
 		up * position.y;
 	

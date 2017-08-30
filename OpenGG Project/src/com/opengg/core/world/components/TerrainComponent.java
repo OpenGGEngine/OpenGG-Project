@@ -9,8 +9,8 @@ package com.opengg.core.world.components;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.texture.TextureManager;
-import com.opengg.core.util.GGByteInputStream;
-import com.opengg.core.util.GGByteOutputStream;
+import com.opengg.core.util.GGInputStream;
+import com.opengg.core.util.GGOutputStream;
 import com.opengg.core.world.Terrain;
 import com.opengg.core.world.collision.AABB;
 import com.opengg.core.world.components.physics.CollisionComponent;
@@ -73,7 +73,7 @@ public class TerrainComponent extends RenderComponent{
     }
     
     @Override
-    public void serialize(GGByteOutputStream out) throws IOException{
+    public void serialize(GGOutputStream out) throws IOException{
         super.serialize(out);
         out.write(terrain.getSource());
         out.write(blotmap.getData().get(0).source);
@@ -85,7 +85,7 @@ public class TerrainComponent extends RenderComponent{
     }
     
     @Override
-    public void deserialize(GGByteInputStream in) throws IOException{
+    public void deserialize(GGInputStream in) throws IOException{
         super.deserialize(in);
         terrain = Terrain.generate(in.readString());
         blotmap = Texture.get2DTexture(in.readString());

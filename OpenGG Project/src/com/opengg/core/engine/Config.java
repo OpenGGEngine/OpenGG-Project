@@ -22,7 +22,7 @@ public class Config {
     static HashMap<String,ConfigFile> settings = new HashMap<>();
     
     public static void reloadConfigs(){
-        File cfgdir = new File("config\\");
+        File cfgdir = new File("config" + File.separator);
         File[] cfgs = cfgdir.listFiles();
         if(cfgs == null || cfgs.length == 0){
             GGConsole.log("Found no configuration files, continuing without them...");

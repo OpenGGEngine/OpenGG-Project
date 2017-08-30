@@ -5,8 +5,8 @@
  */
 package com.opengg.core.world.components;
 
-import com.opengg.core.util.GGByteInputStream;
-import com.opengg.core.util.GGByteOutputStream;
+import com.opengg.core.util.GGInputStream;
+import com.opengg.core.util.GGOutputStream;
 import java.io.IOException;
 
 /**
@@ -19,12 +19,12 @@ public class WorldObject extends Component{
     }
 
     @Override
-    public void serialize(GGByteOutputStream out) throws IOException{
+    public void serialize(GGOutputStream out) throws IOException{
         super.serialize(out);
     }
     
     @Override
-    public void deserialize(GGByteInputStream in) throws IOException{
+    public void deserialize(GGInputStream in) throws IOException{
         super.deserialize(in);
     }
 }

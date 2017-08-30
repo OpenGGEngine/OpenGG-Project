@@ -1,0 +1,15 @@
+# Blender MTL File: 'SA_45ACP_Example.blend'
+# Material Count: 1
+
+newmtl 45ACP_Mats
+Ns 47.058824
+Ka 0.000000 0.000000 0.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.699478 0.750000 0.315374
+Ni 1.000000
+d 0.000000
+illum 2
+map_Kd SA_45ACP_Diffuse.tga
+map_Ks SA_45ACP_Specular.tga
+map_Bump SA_45ACP_Normals.tga
+map_Ns SA_45ACP_Specular.tga

@@ -14,8 +14,8 @@ import com.opengg.core.engine.WorldEngine;
 import com.opengg.core.exceptions.InvalidParentException;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
-import com.opengg.core.util.GGByteInputStream;
-import com.opengg.core.util.GGByteOutputStream;
+import com.opengg.core.util.GGInputStream;
+import com.opengg.core.util.GGOutputStream;
 import com.opengg.core.world.components.Component;
 import com.opengg.core.world.components.RenderComponent;
 import com.opengg.core.world.components.physics.CollisionComponent;
@@ -173,14 +173,14 @@ public class World extends Component{
     }
     
     @Override
-    public void serialize(GGByteOutputStream out) throws IOException{
+    public void serialize(GGOutputStream out) throws IOException{
         super.serialize(out);
         out.write(gravityVector);
         out.write(floorLev);
     }
     
     @Override
-    public void deserialize(GGByteInputStream in) throws IOException{
+    public void deserialize(GGInputStream in) throws IOException{
         super.deserialize(in);
         gravityVector = in.readVector3f();
         floorLev = in.readFloat();

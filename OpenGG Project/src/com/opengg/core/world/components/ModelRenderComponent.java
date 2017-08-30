@@ -6,10 +6,11 @@
 package com.opengg.core.world.components;
 
 import com.opengg.core.engine.OpenGG;
+import com.opengg.core.engine.RenderEngine;
 import com.opengg.core.model.Model;
 import com.opengg.core.model.ModelLoader;
-import com.opengg.core.util.GGByteInputStream;
-import com.opengg.core.util.GGByteOutputStream;
+import com.opengg.core.util.GGInputStream;
+import com.opengg.core.util.GGOutputStream;
 import java.io.IOException;
 
 /**
@@ -35,19 +36,27 @@ public class ModelRenderComponent extends RenderComponent{
     
     public void setModel(Model model){
         this.model = model;
+        if(model.isanimated){
+            this.shader = "animation";
+            this.format = RenderEngine.getAnimationFormat(); 
+        }else{
+            this.shader = "object";
+            this.format = RenderEngine.getDefaultFormat();
+        }
+        
         OpenGG.addExecutable(() -> {
             setDrawable(model.getDrawable());
         });
     }
     
     @Override
-    public void serialize(GGByteOutputStream out) throws IOException{
+    public void serialize(GGOutputStream out) throws IOException{
         super.serialize(out);
         out.write(model.getName());
     }
     
     @Override
-    public void deserialize(GGByteInputStream in) throws IOException{
+    public void deserialize(GGInputStream in) throws IOException{
         super.deserialize(in);
         String path = in.readString();
         model = ModelLoader.loadModel(path);

@@ -15,6 +15,7 @@ import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.model.Material;
 import com.opengg.core.render.GLBuffer;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
@@ -37,7 +38,7 @@ public class ShaderController {
     
     public static void initialize(){
         loadShader("mainvert", Resource.getShaderPath("object.vert"), ShaderProgram.VERTEX);
-        loadShader("animvert", Resource.getShaderPath("animobject.vert"), ShaderProgram.VERTEX);
+        loadShader("animvert", Resource.getShaderPath("anim.vert"), ShaderProgram.VERTEX);
         loadShader("particlevert", Resource.getShaderPath("particle.vert"), ShaderProgram.VERTEX);
         loadShader("passthroughvert", Resource.getShaderPath("passthrough.vert"), ShaderProgram.VERTEX);
 
@@ -526,8 +527,11 @@ public class ShaderController {
             p.checkStatus();
             return true;
         } catch (UnsupportedEncodingException ex) {
-            GGConsole.error("Failed to load shader: " + name);
-            return false;
+            GGConsole.error("Failed to load shader " + name + " located at " + loc);
+            throw new ShaderException("Failed to load shader " + name + " located at " + loc);
+        } catch (IOException ex) {
+            GGConsole.error("Failed to find/read shader " + name + " located at " + loc);
+            throw new ShaderException("Failed to find/read shader " + name + " located at " + loc);
         }
     }
 }

@@ -10,8 +10,8 @@ import com.opengg.core.engine.OpenGG;
 import com.opengg.core.engine.RenderEngine;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.light.Light;
-import com.opengg.core.util.GGByteInputStream;
-import com.opengg.core.util.GGByteOutputStream;
+import com.opengg.core.util.GGInputStream;
+import com.opengg.core.util.GGOutputStream;
 import java.io.IOException;
 
 /**
@@ -48,7 +48,7 @@ public class LightComponent extends Component{
     }
     
     @Override
-    public void serialize(GGByteOutputStream stream) throws IOException{
+    public void serialize(GGOutputStream stream) throws IOException{
         super.serialize(stream);
         stream.write(l.getColor());
         stream.write(l.getDistance());
@@ -56,7 +56,7 @@ public class LightComponent extends Component{
     }
     
     @Override
-    public void deserialize(GGByteInputStream stream) throws IOException{
+    public void deserialize(GGInputStream stream) throws IOException{
         super.deserialize(stream);
         l = new Light(new Vector3f(), stream.readVector3f(), stream.readFloat(), 0);
         boolean use = stream.readBoolean();

@@ -8,7 +8,7 @@ package com.opengg.core.render.texture.text;
 import com.opengg.core.engine.RenderEngine;
 import com.opengg.core.render.Text;
 import com.opengg.core.model.Material;
-import com.opengg.core.render.drawn.MatDrawnObject;
+import com.opengg.core.render.drawn.MaterialDrawnObject;
 import java.io.File;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
@@ -28,10 +28,10 @@ public class TextVBOGenerator {
 		metaData = new GGFontFile(metaFile);
 	}
 
-	protected MatDrawnObject createTextData(Text text, GGFont f) {
+	protected MaterialDrawnObject createTextData(Text text, GGFont f) {
 		List<TextLine> lines = createStructure(text);
 		FloatBuffer data = createQuadVertices(text, lines);
-                MatDrawnObject t = new MatDrawnObject(data, RenderEngine.getDefaultFormat());     
+                MaterialDrawnObject t = new MaterialDrawnObject(data, RenderEngine.getDefaultFormat());     
                 t.setM(Material.defaultmaterial);
                 t.getMaterial().Kd = f.texture;
 		return t;

@@ -19,9 +19,7 @@ import java.io.InputStreamReader;
  */
 public class FileStringLoader {
     private FileStringLoader(){};
-    public static CharSequence loadStringSequence(String path){
-        
-        
+    public static CharSequence loadStringSequence(String path) throws IOException{
         StringBuilder builder = new StringBuilder();
 
         try (InputStream in = new FileInputStream(path);
@@ -31,8 +29,7 @@ public class FileStringLoader {
                 builder.append(line).append("\n");
             }
         } catch (IOException ex) {
-            throw new RuntimeException("Failed to load a shader file!"
-                    + System.lineSeparator() + ex.getMessage());
+            throw ex;
         }
 
         CharSequence source = builder.toString();

@@ -6,10 +6,10 @@
 package com.opengg.test;
 
 import com.opengg.core.engine.RenderEngine;
+import com.opengg.core.engine.Resource;
 import com.opengg.core.engine.WorldEngine;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
-import com.opengg.core.model.ModelLoader;
 import com.opengg.core.render.light.Light;
 import com.opengg.core.world.collision.AABB;
 import com.opengg.core.world.collision.CylinderCollider;
@@ -36,7 +36,7 @@ public class BulletComponent extends Component{
         this.setRotationOffset(source.getRotation());
         
         this.attach(new PhysicsComponent());
-        bullet = new ModelRenderComponent(ModelLoader.loadModel("C:\\res\\45acp\\45acp.bmf"));
+        bullet = new ModelRenderComponent(Resource.getModel("45acp"));
         bullet.setRotationOffset(new Quaternionf(new Vector3f(0,0,-90)));
         bullet.setScale(new Vector3f(0.3f,0.3f,0.3f));
         attach(bullet);

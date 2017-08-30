@@ -7,7 +7,7 @@
 package com.opengg.core.world;
 
 import com.opengg.core.engine.GGConsole;
-import com.opengg.core.util.GGByteInputStream;
+import com.opengg.core.util.GGInputStream;
 import com.opengg.core.world.components.Component;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -21,13 +21,13 @@ import java.util.List;
  */
 public class Deserializer {
     public static Deserializer ds;
-    public GGByteInputStream b;
+    public GGInputStream b;
     public List<SerialHolder> components = new LinkedList<>();
     public World w;
     
     public static World deserialize(ByteBuffer b){
         ds = new Deserializer();
-        ds.b = new GGByteInputStream(b);
+        ds.b = new GGInputStream(b);
         try {
             ds.w = new World();
             ds.w.deserialize(ds.b);

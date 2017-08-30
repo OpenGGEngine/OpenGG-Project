@@ -7,8 +7,8 @@ package com.opengg.core.world.components.physics;
 
 import com.opengg.core.engine.GGConsole;
 import com.opengg.core.math.Vector3f;
-import com.opengg.core.util.GGByteInputStream;
-import com.opengg.core.util.GGByteOutputStream;
+import com.opengg.core.util.GGInputStream;
+import com.opengg.core.util.GGOutputStream;
 import com.opengg.core.world.collision.AABB;
 import com.opengg.core.world.collision.Collider;
 import com.opengg.core.world.collision.Collision;
@@ -108,7 +108,7 @@ public class CollisionComponent extends Trigger{
     }
     
     @Override
-    public void serialize(GGByteOutputStream stream) throws IOException{
+    public void serialize(GGOutputStream stream) throws IOException{
         super.serialize(stream);
         stream.write(main.getPos());
         stream.write(main.getLWH());
@@ -122,17 +122,16 @@ public class CollisionComponent extends Trigger{
     }
     
     @Override
-    public void deserialize(GGByteInputStream stream) throws IOException{
+    public void deserialize(GGInputStream stream) throws IOException{
         super.deserialize(stream);
         Vector3f mpos = stream.readVector3f();
         Vector3f lwh = stream.readVector3f();
         main = new AABB(mpos, lwh.x, lwh.y, lwh.z);
         int size = stream.readInt();
-        System.out.println(size);
+
         for(int i = 0; i < size; i++){
             try {
                 String clazzname = stream.readString();
-                System.out.println(clazzname);
                 Class clazz = Class.forName(clazzname);
                 Collider collider = (Collider)clazz.getConstructor().newInstance();
                 collider.deserialize(stream);

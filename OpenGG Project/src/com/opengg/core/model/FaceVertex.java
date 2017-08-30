@@ -7,6 +7,7 @@ package com.opengg.core.model;
 
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
+import com.opengg.core.math.Vector4f;
 
 /**
  *
@@ -17,6 +18,9 @@ public class FaceVertex {
     public Vector3f v = new Vector3f();
     public Vector2f t = new Vector2f();
     public Vector3f n = new Vector3f();
+    public Vector4f j = new Vector4f();
+    public Vector4f w = new Vector4f();
+    
 
     @Override
     public boolean equals(Object eq){
@@ -28,6 +32,10 @@ public class FaceVertex {
                 return false;
             if(!this.n.equals(e.n))
                 return false;
+            if(!this.j.equals(e.j))
+                return false;
+            if(!this.w.equals(e.w))
+                return false;
             return true;
         }
         return false;
@@ -35,6 +43,6 @@ public class FaceVertex {
     
     @Override
     public String toString() {
-        return v + "|" + n + "|" + t;
+        return v.toString();
     }
 }

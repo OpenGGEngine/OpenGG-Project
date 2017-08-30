@@ -16,8 +16,8 @@ import com.opengg.core.render.objects.ObjectCreator;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.texture.TextureManager;
-import com.opengg.core.util.GGByteInputStream;
-import com.opengg.core.util.GGByteOutputStream;
+import com.opengg.core.util.GGInputStream;
+import com.opengg.core.util.GGOutputStream;
 import java.io.IOException;
 
 /**
@@ -90,7 +90,7 @@ public class WaterComponent extends RenderComponent{
     }
     
     @Override
-    public void serialize(GGByteOutputStream out) throws IOException{
+    public void serialize(GGOutputStream out) throws IOException{
         super.serialize(out);
         out.write(size);
         out.write(movespeed);
@@ -100,7 +100,7 @@ public class WaterComponent extends RenderComponent{
     }
     
     @Override
-    public void deserialize(GGByteInputStream in) throws IOException{
+    public void deserialize(GGInputStream in) throws IOException{
         super.deserialize(in);
         size = in.readFloat();
         movespeed = in.readFloat();

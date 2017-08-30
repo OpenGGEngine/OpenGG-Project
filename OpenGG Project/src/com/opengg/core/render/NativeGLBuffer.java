@@ -47,11 +47,11 @@ public class NativeGLBuffer {
         glBufferData(target, size, usage);
     }
 
-    public void uploadSubData(int target, long offset,FloatBuffer data) {
+    public void uploadSubData(int target, long offset, FloatBuffer data) {
         glBufferSubData(target, offset, data);
     }
     
-    public void uploadSubData(int target, long offset,IntBuffer data) {
+    public void uploadSubData(int target, long offset, IntBuffer data) {
         glBufferSubData(target, offset, data);
     }
 

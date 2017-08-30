@@ -5,6 +5,7 @@
  */
 package com.opengg.core.util;
 
+import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
@@ -12,29 +13,57 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.util.Arrays;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+import org.lwjgl.system.MemoryUtil;
 
 /**
  *
  * @author Javier
  */
-public class GGByteInputStream extends InputStream{
-    private ByteArrayInputStream bais;
+public class GGInputStream extends InputStream{
+    private InputStream in;
     
-    public GGByteInputStream(ByteArrayInputStream bais){
-        this.bais = bais;
+    public GGInputStream(InputStream bais){
+        this.in = bais;
     }
     
-    public GGByteInputStream(ByteBuffer buffer){
+    public GGInputStream(ByteBuffer buffer){
         if(buffer.hasArray()){
-            this.bais = new ByteArrayInputStream(buffer.array());
+            this.in = new ByteArrayInputStream(buffer.array());
         }else{
             byte[] array = new byte[buffer.limit()];
             for(int i = 0; i < array.length; i++){
                 array[i] = buffer.get();
             }
-            this.bais = new ByteArrayInputStream(array);
+            this.in = new ByteArrayInputStream(array);
         }
+    }
+    
+    public Matrix4f readMatrix4f() throws IOException{
+        readInt();
+        float l00 = readFloat();
+        float l01 = readFloat();
+        float l02 = readFloat();
+        float l03 = readFloat();
+        float l10 = readFloat();
+        float l11 = readFloat();
+        float l12 = readFloat();
+        float l13 = readFloat();
+        float l20 = readFloat();
+        float l21 = readFloat();
+        float l22 = readFloat();
+        float l23 = readFloat();
+        float l30 = readFloat();
+        float l31 = readFloat();
+        float l32 = readFloat();
+        float l33 = readFloat();
+
+        Matrix4f temp = new Matrix4f(l00,l01,l02,l03,
+                                    l10,l11,l12,l13,
+                                    l20,l21,l22,l23,
+                                    l30,l31,l32,l33);
+        return temp;
     }
     
     public Vector3f readVector3f() throws IOException{
@@ -72,6 +101,11 @@ public class GGByteInputStream extends InputStream{
         b.flip();
         return b.getFloat();
     }
+    public double readDouble() throws IOException{
+        ByteBuffer b = ByteBuffer.allocate(Double.BYTES).put(readByteArray(Double.BYTES));
+        b.flip();
+        return b.getDouble();
+    }
     
     public boolean readBoolean() throws IOException{
         int b = readInt();
@@ -80,7 +114,7 @@ public class GGByteInputStream extends InputStream{
     
     public byte[] readByteArray(int size) throws IOException{
         byte[] b = new byte[size];
-        bais.read(b);
+        in.read(b);
         return b;
     }
     
@@ -103,6 +137,36 @@ public class GGByteInputStream extends InputStream{
         return s;
     }
     
+    public FloatBuffer readFloatBuffer() throws IOException{
+        int len = readInt();
+        FloatBuffer fb = MemoryUtil.memAllocFloat(len);
+        for(int i = 0; i < len; i++){
+            fb.put(readFloat());
+        }
+        fb.flip();
+        return fb;
+    }
+    
+    public IntBuffer readIntBuffer() throws IOException{
+        int len = readInt();
+        IntBuffer ib = MemoryUtil.memAllocInt(len);
+        for(int i = 0; i < len; i++){
+            ib.put(readInt());
+        }
+        ib.flip();
+        return ib;
+    }
+    
+    public ByteBuffer readByteBuffer() throws IOException{
+        int len = readInt();
+        ByteBuffer bb = MemoryUtil.memAlloc(len);
+        for(int i = 0; i < len; i++){
+            bb.put(readByte());
+        }
+        bb.flip();
+        return bb;
+    }
+    
     public Vector2f readNormalizedVector2f() throws IOException{
         return readVector2f();
     }
@@ -117,6 +181,6 @@ public class GGByteInputStream extends InputStream{
 
     @Override
     public int read() throws IOException {
-        return bais.read();
+        return in.read();
     }
 }

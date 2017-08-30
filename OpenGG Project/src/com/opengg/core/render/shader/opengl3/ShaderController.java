@@ -7,20 +7,14 @@
 package com.opengg.core.render.shader.opengl3;
 
 import com.opengg.core.engine.GGConsole;
-import com.opengg.core.io.FileStringLoader;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.model.Material;
 import com.opengg.core.render.NativeGLBuffer;
 import com.opengg.core.world.Camera;
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
-import java.net.URLDecoder;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
-import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
-import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
-import static org.lwjgl.opengl.GL32.GL_GEOMETRY_SHADER;
 
 /**
  *
@@ -41,25 +35,7 @@ public class ShaderController {
             uvx,hasnorm,lightcolor,inst,text,time;
     
     public static void initialize(URL vert, URL frag, URL geom){
-        try {
-            vertexTex= new Shader(GL_VERTEX_SHADER,
-                    FileStringLoader.loadStringSequence(
-                            URLDecoder.decode(
-                                    vert.getFile(), "UTF-8")));
-            geomTex = new Shader(GL_GEOMETRY_SHADER,
-                    FileStringLoader.loadStringSequence(
-                            URLDecoder.decode(
-                                    geom.getFile(), "UTF-8")));
-            fragmentTex = new Shader(GL_FRAGMENT_SHADER,
-                    FileStringLoader.loadStringSequence(
-                            URLDecoder.decode(
-                                    frag.getFile(), "UTF-8")));
-            program = new ShaderProgram();
-            GGConsole.log("Shader files loaded and validated");
-        } catch (UnsupportedEncodingException ex) {
-            GGConsole.error("Unable to parse shader files!");
-            return;
-        }
+
         program.attachShader(vertexTex);
         program.attachShader(geomTex);
         program.attachShader(fragmentTex);
@@ -274,7 +250,7 @@ public class ShaderController {
        
         Quaternionf rot = c.getRot();       
   
-        view = new Matrix4f().rotate(rot.x,1,0,0).rotate(rot.y,0,1,0).rotate(rot.z,0,0,1).translate(c.getPos());
+        //view = new Matrix4f().rotate(rot.x,1,0,0).rotate(rot.y,0,1,0).rotate(rot.z,0,0,1).translate(c.getPos());
         
         setView(view);
     }

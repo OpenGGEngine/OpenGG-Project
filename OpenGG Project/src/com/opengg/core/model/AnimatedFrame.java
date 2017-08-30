@@ -3,12 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.opengg.core.render.animation;
+package com.opengg.core.model;
 
 import com.opengg.core.math.Matrix4f;
-import java.io.DataOutputStream;
+import com.opengg.core.util.GGOutputStream;
 import java.io.IOException;
-import java.nio.FloatBuffer;
 import java.util.Arrays;
 
 public class AnimatedFrame {
@@ -35,15 +34,11 @@ public class AnimatedFrame {
         jointMatrices[pos] = jointMatrix;
     }
 
-    public void writeBuffer(DataOutputStream ds) throws IOException {
-        ds.writeInt(jointMatrices.length);
+    public void writeBuffer(GGOutputStream ds) throws IOException {
+        ds.write(jointMatrices.length);
         for (int i = 0; i < jointMatrices.length; i++) {
             Matrix4f tes= jointMatrices[i];
-             ds.writeFloat(tes.m00);ds.writeFloat(tes.m10);ds.writeFloat(tes.m20);ds.writeFloat(tes.m30);
-            ds.writeFloat(tes.m01);ds.writeFloat(tes.m11);ds.writeFloat(tes.m21);ds.writeFloat(tes.m31);
-            ds.writeFloat(tes.m02);ds.writeFloat(tes.m12);ds.writeFloat(tes.m22);ds.writeFloat(tes.m32);
-            ds.writeFloat(tes.m03);ds.writeFloat(tes.m13);ds.writeFloat(tes.m23);ds.writeFloat(tes.m33);
-            
+            ds.write(tes);
         }
     }
 

@@ -10,8 +10,8 @@ import com.opengg.core.engine.BindController;
 import com.opengg.core.engine.OpenGG;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
-import com.opengg.core.util.GGByteInputStream;
-import com.opengg.core.util.GGByteOutputStream;
+import com.opengg.core.util.GGInputStream;
+import com.opengg.core.util.GGOutputStream;
 import com.opengg.core.world.Action;
 import com.opengg.core.world.ActionType;
 import com.opengg.core.world.Actionable;
@@ -132,7 +132,7 @@ public class FreeFlyComponent extends Component implements Actionable{
     }
     
     @Override
-    public void serialize(GGByteOutputStream stream) throws IOException{
+    public void serialize(GGOutputStream stream) throws IOException{
         super.serialize(stream);
         stream.write(rotspeed);
         stream.write(speed);
@@ -140,7 +140,7 @@ public class FreeFlyComponent extends Component implements Actionable{
     }
     
     @Override
-    public void deserialize(GGByteInputStream stream) throws IOException{
+    public void deserialize(GGInputStream stream) throws IOException{
         super.deserialize(stream);
         rotspeed = stream.readFloat();
         speed = stream.readFloat();

@@ -28,12 +28,11 @@ public class ModelManager {
         } catch (IOException ex) {
             GGConsole.error("Failed to load default model, nonexistent models may crash the program!");
         }
-                
+               
     }  
     
     public static void addModel( Model model){
         modellist.put(model.getName(), model);
-
     }
     
     public static Model getModel(String path){
@@ -54,10 +53,10 @@ public class ModelManager {
                 addModel(model);
                 return model;
             }else{
-                GGConsole.warn("Failed to load model at" + path + ", using default model instead");
+                GGConsole.warn("Failed to load model at " + path + ", using default model instead");
             }
         }catch(Exception e){
-            GGConsole.warn("Failed to load model at" + path + ", using default model instead");
+            GGConsole.warn("Failed to load model at " + path + ", using default model instead");
         }
         return defaultm;
     }

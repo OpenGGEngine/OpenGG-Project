@@ -171,7 +171,6 @@ void process(){
         specular = material.ks;
     }
 	
-    
     if(material.hasnormmap){
 		n = calculatenormal(normalize((model * vec4(norm,0.0f)).xyz),pos.xyz-camera,textureCoord);
     }else{
@@ -187,10 +186,12 @@ void main() {
 	genPhong();
 	process();
 	vec3 col = vec3(0,0,0);
-	
+	int w = 0;
 	for(int i = 0; i < numLights; i++){
 		col += shadify(lights[i]);
+		w++;
 	}
+	
 	fcolor = vec4(col + ambient, color.a);
 }
 

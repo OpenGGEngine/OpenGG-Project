@@ -8,8 +8,8 @@ package com.opengg.core.world.collision;
 
 import com.opengg.core.world.components.physics.CollisionComponent;
 import com.opengg.core.math.Vector3f;
-import com.opengg.core.util.GGByteInputStream;
-import com.opengg.core.util.GGByteOutputStream;
+import com.opengg.core.util.GGInputStream;
+import com.opengg.core.util.GGOutputStream;
 import java.io.IOException;
 
 /**
@@ -30,11 +30,11 @@ public abstract class Collider {
         this.parent = parent;
     }
     
-    public void serialize(GGByteOutputStream stream) throws IOException{
+    public void serialize(GGOutputStream stream) throws IOException{
         stream.write(offset);
     }
     
-    public void deserialize(GGByteInputStream stream) throws IOException{
+    public void deserialize(GGInputStream stream) throws IOException{
         offset = stream.readVector3f();
     }
     

@@ -6,16 +6,8 @@
 package com.opengg.core.model;
 
 import com.opengg.core.engine.GGConsole;
-import com.opengg.core.render.animation.AnimatedDrawnObject;
-import com.opengg.core.render.animation.Animation;
 import com.opengg.core.render.drawn.Drawable;
-import com.opengg.core.render.drawn.DrawnObject;
-import com.opengg.core.render.drawn.DrawnObjectGroup;
-import com.opengg.core.render.drawn.MatDrawnObject;
-import java.io.BufferedOutputStream;
-import java.io.DataOutputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import com.opengg.core.util.GGOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,108 +21,62 @@ import java.util.Map;
  * @author Warren
  */
 public class Model {
-   public Map<String, Animation> animations = new HashMap<>();
+    public Map<String, Animation> animations = new HashMap<>();
+    private List<Mesh> meshes = new ArrayList<>();
+    
     public boolean isanimated;
     public static int mversion = 1;
     private String name;
-    private List<Mesh> meshes = new ArrayList<>();
-    private Drawable drawable = null;
+    
+    private ModelDrawnObject drawable = null;
+    
     public Model(String name, List<Mesh> meshes){
         this.name = name;
         this.meshes = meshes;
+        this.isanimated = false;
+    }
+    
+    public Model(String name, List<Mesh> meshes, Map<String, Animation> animations){
+        this.name = name;
+        this.meshes = meshes;
+        this.animations = animations;
+        this.isanimated = true;
     }
     
     public List<Mesh> getMeshes(){
         return meshes;
     }
-    
-    public Model(Build b) {
-        name = b.getObjectName();
-        GGConsole.log(name + " has been loaded, generating meshes...");
-        HashMap<String, ArrayList<BuilderFace>> facesByTextureList = new HashMap<>();
 
-        for (BuilderFace face : b.faces) {
-
-            if (face.material == null) {
-                face.material = new Material("default");
-            }
-
-            if (facesByTextureList.containsKey(face.material.toString())) {
-                ArrayList<BuilderFace> temp = facesByTextureList.get(face.material.toString());
-                temp.add(face);
-                facesByTextureList.replace(face.material.toString(), temp);
-            } else {
-                ArrayList<BuilderFace> temp = new ArrayList<>();
-                temp.add(face);
-                facesByTextureList.put(face.material.toString(), temp);
-            }
-        }
-        facesByTextureList.keySet()
-            .parallelStream()
-            .map((key) -> facesByTextureList.get(key))
-            .map((currentFaceList) -> ModelUtil.splitQuads(currentFaceList))
-            .map((currentFaceList) -> {
-                Material material = currentFaceList.get(0).material;
-                List<Face> faces = ModelUtil.builderToFace(currentFaceList);
-                Mesh obj = new Mesh(faces, material);
-                return obj;})
-            .forEach((obj) -> {
-                meshes.add(obj);
-        });
-    }
-
-    public void generateDrawable(){
+    private ModelDrawnObject generateDrawable(){
         GGConsole.log("Drawable for " + name + " has been requested, loading textures...");
-        List<Drawable> draws = new ArrayList<>();
-        for(Mesh mesh : meshes){
-            DrawnObject dr = new DrawnObject(mesh.vbodata, mesh.inddata);
-            dr.setAdjacency(false);
-            draws.add(new MatDrawnObject(dr, mesh.m));
-        }
-        if(this.isanimated){
-            drawable = new AnimatedDrawnObject((MatDrawnObject)draws.get(0),animations);
-        }else{
-        drawable = new DrawnObjectGroup(draws);
-        }
+        return new ModelDrawnObject(this);
     }
     
     public Drawable getDrawable(){
         if(drawable != null)
             return drawable;
-        generateDrawable();
+        drawable = generateDrawable();
         return drawable;
     }
 
-    public void putData(String path) throws FileNotFoundException, IOException {
-        FileOutputStream ps;
-        ModelUtil.makeadamnvbo(meshes);
-        GGConsole.log("Writing model data to file...");
-        ps = new FileOutputStream(path + name + ".bmf");
-        try (DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(ps))) {
-            //dos.writeInt(mversion);
-            dos.writeInt(meshes.size());
-            for (Mesh m : meshes) {
-                dos.writeInt(m.vbodata.capacity());
-                for (float f : m.vbodata.array()) {
-                    dos.writeFloat(f);
-                }
-                
-                dos.writeInt(m.inddata.capacity());
-                for (int i : m.inddata.array()) {
-                    dos.writeInt(i);
-                }
-                
-              //  dos.writeInt(m.faces.size());
-                for(Face f : m.faces){
-                  //  dos.writeInt(f.adj1);
-                    //dos.writeInt(f.adj2);
-                    //dos.writeInt(f.adj3);
-                }
-                m.m.toFileFormat(dos);
+    public void putData(GGOutputStream out) throws IOException {
+        GGConsole.log("Writing model data...");
+        out.write(1);
+        out.write(isanimated);
+        
+        out.write(meshes.size());
+        for (Mesh mesh : meshes) {
+            mesh.putData(out);
+        }
+        
+        out.write("animcheck");
+        
+        if(isanimated){
+            out.write(animations.size());
+            for(String s : animations.keySet()){
+                animations.get(s).writeBuffer(out);
             }
         }
-        ps.close();
-       
         
         GGConsole.log("Finished putting data for " + name);
     }

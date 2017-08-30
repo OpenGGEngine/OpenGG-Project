@@ -3,6 +3,7 @@ package com.opengg.test;
 import com.opengg.core.audio.AudioListener;
 import com.opengg.core.audio.Soundtrack;
 import com.opengg.core.audio.SoundtrackHandler;
+import com.opengg.core.engine.AudioController;
 import com.opengg.core.engine.BindController;
 import com.opengg.core.engine.GGApplication;
 import com.opengg.core.engine.OpenGG;
@@ -16,13 +17,16 @@ import static com.opengg.core.io.input.keyboard.Key.*;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
+import com.opengg.core.model.ModelLoader;
 import com.opengg.core.render.Text;
+import com.opengg.core.render.light.Light;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.texture.text.GGFont;
 import com.opengg.core.render.window.WindowInfo;
 import com.opengg.core.render.window.WindowOptions;
 import com.opengg.core.world.Skybox;
+import com.opengg.core.world.components.LightComponent;
 import com.opengg.core.world.components.ModelRenderComponent;
 import com.opengg.core.world.components.TerrainComponent;
 import java.io.IOException;
@@ -59,7 +63,8 @@ public class OpenGGTest extends GGApplication{
         track.addSong(Resource.getSoundData("megaleg.ogg"));
         track.addSong(Resource.getSoundData("stardust.ogg"));
         track.shuffle();
-        track.play();   
+        //track.play();   
+        AudioController.setGlobalGain(0.2f);
         SoundtrackHandler.setSoundtrack(track);
         
         font = Resource.getFont("test", "test.png");
@@ -71,12 +76,8 @@ public class OpenGGTest extends GGApplication{
                 + " the guardians of peace and justice in the galaxy, to settle the conflict...", new Vector2f(), 1f, 0.5f, false);
         GUI.addItem("aids", new GUIText(text, font, new Vector2f(0f,0)));
         
-        WorldEngine.getCurrent().attach(new ModelRenderComponent(Resource.getModel("anakin")));
-        ModelRenderComponent comp = new ModelRenderComponent(Resource.getModel("stormtrooper"));
-        comp.setRotationOffset(new Quaternionf(new Vector3f(0,180,0)));
-        comp.setPositionOffset(new Vector3f(0,0,4));
-        WorldEngine.getCurrent().attach(comp);
-        //WorldEngine.getCurrent().attach(new LightComponent(new Light(new Vector3f(0,2,2), new Vector3f(1,1,1), 100, 0))); 
+        WorldEngine.getCurrent().attach(new ModelRenderComponent(ModelLoader.loadModel("C:\\res\\animation\\model.bmf")));
+        WorldEngine.getCurrent().attach(new LightComponent(new Light(new Vector3f(0,2,2), new Vector3f(1,1,1), 100, 0))); 
           
         TestPlayerComponent player = new TestPlayerComponent();
         player.use();
@@ -102,7 +103,6 @@ public class OpenGGTest extends GGApplication{
                 Resource.getTexturePath("skybox\\majestic_dn.png"),
                 Resource.getTexturePath("skybox\\majestic_rt.png"),
                 Resource.getTexturePath("skybox\\majestic_lf.png")), 1500f));
-        
         
     }
     float wow = 0f;

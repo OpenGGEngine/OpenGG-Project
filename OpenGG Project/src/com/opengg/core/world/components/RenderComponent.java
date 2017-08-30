@@ -11,8 +11,8 @@ import com.opengg.core.render.Renderable;
 import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.render.shader.VertexArrayAttribute;
 import com.opengg.core.render.shader.VertexArrayFormat;
-import com.opengg.core.util.GGByteInputStream;
-import com.opengg.core.util.GGByteOutputStream;
+import com.opengg.core.util.GGInputStream;
+import com.opengg.core.util.GGOutputStream;
 import java.io.IOException;
 
 /**
@@ -87,7 +87,7 @@ public class RenderComponent extends Component implements Renderable{
     }
     
     @Override
-    public void serialize(GGByteOutputStream out) throws IOException{
+    public void serialize(GGOutputStream out) throws IOException{
         super.serialize(out);
         out.write(shader);
         out.write(transparent);
@@ -105,7 +105,7 @@ public class RenderComponent extends Component implements Renderable{
     }
     
     @Override
-    public void deserialize(GGByteInputStream in) throws IOException{
+    public void deserialize(GGInputStream in) throws IOException{
         super.deserialize(in);
         shader = in.readString();
         transparent = in.readBoolean();

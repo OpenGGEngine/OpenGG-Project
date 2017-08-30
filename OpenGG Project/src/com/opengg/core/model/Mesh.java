@@ -6,6 +6,8 @@
 package com.opengg.core.model;
 
 import static com.opengg.core.model.ModelUtil.*;
+import com.opengg.core.util.GGOutputStream;
+import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
@@ -19,12 +21,8 @@ public class Mesh {
     public List<Face> faces = new ArrayList<>();
     public FloatBuffer vbodata;
     public IntBuffer inddata;
-    public Material m;
-    public boolean adjacency = false;
-    
-    public boolean hasAdjacencyData(){
-        return adjacency;
-    }
+    public Material material;
+    public boolean animated = false;
     
     public Mesh(List<Face> faces){
         this(faces, Material.defaultmaterial);
@@ -32,44 +30,37 @@ public class Mesh {
     
     public Mesh(List<Face> faces, Material m) {
         this.faces = faces;
-        this.m = m;
-        findAdjacencies(this);
-        makeadamnadjacencyvbo(this);
+        this.material = m;
+        makeadamnvbo(this, false);
     }
     
-    public Mesh(FloatBuffer fb, IntBuffer ib, Material m){
+    public Mesh(FloatBuffer fb, IntBuffer ib, Material m, boolean animated){
         updateVBO(fb, ib);
-        this.m = m;
-        makeadamnfacelist(this);
-        findAdjacencies(this);
-        makeadamnadjacencyvbo(this);
-    }
-    public Mesh(FloatBuffer fb, IntBuffer ib, Material m,boolean overide){
-        updateVBO(fb, ib);
-        this.m = m;
-        if(overide){
-        makeadamnfacelist(this);
-        findAdjacencies(this);
-        makeadamnadjacencyvbo(this);
-        }
-    }
-    
-    public Mesh(FloatBuffer fb, IntBuffer ib, Material m, int[] adjacencies){
-        updateVBO(fb, ib);
-        this.m = m;
-        makeadamnfacelist(this, adjacencies);
-        makeadamnadjacencyvbo(this);
+        this.material = m;
+        makeadamnfacelist(this, animated);
     }
     
     public Mesh(FloatBuffer fb, IntBuffer ib, List<Face> faces, Material m){
         this.faces = faces;
         this.vbodata = fb;
         this.inddata = ib;
-        this.m = m;
+        this.material = m;
     }
     
     public void updateVBO(FloatBuffer fb, IntBuffer ib){
         vbodata = fb;
         inddata = ib;
+    }
+    
+    public void putData(GGOutputStream out) throws IOException{
+        vbodata.rewind();
+        out.write(vbodata);
+        vbodata.rewind();
+        
+        inddata.rewind();
+        out.write(inddata);
+        inddata.rewind();
+        
+        material.toFileFormat(out);
     }
 }

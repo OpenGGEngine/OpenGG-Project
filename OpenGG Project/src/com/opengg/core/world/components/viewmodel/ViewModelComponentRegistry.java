@@ -10,6 +10,7 @@ import com.opengg.core.engine.Resource;
 import com.opengg.core.util.ClassUtil;
 import com.opengg.core.util.JarClassUtil;
 import com.opengg.core.world.components.Component;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +24,7 @@ public class ViewModelComponentRegistry {
     static List<Class> viewmodels = new ArrayList<>();
     
     public static void initialize(){
-        registerAllFromJar(Resource.getAbsoluteFromLocal("lib\\OpenGG.jar"));
+        registerAllFromJar(Resource.getAbsoluteFromLocal("lib" + File.separator + "OpenGG.jar"));
     }
     
     public static void register(Class component){

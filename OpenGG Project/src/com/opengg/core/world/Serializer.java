@@ -7,8 +7,9 @@
 package com.opengg.core.world;
 
 import com.opengg.core.engine.GGConsole;
-import com.opengg.core.util.GGByteOutputStream;
+import com.opengg.core.util.GGOutputStream;
 import com.opengg.core.world.components.Component;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 
@@ -18,18 +19,18 @@ import java.util.List;
  */
 public class Serializer {
     static Serializer serializer;
-    GGByteOutputStream stream;
+    GGOutputStream stream;
     
     public static byte[] serialize(World w){
         try {
 
             serializer = new Serializer();
-            serializer.stream = new GGByteOutputStream();
+            serializer.stream = new GGOutputStream();
             
             w.serialize(serializer.stream);
             traverse(w.getChildren());          
             
-            return serializer.stream.getArray();
+            return ((ByteArrayOutputStream)serializer.stream.getStream()).toByteArray();
         } catch (IOException ex) {
             GGConsole.error("IOException thrown during serialization of world!");
         }

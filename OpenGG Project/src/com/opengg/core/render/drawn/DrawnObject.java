@@ -30,7 +30,7 @@ import org.lwjgl.system.MemoryUtil;
 public class DrawnObject implements Drawable {
     GLBuffer vbo;
     GLBuffer evbo;
-    FloatBuffer b;
+    FloatBuffer vertices;
     IntBuffer ind; 
     boolean adj = false;
     boolean vbexist = false, evbexist = false;
@@ -39,9 +39,9 @@ public class DrawnObject implements Drawable {
     
     Matrix4f model = Matrix4f.translate(0, 0, 0);
    
-    DrawnObject(FloatBuffer b, VertexArrayFormat format){
+    public DrawnObject(FloatBuffer vertices, VertexArrayFormat format){
        
-        limit = b.limit();
+        limit = vertices.limit();
         vertLimit = limit/format.getVertexLength();
         
         ind = MemoryUtil.memAllocInt(vertLimit);
@@ -50,7 +50,7 @@ public class DrawnObject implements Drawable {
         }
         
         ind.flip();
-        defBuffers(b, ind);
+        defBuffers(vertices, ind);
     }
     
     public DrawnObject(FloatBuffer b){
@@ -70,22 +70,25 @@ public class DrawnObject implements Drawable {
             }
             ind.flip();
 
-            this.b = b;
+            this.vertices = b;
         }
         
-        defBuffers(b, ind);
+        defBuffers(vertices, ind);
     }
     
     public DrawnObject(List<FloatBuffer> buffers){
         this(buffers, RenderEngine.getDefaultFormat());
     }
     
-    public DrawnObject(FloatBuffer b, IntBuffer index){
-        
-        limit = b.limit();
+    public DrawnObject(FloatBuffer vertices, IntBuffer index, VertexArrayFormat format){
+        limit = vertices.limit();
         ind = index;
         
-        defBuffers(b, ind);
+        defBuffers(vertices, ind);
+    }
+    
+    public DrawnObject(FloatBuffer vertices, IntBuffer index){
+        this(vertices, index, RenderEngine.getDefaultFormat());
     }
           
     private void defBuffers(FloatBuffer b, IntBuffer ind ){
@@ -108,8 +111,8 @@ public class DrawnObject implements Drawable {
     }
 
 
-    public void setBuffer(FloatBuffer b, int vertSize){
-        limit = b.limit();
+    public void setBuffer(FloatBuffer vertices, int vertSize){
+        limit = vertices.limit();
         vertLimit = limit/vertSize;
         
         ind = MemoryUtil.memAllocInt(vertLimit);
@@ -118,12 +121,12 @@ public class DrawnObject implements Drawable {
         }
         ind.flip();
         
-        this.b = b;
-        defBuffers(b, ind);
+        this.vertices = vertices;
+        defBuffers(vertices, ind);
     }    
     
     public FloatBuffer getVertexBuffer(){
-        return b;
+        return vertices;
     }
     
     public IntBuffer getElementBuffer(){
@@ -139,21 +142,11 @@ public class DrawnObject implements Drawable {
     }
     
     @Override
-    public void render(){    
+    public void render(){  
         ShaderController.setModel(model);
         RenderEngine.getCurrentVAO().applyFormat(vbo);
         evbo.bind();
         glDrawElements(adj ? GL_TRIANGLES_ADJACENCY : GL_TRIANGLES, ind.limit(), GL_UNSIGNED_INT, 0);
-    }
-    
-    @Override
-    public boolean hasAdjacency(){
-        return adj;
-    }
-
-    @Override
-    public Matrix4f getMatrix() {
-        return model;
     }
 
     @Override

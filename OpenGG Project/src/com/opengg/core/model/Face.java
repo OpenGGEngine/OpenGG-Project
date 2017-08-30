@@ -24,7 +24,7 @@ public class Face {
 
     @Override
     public String toString() { 
-        String result = v1 +  ", " + v2 + ", " + v3 + ", adjacent to " + adj1 + ", " + adj2 + ", " + adj3;
+        String result = v1 +  ", " + v2 + ", " + v3;
         return result;
     }
 }  

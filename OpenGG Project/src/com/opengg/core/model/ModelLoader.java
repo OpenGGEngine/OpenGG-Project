@@ -6,24 +6,19 @@
 package com.opengg.core.model;
 
 import com.opengg.core.engine.GGConsole;
-import com.opengg.core.engine.Resource;
 import com.opengg.core.math.Matrix4f;
-import static com.opengg.core.model.ModelUtil.readString;
-import com.opengg.core.render.animation.AnimatedFrame;
-import com.opengg.core.render.animation.Animation;
+import com.opengg.core.util.GGInputStream;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import org.lwjgl.system.MemoryUtil;
 
 /**
  * Static handler for loading and processing BMF Model files
@@ -52,121 +47,66 @@ public class ModelLoader {
         Map<String, Animation> anims = new HashMap<>();
         GGConsole.log("Loading model at " + path + "...");
 
-        String fpath = path;
-        if (!new File(path).isAbsolute()) {
-            fpath = Resource.getAbsoluteFromLocal(path);
-        }
         ArrayList<Mesh> meshes = new ArrayList<>();
-        try (DataInputStream in = new DataInputStream(new BufferedInputStream(new FileInputStream(fpath)))) {
-            String texpath = fpath.substring(0, fpath.lastIndexOf("\\") + 1) + "tex\\";
-            int veresion = in.readInt();
-            boolean isanimated = in.readBoolean();
-            int id = in.readInt();
-            System.out.println("V: " + veresion + ", isAnim: " + isanimated + ", numMesh: " + id);
-            for (int si = 0; si < id; si++) {
-                int fbcap = in.readInt();
-                FloatBuffer f = MemoryUtil.memAllocFloat(fbcap);
-                for (int i = 0; i < fbcap; i++) {
+        GGInputStream in = new GGInputStream(new DataInputStream(new BufferedInputStream(new FileInputStream(path))));
+        String texpath = path.substring(0, path.lastIndexOf(File.separator) + 1) + "tex" + File.separator;
+        int version = in.readInt();
+        boolean isanimated = in.readBoolean();
+        int meshcount = in.readInt();
+        for (int i = 0; i < meshcount; i++) {
+            FloatBuffer vdata = in.readFloatBuffer();
+            IntBuffer indices = in.readIntBuffer();
 
-                    float e = in.readFloat();
-                    f.put(e);
+            String name = in.readString();
 
-                }
-                f.flip();
-                int ibcap = in.readInt();
-                IntBuffer inb = MemoryUtil.memAllocInt(ibcap);
-                for (int i = 0; i < ibcap; i++) {
-                    inb.put(in.readInt());
-                }
-                inb.flip();
-
-//                int fam = in.readInt();
-//                int[] adjs = new int[fam * 3];
-//                for(int i = 0; i < fam * 3; i++){
-//                    adjs[i] = in.readInt();
-//                }
-                String name = readString(in);
-                Material m;
-                if ("default".equals(name)) {
-                    m = Material.defaultmaterial;
-                } else {
-                    m = new Material(name, texpath, in);
-                }
-                m.loadTextures();
-                meshes.add(new Mesh(f, inb, m, false));
+            Material m;
+            if ("default".equals(name)) {
+                m = Material.defaultmaterial;
+            } else {
+                m = new Material(name, texpath, in);
             }
-            if (isanimated) {
-                int numanimations = in.readInt();
-                System.out.println("Loaded " + numanimations + " animations.");
-                for (int i = 0; i < numanimations; i++) {
-                    ArrayList<AnimatedFrame> af = new ArrayList<>();
-                    String name = readString(in);
-                    double duration = in.readDouble();
-                    int framecount = in.readInt();
-                    for (int i2 = 0; i2 < framecount; i2++) {
 
-                        int matrixlength = in.readInt();
-                        Matrix4f[] joints = new Matrix4f[matrixlength];
-                        for (int i3 = 0; i3 < joints.length; i3++) {
-                            float l00 = in.readFloat();
-                            float l01 = in.readFloat();
-                            float l02 = in.readFloat();
-                            float l03 = in.readFloat();
-                            float l10 = in.readFloat();
-                            float l11 = in.readFloat();
-                            float l12 = in.readFloat();
-                            float l13 = in.readFloat();
-                            float l20 = in.readFloat();
-                            float l21 = in.readFloat();
-                            float l22 = in.readFloat();
-                            float l23 = in.readFloat();
-                            float l30 = in.readFloat();
-                            float l31 = in.readFloat();
-                            float l32 = in.readFloat();
-                            float l33 = in.readFloat();
+            m.loadTextures();
+            meshes.add(new Mesh(vdata, indices, m, false));
+        }
 
-                            Matrix4f temp = new Matrix4f();
-                            temp.m00 = l00;
-                            temp.m10 = l01;
-                            temp.m20 = l02;
-                            temp.m30 = l03;
+        String test = in.readString();
+        if(!(test.equals("animcheck")))
+            throw new RuntimeException("Failed anti-corruption check!");
+        
+        if (isanimated) {
+            int numanimations = in.readInt();
+            for (int i = 0; i < numanimations; i++) {
+                ArrayList<AnimatedFrame> af = new ArrayList<>();
+                String name = in.readString();
+                float duration = in.readFloat();
+                int framecount = in.readInt();
 
-                            temp.m01 = l10;
-                            temp.m11 = l11;
-                            temp.m21 = l12;
-                            temp.m31 = l13;
-
-                            temp.m02 = l20;
-                            temp.m12 = l21;
-                            temp.m22 = l22;
-                            temp.m32 = l23;
-
-                            temp.m03 = l30;
-                            temp.m13 = l31;
-                            temp.m23 = l32;
-                            temp.m33 = l33;
-
-                            joints[i3] = temp;
-                        }
-                        AnimatedFrame am = new AnimatedFrame(joints);
-                        af.add(am);
+                for (int i2 = 0; i2 < framecount; i2++) {
+                    int matrixlength = in.readInt();
+                    Matrix4f[] joints = new Matrix4f[matrixlength];
+                    for (int i3 = 0; i3 < joints.length; i3++) {
+                        joints[i3] = in.readMatrix4f();
                     }
-                    Animation anim = new Animation(name, af, duration);
-                    anims.put(name, anim);
+
+                    AnimatedFrame am = new AnimatedFrame(joints);
+                    af.add(am);
                 }
-
+                
+                Animation anim = new Animation(name, af, duration);
+                anims.put(name, anim);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
 
-        Model m = new Model(path, meshes);
-        if (anims.size() > 0) {
-            m.animations = anims;
-            m.isanimated = true;
+        Model model;
+        
+        if (isanimated) {
+            model = new Model(path, meshes, anims);
+        }else{
+            model = new Model(path, meshes);
         }
-        GGConsole.log("Done Parsing " + path + ", got " + m.getName());
-        return m;
+        
+        GGConsole.log("Done Parsing " + path + ", got " + model.getName());
+        return model;
     }
-
 }

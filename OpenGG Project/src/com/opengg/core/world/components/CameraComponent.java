@@ -7,8 +7,8 @@
 package com.opengg.core.world.components;
 
 import com.opengg.core.engine.RenderEngine;
-import com.opengg.core.util.GGByteInputStream;
-import com.opengg.core.util.GGByteOutputStream;
+import com.opengg.core.util.GGInputStream;
+import com.opengg.core.util.GGOutputStream;
 import com.opengg.core.world.Camera;
 import java.io.IOException;
 
@@ -34,13 +34,13 @@ public class CameraComponent extends Component{
     }
     
     @Override
-    public void serialize(GGByteOutputStream out) throws IOException{
+    public void serialize(GGOutputStream out) throws IOException{
         super.serialize(out);
         out.write(RenderEngine.getCurrentCamera() == camera);
     }
     
     @Override
-    public void deserialize(GGByteInputStream in) throws IOException{
+    public void deserialize(GGInputStream in) throws IOException{
         super.deserialize(in);
         camera = new Camera();
         if(in.readBoolean())

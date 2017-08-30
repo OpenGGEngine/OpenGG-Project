@@ -7,18 +7,16 @@ package com.opengg.core.world.components;
 
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
+import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.render.drawn.TexturedDrawnObject;
 import com.opengg.core.render.light.Light;
 import com.opengg.core.render.objects.ObjectCreator;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.texture.TextureManager;
-import com.opengg.core.util.GGByteInputStream;
-import com.opengg.core.util.GGByteOutputStream;
+import com.opengg.core.util.GGInputStream;
+import com.opengg.core.util.GGOutputStream;
 import java.io.IOException;
-import java.nio.Buffer;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 
 /**
  *
@@ -41,8 +39,8 @@ public class SunComponent extends RenderComponent{
     
     public SunComponent(Texture texture, float rotspeed){
         super();
-        Buffer[] buffers = ObjectCreator.createSquareBuffers(new Vector2f(0,0), new Vector2f(1,1), 0f);
-        setDrawable(new TexturedDrawnObject((FloatBuffer)buffers[0], (IntBuffer)buffers[1], texture));
+        Drawable drawn = ObjectCreator.createSquare(new Vector2f(0,0), new Vector2f(1,1), 0f);
+        setDrawable(new TexturedDrawnObject(drawn, texture));
         this.rotspeed = rotspeed;
         this.texture = texture;
         light = new LightComponent(new Light(new Vector3f(), new Vector3f(1,0.3f,0.3f),100000,10000));
@@ -91,7 +89,7 @@ public class SunComponent extends RenderComponent{
     }
     
     @Override
-    public void serialize(GGByteOutputStream stream) throws IOException{
+    public void serialize(GGOutputStream stream) throws IOException{
         super.serialize(stream);
         stream.write((int)SUN_DIS);
         stream.write((float)rotspeed);
@@ -100,7 +98,7 @@ public class SunComponent extends RenderComponent{
     }
     
     @Override
-    public void deserialize(GGByteInputStream stream) throws IOException{
+    public void deserialize(GGInputStream stream) throws IOException{
         super.deserialize(stream);
         SUN_DIS = stream.readInt();
         rotspeed = stream.readFloat();

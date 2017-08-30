@@ -50,23 +50,9 @@ public class DrawnObjectGroup implements Drawable {
     }
 
     @Override
-    public Matrix4f getMatrix() {
-        return new Matrix4f();
-    }
-
-    @Override
     public void destroy() {
         for(Drawable d : objs){
             d.destroy();
         }
-    }
-    
-    @Override
-    public boolean hasAdjacency() {
-        boolean adj = false;
-        for(Drawable d : objs){
-            adj = adj || d.hasAdjacency();
-        }
-        return adj;
     }
 }

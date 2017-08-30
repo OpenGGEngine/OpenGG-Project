@@ -15,15 +15,19 @@ import com.opengg.core.math.Vector3f;
  */
 public class Particle {
     private Vector3f position;
-
-    public Vector3f getPosition() {
-        return position;
-    }
     private Vector3f velocity;
     private Vector3f gravity;
     private float lifelength = 0;
     private float lifespan;
     private float scale;
+    
+    public Vector3f getPosition() {
+        return position;
+    }
+    
+    public float getScale(){
+        return scale;
+    }
     
     public Particle(Vector3f position, Vector3f velocity, float lifeLength, float scale) {
         this(position, velocity, -9.81f, lifeLength, scale);

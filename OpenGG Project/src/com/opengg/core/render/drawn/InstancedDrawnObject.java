@@ -96,13 +96,8 @@ public class InstancedDrawnObject extends DrawnObject implements Drawable {
     }
     
     public void removeBuffer(){
-        b = null;
+        vertices = null;
         
-    }
-
-    @Override
-    public Matrix4f getMatrix() {
-        return model;
     }
 
     @Override

@@ -8,6 +8,7 @@ package com.opengg.core.engine;
 
 import com.opengg.core.audio.AudioListener;
 import com.opengg.core.audio.NativeSound;
+import com.opengg.core.audio.Sound;
 import com.opengg.core.audio.SoundManager;
 import static com.opengg.core.engine.GGConsole.error;
 import java.nio.ByteBuffer;
@@ -34,7 +35,7 @@ public class AudioController {
     static boolean initialized;
     static float gain = 1;
     
-    static ArrayList<NativeSound> sources = new ArrayList<>();
+    static ArrayList<Sound> sounds = new ArrayList<>();
     static void init() {
         device = alcOpenDevice((ByteBuffer)null);
         ALCCapabilities caps = ALC.createCapabilities(device);
@@ -59,16 +60,19 @@ public class AudioController {
             error("OpenAL Error in AudioHandler: " + i);
     }
     
-    public static void addAudioSource(NativeSound s){
-        sources.add(s);
+    public static void addAudioSource(Sound s){
+        sounds.add(s);
     }
     
-    public static void removeAudioSource(NativeSound s){
-        sources.remove(s);
+    public static void removeAudioSource(Sound s){
+        sounds.remove(s);
     }
     
     public static void setGlobalGain(float ngain){
         gain = ngain;
+        for(Sound sound : sounds){
+            sound.setGain(sound.getGain());
+        }
     }
     
     public static float getGlobalGain(){
@@ -76,9 +80,9 @@ public class AudioController {
     }
     
     static void destroy(){
-        sources.stream().forEach((source) -> {
-            source.remove();
-        });
+        for(Sound sound : sounds){
+            
+        }
         ALC.destroy();
     }
 }

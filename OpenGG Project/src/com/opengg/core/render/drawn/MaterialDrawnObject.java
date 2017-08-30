@@ -13,13 +13,12 @@ import com.opengg.core.render.shader.VertexArrayFormat;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.List;
-import static org.lwjgl.opengl.GL11.glGetError;
 
 /**
  *
  * @author Javier
  */
-public class MatDrawnObject implements Drawable {
+public class MaterialDrawnObject implements Drawable {
     Drawable d;
     Material m = Material.defaultmaterial;
     
@@ -27,31 +26,31 @@ public class MatDrawnObject implements Drawable {
         this.m = m;
     }
 
-    public MatDrawnObject(Drawable d){
+    public MaterialDrawnObject(Drawable d){
         this.d = d;
     }
     
-    public MatDrawnObject(Drawable d, Material m){
+    public MaterialDrawnObject(Drawable d, Material m){
         this.d = d;
         this.m = m;
         m.loadTextures();
     }
     
-    public MatDrawnObject(FloatBuffer b, VertexArrayFormat format){
+    public MaterialDrawnObject(FloatBuffer b, VertexArrayFormat format){
         d = new DrawnObject(b, format);
     }
     
-    public MatDrawnObject(List<FloatBuffer> buffers, VertexArrayFormat format){
+    public MaterialDrawnObject(List<FloatBuffer> buffers, VertexArrayFormat format){
         d = new DrawnObject(buffers, format);
     }
     
-    public MatDrawnObject(FloatBuffer b, IntBuffer index, Material m){
+    public MaterialDrawnObject(FloatBuffer b, IntBuffer index, Material m){
         d = new DrawnObject(b,index);
         this.m = m;
         m.loadTextures();
     }
     
-    public MatDrawnObject(FloatBuffer b, IntBuffer index){
+    public MaterialDrawnObject(FloatBuffer b, IntBuffer index){
         this(b, index, Material.defaultmaterial);
     }
     
@@ -69,7 +68,9 @@ public class MatDrawnObject implements Drawable {
             m.Ks.use(4); 
         if(m.Ns != null)
             m.Ns.use(5);
+
         ShaderController.passMaterial(m);
+
         d.render();
     }
 
@@ -79,17 +80,7 @@ public class MatDrawnObject implements Drawable {
     }
 
     @Override
-    public Matrix4f getMatrix() {
-        return d.getMatrix();
-    }
-
-    @Override
     public void destroy() {
         d.destroy();
-    }
-    
-    @Override
-    public boolean hasAdjacency(){
-        return d.hasAdjacency();
     }
 }

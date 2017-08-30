@@ -11,6 +11,7 @@ package com.opengg.core.model;
  */
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
+import java.io.File;
 import java.util.*;
 import static java.util.logging.Level.INFO;
 import static java.util.logging.Level.SEVERE;
@@ -418,7 +419,7 @@ public class Build implements BuilderInterface {
     }
     
     public String getObjectFileName(){
-        String name = objFilename.substring(objFilename.lastIndexOf("\\")+2);
+        String name = objFilename.substring(objFilename.lastIndexOf(File.separator)+2);
         return name;
     }
     

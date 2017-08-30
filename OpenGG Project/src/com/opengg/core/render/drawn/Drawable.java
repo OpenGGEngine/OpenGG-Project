@@ -15,7 +15,5 @@ import com.opengg.core.render.Renderable;
  */
 public interface Drawable extends Renderable{
     public void setMatrix(Matrix4f m);
-    public Matrix4f getMatrix();
-    public boolean hasAdjacency();
     public void destroy();
 }

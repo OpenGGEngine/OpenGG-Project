@@ -7,6 +7,7 @@
 package com.opengg.core.engine;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -82,7 +83,7 @@ public class GGConsole implements Runnable{
     }
     
     public static void writeLog(Date date, String error, String name){
-        try(PrintWriter writer = new PrintWriter(new FileOutputStream(Resource.getAbsoluteFromLocal("logs\\" + name + ".log")))) {
+        try(PrintWriter writer = new PrintWriter(new FileOutputStream(Resource.getAbsoluteFromLocal("logs" + File.separator + name + ".log")))) {
             for(GGMessage m : messages){
                 writer.println(m.toString());
             }

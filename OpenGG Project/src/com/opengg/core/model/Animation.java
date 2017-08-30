@@ -3,10 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.opengg.core.render.animation;
+package com.opengg.core.model;
 
-import com.opengg.core.render.animation.AnimatedFrame;
-import java.io.DataOutputStream;
+import com.opengg.core.util.GGOutputStream;
 import java.io.IOException;
 import java.util.List;
 
@@ -15,23 +14,22 @@ import java.util.List;
  * @author Warren
  */
 public class Animation {
-
     private int currentFrame;
-
     private List<AnimatedFrame> frames;
-
     private String name;
-    
-    private double duration;
+    private float duration;
+    private float animcounter;
 
-    public Animation(String name, List<AnimatedFrame> frames, double duration) {
+    public Animation(String name, List<AnimatedFrame> frames, float duration) {
         this.name = name;
         this.frames = frames;
-        currentFrame = 0;
         this.duration = duration;
+        currentFrame = 0;
     }
 
     public AnimatedFrame getCurrentFrame() {
+        if(frames.isEmpty())
+            return new AnimatedFrame();
         return this.frames.get(currentFrame);
     }
 
@@ -45,6 +43,10 @@ public class Animation {
 
     public String getName() {
         return name;
+    }
+    
+    public float getFrameDuration(){
+        return (float) (duration/frames.size());
     }
 
     public AnimatedFrame getNextFrame() {
@@ -61,12 +63,20 @@ public class Animation {
         }
     }
     
-    public void writeBuffer(DataOutputStream ds) throws IOException{
-        ds.writeDouble(duration);
-        ds.writeInt(frames.size());
+    public void writeBuffer(GGOutputStream out) throws IOException{
+        out.write(name);
+        out.write(duration);
+        out.write(frames.size());
         for (AnimatedFrame frame : frames) {
-            frame.writeBuffer(ds);
+            frame.writeBuffer(out);
         }
     }
 
+    public void updateAnimation(float delta){
+        animcounter += delta;
+        if(animcounter > getFrameDuration()){
+            animcounter = 0;
+            nextFrame();
+        }
+    }
 }

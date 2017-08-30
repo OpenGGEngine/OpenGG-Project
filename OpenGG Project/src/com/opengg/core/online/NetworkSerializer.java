@@ -8,9 +8,10 @@ package com.opengg.core.online;
 
 import com.opengg.core.engine.GGConsole;
 import com.opengg.core.engine.WorldEngine;
-import com.opengg.core.util.GGByteInputStream;
-import com.opengg.core.util.GGByteOutputStream;
+import com.opengg.core.util.GGInputStream;
+import com.opengg.core.util.GGOutputStream;
 import com.opengg.core.world.components.Component;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Calendar;
@@ -23,7 +24,7 @@ import java.util.List;
 public class NetworkSerializer {
     public static byte[] serializeUpdate(List<Component> components){
         try {
-            GGByteOutputStream out = new GGByteOutputStream();
+            GGOutputStream out = new GGOutputStream();
             out.write(Calendar.getInstance().getTimeInMillis());
             out.write(components.size());
             for(Component c : components){
@@ -31,7 +32,7 @@ public class NetworkSerializer {
                 c.serialize(out);
             }
             
-            return out.getArray();
+            return ((ByteArrayOutputStream)out.getStream()).toByteArray();
         } catch (IOException ex) {
             GGConsole.error("Error occured during serialization of packet!");
         }
@@ -40,7 +41,7 @@ public class NetworkSerializer {
     
     public static void deserializeUpdate(byte[] bytes){
         try {
-            GGByteInputStream ds = new GGByteInputStream(ByteBuffer.wrap(bytes));
+            GGInputStream ds = new GGInputStream(ByteBuffer.wrap(bytes));
             //long time = ds.readLong();
             int amount = ds.readInt();
             List<Component> components = WorldEngine.getCurrent().getAll();

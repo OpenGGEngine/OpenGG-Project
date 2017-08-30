@@ -209,11 +209,11 @@ public class OpenGG{
     public static void linkLWJGL(){
         GGConsole.log("Loading native libraries...");
         if(System.getProperty("os.name").contains("Windows")){
-            System.setProperty("org.lwjgl.librarypath", new File("natives\\windows").getAbsolutePath());
+            System.setProperty("org.lwjgl.librarypath", new File("natives" + File.separator + "windows").getAbsolutePath());
         }else if(System.getProperty("os.name").contains("OS X")){
-           System.setProperty("org.lwjgl.librarypath", new File("natives\\osx").getAbsolutePath());
+           System.setProperty("org.lwjgl.librarypath", new File("natives" + File.separator + "osx").getAbsolutePath());
         }else if(System.getProperty("os.name").contains("Linux")){
-            System.setProperty("org.lwjgl.librarypath", new File("natives\\linux").getAbsolutePath());
+            System.setProperty("org.lwjgl.librarypath", new File("natives" + File.separator + "linux").getAbsolutePath());
         }else{
             GGConsole.error("OpenGG is not supported on " + System.getProperty("os.name") + ", exiting...");
             writeLog();

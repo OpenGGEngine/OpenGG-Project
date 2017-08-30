@@ -11,7 +11,6 @@ import com.opengg.core.render.GLBuffer;
 import static org.lwjgl.opengl.GL11.GL_BYTE;
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL11.GL_INT;
-import static org.lwjgl.opengl.GL11.glGetError;
 
 /**
  *

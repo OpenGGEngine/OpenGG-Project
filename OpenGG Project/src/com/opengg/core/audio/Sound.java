@@ -57,6 +57,10 @@ public class Sound{
         so.setGain(gain * AudioController.getGlobalGain());
     }
     
+    public float getGain(){
+        return gain;
+    }
+    
     public void setSound(String path){
         setSound(SoundManager.loadSound(path));
     }
@@ -68,7 +72,7 @@ public class Sound{
     
     public void setSound(ALBuffer buffer){
         so = new NativeSound(buffer);
-        AudioController.addAudioSource(so);
+        AudioController.addAudioSource(this);
     }
     
     public ALBuffer getBuffer(){
@@ -80,6 +84,6 @@ public class Sound{
     }
     
     public void remove(){
-        AudioController.removeAudioSource(so);
+        AudioController.removeAudioSource(this);
     }
 }

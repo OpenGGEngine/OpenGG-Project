@@ -8,7 +8,7 @@ package com.opengg.core.render;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.drawn.Drawable;
-import com.opengg.core.render.drawn.MatDrawnObject;
+import com.opengg.core.render.drawn.MaterialDrawnObject;
 import com.opengg.core.render.texture.text.GGFont;
 
 /**
@@ -165,8 +165,8 @@ public class Text{
         outlineColor = new Vector3f(r, g, b); 
     }
 
-    public MatDrawnObject getDrawable(GGFont f){
-        return f.loadText(this);
+    public MaterialDrawnObject getDrawable(GGFont font){
+        return font.loadText(this);
     }
  
 }

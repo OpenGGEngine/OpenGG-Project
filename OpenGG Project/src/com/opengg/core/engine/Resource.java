@@ -6,7 +6,6 @@
 
 package com.opengg.core.engine;
 
-import com.opengg.core.audio.AudioLoader;
 import com.opengg.core.audio.SoundData;
 import com.opengg.core.audio.SoundManager;
 import com.opengg.core.model.Model;
@@ -41,31 +40,31 @@ public class Resource {
     }
     
     public static String getModelPath(String name){
-        return "resources\\models\\" +  name + "\\" + name + ".bmf";
+        return "resources" + File.separator + "models" + File.separator + name + File.separator + name + ".bmf";
     }
     
     public static String getConfigPath(String name){
-        return "cfg\\" +  name + ".cfg";
+        return "cfg" + File.separator + name + ".cfg";
     }
     
     public static String getShaderPath(String name){
-        return "resources\\glsl\\" +  name;
+        return "resources" + File.separator + "glsl" + File.separator +  name;
     }
     
     public static String getTexturePath(String name){
-        return "resources\\tex\\" +  name;
+        return "resources" + File.separator + "tex" + File.separator +  name;
     }
     
     public static String getFontPath(String name){
-        return "resources\\font\\" +  name + ".fnt";
+        return "resources" + File.separator + "font" + File.separator +  name + ".fnt";
     }
     
     public static String getSoundPath(String name){
-        return "resources\\audio\\" +  name;
+        return "resources" + File.separator + "audio" + File.separator +  name;
     }
     
     public static String getWorldPath(String name){
-        return "resources\\worlds\\" +  name + ".bwf";
+        return "resources" + File.separator + "worlds" + File.separator +  name + ".bwf";
     }
     
     public static SoundData getSoundData(String name){

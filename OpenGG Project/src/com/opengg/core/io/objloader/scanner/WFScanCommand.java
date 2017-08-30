@@ -22,6 +22,7 @@ import java.io.IOException;
 import com.opengg.core.io.objloader.common.FastFloat;
 import com.opengg.core.io.objloader.common.IFastFloat;
 import com.opengg.core.exceptions.WFCorruptException;
+import java.io.File;
 
 /**
  * This class helps in parsing OBJ and MTL files by extracting element
@@ -36,7 +37,7 @@ class WFScanCommand {
     private static final String WHITE_SPACE_PATTERN = "[\\s]+";
     private static final String COMMENT_SEPARATOR = "#";
     private static final int COMMENT_SEPARATOR_LENGTH = COMMENT_SEPARATOR.length();
-    private static final String LINE_EXTENSION = "\\";
+    private static final String LINE_EXTENSION = File.separator;
     
     private final FastFloat[] fastFloats = new FastFloat[FAST_FLOAT_POOL_SIZE];
 	private final StringBuilder logicalLineBuilder = new StringBuilder();

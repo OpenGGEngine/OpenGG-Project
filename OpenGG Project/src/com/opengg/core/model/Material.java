@@ -5,12 +5,11 @@
  */
 package com.opengg.core.model;
 
-import com.opengg.core.model.BuilderInterface;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.math.Vector4f;
 import com.opengg.core.render.texture.Texture;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import com.opengg.core.util.GGInputStream;
+import com.opengg.core.util.GGOutputStream;
 import java.io.IOException;
 
 /**
@@ -48,6 +47,7 @@ public class Material {
     public Texture Ns = null;
     public Texture D = null;
     public Texture norm = null;
+    public String texpath = "";
 
     public boolean hasspecmap = false;
     public boolean hasnormmap = false;
@@ -60,242 +60,124 @@ public class Material {
         this.name = name;
     }
 
-    public Material(String name,String texpath, DataInputStream in) throws IOException {
+    public Material(String name, String texpath, GGInputStream in) throws IOException {
         this.name = name;
+        this.texpath = texpath;
 
-        this.ka.x = in.readFloat();
-        this.ka.y = in.readFloat();
-        this.ka.z = in.readFloat();
-
-        this.kd.x = in.readFloat();
-        this.kd.y = in.readFloat();
-        this.kd.z = in.readFloat();
-
-        this.ks.x = in.readFloat();
-        this.ks.y = in.readFloat();
-        this.ks.z = in.readFloat();
-
-        this.tf.x = in.readFloat();
-        this.tf.y = in.readFloat();
-        this.tf.z = in.readFloat();
+        this.ka = in.readVector3f();
+        this.kd = in.readVector3f();
+        this.ks = in.readVector3f();
+        this.tf = in.readVector3f();
 
         this.illumModel = in.readInt();
-
         this.dHalo = in.readBoolean();
-
         this.dFactor = in.readDouble();
-
         this.nsExponent = in.readDouble();
-
         this.sharpnessValue = in.readDouble();
-
         this.niOpticalDensity = in.readDouble();
 
-        int len = in.readInt();
-        if (len != 0) {
-            name = "";
-            for (int i = 0; i < len; i++) {
-                name += in.readChar();
-            }
-            this.mapKaFilename = texpath + name;
-        } else {
-            this.mapKaFilename = null;
-        }
-
-        len = in.readInt();
-        if (len != 0) {
-            name = "";
-            for (int i = 0; i < len; i++) {
-                name += in.readChar();
-            }
-            this.mapKdFilename = texpath + name;
-        } else {
-            this.mapKdFilename = null;
-        }
-
-        len = in.readInt();
-        if (len != 0) {
-            name = "";
-            for (int i = 0; i < len; i++) {
-                name += in.readChar();
-            }
-            this.mapKsFilename = texpath + name;
-        } else {
-            this.mapKsFilename = null;
-        }
-
-        len = in.readInt();
-        if (len != 0) {
-            name = "";
-            for (int i = 0; i < len; i++) {
-                name += in.readChar();
-            }
-            this.mapNsFilename = texpath + name;
-        } else {
-            this.mapNsFilename = null;
-        }
-
-        len = in.readInt();
-        if (len != 0) {
-            name = "";
-            for (int i = 0; i < len; i++) {
-                name += in.readChar();
-            }
-            this.mapDFilename = texpath + name;
-        } else {
-            this.mapDFilename = null;
-        }
-
-        len = in.readInt();
-        if (len != 0) {
-            name = "";
-            for (int i = 0; i < len; i++) {
-                name += in.readChar();
-            }
-            this.decalFilename = texpath + name;
-        } else {
-            this.decalFilename = null;
-        }
-
-        len = in.readInt();
-        if (len != 0) {
-            name = "";
-            for (int i = 0; i < len; i++) {
-                name += in.readChar();
-            }
-            this.dispFilename = texpath + name;
-        } else {
-            this.dispFilename = null;
-        }
-
-        len = in.readInt();
-        if (len != 0) {
-            name = "";
-            for (int i = 0; i < len; i++) {
-                name += in.readChar();
-            }
-            this.bumpFilename = texpath + name;
-        } else {
-            this.bumpFilename = null;
-        }
+        this.mapKaFilename = in.readString();
+        this.mapKdFilename = in.readString();
+        this.mapKsFilename = in.readString();
+        this.mapNsFilename = in.readString();
+        this.mapDFilename = in.readString();
+        this.decalFilename = in.readString();
+        this.dispFilename = in.readString();
+        this.bumpFilename = in.readString();
 
         this.reflType = in.readInt();
-
-        len = in.readInt();
-        if (len != 0) {
-            name = "";
-            for (int i = 0; i < len; i++) {
-                name += in.readChar();
-            }
-            this.reflFilename = texpath + name;
-        } else {
-            this.reflFilename = null;
-        }
+        this.reflFilename = in.readString();
     }
 
     public void loadTextures() {
-        if (mapKdFilename != null) {
+        if (mapKdFilename != null && !mapKdFilename.isEmpty()) {
             hascolmap = true;
-            Kd = Texture.get2DTexture(mapKdFilename);
+            Kd = Texture.get2DTexture(texpath + mapKdFilename);
         }
-        if (mapKaFilename != null) {
+        if (mapKaFilename != null && !mapKaFilename.isEmpty()) {
             hasreflmap = true;
-            Ka = Texture.get2DTexture(mapKaFilename);
+            Ka = Texture.get2DTexture(texpath + mapKaFilename);
         }
-        if (mapKsFilename != null) {
+        if (mapKsFilename != null && !mapKsFilename.isEmpty()) {
             hasspecmap = true;
-            Ks = Texture.get2DTexture(mapKsFilename);
+            Ks = Texture.get2DTexture(texpath + mapKsFilename);
         }
-        if (mapNsFilename != null) {
+        if (mapNsFilename != null && !mapNsFilename.isEmpty()) {
             hasspecpow = true;
-            Ns = Texture.get2DTexture(mapNsFilename);
+            Ns = Texture.get2DTexture(texpath + mapNsFilename);
         }
-        if (mapDFilename != null) {
+        if (mapDFilename != null && !mapDFilename.isEmpty()) {
             hastrans = true;
-            D = Texture.get2DTexture(mapDFilename);
+            D = Texture.get2DTexture(texpath + mapDFilename);
         }
-        if (bumpFilename != null) {
+        if (bumpFilename != null && !bumpFilename.isEmpty()) {
             hasnormmap = true;
-            norm = Texture.get2DTexture(bumpFilename);
+            norm = Texture.get2DTexture(texpath + bumpFilename);
         }
     }
 
-    public void toFileFormat(DataOutputStream s) throws IOException {
-        s.writeInt(name.length());
-        s.writeChars(name);
-        s.writeFloat(ka.x);
-        s.writeFloat(ka.y);
-        s.writeFloat(ka.z);
-        s.writeFloat(kd.x);
-        s.writeFloat(kd.y);
-        s.writeFloat(kd.z);
-        s.writeFloat(ks.x);
-        s.writeFloat(ks.y);
-        s.writeFloat(ks.z);
-        s.writeFloat(tf.x);
-        s.writeFloat(tf.y);
-        s.writeFloat(tf.z);
-        s.writeInt(illumModel);
-        s.writeBoolean(dHalo);
-        s.writeDouble(dFactor);
-        s.writeDouble(nsExponent);
-        s.writeDouble(sharpnessValue);
-        s.writeDouble(niOpticalDensity);
+    public void toFileFormat(GGOutputStream out) throws IOException {
+        out.write(name);
+        
+        out.write(ka);
+        out.write(kd);
+        out.write(ks);
+        out.write(tf);
+        
+        out.write(illumModel);
+        out.write(dHalo);
+        out.write(dFactor);
+        out.write(nsExponent);
+        out.write(sharpnessValue);
+        out.write(niOpticalDensity);
 
         if (mapKaFilename != null) {
-            s.writeInt(mapKaFilename.length());
-            s.writeChars(mapKaFilename);
+            out.write(mapKaFilename);
         } else {
-            s.writeInt(0);
+            out.write(0);
         }
         if (mapKdFilename != null) {
-            s.writeInt(mapKdFilename.length());
-            s.writeChars(mapKdFilename);
+            out.write(mapKdFilename);
         } else {
-            s.writeInt(0);
+            out.write(0);
         }
         if (mapKsFilename != null) {
-            s.writeInt(mapKsFilename.length());
-            s.writeChars(mapKsFilename);
+            out.write(mapKsFilename);
         } else {
-            s.writeInt(0);
+            out.write(0);
         }
         if (mapNsFilename != null) {
-            s.writeInt(mapNsFilename.length());
-            s.writeChars(mapNsFilename);
+            out.write(mapNsFilename);
         } else {
-            s.writeInt(0);
+            out.write(0);
         }
         if (mapDFilename != null) {
-            s.writeInt(mapDFilename.length());
-            s.writeChars(mapDFilename);
+            out.write(mapDFilename);
         } else {
-            s.writeInt(0);
+            out.write(0);
         }
         if (decalFilename != null) {
-            s.writeInt(decalFilename.length());
-            s.writeChars(decalFilename);
+            out.write(decalFilename);
         } else {
-            s.writeInt(0);
+            out.write(0);
         }
         if (dispFilename != null) {
-            s.writeInt(dispFilename.length());
-            s.writeChars(dispFilename);
+            out.write(dispFilename);
         } else {
-            s.writeInt(0);
+            out.write(0);
         }
         if (bumpFilename != null) {
-            s.writeInt(bumpFilename.length());
-            s.writeChars(bumpFilename);
+            out.write(bumpFilename);
         } else {
-            s.writeInt(0);
+            out.write(0);
         }
-        s.writeInt(reflType);
+        
+        out.write(reflType);
+        
         if (reflFilename != null) {
-            s.writeInt(reflFilename.length());
-            s.writeChars(reflFilename);
+            out.write(reflFilename);
         } else {
-            s.writeInt(0);
+            out.write(0);
         }
 
     }

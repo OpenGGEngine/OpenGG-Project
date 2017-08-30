@@ -70,8 +70,6 @@ public class ModelUtil {
             else if(edge.edgeid == 3)
                 f.adj3 = edge.adjfaceid;
         });
-        
-        m.adjacency = true;
     }
     
     public static void makeadamnadjacencyvbo(Mesh mesh){
@@ -157,40 +155,40 @@ public class ModelUtil {
         }else{
             indices = IntBuffer.allocate(indicesCount);
         }
-        System.out.println("Adjacency");
+
         for (Face face : mesh.faces) {
             
             FaceVertex vertex = face.v1;
             int index = indexMap.get(vertex);
             indices.put(index);
-            System.out.println(index);
+
             vertex = findAdjacentVertex(face, 1, mesh.faces);
             index = indexMap.get(vertex);
             indices.put(index);
-            System.out.println(index);
+
             vertex = face.v2;
             index = indexMap.get(vertex);
             indices.put(index);
-            System.out.println(index);
+
             vertex = findAdjacentVertex(face, 2, mesh.faces);
             index = indexMap.get(vertex);
             indices.put(index);
-            System.out.println(index);
+
             vertex = face.v3;
             index = indexMap.get(vertex);
             indices.put(index);
-            System.out.println(index);
+
             vertex = findAdjacentVertex(face, 3, mesh.faces);
             index = indexMap.get(vertex);
             indices.put(index);
-            System.out.println(index);
+
         }     
         indices.flip();
 
         mesh.updateVBO(verticeAttributes, indices);
     }
     
-    public static void makeadamnvbo(Mesh mesh){
+    public static void makeadamnvbo(Mesh mesh, boolean animated){
         HashMap<FaceVertex, Integer> indexMap = new HashMap<>();
         int nextVertexIndex = 0;
         ArrayList<FaceVertex> faceVertexList = new ArrayList<>();
@@ -239,6 +237,18 @@ public class ModelUtil {
 
             verticeAttributes.put(vertex.t.x);
             verticeAttributes.put(vertex.t.y);
+            
+            if(animated){
+                verticeAttributes.put(vertex.j.x);
+                verticeAttributes.put(vertex.j.y);
+                verticeAttributes.put(vertex.j.z);
+                verticeAttributes.put(vertex.j.w);
+                
+                verticeAttributes.put(vertex.w.x);
+                verticeAttributes.put(vertex.w.y);
+                verticeAttributes.put(vertex.w.z);
+                verticeAttributes.put(vertex.w.w);
+            }
 
         }
         verticeAttributes.flip();
@@ -252,52 +262,42 @@ public class ModelUtil {
             indices = IntBuffer.allocate(indicesCount);
         }
         
-        System.out.println("Adjacency");
         for (Face face : mesh.faces) {
             FaceVertex vertex = face.v1;
             int index = indexMap.get(vertex);
             indices.put(index);
-            System.out.println(index);
+
             vertex = face.v2;
             index = indexMap.get(vertex);
             indices.put(index);
-            System.out.println(index);
+
             vertex = face.v3;
             index = indexMap.get(vertex);
             indices.put(index);
-            System.out.println(index);
+
         }
         indices.flip();
         
         mesh.updateVBO(verticeAttributes, indices);
     }
     
-    public static void makeadamnvbo(List<Mesh> meshes) {
+    public static void makeadamnvbo(List<Mesh> meshes, boolean animated) {
         meshes.stream().parallel().forEach((mesh) -> {
-            makeadamnvbo(mesh);
+            makeadamnvbo(mesh, animated);
         });
     }
-    public static void makeadamnfacelist(Mesh mesh, int[] adjacencies){
-        makeadamnfacelist(mesh);
-        for(int i = 0; i < mesh.faces.size(); i++){
-            int j = i * 3;
-            Face f = mesh.faces.get(i);
-            f.adj1 = adjacencies[i + 0];
-            f.adj2 = adjacencies[i + 1];
-            f.adj3 = adjacencies[i + 2];
-        }
-        mesh.adjacency = true;
-    }
-    public static void makeadamnfacelist(Mesh mesh){
+
+    public static void makeadamnfacelist(Mesh mesh, boolean animated){
         List<Face> faces = new ArrayList<>();
-            
         List<FaceVertex> vertices = new ArrayList<>();
+        
         mesh.inddata.rewind();
         mesh.vbodata.rewind();
+
         for(int i = 0; i < mesh.inddata.limit(); i++){
             int index = mesh.inddata.get(i);
             mesh.vbodata.position(index * 12);
-            
+
             FaceVertex fv = new FaceVertex();
             fv.v.x = mesh.vbodata.get();
             fv.v.y = mesh.vbodata.get();
@@ -307,20 +307,31 @@ public class ModelUtil {
             mesh.vbodata.get();
             mesh.vbodata.get();
             mesh.vbodata.get();
-            
+
             fv.n.x = mesh.vbodata.get();
             fv.n.y = mesh.vbodata.get();
             fv.n.z = mesh.vbodata.get();
-      
+
             fv.t.x = mesh.vbodata.get();
             fv.t.y = mesh.vbodata.get();
-            
-            
+
+            if(animated){
+                fv.j.x = mesh.vbodata.get();
+                fv.j.y = mesh.vbodata.get();
+                fv.j.z = mesh.vbodata.get();
+                fv.j.w = mesh.vbodata.get();
+                
+                fv.w.x = mesh.vbodata.get();
+                fv.w.y = mesh.vbodata.get();
+                fv.w.z = mesh.vbodata.get();
+                fv.w.w = mesh.vbodata.get();
+            }
+
             vertices.add(fv);
-            
+
         }
         mesh.vbodata.rewind();
-        
+
         for(int i = 0; i < vertices.size(); i += 3){
             Face f = new Face();
 
@@ -334,9 +345,9 @@ public class ModelUtil {
         mesh.faces = faces;
     }
     
-    public static void makeadamnfacelist(List<Mesh> meshes){
+    public static void makeadamnfacelist(List<Mesh> meshes, boolean animated){
         for(Mesh mesh : meshes){
-            makeadamnfacelist(mesh);
+            makeadamnfacelist(mesh, animated);
         }
     }
     

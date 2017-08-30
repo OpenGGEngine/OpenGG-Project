@@ -6,12 +6,10 @@
 package com.opengg.core.gui;
 
 import com.opengg.core.math.Vector2f;
+import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.render.drawn.TexturedDrawnObject;
 import com.opengg.core.render.objects.ObjectCreator;
 import com.opengg.core.render.texture.Texture;
-import java.nio.Buffer;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 
 /**
  *
@@ -19,9 +17,9 @@ import java.nio.IntBuffer;
  */
 public class GUITexture extends GUIRenderable {
     public GUITexture(Texture tex, Vector2f screenpos, Vector2f size) {
-        Buffer[] b = ObjectCreator.createSquareBuffers(new Vector2f(0,0), size, 0.2f);
+        Drawable drawn = ObjectCreator.createSquare(new Vector2f(0,0), size, 0.2f);
         
-        this.setDrawable(new TexturedDrawnObject((FloatBuffer)b[0],(IntBuffer)b[1],tex));
+        this.setDrawable(new TexturedDrawnObject(drawn, tex));
         this.setPositionOffset(screenpos);
     }
 }

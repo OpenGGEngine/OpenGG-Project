@@ -8,8 +8,8 @@ package com.opengg.core.world.components;
 import com.opengg.core.engine.WorldEngine;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
-import com.opengg.core.util.GGByteInputStream;
-import com.opengg.core.util.GGByteOutputStream;
+import com.opengg.core.util.GGInputStream;
+import com.opengg.core.util.GGOutputStream;
 import com.opengg.core.world.World;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -210,7 +210,7 @@ public abstract class Component{
      * It is recommended to allow for complete recreation of the object using these two methods
      * @param out Output stream used for writing objects to the buffer
      */
-    public void serialize(GGByteOutputStream out) throws IOException{
+    public void serialize(GGOutputStream out) throws IOException{
         out.write(posoffset);
         out.write(rotoffset);
         out.write(scale);
@@ -230,7 +230,7 @@ public abstract class Component{
      * It is recommended to allow for complete recreation of the object using these methods
      * @param in Input steam used for reading objects from the buffer
      */
-    public void deserialize(GGByteInputStream in) throws IOException{
+    public void deserialize(GGInputStream in) throws IOException{
         posoffset = in.readVector3f();
         rotoffset = in.readQuaternionf();
         scale = in.readVector3f();
