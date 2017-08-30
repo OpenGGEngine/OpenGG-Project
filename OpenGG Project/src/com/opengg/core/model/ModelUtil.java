@@ -6,6 +6,7 @@
 
 package com.opengg.core.model;
 
+import com.opengg.core.engine.GGConsole;
 import com.opengg.core.engine.OpenGG;
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -331,17 +332,20 @@ public class ModelUtil {
 
         }
         mesh.vbodata.rewind();
+        try{
+            for(int i = 0; i < vertices.size(); i += 3){
+                Face f = new Face();
 
-        for(int i = 0; i < vertices.size(); i += 3){
-            Face f = new Face();
+                f.v1 = (vertices.get(i + 0));
+                f.v2 = (vertices.get(i + 1));
+                f.v3 = (vertices.get(i + 2));
 
-            f.v1 = (vertices.get(i + 0));
-            f.v2 = (vertices.get(i + 1));
-            f.v3 = (vertices.get(i + 2));
-
-            faces.add(f);
+                faces.add(f);
+            }
+        }catch(Exception e){
+            GGConsole.warn("End of list in face list creation");
         }
-
+            
         mesh.faces = faces;
     }
     

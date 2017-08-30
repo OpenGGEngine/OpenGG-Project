@@ -19,7 +19,7 @@ out vertexData{
 };
 
  const int MAX_WEIGHTS = 4;
- const int MAX_JOINTS = 50;
+ const int MAX_JOINTS = 100;
 
 uniform mat4 model;
 uniform mat4 jointsMatrix[MAX_JOINTS];

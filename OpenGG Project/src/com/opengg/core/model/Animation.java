@@ -29,7 +29,7 @@ public class Animation {
 
     public AnimatedFrame getCurrentFrame() {
         if(frames.isEmpty())
-            return new AnimatedFrame();
+            return new AnimatedFrame(0);
         return this.frames.get(currentFrame);
     }
 

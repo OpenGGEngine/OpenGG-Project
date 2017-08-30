@@ -18,8 +18,8 @@ public class AnimatedFrame {
 
     private final Matrix4f[] jointMatrices;
 
-    public AnimatedFrame() {
-        jointMatrices = new Matrix4f[MAX_JOINTS];
+    public AnimatedFrame(int numbones) {
+        jointMatrices = new Matrix4f[numbones];
         Arrays.fill(jointMatrices, IDENTITY_MATRIX);
     }
      public AnimatedFrame(Matrix4f[] moveon) {
