@@ -18,14 +18,24 @@ import static org.lwjgl.opengl.GL41.*;
  */
 public class ShaderPipeline {
     int id = 0;
-    String vert, frag, geom;
+    String  vert,
+            frag,
+            tesc,
+            tese,
+            geom;
     
-    public ShaderPipeline(ShaderProgram vert, ShaderProgram geom, ShaderProgram frag){
+    public ShaderPipeline(ShaderProgram vert, ShaderProgram tesc, ShaderProgram tese, ShaderProgram geom, ShaderProgram frag){
         this.vert = vert.name;
+        
+        if(tesc != null)
+            this.tesc = tesc.name;
+        
+        if(tese != null)
+            this.tese = tese.name;
+        
         if(geom != null)
             this.geom = geom.name;
-        else
-            this.geom = "";
+
         this.frag = frag.name;
         
         glUseProgram(0);
@@ -36,8 +46,16 @@ public class ShaderPipeline {
             return;
         }
         glUseProgramStages(id, GL_VERTEX_SHADER_BIT, vert.getId());
+        
+        if(tesc != null)
+            glUseProgramStages(id, GL_TESS_CONTROL_SHADER_BIT, tesc.getId());
+        
+        if(tese != null)
+            glUseProgramStages(id, GL_TESS_EVALUATION_SHADER_BIT, tese.getId());
+        
         if(geom != null)
             glUseProgramStages(id, GL_GEOMETRY_SHADER_BIT, geom.getId());
+        
         glUseProgramStages(id, GL_FRAGMENT_SHADER_BIT, frag.getId());
         validate();
         unbind();

@@ -17,6 +17,8 @@ import static org.lwjgl.opengl.GL11.GL_TRUE;
 import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
 import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
 import static org.lwjgl.opengl.GL32.GL_GEOMETRY_SHADER;
+import static org.lwjgl.opengl.GL40.GL_TESS_CONTROL_SHADER;
+import static org.lwjgl.opengl.GL40.GL_TESS_EVALUATION_SHADER;
 
 /**
  *
@@ -24,6 +26,8 @@ import static org.lwjgl.opengl.GL32.GL_GEOMETRY_SHADER;
  */
 public class ShaderProgram {
     public final static int VERTEX = GL_VERTEX_SHADER, 
+            TESSCONTROL = GL_TESS_CONTROL_SHADER,
+            TESSEVAL = GL_TESS_EVALUATION_SHADER,
             GEOMETRY = GL_GEOMETRY_SHADER,
             FRAGMENT = GL_FRAGMENT_SHADER;
     

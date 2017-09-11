@@ -21,6 +21,8 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -33,7 +35,7 @@ public class ShaderController {
     private static HashMap<String, String> rnames = new HashMap<>();
     private static List<String> searchedUniforms = new ArrayList<>();
     private static List<String> searchedAttribs = new ArrayList<>();
-    private static String curv, curg, curf;
+    private static String currentvert, currenttesc, currenttese, currentgeom, currentfrag;
     private static int currentBind = 0;
     
     public static void initialize(){
@@ -66,7 +68,7 @@ public class ShaderController {
         use("mainvert", "mainfrag");
         saveCurrentConfiguration("object");   
         
-         use("animvert", "mainfrag");
+        use("animvert", "mainfrag");
         saveCurrentConfiguration("animation");  
         
         use("mainvert", "shadowfrag");
@@ -113,6 +115,8 @@ public class ShaderController {
         
         use("particlevert", "texturefrag");
         saveCurrentConfiguration("particle");
+        
+        for(String s : rnames.values()) System.out.println(s);
         
         GGConsole.log("Default shaders loaded and validated");
 
@@ -288,19 +292,19 @@ public class ShaderController {
     }
     
     public static void enableVertexAttribute(String loc){
-        programs.get(curv).enableVertexAttribute(loc);
+        programs.get(currentvert).enableVertexAttribute(loc);
     }
     
     public static void disableVertexAttribute(String loc){
-        programs.get(curv).enableVertexAttribute(loc);
+        programs.get(currentvert).enableVertexAttribute(loc);
     }
     
     public static void pointVertexAttribute(String loc, int size, int type, int tot, int start){
-        programs.get(curv).pointVertexAttribute(loc, size, type, tot, start);
+        programs.get(currentvert).pointVertexAttribute(loc, size, type, tot, start);
     }
     
     public static void setVertexAttribDivisor(String loc, int idk){
-        programs.get(curv).setVertexAttribDivisor(loc, idk);
+        programs.get(currentvert).setVertexAttribDivisor(loc, idk);
     }
     
     public static void findUniform(String loc){
@@ -431,77 +435,92 @@ public class ShaderController {
         setUniform("billboard", yes);
     }
     
-    private static void use(ShaderProgram v, ShaderProgram g, ShaderProgram f){
-        String st;
-        if(g == null)
-            st = v.getId() + ";;" + f.getId();
-        else
-            st = v.getId() + ";" + g.getId() + ";" + f.getId();
+    private static String getUniqueConfigID(ShaderProgram vert, ShaderProgram tesc, ShaderProgram tese, ShaderProgram geom, ShaderProgram frag){
+        String st = "";
+        st += vert.getId() + ";";
         
-        ShaderPipeline p;
-        if((p = pipelines.get(st)) != null){
-            p.bind();
+        if(tesc != null)
+            st += tesc.getId(); 
+        st += ";";
+        
+        if(tese != null)
+            st += tese.getId();
+        st += ";";
+        
+        if(geom != null)
+            st += geom.getId();
+        st += ";";
+        
+        st += frag.getId();
+        return st;
+    }
+    
+    private static void use(ShaderProgram vert, ShaderProgram tesc, ShaderProgram tese, ShaderProgram geom, ShaderProgram frag){
+        String id = getUniqueConfigID(vert, tesc, tese, geom, frag);
+        
+        ShaderPipeline pipeline;
+        if((pipeline = pipelines.get(id)) != null){
+            pipeline.bind();
+
             return;
+        }else{
+            pipeline = new ShaderPipeline(vert, tesc, tese, geom, frag);
+        
+            pipelines.put(id, pipeline);
+            pipeline.bind();
         }
-        p = new ShaderPipeline(v,g,f);
-        pipelines.put(st, p);
-        p.bind();
-    }
-    
-    public static void use(String v, String g, String f){
-        curv = v;
-        curg = g;
-        curf = f;
-        use(programs.get(v), programs.get(g), programs.get(f));
-    }
-    
-    public static void use(String v, String f){
-        curv = v;
-        curg = "";
-        curf = f;
-        use(programs.get(v), null, programs.get(f));
-    }
-    
-    public static void saveConfiguration(String v, String g, String f, String name){
-        ShaderProgram vp = programs.get(v);
-        ShaderProgram gp = programs.get(g);
-        ShaderProgram fp = programs.get(f);
         
-        String st = vp.getId() + ";" + gp.getId() + ";" + fp.getId();
+        currentvert = pipeline.vert;
+        currenttesc = pipeline.tesc;
+        currenttese = pipeline.tese;    
+        currentgeom = pipeline.geom;
+        currentfrag = pipeline.frag;
+    }
+    
+    public static void use(String vert, String geom, String frag){
+        use(programs.get(vert), null, null, programs.get(geom), programs.get(frag));
+    }
+    
+    public static void use(String vert, String frag){
+        use(programs.get(vert), null, null, null, programs.get(frag));
+    }
+    
+    public static void saveConfiguration(String vert, String tesc, String tese, String geom, String frag, String name){
+        ShaderProgram vertprogram = programs.get(vert);
+        ShaderProgram tescprogram = programs.get(geom);
+        ShaderProgram teseprogram = programs.get(geom);
+        ShaderProgram geomprogram = programs.get(geom);
+        ShaderProgram fragprogram = programs.get(frag);
         
-        rnames.put(name, st);
+        String id = getUniqueConfigID(vertprogram, tescprogram, teseprogram, geomprogram, fragprogram);
+        
+        rnames.put(name, id);
     }
     
     public static void saveConfiguration(String v, String f, String name){
-        ShaderProgram vp = programs.get(v);
-        ShaderProgram fp = programs.get(f);
-        
-        String st = vp.getId() + ";;" + fp.getId();
-        
-        rnames.put(name, st);
+       saveConfiguration(v,"","","",f,name);
     }
     
     public static void saveCurrentConfiguration(String name){
-        if(!curg.equals(""))
-            saveConfiguration(curv, curg, curf, name);
-        else
-            saveConfiguration(curv,curf,name);
+        saveConfiguration(currentvert, currenttesc, currenttese, currentgeom, currentfrag, name);
     }
     
     public static void useConfiguration(String name){
         String id = rnames.get(name);
-        ShaderPipeline p = pipelines.get(id);
+        ShaderPipeline pipeline = pipelines.get(id);
                
-        if(p == null){
+        if(pipeline == null){
             GGConsole.error("A shader configuration named " + name + " tried to be used, but no appropriate pipeline was found!");
             throw new ShaderException("Failed to find pipeline named " + name);
         }
         
-        curv = p.vert;
-        curg = p.geom;
-        curf = p.frag;
+        currentvert = pipeline.vert;
+        currenttesc = pipeline.tesc;
+        currenttese = pipeline.tese;
+        currentgeom = pipeline.geom;
+        currentfrag = pipeline.frag;
         
-        p.bind();
+        pipeline.bind();
     }
     
     public static void clearPipelineCache(){
@@ -527,11 +546,11 @@ public class ShaderController {
             p.checkStatus();
             return true;
         } catch (UnsupportedEncodingException ex) {
-            GGConsole.error("Failed to load shader " + name + " located at " + loc);
-            throw new ShaderException("Failed to load shader " + name + " located at " + loc);
+            GGConsole.error("Failed to load shader: " + name);
+            return false;
         } catch (IOException ex) {
-            GGConsole.error("Failed to find/read shader " + name + " located at " + loc);
-            throw new ShaderException("Failed to find/read shader " + name + " located at " + loc);
+            GGConsole.error("Failed to find shader file for " + loc);
+            return false;
         }
     }
 }
