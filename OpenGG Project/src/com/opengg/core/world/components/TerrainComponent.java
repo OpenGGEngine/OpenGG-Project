@@ -12,9 +12,9 @@ import com.opengg.core.render.texture.TextureManager;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
 import com.opengg.core.world.Terrain;
-import com.opengg.core.world.collision.AABB;
+import com.opengg.core.physics.collision.AABB;
 import com.opengg.core.world.components.physics.CollisionComponent;
-import com.opengg.core.world.collision.TerrainCollider;
+import com.opengg.core.physics.collision.TerrainCollider;
 import java.io.IOException;
 
 /**

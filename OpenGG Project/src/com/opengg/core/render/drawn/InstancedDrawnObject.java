@@ -92,7 +92,7 @@ public class InstancedDrawnObject extends DrawnObject implements Drawable {
         ShaderController.setModel(model);
         RenderEngine.getCurrentVAO().applyFormat(vbo, ivbo);
         evbo.bind();
-        glDrawElementsInstanced(adj ? GL_TRIANGLES_ADJACENCY : GL_TRIANGLES, ind.limit(), GL_UNSIGNED_INT, 0, instnum);
+        glDrawElementsInstanced(drawtype, ind.limit(), GL_UNSIGNED_INT, 0, instnum);
     }
     
     public void removeBuffer(){

@@ -8,8 +8,8 @@ package com.opengg.test;
 
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.model.ModelLoader;
-import com.opengg.core.world.collision.AABB;
-import com.opengg.core.world.collision.CylinderCollider;
+import com.opengg.core.physics.collision.AABB;
+import com.opengg.core.physics.collision.CylinderCollider;
 import com.opengg.core.world.components.Component;
 import com.opengg.core.world.components.ModelRenderComponent;
 import com.opengg.core.world.components.physics.CollisionComponent;

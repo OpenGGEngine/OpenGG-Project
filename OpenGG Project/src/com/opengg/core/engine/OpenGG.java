@@ -44,7 +44,7 @@ public class OpenGG{
     static boolean force = false;
     static boolean verbose = false;
     static boolean test = false;
-    static Time time = new Time();
+    static Time time;
       
     private OpenGG(){}
     
@@ -93,6 +93,7 @@ public class OpenGG{
     }
     
     private static void initializeLocal(GGApplication app, WindowInfo info, boolean client){
+        time = new Time();
         startTime = Calendar.getInstance().getTime();
         head = client;
         
@@ -175,13 +176,14 @@ public class OpenGG{
             app.render();
             ExtensionManager.render();
             RenderEngine.draw();
-            endFrame();
             RenderEngine.checkForGLErrors();
-
+            endFrame();
+            
             float delta = time.getDeltaSec();
             app.update(delta);
             ExtensionManager.update();
             WorldEngine.update(delta);
+            PhysicsEngine.updatePhysics(delta);
             SoundtrackHandler.update();
         }
         GGConsole.log("OpenGG closing...");

@@ -12,10 +12,10 @@ import com.opengg.core.math.Vector3f;
 import com.opengg.core.world.Action;
 import com.opengg.core.world.ActionType;
 import com.opengg.core.world.Actionable;
-import com.opengg.core.world.collision.AABB;
+import com.opengg.core.physics.collision.AABB;
 import com.opengg.core.world.components.physics.PhysicsComponent;
 import com.opengg.core.world.components.physics.CollisionComponent;
-import com.opengg.core.world.collision.CylinderCollider;
+import com.opengg.core.physics.collision.CylinderCollider;
 import static java.lang.Math.abs;
 
 /**
@@ -53,21 +53,21 @@ public class PlayerComponent extends Component implements Actionable{
         this.setRotationOffset(new Quaternionf(currot));
         
         float xvel = control.x * delta * speed;
-        if((abs(playerphysics.velocity.x) < 20))
-            playerphysics.velocity.x += xvel;
+        if((abs(playerphysics.getEntity().velocity.x) < 20))
+            playerphysics.getEntity().velocity.x += xvel;
         
         if(control.x == 0)
-            playerphysics.velocity.x /= 2;
+            playerphysics.getEntity().velocity.x /= 2;
         
         float zvel = control.z * delta * speed;
-        if(abs(playerphysics.velocity.z) < 20)
-            playerphysics.velocity.z += zvel; 
+        if(abs(playerphysics.getEntity().velocity.z) < 20)
+            playerphysics.getEntity().velocity.z += zvel; 
         
         if(control.z == 0)
-            playerphysics.velocity.z /= 2;
+            playerphysics.getEntity().velocity.z /= 2;
             
         if((control.y == 1) && (getPosition().y <= getWorld().floorLev + 0.001f))
-            playerphysics.velocity.y += 5;
+            playerphysics.getEntity().velocity.y += 5;
     }
     
     @Override

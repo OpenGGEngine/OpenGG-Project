@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package com.opengg.core.world.collision;
+package com.opengg.core.physics.collision;
 
 import com.opengg.core.world.components.physics.CollisionComponent;
 import com.opengg.core.math.Vector3f;

@@ -168,7 +168,7 @@ public class World extends Component{
     }
     
     @Override
-    public void setParentInfo(Component parent) {
+    public void onParentChange(Component parent) {
         throw new InvalidParentException("World must be the top level component!");
     }
     

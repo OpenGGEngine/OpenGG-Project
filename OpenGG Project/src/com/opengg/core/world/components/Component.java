@@ -78,12 +78,18 @@ public abstract class Component{
      * Set the parent of the component, should rarely be called directly
      * @param parent The object that represents the new parent to this component
      */
-    public void setParentInfo(Component parent){
+    private void setParentInfo(Component parent){
         this.parent = parent;
         regenPos();
         for(Component c : children) c.regenPos();
         regenRot();
         for(Component c : children) c.regenRot();
+        
+        onParentChange(parent);
+    }
+    
+    public void onParentChange(Component parent){
+        
     }
     
     /**
@@ -264,6 +270,12 @@ public abstract class Component{
         this.serialize = serialize;
     }
     
+    public void finalizeComponent(){
+        for(Component child : children){
+            child.finalizeComponent();
+        }
+    }
+    
     public void attach(Component c) {
         if(c.getParent() != null)
             c.getParent().remove(c);
@@ -287,9 +299,4 @@ public abstract class Component{
     public void remove(Component w){
         children.remove(w);
     }
-    
-    /**
-     * Called during removal of an object for cleanup
-     */
-    public void remove(){}
 }

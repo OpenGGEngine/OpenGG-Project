@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package com.opengg.core.world.components.physics;
+package com.opengg.core.physics;
 
 /**
  *

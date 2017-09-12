@@ -10,7 +10,7 @@ import com.opengg.core.world.Deserializer;
 import com.opengg.core.world.Serializer;
 import com.opengg.core.world.TransitionEngine;
 import com.opengg.core.world.World;
-import com.opengg.core.world.collision.CollisionHandler;
+import com.opengg.core.physics.collision.CollisionHandler;
 import com.opengg.core.world.components.Component;
 import com.opengg.core.world.components.RenderComponent;
 import com.opengg.core.world.components.physics.CollisionComponent;
@@ -72,7 +72,7 @@ public class WorldEngine{
             TransitionEngine.remove(c);
             c.getParent().remove(c);
             objs.remove(c);         
-            c.remove();
+            c.finalizeComponent();
         }
         removal.clear();
     }

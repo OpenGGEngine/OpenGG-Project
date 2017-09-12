@@ -71,19 +71,19 @@ public class PhysicsComponentViewModel extends ViewModel{
     @Override
     public void onChange(Element element) {
         if(element.internalname.equals("mass"))
-            ((PhysicsComponent)component).mass = (Float)element.value;
+            ((PhysicsComponent)component).getEntity().mass = (Float)element.value;
         
         if(element.internalname.equals("density"))
-            ((PhysicsComponent)component).density = (Float)element.value;
+            ((PhysicsComponent)component).getEntity().density = (Float)element.value;
         
         if(element.internalname.equals("fcoeff"))
-            ((PhysicsComponent)component).frictionCoefficient = (Float)element.value;
+            ((PhysicsComponent)component).getEntity().frictionCoefficient = (Float)element.value;
         
         if(element.internalname.equals("bounciness"))
-            ((PhysicsComponent)component).bounciness = (Float)element.value;
+            ((PhysicsComponent)component).getEntity().bounciness = (Float)element.value;
         
         if(element.internalname.equals("friction"))
-            ((PhysicsComponent)component).absoluteOffset = (Boolean)element.value;
+            ((PhysicsComponent)component).getEntity().frictionCoefficient = (Float)element.value;
     }
 
     @Override

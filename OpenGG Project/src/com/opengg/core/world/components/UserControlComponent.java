@@ -27,8 +27,7 @@ public class UserControlComponent extends Component implements ActionTransmitter
     }
     
     @Override
-    public void setParentInfo(Component parent){
-        super.setParentInfo(parent);
+    public void onParentChange(Component parent){
         if(!(parent instanceof Actionable)){
             throw new InvalidParentException("Controllers must have actionables as parents!");
         }
