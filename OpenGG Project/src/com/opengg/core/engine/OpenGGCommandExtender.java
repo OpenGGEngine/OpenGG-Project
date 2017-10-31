@@ -18,8 +18,20 @@ public class OpenGGCommandExtender implements ConsoleListener{
         if(command.command.equalsIgnoreCase("quit")){
             endApplication();
         }
+        
         if(command.command.equalsIgnoreCase("fquit")){
             forceEnd();
+        }
+        
+        if(command.command.equalsIgnoreCase("volume")){
+            if(command.argCount == 1){
+                try{
+                    float vol = Float.parseFloat(command.args[0]);
+                    AudioController.setGlobalGain(vol);
+                }catch(Exception e){
+                    GGConsole.error(command.args[0] + " is not a valid volume!");
+                }
+            }
         }
     }
 }

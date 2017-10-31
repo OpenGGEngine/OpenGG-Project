@@ -5,7 +5,7 @@ layout(location = 0) out vec4 fcolor;
 layout(location = 1) out vec4 bright;
 
 in vertexData{
-    vec4 vertexColor;
+    
     vec2 textureCoord;
     vec4 pos;
     vec3 norm;

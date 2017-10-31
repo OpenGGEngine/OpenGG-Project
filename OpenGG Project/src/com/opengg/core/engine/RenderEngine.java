@@ -61,7 +61,7 @@ public class RenderEngine {
         
         vaoformat = new VertexArrayFormat();
         vaoformat.addAttribute(new VertexArrayAttribute("position", 3, 12, GL_FLOAT, 0, 0, false));
-        vaoformat.addAttribute(new VertexArrayAttribute("color", 4, 12, GL_FLOAT, 3, 0, false));
+        //vaoformat.addAttribute(new VertexArrayAttribute("color", 4, 12, GL_FLOAT, 3, 0, false));
         vaoformat.addAttribute(new VertexArrayAttribute("normal", 3, 12, GL_FLOAT, 7, 0, false));
         vaoformat.addAttribute(new VertexArrayAttribute("texcoord", 2, 12, GL_FLOAT, 10, 0, false));
         
@@ -73,7 +73,7 @@ public class RenderEngine {
         
         animation = new VertexArrayFormat();
         animation.addAttribute(new VertexArrayAttribute("position", 3, 20, GL_FLOAT, 0, 0, false));
-        animation.addAttribute(new VertexArrayAttribute("color", 4, 20, GL_FLOAT, 3, 0, false));
+        //animation.addAttribute(new VertexArrayAttribute("color", 4, 20, GL_FLOAT, 3, 0, false));
         animation.addAttribute(new VertexArrayAttribute("normal", 3, 20, GL_FLOAT, 7, 0, false));
         animation.addAttribute(new VertexArrayAttribute("texcoord", 2, 20, GL_FLOAT, 10, 0, false));
         animation.addAttribute(new VertexArrayAttribute("jointindex", 4, 20, GL_FLOAT, 12, 0, false));

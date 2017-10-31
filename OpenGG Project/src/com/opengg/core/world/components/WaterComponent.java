@@ -107,7 +107,7 @@ public class WaterComponent extends RenderComponent{
         current = in.readFloat();
         tscale = in.readFloat();
         texture = Texture.get2DTexture(TextureManager.loadTexture(in.readString()));
-        OpenGG.addExecutable(() -> {
+        OpenGG.asyncExec(() -> {
             super.setDrawable(ObjectCreator.createSquare(new Vector2f(-size,-size), new Vector2f(size,size), 0));
         });
     }

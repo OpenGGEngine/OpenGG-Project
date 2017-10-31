@@ -6,23 +6,22 @@
 
 package com.opengg.core.engine;
 
+import com.opengg.core.audio.ALCContext;
+import com.opengg.core.audio.ALCDevice;
 import com.opengg.core.audio.AudioListener;
-import com.opengg.core.audio.NativeSound;
 import com.opengg.core.audio.Sound;
 import com.opengg.core.audio.SoundManager;
 import static com.opengg.core.engine.GGConsole.error;
 import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
 import java.util.ArrayList;
 import org.lwjgl.openal.AL;
 import org.lwjgl.openal.AL10;
+import static org.lwjgl.openal.AL10.AL_NO_ERROR;
 import static org.lwjgl.openal.AL10.AL_POSITION;
 import static org.lwjgl.openal.AL10.AL_VELOCITY;
+import static org.lwjgl.openal.AL10.alGetError;
 import static org.lwjgl.openal.AL10.alListener3f;
 import org.lwjgl.openal.ALC;
-import org.lwjgl.openal.ALC10;
-import static org.lwjgl.openal.ALC10.alcMakeContextCurrent;
-import static org.lwjgl.openal.ALC10.alcOpenDevice;
 import org.lwjgl.openal.ALCCapabilities;
 
 /**
@@ -30,25 +29,34 @@ import org.lwjgl.openal.ALCCapabilities;
  * @author Javier
  */
 public class AudioController {
-    static long device;
-    static long context;
+    static ALCContext context;
+    static ALCDevice device;
     static boolean initialized;
     static float gain = 1;
     
     static ArrayList<Sound> sounds = new ArrayList<>();
     static void init() {
-        device = alcOpenDevice((ByteBuffer)null);
-        ALCCapabilities caps = ALC.createCapabilities(device);
+        device = new ALCDevice(null);
+        ALCCapabilities caps = device.getCapabilities();
         
-        context = ALC10.alcCreateContext(device, (IntBuffer)null);
-        alcMakeContextCurrent(context);
+        context = device.getContextFromDevice(null);
+        context.makeCurrent();
+        
         AL.createCapabilities(caps);
+        
         if(AL10.alGetError() != AL10.AL_NO_ERROR)
-            error("OpenAL Error in initialization: " + AL10.alGetError());
+            GGConsole.error("OpenAL Error in initialization: " + AL10.alGetError());
         else
             initialized = true;
         
         SoundManager.initialize();
+    }
+    
+    public static void checkForALErrors(){
+        int i;
+        while((i = alGetError()) != AL_NO_ERROR){
+            GGConsole.error("OpenAL Error: " + i);
+        }
     }
     
     public static void setListener(AudioListener s){

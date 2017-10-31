@@ -10,7 +10,7 @@ package com.opengg.core.extension;
  * @author Javier
  */
 public abstract class Extension {
-    public static final int NONE = 0, LWJGL = 1, GRAPHICS = 2;
+    public static final int NONE = 0, LWJGL = 1, CONFIG = 2, GRAPHICS = 3;
     
     public String extname = "DEFAULT";
     public int requirement = GRAPHICS;

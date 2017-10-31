@@ -16,7 +16,6 @@ import com.opengg.core.render.window.Window;
 import com.opengg.core.render.window.WindowInfo;
 import com.opengg.core.thread.ThreadManager;
 import com.opengg.core.util.Time;
-import com.opengg.core.world.components.viewmodel.ViewModelComponentRegistry;
 import com.opengg.core.world.World;
 import java.io.File;
 import java.util.Calendar;
@@ -32,12 +31,11 @@ import java.util.logging.Logger;
  * @author Javier
  */
 public class OpenGG{
-    public static final String version = "0.0.1a1";
+    public static final String version = "0.1";
     
     static GGApplication app;
-    static World curworld;
     static boolean lwjglinit = false;
-    static List<Executable> executables = Collections.synchronizedList(new LinkedList<>());
+    static List<ExecutableContainer> executables = Collections.synchronizedList(new LinkedList<>());
     static Date startTime;
     static boolean head = false;
     static boolean end = false;
@@ -45,11 +43,12 @@ public class OpenGG{
     static boolean verbose = false;
     static boolean test = false;
     static Time time;
+    static Thread mainthread;
       
     private OpenGG(){}
     
     /**
-     * Initializes an instance of the OpenGG Engine. This gives full runtime control of the program to OpenGG, so no code will run past this call until the engine closes
+     * Initializes the OpenGG Engine. This gives full runtime control of the program to OpenGG, so no code will run past this call until the engine closes
      * @param app Instance of the OpenGG-driven application
      * @param info Window information
      */
@@ -92,46 +91,35 @@ public class OpenGG{
         ExtensionManager.loadStep(Extension.GRAPHICS);
     }
     
-    private static void initializeLocal(GGApplication app, WindowInfo info, boolean client){
+    private static void initializeLocal(GGApplication ggapp, WindowInfo info, boolean client){
         time = new Time();
         startTime = Calendar.getInstance().getTime();
+        mainthread = Thread.currentThread();
         head = client;
+        app = ggapp;
         
         Resource.initialize();
+        getVMOptions();
         
         ExtensionManager.loadStep(Extension.NONE);
 
         linkLWJGL();
-        lwjglinit = true;
+        
+        ExtensionManager.loadStep(Extension.LWJGL);
         
         ThreadManager.initialize();
         SystemInfo.querySystemInfo();
         Config.reloadConfigs();
-          
-        String verb = System.getProperty("gg.verbose");
-        String stest = System.getProperty("gg.istest");
-        if(verb != null)
-            if(verb.equals("true"))
-                verbose = true;
-        
-        if(stest != null)
-            if(stest.equals("true"))
-                test = true;
         
         ThreadManager.runRunnable(new GGConsole(), "consolethread");
         GGConsole.addListener(new OpenGGCommandExtender());
         GGConsole.log("OpenGG initializing, running on " + System.getProperty("os.name") + ", " + System.getProperty("os.arch"));
+        WorldEngine.initialize();
         
-        OpenGG.app = app;
-               
-        ViewModelComponentRegistry.initialize();
-        
-        ExtensionManager.loadStep(Extension.LWJGL);
+        ExtensionManager.loadStep(Extension.CONFIG);
         
         if(client)
             initializeGraphics(info);
-        
-        curworld = new World();
 
         GGConsole.log("Application setup beginning");
         app.setup();
@@ -150,10 +138,8 @@ public class OpenGG{
             float delta = time.getDeltaSec();
             app.update(delta);
             WorldEngine.update(delta);
-            for(Executable e : executables){
-                    e.execute();
-            }
-            executables.clear();
+            processExecutables(delta);
+            
             try {
                 Thread.sleep(20);
             } catch (InterruptedException ex) {
@@ -170,7 +156,6 @@ public class OpenGG{
     
     public static void run(){
         while (!getWindow().shouldClose() && !end) {
-            processExecutables();
             WindowController.update();
             startFrame();
             app.render();
@@ -180,6 +165,7 @@ public class OpenGG{
             endFrame();
             
             float delta = time.getDeltaSec();
+            processExecutables(delta);
             app.update(delta);
             ExtensionManager.update();
             WorldEngine.update(delta);
@@ -221,7 +207,21 @@ public class OpenGG{
             writeLog();
             System.exit(0);
         }
+         lwjglinit = true;
         GGConsole.log("LWJGL has been loaded");
+    }
+    
+    public static void getVMOptions(){
+          
+        String verb = System.getProperty("gg.verbose");
+        String stest = System.getProperty("gg.istest");
+        if(verb != null)
+            if(verb.equals("true"))
+                verbose = true;
+        
+        if(stest != null)
+            if(stest.equals("true"))
+                test = true;
     }
     
     public static void endApplication(){
@@ -241,10 +241,6 @@ public class OpenGG{
 
     public static GGApplication getApp() {
         return app;
-    }
-
-    public static World getCurrentWorld() {
-        return curworld;
     }
     
     public static boolean getEnded(){
@@ -277,23 +273,58 @@ public class OpenGG{
         GGConsole.writeLog(startTime, error, "error");
     }
 
-    public static void addExecutable(Executable e){
+    public static boolean inMainThread(){
+        return mainthread == Thread.currentThread();
+    }
+    
+    private static void exec(ExecutableContainer e){
         executables.add(e);
+    }
+    
+    public static void asyncExec(Executable e){
+        exec(new ExecutableContainer(e));
+    }
+    
+    public static void syncExec(Executable e){
+        ExecutableContainer execcont = new ExecutableContainer(e);
+        
+        if(!inMainThread()){
+            GGConsole.error("syncExec cannot be called in OpenGG thread!");
+            throw new RuntimeException("syncExec cannot be called in OpenGG thread!");
+        }
+        
+        exec(execcont);
+
+        while(!(execcont.executed)){
+            try{
+        	Thread.sleep(5);
+            }catch(InterruptedException ex){}
+        }
     }
     
     public static boolean hasExecutables(){
         return !executables.isEmpty();
     }
     
-    public static void processExecutables(){
+    public static void processExecutables(float delta){
         while(!executables.isEmpty()){
-            List<Executable> tempex = new LinkedList<>();
-            for(Executable ex : executables)
-                tempex.add(ex);
-            executables.clear();
+            List<ExecutableContainer> tempex = new LinkedList<>();
+            for(ExecutableContainer ex : executables){
+                ex.elapsed += delta;
+                if(ex.elapsed > ex.timetoexec){
+                    tempex.add(ex);
+                }
+            }
             
-            for(Executable e : tempex)
-                e.execute();
+            for(ExecutableContainer ex : tempex){
+                executables.remove(ex);
+            }
+            
+            
+            for(ExecutableContainer e : tempex){
+                e.exec.execute();
+                e.executed = true;
+            }
         }
         
     }

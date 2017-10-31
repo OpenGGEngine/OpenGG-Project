@@ -5,7 +5,7 @@ layout(location = 0) out vec4 fcolor;
 layout(location = 1) out vec4 bright;
 
 in vertexData{
-    vec4 vertexColor;
+    
     vec2 textureCoord;
     vec4 pos;
     vec3 norm;
@@ -121,7 +121,7 @@ vec4 getTex(sampler2D tname){
 }
 
 vec3 shadify(Light light){
-
+    
 	float distance = length( light.lightpos - pos.xyz ); 
 	float attenuation =  clamp((1.0 - (distance/light.lightdistance) * (distance/light.lightdistance)), 0.0, 10.0);
 	attenuation = attenuation * attenuation;

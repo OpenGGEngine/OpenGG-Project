@@ -26,9 +26,7 @@ import com.opengg.core.render.window.WindowInfo;
 import com.opengg.core.render.window.WindowOptions;
 import com.opengg.core.world.Skybox;
 import com.opengg.core.world.components.LightComponent;
-import com.opengg.core.world.components.ModelRenderComponent;
 import com.opengg.core.world.components.TerrainComponent;
-import java.io.IOException;
 
 public class OpenGGTest extends GGApplication{
     private GGFont font;
@@ -37,7 +35,7 @@ public class OpenGGTest extends GGApplication{
     private Texture t2;
     private AudioListener as;
     
-    public static void main(String[] args) throws IOException, Exception {
+    public static void main(String[] args){
         WindowInfo w = new WindowInfo();
         w.displaymode = WindowOptions.WINDOWED;
         w.width = 1280;
@@ -62,7 +60,7 @@ public class OpenGGTest extends GGApplication{
         track.addSong(Resource.getSoundData("megaleg.ogg"));
         track.addSong(Resource.getSoundData("stardust.ogg"));
         track.shuffle();
-        //track.play();   
+        track.play();   
         AudioController.setGlobalGain(0.2f);
         SoundtrackHandler.setSoundtrack(track);
         
@@ -75,7 +73,7 @@ public class OpenGGTest extends GGApplication{
                 + " the guardians of peace and justice in the galaxy, to settle the conflict...", new Vector2f(), 1f, 0.5f, false);
         GUI.addItem("aids", new GUIText(text, font, new Vector2f(0f,0)));
         
-        WorldEngine.getCurrent().attach(new ModelRenderComponent(ModelLoader.loadModel("C:\\res\\animation\\model.bmf")));
+        //WorldEngine.getCurrent().attach(new ModelRenderComponent(ModelLoader.loadModel("C:\\res\\animation\\model.bmf")));
         WorldEngine.getCurrent().attach(new LightComponent(new Light(new Vector3f(0,2,2), new Vector3f(1,1,1), 100, 0))); 
           
         TestPlayerComponent player = new TestPlayerComponent();
@@ -104,7 +102,6 @@ public class OpenGGTest extends GGApplication{
                 Resource.getTexturePath("skybox\\majestic_lf.png")), 1500f));
         
     }
-    float wow = 0f;
     
     @Override
     public void render() {
@@ -112,5 +109,7 @@ public class OpenGGTest extends GGApplication{
     }
 
     @Override
-    public void update(float delta) {}
+    public void update(float delta) {
+        ;
+    }
 }

@@ -61,7 +61,7 @@ public class LightComponent extends Component{
         l = new Light(new Vector3f(), stream.readVector3f(), stream.readFloat(), 0);
         boolean use = stream.readBoolean();
         
-        OpenGG.addExecutable(() -> {
+        OpenGG.asyncExec(() -> {
             if(use) use();
         });
     }

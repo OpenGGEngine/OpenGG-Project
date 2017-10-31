@@ -145,7 +145,7 @@ public class FreeFlyComponent extends Component implements Actionable{
         rotspeed = stream.readFloat();
         speed = stream.readFloat();
         boolean use = stream.readBoolean();
-        OpenGG.addExecutable(() -> {
+        OpenGG.asyncExec(() -> {
             if(use) use();
         });
         

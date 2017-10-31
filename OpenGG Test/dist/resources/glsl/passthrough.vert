@@ -10,7 +10,7 @@ out gl_PerVertex{
 };
 
 out vertexData{
-	vec4 vertexColor;
+	
 	vec2 textureCoord;
 	vec3 pos;
 	vec3 norm;
@@ -26,7 +26,6 @@ void main() {
 	
 	mat4 modelView = view * model;
 	
-    vertexColor = color;
     textureCoord = texcoord;
     pos = (model * vec4(position, 1.0f) ).xyz;
     norm = normal;

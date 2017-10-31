@@ -10,7 +10,7 @@ out gl_PerVertex{
 };
 
 out vertexData{
-	vec4 vertexColor;
+	
 	vec2 textureCoord;
 	vec3 pos;
 	vec3 norm;
@@ -26,7 +26,6 @@ uniform float divAmount;
 uniform vec3 camera;
 
 void main() {
-    vertexColor = vec4(1,1,1,1);
     textureCoord = texcoord;
 	norm = normal;
 

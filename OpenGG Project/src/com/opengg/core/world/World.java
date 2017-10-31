@@ -65,9 +65,6 @@ public class World extends Component{
     }
     
     public void addRenderable(RenderComponent r){
-        if(OpenGG.hasExecutables())
-            processExecutables();
-        
         boolean found = false;
         for(RenderGroup rg : groups){
             if(rg.isTransparent() == r.isTransparent()){
@@ -121,7 +118,7 @@ public class World extends Component{
     }
     
     public void addCollider(CollisionComponent c){
-        if(this != OpenGG.getCurrentWorld())
+        if(this != WorldEngine.getCurrent())
             return;
         WorldEngine.addCollider(c);
     }

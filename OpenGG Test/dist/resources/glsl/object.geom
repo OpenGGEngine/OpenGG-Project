@@ -15,13 +15,12 @@ out gl_PerVertex{
 };
 
 out vertexData{
-    vec4 vertexColor;
+    
     vec2 textureCoord;
     vec4 pos;
     vec3 norm;
 };
 
-in vec4 vertexColors[];
 in vec2 textureCoords[];
 in vec3 poss[];
 in vec3 norms[];
@@ -35,7 +34,6 @@ void main(){
     for(int i = 0; i < gl_in.length(); i++){
         vec4 temppos = gl_in[i].gl_Position;
 		
-        vertexColor = vertexColors[i];
         textureCoord = textureCoords[i];
 		norm = norms[i];
         pos = vec4(poss[i], 1.0f);

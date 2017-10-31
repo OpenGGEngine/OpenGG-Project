@@ -31,10 +31,15 @@ import java.util.logging.Logger;
  * @author Javier Coindreau
  */
 public class WorldEngine{
+    static World curworld;
     static List<CollisionComponent> colliders = new LinkedList<>();
     static List<Component> objs = new ArrayList<>();
     static List<Component> removal = new LinkedList<>();
     static boolean enabled = true;
+    
+    public static void initialize(){
+        curworld = new World();
+    }
     
     public static void addCollider(CollisionComponent c) {
         colliders.add(c);
@@ -131,17 +136,17 @@ public class WorldEngine{
     }
     
     public static void useWorld(World world){
-        OpenGG.curworld.disableRenderables();
-        OpenGG.curworld = world;
+        curworld.disableRenderables();
+        curworld = world;
         rescanCurrent();
     }
     
     public static void rescanCurrent(){
-        OpenGG.curworld.useRenderables();
-        colliders = OpenGG.curworld.useColliders();
+        curworld.useRenderables();
+        colliders = curworld.useColliders();
     }
     
     public static World getCurrent(){
-        return OpenGG.curworld;
+        return curworld;
     }
 }

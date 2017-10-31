@@ -3,7 +3,7 @@
 layout(location = 0) out vec4 fcolor;
 
 in vertexData{
-    vec4 vertexColor;
+    
     vec2 textureCoord;
     vec3 lightdir;
     vec3 eyedir;

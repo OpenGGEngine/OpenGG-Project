@@ -12,7 +12,7 @@ out gl_PerVertex{
 };
 
 out vertexData{
-	vec4 vertexColor;
+	
 	vec2 textureCoord;
 	vec3 pos;
 	vec3 norm;
@@ -35,7 +35,6 @@ uniform float divAmount;
 void main() {
 
     mat4 modelView = view * model;
-    vertexColor = color;
     textureCoord = texcoord;
 	vec4 initPos = vec4(0, 0, 0, 0);
     vec4 initNormal = vec4(0, 0, 0, 0);

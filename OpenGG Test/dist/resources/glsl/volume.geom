@@ -15,13 +15,12 @@ out gl_PerVertex{
 };
 
 out vertexData{
-    vec4 vertexColor;
+    
     vec2 textureCoord;
     vec4 pos;
     vec3 norm;
 };
 
-in vec4 vertexColors[];
 in vec2 textureCoords[];
 in vec3 poss[];
 in vec3 norms[];

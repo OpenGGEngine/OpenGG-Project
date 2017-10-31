@@ -44,7 +44,7 @@ public class ModelRenderComponent extends RenderComponent{
             this.format = RenderEngine.getDefaultFormat();
         }
         
-        OpenGG.addExecutable(() -> {
+        OpenGG.asyncExec(() -> {
             setDrawable(model.getDrawable());
         });
     }
@@ -60,7 +60,7 @@ public class ModelRenderComponent extends RenderComponent{
         super.deserialize(in);
         String path = in.readString();
         model = ModelLoader.loadModel(path);
-        OpenGG.addExecutable(() -> {
+        OpenGG.asyncExec(() -> {
             this.g = model.getDrawable();
         });
     }
