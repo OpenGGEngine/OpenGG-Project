@@ -6,11 +6,13 @@
 
 package com.opengg.core.physics;
 
+import com.opengg.core.math.Vector3f;
+
 /**
  *
  * @author Javier
  */
 public class PhysicsConstants {
-    public static float GRAVITY = -9.81f;
-    public static float BASE = -50;
+    public Vector3f GRAVITY = new Vector3f(0,-9.81f,0);
+    public float BASE = -50;
 }

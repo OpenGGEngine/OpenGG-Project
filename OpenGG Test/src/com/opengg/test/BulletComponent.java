@@ -52,7 +52,6 @@ public class BulletComponent extends Component{
         attach(lc);
         
         WorldEngine.getCurrent().addRenderable(bullet);
-        WorldEngine.getCurrent().addCollider(physics.getEntity().getColliders().get(0));
     }
     
     @Override

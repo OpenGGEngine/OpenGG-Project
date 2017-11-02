@@ -6,8 +6,9 @@
 
 package com.opengg.core.physics.collision;
 
-import com.opengg.core.world.components.physics.CollisionComponent;
+import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
+import com.opengg.core.physics.PhysicsObject;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
 import java.io.IOException;
@@ -16,18 +17,20 @@ import java.io.IOException;
  *
  * @author Javier
  */
-public abstract class Collider {
-    CollisionComponent parent;
-    Vector3f offset = new Vector3f();
+public abstract class Collider extends PhysicsObject{
+    Vector3f position = new Vector3f(), offset = new Vector3f();
+    Vector3f scale = new Vector3f(), scaleoffset = new Vector3f();
+    Quaternionf rot = new Quaternionf(), rotoffset = new Quaternionf();
+    
     boolean serializable = true;
     public abstract Collision isColliding(Collider c);
     
     public Vector3f getPosition(){
-        return offset.add(parent.getPosition());
+        return offset.add(position);
     }
     
-    public void setParent(CollisionComponent parent){
-        this.parent = parent;
+    public void setPosition(Vector3f pos){
+        this.position = pos;
     }
     
     public void serialize(GGOutputStream stream) throws IOException{

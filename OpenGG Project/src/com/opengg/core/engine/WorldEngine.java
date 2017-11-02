@@ -21,7 +21,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -31,35 +30,16 @@ import java.util.logging.Logger;
  * @author Javier Coindreau
  */
 public class WorldEngine{
-    static World curworld;
-    static List<CollisionComponent> colliders = new LinkedList<>();
-    static List<Component> objs = new ArrayList<>();
-    static List<Component> removal = new LinkedList<>();
-    static boolean enabled = true;
+    private static World curworld;
+    private static List<Component> removal = new LinkedList<>();
+    private static boolean enabled = true;
     
     public static void initialize(){
         curworld = new World();
     }
     
-    public static void addCollider(CollisionComponent c) {
-        colliders.add(c);
-    }
-    
-    public static void removeCollider(CollisionComponent c){
-        colliders.remove(c);
-    }
-
-    public static List<CollisionComponent> getColliders(){
-        return colliders;
-    }
-    
     public static void markForRemoval(Component c){
         removal.add(c);
-    }
-    
-    public static void addObjects(Component e){
-        if(!objs.contains(e))
-            objs.add(e);
     }
     
     public static void shouldUpdate(boolean update){
@@ -68,16 +48,11 @@ public class WorldEngine{
     
     public static void removeMarked(){
         for(Component c : removal){
+            c.finalizeComponent();
             if(c instanceof RenderComponent)
                 c.getWorld().removeRenderable((RenderComponent)c);
-            
-            if(c instanceof CollisionComponent)
-                colliders.remove((CollisionComponent)c);
-            
             TransitionEngine.remove(c);
-            c.getParent().remove(c);
-            objs.remove(c);         
-            c.finalizeComponent();
+            c.getParent().remove(c);       
         }
         removal.clear();
     }
@@ -93,7 +68,7 @@ public class WorldEngine{
     }
     
     private static void traverseUpdate(Component c, float delta){
-        if(!c.isEnabled() || ((c.updatedistance > c.getPosition().subtract(RenderEngine.camera.getPos()).length()) && c.updatedistance != 0))
+        if(!c.isEnabled() || ((c.updatedistance > c.getPosition().subtract(RenderEngine.getCurrentCamera().getPos()).length()) && c.updatedistance != 0))
             return;
         c.update(delta);
         for(Component c2 : ((Component)c).getChildren()){
@@ -136,14 +111,24 @@ public class WorldEngine{
     }
     
     public static void useWorld(World world){
-        curworld.disableRenderables();
+        world.rescanRenderables();
+        removeRenderables(curworld);
+        addRenderables(world);
         curworld = world;
-        rescanCurrent();
+        PhysicsEngine.setInstance(world.physics);
+        
     }
     
-    public static void rescanCurrent(){
-        curworld.useRenderables();
-        colliders = curworld.useColliders();
+    public static void addRenderables(World world){
+        for(RenderGroup r : world.groups){
+            RenderEngine.addRenderGroup(r);
+        }
+    }
+    
+    public static void removeRenderables(World world){
+        for(RenderGroup r : world.groups){
+            RenderEngine.removeRenderGroup(r);
+        }
     }
     
     public static World getCurrent(){

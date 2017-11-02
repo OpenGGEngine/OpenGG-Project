@@ -17,7 +17,7 @@ public abstract class Extension {
     
     public abstract void loadExtension();
     
-    public void update(){}
+    public void update(float delta){}
     
     public void render(){}
 }

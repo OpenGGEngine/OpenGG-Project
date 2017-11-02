@@ -39,38 +39,38 @@ import org.lwjgl.system.MemoryUtil;
  * @author Javier
  */
 public class RenderEngine {
-    static List<RenderGroup> groups = new ArrayList<>();
-    static List<Light> lights = new ArrayList<>();
-    static List<RenderPath> paths = new ArrayList<>();
-    static GLBuffer lightobj;
-    static RenderGroup dlist,animlist;
-    static Skybox skybox;
-    static boolean initialized;
-    static Framebuffer sceneTex;
-    static VertexArrayFormat vaoformat;
-    static VertexArrayFormat particle;
-    static VertexArrayFormat animation;
-    static boolean cull = true;
-    static int lightoffset;
-    static Camera camera;
-    static VertexArrayObject currentvao;
-    static VertexArrayObject defaultvao;
-    
-    static boolean init(){
+    private static List<RenderGroup> groups = new ArrayList<>();
+    private static List<Light> lights = new ArrayList<>();
+    private static List<RenderPath> paths = new ArrayList<>();
+    private static GLBuffer lightobj;
+    private static RenderGroup dlist, animlist;
+    private static Skybox skybox;
+    private static boolean initialized;
+    private static Framebuffer sceneTex;
+    private static VertexArrayFormat vaoformat;
+    private static VertexArrayFormat particle;
+    private static VertexArrayFormat animation;
+    private static boolean cull = true;
+    private static int lightoffset;
+    private static Camera camera;
+    private static VertexArrayObject currentvao;
+    private static VertexArrayObject defaultvao;
+
+    static void init() {
         ShaderController.initialize();
-        
+
         vaoformat = new VertexArrayFormat();
         vaoformat.addAttribute(new VertexArrayAttribute("position", 3, 12, GL_FLOAT, 0, 0, false));
         //vaoformat.addAttribute(new VertexArrayAttribute("color", 4, 12, GL_FLOAT, 3, 0, false));
         vaoformat.addAttribute(new VertexArrayAttribute("normal", 3, 12, GL_FLOAT, 7, 0, false));
         vaoformat.addAttribute(new VertexArrayAttribute("texcoord", 2, 12, GL_FLOAT, 10, 0, false));
-        
+
         particle = new VertexArrayFormat();
         particle.addAttribute(new VertexArrayAttribute("position", 3, 12, GL_FLOAT, 0, 0, false));
         particle.addAttribute(new VertexArrayAttribute("offset", 3, 3, GL_FLOAT, 0, 1, true));
         particle.addAttribute(new VertexArrayAttribute("normal", 3, 12, GL_FLOAT, 7, 0, false));
         particle.addAttribute(new VertexArrayAttribute("texcoord", 2, 12, GL_FLOAT, 10, 0, false));
-        
+
         animation = new VertexArrayFormat();
         animation.addAttribute(new VertexArrayAttribute("position", 3, 20, GL_FLOAT, 0, 0, false));
         //animation.addAttribute(new VertexArrayAttribute("color", 4, 20, GL_FLOAT, 3, 0, false));
@@ -80,7 +80,7 @@ public class RenderEngine {
         animation.addAttribute(new VertexArrayAttribute("weights", 4, 20, GL_FLOAT, 16, 0, false));
         TextureManager.initialize();
         ModelManager.initialize();
-        
+
         sceneTex = WindowFramebuffer.getWindowFramebuffer(1);
         PostProcessPipeline.initialize(sceneTex);
 
@@ -88,28 +88,27 @@ public class RenderEngine {
         lightobj = new GLBuffer(GL_UNIFORM_BUFFER, 1600, GL_DYNAMIC_DRAW);
         lightobj.bindBase(ShaderController.getUniqueUniformBufferLocation());
         ShaderController.setUniformBlockLocation(lightobj, "LightBuffer");
-        
+
         enableDefaultGroups();
-        
+
         lightoffset = (MemoryUtil.memAllocFloat(Light.bfsize).capacity());// << 2;
 
         groups.add(dlist);
        // groups.add(animlist);
-        
+
         Camera c = new Camera();
         useCamera(c);
-        
+
         glEnable(GL_BLEND);
         glBlendEquation(GL_FUNC_ADD);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        
+
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LEQUAL);
         glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
-        glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
-        return true;
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }
-    
+
     public static void enableDefaultGroups(){
         dlist = new RenderGroup("default");
         dlist.setPipeline("object");
@@ -210,7 +209,8 @@ public class RenderEngine {
     }
     
     public static void addRenderGroup(RenderGroup r){
-        groups.add(r);
+        if(!groups.contains(r))
+            groups.add(r);
     }
     
     public RenderGroup getRenderGroup(String name){
@@ -293,6 +293,10 @@ public class RenderEngine {
     
     public static Camera getCurrentCamera(){
         return camera;
+    }
+
+    public static boolean isInitialized() {
+        return initialized;
     }
     
     static void useLights(){

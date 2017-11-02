@@ -5,28 +5,33 @@
  */
 package com.opengg.core.engine;
 
+import com.opengg.core.physics.PhysicsSystem;
 import com.opengg.core.physics.PhysicsEntity;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
  * @author Javier
  */
 public class PhysicsEngine {
-    static List<PhysicsEntity> entities = new ArrayList<>(); 
+    static PhysicsSystem instance;
     
     public static void addEntity(PhysicsEntity entity){
-        entities.add(entity);
+        instance.addEntity(entity);
     }
     
     public static void removeEntity(PhysicsEntity entity){
-        entities.remove(entity);
+        instance.removeEntity(entity);
     }
     
     public static void updatePhysics(float delta){
-        for(PhysicsEntity entity : entities){
-            entity.update(delta);
-        }
+        instance.update(delta);
+    }
+
+    public static void setInstance(PhysicsSystem physics) {
+        instance = physics;
+    }
+    
+    public static PhysicsSystem getInstance(){
+        return instance;
     }
 }

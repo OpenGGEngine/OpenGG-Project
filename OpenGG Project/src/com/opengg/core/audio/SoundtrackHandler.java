@@ -11,7 +11,7 @@ package com.opengg.core.audio;
  * @author Javier
  */
 public class SoundtrackHandler {
-    public static Soundtrack current;
+    private static Soundtrack current;
     
     public static Soundtrack getCurrent(){
         return current;
@@ -27,5 +27,11 @@ public class SoundtrackHandler {
     public static void update(){
         if(current != null)
             current.update();
+    }
+    
+    public static void refresh(){
+        current.stop();
+        current.shuffle();
+        current.play();
     }
 }

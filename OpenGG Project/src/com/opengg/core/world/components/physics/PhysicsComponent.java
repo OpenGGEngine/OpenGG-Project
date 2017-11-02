@@ -5,10 +5,11 @@
  */
 package com.opengg.core.world.components.physics;
 
-import com.opengg.core.engine.PhysicsEngine;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.physics.PhysicsEntity;
+import com.opengg.core.physics.PhysicsSystem;
+import com.opengg.core.physics.collision.ColliderGroup;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
 import com.opengg.core.world.components.Component;
@@ -22,22 +23,12 @@ public class PhysicsComponent extends Component {
     PhysicsEntity entity;
     
     public PhysicsComponent(){
-        this(10);
-    }
-    
-    public PhysicsComponent(float mass){
-        entity = new PhysicsEntity(mass);
-        addEntity();
-    }
-    
-    public PhysicsComponent(CollisionComponent collider){
         entity = new PhysicsEntity();
-        entity.addCollider(collider);
-        addEntity();
     }
     
-    private void addEntity(){
-        PhysicsEngine.addEntity(entity);
+    public PhysicsComponent(ColliderGroup collider){
+        this();
+        entity.addCollider(collider);
     }
 
     @Override
@@ -52,12 +43,26 @@ public class PhysicsComponent extends Component {
         entity.rotation = getRotation().toEuler();
     }
     
-    public void addCollider(CollisionComponent c){
+    public void addCollider(ColliderGroup c){
         entity.addCollider(c);
+    }
+    
+    public void addCollider(CollisionComponent c){
+        this.attach(c);
+        entity.addCollider(c.getColliderGroup());
+    }
+    
+    public void setSystem(PhysicsSystem system){
+        entity.setSystem(system);
     }
     
     public PhysicsEntity getEntity(){
         return entity;
+    }
+    
+    @Override
+    public void onWorldChange(){
+        entity.setSystem(this.getWorld().getSystem());
     }
     
     @Override
@@ -74,7 +79,7 @@ public class PhysicsComponent extends Component {
     @Override
     public void deserialize(GGInputStream in) throws IOException{
         super.deserialize(in);
-        entity = new PhysicsEntity();
+        entity = new PhysicsEntity(this.getWorld().getSystem());
         entity.mass = in.readFloat();
         entity.density = in.readFloat();
         entity.frictionCoefficient = in.readFloat();
@@ -85,6 +90,8 @@ public class PhysicsComponent extends Component {
     
     @Override
     public void finalizeComponent(){
-        PhysicsEngine.removeEntity(entity);
+        try{
+            this.getWorld().getSystem().removeEntity(entity);
+        }catch (NullPointerException e){}
     }
 }

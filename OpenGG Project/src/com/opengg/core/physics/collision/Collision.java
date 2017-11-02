@@ -6,7 +6,6 @@
 
 package com.opengg.core.physics.collision;
 
-import com.opengg.core.world.components.physics.CollisionComponent;
 import com.opengg.core.math.Vector3f;
 
 /**
@@ -15,7 +14,7 @@ import com.opengg.core.math.Vector3f;
  */
 public class Collision{
     Collision(){};
-    public CollisionComponent thiscollider, other;
+    public ColliderGroup thiscollider, other;
     public Vector3f collisionNormal;
     public Vector3f collisionPoint;
     public Vector3f overshoot;
@@ -30,7 +29,7 @@ public class Collision{
         return c2;
     }
     
-    public int contains(CollisionComponent c){
+    public int contains(ColliderGroup c){
         if(c == thiscollider)
             return 1;
         if(c == other)

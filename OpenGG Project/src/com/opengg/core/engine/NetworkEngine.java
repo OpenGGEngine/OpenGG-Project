@@ -58,7 +58,7 @@ public class NetworkEngine {
             out.println("oh shit we out here");
             
             String servname = in.readLine();
-            out.println(OpenGG.app.applicationName);
+            out.println(OpenGG.getApp().applicationName);
                      
             GGConsole.log("Connected to " + servname + ", receiving world...");
             

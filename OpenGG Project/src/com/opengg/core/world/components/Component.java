@@ -80,15 +80,27 @@ public abstract class Component{
      */
     private void setParentInfo(Component parent){
         this.parent = parent;
+        
         regenPos();
         for(Component c : children) c.regenPos();
         regenRot();
         for(Component c : children) c.regenRot();
         
+        if(parent instanceof World) localOnWorldChange();
         onParentChange(parent);
     }
     
     public void onParentChange(Component parent){
+        
+    }
+    
+    private void localOnWorldChange(){
+        for(Component c : children) c.localOnWorldChange();
+        
+        onWorldChange();
+    }
+    
+    public void onWorldChange(){
         
     }
     
@@ -277,10 +289,11 @@ public abstract class Component{
     }
     
     public void attach(Component c) {
+        if(c.getParent() == this)
+            return;
         if(c.getParent() != null)
             c.getParent().remove(c);
         c.setParentInfo((Component)this);
-        WorldEngine.addObjects(c);
         children.add(c);
     }  
     

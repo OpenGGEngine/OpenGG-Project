@@ -11,8 +11,8 @@ import com.opengg.core.audio.ALCDevice;
 import com.opengg.core.audio.AudioListener;
 import com.opengg.core.audio.Sound;
 import com.opengg.core.audio.SoundManager;
+import com.opengg.core.audio.SoundtrackHandler;
 import static com.opengg.core.engine.GGConsole.error;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import org.lwjgl.openal.AL;
 import org.lwjgl.openal.AL10;
@@ -22,27 +22,25 @@ import static org.lwjgl.openal.AL10.AL_VELOCITY;
 import static org.lwjgl.openal.AL10.alGetError;
 import static org.lwjgl.openal.AL10.alListener3f;
 import org.lwjgl.openal.ALC;
-import org.lwjgl.openal.ALCCapabilities;
 
 /**
  *
  * @author Javier
  */
 public class AudioController {
-    static ALCContext context;
-    static ALCDevice device;
-    static boolean initialized;
-    static float gain = 1;
+    private static ALCContext context;
+    private static ALCDevice device;
+    private static boolean initialized;
+    private static float gain = 1;
     
-    static ArrayList<Sound> sounds = new ArrayList<>();
+    private static ArrayList<Sound> sounds = new ArrayList<>();
     static void init() {
         device = new ALCDevice(null);
-        ALCCapabilities caps = device.getCapabilities();
-        
+
         context = device.getContextFromDevice(null);
         context.makeCurrent();
         
-        AL.createCapabilities(caps);
+        AL.createCapabilities(device.getCapabilities());
         
         if(AL10.alGetError() != AL10.AL_NO_ERROR)
             GGConsole.error("OpenAL Error in initialization: " + AL10.alGetError());
@@ -57,6 +55,14 @@ public class AudioController {
         while((i = alGetError()) != AL_NO_ERROR){
             GGConsole.error("OpenAL Error: " + i);
         }
+    }
+    
+    public static void restart(){
+        for(Sound sound : sounds){
+            sound.stop();
+            sound.rewind();
+        }
+        SoundtrackHandler.refresh();
     }
     
     public static void setListener(AudioListener s){
@@ -85,6 +91,10 @@ public class AudioController {
     
     public static float getGlobalGain(){
         return gain;
+    }
+    
+    public static boolean isInitialized(){
+        return initialized;
     }
     
     static void destroy(){

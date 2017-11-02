@@ -44,7 +44,7 @@ public class GGConsole implements Runnable{
     }
     
     public static void logVerbose(String message){
-        if(OpenGG.verbose)
+        if(OpenGG.isVerbose())
             write(message, Level.INFO);
     }
             

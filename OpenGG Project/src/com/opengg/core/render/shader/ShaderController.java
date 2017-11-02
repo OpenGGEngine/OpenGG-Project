@@ -116,8 +116,6 @@ public class ShaderController {
         use("particlevert", "texturefrag");
         saveCurrentConfiguration("particle");
         
-        for(String s : rnames.values()) System.out.println(s);
-        
         GGConsole.log("Default shaders loaded and validated");
 
         /* Set shader variables */

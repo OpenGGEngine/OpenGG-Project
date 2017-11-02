@@ -6,6 +6,7 @@
 
 package com.opengg.core.physics.collision;
 
+import com.opengg.core.engine.PhysicsEngine;
 import com.opengg.core.engine.WorldEngine;
 import com.opengg.core.world.components.physics.CollisionComponent;
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ public class CollisionHandler {
         collisions.clear();
     }
     
-    public static List<Collision> testForCollisions(CollisionComponent collider){
+    public static List<Collision> testForCollisions(ColliderGroup collider){
         List<Collision> ncollisions = new ArrayList<>();
         for(Collision c : collisions)
             if(c.contains(collider) == 1)
@@ -31,7 +32,7 @@ public class CollisionHandler {
                 ncollisions.add(Collision.reverse(c));
         
         
-        traverse: for(CollisionComponent comp : WorldEngine.getColliders()){
+        traverse: for(ColliderGroup comp : PhysicsEngine.getInstance().getColliders()){
             if(comp == collider)
                 continue;
             for(Collision c : ncollisions)

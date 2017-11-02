@@ -16,7 +16,6 @@ import com.opengg.core.render.window.Window;
 import com.opengg.core.render.window.WindowInfo;
 import com.opengg.core.thread.ThreadManager;
 import com.opengg.core.util.Time;
-import com.opengg.core.world.World;
 import java.io.File;
 import java.util.Calendar;
 import java.util.Collections;
@@ -33,17 +32,17 @@ import java.util.logging.Logger;
 public class OpenGG{
     public static final String version = "0.1";
     
-    static GGApplication app;
-    static boolean lwjglinit = false;
-    static List<ExecutableContainer> executables = Collections.synchronizedList(new LinkedList<>());
-    static Date startTime;
-    static boolean head = false;
-    static boolean end = false;
-    static boolean force = false;
-    static boolean verbose = false;
-    static boolean test = false;
-    static Time time;
-    static Thread mainthread;
+    private static GGApplication app;
+    private static boolean lwjglinit = false;
+    private static List<ExecutableContainer> executables = Collections.synchronizedList(new LinkedList<>());
+    private static Date startTime;
+    private static boolean head = false;
+    private static boolean end = false;
+    private static boolean force = false;
+    private static boolean verbose = false;
+    private static boolean test = false;
+    private static Time time;
+    private static Thread mainthread;
       
     private OpenGG(){}
     
@@ -75,7 +74,7 @@ public class OpenGG{
         initialize(app, null);
     }
     
-    private static void initializeGraphics(WindowInfo windowinfo){       
+    private static void initializeLocalClient(WindowInfo windowinfo){       
         WindowController.setup(windowinfo);
         GGConsole.log("Window generation successful, using OpenGL context version " + RenderEngine.getGLVersion());
         
@@ -119,11 +118,11 @@ public class OpenGG{
         ExtensionManager.loadStep(Extension.CONFIG);
         
         if(client)
-            initializeGraphics(info);
+            initializeLocalClient(info);
 
         GGConsole.log("Application setup beginning");
         app.setup();
-        WorldEngine.rescanCurrent();
+        WorldEngine.useWorld(WorldEngine.getCurrent());
         GGConsole.log("Application setup complete");
         GGConsole.log("OpenGG initialized in " + time.getDeltaMs() + " milliseconds");
         
@@ -167,11 +166,12 @@ public class OpenGG{
             float delta = time.getDeltaSec();
             processExecutables(delta);
             app.update(delta);
-            ExtensionManager.update();
+            ExtensionManager.update(delta);
             WorldEngine.update(delta);
             PhysicsEngine.updatePhysics(delta);
             SoundtrackHandler.update();
         }
+        
         GGConsole.log("OpenGG closing...");
         end = true;
         if(!force){
@@ -181,14 +181,14 @@ public class OpenGG{
     }
     
     private static void initializeRenderEngine(){
-        if(getWindow().getSuccessfulConstruction() && RenderEngine.initialized == false){
+        if(getWindow().getSuccessfulConstruction() && RenderEngine.isInitialized() == false){
             RenderEngine.init();
             GGConsole.log("Render engine initialized");
         }
     }
     
     private static void initializeAudioController(){
-       if(getWindow().getSuccessfulConstruction() && AudioController.initialized == false){
+       if(getWindow().getSuccessfulConstruction() && AudioController.isInitialized() == false){
             AudioController.init();
             GGConsole.log("Audio controller initialized");
         }   
@@ -249,6 +249,10 @@ public class OpenGG{
     
     public static boolean lwjglInitialized(){
         return lwjglinit;
+    }
+
+    public static boolean isVerbose() {
+        return verbose;
     }
     
     private static void closeEngine(){

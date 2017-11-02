@@ -6,12 +6,10 @@
 package com.opengg.core.physics;
 
 import com.opengg.core.engine.WorldEngine;
-import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
+import com.opengg.core.physics.collision.ColliderGroup;
 import com.opengg.core.physics.collision.Collision;
 import com.opengg.core.physics.collision.CollisionHandler;
-import com.opengg.core.world.components.physics.CollisionComponent;
-import com.opengg.core.world.components.physics.PhysicsComponent;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,8 +18,8 @@ import java.util.List;
  *
  * @author Javier
  */
-public class PhysicsEntity {
-    List<CollisionComponent> colliders = new ArrayList<>();
+public class PhysicsEntity extends PhysicsObject{
+    List<ColliderGroup> colliders = new ArrayList<>();
     
     public boolean gravEffect = true;
     public boolean grounded = false;
@@ -48,13 +46,16 @@ public class PhysicsEntity {
     public float frictionCoefficient = 0.5f;
     public float bounciness = 0.5f;
     
-    public PhysicsEntity(){}
-    
-    public PhysicsEntity(float mass){
-        this.mass = mass;
+    public PhysicsEntity(){
+        
     }
     
-    public PhysicsEntity(CollisionComponent collider){
+    public PhysicsEntity(PhysicsSystem system){
+        this.system = system;
+    }
+
+    public PhysicsEntity(PhysicsSystem system, ColliderGroup collider){
+        this(system);
         addCollider(collider);
     }
 
@@ -83,7 +84,7 @@ public class PhysicsEntity {
             touched = true;
         }
         
-        for(CollisionComponent collider : colliders){
+        for(ColliderGroup collider : colliders){
             List<Collision> collisions = CollisionHandler.testForCollisions(collider);
             for(Collision c : collisions){
                 touched = true;
@@ -99,11 +100,11 @@ public class PhysicsEntity {
         }
     }
     
-    public void addCollider(CollisionComponent c){
+    public void addCollider(ColliderGroup c){
         colliders.add(c);
     }
     
-    public List<CollisionComponent> getColliders() {
+    public List<ColliderGroup> getColliders() {
         return colliders;
     }
     
@@ -131,9 +132,23 @@ public class PhysicsEntity {
         acceleration = force.divide(mass);
         
         if (gravEffect && !grounded) {
-            acceleration.x += WorldEngine.getCurrent().gravityVector.x;
-            acceleration.y += WorldEngine.getCurrent().gravityVector.y;
-            acceleration.z += WorldEngine.getCurrent().gravityVector.z;
+            acceleration.add(system.getConstants().GRAVITY);
+        }
+    }
+    
+    public void setSystem(PhysicsSystem system){
+        if(this.system != null){
+            this.system.removeEntity(this);
+            for(ColliderGroup col : getColliders()){
+                system.removeCollider(col);
+            }
+        }
+        
+        
+        this.system = system;
+        system.addEntity(this);
+        for(ColliderGroup col : getColliders()){
+            system.addCollider(col);
         }
     }
     

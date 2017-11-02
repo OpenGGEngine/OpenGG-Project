@@ -59,12 +59,12 @@ public class CollisionUtil {
     }
     
     public static Collision SphereTerrain(SphereCollider c1, TerrainCollider c2){
-        Vector3f np = c1.getPosition().subtract(c2.getPosition()).divide(c2.parent.getScale());
+        Vector3f np = c1.getPosition().subtract(c2.getPosition()).divide(c2.getScale());
         float height = c2.t.getHeight(np.x, np.z);
         if(height == 12345)
             return null;
         height += c2.getPosition().y;
-        height *= c2.parent.getScale().y;
+        height *= c2.getScale().y;
         if(!(c1.getPosition().y < height))
             return null;
         Collision data = new Collision();
@@ -75,12 +75,12 @@ public class CollisionUtil {
     }
     
     public static Collision CylinderTerrain(CylinderCollider c1, TerrainCollider c2){
-        Vector3f np = c1.getPosition().subtract(c2.getPosition()).divide(c2.parent.getScale());
+        Vector3f np = c1.getPosition().subtract(c2.getPosition()).divide(c2.getScale());
         float height = c2.t.getHeight(np.x, np.z);
         if(height == 12345)
             return null;
         height += c2.getPosition().y;
-        height *= c2.parent.getScale().y;
+        height *= c2.getScale().y;
         if(!(c1.getPosition().y < height))
             return null;
         Collision data = new Collision();

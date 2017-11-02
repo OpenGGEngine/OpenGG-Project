@@ -34,10 +34,10 @@ public class ExtensionManager {
         }
     }
     
-    public static void update(){
+    public static void update(float delta){
         for(Tuple<Extension, Boolean> pair : extensions){
             if(pair.y == true)
-                pair.x.update();
+                pair.x.update(delta);
         }
     }
     public static void render(){
