@@ -6,6 +6,7 @@
 
 package com.opengg.core.engine;
 
+import com.opengg.core.audio.SoundtrackHandler;
 import static com.opengg.core.engine.OpenGG.*;
 
 /**
@@ -46,6 +47,8 @@ public class OpenGGCommandExtender implements ConsoleListener{
             if(command.argCount == 1){
                 if(command.args[0].equalsIgnoreCase("restart")){
                     AudioController.restart();
+                }else if(command.args[0].equalsIgnoreCase("next_track")){
+                    SoundtrackHandler.getCurrent().next();
                 }
             }
         }

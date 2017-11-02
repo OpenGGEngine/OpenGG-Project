@@ -31,18 +31,6 @@ public class PhysicsComponent extends Component {
         entity.addCollider(collider);
     }
 
-    @Override
-    public void update(float delta) {
-        Vector3f tpos = entity.position;
-        Vector3f trot = entity.rotation;
-
-        this.getParent().setPositionOffset(tpos);
-        this.getParent().setRotationOffset(new Quaternionf(trot));
-        
-        entity.position = getPosition();
-        entity.rotation = getRotation().toEuler();
-    }
-    
     public void addCollider(ColliderGroup c){
         entity.addCollider(c);
     }
@@ -63,6 +51,22 @@ public class PhysicsComponent extends Component {
     @Override
     public void onWorldChange(){
         entity.setSystem(this.getWorld().getSystem());
+    }
+    
+    @Override
+    public void onPositionChange(Vector3f npos){
+        entity.setPosition(npos);
+    }
+    
+    @Override
+    public void onRotationChange(Quaternionf nrot){
+        entity.setRotation(nrot);
+    }
+    
+    @Override
+    public void update(float delta) {
+        this.getParent().setPositionOffset(entity.position);
+        this.getParent().setRotationOffset(entity.rotation);
     }
     
     @Override

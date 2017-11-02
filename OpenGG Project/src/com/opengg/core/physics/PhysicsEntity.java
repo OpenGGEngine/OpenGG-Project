@@ -5,7 +5,7 @@
  */
 package com.opengg.core.physics;
 
-import com.opengg.core.engine.WorldEngine;
+import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.physics.collision.ColliderGroup;
 import com.opengg.core.physics.collision.Collision;
@@ -37,9 +37,6 @@ public class PhysicsEntity extends PhysicsObject{
     
     public Vector3f velocity = new Vector3f();
     public Vector3f angvelocity = new Vector3f();
-    
-    public Vector3f position = new Vector3f();
-    public Vector3f rotation = new Vector3f();
 
     public float mass = 100f;
     public float density = 1f;
@@ -60,25 +57,23 @@ public class PhysicsEntity extends PhysicsObject{
     }
 
     public void update(float delta) {
-        Vector3f pos = position;
-        Vector3f rot = position;
-        
-        float floor = WorldEngine.getCurrent().floorLev;
+        float floor = system.getConstants().BASE;
         
         force = finalForce();
         accel(force);
+        
         grounded = false;
         touched = false;
-        
-        velocity.addThis(acceleration.multiply(delta));
-        pos.addThis(velocity.multiply(delta));
+        velocity = velocity.add(acceleration.multiply(delta));
+        position = position.add(velocity.multiply(delta));
         
         rotforce = finalRotForce();
         angaccel = rotforce.divide(mass);
         angvelocity.addThis(angaccel.multiply(delta));
         
-        if(pos.y < floor){ 
-            pos.y = floor;
+        if(position.y <= floor){ 
+            System.out.println("Sonic the hedgehog");
+            position.y = floor;
             velocity.y = -velocity.y * bounciness;
             grounded = true;
             touched = true;
@@ -91,7 +86,7 @@ public class PhysicsEntity extends PhysicsObject{
                 if(c.collisionNormal.y > 0.5f)
                     grounded = true;
                 velocity = Vector3f.lerp(velocity, velocity.reflect(c.collisionNormal).multiply(bounciness), bounciness);
-                pos.subtractThis(c.overshoot);
+                position.subtractThis(c.overshoot);
             }
         }      
      
@@ -170,7 +165,7 @@ public class PhysicsEntity extends PhysicsObject{
         state.position = a.position.multiply(1 - alpha).add(b.position.multiply(alpha));
         state.velocity = a.velocity.multiply(1 - alpha).add(b.velocity .multiply(alpha));
         
-        state.rotation = Vector3f.lerp(a.rotation, b.rotation, alpha);
+        state.rotation = Quaternionf.slerp(a.rotation, b.rotation, alpha);
         state.angvelocity = a.angvelocity.multiply(1 - alpha).add(b.angvelocity.multiply(alpha));
         
         state.acceleration = a.acceleration.multiply(1 - alpha).add(b.acceleration.multiply(alpha));

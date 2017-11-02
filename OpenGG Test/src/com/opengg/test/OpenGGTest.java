@@ -16,6 +16,8 @@ import com.opengg.core.io.ControlType;
 import static com.opengg.core.io.input.keyboard.Key.*;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
+import com.opengg.core.physics.collision.AABB;
+import com.opengg.core.physics.collision.CylinderCollider;
 import com.opengg.core.render.Text;
 import com.opengg.core.render.light.Light;
 import com.opengg.core.render.shader.ShaderController;
@@ -26,6 +28,7 @@ import com.opengg.core.render.window.WindowOptions;
 import com.opengg.core.world.Skybox;
 import com.opengg.core.world.components.LightComponent;
 import com.opengg.core.world.components.TerrainComponent;
+import com.opengg.core.world.components.physics.CollisionComponent;
 
 public class OpenGGTest extends GGApplication{
     private GGFont font;
@@ -53,11 +56,11 @@ public class OpenGGTest extends GGApplication{
         track.addSong(Resource.getSoundData("windgarden.ogg"));
         track.addSong(Resource.getSoundData("battlerock.ogg"));
         track.addSong(Resource.getSoundData("floaterland.ogg"));
-//        track.addSong(Resource.getSoundData("hell.ogg"));
-//        track.addSong(Resource.getSoundData("intogalaxy.ogg"));
-//        track.addSong(Resource.getSoundData("koopa.ogg"));
-//        track.addSong(Resource.getSoundData("megaleg.ogg"));
-//        track.addSong(Resource.getSoundData("stardust.ogg"));
+        track.addSong(Resource.getSoundData("hell.ogg"));
+        track.addSong(Resource.getSoundData("intogalaxy.ogg"));
+        track.addSong(Resource.getSoundData("koopa.ogg"));
+        track.addSong(Resource.getSoundData("megaleg.ogg"));
+        track.addSong(Resource.getSoundData("stardust.ogg"));
         track.shuffle();
         track.play();   
         AudioController.setGlobalGain(0.2f);
@@ -76,9 +79,11 @@ public class OpenGGTest extends GGApplication{
         WorldEngine.getCurrent().attach(new LightComponent(new Light(new Vector3f(0,2,2), new Vector3f(1,1,1), 100, 0))); 
           
         TestPlayerComponent player = new TestPlayerComponent();
+        player.setPositionOffset(new Vector3f(0,100,0));
         player.use();
         WorldEngine.getCurrent().attach(player);
-
+        WorldEngine.getCurrent().attach(new CollisionComponent(new AABB(new Vector3f(),10,6,10), new CylinderCollider(1,2)));
+        
         BindController.addBind(ControlType.KEYBOARD, "forward", KEY_W);
         BindController.addBind(ControlType.KEYBOARD, "backward", KEY_S);
         BindController.addBind(ControlType.KEYBOARD, "left", KEY_A);
@@ -104,7 +109,7 @@ public class OpenGGTest extends GGApplication{
     
     @Override
     public void render() {
-        ShaderController.setPerspective(90, OpenGG.getWindow().getRatio(), 0.2f, 3000f);
+        ShaderController.setPerspective(100, OpenGG.getWindow().getRatio(), 0.2f, 3000f);
     }
 
     @Override

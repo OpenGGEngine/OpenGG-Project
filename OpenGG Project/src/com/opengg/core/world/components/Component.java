@@ -5,7 +5,6 @@
  */
 package com.opengg.core.world.components;
 
-import com.opengg.core.engine.WorldEngine;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.util.GGInputStream;
@@ -94,7 +93,7 @@ public abstract class Component{
         
     }
     
-    private void localOnWorldChange(){
+    public final void localOnWorldChange(){
         for(Component c : children) c.localOnWorldChange();
         
         onWorldChange();
@@ -108,28 +107,42 @@ public abstract class Component{
      * Sets the local position offset of the object relative to the parent
      * @param npos New position offset
      */
-    public void setPositionOffset(Vector3f npos){
+    public final void setPositionOffset(Vector3f npos){
         this.posoffset = npos;
         regenPos();
-        for(Component c : children) c.regenPos();
+    }
+    
+    public void onPositionChange(Vector3f npos){
+        
     }
     
     /**
      * Sets the local rotation offset of the object relative to the parent
      * @param nrot New rotation offset
      */
-    public void setRotationOffset(Quaternionf nrot){
+    public final void setRotationOffset(Quaternionf nrot){
         this.rotoffset = nrot;
         regenRot();
-        for(Component c : children) c.regenRot();
+        for(Component c : children) c.regenPos();
+        
+    }
+    
+    public void onRotationChange(Quaternionf nrot){
+        
     }
     
     /**
      * Sets the scaling offset of the object relative to the parent
-     * @param scale New scale offset
+     * @param nscale New scale offset
      */
-    public void setScale(Vector3f scale){
-        this.scale = scale;
+    public final void setScale(Vector3f nscale){
+        this.scale = nscale;
+        
+        onScaleChange(nscale);
+    }
+    
+    public void onScaleChange(Vector3f nscale){
+        
     }
     
     /**
@@ -170,14 +183,17 @@ public abstract class Component{
     private void regenPos(){
         if(parent != null){
             if(absoluteOffset){
-                pos =  parent.getPosition().add(posoffset);
+                pos = parent.getPosition().add(posoffset);
             }else{
                 pos = parent.getPosition().add(parent.getRotation().transform(posoffset));
             }
         }else{
             pos = posoffset;
-        }
+        }     
+        
         for(Component c : children) c.regenPos();
+        
+        onPositionChange(pos);
     }
     
     /**
@@ -202,6 +218,8 @@ public abstract class Component{
         }else{
             rot = rotoffset;
         }
+        
+        onRotationChange(rot);
         for(Component c : children) c.regenRot();
     }
     

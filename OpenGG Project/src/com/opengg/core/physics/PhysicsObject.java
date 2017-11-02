@@ -15,9 +15,9 @@ import com.opengg.core.math.Vector3f;
  */
 public class PhysicsObject {
     public PhysicsSystem system;
-    private Vector3f position = new Vector3f();
-    private Quaternionf rotation = new Quaternionf();
-    private Vector3f scale = new Vector3f();
+    public Vector3f position = new Vector3f();
+    public Quaternionf rotation = new Quaternionf();
+    public Vector3f scale = new Vector3f();
 
     public Vector3f getPosition() {
         return position;
