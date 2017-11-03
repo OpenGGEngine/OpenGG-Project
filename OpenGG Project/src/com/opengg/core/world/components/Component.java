@@ -123,7 +123,7 @@ public abstract class Component{
     public final void setRotationOffset(Quaternionf nrot){
         this.rotoffset = nrot;
         regenRot();
-        for(Component c : children) c.regenPos();
+        for(Component c : children) if(!c.getPositionOffset().equals(new Vector3f())) c.regenPos();
         
     }
     
