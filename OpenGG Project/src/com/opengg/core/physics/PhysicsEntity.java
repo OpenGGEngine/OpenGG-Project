@@ -8,8 +8,6 @@ package com.opengg.core.physics;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.physics.collision.ColliderGroup;
-import com.opengg.core.physics.collision.Collision;
-import com.opengg.core.physics.collision.CollisionHandler;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,6 +18,8 @@ import java.util.List;
  */
 public class PhysicsEntity extends PhysicsObject{
     List<ColliderGroup> colliders = new ArrayList<>();
+    Vector3f centerOfMass = new Vector3f();
+    
     
     public boolean gravEffect = true;
     public boolean grounded = false;
@@ -38,7 +38,7 @@ public class PhysicsEntity extends PhysicsObject{
     public Vector3f velocity = new Vector3f();
     public Vector3f angvelocity = new Vector3f();
 
-    public float mass = 100f;
+    public float mass = 1f;
     public float density = 1f;
     public float frictionCoefficient = 0.5f;
     public float bounciness = 0.5f;
@@ -57,57 +57,45 @@ public class PhysicsEntity extends PhysicsObject{
     }
 
     public void update(float delta) {
-        float floor = system.getConstants().BASE;
-        
-        force = finalForce();
-        accel(force);
-        
-        grounded = false;
-        touched = false;
-        velocity = velocity.add(acceleration.multiply(delta));
-        position = position.add(velocity.multiply(delta));
+        computeLinearMotion(delta);
         
         rotforce = finalRotForce();
         angaccel = rotforce.divide(mass);
         angvelocity.addThis(angaccel.multiply(delta));
         
-        if(position.y <= floor){ 
-            System.out.println("Sonic the hedgehog");
-            position.y = floor;
+        if(position.y <= getSystem().getConstants().BASE){ 
+            position.y = getSystem().getConstants().BASE;
             velocity.y = -velocity.y * bounciness;
             grounded = true;
             touched = true;
+        }else{
+            grounded = false;
+            touched = false;
         }
+    }
+    
+    public void updateCollisionResponse(float delta){
         
-        for(ColliderGroup collider : colliders){
-            List<Collision> collisions = CollisionHandler.testForCollisions(collider);
-            for(Collision c : collisions){
-                touched = true;
-                if(c.collisionNormal.y > 0.5f)
-                    grounded = true;
-                velocity = Vector3f.lerp(velocity, velocity.reflect(c.collisionNormal).multiply(bounciness), bounciness);
-                position.subtractThis(c.overshoot);
-            }
-        }      
-     
+    }
+    
+    private void computeLinearMotion(float delta){
+        force = computeForces(delta);
+        acceleration = getAccel(force);
+        
+        velocity = velocity.add(acceleration.multiply(delta));
+        
         if(touched && !overrideFriction){
             velocity.multiplyThis(1-frictionCoefficient*delta);
         }
+        
+        position = position.add(velocity.multiply(delta));
     }
     
-    public void addCollider(ColliderGroup c){
-        colliders.add(c);
-    }
-    
-    public List<ColliderGroup> getColliders() {
-        return colliders;
-    }
-    
-    private Vector3f finalForce() {
+    private Vector3f computeForces(float delta) {
         overrideFriction = false;
         Vector3f fforce = new Vector3f();
         for(Force forcee : forces){
-            if(!((velocity.length() >= forcee.velLimit) || forcee.velLimit == 0 )&& forcee.force.length() != 0){
+            if(velocity.add(fforce.multiply(mass)).multiply(delta).length() < forcee.velLimit){
                 fforce.addThis(forcee.force);
                 overrideFriction = overrideFriction || forcee.frictionDisable;
             }
@@ -123,12 +111,22 @@ public class PhysicsEntity extends PhysicsObject{
         return fforce;
     }
     
-    private void accel(Vector3f force){
-        acceleration = force.divide(mass);
-        
+    private Vector3f getAccel(Vector3f force){
+        Vector3f accel = force.divide(mass);
         if (gravEffect && !grounded) {
-            acceleration.add(system.getConstants().GRAVITY);
+            accel = accel.add(system.getConstants().GRAVITY);
         }
+        return accel;
+    }
+    
+        
+    public void addCollider(ColliderGroup c){
+        colliders.add(c);
+        c.setParent(this);
+    }
+    
+    public List<ColliderGroup> getColliders() {
+        return colliders;
     }
     
     public void setSystem(PhysicsSystem system){

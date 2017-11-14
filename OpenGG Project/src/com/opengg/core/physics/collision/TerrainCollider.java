@@ -17,15 +17,14 @@ public class TerrainCollider extends Collider{
 
     public TerrainCollider(Terrain t){
         this.t = t;
-        this.serializable = false;
     }
     
     @Override
-    public Collision isColliding(Collider c) {
+    public ContactManifold isColliding(Collider c) {
         if(c instanceof SphereCollider)
-            return CollisionUtil.SphereTerrain((SphereCollider)c, this);
-        if(c instanceof CylinderCollider)
-            return CollisionUtil.CylinderTerrain((CylinderCollider)c, this);
+            return CollisionSolver.SphereTerrain((SphereCollider)c, this);
+        if(c instanceof CapsuleCollider)
+            return CollisionSolver.CylinderTerrain((CapsuleCollider)c, this);
         return null;
     }
 }

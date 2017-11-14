@@ -13,14 +13,14 @@ import java.util.Random;
 
 public final class FastMath {
 
-    static public final float nanoToSec = 1 / 1000000000f;
+    public static final float nanoToSec = 1 / 1000000000f;
 
     // ---
-    static public final float FLOAT_ROUNDING_ERROR = 0.000001f; // 32 bits
-    static public final float PI = 3.1415927f;
-    static public final float PI2 = PI * 2;
+    public static final float FLOAT_ROUNDING_ERROR = 0.000001f; // 32 bits
+    public static final float PI = 3.1415927f;
+    public static final float PI2 = PI * 2;
     static final double PIHalf = PI * 0.5;
-    static public final float E = 2.7182818f;
+    public static final float E = 2.7182818f;
 
     static private final int SIN_BITS = 14; // 16KB. Adjust for accuracy.
     static private final int SIN_MASK = ~(-1 << SIN_BITS);
@@ -34,13 +34,13 @@ public final class FastMath {
     /**
      * multiply by this to convert from radians to degrees
      */
-    static public final float radiansToDegrees = 180f / PI;
-    static public final float radDeg = radiansToDegrees;
+    public static final float radiansToDegrees = 180f / PI;
+    public static final float radDeg = radiansToDegrees;
     /**
      * multiply by this to convert from degrees to radians
      */
-    static public final float degreesToRadians = PI / 180;
-    static public final float degRad = degreesToRadians;
+    public static final float degreesToRadians = PI / 180;
+    public static final float degRad = degreesToRadians;
 
     static private class Sin {
 
@@ -59,7 +59,7 @@ public final class FastMath {
     /**
      * Returns the sine in radians from a lookup table.
      */
-    static public float sin(float radians) {
+    public static float sin(float radians) {
         return Sin.table[(int) (radians * radToIndex) & SIN_MASK];
     }
 
@@ -81,21 +81,21 @@ public final class FastMath {
     /**
      * Returns the cosine in radians from a lookup table.
      */
-    static public float cos(float radians) {
+    public static float cos(float radians) {
         return Sin.table[(int) ((radians + PI / 2) * radToIndex) & SIN_MASK];
     }
 
     /**
      * Returns the sine in radians from a lookup table.
      */
-    static public float sinDeg(float degrees) {
+    public static float sinDeg(float degrees) {
         return Sin.table[(int) (degrees * degToIndex) & SIN_MASK];
     }
 
     /**
      * Returns the cosine in radians from a lookup table.
      */
-    static public float cosDeg(float degrees) {
+    public static float cosDeg(float degrees) {
         return Sin.table[(int) ((degrees + 90) * degToIndex) & SIN_MASK];
     }
 
@@ -105,7 +105,7 @@ public final class FastMath {
      * Average error of 0.00231 radians (0.1323 degrees),
      * largest error of 0.00488 radians (0.2796 degrees).
      */
-    static public float atan2(float y, float x) {
+    public static float atan2(float y, float x) {
         if (x == 0f) {
             if (y > 0f) {
                 return PI / 2;
@@ -128,20 +128,20 @@ public final class FastMath {
     }
 
     // ---
-    static public Random random = new Random();
+    public static Random random = new Random();
 
     /**
      * Returns a random number between 0 (inclusive) and the specified value
      * (inclusive).
      */
-    static public int random(int range) {
+    public static int random(int range) {
         return random.nextInt(range + 1);
     }
 
     /**
      * Returns a random number between start (inclusive) and end (inclusive).
      */
-    static public int random(int start, int end) {
+    public static int random(int start, int end) {
         return start + random.nextInt(end - start + 1);
     }
 
@@ -149,21 +149,21 @@ public final class FastMath {
      * Returns a random number between 0 (inclusive) and the specified value
      * (inclusive).
      */
-    static public long random(long range) {
+    public static long random(long range) {
         return (long) (random.nextDouble() * range);
     }
 
     /**
      * Returns a random number between start (inclusive) and end (inclusive).
      */
-    static public long random(long start, long end) {
+    public static long random(long start, long end) {
         return start + (long) (random.nextDouble() * (end - start));
     }
 
     /**
      * Returns a random boolean value.
      */
-    static public boolean randomBoolean() {
+    public static boolean randomBoolean() {
         return random.nextBoolean();
     }
 
@@ -171,14 +171,14 @@ public final class FastMath {
      * Returns true if a random value between 0 and 1 is less than the specified
      * value.
      */
-    static public boolean randomBoolean(float chance) {
+    public static boolean randomBoolean(float chance) {
         return FastMath.random() < chance;
     }
 
     /**
      * Returns random number between 0.0 (inclusive) and 1.0 (exclusive).
      */
-    static public float random() {
+    public static float random() {
         return random.nextFloat();
     }
 
@@ -186,21 +186,21 @@ public final class FastMath {
      * Returns a random number between 0 (inclusive) and the specified value
      * (exclusive).
      */
-    static public float random(float range) {
+    public static float random(float range) {
         return random.nextFloat() * range;
     }
 
     /**
      * Returns a random number between start (inclusive) and end (exclusive).
      */
-    static public float random(float start, float end) {
+    public static float random(float start, float end) {
         return start + random.nextFloat() * (end - start);
     }
 
     /**
      * Returns -1 or 1, randomly.
      */
-    static public int randomSign() {
+    public static int randomSign() {
         return 1 | (random.nextInt() >> 31);
     }
 
@@ -269,7 +269,7 @@ public final class FastMath {
      * Returns the next power of two. Returns the specified value if the value
      * is already a power of two.
      */
-    static public int nextPowerOfTwo(int value) {
+    public static int nextPowerOfTwo(int value) {
         if (value == 0) {
             return 1;
         }
@@ -282,12 +282,12 @@ public final class FastMath {
         return value + 1;
     }
 
-    static public boolean isPowerOfTwo(int value) {
+    public static boolean isPowerOfTwo(int value) {
         return value != 0 && (value & value - 1) == 0;
     }
 
     // ---
-    static public short clamp(short value, short min, short max) {
+    public static short clamp(short value, short min, short max) {
         if (value < min) {
             return min;
         }
@@ -297,7 +297,7 @@ public final class FastMath {
         return value;
     }
 
-    static public int clamp(int value, int min, int max) {
+    public static int clamp(int value, int min, int max) {
         if (value < min) {
             return min;
         }
@@ -307,7 +307,7 @@ public final class FastMath {
         return value;
     }
 
-    static public long clamp(long value, long min, long max) {
+    public static long clamp(long value, long min, long max) {
         if (value < min) {
             return min;
         }
@@ -317,7 +317,7 @@ public final class FastMath {
         return value;
     }
 
-    static public float clamp(float value, float min, float max) {
+    public static float clamp(float value, float min, float max) {
         if (value < min) {
             return min;
         }
@@ -327,7 +327,7 @@ public final class FastMath {
         return value;
     }
 
-    static public double clamp(double value, double min, double max) {
+    public static double clamp(double value, double min, double max) {
         if (value < min) {
             return min;
         }
@@ -341,7 +341,7 @@ public final class FastMath {
     /**
      * Linearly interpolates between fromValue to toValue on progress position.
      */
-    static public float lerp(float fromValue, float toValue, float progress) {
+    public static float lerp(float fromValue, float toValue, float progress) {
         return fromValue + (toValue - fromValue) * progress;
     }
 
@@ -387,7 +387,7 @@ public final class FastMath {
      * This method will only properly floor floats from
      * -(2^14) to (Float.MAX_VALUE - 2^14).
      */
-    static public int floor(float value) {
+    public static int floor(float value) {
         return (int) (value + BIG_ENOUGH_FLOOR) - BIG_ENOUGH_INT;
     }
 
@@ -396,7 +396,7 @@ public final class FastMath {
      * This method will only properly floor floats that are
      * positive. Note this method simply casts the float to int.
      */
-    static public int floorPositive(float value) {
+    public static int floorPositive(float value) {
         return (int) value;
     }
 
@@ -405,7 +405,7 @@ public final class FastMath {
      * float. This method will only properly ceil floats from
      * -(2^14) to (Float.MAX_VALUE - 2^14).
      */
-    static public int ceil(float value) {
+    public static int ceil(float value) {
         return (int) (value + BIG_ENOUGH_CEIL) - BIG_ENOUGH_INT;
     }
 
@@ -414,7 +414,7 @@ public final class FastMath {
      * float. This method will only properly ceil floats that
      * are positive.
      */
-    static public int ceilPositive(float value) {
+    public static int ceilPositive(float value) {
         return (int) (value + CEIL);
     }
 
@@ -423,7 +423,7 @@ public final class FastMath {
      * properly round floats from -(2^14) to
      * (Float.MAX_VALUE - 2^14).
      */
-    static public int round(float value) {
+    public static int round(float value) {
         return (int) (value + BIG_ENOUGH_ROUND) - BIG_ENOUGH_INT;
     }
 
@@ -431,7 +431,7 @@ public final class FastMath {
      * Returns the closest integer to the specified float. This method will only
      * properly round floats that are positive.
      */
-    static public int roundPositive(float value) {
+    public static int roundPositive(float value) {
         return (int) (value + 0.5f);
     }
 
@@ -439,7 +439,7 @@ public final class FastMath {
      * Returns true if the value is zero (using the default tolerance as upper
      * bound)
      */
-    static public boolean isZero(float value) {
+    public static boolean isZero(float value) {
         return Math.abs(value) <= FLOAT_ROUNDING_ERROR;
     }
 
@@ -449,7 +449,7 @@ public final class FastMath {
      * @param tolerance represent an upper bound below which the value is
      * considered zero.
      */
-    static public boolean isZero(float value, float tolerance) {
+    public static boolean isZero(float value, float tolerance) {
         return Math.abs(value) <= tolerance;
     }
 
@@ -460,7 +460,7 @@ public final class FastMath {
      * @param a the first value.
      * @param b the second value.
      */
-    static public boolean isEqual(float a, float b) {
+    public static boolean isEqual(float a, float b) {
         return Math.abs(a - b) <= FLOAT_ROUNDING_ERROR;
     }
 
@@ -472,21 +472,61 @@ public final class FastMath {
      * @param tolerance represent an upper bound below which the two values are
      * considered equal.
      */
-    static public boolean isEqual(float a, float b, float tolerance) {
+    public static boolean isEqual(float a, float b, float tolerance) {
         return Math.abs(a - b) <= tolerance;
     }
 
     /**
      * @return the logarithm of value with base a
      */
-    static public float log(float a, float value) {
+    public static float log(float a, float value) {
         return (float) (Math.log(value) / Math.log(a));
     }
 
     /**
      * @return the logarithm of value with base 2
      */
-    static public float log2(float value) {
+    public static float log2(float value) {
         return log(2, value);
+    }
+    
+    public static Vector3f closestPointTo(Vector3f a, Vector3f b, Vector3f point, boolean segClamp){
+        Vector3f ap = point.subtract(a);
+        Vector3f ab = b.subtract(a);
+        float ab2 = ab.dot(ab);
+        float ap_ab = ab.dot(ap);
+        float t = ap_ab / ab2;
+        if (segClamp)
+        {
+            if (t < 0.0f) t = 0.0f;
+            else if (t > 1.0f) t = 1.0f;
+        }
+        Vector3f closest = a.add(ab.multiply(t));
+        return closest;
+    }
+    
+    public static Vector3f[] closestApproach(Vector3f l1a, Vector3f l1b, Vector3f l2a, Vector3f l2b, boolean lock1, boolean lock2){
+        Vector3f o1 = l1a;
+        Vector3f d1 = l1b.subtract(l1a);
+        
+        Vector3f o2 = l2a;
+        Vector3f d2 = l2b.subtract(l2a);
+        float t1 = new Matrix3f(o2.subtract(o1), d2, d1.cross(d2)).determinant() / d1.cross(d2).lengthSquared();
+        
+        float t2 = new Matrix3f(o2.subtract(o1), d1, d1.cross(d2)).determinant() / d1.cross(d2).lengthSquared();
+        if(lock1){
+            if (t1 < 0.0f) t1 = 0.0f;
+            else if (t1 > 1.0f) t1 = 1.0f;
+        }
+        
+        if(lock2){
+            if (t2 < 0.0f) t2 = 0.0f;
+            else if (t2 > 1.0f) t2 = 1.0f;
+        }
+ 
+        Vector3f[] end = new Vector3f[2];
+        end[0] = o1.add(d1.multiply(t1));
+        end[1] = o2.add(d2.multiply(t2));
+        return end;
     }
 }

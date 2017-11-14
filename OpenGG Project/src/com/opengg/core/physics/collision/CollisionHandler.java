@@ -6,10 +6,9 @@
 
 package com.opengg.core.physics.collision;
 
-import com.opengg.core.engine.PhysicsEngine;
-import com.opengg.core.engine.WorldEngine;
-import com.opengg.core.world.components.physics.CollisionComponent;
+import com.opengg.core.physics.PhysicsSystem;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -18,34 +17,28 @@ import java.util.List;
  */
 public class CollisionHandler {
     static List<Collision> collisions = new ArrayList<>();
+    static List<ColliderGroup> test = new LinkedList<>();
     
     public static void clearCollisions(){
         collisions.clear();
     }
     
-    public static List<Collision> testForCollisions(ColliderGroup collider){
-        List<Collision> ncollisions = new ArrayList<>();
-        for(Collision c : collisions)
-            if(c.contains(collider) == 1)
-                ncollisions.add(c);
-            else if(c.contains(collider) == 2)
-                ncollisions.add(Collision.reverse(c));
-        
-        
-        traverse: for(ColliderGroup comp : PhysicsEngine.getInstance().getColliders()){
-            if(comp == collider)
-                continue;
-            for(Collision c : ncollisions)
-                if(c.contains(comp) != 0)
-                    continue traverse;
-      
-            List<Collision> info = collider.testForCollision(comp);
-            if(!(info == null || info.isEmpty())){
-                ncollisions.addAll(info);
-                collisions.addAll(info);
+    public static void testForCollisions(PhysicsSystem system){
+        collisions.clear();
+        for(ColliderGroup next : test){
+            for(ColliderGroup other : system.getColliders()){
+                Collision col = null;
+                if(next == other) continue;
+                for(Collision c : collisions){
+                    if(c.contains(next) > 0 && c.contains(other) > 0){
+                        continue;
+                    }
+                }
+                
+                if(col == null){
+                    collisions.add(next.testForCollision(other));
+                }
             }
         }
-        
-        return ncollisions;
     }
 }

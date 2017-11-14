@@ -6,6 +6,7 @@
 
 package com.opengg.core.physics.collision;
 
+import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.physics.PhysicsObject;
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import java.util.List;
  */
 public class ColliderGroup extends PhysicsObject{
     AABB main;
+    PhysicsObject parent;
     List<Collider> colliders = new ArrayList<>();
     boolean lastcollided = false;
     boolean forcetest = false;
@@ -28,7 +30,7 @@ public class ColliderGroup extends PhysicsObject{
     
     public ColliderGroup(AABB main, List<Collider> all) {
         setBoundingBox(main);
-        colliders.addAll(all);
+        addColliders(all);
     }
     
     public ColliderGroup(AABB main, Collider... all) {
@@ -37,34 +39,60 @@ public class ColliderGroup extends PhysicsObject{
     
     public void addCollider(Collider bb) {
         colliders.add(bb);
+        bb.setParent(this);
     }
     
     public void addColliders(List<Collider> bb) {
-        colliders.addAll(bb);
+        for(Collider c : bb){
+            addCollider(c);
+        }
     }
     
     public void setBoundingBox(AABB box){
         this.main = box;
     }
     
-    public List<Collision> testForCollision(ColliderGroup other) {
-        List<Collision> dataList = new ArrayList<>();
-        
+    public void setParent(PhysicsObject parent){
+        if(parent != this){
+            this.parent = parent;
+        }
+    }
+    
+    public Collision testForCollision(ColliderGroup other) {
         if (!main.isColliding(other.main) && !(this.forcetest || other.forcetest))
-            return dataList;
+            return null;
 
-
+        Collision c = null;
         for (Collider x: this.colliders) {
             for(Collider y: other.colliders) {
-                Collision data = x.isColliding(y);
+                ContactManifold data = x.isColliding(y);
                 if ((data) != null){
-                    data.thiscollider = this;
-                    data.other = other;
-                    dataList.add(data);
+                    if(c == null){
+                        c = new Collision();
+                        c.thiscollider = this;
+                        c.other = other;
+                    }
+                    c.manifolds.add(data);
                 }
             }
         }
 
-        return dataList;
+        return c;
+    }
+    
+    @Override
+    public Vector3f getPosition(){
+        if(parent != null)
+            return parent.getPosition().add(parent.getRotation().transform(position));
+        else
+            return super.getPosition();
+    }
+    
+    @Override
+    public Quaternionf getRotation(){
+        if(parent != null)
+            return parent.getRotation().multiply(rotation);
+        else
+            return super.getRotation();
     }
 }

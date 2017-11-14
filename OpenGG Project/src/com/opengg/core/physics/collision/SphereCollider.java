@@ -26,11 +26,11 @@ public class SphereCollider extends Collider{
     }
     
     @Override
-    public Collision isColliding(Collider c) {
+    public ContactManifold isColliding(Collider c) {
         if(c instanceof SphereCollider)
-            return CollisionUtil.SphereSphere(this, (SphereCollider)c);
+            return CollisionSolver.SphereSphere(this, (SphereCollider)c);
         else if(c instanceof TerrainCollider)
-            return CollisionUtil.SphereTerrain(this, (TerrainCollider)c);
+            return CollisionSolver.SphereTerrain(this, (TerrainCollider)c);
         return null;
     }
     

@@ -36,7 +36,7 @@ public class TerrainComponent extends RenderComponent{
     }
     
     public void enableCollider(){
-        c = new CollisionComponent(new AABB(new Vector3f(-15000,-15000,-15000), 15000,15000,15000), new TerrainCollider(terrain));
+        c = new CollisionComponent(new AABB(new Vector3f(), 15000,15000,15000), new TerrainCollider(terrain));
         this.attach(c);
     }
     

@@ -14,6 +14,6 @@ import com.opengg.core.math.Vector3f;
  */
 public class Force {
     public Vector3f force = new Vector3f();
-    public float velLimit = 0;
+    public float velLimit = 10;
     public boolean frictionDisable = false;
 }

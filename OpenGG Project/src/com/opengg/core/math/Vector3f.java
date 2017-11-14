@@ -171,7 +171,13 @@ public class Vector3f implements Serializable{
         return x * v.x + y * v.y + z * v.z;
     }
     
-    private double lengthSquared() {
+    public Vector3f cross(Vector3f v) {
+        return new Vector3f(y * v.z - z * v.y,
+                   z * v.x - x * v.z,
+                   x * v.y - y * v.x);
+    }
+    
+    public float lengthSquared() {
         return x * x + y * y + z * z;
     }
 
@@ -218,6 +224,17 @@ public class Vector3f implements Serializable{
         return this;
     }
  
+    public Vector3f abs(){
+        return new Vector3f(this.absThis());
+    }
+    
+    public Vector3f absThis(){
+        if(x <= 0) x = -x;
+        if(y <= 0) y = -y;
+        if(z <= 0) z = -z;
+        return this;
+    }
+    
     public void set(float x, float y, float z) {
         this.x = x;
         this.y = y;

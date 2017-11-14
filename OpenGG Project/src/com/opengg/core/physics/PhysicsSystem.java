@@ -8,6 +8,7 @@ package com.opengg.core.physics;
 
 import com.opengg.core.physics.PhysicsEntity;
 import com.opengg.core.physics.collision.ColliderGroup;
+import com.opengg.core.physics.collision.CollisionHandler;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,5 +53,7 @@ public class PhysicsSystem {
         for(PhysicsEntity entity : entities){
             entity.update(delta);
         }
+        CollisionHandler.clearCollisions();
+        CollisionHandler.testForCollisions(this);
     }
 }

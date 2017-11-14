@@ -15,7 +15,7 @@ import com.opengg.core.world.Actionable;
 import com.opengg.core.physics.collision.AABB;
 import com.opengg.core.world.components.physics.PhysicsComponent;
 import com.opengg.core.world.components.physics.CollisionComponent;
-import com.opengg.core.physics.collision.CylinderCollider;
+import com.opengg.core.physics.collision.CapsuleCollider;
 import static java.lang.Math.abs;
 
 /**
@@ -37,7 +37,7 @@ public class PlayerComponent extends Component implements Actionable{
         camera = new CameraComponent();
         controller = new UserControlComponent();
         playerphysics = new PhysicsComponent();
-        playerphysics.addCollider(new CollisionComponent(new AABB(new Vector3f(),10,6,10), new CylinderCollider(3,2)));
+        playerphysics.addCollider(new CollisionComponent(new AABB(new Vector3f(),10,6,10), new CapsuleCollider(new Vector3f(0,3,0),2)));
         attach(camera);
         attach(controller);
         attach(playerphysics);

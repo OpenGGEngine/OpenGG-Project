@@ -306,13 +306,16 @@ public abstract class Component{
         }
     }
     
-    public void attach(Component c) {
+    public Component attach(Component c) {
+        if(c == this)
+            return this;
         if(c.getParent() == this)
-            return;
+            return this;
         if(c.getParent() != null)
             c.getParent().remove(c);
         c.setParentInfo((Component)this);
         children.add(c);
+        return this;
     }  
     
     public List<Component> getChildren(){

@@ -34,6 +34,20 @@ public class Matrix3f {
         this.m22 = m33;
     }
     
+    public Matrix3f(Vector3f m1,
+            Vector3f m2,
+            Vector3f m3) {
+        this.m00 = m1.x;
+        this.m01 = m1.y;
+        this.m02 = m1.z;
+        this.m10 = m2.x;
+        this.m11 = m2.y;
+        this.m12 = m2.z;
+        this.m20 = m3.x;
+        this.m21 = m3.y;
+        this.m22 = m3.z;
+    }
+    
     public Matrix3f(Matrix4f m) {
         this.m00 = m.m00;
         this.m01 = m.m01;

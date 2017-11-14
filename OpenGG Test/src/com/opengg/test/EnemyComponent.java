@@ -9,7 +9,7 @@ package com.opengg.test;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.model.ModelLoader;
 import com.opengg.core.physics.collision.AABB;
-import com.opengg.core.physics.collision.CylinderCollider;
+import com.opengg.core.physics.collision.CapsuleCollider;
 import com.opengg.core.world.components.Component;
 import com.opengg.core.world.components.ModelRenderComponent;
 import com.opengg.core.world.components.physics.CollisionComponent;
@@ -26,7 +26,7 @@ public class EnemyComponent extends Component{
         enemy = new ModelRenderComponent(ModelLoader.loadModel("C:\\res\\internal_skeleton\\skelet.bmf"));
         attach(enemy);
         enemy.setScale(new Vector3f(0.06f,0.06f,0.06f));
-        killcollider = new CollisionComponent(new AABB(new Vector3f(-5,-5,-5),5,5,5), new CylinderCollider(1,2));
+        killcollider = new CollisionComponent(new AABB(new Vector3f(-5,-5,-5),5,5,5), new CapsuleCollider(new Vector3f(0,1,0),2));
         attach(killcollider);
     }
 }

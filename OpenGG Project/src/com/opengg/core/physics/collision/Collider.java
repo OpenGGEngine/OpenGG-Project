@@ -18,34 +18,31 @@ import java.io.IOException;
  * @author Javier
  */
 public abstract class Collider extends PhysicsObject{
-    Vector3f position = new Vector3f(), offset = new Vector3f();
-    Vector3f scale = new Vector3f(), scaleoffset = new Vector3f();
-    Quaternionf rot = new Quaternionf(), rotoffset = new Quaternionf();
+    ColliderGroup parent;
     
-    boolean serializable = true;
-    public abstract Collision isColliding(Collider c);
+    public abstract ContactManifold isColliding(Collider c);
     
+    @Override
     public Vector3f getPosition(){
-        return offset.add(position);
+        return parent.getPosition().add(parent.getRotation().transform(position));
     }
     
-    public void setPosition(Vector3f pos){
-        this.position = pos;
+    @Override
+    public Quaternionf getRotation(){
+        return parent.getRotation().add(rotation);
     }
     
     public void serialize(GGOutputStream stream) throws IOException{
-        stream.write(offset);
+        stream.write(position);
+        stream.write(rotation);
     }
     
     public void deserialize(GGInputStream stream) throws IOException{
-        offset = stream.readVector3f();
+        position = stream.readVector3f();
+        rotation = stream.readQuaternionf();
     }
     
-    public boolean isSerializable(){
-        return serializable;
-    }
-    
-    public void setSerializable(boolean serializable){
-        this.serializable = serializable;
+    public void setParent(ColliderGroup parent){
+        this.parent = parent;
     }
 }
