@@ -6,19 +6,10 @@
 
 package com.opengg.core.physics.collision;
 
-import com.opengg.core.math.Vector3f;
-
 /**
  *
  * @author Javier
  */
-public class ContactManifold {
-    public Vector3f normal;
-    public Vector3f point;
-    public float depth;
-    
-    public ContactManifold reverse(){
-        normal = normal.inverse();
-        return this;
-    }
+public class HullFace {
+    int v1, v2, v3;
 }

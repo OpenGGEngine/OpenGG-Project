@@ -27,9 +27,11 @@ public abstract class Collider extends PhysicsObject{
         return parent.getPosition().add(parent.getRotation().transform(position));
     }
     
+    public void updatePositions(){}
+    
     @Override
     public Quaternionf getRotation(){
-        return parent.getRotation().add(rotation);
+        return parent.getRotation().multiply(rotation);
     }
     
     public void serialize(GGOutputStream stream) throws IOException{

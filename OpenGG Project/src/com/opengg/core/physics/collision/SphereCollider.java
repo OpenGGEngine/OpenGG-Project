@@ -29,6 +29,8 @@ public class SphereCollider extends Collider{
     public ContactManifold isColliding(Collider c) {
         if(c instanceof SphereCollider)
             return CollisionSolver.SphereSphere(this, (SphereCollider)c);
+        if(c instanceof CapsuleCollider)
+            return CollisionSolver.SphereCapsule(this, (CapsuleCollider)c);
         else if(c instanceof TerrainCollider)
             return CollisionSolver.SphereTerrain(this, (TerrainCollider)c);
         return null;

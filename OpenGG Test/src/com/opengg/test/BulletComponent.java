@@ -45,7 +45,7 @@ public class BulletComponent extends Component{
         physics.getEntity().velocity = getRotation().transform(new Vector3f(5,0,0));
         physics.addCollider(new CollisionComponent(new AABB(new Vector3f(-1,-1,-1),1,1,1),
                 new CapsuleCollider(new Vector3f(0,0,0), new Vector3f(0,0,1),0.1f)));
-        physics.getEntity().bounciness = 0.9f;
+        physics.getEntity().restitution = 0.9f;
         physics.getEntity().frictionCoefficient = 0;
         attach(physics);
 

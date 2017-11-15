@@ -5,9 +5,12 @@
  */
 package com.opengg.core.physics;
 
+import com.opengg.core.math.FastMath;
+import com.opengg.core.math.Matrix3f;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.physics.collision.ColliderGroup;
+import com.opengg.core.physics.collision.CollisionManager;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -17,9 +20,9 @@ import java.util.List;
  * @author Javier
  */
 public class PhysicsEntity extends PhysicsObject{
-    List<ColliderGroup> colliders = new ArrayList<>();
-    Vector3f centerOfMass = new Vector3f();
-    
+    public List<ColliderGroup> colliders = new ArrayList<>();
+    public Vector3f centerOfMass = new Vector3f();
+    public Matrix3f inertialMatrix = new Matrix3f(0.3f,0,0,0,0.3f,0,0,0,0.3f);
     
     public boolean gravEffect = true;
     public boolean grounded = false;
@@ -41,7 +44,7 @@ public class PhysicsEntity extends PhysicsObject{
     public float mass = 1f;
     public float density = 1f;
     public float frictionCoefficient = 0.5f;
-    public float bounciness = 0.5f;
+    public float restitution = 0.2f;
     
     public PhysicsEntity(){
         
@@ -58,24 +61,20 @@ public class PhysicsEntity extends PhysicsObject{
 
     public void update(float delta) {
         computeLinearMotion(delta);
+        computeAngularMotion(delta);
         
-        rotforce = finalRotForce();
-        angaccel = rotforce.divide(mass);
-        angvelocity.addThis(angaccel.multiply(delta));
+        
+        CollisionManager.addToTest(colliders);
         
         if(position.y <= getSystem().getConstants().BASE){ 
             position.y = getSystem().getConstants().BASE;
-            velocity.y = -velocity.y * bounciness;
+            velocity.y = -velocity.y * restitution;
             grounded = true;
             touched = true;
         }else{
             grounded = false;
             touched = false;
         }
-    }
-    
-    public void updateCollisionResponse(float delta){
-        
     }
     
     private void computeLinearMotion(float delta){
@@ -89,6 +88,13 @@ public class PhysicsEntity extends PhysicsObject{
         }
         
         position = position.add(velocity.multiply(delta));
+    }
+    
+    private void computeAngularMotion(float delta){
+        rotforce = finalRotForce();
+        angaccel = rotforce.divide(mass);
+        angvelocity.addThis(angaccel.multiply(delta));
+        rotation = rotation.multiply(new Quaternionf(angvelocity));
     }
     
     private Vector3f computeForces(float delta) {

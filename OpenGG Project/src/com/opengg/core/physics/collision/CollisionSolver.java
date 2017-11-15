@@ -8,6 +8,7 @@ package com.opengg.core.physics.collision;
 
 import com.opengg.core.math.FastMath;
 import com.opengg.core.math.Vector3f;
+import java.util.List;
 
 /**
  *
@@ -37,7 +38,7 @@ public class CollisionSolver {
         return null;
     }
     
-    public static ContactManifold SphereCylinder(SphereCollider c1, CapsuleCollider c2){
+    public static ContactManifold SphereCapsule(SphereCollider c1, CapsuleCollider c2){
         Vector3f closest = FastMath.closestPointTo(c2.getP1(), c2.getP2(), c1.getPosition(), true);  
         if(c1.getPosition().getDistance(closest) < c1.radius + c2.radius){
             ContactManifold data = new ContactManifold();
@@ -103,5 +104,10 @@ public class CollisionSolver {
         data.normal = c2.t.getNormalAt(np.x, np.z);
         data.depth = height-c1.getPosition().y;
         return data;
+    }
+    
+    public static ContactManifold HullHull(ConvexHull h1, ConvexHull h2){
+        List<Vector3f> msum = FastMath.minkowskiSum(h1.vertices, h2.vertices);
+        return null;
     }
 }

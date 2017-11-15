@@ -130,7 +130,11 @@ public class Vector3f implements Serializable{
     }
     
     public float getDistance(Vector3f v) {
-        return (float) Math.sqrt(Math.pow((this.x - v.x), 2) + Math.pow((this.y - v.y), 2) + Math.pow((this.z - v.z), 2));
+        return (float) Math.sqrt(this.getDistanceSquared(v));
+    }
+    
+    public float getDistanceSquared(Vector3f v){
+        return (float) (Math.pow((this.x - v.x), 2) + Math.pow((this.y - v.y), 2) + Math.pow((this.z - v.z), 2));
     }
     
     public static float getDistance(Vector3f v1, Vector3f v2){

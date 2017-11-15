@@ -10,7 +10,7 @@ import com.opengg.core.world.Deserializer;
 import com.opengg.core.world.Serializer;
 import com.opengg.core.world.TransitionEngine;
 import com.opengg.core.world.World;
-import com.opengg.core.physics.collision.CollisionHandler;
+import com.opengg.core.physics.collision.CollisionManager;
 import com.opengg.core.world.components.Component;
 import com.opengg.core.world.components.RenderComponent;
 import com.opengg.core.world.components.physics.CollisionComponent;
@@ -58,7 +58,7 @@ public class WorldEngine{
     }
     
     public static void update(float delta){
-        CollisionHandler.clearCollisions();
+        CollisionManager.clearCollisions();
         removeMarked();
         Animator.update(delta);
         if(enabled){

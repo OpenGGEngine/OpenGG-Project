@@ -106,10 +106,12 @@ public abstract class Component{
     /**
      * Sets the local position offset of the object relative to the parent
      * @param npos New position offset
+     * @return This object
      */
-    public final void setPositionOffset(Vector3f npos){
+    public final Component setPositionOffset(Vector3f npos){
         this.posoffset = npos;
         regenPos();
+        return this;
     }
     
     public void onPositionChange(Vector3f npos){

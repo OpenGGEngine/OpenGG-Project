@@ -34,19 +34,23 @@ public class CapsuleCollider extends Collider{
     }
     
     public Vector3f getP1(){
-        return p1.add(getPosition());
+        return parent.getPosition().add(parent.getRotation().transform(position.add(p1)));
     }
     
     public Vector3f getP2(){
-        return p2.add(getPosition());
+        return parent.getPosition().add(parent.getRotation().transform(position.add(p2)));
     }
     
     @Override
     public ContactManifold isColliding(Collider c) {
-        if(c instanceof SphereCollider)
-            return CollisionSolver.SphereCylinder((SphereCollider)c, this);
-        else if(c instanceof CapsuleCollider)
-            return CollisionSolver.CapsuleCapsule((CapsuleCollider)c, this);
+        if(c instanceof SphereCollider){
+            ContactManifold cm = CollisionSolver.SphereCapsule((SphereCollider)c, this);
+            if(cm == null)
+                return cm;
+            else
+                return cm.reverse();
+        }else if(c instanceof CapsuleCollider)
+            return CollisionSolver.CapsuleCapsule(this, (CapsuleCollider)c);
         else if(c instanceof TerrainCollider)
             return CollisionSolver.CylinderTerrain(this, (TerrainCollider)c);
         

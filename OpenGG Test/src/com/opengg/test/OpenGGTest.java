@@ -14,13 +14,13 @@ import com.opengg.core.gui.GUI;
 import com.opengg.core.gui.GUIText;
 import com.opengg.core.io.ControlType;
 import static com.opengg.core.io.input.keyboard.Key.*;
-import static com.opengg.core.math.FastMath.closestPointTo;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.model.ModelLoader;
 import com.opengg.core.physics.collision.AABB;
 import com.opengg.core.physics.collision.CapsuleCollider;
 import com.opengg.core.physics.collision.ColliderGroup;
+import com.opengg.core.physics.collision.SphereCollider;
 import com.opengg.core.render.Text;
 import com.opengg.core.render.light.Light;
 import com.opengg.core.render.shader.ShaderController;
@@ -32,7 +32,6 @@ import com.opengg.core.world.Skybox;
 import com.opengg.core.world.components.LightComponent;
 import com.opengg.core.world.components.ModelRenderComponent;
 import com.opengg.core.world.components.TerrainComponent;
-import com.opengg.core.world.components.physics.CollisionComponent;
 import com.opengg.core.world.components.physics.PhysicsComponent;
 
 public class OpenGGTest extends GGApplication{
@@ -80,18 +79,23 @@ public class OpenGGTest extends GGApplication{
                 + " the guardians of peace and justice in the galaxy, to settle the conflict...", new Vector2f(), 1f, 0.5f, false);
         GUI.addItem("aids", new GUIText(text, font, new Vector2f(0f,0)));
         
-        //WorldEngine.getCurrent().attach(new ModelRenderComponent(ModelLoader.loadModel("C:\\res\\animation\\model.bmf")));
+        WorldEngine.getCurrent().attach(new ModelRenderComponent(ModelLoader.loadModel("C:\\res\\moomoo\\moomoo.bmf")).setPositionOffset(new Vector3f(0,-20,0)));
         WorldEngine.getCurrent().attach(new LightComponent(new Light(new Vector3f(0,2,2), new Vector3f(1,1,1), 100, 0))); 
           
         TestPlayerComponent player = new TestPlayerComponent();
         player.setPositionOffset(new Vector3f(0,0,10));
         player.use();
+        
+        ModelRenderComponent testphys = new ModelRenderComponent(ModelLoader.loadModel("C\\res\\animation\\model.bmf"));
+        PhysicsComponent phys = new PhysicsComponent(new ColliderGroup(
+                new AABB(new Vector3f(),10,6,10),
+                new CapsuleCollider(new Vector3f(3,0,0),
+                        new Vector3f(-3,0,0),4)));
+        phys.getEntity().mass = 10;
+        
         WorldEngine.getCurrent().attach(player);
-        WorldEngine.getCurrent().attach(new ModelRenderComponent(ModelLoader.loadModel("C:\\res\\animation\\model.bmf"))
-                .attach(new PhysicsComponent(new ColliderGroup(new AABB(new Vector3f(),10,6,10), new CapsuleCollider(new Vector3f(0,1,0),2)))));
-        
-        System.out.println(closestPointTo(new Vector3f(0,0,0), new Vector3f(0,0,1), new Vector3f(0,0.5f,0.5f), true));
-        
+        WorldEngine.getCurrent().attach(testphys.attach(phys));
+
         BindController.addBind(ControlType.KEYBOARD, "forward", KEY_W);
         BindController.addBind(ControlType.KEYBOARD, "backward", KEY_S);
         BindController.addBind(ControlType.KEYBOARD, "left", KEY_A);

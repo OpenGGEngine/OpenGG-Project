@@ -9,6 +9,8 @@ package com.opengg.core.math;
  *
  * @author Warren
  */
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public final class FastMath {
@@ -528,5 +530,33 @@ public final class FastMath {
         end[0] = o1.add(d1.multiply(t1));
         end[1] = o2.add(d2.multiply(t2));
         return end;
+    }
+    
+    public static List<Vector3f> minkowskiSum(List<Vector3f> v1, List<Vector3f> v2){    
+        List<Vector3f> sum = new ArrayList<>();
+        
+        for(Vector3f vi : v1)
+            for(Vector3f vj : v2)
+                sum.add(vi.add(vj));
+        
+        return sum;
+    }
+    public static List<Vector3f> minkowskiDifference(List<Vector3f> v1, List<Vector3f> v2){    
+        List<Vector3f> sum = new ArrayList<>();
+        
+        for(Vector3f vi : v1)
+            for(Vector3f vj : v2)
+                sum.add(vi.subtract(vj));
+        
+        return sum;
+    }
+    
+    
+    public static Vector3f toRadians(Vector3f deg){
+        return deg.multiply(degRad);
+    }
+    
+    public static Vector3f toDegrees(Vector3f rad){
+        return rad.multiply(radDeg);
     }
 }

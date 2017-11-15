@@ -8,6 +8,7 @@ package com.opengg.core.physics.collision;
 
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
+import com.opengg.core.physics.PhysicsEntity;
 import com.opengg.core.physics.PhysicsObject;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,7 +20,7 @@ import java.util.List;
  */
 public class ColliderGroup extends PhysicsObject{
     AABB main;
-    PhysicsObject parent;
+    PhysicsEntity parent;
     List<Collider> colliders = new ArrayList<>();
     boolean lastcollided = false;
     boolean forcetest = false;
@@ -52,10 +53,8 @@ public class ColliderGroup extends PhysicsObject{
         this.main = box;
     }
     
-    public void setParent(PhysicsObject parent){
-        if(parent != this){
-            this.parent = parent;
-        }
+    public void setParent(PhysicsEntity parent){
+        this.parent = parent;
     }
     
     public Collision testForCollision(ColliderGroup other) {
@@ -65,6 +64,8 @@ public class ColliderGroup extends PhysicsObject{
         Collision c = null;
         for (Collider x: this.colliders) {
             for(Collider y: other.colliders) {
+                x.updatePositions();
+                y.updatePositions();
                 ContactManifold data = x.isColliding(y);
                 if ((data) != null){
                     if(c == null){

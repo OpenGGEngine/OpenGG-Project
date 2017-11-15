@@ -75,7 +75,7 @@ public class PhysicsComponent extends Component {
         out.write(entity.mass);
         out.write(entity.density);
         out.write(entity.frictionCoefficient);
-        out.write(entity.bounciness);
+        out.write(entity.restitution);
         out.write(entity.velocity);
         out.write(entity.angvelocity);
     }
@@ -87,7 +87,7 @@ public class PhysicsComponent extends Component {
         entity.mass = in.readFloat();
         entity.density = in.readFloat();
         entity.frictionCoefficient = in.readFloat();
-        entity.bounciness = in.readFloat();
+        entity.restitution = in.readFloat();
         entity.velocity = in.readVector3f();
         entity.angvelocity = in.readVector3f();
     }
