@@ -49,6 +49,10 @@ public class ColliderGroup extends PhysicsObject{
         }
     }
     
+    public List<Collider> getColliders(){
+        return colliders;
+    }
+    
     public void setBoundingBox(AABB box){
         this.main = box;
     }

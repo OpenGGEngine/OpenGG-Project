@@ -20,10 +20,10 @@ import java.util.List;
  */
 public class MaterialDrawnObject implements Drawable {
     Drawable d;
-    Material m = Material.defaultmaterial;
+    Material mat = Material.defaultmaterial;
     
     public void setM(Material m) {
-        this.m = m;
+        this.mat = m;
     }
 
     public MaterialDrawnObject(Drawable d){
@@ -32,7 +32,7 @@ public class MaterialDrawnObject implements Drawable {
     
     public MaterialDrawnObject(Drawable d, Material m){
         this.d = d;
-        this.m = m;
+        this.mat = m;
         m.loadTextures();
     }
     
@@ -46,7 +46,7 @@ public class MaterialDrawnObject implements Drawable {
     
     public MaterialDrawnObject(FloatBuffer b, IntBuffer index, Material m){
         d = new DrawnObject(b,index);
-        this.m = m;
+        this.mat = m;
         m.loadTextures();
     }
     
@@ -55,21 +55,21 @@ public class MaterialDrawnObject implements Drawable {
     }
     
     public Material getMaterial(){
-        return m;
+        return mat;
     }
     
     @Override
     public void render() {
-        if(m.Kd != null)
-            m.Kd.use(0); 
-        if(m.norm != null) 
-            m.norm.use(3);
-        if(m.Ks != null) 
-            m.Ks.use(4); 
-        if(m.Ns != null)
-            m.Ns.use(5);
+        if(mat.Kd != null)
+            mat.Kd.use(0); 
+        if(mat.norm != null) 
+            mat.norm.use(3);
+        if(mat.Ks != null) 
+            mat.Ks.use(4); 
+        if(mat.Ns != null)
+            mat.Ns.use(5);
 
-        ShaderController.passMaterial(m);
+        ShaderController.passMaterial(mat);
 
         d.render();
     }

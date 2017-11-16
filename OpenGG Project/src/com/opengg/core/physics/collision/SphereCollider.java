@@ -16,7 +16,7 @@ import java.io.IOException;
  */
 public class SphereCollider extends Collider{
     float radius;
-    
+  
     public SphereCollider(){
         this(1);
     }
@@ -24,6 +24,11 @@ public class SphereCollider extends Collider{
     public SphereCollider(float radius){
         this.radius = radius;
     }
+    
+    public float getRadius() {
+        return radius;
+    }
+  
     
     @Override
     public ContactManifold isColliding(Collider c) {

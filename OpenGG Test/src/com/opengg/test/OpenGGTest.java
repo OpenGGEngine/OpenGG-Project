@@ -14,13 +14,14 @@ import com.opengg.core.gui.GUI;
 import com.opengg.core.gui.GUIText;
 import com.opengg.core.io.ControlType;
 import static com.opengg.core.io.input.keyboard.Key.*;
+import com.opengg.core.math.FastMath;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.model.ModelLoader;
+import com.opengg.core.physics.PhysicsRenderer;
 import com.opengg.core.physics.collision.AABB;
 import com.opengg.core.physics.collision.CapsuleCollider;
 import com.opengg.core.physics.collision.ColliderGroup;
-import com.opengg.core.physics.collision.SphereCollider;
 import com.opengg.core.render.Text;
 import com.opengg.core.render.light.Light;
 import com.opengg.core.render.shader.ShaderController;
@@ -33,6 +34,8 @@ import com.opengg.core.world.components.LightComponent;
 import com.opengg.core.world.components.ModelRenderComponent;
 import com.opengg.core.world.components.TerrainComponent;
 import com.opengg.core.world.components.physics.PhysicsComponent;
+import java.util.ArrayList;
+import java.util.List;
 
 public class OpenGGTest extends GGApplication{
     private GGFont font;
@@ -58,8 +61,8 @@ public class OpenGGTest extends GGApplication{
     public  void setup(){
         Soundtrack track = new Soundtrack();
         track.addSong(Resource.getSoundData("windgarden.ogg"));
-        track.addSong(Resource.getSoundData("battlerock.ogg"));
-        track.addSong(Resource.getSoundData("floaterland.ogg"));
+        //track.addSong(Resource.getSoundData("battlerock.ogg"));
+        //track.addSong(Resource.getSoundData("floaterland.ogg"));
         //track.addSong(Resource.getSoundData("hell.ogg"));
         //track.addSong(Resource.getSoundData("intogalaxy.ogg"));
         //track.addSong(Resource.getSoundData("koopa.ogg"));
@@ -67,7 +70,7 @@ public class OpenGGTest extends GGApplication{
         //track.addSong(Resource.getSoundData("stardust.ogg"));
         track.shuffle();
         track.play();   
-        AudioController.setGlobalGain(0.2f);
+        AudioController.setGlobalGain(0f);
         SoundtrackHandler.setSoundtrack(track);
         
         font = Resource.getFont("test", "test.png");
@@ -79,18 +82,18 @@ public class OpenGGTest extends GGApplication{
                 + " the guardians of peace and justice in the galaxy, to settle the conflict...", new Vector2f(), 1f, 0.5f, false);
         GUI.addItem("aids", new GUIText(text, font, new Vector2f(0f,0)));
         
-        WorldEngine.getCurrent().attach(new ModelRenderComponent(ModelLoader.loadModel("C:\\res\\moomoo\\moomoo.bmf")).setPositionOffset(new Vector3f(0,-20,0)));
-        WorldEngine.getCurrent().attach(new LightComponent(new Light(new Vector3f(0,2,2), new Vector3f(1,1,1), 100, 0))); 
-          
         TestPlayerComponent player = new TestPlayerComponent();
-        player.setPositionOffset(new Vector3f(0,0,10));
+        player.setPositionOffset(new Vector3f(0,0,30));
         player.use();
         
-        ModelRenderComponent testphys = new ModelRenderComponent(ModelLoader.loadModel("C\\res\\animation\\model.bmf"));
+        WorldEngine.getCurrent().attach(new LightComponent(new Light(new Vector3f(0,2,2), new Vector3f(1,1,1), 1000, 0))); 
+        WorldEngine.getCurrent().attach(new ModelRenderComponent(Resource.getModel("goldleaf")).setScale(new Vector3f(0.1f)).setRotationOffset(new Vector3f(-90,0,0)));  
+        ModelRenderComponent testphys = new ModelRenderComponent(ModelLoader.loadModel("C:\\res\\sphere\\sphere.bmf"));
+        
         PhysicsComponent phys = new PhysicsComponent(new ColliderGroup(
                 new AABB(new Vector3f(),10,6,10),
                 new CapsuleCollider(new Vector3f(3,0,0),
-                        new Vector3f(-3,0,0),4)));
+                        new Vector3f(-3,0,0),2)));
         phys.getEntity().mass = 10;
         
         WorldEngine.getCurrent().attach(player);
@@ -117,8 +120,30 @@ public class OpenGGTest extends GGApplication{
                 Resource.getTexturePath("skybox\\majestic_rt.png"),
                 Resource.getTexturePath("skybox\\majestic_lf.png")), 1500f));
         
+        PhysicsRenderer.setEnabled(true);
+        
+        ArrayList<Vector3f> v1 = new ArrayList<>();
+        v1.add(new Vector3f(0,1,0));
+        v1.add(new Vector3f(1,-1,-1));
+        v1.add(new Vector3f(1,-1,1));
+        v1.add(new Vector3f(-1,-1,1));
+        v1.add(new Vector3f(-1,-1,-1));
+        
+        
+        ArrayList<Vector3f> v2 = new ArrayList<>();
+        v2.add(new Vector3f(0,-1.12f,0));
+        v2.add(new Vector3f(1,-2,-1));
+        v2.add(new Vector3f(1,-2,1));
+        v2.add(new Vector3f(-1,-2,1));
+        v2.add(new Vector3f(-1,-2,-1));
+        
+        List<Vector3f> mdif = FastMath.minkowskiDifference(v1, v2);
+        for(Vector3f f : mdif)
+            System.out.println(f);
+        List<Vector3f> fin = FastMath.runGJK(mdif);
+        System.out.println(fin);
     }
-    
+
     @Override
     public void render() {
         ShaderController.setPerspective(100, OpenGG.getWindow().getRatio(), 0.2f, 3000f);
@@ -126,6 +151,6 @@ public class OpenGGTest extends GGApplication{
 
     @Override
     public void update(float delta) {
-        ;
+        
     }
 }

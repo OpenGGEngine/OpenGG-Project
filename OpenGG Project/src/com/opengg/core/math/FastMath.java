@@ -10,6 +10,7 @@ package com.opengg.core.math;
  * @author Warren
  */
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
@@ -533,7 +534,7 @@ public final class FastMath {
     }
     
     public static List<Vector3f> minkowskiSum(List<Vector3f> v1, List<Vector3f> v2){    
-        List<Vector3f> sum = new ArrayList<>();
+        List<Vector3f> sum = new ArrayList<>(v1.size()*v2.size());
         
         for(Vector3f vi : v1)
             for(Vector3f vj : v2)
@@ -542,15 +543,48 @@ public final class FastMath {
         return sum;
     }
     public static List<Vector3f> minkowskiDifference(List<Vector3f> v1, List<Vector3f> v2){    
-        List<Vector3f> sum = new ArrayList<>();
+        List<Vector3f> diff = new ArrayList<>(v1.size()*v2.size());
         
         for(Vector3f vi : v1)
             for(Vector3f vj : v2)
-                sum.add(vi.subtract(vj));
+                diff.add(vi.subtract(vj));
         
-        return sum;
+        return diff;
     }
     
+    public static Vector3f getSupportingPoint(Vector3f dir, List<Vector3f> vertices){
+        float max = Float.NEGATIVE_INFINITY;
+        int index = 0;
+        for (int i = 0; i < vertices.size(); i++)
+        {
+            float dot = dir.dot(vertices.get(i));
+            if (dot > max)
+            {
+                max = dot;
+                index = i;
+            }
+        }
+        return vertices.get(index);
+    }
+
+    public static List<Vector3f> runGJK(List<Vector3f> vertices){
+        List<Vector3f> sim = new LinkedList<>();
+        Vector3f v = vertices.get(0);
+        Vector3f searchdir = v.inverse();
+        while(true){
+            Vector3f w = getSupportingPoint(searchdir, vertices);
+            if(w.dot(searchdir) < 0) return sim;
+            sim.add(w);
+            if(sim.size() == 2){
+                searchdir = closestPointTo(sim.get(0), sim.get(1), new Vector3f(), true).inverse();
+                continue;
+            }else if(sim.size() == 3){
+                Vector3f ab = sim.get(1).subtract(sim.get(0));
+                Vector3f ac = sim.get(2).subtract(sim.get(0));
+                Vector3f abc = sim.get(1).subtract(sim.get(0));
+            }
+        } 
+    }
     
     public static Vector3f toRadians(Vector3f deg){
         return deg.multiply(degRad);

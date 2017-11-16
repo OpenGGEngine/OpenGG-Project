@@ -72,6 +72,7 @@ public class CollisionManager {
                 Vector3f vr = v1.subtract(v2);
                 
                 Vector3f td = vr.subtract(vr.multiply(vr.dot(mf.normal)));
+                td = td.add(new Vector3f(0.000001f, 0.000001f, 0.000001f));
                 Vector3f t = td.divide(td.abs());
                 
                 float jdiv = e1.mass + e2.mass + 

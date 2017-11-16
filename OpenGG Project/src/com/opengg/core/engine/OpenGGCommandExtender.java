@@ -8,6 +8,7 @@ package com.opengg.core.engine;
 
 import com.opengg.core.audio.SoundtrackHandler;
 import static com.opengg.core.engine.OpenGG.*;
+import com.opengg.core.physics.PhysicsRenderer;
 
 /**
  *
@@ -57,6 +58,19 @@ public class OpenGGCommandExtender implements ConsoleListener{
             if(command.argCount == 1){
                 if(command.args[0].equalsIgnoreCase("list")){
                     BindController.printBinds();
+                }
+            }
+        }
+        
+        if(command.command.equalsIgnoreCase("phys")){
+            if(command.argCount == 2){
+                if(command.args[0].equalsIgnoreCase("render")){
+                    try{
+                        boolean vol = Boolean.parseBoolean(command.args[0].toLowerCase());
+                        PhysicsRenderer.setEnabled(vol);
+                    }catch(Exception e){
+                        GGConsole.error(command.args[0] + " is not a valid boolean!");
+                    }
                 }
             }
         }

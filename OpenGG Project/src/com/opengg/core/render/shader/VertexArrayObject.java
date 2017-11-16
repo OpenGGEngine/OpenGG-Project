@@ -31,7 +31,6 @@ public class VertexArrayObject {
     }
     
     public void applyFormat(GLBuffer... buffers){
-         
         vao.bind();
         int lastloc = 0;
         buffers[0].bind();

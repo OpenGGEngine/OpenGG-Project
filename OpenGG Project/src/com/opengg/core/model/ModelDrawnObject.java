@@ -69,8 +69,6 @@ public class ModelDrawnObject implements Drawable {
         if(currentAnimation != null){
             AnimatedFrame frame = this.getCurrentAnimation().getCurrentFrame();
             ShaderController.setUniform("jointsMatrix", frame.getJointMatrices());
-        }else{
-            ShaderController.setUniform("jointsMatrix", new Matrix4f[4]);
         }
         for(Drawable drawable : drawables) drawable.render();
     }

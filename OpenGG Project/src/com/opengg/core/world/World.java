@@ -69,16 +69,16 @@ public class World extends Component{
                     if(rg.getFormat().equals(r.getFormat())){
                         if(!rg.getList().contains(r)){
                             rg.add(r);
-                            break;
                         }
                         found = true;
+                        break;
                     }
                 }
             }            
         }
         
         if(!found){
-            RenderGroup group = new RenderGroup("world " + getId() + r.getShader() + r.getFormat().toString(), r.getFormat());
+            RenderGroup group = new RenderGroup("world " + getId() + " " + r.getShader() + " " + r.getFormat().toString() + " group: " + (groups.size() + 1), r.getFormat());
             group.add(r);
             group.setTransparent(r.isTransparent());
             group.setPipeline(r.getShader());

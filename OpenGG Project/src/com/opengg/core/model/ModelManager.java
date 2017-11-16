@@ -56,7 +56,7 @@ public class ModelManager {
                 GGConsole.warn("Failed to load model at " + path + ", using default model instead");
             }
         }catch(Exception e){
-            GGConsole.warn("Failed to load model at " + path + ", using default model instead");
+            GGConsole.warn("Failed to load model at " + path + " due to " + e.toString() + ", using default model instead");
         }
         return defaultm;
     }

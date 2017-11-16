@@ -113,13 +113,15 @@ public class OpenGG{
         ThreadManager.runRunnable(new GGConsole(), "consolethread");
         GGConsole.addListener(new OpenGGCommandExtender());
         GGConsole.log("OpenGG initializing, running on " + System.getProperty("os.name") + ", " + System.getProperty("os.arch"));
-        WorldEngine.initialize();
-        
+
         ExtensionManager.loadStep(Extension.CONFIG);
         
         if(client)
             initializeLocalClient(info);
 
+        WorldEngine.initialize();
+        PhysicsEngine.initialize();
+        
         GGConsole.log("Application setup beginning");
         app.setup();
         WorldEngine.useWorld(WorldEngine.getCurrent());
@@ -155,21 +157,22 @@ public class OpenGG{
     
     public static void run(){
         while (!getWindow().shouldClose() && !end) {
+            float delta = time.getDeltaSec();
+            processExecutables(delta);
+            
+            app.update(delta);
+            ExtensionManager.update(delta);
+            WorldEngine.update(delta);
+            PhysicsEngine.updatePhysics(delta);
+            SoundtrackHandler.update();
+            
             WindowController.update();
             startFrame();
             app.render();
             ExtensionManager.render();
             RenderEngine.draw();
             RenderEngine.checkForGLErrors();
-            endFrame();
-            
-            float delta = time.getDeltaSec();
-            processExecutables(delta);
-            app.update(delta);
-            ExtensionManager.update(delta);
-            WorldEngine.update(delta);
-            PhysicsEngine.updatePhysics(delta);
-            SoundtrackHandler.update();
+            endFrame();                   
         }
         
         GGConsole.log("OpenGG closing...");

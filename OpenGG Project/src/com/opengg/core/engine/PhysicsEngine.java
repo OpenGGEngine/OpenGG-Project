@@ -7,6 +7,7 @@ package com.opengg.core.engine;
 
 import com.opengg.core.physics.PhysicsSystem;
 import com.opengg.core.physics.PhysicsEntity;
+import com.opengg.core.physics.PhysicsRenderer;
 
 /**
  *
@@ -14,6 +15,10 @@ import com.opengg.core.physics.PhysicsEntity;
  */
 public class PhysicsEngine {
     static PhysicsSystem instance;
+    
+    public static void initialize(){
+        PhysicsRenderer.initialize();
+    }
     
     public static void addEntity(PhysicsEntity entity){
         instance.addEntity(entity);

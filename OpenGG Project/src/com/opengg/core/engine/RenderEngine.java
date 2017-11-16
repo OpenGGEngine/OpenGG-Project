@@ -110,7 +110,7 @@ public class RenderEngine {
     }
 
     public static void enableDefaultGroups(){
-        dlist = new RenderGroup("default");
+        dlist = new RenderGroup("defaultgroup");
         dlist.setPipeline("object");
         
         RenderPath path = new RenderPath("mainpath", () -> {
@@ -335,12 +335,12 @@ public class RenderEngine {
         }
         
         defaultvao.bind();
-
+        
         for(RenderPath path : getActiveRenderPaths()){
             path.render();
             resetConfig();
         }       
-
+        
         sceneTex.disableRendering();
         GUI.startGUIPos();
         PostProcessPipeline.process();

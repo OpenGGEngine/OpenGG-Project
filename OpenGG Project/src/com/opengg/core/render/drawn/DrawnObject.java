@@ -147,8 +147,8 @@ public class DrawnObject implements Drawable {
     @Override
     public void render(){  
         ShaderController.setModel(model);
-        RenderEngine.getCurrentVAO().applyFormat(vbo);
         evbo.bind();
+        RenderEngine.getCurrentVAO().applyFormat(vbo);
         glDrawElements(drawtype, ind.limit(), GL_UNSIGNED_INT, 0);
     }
 

@@ -33,6 +33,10 @@ public class CapsuleCollider extends Collider{
         this.p2 = p2;
     }
     
+    public float getRadius(){
+        return radius;
+    }
+    
     public Vector3f getP1(){
         return parent.getPosition().add(parent.getRotation().transform(position.add(p1)));
     }

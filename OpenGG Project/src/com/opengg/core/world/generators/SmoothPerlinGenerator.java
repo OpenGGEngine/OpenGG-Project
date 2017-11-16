@@ -19,7 +19,7 @@ public class SmoothPerlinGenerator implements HeightsGenerator{
     PerlinOctave[] octaves;
     double[] frequencys;
     double[] amplitudes;
-    public SmoothPerlinGenerator(int octavecount,double persistence, int seed){
+    public SmoothPerlinGenerator(int octavecount, double persistence, int seed){
         this.persistence=persistence;
         this.seed=seed;
 

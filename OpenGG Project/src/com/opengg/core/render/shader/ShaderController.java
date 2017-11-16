@@ -21,15 +21,13 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
  * @author Javier
  */
 public class ShaderController {
-    private static Matrix4f model= new Matrix4f(), view= new Matrix4f(), proj = new Matrix4f();
+    public static Matrix4f model= new Matrix4f(), view= new Matrix4f(), proj = new Matrix4f();
     private static HashMap<String, ShaderProgram> programs = new HashMap<>();
     private static HashMap<String, ShaderPipeline> pipelines = new HashMap<>(); 
     private static HashMap<String, String> rnames = new HashMap<>();
@@ -255,6 +253,7 @@ public class ShaderController {
     }
     
     public static void setView(Matrix4f view){
+        ShaderController.view = view;
         setUniform("view", view);
     }
     

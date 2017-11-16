@@ -31,7 +31,7 @@ public abstract class Component{
     public boolean absoluteOffset = false;
     public boolean enabled = true;
     public float updatedistance = 0;
-    private String name = "";
+    private String name = "default";
     private Component parent;
     private Vector3f posoffset = new Vector3f();
     private Quaternionf rotoffset = new Quaternionf();
@@ -119,14 +119,24 @@ public abstract class Component{
     }
     
     /**
+     * Sets the local rotation offset of the object relative to the parent, in a euclidean vector
+     * @param nrot New rotation offset
+     * @return This object
+     */
+    public final Component setRotationOffset(Vector3f nrot){
+        return this.setRotationOffset(new Quaternionf(nrot));
+    }
+    
+    /**
      * Sets the local rotation offset of the object relative to the parent
      * @param nrot New rotation offset
+     * @return This object
      */
-    public final void setRotationOffset(Quaternionf nrot){
+    public final Component setRotationOffset(Quaternionf nrot){
         this.rotoffset = nrot;
         regenRot();
         for(Component c : children) if(!c.getPositionOffset().equals(new Vector3f())) c.regenPos();
-        
+         return this;
     }
     
     public void onRotationChange(Quaternionf nrot){
@@ -136,11 +146,13 @@ public abstract class Component{
     /**
      * Sets the scaling offset of the object relative to the parent
      * @param nscale New scale offset
+     * @return This object
      */
-    public final void setScale(Vector3f nscale){
+    public final Component setScale(Vector3f nscale){
         this.scale = nscale;
         
         onScaleChange(nscale);
+        return this;
     }
     
     public void onScaleChange(Vector3f nscale){

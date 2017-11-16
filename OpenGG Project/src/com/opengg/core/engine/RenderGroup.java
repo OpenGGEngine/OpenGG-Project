@@ -78,7 +78,6 @@ public class RenderGroup {
     }
     
     public RenderGroup add(Renderable r){
-        
         if(!items.contains(r))
             items.add(r);
         return this;
