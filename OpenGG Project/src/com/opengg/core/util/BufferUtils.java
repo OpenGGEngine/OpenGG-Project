@@ -17,11 +17,9 @@ public class BufferUtils {
             return source.array();
         }else{
             source.rewind();
-            System.out.println(source.limit());
             byte[] array = new byte[source.limit()];
             for(int i = 0; i < array.length; i++){
                 array[i] = source.get();
-                System.out.println(array[i]);
             }
             return array;
         }

@@ -359,14 +359,8 @@ public class Vector3f implements Serializable{
     @Override
     public boolean equals(Object ot){
         if(ot instanceof Vector3f){
-            Vector3f o = (Vector3f) ot;
-            if(!isEqual(o.x, this.x))
-                return false;
-            if(!isEqual(o.y, this.y))
-                return false;
-            if(!isEqual(o.z, this.z))
-                return false;
-            return true;
+            Vector3f v = (Vector3f)ot;
+            return FastMath.isEqual(v.x, x) && FastMath.isEqual(v.y, y)  && FastMath.isEqual(v.z, z);
         }   
         return false;
     }

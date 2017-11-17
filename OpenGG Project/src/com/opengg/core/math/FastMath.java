@@ -10,6 +10,7 @@ package com.opengg.core.math;
  * @author Warren
  */
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -552,7 +553,8 @@ public final class FastMath {
         return diff;
     }
     
-    public static Vector3f getSupportingPoint(Vector3f dir, List<Vector3f> vertices){
+    //where is the student center
+    public static Vector3f getSupport(Vector3f dir, List<Vector3f> vertices){
         float max = Float.NEGATIVE_INFINITY;
         int index = 0;
         for (int i = 0; i < vertices.size(); i++)
@@ -567,23 +569,331 @@ public final class FastMath {
         return vertices.get(index);
     }
 
-    public static List<Vector3f> runGJK(List<Vector3f> vertices){
-        List<Vector3f> sim = new LinkedList<>();
-        Vector3f v = vertices.get(0);
-        Vector3f searchdir = v.inverse();
-        while(true){
-            Vector3f w = getSupportingPoint(searchdir, vertices);
-            if(w.dot(searchdir) < 0) return sim;
-            sim.add(w);
-            if(sim.size() == 2){
-                searchdir = closestPointTo(sim.get(0), sim.get(1), new Vector3f(), true).inverse();
-                continue;
-            }else if(sim.size() == 3){
-                Vector3f ab = sim.get(1).subtract(sim.get(0));
-                Vector3f ac = sim.get(2).subtract(sim.get(0));
-                Vector3f abc = sim.get(1).subtract(sim.get(0));
+    public static Simplex runGJK(List<Vector3f> vecs){
+        Simplex s = new Simplex();
+        
+        s.v = new Vector3f( 1, 0, 0 );
+        s.n = 0; 
+ 
+        for( ; ; )
+        {
+            s.a = getSupport(s.v, vecs);
+ 
+            if( s.a.dot(s.v) < 0 )
+                return null;
+ 
+            if( updateGJK(s) ){
+                return s;
+            }  
+        }
+    }
+    
+    private static boolean updateGJK(Simplex s){
+        if(s.n == 0){
+            s.b = s.a;
+            s.v = s.a.inverse();
+            s.n = 1;
+            return false;
+        }else if(s.n == 1){
+            s.v = crossABA( s.b.subtract(s.a), s.a.inverse() );
+ 
+            s.c = s.b;
+            s.b = s.a; 
+            s.n = 2;
+            return false;
+        } else if (s.n == 2) {
+            Vector3f ao = s.a.inverse();
+            Vector3f ab = s.b.subtract(s.a);
+            Vector3f ac = s.c.subtract(s.a);
+
+            Vector3f abc = ab.cross(ac);
+            Vector3f abp = ab.cross(abc);
+
+            if (abp.dot(ao) > 0) {
+
+                s.c = s.b;
+                s.b = s.a;
+
+                s.v = crossABA(ab, ao);
+
+                return false;
             }
-        } 
+
+            Vector3f acp = abc.cross(ac);
+
+            if (acp.dot(ao) > 0) {
+                s.b = s.a;
+                s.v = crossABA(ac, ao);
+                return false;
+            }
+
+            if (abc.dot(ao) > 0) {
+                s.d = s.c;
+                s.c = s.b;
+                s.b = s.a;
+
+                s.v = abc;
+            } else {
+                s.d = s.b;
+                s.b = s.a;
+
+                s.v = abc.inverse();
+            }
+
+            s.n = 3;
+
+            return false;
+        } else if (s.n == 3) {
+            Vector3f ao = s.a.inverse();
+
+            Vector3f ab = s.b.subtract(s.a);
+            Vector3f ac = s.c.subtract(s.a);
+            Vector3f ad = s.d.subtract(s.a);
+
+            Vector3f abc = ab.cross(ac);
+            Vector3f acd = ac.cross(ad);
+            Vector3f adb = ad.cross(ab);
+
+            Vector3f tmp;
+            final int over_abc = 0x1;
+            final int over_acd = 0x2;
+            final int over_adb = 0x4;
+
+            int plane_tests
+                    = (abc.dot(ao) > 0 ? over_abc : 0)
+                    | (acd.dot(ao) > 0 ? over_acd : 0)
+                    | (adb.dot(ao) > 0 ? over_adb : 0);
+
+            switch (plane_tests) {
+                case 0:
+                    return true;
+
+                case over_abc:
+                    return checkOneFace(s,ab,ac,ad,ao,abc);
+
+                case over_acd:
+
+                    s.b = s.c;
+                    s.c = s.d;
+
+                    ab = ac;
+                    ac = ad;
+
+                    abc = acd;
+
+                    return checkOneFace(s,ab,ac,ad,ao,abc);
+
+                case over_adb:
+
+                    s.c = s.b;
+                    s.b = s.d;
+
+                    ac = ab;
+                    ab = ad;
+
+                    abc = adb;
+
+                    return checkOneFace(s,ab,ac,ad,ao,abc);
+
+                case over_abc | over_acd:
+                    return checkTwoFaces(s,ab,ac,ad,ao,abc,acd);
+
+                case over_acd | over_adb:
+
+
+                    tmp = s.b;
+                    s.b = s.c;
+                    s.c = s.d;
+                    s.d = tmp;
+
+                    tmp = ab;
+                    ab = ac;
+                    ac = ad;
+                    ad = tmp;
+
+                    abc = acd;
+                    acd = adb;
+
+                    return checkTwoFaces(s,ab,ac,ad,ao,abc,acd);
+
+                case over_adb | over_abc:
+
+                    tmp = s.c;
+                    s.c = s.b;
+                    s.b = s.d;
+                    s.d = tmp;
+
+                    tmp = ac;
+                    ac = ab;
+                    ab = ad;
+                    ad = tmp;
+
+                    acd = abc;
+                    abc = adb;
+
+                    return checkTwoFaces(s,ab,ac,ad,ao,abc,acd);
+
+                default:
+                    return true;
+            }          
+        }
+        return false;
+    }
+    
+    private static boolean checkOneFace(Simplex s, Vector3f ab, Vector3f ac, Vector3f ad, Vector3f ao, Vector3f abc){
+        
+        if (abc.cross(ac).dot(ao) > 0) {
+
+            s.b = s.a;
+
+            s.v = crossABA(ac, ao);
+
+            s.n = 2;
+
+            return false;
+        }
+        return checkOneFacePt2(s,ab,ac,ad,ao,abc);
+    }
+    
+    private static boolean checkOneFacePt2(Simplex s, Vector3f ab, Vector3f ac, Vector3f ad, Vector3f ao, Vector3f abc){
+        if (ab.cross(abc).dot(ao) > 0) {
+
+            s.c = s.b;
+            s.b = s.a;
+
+            s.v = crossABA(ab, ao);
+
+            s.n = 2;
+
+            return false;
+        }
+
+        s.d = s.c;
+        s.c = s.b;
+        s.b = s.a;
+
+        s.v = abc;
+
+        s.n = 3;
+
+        return false;
+    }
+
+    private static boolean checkTwoFaces(Simplex s, Vector3f ab, Vector3f ac, Vector3f ad, Vector3f ao, Vector3f abc, Vector3f acd) {
+        if (abc.cross(ac).dot(ao) > 0) {
+
+            s.b = s.c;
+            s.c = s.d;
+
+            ab = ac;
+            ac = ad;
+
+            abc = acd;
+            return checkOneFace(s,ab,ac,ad,ao,abc);
+        }
+
+        return checkOneFacePt2(s,ab,ac,ad,ao,abc);
+    }
+
+    private static Vector3f crossABA(Vector3f a, Vector3f b) {
+        return a.cross(b).cross(a);
+    }
+    
+    public static Vector3f runEPA(Simplex s, List<Vector3f> mdif){
+        final float EXIT_THRESHOLD = 0.001f;
+        final int EXIT_ITERATION_LIMIT = 50;
+        int EXIT_ITERATION_CUR = 0;
+        List<Triangle> triangles = new LinkedList<>();
+        List<Edge> edges = new LinkedList<>();
+
+			// process the specified edge, if another edge with the same points in the
+        // opposite order exists then it is removed and the new point is also not added
+        // this ensures only the outermost ring edges of a cluster of triangles remain
+        // in the list
+        
+
+        // add the GJK simplex triangles to the list
+        triangles.add(new Triangle(s.a, s.b, s.c));
+        triangles.add(new Triangle(s.a, s.c, s.d));
+        triangles.add(new Triangle(s.a, s.d, s.b));
+        triangles.add(new Triangle(s.b, s.d, s.c));
+
+        while (true) {
+            if (EXIT_ITERATION_CUR++ >= EXIT_ITERATION_LIMIT) {
+                return null;
+            }
+            // find closest triangle to origin
+            Triangle closest = new Triangle(new Vector3f(), new Vector3f(), new Vector3f());
+            float entry_cur_dst = Float.MAX_VALUE;
+            
+            for (Triangle triangle : triangles) {
+                float dst = Math.abs(triangle.n.dot(triangle.a));
+                if (dst < entry_cur_dst) {
+                    entry_cur_dst = dst;
+                    closest = triangle;
+                }
+            }
+            Vector3f support = getSupport(closest.n, mdif);
+
+            if ((closest.n.dot(support) - entry_cur_dst < EXIT_THRESHOLD)) {
+                return support;
+            }
+
+            Iterator<Triangle> iterator = triangles.iterator();
+            while(iterator.hasNext()) {
+                
+                Triangle t = iterator.next();
+                if (t.n.dot(support.subtract(t.a)) > 0) {
+                    addEdge(t.a,t.b,edges);
+                    addEdge(t.b,t.c,edges);
+                    addEdge(t.c,t.a,edges);
+                    iterator.remove();
+                }
+            }
+
+            // create new triangles from the edges in the edge list
+            for (Edge edge : edges) {
+                triangles.add(new Triangle(support, edge.a, edge.b));
+            }
+
+            edges.clear();
+        }
+    }
+ 
+    private static void addEdge(Vector3f a, Vector3f b, List<Edge> edges) {
+        for (Edge edge : edges) {
+            if(edge.a.equals(b) && edge.b.equals(a)) {
+                edges.remove(edge);
+                return;
+            }
+        }
+        edges.add(new Edge(a,b));
+    }
+
+
+              
+    private static class Edge{
+        Vector3f a;
+        Vector3f b;
+        
+        public Edge(Vector3f a, Vector3f b){
+            this.a = a;
+            this.b = b;
+        }
+    }
+    
+    private static class Triangle{
+        Vector3f a;
+        Vector3f b;
+        Vector3f c;
+        Vector3f n;
+        
+        public Triangle(Vector3f a, Vector3f b, Vector3f c){
+            this.a = a;
+            this.b = b;
+            this.c = c;
+            n = b.subtract(a).multiply(c.subtract(a)).add(new Vector3f(0.0001f,0.0001f,0.0001f)).normalize();
+        }
     }
     
     public static Vector3f toRadians(Vector3f deg){

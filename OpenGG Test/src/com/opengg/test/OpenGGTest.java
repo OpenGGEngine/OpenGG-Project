@@ -15,6 +15,7 @@ import com.opengg.core.gui.GUIText;
 import com.opengg.core.io.ControlType;
 import static com.opengg.core.io.input.keyboard.Key.*;
 import com.opengg.core.math.FastMath;
+import com.opengg.core.math.Simplex;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.model.ModelLoader;
@@ -123,25 +124,24 @@ public class OpenGGTest extends GGApplication{
         PhysicsRenderer.setEnabled(true);
         
         ArrayList<Vector3f> v1 = new ArrayList<>();
-        v1.add(new Vector3f(0,1,0));
-        v1.add(new Vector3f(1,-1,-1));
-        v1.add(new Vector3f(1,-1,1));
-        v1.add(new Vector3f(-1,-1,1));
-        v1.add(new Vector3f(-1,-1,-1));
+        v1.add(new Vector3f(0,10000,0));
+        v1.add(new Vector3f(1,1,-1));
+        v1.add(new Vector3f(0,-1,0));
+        v1.add(new Vector3f(-1,1,1));
+        v1.add(new Vector3f(-1,1,-1));
         
         
         ArrayList<Vector3f> v2 = new ArrayList<>();
-        v2.add(new Vector3f(0,-1.12f,0));
-        v2.add(new Vector3f(1,-2,-1));
-        v2.add(new Vector3f(1,-2,1));
-        v2.add(new Vector3f(-1,-2,1));
-        v2.add(new Vector3f(-1,-2,-1));
+        v2.add(new Vector3f(0,-0.9f,0));
+        v2.add(new Vector3f(100,-200,-100));
+        v2.add(new Vector3f(100,-200,100));
+        v2.add(new Vector3f(-100,-200,100));
+        v2.add(new Vector3f(-100,-200,-100));
         
         List<Vector3f> mdif = FastMath.minkowskiDifference(v1, v2);
-        for(Vector3f f : mdif)
-            System.out.println(f);
-        List<Vector3f> fin = FastMath.runGJK(mdif);
-        System.out.println(fin);
+        Simplex fin = FastMath.runGJK(mdif);
+        Vector3f clos = FastMath.runEPA(fin, mdif);
+        System.out.println(clos);
     }
 
     @Override

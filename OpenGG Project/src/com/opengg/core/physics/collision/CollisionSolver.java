@@ -7,6 +7,7 @@
 package com.opengg.core.physics.collision;
 
 import com.opengg.core.math.FastMath;
+import com.opengg.core.math.Simplex;
 import com.opengg.core.math.Vector3f;
 import java.util.List;
 
@@ -108,6 +109,10 @@ public class CollisionSolver {
     
     public static ContactManifold HullHull(ConvexHull h1, ConvexHull h2){
         List<Vector3f> msum = FastMath.minkowskiSum(h1.vertices, h2.vertices);
-        return null;
+        Simplex s = FastMath.runGJK(msum);
+        if(s == null) return null;
+        ContactManifold cm = new ContactManifold();
+        //cm.
+        return cm;
     }
 }
