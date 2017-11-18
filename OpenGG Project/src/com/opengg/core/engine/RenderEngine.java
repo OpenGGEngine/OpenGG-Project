@@ -55,6 +55,7 @@ public class RenderEngine {
     private static Camera camera;
     private static VertexArrayObject currentvao;
     private static VertexArrayObject defaultvao;
+    private static ProjectionData projdata;
 
     static void init() {
         ShaderController.initialize();
@@ -295,6 +296,14 @@ public class RenderEngine {
         return camera;
     }
 
+    public static void setProjectionData(ProjectionData data){
+        projdata = data;
+    }
+    
+    public static ProjectionData getData(){
+        return projdata;
+    }
+    
     public static boolean isInitialized() {
         return initialized;
     }
@@ -321,6 +330,8 @@ public class RenderEngine {
     public static void draw(){
         ShaderController.setView(camera.getMatrix());
         ShaderController.setUniform("camera", camera.getPos().inverse());
+        projdata.ratio = OpenGG.getWindow().getRatio();
+        projdata.use();
 
         sceneTex.enableRendering();
         sceneTex.useEnabledAttachments();

@@ -31,12 +31,12 @@ public class ProjectionData {
     
     private ProjectionData(){}
     
-    public static ProjectionData getPerspective(float fov, float ratio, float minz, float maxz){
+    public static ProjectionData getPerspective(float fov, float minz, float maxz){
         ProjectionData data = new ProjectionData();
         
         data.type = PERSPECTIVE;
         data.fov = fov;
-        data.ratio = ratio;
+        data.ratio = OpenGG.getWindow().getRatio();
         data.minz = minz;
         data.maxz = maxz;
         

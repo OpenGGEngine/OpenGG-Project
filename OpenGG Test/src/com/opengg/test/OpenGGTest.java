@@ -7,6 +7,7 @@ import com.opengg.core.engine.AudioController;
 import com.opengg.core.engine.BindController;
 import com.opengg.core.engine.GGApplication;
 import com.opengg.core.engine.OpenGG;
+import com.opengg.core.engine.ProjectionData;
 import com.opengg.core.engine.RenderEngine;
 import com.opengg.core.engine.Resource;
 import com.opengg.core.engine.WorldEngine;
@@ -113,6 +114,7 @@ public class OpenGGTest extends GGApplication{
         BindController.addBind(ControlType.KEYBOARD, "fire", KEY_L);
         BindController.addBind(ControlType.KEYBOARD, "aim", KEY_K);
         
+        RenderEngine.setProjectionData(ProjectionData.getPerspective(100, 0.2f, 3000f));
         RenderEngine.setSkybox(new Skybox(Texture.getCubemap(
                 Resource.getTexturePath("skybox\\majestic_ft.png"),
                 Resource.getTexturePath("skybox\\majestic_bk.png"),
@@ -145,12 +147,8 @@ public class OpenGGTest extends GGApplication{
     }
 
     @Override
-    public void render() {
-        ShaderController.setPerspective(100, OpenGG.getWindow().getRatio(), 0.2f, 3000f);
-    }
+    public void render() {}
 
     @Override
-    public void update(float delta) {
-        
-    }
+    public void update(float delta) {}
 }
