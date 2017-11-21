@@ -18,8 +18,8 @@ import java.util.List;
  * @author Javier
  */
 public class CollisionManager {
-    static List<Collision> collisions = new ArrayList<>();
-    static List<ColliderGroup> test = new LinkedList<>();
+    private static List<Collision> collisions = new ArrayList<>();
+    private static List<ColliderGroup> test = new LinkedList<>();
     
     public static void clearCollisions(){
         collisions.clear();

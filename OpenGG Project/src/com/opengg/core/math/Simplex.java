@@ -11,6 +11,7 @@ package com.opengg.core.math;
  * @author Javier
  */
 public class Simplex {
-    Vector3f a, b, c, d, v;
-    int n;
+    public MinkowskiSet a, b, c, d;
+    public Vector3f v;
+    public int n;
 }

@@ -49,7 +49,7 @@ public class Camera {
     }
     
     public Matrix4f getMatrix(){
-        Matrix4f matrix = new Matrix4f().rotateQuat(rot).translate(pos);
+        Matrix4f matrix = new Matrix4f().rotate(rot).translate(pos);
         return matrix;
     }
 }

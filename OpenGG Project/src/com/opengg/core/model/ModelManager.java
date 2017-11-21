@@ -15,11 +15,9 @@ import java.util.Map;
  *
  * @author Javier
  */
-public class ModelManager {
-
+public class ModelManager{
     private static Map<String,Model> modellist = new HashMap<>();
     private static Model defaultm;
-    public static int repsave = 0;
     
     public static void initialize(){
         

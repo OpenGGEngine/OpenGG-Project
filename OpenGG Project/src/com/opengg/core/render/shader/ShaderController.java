@@ -27,16 +27,17 @@ import java.util.List;
  * @author Javier
  */
 public class ShaderController {
-    public static Matrix4f model= new Matrix4f(), view= new Matrix4f(), proj = new Matrix4f();
+
+    private static Matrix4f model = new Matrix4f(), view = new Matrix4f(), proj = new Matrix4f();
     private static HashMap<String, ShaderProgram> programs = new HashMap<>();
-    private static HashMap<String, ShaderPipeline> pipelines = new HashMap<>(); 
+    private static HashMap<String, ShaderPipeline> pipelines = new HashMap<>();
     private static HashMap<String, String> rnames = new HashMap<>();
     private static List<String> searchedUniforms = new ArrayList<>();
     private static List<String> searchedAttribs = new ArrayList<>();
     private static String currentvert, currenttesc, currenttese, currentgeom, currentfrag;
     private static int currentBind = 0;
-    
-    public static void initialize(){
+
+    public static void initialize() {
         loadShader("mainvert", Resource.getShaderPath("object.vert"), ShaderProgram.VERTEX);
         loadShader("animvert", Resource.getShaderPath("anim.vert"), ShaderProgram.VERTEX);
         loadShader("particlevert", Resource.getShaderPath("particle.vert"), ShaderProgram.VERTEX);
@@ -47,7 +48,7 @@ public class ShaderController {
         loadShader("volumegeom", Resource.getShaderPath("volume.geom"), ShaderProgram.GEOMETRY);
         loadShader("mainadjgeom", Resource.getShaderPath("objectadj.geom"), ShaderProgram.GEOMETRY);
         loadShader("passthroughadjgeom", Resource.getShaderPath("passthroughadj.geom"), ShaderProgram.GEOMETRY);
-        
+
         loadShader("mainfrag", Resource.getShaderPath("phong.frag"), ShaderProgram.FRAGMENT);
         loadShader("shadowfrag", Resource.getShaderPath("phongshadow.frag"), ShaderProgram.FRAGMENT);
         loadShader("passthroughfrag", Resource.getShaderPath("passthrough.frag"), ShaderProgram.FRAGMENT);

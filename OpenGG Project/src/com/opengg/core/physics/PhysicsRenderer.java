@@ -16,8 +16,10 @@ import com.opengg.core.model.Model;
 import com.opengg.core.physics.collision.CapsuleCollider;
 import com.opengg.core.physics.collision.Collider;
 import com.opengg.core.physics.collision.ColliderGroup;
+import com.opengg.core.physics.collision.ConvexHull;
 import com.opengg.core.physics.collision.SphereCollider;
 import com.opengg.core.render.drawn.Drawable;
+import com.opengg.core.render.drawn.DrawnObject;
 
 /**
  *
@@ -65,8 +67,9 @@ public class PhysicsRenderer {
             sphereobj.setMatrix(new Matrix4f().translate(nc.getP1()).scale(new Vector3f(nc.getRadius())));
             sphereobj.render();
             
+            Vector3f cdir = nc.getP1().subtract(nc.getP2()).normalize();
             cylinderobj.setMatrix(new Matrix4f().translate(Vector3f.lerp(nc.getP1(), nc.getP2(), 0.5f))
-                    .rotateQuat(new Quaternionf(nc.getP1().subtract(nc.getP2()).normalize()))
+                    .rotate(new Quaternionf(new Vector3f(cdir.y, cdir.x, cdir.z)))
                     .scale(new Vector3f(nc.getRadius(), nc.getP1().subtract(nc.getP2()).length(), nc.getRadius())));
             cylinderobj.render();
             

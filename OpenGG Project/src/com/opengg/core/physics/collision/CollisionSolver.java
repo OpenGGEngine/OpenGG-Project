@@ -7,6 +7,7 @@
 package com.opengg.core.physics.collision;
 
 import com.opengg.core.math.FastMath;
+import com.opengg.core.math.MinkowskiSet;
 import com.opengg.core.math.Simplex;
 import com.opengg.core.math.Vector3f;
 import java.util.List;
@@ -108,11 +109,14 @@ public class CollisionSolver {
     }
     
     public static ContactManifold HullHull(ConvexHull h1, ConvexHull h2){
-        List<Vector3f> msum = FastMath.minkowskiSum(h1.vertices, h2.vertices);
+        List<MinkowskiSet> msum = FastMath.minkowskiDifference(h1.vertices, h2.vertices);
         Simplex s = FastMath.runGJK(msum);
         if(s == null) return null;
         ContactManifold cm = new ContactManifold();
-        //cm.
+        MinkowskiSet contact = FastMath.runEPA(s, msum);
+        cm.depth = contact.a.getDistance(contact.b);
+        cm.normal = contact.a.subtract(contact.b);
+        cm.point = Vector3f.lerp(contact.a, contact.a, 0.5f);
         return cm;
     }
 }

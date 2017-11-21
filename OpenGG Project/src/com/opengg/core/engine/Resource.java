@@ -20,7 +20,7 @@ import java.io.IOException;
  * @author Javier
  */
 public class Resource {
-    static String current;
+    private static String current;
     
     public static void initialize(){
         try{

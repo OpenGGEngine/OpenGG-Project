@@ -16,6 +16,7 @@ import com.opengg.core.gui.GUIText;
 import com.opengg.core.io.ControlType;
 import static com.opengg.core.io.input.keyboard.Key.*;
 import com.opengg.core.math.FastMath;
+import com.opengg.core.math.MinkowskiSet;
 import com.opengg.core.math.Simplex;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
@@ -26,7 +27,6 @@ import com.opengg.core.physics.collision.CapsuleCollider;
 import com.opengg.core.physics.collision.ColliderGroup;
 import com.opengg.core.render.Text;
 import com.opengg.core.render.light.Light;
-import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.texture.text.GGFont;
 import com.opengg.core.render.window.WindowInfo;
@@ -127,7 +127,6 @@ public class OpenGGTest extends GGApplication{
         
         ArrayList<Vector3f> v1 = new ArrayList<>();
         v1.add(new Vector3f(0,10000,0));
-        v1.add(new Vector3f(1,1,-1));
         v1.add(new Vector3f(0,-1,0));
         v1.add(new Vector3f(-1,1,1));
         v1.add(new Vector3f(-1,1,-1));
@@ -140,10 +139,13 @@ public class OpenGGTest extends GGApplication{
         v2.add(new Vector3f(-100,-200,100));
         v2.add(new Vector3f(-100,-200,-100));
         
-        List<Vector3f> mdif = FastMath.minkowskiDifference(v1, v2);
+        List<MinkowskiSet> mdif = FastMath.minkowskiDifference(v1, v2);
         Simplex fin = FastMath.runGJK(mdif);
-        Vector3f clos = FastMath.runEPA(fin, mdif);
-        System.out.println(clos);
+        MinkowskiSet clos = FastMath.runEPA(fin, mdif);
+        System.out.println(clos.a);
+        System.out.println(clos.b);
+        System.out.println(clos.v);
+
     }
 
     @Override

@@ -141,7 +141,7 @@ public class Matrix4f {
         return init.mul(this);
     }
     
-    public Matrix4f rotateQuat(Quaternionf q) {
+    public Matrix4f rotate(Quaternionf q) {
         return this.multiply(q.convertMatrix());
     }
 
