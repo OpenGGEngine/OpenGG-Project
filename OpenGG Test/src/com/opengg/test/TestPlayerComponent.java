@@ -13,6 +13,7 @@ import com.opengg.core.math.Vector3f;
 import com.opengg.core.physics.Force;
 import com.opengg.core.physics.collision.AABB;
 import com.opengg.core.physics.collision.CapsuleCollider;
+import com.opengg.core.physics.collision.ConvexHull;
 import com.opengg.core.physics.collision.SphereCollider;
 import com.opengg.core.world.Action;
 import com.opengg.core.world.ActionType;
@@ -23,6 +24,7 @@ import com.opengg.core.world.components.UserControlComponent;
 import com.opengg.core.world.components.WorldObject;
 import com.opengg.core.world.components.physics.CollisionComponent;
 import com.opengg.core.world.components.physics.PhysicsComponent;
+import java.util.ArrayList;
 
 /**
  *
@@ -56,7 +58,12 @@ public class TestPlayerComponent extends Component implements Actionable{
         head.setAbsoluteOffset(true);
         controller = new UserControlComponent();
         playerphysics = new PhysicsComponent();
-        playerphysics.addCollider(new CollisionComponent(new AABB(new Vector3f(),10,6,10), new SphereCollider(1)));
+        ArrayList<Vector3f> v1 = new ArrayList<>();
+        v1.add(new Vector3f(0,10,0));
+        v1.add(new Vector3f(0,-1,0));
+        v1.add(new Vector3f(-1,1,1));
+        v1.add(new Vector3f(-1,1,-1));
+        playerphysics.addCollider(new CollisionComponent(new AABB(new Vector3f(),10,6,10), new ConvexHull(v1)));
         playerphysics.getEntity().mass = 1f;
         playerphysics.getEntity().restitution = 0.1f;
         playerphysics.getEntity().frictionCoefficient = 0f;

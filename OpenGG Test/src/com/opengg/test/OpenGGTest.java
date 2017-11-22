@@ -25,6 +25,7 @@ import com.opengg.core.physics.PhysicsRenderer;
 import com.opengg.core.physics.collision.AABB;
 import com.opengg.core.physics.collision.CapsuleCollider;
 import com.opengg.core.physics.collision.ColliderGroup;
+import com.opengg.core.physics.collision.ConvexHull;
 import com.opengg.core.render.Text;
 import com.opengg.core.render.light.Light;
 import com.opengg.core.render.texture.Texture;
@@ -92,10 +93,21 @@ public class OpenGGTest extends GGApplication{
         WorldEngine.getCurrent().attach(new ModelRenderComponent(Resource.getModel("goldleaf")).setScale(new Vector3f(0.1f)).setRotationOffset(new Vector3f(-90,0,0)));  
         ModelRenderComponent testphys = new ModelRenderComponent(ModelLoader.loadModel("C:\\res\\sphere\\sphere.bmf"));
         
+        ArrayList<Vector3f> v2 = new ArrayList<>();
+        v2.add(new Vector3f(-10,-10,-10));
+        v2.add(new Vector3f(-10,10,-10));
+        v2.add(new Vector3f(-10,-10,10));
+        v2.add(new Vector3f(-10,10,10));
+        v2.add(new Vector3f(10,-10,-10));
+        v2.add(new Vector3f(10,10,-10));
+        v2.add(new Vector3f(10,-10,10));
+        v2.add(new Vector3f(10,10,10));
+        
+        
         PhysicsComponent phys = new PhysicsComponent(new ColliderGroup(
-                new AABB(new Vector3f(),10,6,10),
-                new CapsuleCollider(new Vector3f(3,0,0),
-                        new Vector3f(-3,0,0),2)));
+                new AABB(new Vector3f(),10,6,10), new ConvexHull(v2)));
+                //new CapsuleCollider(new Vector3f(3,0,0),
+                //        new Vector3f(-3,0,0),2)));
         phys.getEntity().mass = 10;
         
         WorldEngine.getCurrent().attach(player);
@@ -124,28 +136,6 @@ public class OpenGGTest extends GGApplication{
                 Resource.getTexturePath("skybox\\majestic_lf.png")), 1500f));
         
         PhysicsRenderer.setEnabled(true);
-        
-        ArrayList<Vector3f> v1 = new ArrayList<>();
-        v1.add(new Vector3f(0,10,0));
-        v1.add(new Vector3f(0,-1,0));
-        v1.add(new Vector3f(-1,1,1));
-        v1.add(new Vector3f(-1,1,-1));
-        
-        
-        ArrayList<Vector3f> v2 = new ArrayList<>();
-        v2.add(new Vector3f(0,-0.9f,0));
-        v2.add(new Vector3f(100,-200,-100));
-        v2.add(new Vector3f(100,-200,100));
-        v2.add(new Vector3f(-100,-200,100));
-        v2.add(new Vector3f(-100,-200,-100));
-        
-        List<MinkowskiSet> mdif = FastMath.minkowskiDifference(v1, v2);
-        Simplex fin = FastMath.runGJK(mdif);
-        MinkowskiSet clos = FastMath.runEPA(fin, mdif);
-        System.out.println(clos.a);
-        System.out.println(clos.b);
-        System.out.println(clos.v);
-
     }
 
     @Override

@@ -543,12 +543,41 @@ public final class FastMath {
         
         return sum;
     }
+    
+    public static List<MinkowskiSet> minkowskiSum(List<Vector3f> v1, List<Vector3f> v2, Matrix4f m1, Matrix4f m2){    
+        List<MinkowskiSet> sum = new ArrayList<>(v1.size()*v2.size());
+        
+        for(Vector3f vi : v1){
+            for(Vector3f vj : v2){
+                Vector3f t1 = m1.transform(new Vector4f(vi)).truncate();
+                Vector3f t2 = m2.transform(new Vector4f(vj)).truncate();
+                sum.add(new MinkowskiSet(t1,t2,t1.add(t2)));
+            }
+        }
+        
+        return sum;
+    }
+    
     public static List<MinkowskiSet> minkowskiDifference(List<Vector3f> v1, List<Vector3f> v2){    
         List<MinkowskiSet> diff = new ArrayList<>(v1.size()*v2.size());
         
         for(Vector3f vi : v1)
             for(Vector3f vj : v2)
                 diff.add(new MinkowskiSet(vi,vj,vi.subtract(vj)));
+        
+        return diff;
+    }
+    
+    public static List<MinkowskiSet> minkowskiDifference(List<Vector3f> v1, List<Vector3f> v2, Matrix4f m1, Matrix4f m2){    
+        List<MinkowskiSet> diff = new ArrayList<>(v1.size()*v2.size());
+        
+        for(Vector3f vi : v1){
+            for(Vector3f vj : v2){
+                Vector3f t1 = m1.transform(new Vector4f(vi)).truncate();
+                Vector3f t2 = m2.transform(new Vector4f(vj)).truncate();
+                diff.add(new MinkowskiSet(t1,t2,t1.subtract(t2)));
+            }
+        }
         
         return diff;
     }
@@ -799,7 +828,7 @@ public final class FastMath {
         return a.cross(b).cross(a);
     }
     
-    public static MinkowskiSet runEPA(Simplex s, List<MinkowskiSet> mdif){
+    public static MinkowskiTriangle runEPA(Simplex s, List<MinkowskiSet> mdif){
         final float EXIT_THRESHOLD = 0.001f;
         final int EXIT_ITERATION_LIMIT = 50;
         int EXIT_ITERATION_CUR = 0;
@@ -830,7 +859,7 @@ public final class FastMath {
             MinkowskiSet support = getSupport(closest.n, mdif);
 
             if ((closest.n.dot(support.v) - entry_cur_dst < EXIT_THRESHOLD)) {
-                return support;
+                return closest;
             }
 
             Iterator<MinkowskiTriangle> iterator = triangles.iterator();
@@ -863,79 +892,9 @@ public final class FastMath {
         }
         edges.add(new MinkowskiEdge(a,b));
     }
-//
-//    bool GJKEPAGenerator
-//
-//    ::extrapolateContactInformation(MinkowskiTriangle triangle, Matrix4f transform1, Matrix4f tr) {
-//	const
-//        Matrix & colliderA_toWorld = contactData -> colliders[0]->collision_detection.mtxColliderToWorld;
-//        const
-//        Matrix & colliderB_toWorld = contactData -> colliders[1]->collision_detection.mtxColliderToWorld;
-//        const
-//        float distanceFromOrigin = triangle -> n | triangle -> points[0].v;
-//
-//	// calculate the barycentric coordinates of the closest triangle with respect to
-//        // the projection of the origin onto the triangle
-//        float bary_u, bary_v, bary_w;
-//        barycentric(triangle -> n * distanceFromOrigin,
-//                triangle -> points[0].v,
-//                triangle -> points[1].v,
-//                triangle -> points[2].v,
-//                 & bary_u,
-//                 & bary_v,
-//                 & bary_w);
-//
-//        // barycentric can fail and generate invalid coordinates, if this happens return false
-//        if (!is_valid(bary_u) || !is_valid(bary_v) || !is_valid(bary_w)) {
-//            return false;
-//        }
-//
-//	// if any of the barycentric coefficients have a magnitude greater than 1, then the origin is not within the triangular prism described by 'triangle'
-//        // thus, there is no collision here, return false
-//        if (fabs(bary_u) > 1.0f || fabs(bary_v) > 1.0f || fabs(bary_w) > 1.0f) {
-//            return false;
-//        }
-//        // collision point on object a in world space
-//        const
-//        Vector3 wcolpoint(
-//		(bary_u * (triangle -> points[0].localSupports[0] * colliderA_toWorld)) +
-//		(bary_v * (triangle -> points[1].localSupports[0] * colliderA_toWorld)) +
-//		(bary_w * (triangle -> points[2].localSupports[0] * colliderA_toWorld)
-//    
-//    ));
-//
-//	// collision normal
-//	const Vector3 wcolnormal = -triangle -> n;
-//
-//    // penetration depth
-//    const float wpendepth = distanceFromOrigin;
-//
-//    contactData
-//    ->point  = wcolpoint;
-//    contactData
-//    ->normal  = wcolnormal;
-//    contactData
-//    ->penetration  = wpendepth;
-//
-//    for(uint8 i = 0;
-//    i< 2; i
-//    ++)
-//		for(uint8 j = 0;
-//    j< 3; j
-//    ++)
-//			contactData
-//    ->triangleSupports_local 
-//    [i][j
-//    ] = triangle
-//    ->points 
-//    [j].localSupports 
-//    [i];
-//
-//
-//
-//return true;
-//}    
-//    
+
+    
+    
     private static class Edge{
         Vector3f a;
         Vector3f b;
@@ -967,20 +926,6 @@ public final class FastMath {
             this.b = b;
             this.c = c;
             n = b.subtract(a).cross(c.subtract(a));
-        }
-    }
-    
-    private static class MinkowskiTriangle{
-        MinkowskiSet a;
-        MinkowskiSet b;
-        MinkowskiSet c;
-        Vector3f n;
-        
-        public MinkowskiTriangle(MinkowskiSet a, MinkowskiSet b, MinkowskiSet c){
-            this.a = a;
-            this.b = b;
-            this.c = c;
-            n = b.v.subtract(a.v).cross(c.v.subtract(a.v));
         }
     }
     

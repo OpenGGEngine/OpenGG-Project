@@ -7,7 +7,6 @@
 package com.opengg.core.physics.collision;
 
 import com.opengg.core.math.Vector3f;
-import com.opengg.core.model.Face;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,14 +23,14 @@ public class ConvexHull extends Collider{
         this.faces = faces;
     }
     
-    public ConvexHull(List<Face> faces){
-        
+    public ConvexHull(List<Vector3f> vertices){
+        this.vertices = vertices;
     }
 
     @Override
     public ContactManifold isColliding(Collider c) {
         if(c instanceof ConvexHull){
-            
+            return CollisionSolver.HullHull(this, (ConvexHull)c);
         }
         return null;
     }

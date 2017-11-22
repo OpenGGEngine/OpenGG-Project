@@ -21,4 +21,13 @@ public class ContactManifold {
         normal = normal.inverse();
         return this;
     }
+    
+    @Override
+    public String toString(){
+        String s = "";
+        s += "Collision normal: " + normal + "\n";
+        s += "Collision point: " + point + "\n";
+        s += "Collision depth: " + depth + "\n";
+        return s;
+    }
 }

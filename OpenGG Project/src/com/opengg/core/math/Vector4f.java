@@ -151,6 +151,10 @@ public class Vector4f {
         }
     }
     
+    public Vector3f truncate(){
+        return new Vector3f(x,y,z);
+    }
+    
     @Override
     public String toString(){
         return x + ", " + y + ", " + z + ", " + w; 
