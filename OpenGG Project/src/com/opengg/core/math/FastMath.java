@@ -534,32 +534,32 @@ public final class FastMath {
         return end;
     }
     
-    public static List<Vector3f> minkowskiSum(List<Vector3f> v1, List<Vector3f> v2){    
-        List<Vector3f> sum = new ArrayList<>(v1.size()*v2.size());
+    public static List<MinkowskiSet> minkowskiSum(List<Vector3f> v1, List<Vector3f> v2){    
+        List<MinkowskiSet> sum = new ArrayList<>(v1.size()*v2.size());
         
         for(Vector3f vi : v1)
             for(Vector3f vj : v2)
-                sum.add(vi.add(vj));
+                sum.add(new MinkowskiSet(vi,vj,vi.add(vj)));
         
         return sum;
     }
-    public static List<Vector3f> minkowskiDifference(List<Vector3f> v1, List<Vector3f> v2){    
-        List<Vector3f> diff = new ArrayList<>(v1.size()*v2.size());
+    public static List<MinkowskiSet> minkowskiDifference(List<Vector3f> v1, List<Vector3f> v2){    
+        List<MinkowskiSet> diff = new ArrayList<>(v1.size()*v2.size());
         
         for(Vector3f vi : v1)
             for(Vector3f vj : v2)
-                diff.add(vi.subtract(vj));
+                diff.add(new MinkowskiSet(vi,vj,vi.subtract(vj)));
         
         return diff;
     }
     
     //where is the student center
-    public static Vector3f getSupport(Vector3f dir, List<Vector3f> vertices){
+    public static MinkowskiSet getSupport(Vector3f dir, List<MinkowskiSet> vertices){
         float max = Float.NEGATIVE_INFINITY;
         int index = 0;
         for (int i = 0; i < vertices.size(); i++)
         {
-            float dot = dir.dot(vertices.get(i));
+            float dot = dir.dot(vertices.get(i).v);
             if (dot > max)
             {
                 max = dot;
@@ -569,7 +569,7 @@ public final class FastMath {
         return vertices.get(index);
     }
 
-    public static Simplex runGJK(List<Vector3f> vecs){
+    public static Simplex runGJK(List<MinkowskiSet> vecs){
         Simplex s = new Simplex();
         
         s.v = new Vector3f( 1, 0, 0 );
@@ -579,7 +579,7 @@ public final class FastMath {
         {
             s.a = getSupport(s.v, vecs);
  
-            if( s.a.dot(s.v) < 0 )
+            if( s.a.v.dot(s.v) < 0 )
                 return null;
  
             if( updateGJK(s) ){
@@ -591,20 +591,20 @@ public final class FastMath {
     private static boolean updateGJK(Simplex s){
         if(s.n == 0){
             s.b = s.a;
-            s.v = s.a.inverse();
+            s.v = s.v.inverse();
             s.n = 1;
             return false;
         }else if(s.n == 1){
-            s.v = crossABA( s.b.subtract(s.a), s.a.inverse() );
+            s.v = crossABA( s.b.v.subtract(s.a.v), s.a.v.inverse() );
  
             s.c = s.b;
             s.b = s.a; 
             s.n = 2;
             return false;
         } else if (s.n == 2) {
-            Vector3f ao = s.a.inverse();
-            Vector3f ab = s.b.subtract(s.a);
-            Vector3f ac = s.c.subtract(s.a);
+            Vector3f ao = s.a.v.inverse();
+            Vector3f ab = s.b.v.subtract(s.a.v);
+            Vector3f ac = s.c.v.subtract(s.a.v);
 
             Vector3f abc = ab.cross(ac);
             Vector3f abp = ab.cross(abc);
@@ -644,11 +644,11 @@ public final class FastMath {
 
             return false;
         } else if (s.n == 3) {
-            Vector3f ao = s.a.inverse();
+            Vector3f ao = s.a.v.inverse();
 
-            Vector3f ab = s.b.subtract(s.a);
-            Vector3f ac = s.c.subtract(s.a);
-            Vector3f ad = s.d.subtract(s.a);
+            Vector3f ab = s.b.v.subtract(s.a.v);
+            Vector3f ac = s.c.v.subtract(s.a.v);
+            Vector3f ad = s.d.v.subtract(s.a.v);
 
             Vector3f abc = ab.cross(ac);
             Vector3f acd = ac.cross(ad);
@@ -701,10 +701,10 @@ public final class FastMath {
                 case over_acd | over_adb:
 
 
-                    tmp = s.b;
+                    tmp = s.b.v;
                     s.b = s.c;
                     s.c = s.d;
-                    s.d = tmp;
+                    s.d.v = tmp;
 
                     tmp = ab;
                     ab = ac;
@@ -718,10 +718,10 @@ public final class FastMath {
 
                 case over_adb | over_abc:
 
-                    tmp = s.c;
+                    tmp = s.c.v;
                     s.c = s.b;
                     s.b = s.d;
-                    s.d = tmp;
+                    s.d.v = tmp;
 
                     tmp = ac;
                     ac = ab;
@@ -799,51 +799,45 @@ public final class FastMath {
         return a.cross(b).cross(a);
     }
     
-    public static Vector3f runEPA(Simplex s, List<Vector3f> mdif){
+    public static MinkowskiSet runEPA(Simplex s, List<MinkowskiSet> mdif){
         final float EXIT_THRESHOLD = 0.001f;
         final int EXIT_ITERATION_LIMIT = 50;
         int EXIT_ITERATION_CUR = 0;
-        List<Triangle> triangles = new LinkedList<>();
-        List<Edge> edges = new LinkedList<>();
+        List<MinkowskiTriangle> triangles = new LinkedList<>();
+        List<MinkowskiEdge> edges = new LinkedList<>();
 
-			// process the specified edge, if another edge with the same points in the
-        // opposite order exists then it is removed and the new point is also not added
-        // this ensures only the outermost ring edges of a cluster of triangles remain
-        // in the list
-        
-
-        // add the GJK simplex triangles to the list
-        triangles.add(new Triangle(s.a, s.b, s.c));
-        triangles.add(new Triangle(s.a, s.c, s.d));
-        triangles.add(new Triangle(s.a, s.d, s.b));
-        triangles.add(new Triangle(s.b, s.d, s.c));
+        triangles.add(new MinkowskiTriangle(s.a, s.b, s.c));
+        triangles.add(new MinkowskiTriangle(s.a, s.c, s.d));
+        triangles.add(new MinkowskiTriangle(s.a, s.d, s.b));
+        triangles.add(new MinkowskiTriangle(s.b, s.d, s.c));
 
         while (true) {
             if (EXIT_ITERATION_CUR++ >= EXIT_ITERATION_LIMIT) {
                 return null;
             }
             // find closest triangle to origin
-            Triangle closest = new Triangle(new Vector3f(), new Vector3f(), new Vector3f());
+            MinkowskiTriangle closest = new MinkowskiTriangle(new MinkowskiSet(),new MinkowskiSet(),new MinkowskiSet());
             float entry_cur_dst = Float.MAX_VALUE;
             
-            for (Triangle triangle : triangles) {
-                float dst = Math.abs(triangle.n.dot(triangle.a));
+            for (MinkowskiTriangle triangle : triangles) {
+                float dst = Math.abs(triangle.n.dot(triangle.a.v));
                 if (dst < entry_cur_dst) {
                     entry_cur_dst = dst;
                     closest = triangle;
                 }
             }
-            Vector3f support = getSupport(closest.n, mdif);
+            
+            MinkowskiSet support = getSupport(closest.n, mdif);
 
-            if ((closest.n.dot(support) - entry_cur_dst < EXIT_THRESHOLD)) {
+            if ((closest.n.dot(support.v) - entry_cur_dst < EXIT_THRESHOLD)) {
                 return support;
             }
 
-            Iterator<Triangle> iterator = triangles.iterator();
+            Iterator<MinkowskiTriangle> iterator = triangles.iterator();
             while(iterator.hasNext()) {
                 
-                Triangle t = iterator.next();
-                if (t.n.dot(support.subtract(t.a)) > 0) {
+                MinkowskiTriangle t = iterator.next();
+                if (t.n.dot(support.v.subtract(t.a.v)) > 0) {
                     addEdge(t.a,t.b,edges);
                     addEdge(t.b,t.c,edges);
                     addEdge(t.c,t.a,edges);
@@ -852,31 +846,111 @@ public final class FastMath {
             }
 
             // create new triangles from the edges in the edge list
-            for (Edge edge : edges) {
-                triangles.add(new Triangle(support, edge.a, edge.b));
+            for (MinkowskiEdge edge : edges) {
+                triangles.add(new MinkowskiTriangle(support, edge.a, edge.b));
             }
 
             edges.clear();
         }
     }
  
-    private static void addEdge(Vector3f a, Vector3f b, List<Edge> edges) {
-        for (Edge edge : edges) {
-            if(edge.a.equals(b) && edge.b.equals(a)) {
+    private static void addEdge(MinkowskiSet a, MinkowskiSet b, List<MinkowskiEdge> edges) {
+        for (MinkowskiEdge edge : edges) {
+            if(edge.a.v.equals(b.v) && edge.b.v.equals(a.v)) {
                 edges.remove(edge);
                 return;
             }
         }
-        edges.add(new Edge(a,b));
+        edges.add(new MinkowskiEdge(a,b));
     }
-
-
-              
+//
+//    bool GJKEPAGenerator
+//
+//    ::extrapolateContactInformation(MinkowskiTriangle triangle, Matrix4f transform1, Matrix4f tr) {
+//	const
+//        Matrix & colliderA_toWorld = contactData -> colliders[0]->collision_detection.mtxColliderToWorld;
+//        const
+//        Matrix & colliderB_toWorld = contactData -> colliders[1]->collision_detection.mtxColliderToWorld;
+//        const
+//        float distanceFromOrigin = triangle -> n | triangle -> points[0].v;
+//
+//	// calculate the barycentric coordinates of the closest triangle with respect to
+//        // the projection of the origin onto the triangle
+//        float bary_u, bary_v, bary_w;
+//        barycentric(triangle -> n * distanceFromOrigin,
+//                triangle -> points[0].v,
+//                triangle -> points[1].v,
+//                triangle -> points[2].v,
+//                 & bary_u,
+//                 & bary_v,
+//                 & bary_w);
+//
+//        // barycentric can fail and generate invalid coordinates, if this happens return false
+//        if (!is_valid(bary_u) || !is_valid(bary_v) || !is_valid(bary_w)) {
+//            return false;
+//        }
+//
+//	// if any of the barycentric coefficients have a magnitude greater than 1, then the origin is not within the triangular prism described by 'triangle'
+//        // thus, there is no collision here, return false
+//        if (fabs(bary_u) > 1.0f || fabs(bary_v) > 1.0f || fabs(bary_w) > 1.0f) {
+//            return false;
+//        }
+//        // collision point on object a in world space
+//        const
+//        Vector3 wcolpoint(
+//		(bary_u * (triangle -> points[0].localSupports[0] * colliderA_toWorld)) +
+//		(bary_v * (triangle -> points[1].localSupports[0] * colliderA_toWorld)) +
+//		(bary_w * (triangle -> points[2].localSupports[0] * colliderA_toWorld)
+//    
+//    ));
+//
+//	// collision normal
+//	const Vector3 wcolnormal = -triangle -> n;
+//
+//    // penetration depth
+//    const float wpendepth = distanceFromOrigin;
+//
+//    contactData
+//    ->point  = wcolpoint;
+//    contactData
+//    ->normal  = wcolnormal;
+//    contactData
+//    ->penetration  = wpendepth;
+//
+//    for(uint8 i = 0;
+//    i< 2; i
+//    ++)
+//		for(uint8 j = 0;
+//    j< 3; j
+//    ++)
+//			contactData
+//    ->triangleSupports_local 
+//    [i][j
+//    ] = triangle
+//    ->points 
+//    [j].localSupports 
+//    [i];
+//
+//
+//
+//return true;
+//}    
+//    
     private static class Edge{
         Vector3f a;
         Vector3f b;
         
         public Edge(Vector3f a, Vector3f b){
+            this.a = a;
+            this.b = b;
+        }
+    }
+    
+    private static class MinkowskiEdge{
+        MinkowskiSet a;
+        MinkowskiSet b;
+        
+        public MinkowskiEdge(MinkowskiSet a, MinkowskiSet b){
             this.a = a;
             this.b = b;
         }
@@ -892,7 +966,21 @@ public final class FastMath {
             this.a = a;
             this.b = b;
             this.c = c;
-            n = b.subtract(a).multiply(c.subtract(a)).add(new Vector3f(0.0001f,0.0001f,0.0001f)).normalize();
+            n = b.subtract(a).cross(c.subtract(a));
+        }
+    }
+    
+    private static class MinkowskiTriangle{
+        MinkowskiSet a;
+        MinkowskiSet b;
+        MinkowskiSet c;
+        Vector3f n;
+        
+        public MinkowskiTriangle(MinkowskiSet a, MinkowskiSet b, MinkowskiSet c){
+            this.a = a;
+            this.b = b;
+            this.c = c;
+            n = b.v.subtract(a.v).cross(c.v.subtract(a.v));
         }
     }
     

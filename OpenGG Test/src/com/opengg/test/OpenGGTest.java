@@ -126,7 +126,7 @@ public class OpenGGTest extends GGApplication{
         PhysicsRenderer.setEnabled(true);
         
         ArrayList<Vector3f> v1 = new ArrayList<>();
-        v1.add(new Vector3f(0,10000,0));
+        v1.add(new Vector3f(0,10,0));
         v1.add(new Vector3f(0,-1,0));
         v1.add(new Vector3f(-1,1,1));
         v1.add(new Vector3f(-1,1,-1));
