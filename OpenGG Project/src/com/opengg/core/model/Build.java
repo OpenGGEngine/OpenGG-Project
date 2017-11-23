@@ -9,6 +9,7 @@ package com.opengg.core.model;
  *
  * @author Warren
  */
+import com.opengg.core.math.Vector3fm;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import java.io.File;
@@ -322,33 +323,39 @@ public class Build implements BuilderInterface {
     }
 
     public void setXYZ(int type, float x, float y, float z) {
-        Vector3f rt = currentMaterialBeingParsed.ka;
-        if (type == MTL_KD) {
-            rt = currentMaterialBeingParsed.kd;
-        } else if (type == MTL_KS) {
-            rt = currentMaterialBeingParsed.ks;
-        } else if (type == MTL_TF) {
-            rt = currentMaterialBeingParsed.tf;
-        }
+        Vector3fm rt = new Vector3fm();
 
         rt.x = x;
         rt.y = y;
         rt.z = z;
+        
+        Vector3f nv = new Vector3f(rt);
+        currentMaterialBeingParsed.ka = nv;
+        if (type == MTL_KD) {
+            currentMaterialBeingParsed.kd = nv;
+        } else if (type == MTL_KS) {
+            currentMaterialBeingParsed.ks = nv;
+        } else if (type == MTL_TF) {
+            currentMaterialBeingParsed.tf = nv;
+        }
     }
 
     public void setRGB(int type, float r, float g, float b) {
-        Vector3f rt = currentMaterialBeingParsed.ka;
-        if (type == MTL_KD) {
-            rt = currentMaterialBeingParsed.kd;
-        } else if (type == MTL_KS) {
-            rt = currentMaterialBeingParsed.ks;
-        } else if (type == MTL_TF) {
-            rt = currentMaterialBeingParsed.tf;
-        }
+        Vector3fm rt = new Vector3fm();
 
         rt.x = r;
         rt.y = g;
         rt.z = b;
+        
+        Vector3f nv = new Vector3f(rt);
+        currentMaterialBeingParsed.ka = nv;
+        if (type == MTL_KD) {
+            currentMaterialBeingParsed.kd = nv;
+        } else if (type == MTL_KS) {
+            currentMaterialBeingParsed.ks = nv;
+        } else if (type == MTL_TF) {
+            currentMaterialBeingParsed.tf = nv;
+        }
     }
 
     public void setIllum(int illumModel) {

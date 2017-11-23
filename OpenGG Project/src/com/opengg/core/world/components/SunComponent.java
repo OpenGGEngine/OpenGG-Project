@@ -60,8 +60,8 @@ public class SunComponent extends RenderComponent{
     @Override
     public void update(float delta){
         currot += delta * rotspeed;
-        getPositionOffset().x = (float) (SUN_DIS * Math.cos(currot));
-        getPositionOffset().y = (float) (SUN_DIS * Math.sin(currot));
+        setPositionOffset(getPositionOffset().setX((float) (SUN_DIS * Math.cos(currot))));
+        getPositionOffset().setY((float) (SUN_DIS * Math.sin(currot)));
     }
     
     public float getRotationSpeed() {

@@ -54,13 +54,13 @@ public class TerrainComponent extends RenderComponent{
     
     public float getHeightAt(Vector3f pos){
         Vector3f np = pos.subtract(getPosition()).divide(getScale());
-        float height = terrain.getHeight(np.x, np.z);
-        return (height + getPosition().y) * getScale().y;  
+        float height = terrain.getHeight(np.x(), np.z());
+        return (height + getPosition().x()) * getScale().y();  
     }
     
     public Vector3f getNormalAt(Vector3f pos){
         Vector3f np = pos.subtract(getPosition()).divide(getScale());
-        Vector3f normal = terrain.getNormalAt(np.x, np.z);
+        Vector3f normal = terrain.getNormalAt(np.x(), np.z());
         return normal;
     }
     

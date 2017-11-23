@@ -34,22 +34,22 @@ public class AABB {
     }
     
     public void recenter(Vector3f pos) {
-        vertices[MIN].y = (this.pos.y + pos.y) - height / 2;
-        vertices[MIN].x = (this.pos.x + pos.x) - width / 2;
-        vertices[MIN].z = (this.pos.z + pos.z) - length / 2;
+        vertices[MIN] = vertices[MIN].setY((this.pos.x() + pos.x()) - height / 2);
+        vertices[MIN] = vertices[MIN].setX((this.pos.y() + pos.y()) - width / 2);
+        vertices[MIN] = vertices[MIN].setZ((this.pos.z() + pos.z()) - length / 2);
 
-        vertices[MAX].y = (this.pos.y + pos.y) + height / 2;
-        vertices[MAX].x = (this.pos.x + pos.x) + width / 2;
-        vertices[MAX].z = (this.pos.z + pos.z) + length / 2;
+        vertices[MAX] = vertices[MAX].setY((this.pos.x() + pos.x()) + height / 2);
+        vertices[MAX] = vertices[MAX].setX((this.pos.y() + pos.y()) + width / 2);
+        vertices[MAX] = vertices[MAX].setZ((this.pos.z() + pos.z()) + length / 2);
     }
     
     public boolean isColliding(AABB x) {
-        return ! (vertices[MAX].x < x.vertices[MIN].x || 
-                  vertices[MAX].y < x.vertices[MIN].y ||
-                  vertices[MAX].z < x.vertices[MIN].z ||
-                  vertices[MIN].x > x.vertices[MAX].x || 
-                  vertices[MIN].y > x.vertices[MAX].y ||
-                  vertices[MIN].z > x.vertices[MAX].z);
+        return ! (vertices[MAX].x() < x.vertices[MIN].x() || 
+                  vertices[MAX].y() < x.vertices[MIN].y() ||
+                  vertices[MAX].z() < x.vertices[MIN].z() ||
+                  vertices[MIN].x() > x.vertices[MAX].x() || 
+                  vertices[MIN].y() > x.vertices[MAX].y() ||
+                  vertices[MIN].z() > x.vertices[MAX].z());
     }
     
     public Vector3f getPos(){

@@ -38,7 +38,7 @@ public class DirectionalExplosionParticleEmitter extends ExplosionParticleEmitte
         
             Vector3f finalv = offset.transform(direction);
             finalv = getRotation().transform(finalv);
-            finalv.multiplyThis(velocity);
+            finalv = finalv.multiply(velocity);
             addParticle(new Particle(getPosition(), finalv, lifeLength, 1f));
         }
     }

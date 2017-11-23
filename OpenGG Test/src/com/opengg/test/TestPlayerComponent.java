@@ -10,11 +10,10 @@ import com.opengg.core.engine.BindController;
 import com.opengg.core.math.FastMath;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
+import com.opengg.core.math.Vector3fm;
 import com.opengg.core.physics.Force;
 import com.opengg.core.physics.collision.AABB;
-import com.opengg.core.physics.collision.CapsuleCollider;
 import com.opengg.core.physics.collision.ConvexHull;
-import com.opengg.core.physics.collision.SphereCollider;
 import com.opengg.core.world.Action;
 import com.opengg.core.world.ActionType;
 import com.opengg.core.world.Actionable;
@@ -36,8 +35,8 @@ public class TestPlayerComponent extends Component implements Actionable{
     private final CameraComponent camera;
     //private final GunComponent gun;
     
-    Vector3f control = new Vector3f();
-    Vector3f controlrot = new Vector3f();
+    Vector3fm control = new Vector3fm();
+    Vector3fm controlrot = new Vector3fm();
     Vector3f currot = new Vector3f();
     Vector3f weaponpos = new Vector3f(0.5f,1.1f,-2f);
     Vector3f aweaponpos = new Vector3f(0f,1.2f,-2f);
@@ -82,21 +81,20 @@ public class TestPlayerComponent extends Component implements Actionable{
     
     @Override
     public void update(float delta){
-        currot.x += controlrot.x * rotspeed * delta;
-        currot.y += controlrot.y * rotspeed * delta;
-        currot.z += controlrot.z * rotspeed * delta;
+        currot = currot.setX(currot.x() + controlrot.x * rotspeed * delta);
+        currot = currot.setY(currot.y() + controlrot.y * rotspeed * delta);
+        currot = currot.setZ(currot.z() + controlrot.z * rotspeed * delta);
                 
-        this.setRotationOffset(new Quaternionf(new Vector3f(0,currot.y,currot.z)));      
+        this.setRotationOffset(new Quaternionf(new Vector3f(0, currot.y(), currot.z())));      
         Vector3f movement = new Vector3f(control.x  * speed, 0 ,control.z  *speed);
         movement = getRotation().transform(movement);
         
-        head.setRotationOffset(new Quaternionf(new Vector3f(currot.x,0,0)));
+        head.setRotationOffset(new Quaternionf(new Vector3f(currot.x(),0,0)));
         
-        force.force.x = movement.x;
-        force.force.z = movement.z;
+        force.force = new Vector3f(movement.x(),0,movement.z());
             
         if((control.y == 1) && playerphysics.getEntity().grounded)
-            playerphysics.getEntity().velocity.y += 5;
+            playerphysics.getEntity().velocity = playerphysics.getEntity().velocity.add(new Vector3f(0,5,0));
         
         if(aim)
             cweaponpos = aweaponpos;

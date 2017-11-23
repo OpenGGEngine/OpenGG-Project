@@ -7,17 +7,15 @@
 package com.opengg.core.world.components;
 
 import com.opengg.core.engine.BindController;
-import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
+import com.opengg.core.math.Vector3fm;
+import com.opengg.core.physics.collision.AABB;
+import com.opengg.core.physics.collision.CapsuleCollider;
 import com.opengg.core.world.Action;
 import com.opengg.core.world.ActionType;
 import com.opengg.core.world.Actionable;
-import com.opengg.core.physics.collision.AABB;
-import com.opengg.core.world.components.physics.PhysicsComponent;
 import com.opengg.core.world.components.physics.CollisionComponent;
-import com.opengg.core.physics.collision.CapsuleCollider;
-import static java.lang.Math.abs;
-
+import com.opengg.core.world.components.physics.PhysicsComponent;
 /**
  *
  * @author Javier
@@ -27,8 +25,8 @@ public class PlayerComponent extends Component implements Actionable{
     private final UserControlComponent controller;
     private final CameraComponent camera;
     
-    Vector3f control = new Vector3f();
-    Vector3f controlrot = new Vector3f();
+    Vector3fm control = new Vector3fm();
+    Vector3fm controlrot = new Vector3fm();
     public Vector3f currot = new Vector3f();
     float speed = 80;
     float rotspeed = 1000;
@@ -46,28 +44,28 @@ public class PlayerComponent extends Component implements Actionable{
     @Override
     public void update(float delta){
         
-        currot.x += controlrot.x * rotspeed * delta;
-        currot.y += controlrot.y * rotspeed * delta;
-        currot.z += controlrot.z * rotspeed * delta;
-        
+        currot = currot.setX(currot.x() + controlrot.x * rotspeed * delta);
+        currot = currot.setY(currot.y() + controlrot.y * rotspeed * delta);
+        currot = currot.setZ(currot.z() + controlrot.z * rotspeed * delta);
+        /*
         this.setRotationOffset(new Quaternionf(currot));
         
         float xvel = control.x * delta * speed;
-        if((abs(playerphysics.getEntity().velocity.x) < 20))
+        if((abs(playerphysics.getEntity().velocity.x()) < 20))
             playerphysics.getEntity().velocity.x += xvel;
         
         if(control.x == 0)
             playerphysics.getEntity().velocity.x /= 2;
         
-        float zvel = control.z * delta * speed;
-        if(abs(playerphysics.getEntity().velocity.z) < 20)
+        float zvel = control.x * delta * speed;
+        if(abs(playerphysics.getEntity().velocity.x()) < 20)
             playerphysics.getEntity().velocity.z += zvel; 
         
-        if(control.z == 0)
+        if(control.x == 0)
             playerphysics.getEntity().velocity.z /= 2;
             
-        if((control.y == 1) && (getPosition().y <= getWorld().floorLev + 0.001f))
-            playerphysics.getEntity().velocity.y += 5;
+        if((control.x == 1) && (getPosition().x() <= getWorld().floorLev + 0.001f))
+            playerphysics.getEntity().velocity.y += 5;*/
     }
     
     @Override

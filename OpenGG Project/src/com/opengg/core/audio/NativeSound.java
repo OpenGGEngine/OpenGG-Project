@@ -66,15 +66,15 @@ public final class NativeSound {
     }
     
     public void setPosition(Vector3f pos){
-        alSource3f(audioid, AL_POSITION, pos.x, pos.y, pos.z);
+        alSource3f(audioid, AL_POSITION, pos.x(), pos.y(), pos.z());
     }
     
     public void setVelocity(Vector3f vel){
-        alSource3f(audioid, AL_VELOCITY, vel.x, vel.y, vel.z);
+        alSource3f(audioid, AL_VELOCITY, vel.x(), vel.y(), vel.z());
     }
     
     public void setDirection(Vector3f dir){
-        alSource3f(audioid, AL_DIRECTION, dir.x, dir.y, dir.z);
+        alSource3f(audioid, AL_DIRECTION, dir.x(), dir.z(), dir.z());
     }
     
     public void setPitch(float pitch){

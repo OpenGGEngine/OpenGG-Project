@@ -35,9 +35,9 @@ public class BuilderFace {
         Vector3f v1 = vertices.get(0).v;
         Vector3f v2 = vertices.get(1).v;
         Vector3f v3 = vertices.get(2).v;
-        float[] p1 = {v1.x, v1.y, v1.z};
-        float[] p2 = {v2.x, v2.y, v2.z};
-        float[] p3 = {v3.x, v3.y, v3.z};
+        float[] p1 = {v1.x(), v1.y(), v1.z()};
+        float[] p2 = {v2.x(), v2.y(), v2.z()};
+        float[] p3 = {v3.x(), v3.y(), v3.z()};
 
         edge1[0] = p2[0] - p1[0];
         edge1[1] = p2[1] - p1[1];
@@ -51,9 +51,9 @@ public class BuilderFace {
         normal[1] = edge1[2] * edge2[0] - edge1[0] * edge2[2];
         normal[2] = edge1[0] * edge2[1] - edge1[1] * edge2[0];
 
-        faceNormal.x = normal[0];
-        faceNormal.y = normal[1];
-        faceNormal.z = normal[2];
+        faceNormal = faceNormal.setX(normal[0]);
+        faceNormal = faceNormal.setY(normal[1]);
+        faceNormal = faceNormal.setZ(normal[2]);
     }
     
     @Override

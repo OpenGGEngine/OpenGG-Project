@@ -5,22 +5,22 @@
  */
 package com.opengg.core.math;
 
-import static com.opengg.core.math.FastMath.isEqual;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
+import jdk.nashorn.internal.ir.annotations.Immutable;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 
 /**
- *
+ * 3 component immutable vector with linear algebra functions
  * @author Javier
  */
+@Immutable
 public class Vector3f implements Serializable{
-
-    public float x;
-    public float y;
-    public float z;
+    private float x;
+    private float y;
+    private float z;
 
     /**
      * Creates a default 3d vector with all values set to 0.
@@ -61,17 +61,47 @@ public class Vector3f implements Serializable{
         this.z = v.z;
     }
     
+    public Vector3f(Vector3fm v) {
+        this.x = v.x;
+        this.y = v.y;
+        this.z = v.z;
+    }
+    
     public Vector3f(Vector4f v) {
         this.x = v.x;
         this.y = v.y;
         this.z = v.z;
     }
 
+    public float x(){
+        return x;
+    }
+    
+    public float y(){
+        return y;
+    }
+    
+    public float z(){
+        return z;
+    }
+    
+    public Vector3f setX(float nx){
+        return new Vector3f(nx,y,z);
+    }
+    
+    public Vector3f setY(float ny){
+        return new Vector3f(x,ny,z);
+    }
+    
+    public Vector3f setZ(float nz){
+        return new Vector3f(x,y,nz);
+    }
+    
     public Vector3f add(Vector3f v){
         return new Vector3f(this).addThis(v);
     }
     
-    public Vector3f addThis(Vector3f v){
+    private Vector3f addThis(Vector3f v){
         set(x + v.x, y + v.y, z + v.z);
         return this;
     }
@@ -83,7 +113,7 @@ public class Vector3f implements Serializable{
         return sum;
     }
     
-    public Vector3f addThis(Vector3f[] v){
+    private Vector3f addThis(Vector3f[] v){
         for(Vector3f n : v)
              this.addThis(n);
         return this;
@@ -93,7 +123,7 @@ public class Vector3f implements Serializable{
         return new Vector3f(this).addThis(f);
     }
     
-    public Vector3f addThis(float f){
+    private Vector3f addThis(float f){
         set(x + f, y + f, z + f);
         return this;
     }
@@ -102,7 +132,7 @@ public class Vector3f implements Serializable{
         return new Vector3f(this).subtractThis(v);
     }
     
-    public Vector3f subtractThis(Vector3f v){
+    private Vector3f subtractThis(Vector3f v){
         set(x - v.x, y - v.y, z - v.z);
         return this;
     }
@@ -114,18 +144,51 @@ public class Vector3f implements Serializable{
         return diff;
     }
     
-    public Vector3f subtractThis(Vector3f[] v){
-        for(Vector3f n : v)
-             this.subtractThis(n);
-        return this;
-    }
-    
     public Vector3f subtract(float f){
         return new Vector3f(this).addThis(f);
     }
     
-    public Vector3f subtractThis(float f){
+    private Vector3f subtractThis(float f){
         set(x - f, y - f, z - f);
+        return this;
+    }
+    
+    public Vector3f divide(float scalar) {
+        if (scalar == 0) throw new ArithmeticException("Divide by 0");
+        return multiply(1f / scalar);
+    }
+    
+    private Vector3f divideThis(float scalar) {
+        if (scalar == 0) throw new ArithmeticException("Divide by 0");
+        return multiplyThis(1f / scalar);
+    }
+    
+    public Vector3f divide(Vector3f vector) {
+        //if (scalar == 0) throw new ArithmeticException("Divide by 0");
+        return divideThis(vector);
+    }
+    
+    private Vector3f divideThis(Vector3f vector) {
+        //if (scalar == 0) throw new ArithmeticException("Divide by 0");
+        set(x / vector.x, y / vector.y, z / vector.z);
+        return this;
+    }
+    
+    public Vector3f multiply(float scalar) {
+        return new Vector3f(this).multiplyThis(scalar);
+    }
+    
+    private Vector3f multiplyThis(float scalar){
+        set(x * scalar, y * scalar, z * scalar);
+        return this;
+    }
+    
+    public Vector3f multiply(Vector3f v) {
+        return new Vector3f(this).multiplyThis(v);
+    }
+    
+    private Vector3f multiplyThis(Vector3f v){
+        set(x * v.x, y * v.y, z * v.z);
         return this;
     }
     
@@ -149,7 +212,7 @@ public class Vector3f implements Serializable{
         return new Vector3f(this).invertThis();
     }
     
-    public Vector3f invertThis() {
+    private Vector3f invertThis() {
         set(this.x * -1, this.y * -1, this.z * -1);
         return this;
     }
@@ -158,17 +221,13 @@ public class Vector3f implements Serializable{
         return new Vector3f(this).reciprocateThis();
     }
     
-    public Vector3f reciprocateThis(){
+    private Vector3f reciprocateThis(){
          set(1/this.x, 1/this.y, 1/this.z);
          return this;
     }
     
     public Vector3f normalize() {
         return divide(length());
-    }
-    
-    public Vector3f normalizeThis() {
-        return divideThis(length());
     }
 
     public float dot(Vector3f v) {
@@ -184,55 +243,12 @@ public class Vector3f implements Serializable{
     public float lengthSquared() {
         return x * x + y * y + z * z;
     }
-
-    public Vector3f divide(float scalar) {
-        if (scalar == 0) throw new ArithmeticException("Divide by 0");
-        return multiply(1f / scalar);
-    }
-    
-    public Vector3f divideThis(float scalar) {
-        if (scalar == 0) throw new ArithmeticException("Divide by 0");
-        return multiplyThis(1f / scalar);
-    }
-    
-    public Vector3f divide(Vector3f vector) {
-        //if (scalar == 0) throw new ArithmeticException("Divide by 0");
-        return divideThis(vector);
-    }
-    
-    public Vector3f divideThis(Vector3f vector) {
-        //if (scalar == 0) throw new ArithmeticException("Divide by 0");
-        set(x / vector.x, y / vector.y, z / vector.z);
-        return this;
-    }
-    
-    public Vector3f divide(Matrix3f m) {
-        return m.inverse().multiply(this);
-    }
-    
-    public Vector3f multiply(float scalar) {
-        return new Vector3f(this).multiplyThis(scalar);
-    }
-    
-    public Vector3f multiplyThis(float scalar){
-        set(x * scalar, y * scalar, z * scalar);
-        return this;
-    }
-    
-    public Vector3f multiply(Vector3f v) {
-        return new Vector3f(this).multiplyThis(v);
-    }
-    
-    public Vector3f multiplyThis(Vector3f v){
-        set(x * v.x, y * v.y, z * v.z);
-        return this;
-    }
  
     public Vector3f abs(){
         return new Vector3f(this.absThis());
     }
     
-    public Vector3f absThis(){
+    private Vector3f absThis(){
         if(x <= 0) x = -x;
         if(y <= 0) y = -y;
         if(z <= 0) z = -z;
@@ -249,46 +265,16 @@ public class Vector3f implements Serializable{
         return new Vector3f(this).transformThisByQuat(q);
     }
     
-    public Vector3f transformThisByQuat(Quaternionf q){
+    private Vector3f transformThisByQuat(Quaternionf q){
         q.transform(this);
         return this;
     }
-    
-    public void setRadius(float radi) {
-        float inclination = getInclination();
-        float azimuth = getAzimuth();
 
-        this.x = (float) (radi * FastMath.sinDeg(inclination) * FastMath.cosDeg(azimuth));
-        this.z = (float) (radi * FastMath.sinDeg(inclination) * FastMath.sinDeg(azimuth));
-        this.y = (float) (radi * FastMath.cosDeg(inclination));
-    }
-
-    public float getInclination() {
-        return (float) Math.toDegrees(Math.acos(y / length()));
-    }
-
-    public float getAzimuth() {
-        return (float) Math.toDegrees(Math.atan2(z, x));
+    public Vector3f closerToZero(float f){
+        return new Vector3f().closerToZeroThis(f);
     }
     
-    public void setInclination(float deg){
-        float length = length();
-        float azimuth = getAzimuth();
-        
-        x = (float) (length * FastMath.sinDeg(deg) * FastMath.cosDeg(azimuth));
-        y = (float) (length * FastMath.sinDeg(deg) * FastMath.sinDeg(azimuth));
-        z = (float) (length * FastMath.cosDeg(deg));
-    }
-    
-    public void setAzimuth(float deg){
-        float length = length();
-        float inclination = getInclination();
-        
-        x = (float) (length * FastMath.sinDeg(inclination) * FastMath.cosDeg(deg));
-        z = (float) (length * FastMath.sinDeg(inclination) * FastMath.sinDeg(deg));
-    }
-    
-    public Vector3f closertoZero(float f){
+    private Vector3f closerToZeroThis(float f){
         float signX = x < 0 ? -1 : 1;
         float signY = y < 0 ? -1 : 1;
         float signZ = z < 0 ? -1 : 1;
@@ -298,7 +284,11 @@ public class Vector3f implements Serializable{
         return this;
     }
     
-    public Vector3f closertoZero(Vector3f v){
+    public Vector3f closerToZero(Vector3f v){
+        return new Vector3f().closerToZeroThis(v);
+    }
+    
+    private Vector3f closerToZeroThis(Vector3f v){
         float signX = x < 0 ? -1 : 1;
         float signY = y < 0 ? -1 : 1;
         float signZ = z < 0 ? -1 : 1;
@@ -323,23 +313,23 @@ public class Vector3f implements Serializable{
         return new Vector3f().lerpThis(sv, other, t);
     }
     
-    public Vector3f lerpThis(Vector3f sv, Vector3f other, float t ) {
+    private Vector3f lerpThis(Vector3f sv, Vector3f other, float t ) {
         x = sv.x + (other.x - sv.x) * t;
         y = sv.y + (other.y - sv.y) * t;
         z = sv.z + (other.z - sv.z) * t;
         return this;
     }
 
-    public Vector3f reflect(Vector3f normal) {
+    public Vector3f reflect(Vector3f normal){
+        return new Vector3f(this).reflectThis(normal);
+    }
+    
+    private Vector3f reflectThis(Vector3f normal) {
         float dot = this.dot(normal);
         x = x - (dot + dot) * normal.x;
         y = y - (dot + dot) * normal.y;
         z = z - (dot + dot) * normal.z;
         return this;
-    }
-    
-    public void zero(){
-        this.x = this.y = this.z = 0;
     }
     
     public FloatBuffer getBuffer() {

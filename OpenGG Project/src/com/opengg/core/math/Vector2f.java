@@ -5,16 +5,18 @@
  */
 package com.opengg.core.math;
 
-import static com.opengg.core.math.FastMath.isEqual;
+import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
+import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 
 /**
  *
  * @author Javier
  */
-public class Vector2f {
+public class Vector2f implements Serializable{
+
     public float x;
     public float y;
 
@@ -25,9 +27,10 @@ public class Vector2f {
         this.x = 0f;
         this.y = 0f;
     }
-    
+
     /**
      * Creates a vector based off of 2 points.
+     *
      * @param x
      * @param y
      */
@@ -35,71 +38,242 @@ public class Vector2f {
         this.x = x;
         this.y = y;
     }
-    
+
+    public Vector2f(float val) {
+        this.x = val;
+        this.y = val;
+    }
     
     /**
-     * Creates a new 2d vector based off another.
+     * Creates a new vector based off another.
+     *
      * @param v Vector to be copied
      */
-    public Vector2f(Vector2f v){
+    public Vector2f(Vector2f v) {
         this.x = v.x;
         this.y = v.y;
     }
-    
-    public Vector2f(Vector2i v){
-        this.x = v.x;
-        this.y = v.y;
+
+    public Vector2f add(Vector2f v){
+        return new Vector2f(this).addThis(v);
     }
     
-    public Vector2f add(Vector2f other){
-        return new Vector2f(this).addThis(other);
-    }
-    
-    public Vector2f addThis(Vector2f other){
-        this.x += other.x;
-        this.y += other.y;
+    public Vector2f addThis(Vector2f v){
+        set(x + v.x, y + v.y);
         return this;
     }
     
-    /**
-     * Gets the distance between two vectors.
-     * @param v
-     * @return 
-     */
-    public float getDistance(Vector2f v){
-        return (float) Math.sqrt(Math.pow((this.x - v.x), 2)+Math.pow((this.y - v.y), 2));  
+    public Vector2f add(Vector2f[] v){
+        Vector2f sum = new Vector2f(this);
+        for(Vector2f n : v)
+             sum.addThis(n);
+        return sum;
     }
     
-    /**
-    * Returns the degree of angle of vector
-    */
-    
-    public double getAngle()
-    {
-        return Math.toDegrees(Math.atan2(y, x));
+    public Vector2f addThis(Vector2f[] v){
+        for(Vector2f n : v)
+             this.addThis(n);
+        return this;
     }
     
-    /**
-    * Returns magnitude of vector
-    */
+    public Vector2f add(float f){
+        return new Vector2f(this).addThis(f);
+    }
     
-    public double getMagnitude()
-    {
-        return Math.sqrt((x*x) + (y*y));
+    public Vector2f addThis(float f){
+        set(x + f, y + f);
+        return this;
     }
-    /**
-     * Returns a FloatBuffer representation of the vector
-     * @return FloatBuffer representation of the vector
-     */
-    public FloatBuffer getBuffer(){
-        FloatBuffer b = MemoryUtil.memAllocFloat(2);
-        return b.put(x).put(y);
+    
+    public Vector2f subtract(Vector2f v){
+        return new Vector2f(this).subtractThis(v);
     }
-    /**
-     * Returns byte array containing the vector
-     * @return Byte array containing the vector
-     */
-    public byte[] getByteArray() {
+    
+    public Vector2f subtractThis(Vector2f v){
+        set(x - v.x, y - v.y);
+        return this;
+    }
+    
+    public Vector2f subtract(Vector2f[] v){
+        Vector2f diff = new Vector2f(this);
+        for(Vector2f n : v)
+             diff.subtractThis(n);
+        return diff;
+    }
+    
+    public Vector2f subtractThis(Vector2f[] v){
+        for(Vector2f n : v)
+             this.subtractThis(n);
+        return this;
+    }
+    
+    public Vector2f subtract(float f){
+        return new Vector2f(this).addThis(f);
+    }
+    
+    public Vector2f subtractThis(float f){
+        set(x - f, y - f);
+        return this;
+    }
+    
+    public float getDistance(Vector2f v) {
+        return (float) Math.sqrt(this.getDistanceSquared(v));
+    }
+    
+    public float getDistanceSquared(Vector2f v){
+        return (float) (Math.pow((this.x - v.x), 2) + Math.pow((this.y - v.y), 2));
+    }
+    
+    public static float getDistance(Vector2f v1, Vector2f v2){
+        return (float) Math.sqrt(Math.pow((v2.x - v1.x), 2)+Math.pow((v2.y - v1.y), 2));  
+    }
+    
+    public float length() {
+        return (float) Math.sqrt(lengthSquared());
+    }
+    
+    public Vector2f inverse() {
+        return new Vector2f(this).invertThis();
+    }
+    
+    public Vector2f invertThis() {
+        set(this.x * -1, this.y * -1);
+        return this;
+    }
+
+    public Vector2f reciprocal(){
+        return new Vector2f(this).reciprocateThis();
+    }
+    
+    public Vector2f reciprocateThis(){
+         set(1/this.x, 1/this.y);
+         return this;
+    }
+    
+    public Vector2f normalize() {
+        return divide(length());
+    }
+    
+    public Vector2f normalizeThis() {
+        return divideThis(length());
+    }
+
+    public float dot(Vector2f v) {
+        return x * v.x + y * v.y;
+    }
+
+    public float lengthSquared() {
+        return x * x + y * y;
+    }
+
+    public Vector2f divide(float scalar) {
+        if (scalar == 0) throw new ArithmeticException("Divide by 0");
+        return multiply(1f / scalar);
+    }
+    
+    public Vector2f divideThis(float scalar) {
+        if (scalar == 0) throw new ArithmeticException("Divide by 0");
+        return multiplyThis(1f / scalar);
+    }
+    
+    public Vector2f divide(Vector2f vector) {
+        //if (scalar == 0) throw new ArithmeticException("Divide by 0");
+        return divideThis(vector);
+    }
+    
+    public Vector2f divideThis(Vector2f vector) {
+        //if (scalar == 0) throw new ArithmeticException("Divide by 0");
+        set(x / vector.x, y / vector.y);
+        return this;
+    }
+    
+    
+    public Vector2f multiply(float scalar) {
+        return new Vector2f(this).multiplyThis(scalar);
+    }
+    
+    public Vector2f multiplyThis(float scalar){
+        set(x * scalar, y * scalar);
+        return this;
+    }
+    
+    public Vector2f multiply(Vector2f v) {
+        return new Vector2f(this).multiplyThis(v);
+    }
+    
+    public Vector2f multiplyThis(Vector2f v){
+        set(x * v.x, y * v.y);
+        return this;
+    }
+ 
+    public Vector2f abs(){
+        return new Vector2f(this.absThis());
+    }
+    
+    public Vector2f absThis(){
+        if(x <= 0) x = -x;
+        if(y <= 0) y = -y;
+        return this;
+    }
+    
+    public void set(float x, float y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public Vector2f closertoZero(float f){
+        float signX = x < 0 ? -1 : 1;
+        float signY = y < 0 ? -1 : 1;
+        this.x = (Math.abs(x) - f)*signX;
+        this.y = (Math.abs(y) - f)*signY;
+        return this;
+    }
+    
+    public Vector2f closertoZero(Vector2f v){
+        float signX = x < 0 ? -1 : 1;
+        float signY = y < 0 ? -1 : 1;
+        this.x = (Math.abs(x) - v.x)*signX;
+        this.y = (Math.abs(y) - v.y)*signY;
+        return this;
+    }
+    
+    public static FloatBuffer listToBuffer(Vector2f... list){
+        FloatBuffer f = MemoryUtil.memAllocFloat(3* list.length);
+        for(Vector2f v : list){ 
+           f.put(v.x);
+           f.put(v.y);
+        }
+        f.flip();
+        return f;
+    }
+    
+    public static Vector2f lerp(Vector2f sv, Vector2f other, float t ){
+        return new Vector2f().lerpThis(sv, other, t);
+    }
+    
+    public Vector2f lerpThis(Vector2f sv, Vector2f other, float t ) {
+        x = sv.x + (other.x - sv.x) * t;
+        y = sv.y + (other.y - sv.y) * t;
+        return this;
+    }
+
+    public Vector2f reflect(Vector2f normal) {
+        float dot = this.dot(normal);
+        x = x - (dot + dot) * normal.x;
+        y = y - (dot + dot) * normal.y;
+        return this;
+    }
+
+    public FloatBuffer getBuffer() {
+        try(MemoryStack stack = MemoryStack.stackPush()){
+            FloatBuffer buffer = stack.callocFloat(2);
+            buffer.put(x).put(y);
+            buffer.flip();
+            return buffer;
+        }
+    }
+    
+    public byte[] toByteArray(){   
         ByteBuffer b = MemoryUtil.memAlloc(8);
         return b.putFloat(x).putFloat(y).array();
     }
@@ -107,23 +281,14 @@ public class Vector2f {
     @Override
     public boolean equals(Object ot){
         if(ot instanceof Vector2f){
-            Vector2f o = (Vector2f) ot;
-            if(!isEqual(o.x, this.x))
-                return false;
-            if(!isEqual(o.y, this.y))
-                return false;
-            return true;
+            Vector2f v = (Vector2f)ot;
+            return FastMath.isEqual(v.x, x) && FastMath.isEqual(v.y, y);
         }   
         return false;
     }
     
-    public static Vector2f getFromByteArray(byte[] vector){
-        return new Vector2f(1,1);
-    }
-    
     @Override
     public String toString(){
-        String s = String.valueOf(this.x) + ", " + String.valueOf(this.y);
-        return s;
+        return x + ", " + y;
     }
 }

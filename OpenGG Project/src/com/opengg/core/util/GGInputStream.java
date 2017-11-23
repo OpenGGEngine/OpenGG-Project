@@ -9,6 +9,7 @@ import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
+import com.opengg.core.math.Vector3fm;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -67,11 +68,11 @@ public class GGInputStream extends InputStream{
     }
     
     public Vector3f readVector3f() throws IOException{
-        Vector3f v = new Vector3f();
+        Vector3fm v = new Vector3fm();
         v.x = readFloat();
         v.y = readFloat();
         v.z = readFloat();
-        return v;
+        return new Vector3f(v);
     }
     
     public Vector2f readVector2f() throws IOException{

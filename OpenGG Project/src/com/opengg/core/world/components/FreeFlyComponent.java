@@ -10,6 +10,7 @@ import com.opengg.core.engine.BindController;
 import com.opengg.core.engine.OpenGG;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
+import com.opengg.core.math.Vector3fm;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
 import com.opengg.core.world.Action;
@@ -25,8 +26,8 @@ public class FreeFlyComponent extends Component implements Actionable{
     private UserControlComponent pcontrol;
     private CameraComponent view;
     
-    Vector3f control = new Vector3f();
-    Vector3f controlrot = new Vector3f();
+    Vector3fm control = new Vector3fm();
+    Vector3fm controlrot = new Vector3fm();
     Vector3f currot = new Vector3f();
     float rotspeed = 30;
     float speed = 30;
@@ -43,13 +44,13 @@ public class FreeFlyComponent extends Component implements Actionable{
     
     @Override
     public void update(float delta){
-        currot.x += controlrot.x * rotspeed * delta;
-        currot.y += controlrot.y * rotspeed * delta;
-        currot.z += controlrot.z * rotspeed * delta;
-        this.setRotationOffset(new Quaternionf(new Vector3f(0,currot.y,currot.z)));    
-        head.setRotationOffset(new Quaternionf(new Vector3f(currot.x,0,0)));
+        currot = currot.setX(currot.x() + controlrot.x * rotspeed * delta);
+        currot = currot.setY(currot.y() + controlrot.y * rotspeed * delta);
+        currot = currot.setZ(currot.z() + controlrot.z * rotspeed * delta);
+        this.setRotationOffset(new Quaternionf(new Vector3f(0, currot.y(), currot.z())));    
+        head.setRotationOffset(new Quaternionf(new Vector3f(currot.x(),0,0)));
        
-        Vector3f nvector = control.multiply(delta * 15);
+        Vector3f nvector = new Vector3f(control).multiply(delta * 15);
         nvector = this.getRotation().transform(nvector);
         setPositionOffset(getPositionOffset().add(nvector));
     }

@@ -33,8 +33,8 @@ public class ExplosionParticleEmitter extends ParticleEmitter implements Trigger
             float xd = (float) (Math.random() - 0.5f) * 2f;
             float yd = (float) (Math.random() - 0.5f) * 2f;
             float zd = (float) (Math.random() - 0.5f) * 2f;
-            Vector3f finalv = new Vector3f(xd,yd,zd).normalizeThis();
-            finalv.multiplyThis(velocity);
+            Vector3f finalv = new Vector3f(xd,yd,zd).normalize();
+            finalv = finalv.multiply(velocity);
             addParticle(new Particle(getPosition(), finalv, lifeLength, 1f));
         }
     }

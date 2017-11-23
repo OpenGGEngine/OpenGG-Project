@@ -40,7 +40,7 @@ public class FountainParticleEmitter extends ParticleEmitter{
         
         Vector3f finalv = offset.transform(angle);
         finalv = getRotation().transform(finalv);
-        finalv.multiplyThis(speed);
+        finalv = finalv.multiply(speed);
         
         addParticle(new Particle(getPosition(), finalv, new Vector3f(0,gravityComplient,0), lifeLength,1f));
     }

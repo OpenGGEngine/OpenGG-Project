@@ -34,9 +34,9 @@ public class Ray {
         if (length != -1 && 
                 (pos.add(dir.multiply(length)).subtract(box.pos).length() > maxDistance)
                 || betw.length() > maxDistance
-                || Math.signum(centeredPoint.x) != Math.signum(dir.x)
-                || Math.signum(centeredPoint.y) != Math.signum(dir.y)
-                || Math.signum(centeredPoint.z) != Math.signum(dir.z)
+                || Math.signum(centeredPoint.x()) != Math.signum(dir.x())
+                || Math.signum(centeredPoint.y()) != Math.signum(dir.y())
+                || Math.signum(centeredPoint.z()) != Math.signum(dir.z())
               )
             return false;
 //        if (box.isColliding(shortestPoint))

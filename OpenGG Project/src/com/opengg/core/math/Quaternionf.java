@@ -48,13 +48,13 @@ public class Quaternionf implements Serializable{
 
     public Quaternionf(float angle, Vector3f axis) {
         setAngle(angle);
-        x = axis.x;
-        y = axis.y;
-        z = axis.z;
+        x = axis.x();
+        y = axis.y();
+        z = axis.z();
     }
     
     public Quaternionf(Vector3f euler){
-        rotationXYZ(euler.x, euler.y, euler.z);
+        rotationXYZ(euler.x(), euler.y(), euler.z());
     }
         
     public Quaternionf(Matrix4f matrix) {
@@ -91,7 +91,7 @@ public class Quaternionf implements Serializable{
     }
 
     public Quaternionf add(Quaternionf q) {
-        return new Quaternionf(this.w + q.w, this.x + q.x, this.y + q.y, this.z + q.z);
+        return new Quaternionf(this.x + q.x, this.y + q.y, this.z + q.z, this.w + q.w);
     }
 
     public Quaternionf addEquals(Quaternionf q) {
@@ -103,7 +103,7 @@ public class Quaternionf implements Serializable{
     }
 
     public Quaternionf subtract(final Quaternionf q) {
-        return new Quaternionf(this.w - q.w, this.x - q.x, this.y - q.y, this.z - q.z);
+        return new Quaternionf(this.x - q.x, this.y - q.y, this.z - q.z, this.w - q.w);
     }
 
     public Quaternionf multiply(Quaternionf q){
@@ -208,9 +208,9 @@ public class Quaternionf implements Serializable{
     }
 
     public final void setAxis(Vector3f axis){
-        this.x = axis.x;
-        this.y = axis.y;
-        this.z = axis.z;
+        this.x = axis.x();
+        this.y = axis.y();
+        this.z = axis.z();
     }
     
     public static final Quaternionf slerp(final Quaternionf a, final Quaternionf b, float t) {
@@ -257,8 +257,8 @@ public class Quaternionf implements Serializable{
     
     public Quaternionf invertThisIndirect() {
         Vector3f v = this.toEuler();
-        v.invertThis();
-        return rotationXYZ(v.x,v.y,v.z);
+        v = v.inverse();
+        return rotationXYZ(v.x(), v.y(), v.z());
     }
     
     public Quaternionf set(float x, float y, float z, float w) {
@@ -301,34 +301,36 @@ public class Quaternionf implements Serializable{
     }
     
     public Vector3f toEuler(){
-        Vector3f end = new Vector3f();
+        float nx,ny,nz;
         
         float ysqr = y * y;
         
 	float t0 = + 2.0f * (w * x + y * z);
 	float t1 = + 1.0f - 2.0f * (x * x + ysqr);
-	end.x = FastMath.atan2(t0, t1);
+	nx = FastMath.atan2(t0, t1);
 
 	float t2 = + 2.0f * (w * y - z * x);
 	t2 = t2 > 1.0f ? 1.0f : t2;
 	t2 = t2 < -1.0f ? -1.0f : t2;
-	end.y = (float)Math.asin(t2);
+	ny = (float)Math.asin(t2);
 
 	float t3 = + 2.0f * (w * z + x * y);
 	float t4 = + 1.0f - 2.0f * (ysqr + z * z);  
-	end.z = FastMath.atan2(t3, t4);
+	nz = FastMath.atan2(t3, t4);
         
-        end.x = (float)Math.toDegrees(end.x);
-        end.y = (float)Math.toDegrees(end.y);
-        end.z = (float)Math.toDegrees(end.z);
+        nx = (float)Math.toDegrees(nx);
+        ny = (float)Math.toDegrees(ny);
+        nz = (float)Math.toDegrees(nz);
+        
+        Vector3f end = new Vector3f(nx,ny,nz);
         
         return end;
     }
     
-    public Vector3f transformMutable(Vector3f v){
-        float x = v.x;
-        float y = v.y;
-        float z = v.z;
+    public Vector3f transform(Vector3f v){
+        float x = v.x();
+        float y = v.y();
+        float z = v.z();
         
         float w2 = this.w * this.w;
         float x2 = this.x * this.x;
@@ -351,14 +353,10 @@ public class Quaternionf implements Serializable{
         float m21 = yz + yz - xw - xw;
         float m22 = z2 - y2 - x2 + w2;
 
-        v.x = m00 * x + m10 * y + m20 * z;
-        v.y = m01 * x + m11 * y + m21 * z;
-        v.z = m02 * x + m12 * y + m22 * z;
-        return v;
-    }
-    
-    public Vector3f transform(Vector3f v){
-        return transformMutable(new Vector3f(v));
+        float nx = m00 * x + m10 * y + m20 * z;
+        float ny = m01 * x + m11 * y + m21 * z;
+        float nz = m02 * x + m12 * y + m22 * z;
+        return new Vector3f(nx,ny,nz);
     }
     
     @Override

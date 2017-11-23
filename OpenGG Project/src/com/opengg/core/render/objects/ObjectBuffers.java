@@ -117,15 +117,15 @@ public class ObjectBuffers {
     }
     static Buffer[] genQuadPrism(Vector3f c1, Vector3f c2){
         FloatBuffer d = MemoryUtil.memAllocFloat(8*12);
-        d.put(c1.x).put(c1.y).put(c1.z).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);
-        d.put(c1.x).put(c1.y).put(c2.z).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0).put(1);
-        d.put(c1.x).put(c2.y).put(c2.z).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);
-        d.put(c1.x).put(c2.y).put(c1.z).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0);
+        d.put(c1.x()).put(c1.y()).put(c1.z()).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);
+        d.put(c1.x()).put(c1.y()).put(c2.z()).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0).put(1);
+        d.put(c1.x()).put(c2.y()).put(c2.z()).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);
+        d.put(c1.x()).put(c2.y()).put(c1.z()).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0);
         
-        d.put(c2.x).put(c1.y).put(c1.z).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);
-        d.put(c2.x).put(c1.y).put(c2.z).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0).put(1);
-        d.put(c2.x).put(c2.y).put(c2.z).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0);
-        d.put(c2.x).put(c2.y).put(c1.z).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0).put(0);
+        d.put(c2.x()).put(c1.y()).put(c1.z()).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);
+        d.put(c2.x()).put(c1.y()).put(c2.z()).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0).put(1);
+        d.put(c2.x()).put(c2.y()).put(c2.z()).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0);
+        d.put(c2.x()).put(c2.y()).put(c1.z()).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0).put(0);
         d.flip();
         
         IntBuffer d2 = MemoryUtil.memAllocInt(6*4);

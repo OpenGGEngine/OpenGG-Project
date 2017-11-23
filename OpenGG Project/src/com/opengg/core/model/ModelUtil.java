@@ -8,6 +8,8 @@ package com.opengg.core.model;
 
 import com.opengg.core.engine.GGConsole;
 import com.opengg.core.engine.OpenGG;
+import com.opengg.core.math.Vector3fm;
+import com.opengg.core.math.Vector3f;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.nio.FloatBuffer;
@@ -130,17 +132,17 @@ public class ModelUtil {
         }
         
         for (FaceVertex vertex : faceVertexList) {
-            verticeAttributes.put(vertex.v.x);
-            verticeAttributes.put(vertex.v.y);
-            verticeAttributes.put(vertex.v.z);
+            verticeAttributes.put(vertex.v.x());
+            verticeAttributes.put(vertex.v.y());
+            verticeAttributes.put(vertex.v.z());
             verticeAttributes.put(1f);
             verticeAttributes.put(1f);
             verticeAttributes.put(1f);
             verticeAttributes.put(1f);
 
-            verticeAttributes.put(vertex.n.x);
-            verticeAttributes.put(vertex.n.y);
-            verticeAttributes.put(vertex.n.z);
+            verticeAttributes.put(vertex.n.x());
+            verticeAttributes.put(vertex.n.y());
+            verticeAttributes.put(vertex.n.z());
 
             verticeAttributes.put(vertex.t.x);
             verticeAttributes.put(vertex.t.y);
@@ -223,18 +225,18 @@ public class ModelUtil {
         }
         
         for (FaceVertex vertex : faceVertexList) {
-            verticeAttributes.put(vertex.v.x);
-            verticeAttributes.put(vertex.v.y);
-            verticeAttributes.put(vertex.v.z);
+            verticeAttributes.put(vertex.v.x());
+            verticeAttributes.put(vertex.v.x());
+            verticeAttributes.put(vertex.v.x());
             
             verticeAttributes.put(1f);
             verticeAttributes.put(1f);
             verticeAttributes.put(1f);
             verticeAttributes.put(1f);
 
-            verticeAttributes.put(vertex.n.x);
-            verticeAttributes.put(vertex.n.y);
-            verticeAttributes.put(vertex.n.z);
+            verticeAttributes.put(vertex.n.x());
+            verticeAttributes.put(vertex.n.x());
+            verticeAttributes.put(vertex.n.x());
 
             verticeAttributes.put(vertex.t.x);
             verticeAttributes.put(vertex.t.y);
@@ -300,18 +302,21 @@ public class ModelUtil {
             mesh.vbodata.position(index * 12);
 
             FaceVertex fv = new FaceVertex();
-            fv.v.x = mesh.vbodata.get();
-            fv.v.y = mesh.vbodata.get();
-            fv.v.z = mesh.vbodata.get();
+            Vector3fm nv = new Vector3fm();
+            nv.x = mesh.vbodata.get();
+            nv.y = mesh.vbodata.get();
+            nv.z = mesh.vbodata.get();
+            fv.v = new Vector3f(nv);
 
             mesh.vbodata.get();
             mesh.vbodata.get();
             mesh.vbodata.get();
             mesh.vbodata.get();
 
-            fv.n.x = mesh.vbodata.get();
-            fv.n.y = mesh.vbodata.get();
-            fv.n.z = mesh.vbodata.get();
+            nv.x = mesh.vbodata.get();
+            nv.y = mesh.vbodata.get();
+            nv.z = mesh.vbodata.get();
+            fv.n = new Vector3f(nv);
 
             fv.t.x = mesh.vbodata.get();
             fv.t.y = mesh.vbodata.get();

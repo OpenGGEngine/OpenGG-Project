@@ -66,9 +66,9 @@ public class PhysicsEntity extends PhysicsObject{
         
         CollisionManager.addToTest(colliders);
         
-        if(position.y <= getSystem().getConstants().BASE){ 
-            position.y = getSystem().getConstants().BASE;
-            velocity.y = -velocity.y * restitution;
+        if(position.y() <= getSystem().getConstants().BASE){ 
+            position = position.setY(getSystem().getConstants().BASE);
+            velocity = velocity.setY(-velocity.y() * restitution);
             grounded = true;
             touched = true;
         }else{
@@ -84,7 +84,7 @@ public class PhysicsEntity extends PhysicsObject{
         velocity = velocity.add(acceleration.multiply(delta));
         
         if(touched && !overrideFriction){
-            velocity.multiplyThis(1-frictionCoefficient*delta);
+            velocity = velocity.multiply(1-frictionCoefficient*delta);
         }
         
         position = position.add(velocity.multiply(delta));
@@ -93,7 +93,7 @@ public class PhysicsEntity extends PhysicsObject{
     private void computeAngularMotion(float delta){
         rotforce = finalRotForce();
         angaccel = rotforce.divide(mass);
-        angvelocity.addThis(angaccel.multiply(delta));
+        angvelocity = angvelocity.add(angaccel.multiply(delta));
         rotation = rotation.multiply(new Quaternionf(angvelocity));
     }
     
@@ -102,7 +102,7 @@ public class PhysicsEntity extends PhysicsObject{
         Vector3f fforce = new Vector3f();
         for(Force forcee : forces){
             if(velocity.add(fforce.multiply(mass)).multiply(delta).length() < forcee.velLimit){
-                fforce.addThis(forcee.force);
+                fforce = fforce.add(forcee.force);
                 overrideFriction = overrideFriction || forcee.frictionDisable;
             }
         }

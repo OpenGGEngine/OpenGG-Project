@@ -15,15 +15,11 @@ import com.opengg.core.gui.GUI;
 import com.opengg.core.gui.GUIText;
 import com.opengg.core.io.ControlType;
 import static com.opengg.core.io.input.keyboard.Key.*;
-import com.opengg.core.math.FastMath;
-import com.opengg.core.math.MinkowskiSet;
-import com.opengg.core.math.Simplex;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.model.ModelLoader;
 import com.opengg.core.physics.PhysicsRenderer;
 import com.opengg.core.physics.collision.AABB;
-import com.opengg.core.physics.collision.CapsuleCollider;
 import com.opengg.core.physics.collision.ColliderGroup;
 import com.opengg.core.physics.collision.ConvexHull;
 import com.opengg.core.render.Text;
@@ -38,7 +34,6 @@ import com.opengg.core.world.components.ModelRenderComponent;
 import com.opengg.core.world.components.TerrainComponent;
 import com.opengg.core.world.components.physics.PhysicsComponent;
 import java.util.ArrayList;
-import java.util.List;
 
 public class OpenGGTest extends GGApplication{
     private GGFont font;

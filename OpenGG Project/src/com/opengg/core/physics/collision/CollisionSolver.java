@@ -12,7 +12,6 @@ import com.opengg.core.math.MinkowskiSet;
 import com.opengg.core.math.MinkowskiTriangle;
 import com.opengg.core.math.Simplex;
 import com.opengg.core.math.Vector3f;
-import com.opengg.core.math.Vector4f;
 import java.util.List;
 
 /**
@@ -81,40 +80,40 @@ public class CollisionSolver {
     
     public static ContactManifold SphereTerrain(SphereCollider c1, TerrainCollider c2){
         Vector3f np = c1.getPosition().subtract(c2.getPosition()).divide(c2.getScale());
-        float height = c2.t.getHeight(np.x, np.z);
+        float height = c2.t.getHeight(np.x(), np.z());
         if(height == 12345)
             return null;
-        height += c2.getPosition().y;
-        height *= c2.getScale().y;
-        if(!(c1.getPosition().y-c1.radius < height))
+        height += c2.getPosition().y();
+        height *= c2.getScale().y();
+        if(!(c1.getPosition().y()-c1.radius < height))
             return null;
         ContactManifold data = new ContactManifold();
-        data.point = new Vector3f(c1.getPosition().x, height, c1.getPosition().z);
-        data.normal = c2.t.getNormalAt(np.x, np.z);
-        data.depth = height-(c1.getPosition().y-c1.radius);
+        data.point = new Vector3f(c1.getPosition().x(), height, c1.getPosition().z());
+        data.normal = c2.t.getNormalAt(np.x(), np.z());
+        data.depth = height-(c1.getPosition().y()-c1.radius);
         return data;
     }
     
     public static ContactManifold CylinderTerrain(CapsuleCollider c1, TerrainCollider c2){
         Vector3f np = c1.getPosition().subtract(c2.getPosition()).divide(c2.getScale());
-        float height = c2.t.getHeight(np.x, np.z);
+        float height = c2.t.getHeight(np.x(), np.z());
         if(height == 12345)
             return null;
-        height += c2.getPosition().y;
-        height *= c2.getScale().y;
-        if(!(c1.getPosition().y-c1.radius < height))
+        height += c2.getPosition().y();
+        height *= c2.getScale().y();
+        if(!(c1.getPosition().y()-c1.radius < height))
             return null;
         ContactManifold data = new ContactManifold();
-        data.point = new Vector3f(c1.getPosition().x, height, c1.getPosition().z);
-        data.normal = c2.t.getNormalAt(np.x, np.z);
-        data.depth = height-c1.getPosition().y;
+        data.point = new Vector3f(c1.getPosition().x(), height, c1.getPosition().z());
+        data.normal = c2.t.getNormalAt(np.x(), np.z());
+        data.depth = height-c1.getPosition().y();
         return data;
     }
     
     public static ContactManifold HullHull(ConvexHull h1, ConvexHull h2){
         Matrix4f h1matrix = new Matrix4f().translate(h1.getPosition()).rotate(h1.getRotation());
         Matrix4f h2matrix = new Matrix4f().translate(h2.getPosition()).rotate(h2.getRotation());
-        List<MinkowskiSet> msum = FastMath.minkowskiDifference(h1.vertices, h2.vertices, h1matrix, h2matrix);
+        List<MinkowskiSet> msum = FastMath.minkowskiDifference(h1.vertices, h2.vertices, h1matrix, h2matrix);        
         Simplex s = FastMath.runGJK(msum);
         
         if(s == null) return null;
@@ -128,7 +127,7 @@ public class CollisionSolver {
 
         Vector3f bary = barycentric(contact.n.multiply(distanceFromOrigin), contact.a.v, contact.b.v, contact.c.v);
 
-        if (Math.abs(bary.x) > 1.0f || Math.abs(bary.y) > 1.0f || Math.abs(bary.z) > 1.0f) 
+        if (Math.abs(bary.x()) > 1.0f || Math.abs(bary.y()) > 1.0f || Math.abs(bary.z()) > 1.0f) 
             return null;
         
 //        Vector4f transa = h1matrix.transform(new Vector4f(contact.a.a));
@@ -142,7 +141,7 @@ public class CollisionSolver {
 
         System.out.println(bary);
         
-        cm.point = contact.a.a.multiply(bary.x).add(contact.b.a.multiply(bary.y)).add(contact.c.a.multiply(bary.z));
+        cm.point = contact.a.a.multiply(bary.x()).add(contact.b.a.multiply(bary.y())).add(contact.c.a.multiply(bary.z()));
         
         cm.normal = contact.n;
         cm.depth = distanceFromOrigin;
