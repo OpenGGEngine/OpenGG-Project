@@ -8,7 +8,6 @@ package com.opengg.core.math;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
-import jdk.nashorn.internal.ir.annotations.Immutable;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 
@@ -16,7 +15,6 @@ import org.lwjgl.system.MemoryUtil;
  * 3 component immutable vector with linear algebra functions
  * @author Javier
  */
-@Immutable
 public class Vector3f implements Serializable{
     private float x;
     private float y;
