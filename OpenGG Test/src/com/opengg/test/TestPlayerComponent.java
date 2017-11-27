@@ -13,7 +13,9 @@ import com.opengg.core.math.Vector3f;
 import com.opengg.core.math.Vector3fm;
 import com.opengg.core.physics.Force;
 import com.opengg.core.physics.collision.AABB;
+import com.opengg.core.physics.collision.CapsuleCollider;
 import com.opengg.core.physics.collision.ConvexHull;
+import com.opengg.core.physics.collision.SphereCollider;
 import com.opengg.core.world.Action;
 import com.opengg.core.world.ActionType;
 import com.opengg.core.world.Actionable;
@@ -58,14 +60,15 @@ public class TestPlayerComponent extends Component implements Actionable{
         controller = new UserControlComponent();
         playerphysics = new PhysicsComponent();
         ArrayList<Vector3f> v1 = new ArrayList<>();
-        v1.add(new Vector3f(0,10,0));
+        v1.add(new Vector3f(0,1,0));
         v1.add(new Vector3f(0,-1,0));
-        v1.add(new Vector3f(-1,1,1));
-        v1.add(new Vector3f(-1,1,-1));
-        playerphysics.addCollider(new CollisionComponent(new AABB(new Vector3f(),10,6,10), new ConvexHull(v1)));
+        v1.add(new Vector3f(1,0,1));
+        v1.add(new Vector3f(1,0,-1));
+        v1.add(new Vector3f(-1,0,1));
+        v1.add(new Vector3f(-1,0,-1));
+        playerphysics.addCollider(new CollisionComponent(new AABB(new Vector3f(),10,6,10),
+                new SphereCollider(2)));//new ConvexHull(v1)));
         playerphysics.getEntity().mass = 1f;
-        playerphysics.getEntity().restitution = 0.1f;
-        playerphysics.getEntity().frictionCoefficient = 0f;
         playerphysics.getEntity().addForce(force);
         
         //gun = new GunComponent();
@@ -92,8 +95,7 @@ public class TestPlayerComponent extends Component implements Actionable{
         head.setRotationOffset(new Quaternionf(new Vector3f(currot.x(),0,0)));
         
         force.force = new Vector3f(movement.x(),0,movement.z());
-            
-        if((control.y == 1) && playerphysics.getEntity().grounded)
+        if((control.y == 1) && playerphysics.getEntity().lowestContact.y() > 0.6f)
             playerphysics.getEntity().velocity = playerphysics.getEntity().velocity.add(new Vector3f(0,5,0));
         
         if(aim)

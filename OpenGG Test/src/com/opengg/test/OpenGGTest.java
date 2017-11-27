@@ -20,6 +20,7 @@ import com.opengg.core.math.Vector3f;
 import com.opengg.core.model.ModelLoader;
 import com.opengg.core.physics.PhysicsRenderer;
 import com.opengg.core.physics.collision.AABB;
+import com.opengg.core.physics.collision.CapsuleCollider;
 import com.opengg.core.physics.collision.ColliderGroup;
 import com.opengg.core.physics.collision.ConvexHull;
 import com.opengg.core.render.Text;
@@ -81,29 +82,31 @@ public class OpenGGTest extends GGApplication{
         GUI.addItem("aids", new GUIText(text, font, new Vector2f(0f,0)));
         
         TestPlayerComponent player = new TestPlayerComponent();
-        player.setPositionOffset(new Vector3f(0,0,30));
+        player.setPositionOffset(new Vector3f(0,0,10));
         player.use();
         
         WorldEngine.getCurrent().attach(new LightComponent(new Light(new Vector3f(0,2,2), new Vector3f(1,1,1), 1000, 0))); 
         WorldEngine.getCurrent().attach(new ModelRenderComponent(Resource.getModel("goldleaf")).setScale(new Vector3f(0.1f)).setRotationOffset(new Vector3f(-90,0,0)));  
         ModelRenderComponent testphys = new ModelRenderComponent(ModelLoader.loadModel("C:\\res\\sphere\\sphere.bmf"));
+        testphys.setRotationOffset(new Vector3f(0,0,0));
         
         ArrayList<Vector3f> v2 = new ArrayList<>();
-        v2.add(new Vector3f(-10,-10,-10));
-        v2.add(new Vector3f(-10,10,-10));
-        v2.add(new Vector3f(-10,-10,10));
-        v2.add(new Vector3f(-10,10,10));
-        v2.add(new Vector3f(10,-10,-10));
-        v2.add(new Vector3f(10,10,-10));
-        v2.add(new Vector3f(10,-10,10));
-        v2.add(new Vector3f(10,10,10));
+        v2.add(new Vector3f(-1,-1,-1));
+        v2.add(new Vector3f(-1,1,-1));
+        v2.add(new Vector3f(-1,-1,1));
+        v2.add(new Vector3f(-1,1,1));
+        v2.add(new Vector3f(1,-1,-1));
+        v2.add(new Vector3f(1,1,-1));
+        v2.add(new Vector3f(1,-1,1));
+        v2.add(new Vector3f(1,1,1));
         
         
         PhysicsComponent phys = new PhysicsComponent(new ColliderGroup(
-                new AABB(new Vector3f(),10,6,10), new ConvexHull(v2)));
-                //new CapsuleCollider(new Vector3f(3,0,0),
-                //        new Vector3f(-3,0,0),2)));
+                new AABB(new Vector3f(),10,6,10), //new ConvexHull(v2)));
+                new CapsuleCollider(new Vector3f(3,0,0),
+                      new Vector3f(-3,0,0),2)));
         phys.getEntity().mass = 10;
+        phys.getEntity().inertialMatrix = phys.getEntity().inertialMatrix.scale(10);
         
         WorldEngine.getCurrent().attach(player);
         WorldEngine.getCurrent().attach(testphys.attach(phys));

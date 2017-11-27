@@ -77,13 +77,13 @@ public class PhysicsComponentViewModel extends ViewModel{
             ((PhysicsComponent)component).getEntity().density = (Float)element.value;
         
         if(element.internalname.equals("fcoeff"))
-            ((PhysicsComponent)component).getEntity().frictionCoefficient = (Float)element.value;
+            ((PhysicsComponent)component).getEntity().dynamicfriction = (Float)element.value;
         
         if(element.internalname.equals("bounciness"))
             ((PhysicsComponent)component).getEntity().restitution = (Float)element.value;
         
         if(element.internalname.equals("friction"))
-            ((PhysicsComponent)component).getEntity().frictionCoefficient = (Float)element.value;
+            ((PhysicsComponent)component).getEntity().dynamicfriction = (Float)element.value;
     }
 
     @Override

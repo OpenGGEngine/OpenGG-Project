@@ -38,6 +38,8 @@ public class SphereCollider extends Collider{
             return CollisionSolver.SphereCapsule(this, (CapsuleCollider)c);
         else if(c instanceof TerrainCollider)
             return CollisionSolver.SphereTerrain(this, (TerrainCollider)c);
+        else if(c == null)
+            return CollisionSolver.SphereGround(this);
         return null;
     }
     

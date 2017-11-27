@@ -6,12 +6,15 @@
 
 package com.opengg.core.physics.collision;
 
+import com.opengg.core.engine.PhysicsEngine;
 import com.opengg.core.math.FastMath;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.MinkowskiSet;
 import com.opengg.core.math.MinkowskiTriangle;
 import com.opengg.core.math.Simplex;
 import com.opengg.core.math.Vector3f;
+import com.opengg.core.math.Vector4f;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -60,22 +63,15 @@ public class CollisionSolver {
         return c1.getPosition().getDistance(closest) < c1.radius;
     }
     
-    public static ContactManifold CapsuleCapsule(CapsuleCollider c1, CapsuleCollider c2){
-        Vector3f[] closest = FastMath.closestApproach(c1.getP1(), c1.getP2(), c2.getP1(), c2.getP2(), true, true);
-        if(closest[0].getDistance(closest[1]) < c1.radius + c2.radius){
-            ContactManifold data = new ContactManifold();
-            data.normal = closest[0].subtract(closest[1]);
-            data.point = closest[0].add(data.normal.divide(c1.radius/c2.radius));
-            data.normal = data.normal.normalize();
-            data.depth = closest[1].subtract(closest[0]).length()-c1.radius-c2.radius;
-            return data;
-        }
-        return null;
-    }
-    
-    public static boolean CapsuleRay(CapsuleCollider c1, Ray c2){
-        Vector3f[] closest = FastMath.closestApproach(c1.getP1(), c1.getP2(), c2.pos, c2.dir, true, false);
-        return closest[0].getDistance(closest[1]) < c1.radius;
+    public static ContactManifold SphereGround(SphereCollider c1){
+        float ground = PhysicsEngine.getInstance().getConstants().BASE;
+        if(c1.getPosition().y() - c1.getRadius() > ground) return null;
+        
+        ContactManifold data = new ContactManifold();
+        data.depth = ground - (c1.getPosition().y() - c1.getRadius());
+        data.normal = new Vector3f(0,-1,0);
+        data.point = new Vector3f(c1.getPosition().x(), ground, c1.getPosition().z());
+        return data;
     }
     
     public static ContactManifold SphereTerrain(SphereCollider c1, TerrainCollider c2){
@@ -94,6 +90,24 @@ public class CollisionSolver {
         return data;
     }
     
+    public static ContactManifold CapsuleCapsule(CapsuleCollider c1, CapsuleCollider c2){
+        Vector3f[] closest = FastMath.closestApproach(c1.getP1(), c1.getP2(), c2.getP1(), c2.getP2(), true, true);
+        if(closest[0].getDistance(closest[1]) < c1.radius + c2.radius){
+            ContactManifold data = new ContactManifold();
+            data.normal = closest[0].subtract(closest[1]);
+            data.point = closest[0].add(data.normal.divide(c1.radius/c2.radius));
+            data.normal = data.normal.normalize();
+            data.depth = closest[1].subtract(closest[0]).length()-c1.radius-c2.radius;
+            return data;
+        }
+        return null;
+    }
+    
+    public static boolean CapsuleRay(CapsuleCollider c1, Ray c2){
+        Vector3f[] closest = FastMath.closestApproach(c1.getP1(), c1.getP2(), c2.pos, c2.dir, true, false);
+        return closest[0].getDistance(closest[1]) < c1.radius;
+    }
+     
     public static ContactManifold CylinderTerrain(CapsuleCollider c1, TerrainCollider c2){
         Vector3f np = c1.getPosition().subtract(c2.getPosition()).divide(c2.getScale());
         float height = c2.t.getHeight(np.x(), np.z());
@@ -107,6 +121,21 @@ public class CollisionSolver {
         data.point = new Vector3f(c1.getPosition().x(), height, c1.getPosition().z());
         data.normal = c2.t.getNormalAt(np.x(), np.z());
         data.depth = height-c1.getPosition().y();
+        return data;
+    }
+    
+    public static ContactManifold CapsuleGround(CapsuleCollider c1){
+        Vector3f lowest;
+        if(c1.getP1().y() < c1.getP2().y()) lowest = c1.getP1();
+        else lowest = c1.getP2();
+        
+        float ground = PhysicsEngine.getInstance().getConstants().BASE;
+        if(lowest.y() - c1.getRadius() > ground) return null;
+        
+        ContactManifold data = new ContactManifold();
+        data.depth = ground - (lowest.y() - c1.getRadius());
+        data.normal = new Vector3f(0,-1,0);
+        data.point = new Vector3f(lowest.x(), ground, lowest.z());
         return data;
     }
     
@@ -130,23 +159,32 @@ public class CollisionSolver {
         if (Math.abs(bary.x()) > 1.0f || Math.abs(bary.y()) > 1.0f || Math.abs(bary.z()) > 1.0f) 
             return null;
         
-//        Vector4f transa = h1matrix.transform(new Vector4f(contact.a.a));
-//        Vector3f na = new Vector3f(transa.x, transa.y, transa.z);
-//        Vector4f transb = h1matrix.transform(new Vector4f(contact.b.a));
-//        Vector3f nb = new Vector3f(transb.x, transb.y, transb.z);
-//        Vector4f transc = h1matrix.transform(new Vector4f(contact.c.a));
-//        Vector3f nc = new Vector3f(transc.x, transc.y, transc.z);
-//        
-//        cm.point = new Vector3f((na).multiply(bary.x).add((nb).multiply(bary.y)).add((nc).multiply(bary.z)));
-
-        System.out.println(bary);
-        
         cm.point = contact.a.a.multiply(bary.x()).add(contact.b.a.multiply(bary.y())).add(contact.c.a.multiply(bary.z()));
-        
         cm.normal = contact.n;
         cm.depth = distanceFromOrigin;
-        System.out.println(cm);
         return cm;
+    }
+    
+    public static ContactManifold HullGround(ConvexHull h1){
+        Matrix4f h1matrix = new Matrix4f().translate(h1.getPosition()).rotate(h1.getRotation());
+        List<Vector3f> nlist = new ArrayList<>(h1.vertices.size());
+        for(Vector3f v : h1.vertices){
+            nlist.add(new Vector4f(v).multiply(h1matrix).truncate());
+        }
+        
+        Vector3f lowest = new Vector3f(0,Float.MAX_VALUE,0);
+        for(Vector3f v : nlist){
+            if(v.y() < lowest.y()) lowest = v;
+        }
+        
+        float ground = PhysicsEngine.getInstance().getConstants().BASE;
+        if(lowest.y() > ground) return null;
+        
+        ContactManifold data = new ContactManifold();
+        data.depth = ground - lowest.y();
+        data.normal = new Vector3f(0,-1,0);
+        data.point = new Vector3f(lowest.x(), ground, lowest.z());
+        return data;
     }
     
     public static Vector3f barycentric(Vector3f p,Vector3f a, Vector3f b, Vector3f c) {

@@ -22,7 +22,8 @@ import java.util.List;
 public class PhysicsEntity extends PhysicsObject{
     public List<ColliderGroup> colliders = new ArrayList<>();
     public Vector3f centerOfMass = new Vector3f();
-    public Matrix3f inertialMatrix = new Matrix3f(0.3f,0,0,0,0.3f,0,0,0,0.3f);
+    public Matrix3f inertialMatrix = new Matrix3f(0.16f,0f,0f,0f,0.16f,0f,0f,0f,0.16f);
+    public Vector3f lowestContact = new Vector3f(0,-1,0);
     
     public boolean gravEffect = true;
     public boolean grounded = false;
@@ -32,8 +33,8 @@ public class PhysicsEntity extends PhysicsObject{
     public List<Force> forces = new LinkedList<>();
     public List<Vector3f> rotforces = new LinkedList<>();
     
-    public Vector3f force = new Vector3f();
-    public Vector3f rotforce = new Vector3f();
+    public Vector3f momentum = new Vector3f();
+    public Vector3f angmomentum = new Vector3f();
     
     public Vector3f acceleration = new Vector3f();
     public Vector3f angaccel = new Vector3f();
@@ -43,7 +44,8 @@ public class PhysicsEntity extends PhysicsObject{
 
     public float mass = 1f;
     public float density = 1f;
-    public float frictionCoefficient = 0.5f;
+    public float dynamicfriction = 0.3f;
+    public float staticfriction = 0.5f;
     public float restitution = 0.2f;
     
     public PhysicsEntity(){
@@ -63,38 +65,28 @@ public class PhysicsEntity extends PhysicsObject{
         computeLinearMotion(delta);
         computeAngularMotion(delta);
         
-        
+        lowestContact = new Vector3f(0,-1,0);
         CollisionManager.addToTest(colliders);
-        
-        if(position.y() <= getSystem().getConstants().BASE){ 
-            position = position.setY(getSystem().getConstants().BASE);
-            velocity = velocity.setY(-velocity.y() * restitution);
-            grounded = true;
-            touched = true;
-        }else{
-            grounded = false;
-            touched = false;
-        }
     }
     
     private void computeLinearMotion(float delta){
-        force = computeForces(delta);
-        acceleration = getAccel(force);
+        momentum = computeForces(delta);
+        acceleration = getAccel(momentum);
         
         velocity = velocity.add(acceleration.multiply(delta));
         
         if(touched && !overrideFriction){
-            velocity = velocity.multiply(1-frictionCoefficient*delta);
+            velocity = velocity.multiply(1-dynamicfriction*delta);
         }
         
         position = position.add(velocity.multiply(delta));
     }
     
     private void computeAngularMotion(float delta){
-        rotforce = finalRotForce();
-        angaccel = rotforce.divide(mass);
+        angmomentum = finalRotForce();
+        angaccel = angmomentum.divide(mass);
         angvelocity = angvelocity.add(angaccel.multiply(delta));
-        rotation = rotation.multiply(new Quaternionf(angvelocity));
+        rotation = rotation.multiply(new Quaternionf(angvelocity.multiply(delta))).normalize();
     }
     
     private Vector3f computeForces(float delta) {

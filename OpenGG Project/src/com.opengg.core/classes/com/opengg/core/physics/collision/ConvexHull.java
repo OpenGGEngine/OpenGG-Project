@@ -29,9 +29,10 @@ public class ConvexHull extends Collider{
 
     @Override
     public ContactManifold isColliding(Collider c) {
-        if(c instanceof ConvexHull){
+        if(c instanceof ConvexHull)
             return CollisionSolver.HullHull(this, (ConvexHull)c);
-        }
+        else if(c == null)
+            return CollisionSolver.HullGround(this);
         return null;
     }
 }

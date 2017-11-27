@@ -62,6 +62,8 @@ public class ColliderGroup extends PhysicsObject{
     }
     
     public Collision testForCollision(ColliderGroup other) {
+        this.main.recenter(this.getPosition());
+        other.main.recenter(other.getPosition());
         if (!main.isColliding(other.main) && !(this.forcetest || other.forcetest))
             return null;
 
