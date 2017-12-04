@@ -11,13 +11,17 @@ import com.opengg.core.render.texture.Texture;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /**
  *
  * @author Warren
  */
 public class Material {
-    
+
     public static final Vector4f DEFAULT_COLOUR = new Vector4f(1.0f, 1.0f, 1.0f, 1.0f);
     public static Material defaultmaterial = new Material("default");
     public String name;
@@ -58,6 +62,21 @@ public class Material {
 
     public Material(String name) {
         this.name = name;
+    }
+
+    //flip your bytebuffers
+    public Material(ByteBuffer b) {
+        //   b.flip();
+        name = readString(b);
+        this.ka = new Vector3f(b.getFloat(), b.getFloat(), b.getFloat());
+        this.kd = new Vector3f(b.getFloat(), b.getFloat(), b.getFloat());
+        this.ks = new Vector3f(b.getFloat(), b.getFloat(), b.getFloat());
+        this.mapKdFilename = readString(b);
+
+        this.mapNsFilename = readString(b);
+
+        this.bumpFilename = readString(b);
+
     }
 
     public Material(String name, String texpath, GGInputStream in) throws IOException {
@@ -118,12 +137,12 @@ public class Material {
 
     public void toFileFormat(GGOutputStream out) throws IOException {
         out.write(name);
-        
+
         out.write(ka);
         out.write(kd);
         out.write(ks);
         out.write(tf);
-        
+
         out.write(illumModel);
         out.write(dHalo);
         out.write(dFactor);
@@ -171,9 +190,9 @@ public class Material {
         } else {
             out.write(0);
         }
-        
+
         out.write(reflType);
-        
+
         if (reflFilename != null) {
             out.write(reflFilename);
         } else {
@@ -181,4 +200,43 @@ public class Material {
         }
 
     }
+
+    public void writeString(String s, ByteBuffer b) {
+        b.putInt(s.length());
+        b.put(s.getBytes(Charset.forName("UTF-8")));
+    }
+
+    public String readString(ByteBuffer b) {
+        int namelength = b.getInt();
+        if (namelength == 0) {
+            return "";
+        }
+        byte[] name = new byte[namelength];
+        b.get(name);
+        return new String(name, StandardCharsets.UTF_8);
+    }
+
+    public ByteBuffer toBuffer() throws UnsupportedEncodingException {
+
+        ByteBuffer b = ByteBuffer.allocate(4 + (name.length() * 2) + (3 * (4 * 3)) + 4 + (this.mapKdFilename.length() * 2) + 4 + (this.mapNsFilename.length() * 2) + 4 + (this.bumpFilename.length() * 2));
+        b.putInt(name.length());
+        b.put(name.getBytes("UTF-8"));
+        b.put(ka.toByteArray());
+        b.put(kd.toByteArray());
+        b.put(ks.toByteArray());
+        b.putInt(mapKdFilename.length());
+        b.put(mapKdFilename.getBytes("UTF-8"));
+        b.putInt(mapNsFilename.length());
+        b.put(mapNsFilename.getBytes("UTF-8"));
+        b.putInt(bumpFilename.length());
+        b.put(bumpFilename.getBytes("UTF-8"));
+
+        b.flip();
+        return b;
+    }
+
+    public int getCap() {
+        return 4 + (name.length()) + (3 * (4 * 3)) + 4 + (this.mapKdFilename.length()) + 4 + (this.mapKsFilename.length()) + 4 + (bumpFilename.length());
+    }
+
 }

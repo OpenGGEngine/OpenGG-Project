@@ -16,7 +16,7 @@ import com.opengg.core.render.texture.text.GGFont;
  */
 public class GUIText extends GUIRenderable {
 
-    Text text;
+    public Text text;
     GGFont font;
 
     public GUIText(Text text, GGFont font, Vector2f pos) {
@@ -50,6 +50,7 @@ public class GUIText extends GUIRenderable {
 
     @Override
     public void render(float x, float y) {
+       
         ShaderController.setDistanceField(1);
         super.render((this.position.x + x), (this.position.y + y));
         ShaderController.setDistanceField(0);

@@ -15,9 +15,12 @@ public class AnimatedFrame {
     private static final Matrix4f IDENTITY_MATRIX = new Matrix4f();
 
     public static final int MAX_JOINTS = 50;
-
+    
+   // private final float timeStamp;
+    
     private final Matrix4f[] jointMatrices;
-
+    
+    
     public AnimatedFrame(int numbones) {
         jointMatrices = new Matrix4f[numbones];
         Arrays.fill(jointMatrices, IDENTITY_MATRIX);

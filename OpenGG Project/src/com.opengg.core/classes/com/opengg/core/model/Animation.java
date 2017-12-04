@@ -14,8 +14,8 @@ import java.util.List;
  * @author Warren
  */
 public class Animation {
-    private int currentFrame;
-    private List<AnimatedFrame> frames;
+    public int currentFrame;
+    public List<AnimatedFrame> frames;
     private String name;
     private float duration;
     private float animcounter;

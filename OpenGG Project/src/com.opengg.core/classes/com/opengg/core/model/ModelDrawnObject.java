@@ -29,7 +29,7 @@ public class ModelDrawnObject implements Drawable {
         this.model = model;
         
         for(Mesh mesh : model.getMeshes()){
-            MaterialDrawnObject mdo = new MaterialDrawnObject(new DrawnObject(mesh.vbodata, mesh.inddata), mesh.material);
+            MaterialDrawnObject mdo = new MaterialDrawnObject(new DrawnObject(mesh.vbodata.rewind(), mesh.inddata.rewind()), mesh.material);
             drawables.add(mdo);
         }
 

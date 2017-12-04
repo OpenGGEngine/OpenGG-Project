@@ -337,6 +337,7 @@ public class ModelUtil {
 
         }
         mesh.vbodata.rewind();
+        mesh.inddata.rewind();
         try{
             for(int i = 0; i < vertices.size(); i += 3){
                 Face f = new Face();
@@ -351,6 +352,8 @@ public class ModelUtil {
             GGConsole.warn("End of list in face list creation");
         }
             
+        mesh.inddata.rewind();
+        mesh.vbodata.rewind();
         mesh.faces = faces;
     }
     
