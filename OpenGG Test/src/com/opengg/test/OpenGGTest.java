@@ -36,8 +36,7 @@ import com.opengg.core.world.components.TerrainComponent;
 import com.opengg.core.world.components.physics.PhysicsComponent;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 //import java.util.logging.Level;
 //import java.util.logging.Logger;
 
@@ -91,13 +90,13 @@ public class OpenGGTest extends GGApplication{
         player.use();
         
         WorldEngine.getCurrent().attach(new LightComponent(new Light(new Vector3f(0,2,2), new Vector3f(1,1,1), 1000, 0))); 
-        WorldEngine.getCurrent().attach(new ModelRenderComponent(Resource.getModel("goldleaf")).setScale(new Vector3f(0.1f)).setRotationOffset(new Vector3f(-90,0,0)));  
+        WorldEngine.getCurrent().attach(new ModelRenderComponent(Resource.getModel("goldleaf")).setScaleOffset(new Vector3f(0.1f)).setRotationOffset(new Vector3f(-90,0,0)));  
         ModelRenderComponent testphys = new ModelRenderComponent(ModelLoader.loadModel("C:\\res\\sphere\\sphere.bmf"));
         ModelRenderComponent dragon = null;
         try {
             dragon = new ModelRenderComponent(ModelLoader.loadNewModel("C:\\res\\awp\\dragon.bmf"));
         } catch (IOException ex) {
-            Logger.getLogger(OpenGGTest.class.getName()).log(Level.SEVERE, null, ex);
+            //Logger.getLogger(OpenGGTest.class.getName()).log(Level.SEVERE, null, ex);
         }
         dragon.setRotationOffset(new Vector3f(0,0,0));
         //dragon.setScale(new Vector3f(0.4f,0.4f,0.4f));
