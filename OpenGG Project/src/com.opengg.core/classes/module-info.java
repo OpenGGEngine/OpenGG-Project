@@ -18,6 +18,10 @@ module com.opengg.core {
     requires org.lwjgl;
     requires java.logging;
     requires java.desktop;
+    requires com.opengg.math;
+    requires com.opengg.base;
+    requires com.opengg.system;
+    requires com.opengg.console;
     exports com.opengg.core.audio;
     exports com.opengg.core.engine;
     exports com.opengg.core.exceptions;
@@ -26,7 +30,6 @@ module com.opengg.core {
     exports com.opengg.core.io;
     exports com.opengg.core.io.input.keyboard;
     exports com.opengg.core.io.input.mouse;
-    exports com.opengg.core.math;
     exports com.opengg.core.model;
     exports com.opengg.core.online;
     exports com.opengg.core.online.client;

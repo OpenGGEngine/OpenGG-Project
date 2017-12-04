@@ -3,18 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
-package com.opengg.core.engine;
-
-import java.util.Date;
+package com.opengg.core.system;
 
 /**
  *
  * @author Javier
  */
-public class UserCommand {
-    public Date time;
-    public String command;
-    public String[] args;
-    public int argCount;
+public class Allocator {
+    
 }

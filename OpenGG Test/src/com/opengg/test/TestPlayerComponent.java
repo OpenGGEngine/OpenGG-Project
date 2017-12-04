@@ -66,9 +66,10 @@ public class TestPlayerComponent extends Component implements Actionable{
         v1.add(new Vector3f(1,0,-1));
         v1.add(new Vector3f(-1,0,1));
         v1.add(new Vector3f(-1,0,-1));
-        playerphysics.addCollider(new CollisionComponent(new AABB(new Vector3f(),10,6,10),
-                new SphereCollider(2)));//new ConvexHull(v1)));
-        playerphysics.getEntity().mass = 1f;
+        playerphysics.addCollider(new CollisionComponent(new AABB(new Vector3f(),10,6,10),new ConvexHull(v1)));
+                
+                //new CapsuleCollider(new Vector3f(-1,0,0), new Vector3f(1,0,0), 2)));
+        playerphysics.getEntity().mass = 20f;
         playerphysics.getEntity().addForce(force);
         
         //gun = new GunComponent();

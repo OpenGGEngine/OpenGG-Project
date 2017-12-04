@@ -5,7 +5,7 @@
  */
 package com.opengg.core.audio;
 
-import com.opengg.core.engine.GGConsole;
+import com.opengg.core.console.GGConsole;
 import com.opengg.core.engine.Resource;
 import java.io.IOException;
 import java.util.HashMap;

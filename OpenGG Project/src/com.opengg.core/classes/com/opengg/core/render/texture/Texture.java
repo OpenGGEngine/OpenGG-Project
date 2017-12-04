@@ -5,7 +5,7 @@
  */
 package com.opengg.core.render.texture;
 
-import com.opengg.core.engine.GGConsole;
+import com.opengg.core.console.GGConsole;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;

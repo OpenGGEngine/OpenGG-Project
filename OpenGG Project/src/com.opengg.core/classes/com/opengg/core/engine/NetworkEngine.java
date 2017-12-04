@@ -6,6 +6,7 @@
 
 package com.opengg.core.engine;
 
+import com.opengg.core.console.GGConsole;
 import com.opengg.core.online.client.Client;
 import com.opengg.core.online.Packet;
 import com.opengg.core.online.server.Server;

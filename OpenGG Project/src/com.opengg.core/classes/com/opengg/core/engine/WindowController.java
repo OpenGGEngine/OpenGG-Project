@@ -5,6 +5,7 @@
  */
 package com.opengg.core.engine;
 
+import com.opengg.core.console.GGConsole;
 import com.opengg.core.math.Vector2i;
 import com.opengg.core.render.window.GLFWWindow;
 import com.opengg.core.render.window.Window;

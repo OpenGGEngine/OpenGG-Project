@@ -5,7 +5,7 @@
  */
 package com.opengg.core.extension;
 
-import com.opengg.core.engine.GGConsole;
+import com.opengg.core.console.GGConsole;
 import com.opengg.core.math.Tuple;
 import java.util.ArrayList;
 import java.util.List;

@@ -83,6 +83,15 @@ public class Vector3f implements Serializable{
         return z;
     }
     
+    public float get(int val){
+        switch(val){
+            case 0: return x;
+            case 1: return y;
+            case 2: return z;
+            default: return 0;
+        }
+    }
+    
     public Vector3f setX(float nx){
         return new Vector3f(nx,y,z);
     }
@@ -225,11 +234,19 @@ public class Vector3f implements Serializable{
     }
     
     public Vector3f normalize() {
-        return divide(length());
+        return multiply(1f/length());
     }
 
+    public static float dot(Vector3f v1, Vector3f v2){
+        return v1.dot(v2);
+    }
+    
     public float dot(Vector3f v) {
         return x * v.x + y * v.y + z * v.z;
+    }
+    
+    public static Vector3f cross(Vector3f v1, Vector3f v2){
+        return v1.cross(v2);
     }
     
     public Vector3f cross(Vector3f v) {
@@ -247,9 +264,9 @@ public class Vector3f implements Serializable{
     }
     
     private Vector3f absThis(){
-        if(x <= 0) x = -x;
-        if(y <= 0) y = -y;
-        if(z <= 0) z = -z;
+        if(x < 0) x = -x;
+        if(y < 0) y = -y;
+        if(z < 0) z = -z;
         return this;
     }
     
@@ -328,6 +345,16 @@ public class Vector3f implements Serializable{
         y = y - (dot + dot) * normal.y;
         z = z - (dot + dot) * normal.z;
         return this;
+    }
+    
+    public static Vector3f averageOf(Vector3f... vectors){
+        float nx=0, ny=0, nz=0;
+        for(Vector3f v : vectors){
+            nx += v.x;
+            ny += v.y;
+            nz += v.z;
+        }
+        return new Vector3f(nx/vectors.length, ny/vectors.length, nz/vectors.length);
     }
     
     public FloatBuffer getBuffer() {

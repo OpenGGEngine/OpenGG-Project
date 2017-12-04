@@ -6,6 +6,7 @@
 
 package com.opengg.core.engine;
 
+import com.opengg.core.console.GGConsole;
 import com.opengg.core.gui.GUI;
 import com.opengg.core.model.ModelManager;
 import com.opengg.core.render.GLBuffer;

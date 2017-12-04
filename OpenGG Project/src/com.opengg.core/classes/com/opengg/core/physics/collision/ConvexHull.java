@@ -16,9 +16,9 @@ import java.util.List;
  */
 public class ConvexHull extends Collider{
     List<Vector3f> vertices = new ArrayList<>();
-    List<HullFace> faces = new ArrayList<>();
+    List<ColliderFace> faces = new ArrayList<>();
     
-    public ConvexHull(List<Vector3f> vertices, List<HullFace> faces){
+    public ConvexHull(List<Vector3f> vertices, List<ColliderFace> faces){
         this.vertices = vertices;
         this.faces = faces;
     }

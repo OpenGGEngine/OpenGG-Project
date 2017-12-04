@@ -5,7 +5,7 @@
  */
 package com.opengg.core.model;
 
-import com.opengg.core.engine.GGConsole;
+import com.opengg.core.console.GGConsole;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.util.GGInputStream;
 import java.io.BufferedInputStream;

@@ -5,7 +5,7 @@
  */
 package com.opengg.core.audio;
 
-import com.opengg.core.engine.GGConsole;
+import com.opengg.core.console.GGConsole;
 import com.opengg.core.math.Vector3f;
 import org.lwjgl.openal.AL10;
 import static org.lwjgl.openal.AL10.*;

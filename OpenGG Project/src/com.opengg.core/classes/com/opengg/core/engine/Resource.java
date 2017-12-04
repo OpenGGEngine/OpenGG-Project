@@ -8,6 +8,7 @@ package com.opengg.core.engine;
 
 import com.opengg.core.audio.SoundData;
 import com.opengg.core.audio.SoundManager;
+import com.opengg.core.console.GGConsole;
 import com.opengg.core.model.Model;
 import com.opengg.core.model.ModelManager;
 import com.opengg.core.render.texture.Texture;

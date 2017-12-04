@@ -5,7 +5,7 @@
  */
 package com.opengg.core.render.window;
 
-import com.opengg.core.engine.GGConsole;
+import com.opengg.core.console.GGConsole;
 import com.opengg.core.exceptions.WindowCreationException;
 import java.util.HashMap;
 import java.util.Map;

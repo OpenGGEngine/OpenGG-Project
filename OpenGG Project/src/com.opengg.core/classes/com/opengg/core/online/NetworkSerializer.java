@@ -6,7 +6,7 @@
 
 package com.opengg.core.online;
 
-import com.opengg.core.engine.GGConsole;
+import com.opengg.core.console.GGConsole;
 import com.opengg.core.engine.WorldEngine;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;

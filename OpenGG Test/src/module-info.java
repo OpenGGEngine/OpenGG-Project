@@ -5,4 +5,5 @@
  */
 module OpenGGTest {
     requires com.opengg.core;
+    requires com.opengg.math;
 }

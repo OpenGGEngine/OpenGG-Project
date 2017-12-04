@@ -5,7 +5,7 @@
  */
 package com.opengg.core.world.components.viewmodel;
 
-import com.opengg.core.engine.GGConsole;
+import com.opengg.core.console.GGConsole;
 import com.opengg.core.engine.Resource;
 import com.opengg.core.util.ClassUtil;
 import com.opengg.core.util.JarClassUtil;
@@ -24,7 +24,7 @@ public class ViewModelComponentRegistry {
     static List<Class> viewmodels = new ArrayList<>();
     
     public static void initialize(){
-        registerAllFromJar(Resource.getAbsoluteFromLocal("lib" + File.separator + "OpenGG.jar"));
+        registerAllFromJar(Resource.getAbsoluteFromLocal("lib" + File.separator + "com.opengg.core.jar"));
     }
     
     public static void register(Class component){

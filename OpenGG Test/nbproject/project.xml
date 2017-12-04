@@ -20,8 +20,40 @@
                 <artifact-type>jar</artifact-type>
                 <script>build.xml</script>
                 <target>jar</target>
-                <clean-target>clean</clean-target> 
-                <id>jar</id>
+                <clean-target>clean</clean-target>
+                <id>com.opengg.base.jar</id>
+            </reference>
+            <reference>
+                <foreign-project>OpenGG</foreign-project>
+                <artifact-type>jar</artifact-type>
+                <script>build.xml</script>
+                <target>jar</target>
+                <clean-target>clean</clean-target>
+                <id>com.opengg.console.jar</id>
+            </reference>
+            <reference>
+                <foreign-project>OpenGG</foreign-project>
+                <artifact-type>jar</artifact-type>
+                <script>build.xml</script>
+                <target>jar</target>
+                <clean-target>clean</clean-target>
+                <id>com.opengg.core.jar</id>
+            </reference>
+            <reference>
+                <foreign-project>OpenGG</foreign-project>
+                <artifact-type>jar</artifact-type>
+                <script>build.xml</script>
+                <target>jar</target>
+                <clean-target>clean</clean-target>
+                <id>com.opengg.math.jar</id>
+            </reference>
+            <reference>
+                <foreign-project>OpenGG</foreign-project>
+                <artifact-type>jar</artifact-type>
+                <script>build.xml</script>
+                <target>jar</target>
+                <clean-target>clean</clean-target>
+                <id>com.opengg.system.jar</id>
             </reference>
         </references>
     </configuration>

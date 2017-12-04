@@ -6,7 +6,7 @@
 
 package com.opengg.core.online;
 
-import com.opengg.core.engine.GGConsole;
+import com.opengg.core.console.GGConsole;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.DatagramPacket;

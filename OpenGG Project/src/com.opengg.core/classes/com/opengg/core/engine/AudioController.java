@@ -12,7 +12,7 @@ import com.opengg.core.audio.AudioListener;
 import com.opengg.core.audio.Sound;
 import com.opengg.core.audio.SoundManager;
 import com.opengg.core.audio.SoundtrackHandler;
-import static com.opengg.core.engine.GGConsole.error;
+import com.opengg.core.console.GGConsole;
 import java.util.ArrayList;
 import org.lwjgl.openal.AL;
 import org.lwjgl.openal.AL10;
@@ -71,7 +71,7 @@ public class AudioController {
 
         int i = AL10.alGetError();
         if(i != AL10.AL_NO_ERROR)
-            error("OpenAL Error in AudioHandler: " + i);
+            GGConsole.error("OpenAL Error in AudioHandler: " + i);
     }
     
     public static void addAudioSource(Sound s){

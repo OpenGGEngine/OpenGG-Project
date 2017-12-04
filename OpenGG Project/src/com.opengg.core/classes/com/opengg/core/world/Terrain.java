@@ -5,7 +5,7 @@
  */
 package com.opengg.core.world;
 
-import com.opengg.core.engine.GGConsole;
+import com.opengg.core.console.GGConsole;
 import com.opengg.core.engine.Resource;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;

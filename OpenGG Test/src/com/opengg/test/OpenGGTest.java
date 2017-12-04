@@ -15,8 +15,12 @@ import com.opengg.core.gui.GUI;
 import com.opengg.core.gui.GUIText;
 import com.opengg.core.io.ControlType;
 import static com.opengg.core.io.input.keyboard.Key.*;
+import com.opengg.core.math.FastMath;
+import com.opengg.core.math.Triangle;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
+import com.opengg.core.model.Face;
+import com.opengg.core.model.Model;
 import com.opengg.core.model.ModelLoader;
 import com.opengg.core.physics.PhysicsRenderer;
 import com.opengg.core.physics.collision.AABB;
@@ -30,6 +34,7 @@ import com.opengg.core.render.texture.text.GGFont;
 import com.opengg.core.render.window.WindowInfo;
 import com.opengg.core.render.window.WindowOptions;
 import com.opengg.core.world.Skybox;
+import com.opengg.core.world.components.FreeFlyComponent;
 import com.opengg.core.world.components.LightComponent;
 import com.opengg.core.world.components.ModelRenderComponent;
 import com.opengg.core.world.components.TerrainComponent;
@@ -59,7 +64,7 @@ public class OpenGGTest extends GGApplication{
     @Override
     public  void setup(){
         Soundtrack track = new Soundtrack();
-        track.addSong(Resource.getSoundData("windgarden.ogg"));
+        //track.addSong(Resource.getSoundData("windgarden.ogg"));
         //track.addSong(Resource.getSoundData("battlerock.ogg"));
         //track.addSong(Resource.getSoundData("floaterland.ogg"));
         //track.addSong(Resource.getSoundData("hell.ogg"));
@@ -67,10 +72,10 @@ public class OpenGGTest extends GGApplication{
         //track.addSong(Resource.getSoundData("koopa.ogg"));
         //track.addSong(Resource.getSoundData("megaleg.ogg"));
         //track.addSong(Resource.getSoundData("stardust.ogg"));
-        track.shuffle();
-        track.play();   
+        //track.shuffle();
+        //track.play();   
         AudioController.setGlobalGain(0f);
-        SoundtrackHandler.setSoundtrack(track);
+        //SoundtrackHandler.setSoundtrack(track);
         
         font = Resource.getFont("test", "test.png");
         text = new Text("Turmoil has engulfed the Galactic Republic. The taxation of trade routes to outlying star systems is in dispute. \n\n"
@@ -81,35 +86,52 @@ public class OpenGGTest extends GGApplication{
                 + " the guardians of peace and justice in the galaxy, to settle the conflict...", new Vector2f(), 1f, 0.5f, false);
         GUI.addItem("aids", new GUIText(text, font, new Vector2f(0f,0)));
         
-        TestPlayerComponent player = new TestPlayerComponent();
-        player.setPositionOffset(new Vector3f(0,0,10));
+        //TestPlayerComponent player = new TestPlayerComponent();
+        FreeFlyComponent player = new FreeFlyComponent();
+        player.setPositionOffset(new Vector3f(0,0,40));
         player.use();
         
         WorldEngine.getCurrent().attach(new LightComponent(new Light(new Vector3f(0,2,2), new Vector3f(1,1,1), 1000, 0))); 
         WorldEngine.getCurrent().attach(new ModelRenderComponent(Resource.getModel("goldleaf")).setScale(new Vector3f(0.1f)).setRotationOffset(new Vector3f(-90,0,0)));  
-        ModelRenderComponent testphys = new ModelRenderComponent(ModelLoader.loadModel("C:\\res\\sphere\\sphere.bmf"));
-        testphys.setRotationOffset(new Vector3f(0,0,0));
+        //ModelRenderComponent testphys = new ModelRenderComponent(ModelLoader.loadModel("C:\\res\\sphere\\sphere.bmf"));
+        
+        Model m = Resource.getModel("cylinderds");
+        
         
         ArrayList<Vector3f> v2 = new ArrayList<>();
+
+        
         v2.add(new Vector3f(-1,-1,-1));
         v2.add(new Vector3f(-1,1,-1));
         v2.add(new Vector3f(-1,-1,1));
         v2.add(new Vector3f(-1,1,1));
         v2.add(new Vector3f(1,-1,-1));
         v2.add(new Vector3f(1,1,-1));
-        v2.add(new Vector3f(1,-1,1));
+        v2.add(new Vector3f(1,-1,1f));
         v2.add(new Vector3f(1,1,1));
         
+        for(int i = 0; i < 150; i++){
+            ModelRenderComponent testphys = new ModelRenderComponent(m);
+            testphys.setPositionOffset(new Vector3f((float) (Math.random()-0.5f)*10f, (float) (Math.random())*10f,(float) (Math.random()-0.5f)*10f));
+            //testphys.setRotationOffset(new Vector3f((float) (Math.random()-0.5f)*90f, (float) (Math.random()-0.5f)*90f,(float) (Math.random()-0.5f)*90f));
+            PhysicsComponent phys = new PhysicsComponent(new ColliderGroup(
+                new AABB(new Vector3f(),4,4,4), new ConvexHull(v2)));
+
+            phys.getEntity().mass = 10;
+            phys.getEntity().inertialMatrix = phys.getEntity().inertialMatrix.scale(10);
+            WorldEngine.getCurrent().attach(testphys.attach(phys));
+        }
         
-        PhysicsComponent phys = new PhysicsComponent(new ColliderGroup(
-                new AABB(new Vector3f(),10,6,10), //new ConvexHull(v2)));
-                new CapsuleCollider(new Vector3f(3,0,0),
-                      new Vector3f(-3,0,0),2)));
-        phys.getEntity().mass = 10;
-        phys.getEntity().inertialMatrix = phys.getEntity().inertialMatrix.scale(10);
+        //PhysicsComponent phys = new PhysicsComponent(new ColliderGroup(
+        //        new AABB(new Vector3f(),5,5,5), new ConvexHull(v2)));
+        //        //new CapsuleCollider(new Vector3f(3,0.1f,0),
+        //        //      new Vector3f(-3,0,0),2)));
+        //phys.getEntity().mass = 10;
+        //phys.getEntity().inertialMatrix = phys.getEntity().inertialMatrix.scale(10);
+        //phys.getEntity().angvelocity = new Vector3f(30,0,0);
         
         WorldEngine.getCurrent().attach(player);
-        WorldEngine.getCurrent().attach(testphys.attach(phys));
+        //WorldEngine.getCurrent().attach(testphys.attach(phys));
 
         BindController.addBind(ControlType.KEYBOARD, "forward", KEY_W);
         BindController.addBind(ControlType.KEYBOARD, "backward", KEY_S);

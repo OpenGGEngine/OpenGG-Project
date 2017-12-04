@@ -3,13 +3,8 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
-package com.opengg.core.engine;
-
-/**
- *
- * @author Javier
- */
-public interface ConsoleListener {
-    public void onConsoleInput(UserCommand s);
+module com.opengg.console {
+    requires com.opengg.base;
+    
+    exports com.opengg.core.console;
 }

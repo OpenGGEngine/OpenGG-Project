@@ -5,7 +5,7 @@
  */
 package com.opengg.core.render.texture.text;
 
-import com.opengg.core.engine.GGConsole;
+import com.opengg.core.console.GGConsole;
 import java.util.ArrayList;
 import java.util.List;
 

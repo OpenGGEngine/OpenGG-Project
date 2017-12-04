@@ -6,7 +6,7 @@
 
 package com.opengg.core.render.shader;
 
-import com.opengg.core.engine.GGConsole;
+import com.opengg.core.console.GGConsole;
 import com.opengg.core.engine.Resource;
 import com.opengg.core.exceptions.ShaderException;
 import com.opengg.core.io.FileStringLoader;

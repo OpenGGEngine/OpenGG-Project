@@ -7,6 +7,9 @@
 package com.opengg.core.engine;
 
 import com.opengg.core.audio.SoundtrackHandler;
+import com.opengg.core.console.ConsoleListener;
+import com.opengg.core.console.GGConsole;
+import com.opengg.core.console.UserCommand;
 import static com.opengg.core.engine.OpenGG.*;
 import com.opengg.core.physics.PhysicsRenderer;
 

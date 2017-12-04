@@ -5,7 +5,7 @@
  */
 package com.opengg.core.util;
 
-import com.opengg.core.engine.GGConsole;
+import com.opengg.core.console.GGConsole;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -42,6 +42,7 @@ public class JarClassUtil {
 
         for(String string : strings){
             try{
+                if(string.contains("module-info")) continue;
                 Class clazz = loader.loadClass(string);
                 if(clazz.getCanonicalName() != null)
                     classes.add(clazz);

@@ -6,6 +6,7 @@
 
 package com.opengg.core.engine;
 
+import com.opengg.core.console.GGConsole;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;

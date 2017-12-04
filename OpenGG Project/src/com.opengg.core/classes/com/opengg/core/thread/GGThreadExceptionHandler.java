@@ -6,7 +6,7 @@
 
 package com.opengg.core.thread;
 
-import com.opengg.core.engine.GGConsole;
+import com.opengg.core.console.GGConsole;
 import java.lang.Thread.UncaughtExceptionHandler;
 
 /**

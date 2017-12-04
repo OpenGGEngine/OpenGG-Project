@@ -4,12 +4,11 @@
  * and open the template in the editor.
  */
 
-package com.opengg.core.engine;
+package com.opengg.core.system;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
+import com.opengg.core.console.GGConsole;
+import com.opengg.core.GGInfo;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 /**
@@ -73,7 +72,7 @@ public class SystemInfo {
     }
     
     public static void queryOpenGLInfo(){
-        String glVersion = RenderEngine.getGLVersion();
+        String glVersion = GGInfo.getGlVersion();
         glinfo.put("GL Version", glVersion);
         glinfo.put("GL Initialization", !(glVersion == null || glVersion.equals("")) ? "Initialized successfully" : "Initialization failed");
     }
@@ -83,7 +82,7 @@ public class SystemInfo {
     }
     
     public static String getInfo(){
-        String data = "OpenGG Engine Version: " + OpenGG.version;
+        String data = "OpenGG Engine Version: " + GGInfo.getVersion();
         
         data += "\n\nSystem Information";
         for(String line : sysinfo.keySet()){

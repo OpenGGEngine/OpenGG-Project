@@ -5,6 +5,7 @@
  */
 package com.opengg.core.engine;
 
+import com.opengg.core.console.GGConsole;
 import com.opengg.core.model.Animator;
 import com.opengg.core.world.Deserializer;
 import com.opengg.core.world.Serializer;

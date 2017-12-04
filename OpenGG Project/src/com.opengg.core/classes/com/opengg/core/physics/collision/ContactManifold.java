@@ -7,6 +7,8 @@
 package com.opengg.core.physics.collision;
 
 import com.opengg.core.math.Vector3f;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -14,7 +16,7 @@ import com.opengg.core.math.Vector3f;
  */
 public class ContactManifold {
     public Vector3f normal;
-    public Vector3f point;
+    public List<Vector3f> points = new ArrayList<>(3);
     public float depth;
     
     public ContactManifold reverse(){
@@ -26,7 +28,7 @@ public class ContactManifold {
     public String toString(){
         String s = "";
         s += "Collision normal: " + normal + "\n";
-        s += "Collision point: " + point + "\n";
+        s += "Collision points: " + points + "\n";
         s += "Collision depth: " + depth + "\n";
         return s;
     }

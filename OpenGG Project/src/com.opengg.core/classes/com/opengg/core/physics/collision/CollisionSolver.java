@@ -12,9 +12,12 @@ import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.MinkowskiSet;
 import com.opengg.core.math.MinkowskiTriangle;
 import com.opengg.core.math.Simplex;
+import com.opengg.core.math.Triangle;
+import com.opengg.core.math.Tuple;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.math.Vector4f;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -22,9 +25,7 @@ import java.util.List;
  * @author Javier
  */
 public class CollisionSolver {
-    public static float COLLISION_OFFSET = 0.5F;
 
-    
     public static boolean AABBAABB(AABB c1, AABB c2){
         return c1.isColliding(c2);
     }
@@ -37,7 +38,7 @@ public class CollisionSolver {
         if(c1.getPosition().getDistance(c2.getPosition()) < c1.radius + c2.radius){
             ContactManifold data = new ContactManifold();
             data.normal = c1.getPosition().subtract(c2.getPosition());
-            data.point = c1.getPosition().add(data.normal.divide(c1.radius/c2.radius));
+            data.points.add(c1.getPosition().add(data.normal.divide(c1.radius/c2.radius)));
             data.normal = data.normal.normalize();
             data.depth = c2.getPosition().subtract(c1.getPosition()).length()-c1.radius-c2.radius;
             return data;
@@ -50,7 +51,7 @@ public class CollisionSolver {
         if(c1.getPosition().getDistance(closest) < c1.radius + c2.radius){
             ContactManifold data = new ContactManifold();
             data.normal = c1.getPosition().subtract(closest);
-            data.point = c1.getPosition().add(data.normal.divide(c1.radius/c2.radius));
+            data.points.add(c1.getPosition().add(data.normal.divide(c1.radius/c2.radius)));
             data.normal = data.normal.normalize();
             data.depth = closest.subtract(c1.getPosition()).length()-c1.radius-c2.radius;
             return data;
@@ -69,8 +70,8 @@ public class CollisionSolver {
         
         ContactManifold data = new ContactManifold();
         data.depth = ground - (c1.getPosition().y() - c1.getRadius());
-        data.normal = new Vector3f(0,-1,0);
-        data.point = new Vector3f(c1.getPosition().x(), ground, c1.getPosition().z());
+        data.normal = new Vector3f(0,1,0);
+        data.points.add(new Vector3f(c1.getPosition().x(), ground, c1.getPosition().z()));
         return data;
     }
     
@@ -84,7 +85,7 @@ public class CollisionSolver {
         if(!(c1.getPosition().y()-c1.radius < height))
             return null;
         ContactManifold data = new ContactManifold();
-        data.point = new Vector3f(c1.getPosition().x(), height, c1.getPosition().z());
+        data.points.add(new Vector3f(c1.getPosition().x(), height, c1.getPosition().z()));
         data.normal = c2.t.getNormalAt(np.x(), np.z());
         data.depth = height-(c1.getPosition().y()-c1.radius);
         return data;
@@ -95,7 +96,7 @@ public class CollisionSolver {
         if(closest[0].getDistance(closest[1]) < c1.radius + c2.radius){
             ContactManifold data = new ContactManifold();
             data.normal = closest[0].subtract(closest[1]);
-            data.point = closest[0].add(data.normal.divide(c1.radius/c2.radius));
+            data.points.add(closest[0].add(data.normal.divide(c1.radius/c2.radius)));
             data.normal = data.normal.normalize();
             data.depth = closest[1].subtract(closest[0]).length()-c1.radius-c2.radius;
             return data;
@@ -118,7 +119,7 @@ public class CollisionSolver {
         if(!(c1.getPosition().y()-c1.radius < height))
             return null;
         ContactManifold data = new ContactManifold();
-        data.point = new Vector3f(c1.getPosition().x(), height, c1.getPosition().z());
+        data.points.add(new Vector3f(c1.getPosition().x(), height, c1.getPosition().z()));
         data.normal = c2.t.getNormalAt(np.x(), np.z());
         data.depth = height-c1.getPosition().y();
         return data;
@@ -134,8 +135,8 @@ public class CollisionSolver {
         
         ContactManifold data = new ContactManifold();
         data.depth = ground - (lowest.y() - c1.getRadius());
-        data.normal = new Vector3f(0,-1,0);
-        data.point = new Vector3f(lowest.x(), ground, lowest.z());
+        data.normal = new Vector3f(0,1,0);
+        data.points.add(new Vector3f(lowest.x(), ground, lowest.z()));
         return data;
     }
     
@@ -159,8 +160,8 @@ public class CollisionSolver {
         if (Math.abs(bary.x()) > 1.0f || Math.abs(bary.y()) > 1.0f || Math.abs(bary.z()) > 1.0f) 
             return null;
         
-        cm.point = contact.a.a.multiply(bary.x()).add(contact.b.a.multiply(bary.y())).add(contact.c.a.multiply(bary.z()));
-        cm.normal = contact.n;
+        cm.points.add(contact.a.a.multiply(bary.x()).add(contact.b.a.multiply(bary.y())).add(contact.c.a.multiply(bary.z())));
+        cm.normal = contact.n.inverse();
         cm.depth = distanceFromOrigin;
         return cm;
     }
@@ -172,18 +173,27 @@ public class CollisionSolver {
             nlist.add(new Vector4f(v).multiply(h1matrix).truncate());
         }
         
-        Vector3f lowest = new Vector3f(0,Float.MAX_VALUE,0);
+        float lowest = Float.MAX_VALUE;
+        List<Vector3f> lowestpoints = new LinkedList<>();
         for(Vector3f v : nlist){
-            if(v.y() < lowest.y()) lowest = v;
+            if(FastMath.isEqual(v.y(), lowest, FastMath.FLOAT_ROUNDING_ERROR*10)){
+                lowestpoints.add(v);
+            }else if(v.y() < lowest-FastMath.FLOAT_ROUNDING_ERROR){
+                lowestpoints.clear();
+                lowest = v.y();
+                lowestpoints.add(v);
+            }
         }
         
         float ground = PhysicsEngine.getInstance().getConstants().BASE;
-        if(lowest.y() > ground) return null;
+        if(lowest > ground) return null;
         
         ContactManifold data = new ContactManifold();
-        data.depth = ground - lowest.y();
-        data.normal = new Vector3f(0,-1,0);
-        data.point = new Vector3f(lowest.x(), ground, lowest.z());
+        data.depth = ground - lowest;
+        data.normal = new Vector3f(0,1,0);
+        for(Vector3f low : lowestpoints){
+            data.points.add(new Vector3f(low.x(), ground, low.z()));
+        }
         return data;
     }
     
@@ -198,5 +208,46 @@ public class CollisionSolver {
         float bx = (d11 * d20 - d01 * d21) / denom;
         float by = (d00 * d21 - d01 * d20) / denom;
         return new Vector3f(bx, by, 1.0f - bx-by);
+    }
+    
+    public static ContactManifold MeshMesh(Mesh m1, Mesh m2){
+        Matrix4f m1matrix = new Matrix4f().translate(m1.getPosition()).rotate(m1.getRotation());
+        Matrix4f m2matrix = new Matrix4f().translate(m2.getPosition()).rotate(m2.getRotation());
+        List<Tuple<Triangle, Triangle>> collisions = new ArrayList<>(100);
+        List<Triangle> f1 = m1.getFaces();
+        List<Triangle> f2 = m2.getFaces();
+        for(int i = 0; i < f1.size(); i++){
+            for(int j = i; j < f2.size(); j++){
+                Triangle t1 = new Triangle(f1.get(i)).transform(m1matrix);
+                Triangle t2 = new Triangle(f2.get(j)).transform(m2matrix);
+                if(FastMath.isIntersecting(t1, t2)){
+                    collisions.add(new Tuple<>(t1,t2));
+                }
+            }
+        }
+        if(collisions.isEmpty()) return null;
+        
+        
+        List<Vector3f> collisionPoints = new ArrayList(collisions.size());
+        for(Tuple<Triangle, Triangle> set : collisions){
+            Vector3f v = set.y.a.subtract(set.x.a);
+            float dist = v.dot(set.x.n);
+            Vector3f p1 = set.y.a.subtract(set.x.n.multiply(dist));
+            
+            v = set.y.b.subtract(set.x.a);
+            dist = v.dot(set.x.n);
+            Vector3f p2 = set.y.b.subtract(set.x.n.multiply(dist));
+            
+            v = set.y.c.subtract(set.x.a);
+            dist = v.dot(set.x.n);
+            Vector3f p3 = set.y.c.subtract(set.x.n.multiply(dist));
+            
+            collisionPoints.add(Vector3f.averageOf(p1,p2,p3));
+        }
+        
+        float maxdist = 0;
+        
+        ContactManifold cm = new ContactManifold();
+        return cm;
     }
 }

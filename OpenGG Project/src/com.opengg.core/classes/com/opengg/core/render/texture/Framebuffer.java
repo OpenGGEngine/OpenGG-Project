@@ -5,7 +5,7 @@
  */
 package com.opengg.core.render.texture;
 
-import com.opengg.core.engine.GGConsole;
+import com.opengg.core.console.GGConsole;
 import com.opengg.core.engine.OpenGG;
 import com.opengg.core.engine.WindowController;
 import com.opengg.core.math.Tuple;

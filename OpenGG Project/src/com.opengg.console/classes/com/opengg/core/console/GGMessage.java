@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package com.opengg.core.engine;
+package com.opengg.core.console;
 
 import java.util.Calendar;
 

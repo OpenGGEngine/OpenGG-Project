@@ -6,7 +6,7 @@
 
 package com.opengg.core.model;
 
-import com.opengg.core.engine.GGConsole;
+import com.opengg.core.console.GGConsole;
 import com.opengg.core.engine.OpenGG;
 import com.opengg.core.math.Vector3fm;
 import com.opengg.core.math.Vector3f;

@@ -3,13 +3,8 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
-package com.opengg.core.physics.collision;
-
-/**
- *
- * @author Javier
- */
-public class HullFace {
-    int v1, v2, v3;
+module com.opengg.math {
+    requires org.lwjgl;
+    
+    exports com.opengg.core.math;
 }

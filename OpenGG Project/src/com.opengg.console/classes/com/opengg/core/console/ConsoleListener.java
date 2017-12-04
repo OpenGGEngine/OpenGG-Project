@@ -4,12 +4,12 @@
  * and open the template in the editor.
  */
 
-package com.opengg.core.engine;
+package com.opengg.core.console;
 
 /**
  *
  * @author Javier
  */
-public enum Level {
-    INFO, WARNING, ERROR;
+public interface ConsoleListener {
+    public void onConsoleInput(UserCommand s);
 }

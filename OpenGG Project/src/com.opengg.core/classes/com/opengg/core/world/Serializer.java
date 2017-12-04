@@ -6,7 +6,7 @@
 
 package com.opengg.core.world;
 
-import com.opengg.core.engine.GGConsole;
+import com.opengg.core.console.GGConsole;
 import com.opengg.core.util.GGOutputStream;
 import com.opengg.core.world.components.Component;
 import java.io.ByteArrayOutputStream;

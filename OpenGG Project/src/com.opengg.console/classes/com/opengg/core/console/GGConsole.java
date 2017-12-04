@@ -4,8 +4,9 @@
  * and open the template in the editor.
  */
 
-package com.opengg.core.engine;
+package com.opengg.core.console;
 
+import com.opengg.core.GGInfo;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -44,7 +45,7 @@ public class GGConsole implements Runnable{
     }
     
     public static void logVerbose(String message){
-        if(OpenGG.isVerbose())
+        if(GGInfo.isVerbose())
             write(message, Level.INFO);
     }
             
@@ -83,12 +84,12 @@ public class GGConsole implements Runnable{
     }
     
     public static void writeLog(Date date, String error, String name){
-        try(PrintWriter writer = new PrintWriter(new FileOutputStream(Resource.getAbsoluteFromLocal("logs" + File.separator + name + ".log")))) {
+        try(PrintWriter writer = new PrintWriter(new FileOutputStream(new File(new File("").getCanonicalPath()+("logs" + File.separator + name + ".log"))))) {
             for(GGMessage m : messages){
                 writer.println(m.toString());
             }
             writer.println(error);
-        } catch (FileNotFoundException ex) {
+        } catch (IOException ex) {
             GGConsole.error("Could not create log file!");
         }
     }
