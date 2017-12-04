@@ -20,7 +20,7 @@ public class TerrainCollider extends Collider{
     }
     
     @Override
-    public ContactManifold isColliding(Collider c) {
+    public Contact isColliding(Collider c) {
         if(c instanceof SphereCollider)
             return CollisionSolver.SphereTerrain((SphereCollider)c, this);
         if(c instanceof CapsuleCollider)

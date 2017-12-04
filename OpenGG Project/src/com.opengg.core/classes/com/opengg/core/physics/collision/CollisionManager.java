@@ -39,16 +39,16 @@ public class CollisionManager {
     public static void testForCollisions(PhysicsSystem system){
         collisions.clear();
         for(ColliderGroup next : test){
-            ContactManifold cm = null;
+            Contact cm = null;
             for(Collider c : next.colliders){
-                ContactManifold nxt = c.isColliding(null);
+                Contact nxt = c.isColliding(null);
                 if(nxt != null) cm = nxt;
             }
             if(cm != null){
                 Collision c = new Collision();
                 c.thiscollider = next;
                 c.other = coll;
-                c.manifolds.add(cm);
+                c.manifolds.addAll(cm.manifolds);
                 collisions.add(c);
             }
             

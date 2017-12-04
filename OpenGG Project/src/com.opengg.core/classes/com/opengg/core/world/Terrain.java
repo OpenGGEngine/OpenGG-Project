@@ -7,6 +7,7 @@ package com.opengg.core.world;
 
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.engine.Resource;
+import com.opengg.core.math.Triangle;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.drawn.Drawable;
@@ -20,6 +21,8 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -31,6 +34,7 @@ import org.lwjgl.system.MemoryUtil;
  */
 public class Terrain {
     Drawable d;
+    List<Triangle> mesh;
     
     float[][] map;
     float sizex, sizez;
@@ -135,6 +139,69 @@ public class Terrain {
         return normal;
     }
 
+    public List<Triangle> getMesh(){
+        if(mesh != null) return mesh;
+        
+        
+        List<Vector3f> points = new ArrayList<>( map.length * map[0].length);
+        List<Integer> indices = new ArrayList<>(6 * (map.length * map[0].length));
+        List<Triangle> triangle = new ArrayList<>((6 * (map.length * map[0].length))/2);
+        
+        for(int i = 0; i < map.length-1; i++){
+            for(int i2 = 0; i2 < map[0].length-1; i2++){
+                int topLeft = (i * map.length) + i2;
+                int topRight = topLeft + 1;
+                int bottomLeft = ((i + 1) * map.length) + i2;
+                int bottomRight = bottomLeft + 1;
+                
+                indices.add(topRight);
+                indices.add(bottomLeft);
+                indices.add(topLeft);
+                
+                indices.add(bottomRight);
+                indices.add(bottomLeft);
+                indices.add(topRight); 
+            }
+        }
+        
+        for(int i = 0; i < map.length; i++){
+            for(int i2 = 0; i2 < map[0].length; i2++){
+                float x = ((float) i * xsquarewidth);
+                float y = map[i][i2];
+                float z = ((float) i2 * zsquarewidth);
+                                
+                float u = (float) i / (float) map.length;
+                float v = (float) i2 / (float) map[0].length;
+                
+                float nx = 1;
+                float ny = 1;
+                float nz = 1;
+                if(i > 0 && i < map.length - 1 && i2  > 0 && i2 < map[0].length - 1){
+                    Vector3f normal = calculateNormal(i,i2);
+                    nx = normal.x();
+                    ny = normal.y();
+                    nz = normal.z();
+                }
+
+                points.add(new Vector3f(x,y,z));
+            }
+        }
+        
+        for(int i = 0; i < indices.size()-4; i += 4){
+            Vector3f v1 = points.get(indices.get(i));
+            Vector3f v2 = points.get(indices.get(i+1));
+            Vector3f v3 = points.get(indices.get(i+2));
+            Vector3f v4 = points.get(indices.get(i+3));
+            
+            Triangle t1 = new Triangle(v1,v2,v3);
+            Triangle t2 = new Triangle(v3,v4,v1);
+            triangle.add(t1);
+            triangle.add(t2);
+        }
+        mesh = triangle;
+        System.out.println(mesh.size());
+        return triangle;
+    }
     
     public Drawable getDrawable(){
         if(d != null)

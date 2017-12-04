@@ -25,7 +25,7 @@ public class EnemyComponent extends Component{
         setPositionOffset(new Vector3f(0,2,0));
         enemy = new ModelRenderComponent(ModelLoader.loadModel("C:\\res\\internal_skeleton\\skelet.bmf"));
         attach(enemy);
-        enemy.setScale(new Vector3f(0.06f,0.06f,0.06f));
+        enemy.setScaleOffset(new Vector3f(0.06f,0.06f,0.06f));
         killcollider = new CollisionComponent(new AABB(new Vector3f(-5,-5,-5),5,5,5), new CapsuleCollider(new Vector3f(0,1,0),2));
         attach(killcollider);
     }

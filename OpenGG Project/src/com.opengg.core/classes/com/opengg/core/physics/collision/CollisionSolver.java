@@ -34,19 +34,18 @@ public class CollisionSolver {
         return c2.isColliding(c1);
     }
     
-    public static ContactManifold SphereSphere(SphereCollider c1, SphereCollider c2){
+    public static Contact SphereSphere(SphereCollider c1, SphereCollider c2){
         if(c1.getPosition().getDistance(c2.getPosition()) < c1.radius + c2.radius){
             ContactManifold data = new ContactManifold();
-            data.normal = c1.getPosition().subtract(c2.getPosition());
-            data.points.add(c1.getPosition().add(data.normal.divide(c1.radius/c2.radius)));
-            data.normal = data.normal.normalize();
+            data.normal = c1.getPosition().subtract(c2.getPosition()).normalize().inverse();
+            data.points.add(c1.getPosition().subtract(data.normal.multiply(c1.radius)));
             data.depth = c2.getPosition().subtract(c1.getPosition()).length()-c1.radius-c2.radius;
-            return data;
+            return new Contact(data);
         }
         return null;
     }
     
-    public static ContactManifold SphereCapsule(SphereCollider c1, CapsuleCollider c2){
+    public static Contact SphereCapsule(SphereCollider c1, CapsuleCollider c2){
         Vector3f closest = FastMath.closestPointTo(c2.getP1(), c2.getP2(), c1.getPosition(), true);  
         if(c1.getPosition().getDistance(closest) < c1.radius + c2.radius){
             ContactManifold data = new ContactManifold();
@@ -54,7 +53,7 @@ public class CollisionSolver {
             data.points.add(c1.getPosition().add(data.normal.divide(c1.radius/c2.radius)));
             data.normal = data.normal.normalize();
             data.depth = closest.subtract(c1.getPosition()).length()-c1.radius-c2.radius;
-            return data;
+            return new Contact(data);
         }
         return null;
     }
@@ -64,7 +63,7 @@ public class CollisionSolver {
         return c1.getPosition().getDistance(closest) < c1.radius;
     }
     
-    public static ContactManifold SphereGround(SphereCollider c1){
+    public static Contact SphereGround(SphereCollider c1){
         float ground = PhysicsEngine.getInstance().getConstants().BASE;
         if(c1.getPosition().y() - c1.getRadius() > ground) return null;
         
@@ -72,10 +71,10 @@ public class CollisionSolver {
         data.depth = ground - (c1.getPosition().y() - c1.getRadius());
         data.normal = new Vector3f(0,1,0);
         data.points.add(new Vector3f(c1.getPosition().x(), ground, c1.getPosition().z()));
-        return data;
+        return new Contact(data);
     }
     
-    public static ContactManifold SphereTerrain(SphereCollider c1, TerrainCollider c2){
+    public static Contact SphereTerrain(SphereCollider c1, TerrainCollider c2){
         Vector3f np = c1.getPosition().subtract(c2.getPosition()).divide(c2.getScale());
         float height = c2.t.getHeight(np.x(), np.z());
         if(height == 12345)
@@ -88,10 +87,10 @@ public class CollisionSolver {
         data.points.add(new Vector3f(c1.getPosition().x(), height, c1.getPosition().z()));
         data.normal = c2.t.getNormalAt(np.x(), np.z());
         data.depth = height-(c1.getPosition().y()-c1.radius);
-        return data;
+        return new Contact(data);
     }
     
-    public static ContactManifold CapsuleCapsule(CapsuleCollider c1, CapsuleCollider c2){
+    public static Contact CapsuleCapsule(CapsuleCollider c1, CapsuleCollider c2){
         Vector3f[] closest = FastMath.closestApproach(c1.getP1(), c1.getP2(), c2.getP1(), c2.getP2(), true, true);
         if(closest[0].getDistance(closest[1]) < c1.radius + c2.radius){
             ContactManifold data = new ContactManifold();
@@ -99,7 +98,7 @@ public class CollisionSolver {
             data.points.add(closest[0].add(data.normal.divide(c1.radius/c2.radius)));
             data.normal = data.normal.normalize();
             data.depth = closest[1].subtract(closest[0]).length()-c1.radius-c2.radius;
-            return data;
+            return new Contact(data);
         }
         return null;
     }
@@ -109,7 +108,7 @@ public class CollisionSolver {
         return closest[0].getDistance(closest[1]) < c1.radius;
     }
      
-    public static ContactManifold CylinderTerrain(CapsuleCollider c1, TerrainCollider c2){
+    public static Contact CylinderTerrain(CapsuleCollider c1, TerrainCollider c2){
         Vector3f np = c1.getPosition().subtract(c2.getPosition()).divide(c2.getScale());
         float height = c2.t.getHeight(np.x(), np.z());
         if(height == 12345)
@@ -122,10 +121,10 @@ public class CollisionSolver {
         data.points.add(new Vector3f(c1.getPosition().x(), height, c1.getPosition().z()));
         data.normal = c2.t.getNormalAt(np.x(), np.z());
         data.depth = height-c1.getPosition().y();
-        return data;
+        return new Contact(data);
     }
     
-    public static ContactManifold CapsuleGround(CapsuleCollider c1){
+    public static Contact CapsuleGround(CapsuleCollider c1){
         Vector3f lowest;
         if(c1.getP1().y() < c1.getP2().y()) lowest = c1.getP1();
         else lowest = c1.getP2();
@@ -137,12 +136,12 @@ public class CollisionSolver {
         data.depth = ground - (lowest.y() - c1.getRadius());
         data.normal = new Vector3f(0,1,0);
         data.points.add(new Vector3f(lowest.x(), ground, lowest.z()));
-        return data;
+        return new Contact(data);
     }
     
-    public static ContactManifold HullHull(ConvexHull h1, ConvexHull h2){
-        Matrix4f h1matrix = new Matrix4f().translate(h1.getPosition()).rotate(h1.getRotation());
-        Matrix4f h2matrix = new Matrix4f().translate(h2.getPosition()).rotate(h2.getRotation());
+    public static Contact HullHull(ConvexHull h1, ConvexHull h2){
+        Matrix4f h1matrix = new Matrix4f().translate(h1.getPosition()).rotate(h1.getRotation()).scale(h1.getScale());
+        Matrix4f h2matrix = new Matrix4f().translate(h2.getPosition()).rotate(h2.getRotation()).scale(h2.getScale());
         List<MinkowskiSet> msum = FastMath.minkowskiDifference(h1.vertices, h2.vertices, h1matrix, h2matrix);        
         Simplex s = FastMath.runGJK(msum);
         
@@ -163,11 +162,11 @@ public class CollisionSolver {
         cm.points.add(contact.a.a.multiply(bary.x()).add(contact.b.a.multiply(bary.y())).add(contact.c.a.multiply(bary.z())));
         cm.normal = contact.n.inverse();
         cm.depth = distanceFromOrigin;
-        return cm;
+        return new Contact(cm);
     }
     
-    public static ContactManifold HullGround(ConvexHull h1){
-        Matrix4f h1matrix = new Matrix4f().translate(h1.getPosition()).rotate(h1.getRotation());
+    public static Contact HullGround(ConvexHull h1){
+        Matrix4f h1matrix = new Matrix4f().translate(h1.getPosition()).rotate(h1.getRotation()).scale(h1.getScale());
         List<Vector3f> nlist = new ArrayList<>(h1.vertices.size());
         for(Vector3f v : h1.vertices){
             nlist.add(new Vector4f(v).multiply(h1matrix).truncate());
@@ -194,7 +193,18 @@ public class CollisionSolver {
         for(Vector3f low : lowestpoints){
             data.points.add(new Vector3f(low.x(), ground, low.z()));
         }
-        return data;
+        return new Contact(data);
+    }
+    
+    public static Contact HullTerrain(ConvexHull h1, TerrainCollider t1){
+        List<Triangle> mesh = t1.t.getMesh();
+        Mesh m = new Mesh(mesh);
+        m.parent = t1.parent;
+        m.position = t1.position;
+        m.rotation = t1.rotation;
+        m.scale = t1.scale;
+        m.system = t1.system;
+        return HullMesh(h1,m);
     }
     
     public static Vector3f barycentric(Vector3f p,Vector3f a, Vector3f b, Vector3f c) {
@@ -210,7 +220,7 @@ public class CollisionSolver {
         return new Vector3f(bx, by, 1.0f - bx-by);
     }
     
-    public static ContactManifold MeshMesh(Mesh m1, Mesh m2){
+    public static Contact MeshMesh(Mesh m1, Mesh m2){
         Matrix4f m1matrix = new Matrix4f().translate(m1.getPosition()).rotate(m1.getRotation());
         Matrix4f m2matrix = new Matrix4f().translate(m2.getPosition()).rotate(m2.getRotation());
         List<Tuple<Triangle, Triangle>> collisions = new ArrayList<>(100);
@@ -248,6 +258,42 @@ public class CollisionSolver {
         float maxdist = 0;
         
         ContactManifold cm = new ContactManifold();
-        return cm;
+        return new Contact(cm);
+    }
+    
+    public static Contact HullMesh(ConvexHull hull, Mesh mesh){
+        List<Contact> contacts = new ArrayList<>();
+        for(Triangle f : mesh.getFaces()){
+            List<Vector3f> triAsHull = new ArrayList<>();
+            triAsHull.add(f.a);
+            triAsHull.add(f.b);
+            triAsHull.add(f.c);
+            ConvexHull h2 = new ConvexHull(triAsHull);
+            h2.setParent(mesh.parent);
+            h2.position = mesh.position;
+            h2.rotation = mesh.rotation;
+            h2.scale = mesh.scale;
+            h2.system = mesh.system;
+            Contact tmf = HullHull(hull,h2);
+            if(tmf != null) contacts.add(tmf);
+        }
+        System.out.println(contacts.size());
+        if(contacts.isEmpty()) return null;
+        
+        List<ContactManifold> manifolds = new ArrayList<>();
+        for(Contact contact : contacts){
+            manifolds.addAll(contact.manifolds);
+        }
+        
+        return new Contact(manifolds);
+    }
+    
+    public static Contact MeshGround(Mesh m){
+        ConvexHull h2 = new ConvexHull(m.getPoints());
+        h2.setParent(m.parent);
+        h2.position = m.position;
+        h2.rotation = m.rotation;
+        h2.system = m.system;
+        return HullGround(h2);
     }
 }

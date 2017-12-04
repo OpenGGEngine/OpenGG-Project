@@ -35,10 +35,11 @@ public abstract class Component{
     private Component parent;
     private Vector3f posoffset = new Vector3f();
     private Quaternionf rotoffset = new Quaternionf();
-    private Vector3f scale = new Vector3f(1,1,1);
+    private Vector3f scaleoffset = new Vector3f(1,1,1);
     protected List<Component> children = new ArrayList<>();
     private Vector3f pos = new Vector3f();
     private Quaternionf rot = new Quaternionf();
+    private Vector3f scale = new Vector3f(1,1,1);
     private boolean serialize = true;
     
     /**
@@ -81,9 +82,8 @@ public abstract class Component{
         this.parent = parent;
         
         regenPos();
-        for(Component c : children) c.regenPos();
         regenRot();
-        for(Component c : children) c.regenRot();
+        regenScale();
         
         if(parent instanceof World) localOnWorldChange();
         onParentChange(parent);
@@ -116,63 +116,6 @@ public abstract class Component{
     
     public void onPositionChange(Vector3f npos){
         
-    }
-    
-    /**
-     * Sets the local rotation offset of the object relative to the parent, in a euclidean vector
-     * @param nrot New rotation offset
-     * @return This object
-     */
-    public final Component setRotationOffset(Vector3f nrot){
-        return this.setRotationOffset(new Quaternionf(nrot));
-    }
-    
-    /**
-     * Sets the local rotation offset of the object relative to the parent
-     * @param nrot New rotation offset
-     * @return This object
-     */
-    public final Component setRotationOffset(Quaternionf nrot){
-        this.rotoffset = nrot;
-        regenRot();
-        for(Component c : children) if(!c.getPositionOffset().equals(new Vector3f())) c.regenPos();
-         return this;
-    }
-    
-    public void onRotationChange(Quaternionf nrot){
-        
-    }
-    
-    /**
-     * Sets the scaling offset of the object relative to the parent
-     * @param nscale New scale offset
-     * @return This object
-     */
-    public final Component setScale(Vector3f nscale){
-        this.scale = nscale;
-        
-        onScaleChange(nscale);
-        return this;
-    }
-    
-    public void onScaleChange(Vector3f nscale){
-        
-    }
-    
-    /**
-     * Set whether the position offset should be absolute or take rotation into account (See {@link #getPosition() getPosition()})
-     * @param abs True for absolute, false for relative
-     */
-    public void setAbsoluteOffset(boolean abs){
-        absoluteOffset = abs;
-    }
-    
-    /**
-     * Returns whether or not there is absolute offset enabled
-     * @return Current state of absolute offset
-     */
-    public boolean isAbsoluteOffset(){
-        return absoluteOffset;
     }
     
     /**
@@ -219,11 +162,36 @@ public abstract class Component{
     }
     
     /**
+     * Sets the local rotation offset of the object relative to the parent, in a euclidean vector
+     * @param nrot New rotation offset
+     * @return This object
+     */
+    public final Component setRotationOffset(Vector3f nrot){
+        return this.setRotationOffset(new Quaternionf(nrot));
+    }
+    
+    /**
      * Returns the current rotation offset of the component
      * @return Rotation offset of the component
      */
     public Quaternionf getRotationOffset(){
         return rotoffset;
+    }
+    
+    /**
+     * Sets the local rotation offset of the object relative to the parent
+     * @param nrot New rotation offset
+     * @return This object
+     */
+    public final Component setRotationOffset(Quaternionf nrot){
+        this.rotoffset = nrot;
+        regenRot();
+        for(Component c : children) if(!c.getPositionOffset().equals(new Vector3f())) c.regenPos();
+        return this;
+    }
+    
+    public void onRotationChange(Quaternionf nrot){
+        
     }
     
     private void regenRot(){
@@ -238,13 +206,55 @@ public abstract class Component{
     }
     
     /**
+     * Sets the scaling offset of the object relative to the parent
+     * @param nscale New scale offset
+     * @return This object
+     */
+    public final Component setScaleOffset(Vector3f nscale){
+        this.scaleoffset = nscale;
+        regenScale();
+        return this;
+    }
+    
+    public final void regenScale(){
+        if(parent != null){
+            scale = parent.getScale().multiply(scaleoffset);
+        }else{
+            scale = scaleoffset;
+        }     
+        
+        onScaleChange(pos);
+        for(Component c : children) c.regenScale();
+    }
+    
+    public void onScaleChange(Vector3f nscale){
+        
+    }
+    
+    /**
      * gets the total scaling factor for the object, derived by multiplying the parent's scale by the current offset
      * @return Final object scale
      */
     public Vector3f getScale(){
-        return new Vector3f(scale).multiply(parent.getScale());
+        return scale;
     }
     
+    /**
+     * Set whether the position offset should be absolute or take rotation into account (See {@link #getPosition() getPosition()})
+     * @param abs True for absolute, false for relative
+     */
+    public void setAbsoluteOffset(boolean abs){
+        absoluteOffset = abs;
+    }
+    
+    /**
+     * Returns whether or not there is absolute offset enabled
+     * @return Current state of absolute offset
+     */
+    public boolean isAbsoluteOffset(){
+        return absoluteOffset;
+    }
+
     /**
      * Called once by WorldEngine per update cycle, override for functionality
      * @param delta Delta time since last update cycle in seconds

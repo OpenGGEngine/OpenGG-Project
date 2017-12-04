@@ -72,14 +72,14 @@ public class ColliderGroup extends PhysicsObject{
             for(Collider y: other.colliders) {
                 x.updatePositions();
                 y.updatePositions();
-                ContactManifold data = x.isColliding(y);
+                Contact data = x.isColliding(y);
                 if ((data) != null){
                     if(c == null){
                         c = new Collision();
                         c.thiscollider = this;
                         c.other = other;
                     }
-                    c.manifolds.add(data);
+                    c.manifolds.addAll(data.manifolds);
                 }
             }
         }

@@ -6,6 +6,8 @@
 
 package com.opengg.core.world.components.physics;
 
+import com.opengg.core.math.Quaternionf;
+import com.opengg.core.math.Vector3f;
 import com.opengg.core.physics.collision.AABB;
 import com.opengg.core.physics.collision.Collider;
 import com.opengg.core.physics.collision.ColliderGroup;
@@ -48,6 +50,21 @@ public class CollisionComponent extends Component{
     @Override
     public void onWorldChange(){
         this.getWorld().getSystem().addCollider(collidergroup);
+    }
+    
+    @Override
+    public void onPositionChange(Vector3f npos){
+        collidergroup.setPosition(npos);
+    }
+    
+    @Override
+    public void onRotationChange(Quaternionf nrot){
+        collidergroup.setRotation(nrot);
+    }
+    
+    @Override
+    public void onScaleChange(Vector3f nscale){
+        collidergroup.setScale(nscale);
     }
     
     @Override

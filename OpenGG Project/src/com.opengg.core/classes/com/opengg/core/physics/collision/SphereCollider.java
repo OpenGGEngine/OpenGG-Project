@@ -31,7 +31,7 @@ public class SphereCollider extends Collider{
   
     
     @Override
-    public ContactManifold isColliding(Collider c) {
+    public Contact isColliding(Collider c) {
         if(c instanceof SphereCollider)
             return CollisionSolver.SphereSphere(this, (SphereCollider)c);
         if(c instanceof CapsuleCollider)

@@ -12,9 +12,13 @@ import com.opengg.core.console.GGConsole;
 import com.opengg.core.model.Model;
 import com.opengg.core.model.ModelManager;
 import com.opengg.core.render.texture.Texture;
+import com.opengg.core.render.texture.TextureData;
+import com.opengg.core.render.texture.TextureLoader;
 import com.opengg.core.render.texture.text.GGFont;
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -78,6 +82,15 @@ public class Resource {
     
     public static Texture getTexture(String name){
         return Texture.get2DTexture(getTexturePath(name));
+    }
+    
+    public static TextureData getTextureData(String name){
+        try {
+            return TextureLoader.loadTexture(getTexturePath(name));
+        } catch (IOException ex) {
+            GGConsole.log("Failed to load texture at " + getTexturePath(name));
+        }
+        return null;
     }
     
     public static GGFont getFont(String fname, String ftexname){

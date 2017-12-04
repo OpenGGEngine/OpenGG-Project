@@ -38,7 +38,7 @@ public class BulletComponent extends Component{
         this.attach(new PhysicsComponent());
         bullet = new ModelRenderComponent(Resource.getModel("45acp"));
         bullet.setRotationOffset(new Quaternionf(new Vector3f(0,0,-90)));
-        bullet.setScale(new Vector3f(0.3f,0.3f,0.3f));
+        bullet.setScaleOffset(new Vector3f(0.3f,0.3f,0.3f));
         attach(bullet);
 
         physics = new PhysicsComponent();

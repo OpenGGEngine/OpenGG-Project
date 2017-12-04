@@ -22,7 +22,7 @@ import java.util.List;
 public class PhysicsEntity extends PhysicsObject{
     public List<ColliderGroup> colliders = new ArrayList<>();
     public Vector3f centerOfMass = new Vector3f();
-    public Matrix3f inertialMatrix = new Matrix3f(0.16f,0f,0f,0f,0.16f,0f,0f,0f,0.16f);
+    public Matrix3f inertialMatrix = new Matrix3f(0.4f,0f,0f,0f,0.4f,0f,0f,0f,0.4f);
     public Vector3f lowestContact = new Vector3f(0,-1,0);
     
     public boolean gravEffect = true;
@@ -46,7 +46,7 @@ public class PhysicsEntity extends PhysicsObject{
     public float density = 1f;
     public float dynamicfriction = 0.5f;
     public float staticfriction = 0.7f;
-    public float restitution = 1f;
+    public float restitution = 0.5f;
     
     public PhysicsEntity(){
         

@@ -17,7 +17,7 @@ public class PhysicsObject {
     public PhysicsSystem system;
     public Vector3f position = new Vector3f();
     public Quaternionf rotation = new Quaternionf();
-    public Vector3f scale = new Vector3f();
+    public Vector3f scale = new Vector3f(1,1,1);
 
     public Vector3f getPosition() {
         return position;

@@ -106,7 +106,7 @@ public abstract class ViewModel {
                     component.setRotationOffset(new Quaternionf((Vector3f)element.value));
                     break;
                 case "scale":
-                    component.setScale((Vector3f)element.value);
+                    component.setScaleOffset((Vector3f)element.value);
                     break;
                 case "name":
                     component.setName((String)element.value);

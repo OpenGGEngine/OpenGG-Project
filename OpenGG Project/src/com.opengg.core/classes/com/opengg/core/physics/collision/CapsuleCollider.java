@@ -46,9 +46,9 @@ public class CapsuleCollider extends Collider{
     }
     
     @Override
-    public ContactManifold isColliding(Collider c) {
+    public Contact isColliding(Collider c) {
         if(c instanceof SphereCollider){
-            ContactManifold cm = CollisionSolver.SphereCapsule((SphereCollider)c, this);
+            Contact cm = CollisionSolver.SphereCapsule((SphereCollider)c, this);
             if(cm == null)
                 return cm;
             else
