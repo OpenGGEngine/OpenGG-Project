@@ -192,6 +192,7 @@ void main() {
 		w++;
 	}
 	
-	fcolor = vec4(col + ambient, color.a);
+	//fcolor = vec4(col + ambient, color.a);
+	fcolor = getTex(Kd) + vec4(0.1);
 }
 
