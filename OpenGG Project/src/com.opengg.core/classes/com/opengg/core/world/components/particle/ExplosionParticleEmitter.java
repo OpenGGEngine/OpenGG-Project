@@ -39,6 +39,24 @@ public class ExplosionParticleEmitter extends ParticleEmitter implements Trigger
         }
     }
 
+    public float getVelocity() {
+        return velocity;
+    }
+
+    public void setVelocity(float velocity) {
+        this.velocity = velocity;
+    }
+
+    public int getAmount() {
+        return trigamount;
+    }
+
+    public void setAmount(int trigamount) {
+        this.trigamount = trigamount;
+    }
+
+    
+    
     @Override
     public void onTrigger(Trigger source, TriggerInfo info) {
         fire(trigamount);

@@ -14,6 +14,7 @@ import com.opengg.core.physics.PhysicsRenderer;
  * @author Javier
  */
 public class PhysicsEngine {
+    static boolean enablephysics = true;
     static PhysicsSystem instance;
     
     public static void initialize(){
@@ -29,11 +30,20 @@ public class PhysicsEngine {
     }
     
     public static void updatePhysics(float delta){
-        instance.update(delta);
+        if(enablephysics)
+            instance.update(delta);
     }
 
     public static void setInstance(PhysicsSystem physics) {
         instance = physics;
+    }
+
+    public static boolean isEnabled() {
+        return enablephysics;
+    }
+
+    public static void setEnabled(boolean enablephysics) {
+        PhysicsEngine.enablephysics = enablephysics;
     }
     
     public static PhysicsSystem getInstance(){

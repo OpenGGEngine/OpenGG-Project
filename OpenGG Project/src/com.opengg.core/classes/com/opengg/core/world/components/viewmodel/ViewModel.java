@@ -56,6 +56,14 @@ public abstract class ViewModel {
         update.value = true;
         update.forceupdate = true;
         
+        Element serialize = new Element();
+        serialize.autoupdate = true;
+        serialize.type = Element.BOOLEAN;
+        serialize.name = "Should serialize";
+        serialize.internalname = "serialize";
+        serialize.value = true;
+        serialize.forceupdate = true;
+        
         Element abs = new Element();
         abs.autoupdate = true;
         abs.type = Element.BOOLEAN;
@@ -69,6 +77,7 @@ public abstract class ViewModel {
         elements.add(scale);
         elements.add(name);
         elements.add(update);
+        elements.add(serialize);
         elements.add(abs);
         
         createMainViewModel();
@@ -76,7 +85,7 @@ public abstract class ViewModel {
     
     public abstract void createMainViewModel();
     
-    public abstract Initializer getInitializer();
+    public abstract Initializer getInitializer(Initializer init);
     
     public abstract Component getFromInitializer(Initializer init);
     
@@ -114,6 +123,9 @@ public abstract class ViewModel {
                 case "enabled":
                     component.setEnabled((Boolean)element.value);
                     break;
+                case "serialize":
+                    component.setSerializable((Boolean)element.value);
+                    break;
                 case "abs":
                     component.setAbsoluteOffset((Boolean)element.value);
                     break;
@@ -139,6 +151,9 @@ public abstract class ViewModel {
                     break;
                 case "enabled":
                     element.value = component.isEnabled();
+                    break;
+                case "serialize":
+                    element.value = component.shouldSerialize();
                     break;
                 case "abs":
                     element.value = component.isAbsoluteOffset();

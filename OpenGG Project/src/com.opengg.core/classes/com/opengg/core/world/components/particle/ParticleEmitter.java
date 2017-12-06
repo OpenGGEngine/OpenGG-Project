@@ -59,6 +59,23 @@ public abstract class ParticleEmitter extends RenderComponent{
     public void addParticle(Particle p){
         particles.add(p);
     }
+
+    public Texture getTexture() {
+        return t;
+    }
+
+    public void setTexture(Texture t) {
+        this.t = t;
+    }
+
+    public float getLifeLength() {
+        return lifeLength;
+    }
+
+    public void setLifeLength(float lifeLength) {
+        this.lifeLength = lifeLength;
+    }
+    
     
     
     @Override

@@ -17,7 +17,7 @@ public class GenericComponentViewModel extends ViewModel{
     public void createMainViewModel() {}
 
     @Override
-    public Initializer getInitializer() {
+    public Initializer getInitializer(Initializer init) {
         throw new UnsupportedOperationException("Cannot create a generic viewmodel initializer, this class is only usable for emergency support for components without custom ViewModels");
     }
 

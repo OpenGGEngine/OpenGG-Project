@@ -20,6 +20,7 @@ import java.util.List;
  * @author Javier
  */
 public class PhysicsEntity extends PhysicsObject{
+    public String name = "default";
     public List<ColliderGroup> colliders = new ArrayList<>();
     public Vector3f centerOfMass = new Vector3f();
     public Matrix3f inertialMatrix = new Matrix3f(0.4f,0f,0f,0f,0.4f,0f,0f,0f,0.4f);

@@ -17,9 +17,8 @@ import com.opengg.core.world.components.ModelRenderComponent;
 public class ModelRenderComponentViewModel extends ViewModel{
     
     @Override
-    public Initializer getInitializer() {
-        Initializer initializer = new Initializer();
-        
+    public Initializer getInitializer(Initializer init) {
+
         Element modelpath = new Element();
         modelpath.autoupdate = true;
         modelpath.type = Element.MODEL;
@@ -27,8 +26,8 @@ public class ModelRenderComponentViewModel extends ViewModel{
         modelpath.internalname = "model";
         modelpath.value = ModelManager.getDefaultModel();
         
-        initializer.elements.add(modelpath);
-        return initializer;
+        init.elements.add(modelpath);
+        return init;
     }
 
     @Override

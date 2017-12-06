@@ -30,37 +30,37 @@ public class PhysicsComponentViewModel extends ViewModel{
         density.internalname = "density";
         density.value = 1f;
         
-        Element fcoeff = new Element();
-        fcoeff.type = Element.FLOAT;
-        fcoeff.autoupdate = true;
-        fcoeff.name = "Friction Coefficient";
-        fcoeff.internalname = "fcoeff";
-        fcoeff.value = 0.5f;
+        Element restitution = new Element();
+        restitution.type = Element.FLOAT;
+        restitution.autoupdate = true;
+        restitution.name = "Restitution";
+        restitution.internalname = "restitution";
+        restitution.value = 0.5f;
         
-        Element bounciness = new Element();
-        bounciness.type = Element.FLOAT;
-        bounciness.autoupdate = true;
-        bounciness.name = "Bounciness";
-        bounciness.internalname = "bounciness";
-        bounciness.value = 0.5f;
+        Element sfriction = new Element();
+        sfriction.type = Element.FLOAT;
+        sfriction.autoupdate = true;
+        sfriction.name = "Static friction";
+        sfriction.internalname = "sfriction";
+        sfriction.value = 0.6f;
         
-        Element friction = new Element();
-        friction.type = Element.BOOLEAN;
-        friction.autoupdate = true;
-        friction.name = "Has Friction";
-        friction.internalname = "friction";
-        friction.value = true;
+        Element dfriction = new Element();
+        dfriction.type = Element.FLOAT;
+        dfriction.autoupdate = true;
+        dfriction.name = "Static friction";
+        dfriction.internalname = "sfriction";
+        dfriction.value = 0.6f;
         
         elements.add(mass);
         elements.add(density);
-        elements.add(fcoeff);
-        elements.add(bounciness);
-        elements.add(friction);
+        elements.add(restitution);
+        elements.add(sfriction);
+        elements.add(dfriction);
     }
 
     @Override
-    public Initializer getInitializer() {
-        return new Initializer();
+    public Initializer getInitializer(Initializer init) {
+        return init;
     }
 
     @Override
@@ -70,20 +70,28 @@ public class PhysicsComponentViewModel extends ViewModel{
 
     @Override
     public void onChange(Element element) {
-        if(element.internalname.equals("mass"))
-            ((PhysicsComponent)component).getEntity().mass = (Float)element.value;
-        
-        if(element.internalname.equals("density"))
-            ((PhysicsComponent)component).getEntity().density = (Float)element.value;
-        
-        if(element.internalname.equals("fcoeff"))
-            ((PhysicsComponent)component).getEntity().dynamicfriction = (Float)element.value;
-        
-        if(element.internalname.equals("bounciness"))
-            ((PhysicsComponent)component).getEntity().restitution = (Float)element.value;
-        
-        if(element.internalname.equals("friction"))
-            ((PhysicsComponent)component).getEntity().dynamicfriction = (Float)element.value;
+        switch (element.internalname) {
+            case "name":
+                ((PhysicsComponent)component).getEntity().name = (String)element.value;
+                break;
+            case "mass":
+                ((PhysicsComponent)component).getEntity().mass = (Float)element.value;
+                break;
+            case "density":
+                ((PhysicsComponent)component).getEntity().density = (Float)element.value;
+                break;
+            case "restitution":
+                ((PhysicsComponent)component).getEntity().restitution = (Float)element.value;
+                break;
+            case "sfriction":
+                ((PhysicsComponent)component).getEntity().staticfriction = (Float)element.value;
+                break;
+            case "dfriction":
+                ((PhysicsComponent)component).getEntity().dynamicfriction = (Float)element.value;
+                break;
+            default:
+                break;
+        }
     }
 
     @Override

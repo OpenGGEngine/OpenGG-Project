@@ -23,7 +23,7 @@ import java.util.zip.ZipInputStream;
 public class JarClassUtil {
     public static List<Class> loadAllClassesFromJar(String path){
         URLClassLoader loader;
-        System.out.println(path);
+
         try {
             loader = new URLClassLoader(new URL[] {new URL("jar","", path)});
         }catch (MalformedURLException ex) {
@@ -42,7 +42,7 @@ public class JarClassUtil {
         }
 
         for(String string : strings){
-            System.out.println(string);
+            if(string.contains("module-info")) continue;
             try{
                 Class clazz = loader.loadClass(string);
                 if(clazz.getCanonicalName() != null)

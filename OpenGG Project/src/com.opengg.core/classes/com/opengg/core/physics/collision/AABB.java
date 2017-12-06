@@ -68,6 +68,15 @@ public class AABB {
                   vertices[MIN].z() > x.vertices[MAX].z());
     }
     
+    public boolean isColliding(Vector3f pos){
+        return ! (vertices[MAX].x() < pos.x() || 
+                  vertices[MAX].y() < pos.y() ||
+                  vertices[MAX].z() < pos.z() ||
+                  vertices[MIN].x() > pos.x() || 
+                  vertices[MIN].y() > pos.y() ||
+                  vertices[MIN].z() > pos.z());
+    }
+    
     public Vector3f getPos(){
         return pos;
     }

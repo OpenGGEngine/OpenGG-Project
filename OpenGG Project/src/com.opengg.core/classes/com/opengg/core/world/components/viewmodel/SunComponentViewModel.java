@@ -45,9 +45,7 @@ public class SunComponentViewModel extends ViewModel{
     }
 
     @Override
-    public Initializer getInitializer() {
-        Initializer init = new Initializer();
-        
+    public Initializer getInitializer(Initializer init) {
         Element tex = new Element();
         tex.autoupdate = false;
         tex.type = Element.TEXTURE;

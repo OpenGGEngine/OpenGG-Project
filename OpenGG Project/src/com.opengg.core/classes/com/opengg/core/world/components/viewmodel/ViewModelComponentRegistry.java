@@ -6,11 +6,11 @@
 package com.opengg.core.world.components.viewmodel;
 
 import com.opengg.core.console.GGConsole;
-import com.opengg.core.engine.Resource;
 import com.opengg.core.util.ClassUtil;
 import com.opengg.core.util.JarClassUtil;
-import com.opengg.core.world.components.Component;
-import java.io.File;
+import com.opengg.core.world.components.*;
+import com.opengg.core.world.components.particle.*;
+import com.opengg.core.world.components.physics.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,11 +24,42 @@ public class ViewModelComponentRegistry {
     static List<Class> viewmodels = new ArrayList<>();
     
     public static void initialize(){
-        registerAllFromJar(Resource.getAbsoluteFromLocal("lib" + File.separator + "com.opengg.core.jar"));
+        initializeDefault();
+        //registerAllFromJar(Resource.getAbsoluteFromLocal("lib" + File.separator + "com.opengg.core.jar"));
+    }
+    
+    public static void initializeDefault(){
+        register(ModelRenderComponent.class);
+        register(WaterComponent.class);
+        register(WorldObject.class);
+        register(PhysicsComponent.class);
+        register(TerrainComponent.class);
+        register(SunComponent.class);
+        register(LightComponent.class);
+        register(CameraComponent.class);
+        register(ExplosionParticleEmitter.class);
+        
+        register(ModelRenderComponentViewModel.class);
+        register(WaterComponentViewModel.class);
+        register(WorldObjectViewModel.class);
+        register(PhysicsComponentViewModel.class);
+        register(TerrainComponentViewModel.class);
+        register(SunComponentViewModel.class);
+        register(LightComponentViewModel.class);
+        register(CameraComponentViewModel.class);
+        register(ExplosionParticleEmitterViewModel.class);
+        register(GenericComponentViewModel.class);
+        
     }
     
     public static void register(Class component){
         register(component, true);
+    }
+    
+    public static void register(List<Class> components){
+        for(Class clazz : components){
+            register(clazz);
+        }
     }
     
     public static void register(Class component, boolean error){
@@ -36,9 +67,11 @@ public class ViewModelComponentRegistry {
         boolean isviewmodel = ClassUtil.childOf(component, ViewModel.class);     
         
         if(iscomponent){
-            components.add(component);
+            if(!components.contains(component))
+                components.add(component);
         }else if(isviewmodel){
-            viewmodels.add(component);
+            if(!viewmodels.contains(component))
+                viewmodels.add(component);
         }else if(error){
             GGConsole.warn("Class named " + component.getCanonicalName() + " failed to register as a component or viewmodel due to not being a child of either");
         }
@@ -81,8 +114,6 @@ public class ViewModelComponentRegistry {
     }
     
     public static void clearRegistry(){
-        components.clear();
-        viewmodels.clear();
         registered.clear();
     }
     

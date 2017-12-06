@@ -58,9 +58,7 @@ public class TerrainComponentViewModel extends ViewModel{
     }
 
     @Override
-    public Initializer getInitializer() {
-        Initializer init = new Initializer();
-        
+    public Initializer getInitializer(Initializer init) {
         Element height = new Element();
         height.type = Element.TEXTURE;
         height.name = "Terrain Heightmap";

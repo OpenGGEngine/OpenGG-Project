@@ -34,8 +34,8 @@ public class LightComponentViewModel extends ViewModel{
     }
 
     @Override
-    public Initializer getInitializer() {
-        return new Initializer();
+    public Initializer getInitializer(Initializer init) {
+        return init;
     }
 
     @Override

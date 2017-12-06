@@ -44,9 +44,8 @@ public class WaterComponentViewModel extends ViewModel{
     }
 
     @Override
-    public Initializer getInitializer() {
-        Initializer init = new Initializer();
-        
+    public Initializer getInitializer(Initializer init) {
+
         Element tex = new Element();
         tex.type = Element.TEXTURE;
         tex.internalname = "tex";

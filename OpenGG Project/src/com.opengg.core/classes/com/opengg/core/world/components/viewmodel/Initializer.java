@@ -18,4 +18,11 @@ public class Initializer {
     public void addElement(Element e){
         elements.add(e);
     }
+    
+    public Element get(String name){
+        for(Element element : elements){
+            if(element.internalname.equalsIgnoreCase(name)) return element;
+        }
+        return null;
+    }
 }
