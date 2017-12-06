@@ -64,6 +64,7 @@ public class CollisionComponent extends Component{
     
     @Override
     public void onScaleChange(Vector3f nscale){
+        System.out.println("when youre walking in the street cunton " + nscale);
         collidergroup.setScale(nscale);
     }
     

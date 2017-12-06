@@ -216,14 +216,14 @@ public abstract class Component{
         return this;
     }
     
-    public final void regenScale(){
+    private void regenScale(){
         if(parent != null){
             scale = parent.getScale().multiply(scaleoffset);
         }else{
             scale = scaleoffset;
-        }     
+        } 
         
-        onScaleChange(pos);
+        onScaleChange(scale);
         for(Component c : children) c.regenScale();
     }
     

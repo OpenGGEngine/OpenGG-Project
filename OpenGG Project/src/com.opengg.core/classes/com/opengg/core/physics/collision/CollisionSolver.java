@@ -263,11 +263,23 @@ public class CollisionSolver {
     
     public static Contact HullMesh(ConvexHull hull, Mesh mesh){
         List<Contact> contacts = new ArrayList<>();
+        System.out.println(mesh.getFaces().size());
         for(Triangle f : mesh.getFaces()){
             List<Vector3f> triAsHull = new ArrayList<>();
             triAsHull.add(f.a);
             triAsHull.add(f.b);
             triAsHull.add(f.c);
+            Matrix4f change = new Matrix4f().rotate(mesh.getRotation()).scale(mesh.getScale());
+            Vector3f v1 = change.transform(new Vector4f(f.a)).truncate();
+            Vector3f v2 = change.transform(new Vector4f(f.b)).truncate();
+            Vector3f v3 = change.transform(new Vector4f(f.c)).truncate();
+
+            
+            AABB aabb = new AABB(v1,v2,v3);
+            aabb.recenter(mesh.getPosition());
+            if(!hull.parent.main.isColliding(aabb)) continue;
+            System.out.println(mesh.getScale());
+            
             ConvexHull h2 = new ConvexHull(triAsHull);
             h2.setParent(mesh.parent);
             h2.position = mesh.position;

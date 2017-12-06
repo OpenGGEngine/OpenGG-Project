@@ -129,7 +129,7 @@ public class CollisionManager {
                 Vector3f R2 = Vector3f.averageOf(r2s.toArray(new Vector3f[0]));
                 Vector3f jfv = Vector3f.averageOf(jfs.toArray(new Vector3f[0]));
                 Vector3f jrv = Vector3f.averageOf(jrs.toArray(new Vector3f[0]));
-                Vector3f normal = Vector3f.averageOf(norms.toArray(new Vector3f[0]));
+                Vector3f normal = Vector3f.averageOf(norms.toArray(new Vector3f[0])).normalize();
                 float depth = depths.stream().max((i,j)->{
                     return i > j ? 1 : 0;
                 }).get();
@@ -189,7 +189,7 @@ public class CollisionManager {
                 Vector3f R = Vector3f.averageOf(rs.toArray(new Vector3f[0]));
                 Vector3f jfv = Vector3f.averageOf(jfs.toArray(new Vector3f[0]));
                 Vector3f jrv = Vector3f.averageOf(jrs.toArray(new Vector3f[0]));
-                Vector3f normal = Vector3f.averageOf(norms.toArray(new Vector3f[0]));
+                Vector3f normal = Vector3f.averageOf(norms.toArray(new Vector3f[0])).normalize();
                 
                 e.angvelocity = e.angvelocity.add(e.inertialMatrix.inverse().multiply(R.cross(normal)).multiply(jrv.length()-jfv.length()).divide(e.mass));
                 e.velocity = e.velocity.add(jrv.add(jfv).divide(e1.mass));

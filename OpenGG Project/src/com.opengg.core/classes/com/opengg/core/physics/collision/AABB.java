@@ -6,6 +6,8 @@
 package com.opengg.core.physics.collision;
 
 import com.opengg.core.math.Vector3f;
+import static java.lang.Math.abs;
+import java.util.List;
 
 /**
  *
@@ -16,6 +18,20 @@ public class AABB {
     float length, width, height;
     private Vector3f[] vertices = {new Vector3f(), new Vector3f()};
     Vector3f pos = new Vector3f();
+    
+    public AABB(List<Vector3f> points){
+        float tlength = 0, twidth = 0, theight = 0;
+        for(Vector3f p : points){
+            if(abs(p.x()) > length) length = p.x();
+            if(abs(p.y()) > height) height = p.y();
+            if(abs(p.z()) > width) width = p.z();
+        }
+        recenter(new Vector3f());
+    }
+    
+    public AABB(Vector3f... points){
+        this(List.of(points));
+    }
     
     public AABB(Vector3f pos, float length, float width, float height) {
         this.length = length;
