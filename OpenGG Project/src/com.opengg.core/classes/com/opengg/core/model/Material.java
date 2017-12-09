@@ -35,16 +35,16 @@ public class Material {
     public double nsExponent = 32;
     public double sharpnessValue = 0.0;
     public double niOpticalDensity = 0.0;
-    public String mapKaFilename = null;
-    public String mapKdFilename = null;
-    public String mapKsFilename = null;
-    public String mapNsFilename = null;
-    public String mapDFilename = null;
-    public String decalFilename = null;
-    public String dispFilename = null;
-    public String bumpFilename = null;
+    public String mapKaFilename = "";
+    public String mapKdFilename = "";
+    public String mapKsFilename = "";
+    public String mapNsFilename = "";
+    public String mapDFilename = "";
+    public String decalFilename = "";
+    public String dispFilename = "";
+    public String bumpFilename = "";
     public int reflType = BuilderInterface.MTL_REFL_TYPE_UNKNOWN;
-    public String reflFilename = null;
+    public String reflFilename = "";
     public Texture Kd = null;
     public Texture Ka = null;
     public Texture Ks = null;
@@ -111,6 +111,7 @@ public class Material {
     public void loadTextures() {
         if (mapKdFilename != null && !mapKdFilename.isEmpty()) {
             hascolmap = true;
+            System.out.println("Loaded: " + texpath + mapKdFilename);
             Kd = Texture.get2DTexture(texpath + mapKdFilename);
         }
         if (mapKaFilename != null && !mapKaFilename.isEmpty()) {
@@ -202,8 +203,9 @@ public class Material {
     }
 
     public void writeString(String s, ByteBuffer b) {
-        b.putInt(s.length());
-        b.put(s.getBytes(Charset.forName("UTF-8")));
+        ByteBuffer temp = ByteBuffer.wrap(s.getBytes(Charset.forName("UTF-8")));
+        b.putInt(temp.capacity());
+        b.put(temp);
     }
 
     public String readString(ByteBuffer b) {
@@ -213,23 +215,23 @@ public class Material {
         }
         byte[] name = new byte[namelength];
         b.get(name);
-        return new String(name, StandardCharsets.UTF_8);
+        return new String(name, Charset.forName("UTF-8"));
     }
 
     public ByteBuffer toBuffer() throws UnsupportedEncodingException {
-
-        ByteBuffer b = ByteBuffer.allocate(4 + (name.length() * 2) + (3 * (4 * 3)) + 4 + (this.mapKdFilename.length() * 2) + 4 + (this.mapNsFilename.length() * 2) + 4 + (this.bumpFilename.length() * 2));
+        
+        ByteBuffer b = ByteBuffer.allocate(4 + (name.length() ) + (3 * (4 * 3)) + 4 + (this.mapKdFilename.length() ) + 4 + (this.mapNsFilename.length() ) + 4 + (this.bumpFilename.length() ));
         b.putInt(name.length());
-        b.put(name.getBytes("UTF-8"));
+        b.put(ByteBuffer.wrap(name.getBytes(Charset.forName("UTF-8"))));
         b.put(ka.toByteArray());
         b.put(kd.toByteArray());
         b.put(ks.toByteArray());
         b.putInt(mapKdFilename.length());
-        b.put(mapKdFilename.getBytes("UTF-8"));
+        b.put(ByteBuffer.wrap(mapKdFilename.getBytes(Charset.forName("UTF-8"))));
         b.putInt(mapNsFilename.length());
-        b.put(mapNsFilename.getBytes("UTF-8"));
+        b.put(ByteBuffer.wrap(mapNsFilename.getBytes(Charset.forName("UTF-8"))));
         b.putInt(bumpFilename.length());
-        b.put(bumpFilename.getBytes("UTF-8"));
+        b.put(ByteBuffer.wrap(bumpFilename.getBytes(Charset.forName("UTF-8"))));
 
         b.flip();
         return b;

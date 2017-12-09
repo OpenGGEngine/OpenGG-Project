@@ -14,6 +14,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.GatheringByteChannel;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,10 +28,12 @@ public class Model {
     public Map<String, Animation> animations = new HashMap<>();
     private List<Mesh> meshes = new ArrayList<>();
     public ByteBuffer convexhull;
-
+    public String matlibname="default";
+    
     public boolean isanimated;
     public static int mversion = 1;
     private String name;
+    public MaterialLibrary ml;
 
     private ModelDrawnObject drawable = null;
 
@@ -89,29 +92,43 @@ public class Model {
     public void putDataNew(String file) throws IOException {
         GGConsole.log("Writing model data...");
 
-        ByteBuffer header1 = ByteBuffer.allocate(12);
+         ByteBuffer matlib = ByteBuffer.wrap(this.matlibname.getBytes(Charset.forName("UTF-8")));
+        //matlib.flip();
+//        matlib.rewind();
+//        while(matlib.hasRemaining()){
+//            System.out.println(matlib.get());
+//        }
+        System.out.println("Dig" + matlib.capacity());
+        ByteBuffer header1 = ByteBuffer.allocate(16);
+        
+       
         header1.putInt(2);
         header1.putInt(isanimated ? 1 : 0);
-        header1.putInt((meshes.size() * 3 * 4 ) + 4);
+        header1.putInt((meshes.size() * 3 * 4 ) + 4+ 4);
         header1.flip();
         
-        ByteBuffer header = ByteBuffer.allocate((meshes.size() * 3 * 4 ) + 4);
-        ByteBuffer[] buffers = new ByteBuffer[(meshes.size() * 3)+3];
+        ByteBuffer header = ByteBuffer.allocate((meshes.size() * 3 * 4 ) + 8);
+        header.putInt(matlib.capacity());
+        ByteBuffer[] buffers = new ByteBuffer[(meshes.size() * 3)+4];
         buffers[0] = header1;
         buffers[1] = header;
+        buffers[2] = matlib;
+        
+        MaterialLibrary ml = new MaterialLibrary();
+        
         System.out.println("Mental:"+header.capacity());
-        int pointer = 2;
+        int pointer = 3;
         System.out.println("Total Meshes: "+ meshes.size());
         for (Mesh mesh : meshes) {
             ByteBuffer fb = ByteBuffer.allocate(mesh.vbodata.capacity() * 4);
             fb.asFloatBuffer().put(mesh.vbodata);
-        //    fb.flip();
+           // fb.flip();
             buffers[pointer] = fb;
             header.putInt(fb.capacity());
             
             ByteBuffer fb1 = ByteBuffer.allocate(mesh.inddata.capacity() * 4);
             fb1.asIntBuffer().put(mesh.inddata);
-         //   fb1.flip();
+        //    fb1.flip();
             buffers[pointer + 1] = fb1;
               header.putInt(fb1.capacity());
               
@@ -121,25 +138,49 @@ public class Model {
 //            //  fb2.flip();
 //            buffers[pointer + 2] = fb2;
 //             header.putInt(mesh.material.name.length());
-              
-                ByteBuffer fb2 = ByteBuffer.wrap("afford".getBytes(Charset.forName("UTF-8")));
-            //  fb2.flip();
+              System.out.println("Real:" + mesh.material.name);
+              System.out.println(new String(ByteBuffer.wrap(mesh.material.name.getBytes(Charset.forName("UTF-8"))).array(),Charset.forName("UTF-8")));
+                ByteBuffer fb2 = ByteBuffer.wrap(mesh.material.name.getBytes(Charset.forName("UTF-8")));
+                ml.mats.put(mesh.material.name, mesh.material);
+           //  fb2.flip();
             buffers[pointer + 2] = fb2;
              header.putInt(fb2.capacity());
              
             pointer += 3;
         }
-        
+//        byte[] incredible = new byte[buffers[13].capacity()];
+//        int wow = 0;
+//        while(buffers[13].hasRemaining()){
+//            
+//            byte sd  = buffers[13].get();
+//            incredible[wow] = sd;
+//            wow ++;
+//        }
+    //    System.out.println("nobody:" + Arrays.toString(incredible));
         buffers[buffers.length-1] = convexhull;
         header.putInt(convexhull.capacity());
         header.flip();
         
         FileOutputStream out = new FileOutputStream(file);
-
+        ml.toFile(file.substring(0, file.length()-4)+".bml");
         GatheringByteChannel gather = out.getChannel();
-         gather.write(buffers);
+        System.out.println("Buffers L :" + buffers.length);
+       //  gather.write(Arrays.copyOfRange(buffers,0,buffers.length/2));
+       //  gather.write(Arrays.copyOfRange(buffers,(buffers.length/2), buffers.length));
+         for(int i=0;i< buffers.length;i+=2){
+             if(i>buffers.length-2){
+                 gather.write(buffers[buffers.length-1]);
+             }else{
+             gather.write(Arrays.copyOfRange(buffers,i,i+2));
+             }
+             
+         }
+        // System.out.println(out.getChannel().position());
          
          out.close();
+//        while(header.hasRemaining()){
+//            System.out.println(header.getInt());
+//        }
 //        out.write("animcheck");
 //
 //        if (isanimated) {

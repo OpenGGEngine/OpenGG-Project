@@ -21,6 +21,7 @@ import java.nio.IntBuffer;
 import java.nio.channels.ScatteringByteChannel;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import org.lwjgl.system.MemoryUtil;
@@ -125,69 +126,107 @@ public class ModelLoader {
         scatter.read(headerlength);
 
         headerlength.flip();
-        
+
         int versionnumber = headerlength.getInt();
         int isanimated = headerlength.getInt();
         int headlen = headerlength.getInt();
-        System.out.println("Loaded v "+versionnumber +" headlen "+ headlen );
-        
-        ArrayList<Mesh> meshes =  new ArrayList<>();
-        
+        System.out.println("Loaded v " + versionnumber + " headlen " + headlen);
+        String texpath = path.substring(0, path.lastIndexOf(File.separator) + 1) + "tex" + File.separator;
+
+        ArrayList<Mesh> meshes = new ArrayList<>();
+
+        MaterialLibrary ml = new MaterialLibrary(path.substring(0, path.length() - 4) + ".bml");
+
         ByteBuffer header = ByteBuffer.allocate(headlen);
         scatter.read(header);
         header.flip();
-       //header.rewind();
-        ByteBuffer[] arrays = new ByteBuffer[header.capacity()/4];
+        //header.rewind();
+        ByteBuffer[] arrays = new ByteBuffer[header.capacity() / 4];
+        System.out.println("Meshsize:" + header.capacity() / 4);
         int pointer = 0;
         while (header.hasRemaining()) {
-            int header1s= header.getInt();
+            int header1s = header.getInt();
             arrays[pointer] = ByteBuffer.allocate(header1s);
+            scatter.read(arrays[pointer]);
             pointer++;
         }
-        System.out.println("pointer:"+pointer);
-        scatter.read(arrays);
-        System.out.println("The purge: "+ arrays.length);
-        for (int i = 0; i < arrays.length-1; i += 3) {
-            FloatBuffer fbt = ((ByteBuffer)arrays[i].rewind()).asFloatBuffer();
-                    System.out.println("cap: "+ fbt.limit() *4);
-            System.out.println("---Entered Loop F---");
-            
+
+       // scatter.read(arrays);
+
+        ByteBuffer name3 = arrays[0];
+        //name3.flip();
+        //   arrays[0].flip();
+
+        for (int i = 0; i < 7; i++) {
+            System.out.println(arrays[0].get(i));
+        }
+        String matname = new String(name3.array(), Charset.forName("UTF-8"));
+        //    System.out.println("Matname:" + matname);
+        //    System.out.println("The purge: " + arrays.length);
+        for (int i = 1; i < arrays.length - 1; i += 3) {
+            FloatBuffer fbt = ((ByteBuffer) arrays[i].rewind()).asFloatBuffer();
+            // System.out.println("cap: " + fbt.limit() * 4);
+            //  System.out.println("---Entered Loop F---");
+
             FloatBuffer fb = MemoryUtil.memAllocFloat(fbt.limit());
-            
-           while(fbt.hasRemaining()){
-               
-               fb.put(fbt.get());
-           }
-            
-         //  fb.rewind();
+            float[] fbg = new float[fb.capacity()];
+            int died = 0;
+            while (fbt.hasRemaining()) {
+                        float dede = fbt.get();
+                fb.put(dede);
+                fbg[died] = dede;
+                died++;
+            }
+
+            //  fb.rewind();
             fb.flip();
-        
+          //  System.out.println("Float: "+ Arrays.toString(fbg));
 //       
-             IntBuffer ibt = ((ByteBuffer)arrays[i+1] ).rewind().asIntBuffer();
-             IntBuffer ib = MemoryUtil.memAllocInt(ibt.limit());
-            
+            IntBuffer ibt = ((ByteBuffer) arrays[i + 1]).rewind().asIntBuffer();
+            IntBuffer ib = MemoryUtil.memAllocInt(ibt.limit());
+
 //            System.out.println("cap: "+ ib.capacity() );
 //            System.out.println("---Entered Loop---");
-           while(ibt.hasRemaining()){
-                  ib.put(ibt.get());
-//               System.out.println("flex : "+ib.get());
-           }
-            ib.flip();
-   
+            int[] bye = new int[ib.capacity()];
             
-            ByteBuffer name  = ((ByteBuffer)arrays[i+2] .rewind());
+            int deadanimal = 0;
+            while (ibt.hasRemaining()) {
+                int young = ibt.get();
+                ib.put(young);
+                bye[deadanimal] = young;
+                deadanimal++;
+//               System.out.println("flex : "+ib.get());
+            }
+            ib.flip();
+         //   System.out.println("Integer: "+ Arrays.toString(bye));
+
+            ByteBuffer name = ((ByteBuffer) arrays[i + 2].rewind());
+            System.out.println("Limit " +name.limit());
+            System.out.println("Man: " +name.position());
             name.flip();
-            String name1 = new String(name.array(),Charset.forName("UTF-8"));
-            System.out.println("Ectasydg:"+name1);
-            System.out.println(fb.limit());
-            Mesh m = new Mesh(fb,ib,Material.defaultmaterial,false);
-            System.out.println("VBO " + i + ":" +arrays[i].capacity()/4);
+            String name1 = new String(name.array(), Charset.forName("UTF-8"));
+            Material m3;
+            System.out.println("Damien: " + Arrays.toString(name.array()));
+            if (ml.mats.get(name1) != null) {
+                m3 = ml.mats.get(name1);
+            } else {
+                //m3 = ml.mats.get(name1);
+                m3 = Material.defaultmaterial;
+            }
+            m3.texpath = texpath;
+            m3.loadTextures();
+            Mesh m = new Mesh(fb, ib, m3, false);
+
+            // System.out.println("VBO " + i + ":" + arrays[i].capacity() / 4);
             meshes.add(m);
         }
-        Model m = new Model("Beer",meshes);
-        m.convexhull = arrays[arrays.length-1];
-                System.out.println("Model with m: "+m.getMeshes().size());
-            return m;
-        
+        Model m = new Model("Beer", meshes);
+        System.out.println("Total Meshes: "+m.getMeshes().size());
+        m.convexhull = arrays[arrays.length - 1];
+        m.ml = ml;
+
+        System.out.println("Model with m: " + m.getMeshes().size());
+        return m;
+
     }
 }

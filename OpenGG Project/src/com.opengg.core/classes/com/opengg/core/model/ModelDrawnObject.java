@@ -29,6 +29,22 @@ public class ModelDrawnObject implements Drawable {
         this.model = model;
         
         for(Mesh mesh : model.getMeshes()){
+            MaterialDrawnObject mdo = new MaterialDrawnObject(new DrawnObject(mesh.vbodata, mesh.inddata), mesh.material);
+            drawables.add(mdo);
+            System.out.println("Matcap:" + mesh.vbodata.limit() + "," +mesh.material.name);
+        }
+
+        if(model.isanimated){
+            Optional<Map.Entry<String, Animation>> entry = model.animations.entrySet().stream().findFirst();
+            Animation intro = entry.isPresent() ? entry.get().getValue() : null;
+            if(intro != null) setCurrentAnimation(intro);
+        }
+    }
+    
+    public ModelDrawnObject(Model model,int dummy) {
+        this.model = model;
+        
+        for(Mesh mesh : model.getMeshes()){
             MaterialDrawnObject mdo = new MaterialDrawnObject(new DrawnObject(mesh.vbodata.rewind(), mesh.inddata.rewind()), mesh.material);
             drawables.add(mdo);
         }

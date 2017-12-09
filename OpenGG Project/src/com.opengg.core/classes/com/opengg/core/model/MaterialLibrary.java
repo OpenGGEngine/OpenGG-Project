@@ -48,14 +48,14 @@ public class MaterialLibrary {
         while(header.hasRemaining()){
             int bufflen = header.getInt();
             mats2[i] = ByteBuffer.allocate(bufflen);
+            scatter.read(mats2[i]);
             i++;
         }
-        scatter.read(mats2);
+        //scatter.read(mats2);
         
         for(ByteBuffer b:mats2){
             b.rewind();
             Material mat = new Material(b);
-            System.out.println(mat.name +" loaded.");
             mats.put(mat.name, mat);
         }
         
@@ -75,11 +75,15 @@ public class MaterialLibrary {
         for (String i : mats.keySet()) {
             Material mat = mats.get(i);
             main[i2] = mat.toBuffer();
+      
             header.putInt(mat.getCap());
             i2++;
         }
         header.flip();
         main[0] = header;
-        gather.write(main);
+        for(int i =0;i<main.length;i++){
+            gather.write(main[i]);
+        }
+        //gather.write(main);
     }
 }

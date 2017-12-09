@@ -368,7 +368,8 @@ public class Vector3f implements Serializable{
     
     public byte[] toByteArray(){   
         ByteBuffer b = MemoryUtil.memAlloc(12);
-        return b.putFloat(x).putFloat(y).putFloat(z).array();
+        return ByteBuffer.allocate(12).putFloat(x).putFloat(y).putFloat(z).array();
+        //return b.putFloat(x).putFloat(y).putFloat(z).array();
     }
     
     @Override
