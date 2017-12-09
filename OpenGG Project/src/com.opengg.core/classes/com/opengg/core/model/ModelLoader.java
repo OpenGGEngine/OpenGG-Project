@@ -8,6 +8,7 @@ package com.opengg.core.model;
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.engine.Resource;
 import com.opengg.core.math.Matrix4f;
+import com.opengg.core.math.Vector3f;
 import com.opengg.core.util.GGInputStream;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
@@ -223,6 +224,11 @@ public class ModelLoader {
         Model m = new Model("Beer", meshes);
         System.out.println("Total Meshes: "+m.getMeshes().size());
         m.convexhull = arrays[arrays.length - 1];
+        
+        while(m.convexhull.hasRemaining()){
+            Vector3f wow = new Vector3f((float)m.convexhull.getDouble(),(float)m.convexhull.getDouble(),(float)m.convexhull.getDouble());
+            m.ch.add(wow);
+        }
         m.ml = ml;
 
         System.out.println("Model with m: " + m.getMeshes().size());

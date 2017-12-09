@@ -6,6 +6,7 @@
 package com.opengg.core.model;
 
 import com.opengg.core.console.GGConsole;
+import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.util.GGOutputStream;
 import java.io.FileOutputStream;
@@ -28,6 +29,7 @@ public class Model {
     public Map<String, Animation> animations = new HashMap<>();
     private List<Mesh> meshes = new ArrayList<>();
     public ByteBuffer convexhull;
+    public ArrayList<Vector3f> ch = new ArrayList<>();
     public String matlibname="default";
     
     public boolean isanimated;
