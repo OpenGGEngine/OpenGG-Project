@@ -35,7 +35,7 @@ public class PlayerComponent extends Component implements Actionable{
         camera = new CameraComponent();
         controller = new UserControlComponent();
         playerphysics = new PhysicsComponent();
-        playerphysics.addCollider(new CollisionComponent(new AABB(new Vector3f(),10,6,10), new CapsuleCollider(new Vector3f(0,3,0),2)));
+        playerphysics.addCollider(new CollisionComponent(new AABB(10,6,10), new CapsuleCollider(new Vector3f(0,3,0),2)));
         attach(camera);
         attach(controller);
         attach(playerphysics);

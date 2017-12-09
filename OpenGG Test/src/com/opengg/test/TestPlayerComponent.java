@@ -59,14 +59,16 @@ public class TestPlayerComponent extends Component implements Actionable{
         head.setAbsoluteOffset(true);
         controller = new UserControlComponent();
         playerphysics = new PhysicsComponent();
-        ArrayList<Vector3f> v1 = new ArrayList<>();
-        v1.add(new Vector3f(0,1,0));
-        v1.add(new Vector3f(0,-1,0));
-        v1.add(new Vector3f(1,0,1));
-        v1.add(new Vector3f(1,0,-1));
-        v1.add(new Vector3f(-1,0,1));
-        v1.add(new Vector3f(-1,0,-1));
-        playerphysics.addCollider(new CollisionComponent(new AABB(new Vector3f(),10,6,10),new ConvexHull(v1)));
+        ArrayList<Vector3f> v2 = new ArrayList<>();
+        v2.add(new Vector3f(-1,-1,-1));
+        v2.add(new Vector3f(-1,1,-1));
+        v2.add(new Vector3f(-1,-1,1));
+        v2.add(new Vector3f(-1,1,1));
+        v2.add(new Vector3f(1,-1,-1));
+        v2.add(new Vector3f(1,1,-1));
+        v2.add(new Vector3f(1,-1,1));
+        v2.add(new Vector3f(1,1,1));
+        playerphysics.addCollider(new CollisionComponent(new AABB(3,3,3),new ConvexHull(v2)));
                 
                 //new CapsuleCollider(new Vector3f(-1,0,0), new Vector3f(1,0,0), 2)));
         playerphysics.getEntity().mass = 20f;

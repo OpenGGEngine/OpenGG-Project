@@ -107,10 +107,10 @@ public class TerrainComponentViewModel extends ViewModel{
 
     @Override
     public Component getFromInitializer(Initializer init) {
-        Terrain terrain = Terrain.generate((TextureData)init.elements.get(0).value);
+        Terrain terrain = Terrain.generate((TextureData)init.get("height").value);
         
-        Texture blot = Texture.get2DTexture((TextureData)init.elements.get(1).value);
-        Texture tex = Texture.getArrayTexture((TextureData)init.elements.get(2).value, (TextureData)init.elements.get(3).value, (TextureData)init.elements.get(4).value, (TextureData)init.elements.get(5).value);
+        Texture blot = Texture.get2DTexture((TextureData)init.get("blot").value);
+        Texture tex = Texture.getArrayTexture((TextureData)init.get("t1").value, (TextureData)init.get("t2").value, (TextureData)init.get("t3").value, (TextureData)init.get("t4").value);
         
         TerrainComponent comp = new TerrainComponent(terrain);
         comp.setBlotmap(blot);

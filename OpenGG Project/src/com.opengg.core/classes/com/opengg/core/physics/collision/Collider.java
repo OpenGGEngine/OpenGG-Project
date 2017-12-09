@@ -18,26 +18,9 @@ import java.io.IOException;
  * @author Javier
  */
 public abstract class Collider extends PhysicsObject{
-    ColliderGroup parent;
-    
     public abstract Contact isColliding(Collider c);
-    
-    @Override
-    public Vector3f getPosition(){
-        return parent.getPosition().add(parent.getRotation().transform(position));
-    }
-    
+
     public void updatePositions(){}
-    
-    @Override
-    public Quaternionf getRotation(){
-        return parent.getRotation().multiply(rotation);
-    }
-    
-    @Override
-    public Vector3f getScale(){
-        return parent.getScale().multiply(scale);
-    }
     
     public void serialize(GGOutputStream stream) throws IOException{
         stream.write(position);
@@ -49,7 +32,7 @@ public abstract class Collider extends PhysicsObject{
         rotation = stream.readQuaternionf();
     }
     
-    public void setParent(ColliderGroup parent){
+    public void setParent(PhysicsObject parent){
         this.parent = parent;
     }
 }

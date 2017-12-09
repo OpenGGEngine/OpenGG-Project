@@ -18,6 +18,7 @@ import static com.opengg.core.io.input.keyboard.Key.*;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.model.ModelLoader;
+import com.opengg.core.model.ModelManager;
 import com.opengg.core.physics.PhysicsRenderer;
 import com.opengg.core.physics.collision.AABB;
 import com.opengg.core.physics.collision.CapsuleCollider;
@@ -30,10 +31,13 @@ import com.opengg.core.render.texture.text.GGFont;
 import com.opengg.core.render.window.WindowInfo;
 import com.opengg.core.render.window.WindowOptions;
 import com.opengg.core.world.Skybox;
+import com.opengg.core.world.Terrain;
+import com.opengg.core.world.components.FreeFlyComponent;
 import com.opengg.core.world.components.LightComponent;
 import com.opengg.core.world.components.ModelRenderComponent;
 import com.opengg.core.world.components.TerrainComponent;
 import com.opengg.core.world.components.physics.PhysicsComponent;
+import com.opengg.core.world.generators.SmoothPerlinGenerator;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -85,24 +89,25 @@ public class OpenGGTest extends GGApplication{
                 + " the guardians of peace and justice in the galaxy, to settle the conflict...", new Vector2f(), 1f, 0.5f, false);
         GUI.addItem("aids", new GUIText(text, font, new Vector2f(0f,0)));
         
-        TestPlayerComponent player = new TestPlayerComponent();
-        player.setPositionOffset(new Vector3f(0,0,10));
+        //WorldEngine.useWorld(WorldEngine.loadWorld("world1"));
+        
+        FreeFlyComponent player = new FreeFlyComponent();
+        //TestPlayerComponent player = new TestPlayerComponent();
+        player.setPositionOffset(new Vector3f(0,-2,10));
         player.use();
         
-        WorldEngine.getCurrent().attach(new LightComponent(new Light(new Vector3f(0,2,2), new Vector3f(1,1,1), 1000, 0))); 
-        WorldEngine.getCurrent().attach(new ModelRenderComponent(Resource.getModel("goldleaf")).setScaleOffset(new Vector3f(0.1f)).setRotationOffset(new Vector3f(-90,0,0)));  
-        ModelRenderComponent testphys = new ModelRenderComponent(ModelLoader.loadModel("C:\\res\\sphere\\sphere.bmf"));
-        ModelRenderComponent dragon = null;
-        try {
-            dragon = new ModelRenderComponent(ModelLoader.loadNewModel("C:\\res\\awp\\dragon.bmf"));
-        } catch (IOException ex) {
-            //Logger.getLogger(OpenGGTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        dragon.setRotationOffset(new Vector3f(0,0,0));
-        //dragon.setScale(new Vector3f(0.4f,0.4f,0.4f));
-        OpenGG.processExecutables(0f);
-        System.out.println(dragon.getModel().getMeshes().get(0).inddata.remaining());
-        System.out.println(dragon.getModel().getMeshes().get(0).inddata.capacity());
+        WorldEngine.getCurrent().attach(new LightComponent(new Light(new Vector3f(0,20,2), new Vector3f(1,1,1), 100000, 0))); 
+        //WorldEngine.getCurrent().attach(new ModelRenderComponent(Resource.getModel("goldleaf")).setScaleOffset(new Vector3f(0.1f)).setRotationOffset(new Vector3f(-90,0,0)));  
+
+        Terrain t = Terrain.generate(Resource.getTextureData("heightmap.jpg"));
+        TerrainComponent tc = new TerrainComponent(t);
+        tc.enableCollider();
+        tc.setBlotmap(Resource.getTexture("blendMap.png"));
+        tc.setGroundArray(Texture.getArrayTexture(Resource.getTextureData("grass.png"), Resource.getTextureData("flower2.png"), Resource.getTextureData("dirt.png"), Resource.getTextureData("road.png")));
+        tc.setPositionOffset(new Vector3f(-100, 20,-100));
+        tc.setScaleOffset(new Vector3f(200,30f, 200));
+        
+        WorldEngine.getCurrent().attach(tc);
         
         ArrayList<Vector3f> v2 = new ArrayList<>();
         v2.add(new Vector3f(-1,-1,-1));
@@ -114,17 +119,12 @@ public class OpenGGTest extends GGApplication{
         v2.add(new Vector3f(1,-1,1));
         v2.add(new Vector3f(1,1,1));
         
+        ModelRenderComponent physmod = new ModelRenderComponent(ModelManager.getDefaultModel());
+        PhysicsComponent phys = new PhysicsComponent();
+        phys.addCollider(new ColliderGroup(new AABB( 3, 3, 3), new ConvexHull(v2)));
         
-        PhysicsComponent phys = new PhysicsComponent(new ColliderGroup(
-                new AABB(new Vector3f(),10,6,10), //new ConvexHull(v2)));
-                new CapsuleCollider(new Vector3f(3,0,0),
-                      new Vector3f(-3,0,0),2)));
-        phys.getEntity().mass = 10;
-        phys.getEntity().inertialMatrix = phys.getEntity().inertialMatrix.scale(10);
-        
+        WorldEngine.getCurrent().attach(physmod.attach(phys));
         WorldEngine.getCurrent().attach(player);
-        WorldEngine.getCurrent().attach(dragon);
-        WorldEngine.getCurrent().attach(testphys.attach(phys));
 
         BindController.addBind(ControlType.KEYBOARD, "forward", KEY_W);
         BindController.addBind(ControlType.KEYBOARD, "backward", KEY_S);

@@ -151,8 +151,9 @@ public class CollisionManager {
                 ArrayList<Vector3f> jrs = new ArrayList<>();
                 ArrayList<Vector3f> rs = new ArrayList<>();
                 ArrayList<Vector3f> norms = new ArrayList<>();
+                ArrayList<Float> depths = new ArrayList<>();
                 for(ContactManifold mf : c.manifolds){
-                    e.setPosition(e.getPosition().add(mf.normal.multiply(mf.depth)));
+                    depths.add(mf.depth);
                     for(Vector3f point : mf.points){
                         Vector3f R = point.subtract(e.getPosition());
                         Vector3f v = e.velocity.add(R.cross(e.angvelocity));
@@ -186,12 +187,18 @@ public class CollisionManager {
                     }
                 }
                 
+                
+                
                 Vector3f R = Vector3f.averageOf(rs.toArray(new Vector3f[0]));
                 Vector3f jfv = Vector3f.averageOf(jfs.toArray(new Vector3f[0]));
                 Vector3f jrv = Vector3f.averageOf(jrs.toArray(new Vector3f[0]));
                 Vector3f normal = Vector3f.averageOf(norms.toArray(new Vector3f[0])).normalize();
+                float depth = depths.stream().max((i,j)->{
+                    return i > j ? 1 : 0;
+                }).get();
                 
-                e.angvelocity = e.angvelocity.add(e.inertialMatrix.inverse().multiply(R.cross(normal)).multiply(jrv.length()-jfv.length()).divide(e.mass));
+                e.setPosition(e.getPosition().add(normal.multiply(depth)));
+                e.angvelocity = e.angvelocity.add(e.inertialMatrix.inverse().multiply(R.cross(normal)).multiply(jrv.length()).divide(e.mass));
                 e.velocity = e.velocity.add(jrv.add(jfv).divide(e1.mass));
                 e.lowestContact = normal;
             }

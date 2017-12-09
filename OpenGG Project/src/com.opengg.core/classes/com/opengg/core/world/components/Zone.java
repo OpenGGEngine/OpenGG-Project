@@ -21,7 +21,7 @@ public class Zone extends Trigger{
     AABB box;
     
     public Zone(){
-        box = new AABB(new Vector3f(),0,0,0);
+        box = new AABB(0,0,0);
     }
     
     public Zone(AABB box){
@@ -43,14 +43,15 @@ public class Zone extends Trigger{
     
     @Override
     public void onPositionChange(Vector3f npos){
-        box.recenter(npos);
+        box.setPosition(npos);
+        box.recalculate();
     }
     
     @Override
     public void serialize(GGOutputStream out) throws IOException{
         super.serialize(out);
         out.write(box.getLWH());
-        out.write(box.getPos());
+        out.write(box.getPosition());
     }
     
     @Override
@@ -58,6 +59,7 @@ public class Zone extends Trigger{
         super.deserialize(in);
         Vector3f lwh = in.readVector3f();
         Vector3f pos = in.readVector3f();
-        box = new AABB(pos,lwh.x(),lwh.y(),lwh.z());
+        box = new AABB(lwh.x(),lwh.y(),lwh.z());
+        box.setPosition(pos);
     }
 }

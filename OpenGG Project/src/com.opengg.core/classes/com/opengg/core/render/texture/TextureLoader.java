@@ -32,9 +32,7 @@ public class TextureLoader {
             
             stbi_set_flip_vertically_on_load(flip);
             
-            String fpath = path;
-            if(!new File(path).isAbsolute())
-                fpath = Resource.getAbsoluteFromLocal(path);
+            String fpath = Resource.getAbsoluteFromLocal(path);
             
             ByteBuffer image = stbi_load(fpath, w, h, comp, 4);
             if (image == null) {

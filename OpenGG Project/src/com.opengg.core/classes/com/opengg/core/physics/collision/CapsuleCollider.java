@@ -55,8 +55,6 @@ public class CapsuleCollider extends Collider{
                 return cm.reverse();
         }else if(c instanceof CapsuleCollider)
             return CollisionSolver.CapsuleCapsule(this, (CapsuleCollider)c);
-        else if(c instanceof TerrainCollider)
-            return CollisionSolver.CylinderTerrain(this, (TerrainCollider)c);
         else if(c == null)
             return CollisionSolver.CapsuleGround(this);
         

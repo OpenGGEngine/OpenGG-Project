@@ -34,7 +34,7 @@ public class ConvexHull extends Collider{
         else if(c instanceof Mesh)
             return CollisionSolver.HullMesh(this, (Mesh)c);
         else if(c instanceof TerrainCollider)
-            return CollisionSolver.HullTerrain(this, (TerrainCollider)c);
+            return CollisionSolver.HullTerrain(this, (TerrainCollider) c);
         else if(c == null)
             return CollisionSolver.HullGround(this);
         return null;

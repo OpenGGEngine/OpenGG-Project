@@ -294,6 +294,10 @@ public class OpenGG{
         exec(new ExecutableContainer(e));
     }
     
+    public static void asyncExec(float seconds, Executable e){
+        exec(new ExecutableContainer(e, seconds));
+    }
+    
     public static void syncExec(Executable e){
         ExecutableContainer execcont = new ExecutableContainer(e);
         
@@ -312,14 +316,21 @@ public class OpenGG{
     }
     
     public static boolean hasExecutables(){
-        return !executables.isEmpty();
+        for(ExecutableContainer ex : executables){
+            if(ex.elapsed > ex.timetoexec){
+                return true;
+            }
+        }
+        return false;
     }
     
-    public static void processExecutables(float delta){
-        while(!executables.isEmpty()){
+    public static void processExecutables(float delta){   
+        for(ExecutableContainer ex : executables){
+            ex.elapsed += delta;
+        }
+        while(hasExecutables()){
             List<ExecutableContainer> tempex = new LinkedList<>();
             for(ExecutableContainer ex : executables){
-                ex.elapsed += delta;
                 if(ex.elapsed > ex.timetoexec){
                     tempex.add(ex);
                 }

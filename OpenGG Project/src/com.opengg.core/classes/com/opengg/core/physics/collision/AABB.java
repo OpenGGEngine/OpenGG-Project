@@ -6,6 +6,7 @@
 package com.opengg.core.physics.collision;
 
 import com.opengg.core.math.Vector3f;
+import com.opengg.core.physics.PhysicsObject;
 import static java.lang.Math.abs;
 import java.util.List;
 
@@ -13,75 +14,70 @@ import java.util.List;
  *
  * @author ethachu19
  */
-public class AABB {
-    public static final int MAX = 1, MIN = 0;
-    float length, width, height;
-    private Vector3f[] vertices = {new Vector3f(), new Vector3f()};
-    Vector3f pos = new Vector3f();
+public class AABB extends PhysicsObject{
+    Vector3f lwh = new Vector3f();
+
+    
+    Vector3f min = new Vector3f(1,1,1);
+    Vector3f max = new Vector3f(-1,-1,-1);
     
     public AABB(List<Vector3f> points){
-        float tlength = 0, twidth = 0, theight = 0;
         for(Vector3f p : points){
-            if(abs(p.x()) > length) length = p.x();
-            if(abs(p.y()) > height) height = p.y();
-            if(abs(p.z()) > width) width = p.z();
+            if(abs(p.x()) > lwh.x()) lwh = lwh.setX(abs(p.x()));
+            if(abs(p.y()) > lwh.y()) lwh = lwh.setY(abs(p.y()));
+            if(abs(p.z()) > lwh.z()) lwh = lwh.setZ(abs(p.z()));
         }
-        recenter(new Vector3f());
+        recalculate();
     }
     
     public AABB(Vector3f... points){
         this(List.of(points));
     }
     
-    public AABB(Vector3f pos, float length, float width, float height) {
-        this.length = length;
-        this.width = width;
-        this.height = height;        
-        recenter(pos);
-        this.pos = pos;
+    public AABB(Vector3f lwh) {
+        this.lwh = lwh; 
+        recalculate();
+    }
+    
+    public AABB(float length, float width, float height){
+        this(new Vector3f(length, width, height));
     }
     
     public Vector3f[] getAABBVertices(){
-        return new Vector3f[] {vertices[MIN], vertices[MAX]};
+        return new Vector3f[] {min, max};
     }
     
     public String toString() {
-        return "[" + vertices[MIN].toString() + " , " + vertices[MAX].toString() + "]";
+        return "[" + min.toString() + " , " + max.toString() + "]";
     }
+ 
     
-    public void recenter(Vector3f pos) {
-        vertices[MIN] = vertices[MIN].setY((this.pos.x() + pos.x()) - height / 2);
-        vertices[MIN] = vertices[MIN].setX((this.pos.y() + pos.y()) - width / 2);
-        vertices[MIN] = vertices[MIN].setZ((this.pos.z() + pos.z()) - length / 2);
-
-        vertices[MAX] = vertices[MAX].setY((this.pos.x() + pos.x()) + height / 2);
-        vertices[MAX] = vertices[MAX].setX((this.pos.y() + pos.y()) + width / 2);
-        vertices[MAX] = vertices[MAX].setZ((this.pos.z() + pos.z()) + length / 2);
+    public void recalculate(){
+        Vector3f tscale = getScale();
+        Vector3f tpos = getPosition();
+        min = new Vector3f(-1,-1,-1).multiply(lwh).multiply(tscale).add(tpos);
+        max = new Vector3f(1,1,1).multiply(lwh).multiply(tscale).add(tpos);
     }
     
     public boolean isColliding(AABB x) {
-        return ! (vertices[MAX].x() < x.vertices[MIN].x() || 
-                  vertices[MAX].y() < x.vertices[MIN].y() ||
-                  vertices[MAX].z() < x.vertices[MIN].z() ||
-                  vertices[MIN].x() > x.vertices[MAX].x() || 
-                  vertices[MIN].y() > x.vertices[MAX].y() ||
-                  vertices[MIN].z() > x.vertices[MAX].z());
+        return ! (max.x() < x.min.x() || 
+                  max.y() < x.min.y() ||
+                  max.z() < x.min.z() ||
+                  min.x() > x.max.x() || 
+                  min.y() > x.max.y() ||
+                  min.z() > x.max.z());
     }
     
     public boolean isColliding(Vector3f pos){
-        return ! (vertices[MAX].x() < pos.x() || 
-                  vertices[MAX].y() < pos.y() ||
-                  vertices[MAX].z() < pos.z() ||
-                  vertices[MIN].x() > pos.x() || 
-                  vertices[MIN].y() > pos.y() ||
-                  vertices[MIN].z() > pos.z());
-    }
-    
-    public Vector3f getPos(){
-        return pos;
+        return ! (max.x() < pos.x() || 
+                  max.y() < pos.y() ||
+                  max.z() < pos.z() ||
+                  min.x() > pos.x() || 
+                  min.y() > pos.y() ||
+                  min.z() > pos.z());
     }
     
     public Vector3f getLWH(){
-        return new Vector3f(length, width, height);
+        return lwh;
     }
 }

@@ -142,7 +142,7 @@ public abstract class Component{
             if(absoluteOffset){
                 pos = parent.getPosition().add(posoffset);
             }else{
-                pos = parent.getPosition().add(parent.getRotation().transform(posoffset));
+                pos = parent.getPosition().add(parent.getRotation().transform(posoffset).multiply(parent.getScale()));
             }
         }else{
             pos = posoffset;
@@ -224,6 +224,7 @@ public abstract class Component{
         } 
         
         onScaleChange(scale);
+        regenPos();
         for(Component c : children) c.regenScale();
     }
     

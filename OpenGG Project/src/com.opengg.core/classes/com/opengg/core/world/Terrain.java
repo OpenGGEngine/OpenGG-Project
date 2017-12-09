@@ -37,7 +37,7 @@ public class Terrain {
     List<Triangle> mesh;
     
     float[][] map;
-    float sizex, sizez;
+    int sizex, sizez;
     float xsquarewidth, zsquarewidth;
     String source;
 
@@ -134,7 +134,7 @@ public class Terrain {
         try{
             normal = normal.normalize();
         }catch(Exception e){
-            normal = new Vector3f(1,0,0);
+            normal = new Vector3f(0,1,0);
         }
         return normal;
     }
@@ -169,19 +169,6 @@ public class Terrain {
                 float x = ((float) i * xsquarewidth);
                 float y = map[i][i2];
                 float z = ((float) i2 * zsquarewidth);
-                                
-                float u = (float) i / (float) map.length;
-                float v = (float) i2 / (float) map[0].length;
-                
-                float nx = 1;
-                float ny = 1;
-                float nz = 1;
-                if(i > 0 && i < map.length - 1 && i2  > 0 && i2 < map[0].length - 1){
-                    Vector3f normal = calculateNormal(i,i2);
-                    nx = normal.x();
-                    ny = normal.y();
-                    nz = normal.z();
-                }
 
                 points.add(new Vector3f(x,y,z));
             }
@@ -199,7 +186,52 @@ public class Terrain {
             triangle.add(t2);
         }
         mesh = triangle;
-        System.out.println(mesh.size());
+        return triangle;
+    }
+    
+    public List<Triangle> getMesh(int sx, int sy, int width, int height){
+        List<Vector3f> points = new ArrayList<>( width*height);
+        List<Integer> indices = new ArrayList<>(6 * (width*height));
+        List<Triangle> triangle = new ArrayList<>((6 * (width*height))/2);
+        
+        for(int i = 0; i < width-1; i++){
+            for(int i2 = 0; i2 < height-1; i2++){
+                int topLeft = (i * width) + i2;
+                int topRight = topLeft + 1;
+                int bottomLeft = ((i + 1) * width) + i2;
+                int bottomRight = bottomLeft + 1;
+                
+                indices.add(topRight);
+                indices.add(bottomLeft);
+                indices.add(topLeft);
+                
+                indices.add(bottomRight);
+                indices.add(bottomLeft);
+                indices.add(topRight); 
+            }
+        }
+        
+        for(int i = 0; i < width; i++){
+            for(int i2 = 0; i2 < height; i2++){
+                float x = ((float) (i + sx) * xsquarewidth);
+                float y = map[i+sx][i2+sy];
+                float z = ((float) (i2 + sy) * zsquarewidth);
+
+                points.add(new Vector3f(x,y,z));
+            }
+        }
+        
+        for(int i = 0; i < indices.size()-4; i += 4){
+            Vector3f v1 = points.get(indices.get(i));
+            Vector3f v2 = points.get(indices.get(i+1));
+            Vector3f v3 = points.get(indices.get(i+2));
+            Vector3f v4 = points.get(indices.get(i+3));
+            
+            Triangle t1 = new Triangle(v1,v2,v3);
+            Triangle t2 = new Triangle(v3,v4,v1);
+            triangle.add(t1);
+            triangle.add(t2);
+        }
         return triangle;
     }
     
@@ -314,6 +346,20 @@ public class Terrain {
             }
         }
     }
+
+    public int getLength() {
+        return sizex;
+    }
+
+    public int getWidth() {
+        return sizez;
+    }
+
+    public float[][] getMap() {
+        return map;
+    }
+    
+    
     
     public ByteBuffer getHeightmapBuffer(){
         ByteBuffer texBuffer = MemoryUtil.memAlloc(map.length * map[0].length * 4);

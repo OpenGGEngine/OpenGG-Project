@@ -6,6 +6,7 @@
 package com.opengg.core.model;
 
 import com.opengg.core.console.GGConsole;
+import com.opengg.core.engine.Resource;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.util.GGInputStream;
 import java.io.BufferedInputStream;
@@ -52,7 +53,7 @@ public class ModelLoader {
         GGConsole.log("Loading model at " + path + "...");
 
         ArrayList<Mesh> meshes = new ArrayList<>();
-        GGInputStream in = new GGInputStream(new DataInputStream(new BufferedInputStream(new FileInputStream(path))));
+        GGInputStream in = new GGInputStream(new DataInputStream(new BufferedInputStream(new FileInputStream(Resource.getAbsoluteFromLocal(path)))));
         String texpath = path.substring(0, path.lastIndexOf(File.separator) + 1) + "tex" + File.separator;
         int version = in.readInt();
         boolean isanimated = in.readBoolean();
@@ -116,7 +117,7 @@ public class ModelLoader {
     }
 
     public static Model loadNewModel(String path) throws FileNotFoundException, IOException {
-        FileInputStream in = new FileInputStream(path);
+        FileInputStream in = new FileInputStream(Resource.getAbsoluteFromLocal(path));
 
         ScatteringByteChannel scatter = in.getChannel();
         ByteBuffer headerlength = ByteBuffer.allocate(12);

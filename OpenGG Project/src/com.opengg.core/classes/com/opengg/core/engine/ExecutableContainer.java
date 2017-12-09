@@ -20,4 +20,9 @@ public class ExecutableContainer {
     public ExecutableContainer(Executable exec){
         this.exec = exec;
     }
+    
+    public ExecutableContainer(Executable exec, float timetoexec){
+        this.exec = exec;
+        this.timetoexec = timetoexec;
+    }
 }

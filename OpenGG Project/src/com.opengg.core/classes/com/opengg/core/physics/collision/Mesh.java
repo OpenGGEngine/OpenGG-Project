@@ -16,25 +16,33 @@ import java.util.List;
  * @author Javier
  */
 public class Mesh extends Collider{
-    private List<Triangle> faces = new ArrayList<>();
+    private List<MeshTriangle> faces = new ArrayList<>();
     
     public Mesh(List<Triangle> faces){
+        for(Triangle tri : faces){
+            MeshTriangle m = new MeshTriangle(tri);
+            this.faces.add(m);
+        }
+    }
+    
+    public Mesh(List<MeshTriangle> faces, boolean copy){
         this.faces = faces;
     }
     
     public Mesh(com.opengg.core.model.Mesh model){
         for(Face face : model.faces){
-            this.faces.add(new Triangle(face.v1.v, face.v2.v, face.v3.v));
+            MeshTriangle m = new MeshTriangle(face.v1.v, face.v2.v, face.v3.v);
+            this.faces.add(m);
         }
     }
 
-    public List<Triangle> getFaces() {
+    public List<MeshTriangle> getFaces() {
         return faces;
     }
     
     public List<Vector3f> getPoints(){
         List<Vector3f> points = new ArrayList(faces.size()*3);
-        for(Triangle t : faces){
+        for(MeshTriangle t : faces){
             if(points.isEmpty()){
                 points.add(t.a);
                 points.add(t.b);

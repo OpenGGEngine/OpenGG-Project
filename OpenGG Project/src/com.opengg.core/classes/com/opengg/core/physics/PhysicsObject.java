@@ -15,11 +15,14 @@ import com.opengg.core.math.Vector3f;
  */
 public class PhysicsObject {
     public PhysicsSystem system;
+    public PhysicsObject parent;
     public Vector3f position = new Vector3f();
     public Quaternionf rotation = new Quaternionf();
     public Vector3f scale = new Vector3f(1,1,1);
 
     public Vector3f getPosition() {
+        if(parent != null)
+            return parent.getPosition().add(parent.getRotation().transform(position).multiply(parent.getScale()));
         return position;
     }
 
@@ -28,6 +31,8 @@ public class PhysicsObject {
     }
 
     public Quaternionf getRotation() {
+        if(parent != null)
+            return rotation.multiply(parent.getRotation());
         return rotation;
     }
 
@@ -36,6 +41,9 @@ public class PhysicsObject {
     }
 
     public Vector3f getScale() {
+        if(parent != null)
+            return scale.multiply(parent.getScale());
+        
         return scale;
     }
 

@@ -13,8 +13,9 @@ import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
 import com.opengg.core.world.Terrain;
 import com.opengg.core.physics.collision.AABB;
-import com.opengg.core.world.components.physics.CollisionComponent;
+import com.opengg.core.physics.collision.Mesh;
 import com.opengg.core.physics.collision.TerrainCollider;
+import com.opengg.core.world.components.physics.CollisionComponent;
 import java.io.IOException;
 
 /**
@@ -23,7 +24,7 @@ import java.io.IOException;
  */
 public class TerrainComponent extends RenderComponent{
     Terrain terrain;
-    CollisionComponent c;
+    boolean collideable;
     public Texture blotmap = Texture.get2DTexture(TextureManager.getDefault());
     public Texture array;
     
@@ -36,8 +37,26 @@ public class TerrainComponent extends RenderComponent{
     }
     
     public void enableCollider(){
-        c = new CollisionComponent(new AABB(new Vector3f(), 15000,15000,15000), new TerrainCollider(terrain));
-        this.attach(c);
+        final int sectionsize = 32;
+        float[][] map = terrain.getMap();
+        int length = map.length;
+        int width = map[0].length;
+        int divx = length/sectionsize;
+        
+        int divz = width/sectionsize;
+        
+        for(int i = 0; i < divx; i++){
+            for(int j = 0; j < divz; j++){
+                TerrainCollider mesh = new TerrainCollider(terrain,terrain.getMesh(i*sectionsize, j*sectionsize, sectionsize, sectionsize)); 
+                AABB aabb = new AABB(1f/divx/2,10,1f/divz/2f);
+                aabb.setPosition(new Vector3f((1f/divx)*i+(1f/divx*0.5f),0, (1f/divz)*j+(1f/divz*0.5f)));
+                aabb.recalculate();
+                CollisionComponent c = new CollisionComponent(aabb,mesh);
+                this.attach(c);
+                System.out.println(i + "   " + j);
+                collideable = true;
+            }
+        }
     }
     
     public void setGroundArray(Texture tex){
@@ -80,7 +99,7 @@ public class TerrainComponent extends RenderComponent{
         out.write(array.getData().get(1).source);
         out.write(array.getData().get(2).source);
         out.write(array.getData().get(3).source);
-        out.write(c != null);
+        out.write(collideable);
     }
     
     @Override

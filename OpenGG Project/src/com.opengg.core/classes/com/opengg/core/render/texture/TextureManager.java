@@ -49,8 +49,11 @@ public class TextureManager {
     }
     
     public static TextureData loadTexture(String path, boolean flip){
-        if(texturelist.get(path) != null)
-            return texturelist.get(path);
+        if(texturelist.get(path) != null){
+            TextureData data = texturelist.get(path);
+            data.buffer.rewind();
+            return data;
+        }
         try{
             TextureData data = TextureLoader.loadTexture(path, flip);
             addTexture(data);

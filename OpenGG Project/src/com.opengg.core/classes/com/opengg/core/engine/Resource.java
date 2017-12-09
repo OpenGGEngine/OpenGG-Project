@@ -37,6 +37,7 @@ public class Resource {
     
     public static String getAbsoluteFromLocal(String name){
         try {
+            if(new File(name).isAbsolute()) return name;
             return new File(current, name).getCanonicalPath();
         } catch (IOException ex) {
             GGConsole.warning("Failed to load " + name + "!");

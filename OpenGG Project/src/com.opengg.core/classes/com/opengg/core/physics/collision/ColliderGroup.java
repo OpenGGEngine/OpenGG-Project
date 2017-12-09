@@ -26,7 +26,7 @@ public class ColliderGroup extends PhysicsObject{
     boolean forcetest = false;
     
     public ColliderGroup(){
-        this(new AABB(new Vector3f(0,0,0),1,1,1), new ArrayList<>());
+        this(new AABB(1,1,1), new ArrayList<>());
     }
     
     public ColliderGroup(AABB main, List<Collider> all) {
@@ -55,6 +55,7 @@ public class ColliderGroup extends PhysicsObject{
     
     public void setBoundingBox(AABB box){
         this.main = box;
+        box.parent = this;
     }
     
     public void setParent(PhysicsEntity parent){
@@ -62,11 +63,10 @@ public class ColliderGroup extends PhysicsObject{
     }
     
     public Collision testForCollision(ColliderGroup other) {
-        this.main.recenter(this.getPosition());
-        other.main.recenter(other.getPosition());
+        this.main.recalculate();
+        other.main.recalculate();
         if (!main.isColliding(other.main) && !(this.forcetest || other.forcetest))
             return null;
-
         Collision c = null;
         for (Collider x: this.colliders) {
             for(Collider y: other.colliders) {

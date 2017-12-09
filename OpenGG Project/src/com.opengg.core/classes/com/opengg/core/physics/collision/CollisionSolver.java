@@ -17,8 +17,10 @@ import com.opengg.core.math.Tuple;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.math.Vector4f;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 /**
  *
@@ -74,22 +76,6 @@ public class CollisionSolver {
         return new Contact(data);
     }
     
-    public static Contact SphereTerrain(SphereCollider c1, TerrainCollider c2){
-        Vector3f np = c1.getPosition().subtract(c2.getPosition()).divide(c2.getScale());
-        float height = c2.t.getHeight(np.x(), np.z());
-        if(height == 12345)
-            return null;
-        height += c2.getPosition().y();
-        height *= c2.getScale().y();
-        if(!(c1.getPosition().y()-c1.radius < height))
-            return null;
-        ContactManifold data = new ContactManifold();
-        data.points.add(new Vector3f(c1.getPosition().x(), height, c1.getPosition().z()));
-        data.normal = c2.t.getNormalAt(np.x(), np.z());
-        data.depth = height-(c1.getPosition().y()-c1.radius);
-        return new Contact(data);
-    }
-    
     public static Contact CapsuleCapsule(CapsuleCollider c1, CapsuleCollider c2){
         Vector3f[] closest = FastMath.closestApproach(c1.getP1(), c1.getP2(), c2.getP1(), c2.getP2(), true, true);
         if(closest[0].getDistance(closest[1]) < c1.radius + c2.radius){
@@ -106,22 +92,6 @@ public class CollisionSolver {
     public static boolean CapsuleRay(CapsuleCollider c1, Ray c2){
         Vector3f[] closest = FastMath.closestApproach(c1.getP1(), c1.getP2(), c2.pos, c2.dir, true, false);
         return closest[0].getDistance(closest[1]) < c1.radius;
-    }
-     
-    public static Contact CylinderTerrain(CapsuleCollider c1, TerrainCollider c2){
-        Vector3f np = c1.getPosition().subtract(c2.getPosition()).divide(c2.getScale());
-        float height = c2.t.getHeight(np.x(), np.z());
-        if(height == 12345)
-            return null;
-        height += c2.getPosition().y();
-        height *= c2.getScale().y();
-        if(!(c1.getPosition().y()-c1.radius < height))
-            return null;
-        ContactManifold data = new ContactManifold();
-        data.points.add(new Vector3f(c1.getPosition().x(), height, c1.getPosition().z()));
-        data.normal = c2.t.getNormalAt(np.x(), np.z());
-        data.depth = height-c1.getPosition().y();
-        return new Contact(data);
     }
     
     public static Contact CapsuleGround(CapsuleCollider c1){
@@ -165,6 +135,38 @@ public class CollisionSolver {
         return new Contact(cm);
     }
     
+    public static Contact HullTerrain(ConvexHull h1, TerrainCollider t2){
+        Mesh m = new Mesh(t2.mesh, false);
+        m.setParent(t2.parent);
+        m.position = t2.position;
+        m.rotation = t2.rotation;
+        m.scale = t2.scale;
+        m.system = t2.system;
+        
+        Contact c = HullMesh(h1, m);
+        
+        if(c == null){
+            Vector3f d = h1.getPosition().subtract(t2.getPosition()).divide(t2.getScale());
+            if(d.x()>0 && d.x()<1 && d.z()>0 && d.z()<1){
+                if(d.y() < t2.t.getHeight(d.x(), d.z())){
+                    float lowest = Float.MAX_VALUE;
+                    for(Vector3f f : h1.vertices){
+                        if(lowest > f.y()) lowest = f.y();
+                    }
+                    c = new Contact();
+                    ContactManifold mf = new ContactManifold();
+                    mf.depth = t2.t.getHeight(d.x(), d.z())*t2.scale.y() - lowest;
+                    mf.points.add(new Vector3f(h1.getPosition().setY(d.y()*t2.getScale().y())));
+                    mf.normal = new Vector3f(0,1,0);
+                    c.manifolds.add(mf);
+                }
+            }
+        }
+        
+        
+        return c;
+    }
+    
     public static Contact HullGround(ConvexHull h1){
         Matrix4f h1matrix = new Matrix4f().translate(h1.getPosition()).rotate(h1.getRotation()).scale(h1.getScale());
         List<Vector3f> nlist = new ArrayList<>(h1.vertices.size());
@@ -196,17 +198,6 @@ public class CollisionSolver {
         return new Contact(data);
     }
     
-    public static Contact HullTerrain(ConvexHull h1, TerrainCollider t1){
-        List<Triangle> mesh = t1.t.getMesh();
-        Mesh m = new Mesh(mesh);
-        m.parent = t1.parent;
-        m.position = t1.position;
-        m.rotation = t1.rotation;
-        m.scale = t1.scale;
-        m.system = t1.system;
-        return HullMesh(h1,m);
-    }
-    
     public static Vector3f barycentric(Vector3f p,Vector3f a, Vector3f b, Vector3f c) {
         Vector3f v0 = b.subtract(a), v1 = c.subtract(a), v2 = p.subtract(a);
         float d00 = v0.dot(v0);
@@ -220,12 +211,12 @@ public class CollisionSolver {
         return new Vector3f(bx, by, 1.0f - bx-by);
     }
     
-    public static Contact MeshMesh(Mesh m1, Mesh m2){
+    public static Contact MeshMesh(Mesh m1, Mesh m2){/*
         Matrix4f m1matrix = new Matrix4f().translate(m1.getPosition()).rotate(m1.getRotation());
         Matrix4f m2matrix = new Matrix4f().translate(m2.getPosition()).rotate(m2.getRotation());
         List<Tuple<Triangle, Triangle>> collisions = new ArrayList<>(100);
-        List<Triangle> f1 = m1.getFaces();
-        List<Triangle> f2 = m2.getFaces();
+        List<MeshTriangle> f1 = m1.getFaces();
+        List<MeshTriangle> f2 = m2.getFaces();
         for(int i = 0; i < f1.size(); i++){
             for(int j = i; j < f2.size(); j++){
                 Triangle t1 = new Triangle(f1.get(i)).transform(m1matrix);
@@ -258,41 +249,43 @@ public class CollisionSolver {
         float maxdist = 0;
         
         ContactManifold cm = new ContactManifold();
-        return new Contact(cm);
+        return new Contact(cm);*/return null;
     }
     
     public static Contact HullMesh(ConvexHull hull, Mesh mesh){
         List<Contact> contacts = new ArrayList<>();
-        System.out.println(mesh.getFaces().size());
-        for(Triangle f : mesh.getFaces()){
-            List<Vector3f> triAsHull = new ArrayList<>();
+        List<Vector3f> triAsHull = new ArrayList<>(3);
+        ConvexHull h2 = new ConvexHull(triAsHull);
+        h2.setParent(mesh.parent);
+        h2.position = mesh.position;
+        h2.rotation = mesh.rotation;
+        h2.scale = mesh.scale;
+        h2.system = mesh.system;
+        
+        for(MeshTriangle f : mesh.getFaces()){
+            triAsHull.clear();
             triAsHull.add(f.a);
             triAsHull.add(f.b);
             triAsHull.add(f.c);
-            Matrix4f change = new Matrix4f().rotate(mesh.getRotation()).scale(mesh.getScale());
-            Vector3f v1 = change.transform(new Vector4f(f.a)).truncate();
-            Vector3f v2 = change.transform(new Vector4f(f.b)).truncate();
-            Vector3f v3 = change.transform(new Vector4f(f.c)).truncate();
-
+            /*
+            AABB aabb = new AABB(f.center.subtract(f.a), f.center.subtract(f.b), f.center.subtract(f.c));
+            aabb.setPosition(f.center);
+            aabb.parent = mesh.parent;
             
-            AABB aabb = new AABB(v1,v2,v3);
-            aabb.recenter(mesh.getPosition());
-            if(!hull.parent.main.isColliding(aabb)) continue;
-            System.out.println(mesh.getScale());
+            aabb.recalculate();
             
-            ConvexHull h2 = new ConvexHull(triAsHull);
-            h2.setParent(mesh.parent);
-            h2.position = mesh.position;
-            h2.rotation = mesh.rotation;
-            h2.scale = mesh.scale;
-            h2.system = mesh.system;
+            if(!((ColliderGroup)hull.parent).main.isColliding(aabb)) continue;
+            */
             Contact tmf = HullHull(hull,h2);
             if(tmf != null) contacts.add(tmf);
         }
-        System.out.println(contacts.size());
+
         if(contacts.isEmpty()) return null;
-        
         List<ContactManifold> manifolds = new ArrayList<>();
+        Random random = new Random();
+        while(contacts.size() > 5){
+            contacts.remove(random.nextInt(contacts.size()));
+        }
         for(Contact contact : contacts){
             manifolds.addAll(contact.manifolds);
         }
