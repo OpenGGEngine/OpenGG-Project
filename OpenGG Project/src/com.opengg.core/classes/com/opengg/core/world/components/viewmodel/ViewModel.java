@@ -16,7 +16,7 @@ import java.util.List;
  * @author Javier
  */
 public abstract class ViewModel {
-    Component component;
+    public Component component;
     List<Element> elements = new ArrayList<>();
     
     public ViewModel(){

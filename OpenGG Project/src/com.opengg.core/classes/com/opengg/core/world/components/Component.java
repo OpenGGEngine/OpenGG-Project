@@ -28,8 +28,8 @@ import java.util.List;
 public abstract class Component{
     private static int curid = 0;
     private int id;
-    public boolean absoluteOffset = false;
-    public boolean enabled = true;
+    private boolean absoluteOffset = false;
+    private boolean enabled = true;
     public float updatedistance = 0;
     private String name = "default";
     private Component parent;

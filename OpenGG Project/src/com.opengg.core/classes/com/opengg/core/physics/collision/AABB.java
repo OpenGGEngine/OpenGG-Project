@@ -42,6 +42,14 @@ public class AABB extends PhysicsObject{
     public AABB(float length, float width, float height){
         this(new Vector3f(length, width, height));
     }
+
+    public Vector3f getLWH() {
+        return lwh;
+    }
+
+    public void setLWH(Vector3f lwh) {
+        this.lwh = lwh;
+    }
     
     public Vector3f[] getAABBVertices(){
         return new Vector3f[] {min, max};
@@ -75,9 +83,5 @@ public class AABB extends PhysicsObject{
                   min.x() > pos.x() || 
                   min.y() > pos.y() ||
                   min.z() > pos.z());
-    }
-    
-    public Vector3f getLWH(){
-        return lwh;
     }
 }

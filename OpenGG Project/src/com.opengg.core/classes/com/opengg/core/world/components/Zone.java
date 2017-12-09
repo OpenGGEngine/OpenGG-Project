@@ -5,6 +5,7 @@
  */
 package com.opengg.core.world.components;
 
+import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.physics.collision.AABB;
 import com.opengg.core.util.GGInputStream;
@@ -28,8 +29,14 @@ public class Zone extends Trigger{
         this.box = box;
     }
     
+    @Override
+    public void update(float delta){
+        checkForCollisions();
+    }
+    
     public void checkForCollisions(){
         for(Component c : this.getWorld().getAll()){
+            if(c == this) continue;
             if(box.isColliding(c.getPosition())){
                 TriggerInfo ti = new TriggerInfo();
                 ti.source = this;
@@ -40,10 +47,26 @@ public class Zone extends Trigger{
             }
         }
     }
+
+    public AABB getBox() {
+        return box;
+    }   
     
     @Override
     public void onPositionChange(Vector3f npos){
         box.setPosition(npos);
+        box.recalculate();
+    }
+    
+    @Override
+    public void onRotationChange(Quaternionf nrot){
+        box.setRotation(nrot);
+        box.recalculate();
+    }
+    
+    @Override
+    public void onScaleChange(Vector3f nscale){
+        box.setScale(nscale);
         box.recalculate();
     }
     
@@ -59,7 +82,7 @@ public class Zone extends Trigger{
         super.deserialize(in);
         Vector3f lwh = in.readVector3f();
         Vector3f pos = in.readVector3f();
-        box = new AABB(lwh.x(),lwh.y(),lwh.z());
+        box = new AABB(lwh);
         box.setPosition(pos);
     }
 }

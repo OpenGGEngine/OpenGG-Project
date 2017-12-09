@@ -111,7 +111,6 @@ public class Material {
     public void loadTextures() {
         if (mapKdFilename != null && !mapKdFilename.isEmpty()) {
             hascolmap = true;
-            System.out.println("Loaded: " + texpath + mapKdFilename);
             Kd = Texture.get2DTexture(texpath + mapKdFilename);
         }
         if (mapKaFilename != null && !mapKaFilename.isEmpty()) {

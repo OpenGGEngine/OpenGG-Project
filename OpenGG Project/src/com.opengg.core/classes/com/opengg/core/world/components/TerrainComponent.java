@@ -53,7 +53,6 @@ public class TerrainComponent extends RenderComponent{
                 aabb.recalculate();
                 CollisionComponent c = new CollisionComponent(aabb,mesh);
                 this.attach(c);
-                System.out.println(i + "   " + j);
                 collideable = true;
             }
         }

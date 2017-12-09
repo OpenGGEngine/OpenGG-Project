@@ -31,7 +31,6 @@ public class ModelDrawnObject implements Drawable {
         for(Mesh mesh : model.getMeshes()){
             MaterialDrawnObject mdo = new MaterialDrawnObject(new DrawnObject(mesh.vbodata, mesh.inddata), mesh.material);
             drawables.add(mdo);
-            System.out.println("Matcap:" + mesh.vbodata.limit() + "," +mesh.material.name);
         }
 
         if(model.isanimated){

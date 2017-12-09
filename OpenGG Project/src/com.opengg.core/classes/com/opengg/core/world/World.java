@@ -53,6 +53,43 @@ public class World extends Component{
         return null;
     }
     
+    public Component find(String s){
+        Component c = null;
+        for(Component cc : this.getChildren()){
+            Component ccc = traverseFind(cc, s);
+            if(ccc != null){
+                return ccc;
+            }
+        }
+        return null;
+    }
+    
+    private Component traverseFind(Component c, int i){
+        if(c.getId() == i)
+            return c;
+        if(c instanceof Component){
+            for(Component comp : c.getChildren()){
+                Component fc = traverseFind(comp, i);
+                if(fc != null)
+                    return fc;           
+            }
+        }
+        return null;
+    }
+    
+    private Component traverseFind(Component c, String s){
+        if(c.getName().equals(s))
+            return c;
+        if(c instanceof Component){
+            for(Component comp : c.getChildren()){
+                Component fc = traverseFind(comp,s);
+                if(fc != null)
+                    return fc;           
+            }
+        }
+        return null;
+    }
+    
     public void rescanRenderables(){
         for(Component c : getAll()){
             if(c instanceof RenderComponent){
@@ -98,20 +135,7 @@ public class World extends Component{
     
     public PhysicsSystem getSystem(){
         return physics;
-    }
-
-    private Component traverseFind(Component c, int i){
-        if(c.getId() == i)
-            return c;
-        if(c instanceof Component){
-            for(Component comp : c.getChildren()){
-                Component fc = traverseFind(comp, i);
-                if(fc != null)
-                    return fc;           
-            }
-        }
-        return null;
-    }
+    } 
     
     private void traverseGet(Component c, List<Component> list){
         list.add(c);
