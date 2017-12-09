@@ -6,67 +6,60 @@
 package com.opengg.core.util;
 
 import com.opengg.core.console.GGConsole;
-import java.io.FileInputStream;
+import com.opengg.core.world.Deserializer;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 /**
  *
  * @author Javier
  */
 public class JarClassUtil {
-    public static List<Class> loadAllClassesFromJar(String path){
-        URLClassLoader loader;
-
+    public static List<Class> loadAllClassesFromJar(String path) {
+        JarFile jarFile;
         try {
-            loader = new URLClassLoader(new URL[] {new URL("jar","", path)});
-        }catch (MalformedURLException ex) {
-            GGConsole.error("Failed to load classes due to malformed path: " + path);
-            return new ArrayList<>();
+            jarFile = new JarFile(path);
+        } catch (IOException ex) {
+            GGConsole.error("Failed to find jarfile!");
+            return null;
         }
-        
+        Enumeration<JarEntry> e = jarFile.entries();
+
+        URL[] urls;
+        try {
+            urls = new URL[]{new URL("jar:file:" + path + "!/")};
+        } catch (MalformedURLException ex) {
+            GGConsole.error("Failed to access jarfile!");
+            return null;
+        }
+        URLClassLoader cl = URLClassLoader.newInstance(urls);
+        Deserializer.loaders.add(cl);
         List<Class> classes = new ArrayList<>();
-
-        List<String> strings = loadClassnamesFromJar(path);
-
-        try {
-            loader.loadClass("com.opengg.core.engine.OpenGG");
-        } catch (ClassNotFoundException ex) {
-            System.out.println("IF THIS APPEARS IN YOUR CONSOLE MSG ME ON FACEBOOK CAUSE URLCLASSLOADER SUCKS");
-        }
-
-        for(String string : strings){
-            if(string.contains("module-info")) continue;
-            try{
-                Class clazz = loader.loadClass(string);
-                if(clazz.getCanonicalName() != null)
-                    classes.add(clazz);
-            } catch (ClassNotFoundException ex) {
-                GGConsole.error("Failed to load class that was previously found: " + string);
+        while (e.hasMoreElements()) {
+            JarEntry je = e.nextElement();
+            if (je.isDirectory() || !je.getName().endsWith(".class")) {
+                continue;
             }
+            String className = je.getName().substring(0, je.getName().length() - String.valueOf(".class").length());
+            className = className.replace('/', '.');
+            if(className.contains("module-info")) continue;
+            try {
+                Class clazz = cl.loadClass(className);
+                classes.add(clazz);
+            } catch (ClassNotFoundException ex) {
+                GGConsole.error("Failed to load classes!");
+                return null;
+            }
+
         }
         return classes;
+    }
 
-    }
-    
-    public static List<String> loadClassnamesFromJar(String path){
-        try (ZipInputStream zip = new ZipInputStream(new FileInputStream(path))){
-            List<String> classNames = new ArrayList<>();
-            for (ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
-                if (!entry.isDirectory() && entry.getName().endsWith(".class")) {
-                    String className = entry.getName().replace('/', '.');
-                    classNames.add(className.substring(0, className.length() - ".class".length()));
-                }
-            }   return classNames;
-        } catch (IOException ex) {
-            GGConsole.error("Failed to load classnames from " + path);
-        } 
-        return null;
-    }
 }

@@ -12,6 +12,7 @@ import com.opengg.core.world.components.Component;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -23,6 +24,7 @@ public class Deserializer {
     public static Deserializer ds;
     public GGInputStream b;
     public List<SerialHolder> components = new LinkedList<>();
+    public static List<ClassLoader> loaders = new ArrayList<>();
     public World w;
     
     public static World deserialize(ByteBuffer b){
@@ -73,7 +75,20 @@ public class Deserializer {
             try {
                 int id = ds.b.readInt();
                 int pid = ds.b.readInt();
-                Class c = Class.forName(classname);
+                Class c = null;
+                try{
+                    c = Class.forName(classname);
+                }catch (ClassNotFoundException ex) {
+                    for(ClassLoader cl : loaders){
+                        try{
+                            c = Class.forName(classname, true, cl);
+                        }catch(ClassNotFoundException e){
+                            
+                        }
+                        
+                    }
+                }
+                
                 Component comp = (Component)c.getConstructor().newInstance();
                 comp.deserialize(ds.b);
                 comp.setId(id);
@@ -83,13 +98,9 @@ public class Deserializer {
                 ch.parent = pid;
                 ch.type = c;
                 ds.components.add(ch);
-                
+ 
                 doList(ds);
-            } catch (ClassNotFoundException ex) {
-                GGConsole.error("Failed to load world, class " + classname + " is missing!");
-                ds.w = null;
-                return;
-            } catch (SecurityException  ex) {
+            }  catch (SecurityException  ex) {
                 GGConsole.error("Failed to load world, access to " + classname + " is not allowed");
                 ds.w = null;
                 return;

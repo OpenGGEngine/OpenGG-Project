@@ -91,11 +91,17 @@ public class ViewModelComponentRegistry {
     public static void createRegisters(){
         classsearch: for(Class c : components){
             for(Class vm : viewmodels){
+                register(c);
+                register(vm);
                 if(c.getSimpleName().equals(vm.getSimpleName().replace("ViewModel", ""))){
                     ViewModelComponentRegisterInfoContainer register = new ViewModelComponentRegisterInfoContainer();
                     register.component = c;
                     register.viewmodel = vm;
-                    registered.add(register);
+                    boolean found = false;
+                    for(ViewModelComponentRegisterInfoContainer vmcric : registered){
+                        if(c == vmcric.component && vm == vmcric.viewmodel) found = false;
+                    }
+                    if(!found) registered.add(register);
                     continue classsearch;
                 }
             }
