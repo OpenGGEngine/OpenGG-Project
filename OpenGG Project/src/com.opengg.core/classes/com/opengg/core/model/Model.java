@@ -169,13 +169,10 @@ public class Model {
         System.out.println("Buffers L :" + buffers.length);
        //  gather.write(Arrays.copyOfRange(buffers,0,buffers.length/2));
        //  gather.write(Arrays.copyOfRange(buffers,(buffers.length/2), buffers.length));
-         for(int i=0;i< buffers.length;i+=2){
-             if(i>buffers.length-2){
-                 gather.write(buffers[buffers.length-1]);
-             }else{
-             gather.write(Arrays.copyOfRange(buffers,i,i+2));
-             }
-             
+         for(int i=0;i< buffers.length;i++){
+             System.out.println(buffers[i].capacity());
+             gather.write(buffers[i]);
+            
          }
         // System.out.println(out.getChannel().position());
          

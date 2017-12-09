@@ -224,10 +224,11 @@ public class ModelLoader {
         Model m = new Model("Beer", meshes);
         System.out.println("Total Meshes: "+m.getMeshes().size());
         m.convexhull = arrays[arrays.length - 1];
-        
+        m.convexhull.rewind();
         while(m.convexhull.hasRemaining()){
-            Vector3f wow = new Vector3f((float)m.convexhull.getDouble(),(float)m.convexhull.getDouble(),(float)m.convexhull.getDouble());
+            Vector3f wow = new Vector3f((float)m.convexhull.getFloat(),(float)m.convexhull.getFloat(),(float)m.convexhull.getFloat());
             m.ch.add(wow);
+            System.out.println(wow.toString());
         }
         m.ml = ml;
 
