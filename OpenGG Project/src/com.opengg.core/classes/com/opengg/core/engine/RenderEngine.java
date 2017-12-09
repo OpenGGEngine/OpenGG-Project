@@ -93,6 +93,8 @@ public class RenderEngine {
 
         enableDefaultGroups();
 
+        setProjectionData(ProjectionData.getPerspective(100, 0.2f, 3000f));
+        
         lightoffset = (MemoryUtil.memAllocFloat(Light.bfsize).capacity());// << 2;
 
         groups.add(dlist);
