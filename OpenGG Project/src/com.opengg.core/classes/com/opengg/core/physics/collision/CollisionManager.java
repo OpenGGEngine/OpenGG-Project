@@ -198,12 +198,10 @@ public class CollisionManager {
             float depth = e.depths.stream().max((i,j)->{
                 return i > j ? 1 : 0;
             }).orElse(0f);
-
+            if(e.norms.isEmpty())continue;
             e.setPosition(e.getPosition().add(normal.multiply(depth)));
-            System.out.println("");
-            System.out.println(normal);
-            System.out.println(depth);
-            System.out.println(normal.multiply(depth));
+           
+
             e.angvelocity = e.angvelocity.add(e.inertialMatrix.inverse().multiply(R.cross(normal)).multiply(jrv.length()).divide(e.mass));
             e.velocity = e.velocity.add(jrv.add(jfv).divide(e.mass));
             e.lowestContact = normal;
