@@ -47,7 +47,7 @@ public class PhysicsEntity extends PhysicsObject{
     public float density = 1f;
     public float dynamicfriction = 0.4f;
     public float staticfriction = 0.5f;
-    public float restitution = 0f;
+    public float restitution = -1f;
     
     public PhysicsEntity(){
         

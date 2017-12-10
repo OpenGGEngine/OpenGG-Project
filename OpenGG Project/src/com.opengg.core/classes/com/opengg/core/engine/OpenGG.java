@@ -282,6 +282,10 @@ public class OpenGG{
         GGConsole.writeLog(startTime, error, "error");
     }
 
+    public static Date getStartTime() {
+        return startTime;
+    }
+    
     public static boolean inMainThread(){
         return mainthread == Thread.currentThread();
     }
