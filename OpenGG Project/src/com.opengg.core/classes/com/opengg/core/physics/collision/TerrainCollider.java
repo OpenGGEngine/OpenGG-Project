@@ -23,6 +23,7 @@ public class TerrainCollider extends Collider{
         for(Triangle triangle : triangles){
             MeshTriangle m = new MeshTriangle(triangle);
             mesh.add(m);
+            m.aabb.parent = this;
         }
     }
     

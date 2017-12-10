@@ -296,7 +296,7 @@ public abstract class Component{
         rotoffset = in.readQuaternionf();
         scale = in.readVector3f();
         name = in.readString();
-        enabled = in.readBoolean();
+        enabled = in.readBoolean(); enabled = true;
         absoluteOffset = in.readBoolean();
         updatedistance = in.readInt();
     }

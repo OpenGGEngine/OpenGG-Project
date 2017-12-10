@@ -99,6 +99,11 @@ public class Deserializer {
                 ch.type = c;
                 ds.components.add(ch);
  
+                // i have a desire for death
+                // pleeese keel me yes 
+                // yes please kill me yes good
+                // a.. work and no play makes non  y a happy nboy
+                // aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaad
                 doList(ds);
             }  catch (SecurityException  ex) {
                 GGConsole.error("Failed to load world, access to " + classname + " is not allowed");
@@ -110,6 +115,7 @@ public class Deserializer {
                 return;
             } catch (NoSuchMethodException | IllegalArgumentException | InvocationTargetException ex) {
                 GGConsole.error("Failed to load world, could not access default constructor for " + classname);
+                System.out.println(ex.toString());
                 ds.w = null;
                 return;
             }

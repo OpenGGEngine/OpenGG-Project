@@ -138,30 +138,30 @@ public class CollisionSolver {
     public static Contact HullTerrain(ConvexHull h1, TerrainCollider t2){
         Mesh m = new Mesh(t2.mesh, false);
         m.setParent(t2.parent);
-        m.position = t2.position;
+        m.position = t2.position; 
         m.rotation = t2.rotation;
         m.scale = t2.scale;
         m.system = t2.system;
         
         Contact c = HullMesh(h1, m);
         
-        if(c == null){
-            Vector3f d = h1.getPosition().subtract(t2.getPosition()).divide(t2.getScale());
-            if(d.x()>0 && d.x()<1 && d.z()>0 && d.z()<1){
-                if(d.y() < t2.t.getHeight(d.x(), d.z())){
-                    float lowest = Float.MAX_VALUE;
-                    for(Vector3f f : h1.vertices){
-                        if(lowest > f.y()) lowest = f.y();
-                    }
-                    c = new Contact();
-                    ContactManifold mf = new ContactManifold();
-                    mf.depth = t2.t.getHeight(d.x(), d.z())*t2.scale.y() - lowest;
-                    mf.points.add(new Vector3f(h1.getPosition().setY(d.y()*t2.getScale().y())));
-                    mf.normal = new Vector3f(0,1,0);
-                    c.manifolds.add(mf);
+        Vector3f d = h1.getPosition().subtract(t2.getPosition()).divide(t2.getScale());
+
+        if(d.x()>0 && d.x()<1 && d.z()>0 && d.z()<1){
+            if(d.y()+0.03f < t2.t.getHeight(d.x(), d.z())){
+                float lowest = Float.MAX_VALUE;
+                for(Vector3f f : h1.vertices){
+                    if(lowest > f.multiply(h1.getScale()).add(h1.getPosition()).y()) lowest = f.multiply(h1.getScale()).add(h1.getPosition()).y();
                 }
+                c = new Contact();
+                ContactManifold mf = new ContactManifold();
+                mf.depth = Math.abs(t2.t.getHeight(d.x(), d.z())*t2.getScale().y()+t2.getPosition().y() - lowest);
+                mf.points.add(new Vector3f(h1.getPosition().setY(d.y()*t2.getScale().y())));
+                mf.normal = new Vector3f(0,1,0);
+                c.manifolds.add(mf);
             }
         }
+        
         
         
         return c;
@@ -267,15 +267,10 @@ public class CollisionSolver {
             triAsHull.add(f.a);
             triAsHull.add(f.b);
             triAsHull.add(f.c);
-            /*
-            AABB aabb = new AABB(f.center.subtract(f.a), f.center.subtract(f.b), f.center.subtract(f.c));
-            aabb.setPosition(f.center);
-            aabb.parent = mesh.parent;
+
+            f.aabb.recalculate();
             
-            aabb.recalculate();
-            
-            if(!((ColliderGroup)hull.parent).main.isColliding(aabb)) continue;
-            */
+            if(!((ColliderGroup)hull.parent).main.isColliding(f.aabb)) continue;
             Contact tmf = HullHull(hull,h2);
             if(tmf != null) contacts.add(tmf);
         }

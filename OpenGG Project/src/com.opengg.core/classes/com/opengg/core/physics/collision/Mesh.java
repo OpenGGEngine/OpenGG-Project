@@ -22,6 +22,7 @@ public class Mesh extends Collider{
         for(Triangle tri : faces){
             MeshTriangle m = new MeshTriangle(tri);
             this.faces.add(m);
+            m.aabb.parent = this;
         }
     }
     
@@ -33,6 +34,7 @@ public class Mesh extends Collider{
         for(Face face : model.faces){
             MeshTriangle m = new MeshTriangle(face.v1.v, face.v2.v, face.v3.v);
             this.faces.add(m);
+            
         }
     }
 

@@ -47,7 +47,13 @@ public class PhysicsEntity extends PhysicsObject{
     public float density = 1f;
     public float dynamicfriction = 0.4f;
     public float staticfriction = 0.5f;
-    public float restitution = -1f;
+    public float restitution = -0.5f;
+    
+    public List<Vector3f> R = new ArrayList<>();
+    public List<Vector3f> jr = new ArrayList<>();
+    public List<Vector3f> jf = new ArrayList<>();
+    public List<Vector3f> norms = new ArrayList<>();
+    public List<Float> depths = new ArrayList<>();
     
     public PhysicsEntity(){
         

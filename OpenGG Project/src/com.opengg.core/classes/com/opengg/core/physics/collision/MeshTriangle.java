@@ -17,6 +17,7 @@ public class MeshTriangle {
     public Vector3f b = new Vector3f();
     public Vector3f c = new Vector3f();
     public Vector3f center = new Vector3f();
+    public AABB aabb;
     
     public MeshTriangle(Triangle t){
         this(t.a,t.b,t.c);
@@ -27,6 +28,7 @@ public class MeshTriangle {
         this.b = b;
         this.c = c;
         this.center = Vector3f.averageOf(a,b,c);
-
+        aabb = new AABB(center.subtract(a), center.subtract(b), center.subtract(c));
+        aabb.setPosition(center);
     }
 }

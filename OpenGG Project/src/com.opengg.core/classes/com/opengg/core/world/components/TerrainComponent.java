@@ -6,6 +6,8 @@
 
 package com.opengg.core.world.components;
 
+import com.opengg.core.engine.OpenGG;
+import com.opengg.core.engine.Resource;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.texture.TextureManager;
@@ -13,7 +15,6 @@ import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
 import com.opengg.core.world.Terrain;
 import com.opengg.core.physics.collision.AABB;
-import com.opengg.core.physics.collision.Mesh;
 import com.opengg.core.physics.collision.TerrainCollider;
 import com.opengg.core.world.components.physics.CollisionComponent;
 import java.io.IOException;
@@ -37,7 +38,7 @@ public class TerrainComponent extends RenderComponent{
     }
     
     public void enableCollider(){
-        final int sectionsize = 32;
+        final int sectionsize = 16;
         float[][] map = terrain.getMap();
         int length = map.length;
         int width = map[0].length;
@@ -104,9 +105,20 @@ public class TerrainComponent extends RenderComponent{
     @Override
     public void deserialize(GGInputStream in) throws IOException{
         super.deserialize(in);
-        terrain = Terrain.generate(in.readString());
-        blotmap = Texture.get2DTexture(in.readString());
-        array = Texture.getArrayTexture(in.readString(), in.readString(), in.readString(), in.readString());
+        String tp = in.readString();
+        terrain = Terrain.generate(tp);
+        String blot = in.readString();
+        blotmap = Texture.get2DTexture(blot);
+        String s1 = in.readString(), s2 = in.readString(), s3 = in.readString(), s4 = in.readString();
+        array = Texture.getArrayTexture(s1, s2, s3, s4);
+        this.shader = "terrain";
+        System.out.println(tp);
+        System.out.println(blot);
+        System.out.println(s1);
+        System.out.println(s2);
+        System.out.println(s3);
+        System.out.println(s4);
+        OpenGG.asyncExec(()->this.setDrawable(terrain.getDrawable()));
         if(in.readBoolean()){
             enableCollider();
         }
