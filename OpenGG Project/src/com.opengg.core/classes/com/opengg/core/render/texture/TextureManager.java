@@ -44,6 +44,10 @@ public class TextureManager {
         return texturelist;
     }
     
+    public static void unloadTexture(String path){
+        texturelist.remove(path);
+    }
+    
     public static TextureData loadTexture(String path){
         return loadTexture(path, true);
     }
