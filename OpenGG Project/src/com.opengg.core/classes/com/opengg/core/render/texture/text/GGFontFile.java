@@ -7,6 +7,7 @@ package com.opengg.core.render.texture.text;
 
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.engine.OpenGG;
+import com.opengg.core.engine.WindowController;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -50,7 +51,6 @@ public class GGFontFile {
      * @param file - the font file.
      */
     protected GGFontFile(File file) {
-        this.aspectRatio = OpenGG.getWindow().getRatio();
         openFile(file);
         loadPaddingData();
         loadLineSizes();
@@ -136,7 +136,7 @@ public class GGFontFile {
         processNextLine();
         int lineHeightPixels = getValueOfVariable("lineHeight") - paddingHeight;
         verticalPerPixelSize = TextVBOGenerator.LINE_HEIGHT / (double) lineHeightPixels;
-        horizontalPerPixelSize = verticalPerPixelSize / aspectRatio;
+        horizontalPerPixelSize = verticalPerPixelSize / WindowController.getWindow().getRatio();
     }
 
     private void loadCharacterData(int imageWidth) {

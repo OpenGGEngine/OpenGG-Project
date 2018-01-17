@@ -36,7 +36,7 @@ public class ProjectionData {
         
         data.type = PERSPECTIVE;
         data.fov = fov;
-        data.ratio = OpenGG.getWindow().getRatio();
+        data.ratio = WindowController.getWindow().getRatio();
         data.minz = minz;
         data.maxz = maxz;
         

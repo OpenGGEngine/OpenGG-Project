@@ -58,6 +58,9 @@ public class RenderEngine {
     private static VertexArrayObject defaultvao;
     private static ProjectionData projdata;
 
+    /**
+     * Initializes the render engine, should rarely if ever be called
+     */
     static void init() {
         ShaderController.initialize();
 
@@ -113,7 +116,7 @@ public class RenderEngine {
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }
 
-    public static void enableDefaultGroups(){
+    private static void enableDefaultGroups(){
         dlist = new RenderGroup("defaultgroup");
         dlist.setPipeline("object");
         
@@ -157,6 +160,9 @@ public class RenderEngine {
         paths.add(path);
     }
     
+    /**
+     * Checks for and prints out any OpenGL errors
+     */
     public static void checkForGLErrors(){
         int i = 0;
         while((i = glGetError()) != GL_NO_ERROR){
@@ -164,6 +170,9 @@ public class RenderEngine {
         }
     }
     
+    /**
+     * @return The current OpenGL version in a major . minor format
+     */
     public static String getGLVersion(){
         return glGetInteger(GL_MAJOR_VERSION) + "." + glGetInteger(GL_MINOR_VERSION);
     }
@@ -333,7 +342,7 @@ public class RenderEngine {
     public static void draw(){
         ShaderController.setView(camera.getMatrix());
         ShaderController.setUniform("camera", camera.getPos().inverse());
-        projdata.ratio = OpenGG.getWindow().getRatio();
+        projdata.ratio = WindowController.getWindow().getRatio();
         projdata.use();
 
         sceneTex.enableRendering();

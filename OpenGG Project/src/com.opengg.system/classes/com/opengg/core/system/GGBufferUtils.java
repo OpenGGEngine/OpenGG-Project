@@ -3,15 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.opengg.core.util;
+package com.opengg.core.system;
 
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 
 /**
  *
  * @author Javier
  */
-public class BufferUtils {
+public class GGBufferUtils {
     public static byte[] get(ByteBuffer source){
         if(source.hasArray()){
             return source.array();
@@ -21,6 +22,7 @@ public class BufferUtils {
             for(int i = 0; i < array.length; i++){
                 array[i] = source.get();
             }
+            source.rewind();
             return array;
         }
     }

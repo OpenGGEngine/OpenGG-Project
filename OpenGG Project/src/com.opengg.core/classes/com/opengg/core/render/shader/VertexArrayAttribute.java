@@ -42,8 +42,6 @@ public class VertexArrayAttribute {
             return false;
         if(this.offset != other.offset)
             return false;
-        if(!(this.name.equals(other.name)))
-            return false;
-        return true;
+        return this.name.equals(other.name);
     }
 }

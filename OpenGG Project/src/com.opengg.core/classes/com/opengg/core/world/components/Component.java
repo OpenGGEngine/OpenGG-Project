@@ -15,14 +15,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Represents any object attachable to another Component that links with the WorldEngine for updating and serializing<br><br>
- * 
+ * <h1>Represents any object attachable to another Component that links with the WorldEngine for updating and serializing</h1>
+ * <p>
  * This class is the core class of the World system, which is what a developer would interact the most with during development. All component
  * have a position, scale, and rotation, regardless of whether or not they are used. In addition they have a unique ID, a name which may
  * or may not be unique depending on developer preference, and only one parent, and if it this is a top level component, the parent would be the 
- * corresponding World. <br><br>
- * To create a custom component, first extend this class. This class itself, while it has no practical use by itself, contains all of the
- * code that should be needed to use the features described above, so take care when overriding these default classes.
+ * corresponding World. </p>
+ * <p>
+ * To create a custom component, first extend this class. This class, while lacking practical use by itself, contains all of the
+ * code that should be needed to use the features described above, so take care when overriding these default classes.</p>
  * @author Javier
  */
 public abstract class Component{
@@ -66,18 +67,24 @@ public abstract class Component{
         return name;
     }
     
+    /**
+     * Gets the component's unique ID
+     * @return component's ID
+     */
     public int getId(){
         return id;
     }
     
+    
+    /**
+     * Sets the component's new ID, should only be used in very specific circumstances. If component identification 
+     * is needed, use {@link #setName(java.lang.String) } and {@link  #getName() } instead
+     * @param id component's new ID
+     */
     public void setId(int id){
         this.id = id;
     }
     
-    /**
-     * Set the parent of the component, should rarely be called directly
-     * @param parent The object that represents the new parent to this component
-     */
     private void setParentInfo(Component parent){
         this.parent = parent;
         
@@ -89,6 +96,10 @@ public abstract class Component{
         onParentChange(parent);
     }
     
+    /**
+     * Called when the parent of this component is changed, override to do something on parent change
+     * @param parent The new parent of this parent
+     */
     public void onParentChange(Component parent){
         
     }
@@ -99,6 +110,11 @@ public abstract class Component{
         onWorldChange();
     }
     
+    /**
+     * Called when the world of this component is changed, override to do something on world change<br>
+     * Note, this is also called if the parent changes and the parent is in a new world, including the
+     * first time the parent is changed
+     */
     public void onWorldChange(){
         
     }
@@ -114,12 +130,18 @@ public abstract class Component{
         return this;
     }
     
+    /**
+     * Called when the position of a component is changed, override to do something when this happens<br>
+     * Note, this happens whenever the true position is changed, not just the offset, so it will be called if the position
+     * of the parent of this component is changed
+     * @param npos New true position of this component
+     */
     public void onPositionChange(Vector3f npos){
         
     }
     
     /**
-     * Returns the component's position in world space, dependent on state of the absolute offset variable.<br><br>
+     * Returns the true position of the component<br>
      * 
      * With absolute offset, the position equation is {@code parent.getPosition().add(offset);}<br>
      * Without, it is {@code parent.getPosition().add(parent.getRotation().transform(pos));}
@@ -154,7 +176,7 @@ public abstract class Component{
     }
     
     /**
-     * Returns the final rotation of the current object, derived by multiplying the parent's rotation by the current offset
+     * Returns the true rotation of this component
      * @return Final rotation direction
      */
     public Quaternionf getRotation(){
@@ -162,9 +184,9 @@ public abstract class Component{
     }
     
     /**
-     * Sets the local rotation offset of the object relative to the parent, in a euclidean vector
+     * Sets the local rotation offset of the component relative to the parent, in a euclidean vector
      * @param nrot New rotation offset
-     * @return This object
+     * @return This component
      */
     public final Component setRotationOffset(Vector3f nrot){
         return this.setRotationOffset(new Quaternionf(nrot));
@@ -179,9 +201,9 @@ public abstract class Component{
     }
     
     /**
-     * Sets the local rotation offset of the object relative to the parent
+     * Sets the local rotation offset of the component relative to the parent
      * @param nrot New rotation offset
-     * @return This object
+     * @return This component
      */
     public final Component setRotationOffset(Quaternionf nrot){
         this.rotoffset = nrot;
@@ -190,6 +212,12 @@ public abstract class Component{
         return this;
     }
     
+    /**
+     * Called when the rotation of a component is changed, override to do something when this happens<br>
+     * Note, this happens whenever the true rotation is changed, not just the offset, so it will be called if the rotation
+     * of the parent of this component is changed
+     * @param nrot New true rotation of this component
+     */
     public void onRotationChange(Quaternionf nrot){
         
     }
@@ -206,9 +234,9 @@ public abstract class Component{
     }
     
     /**
-     * Sets the scaling offset of the object relative to the parent
+     * Sets the scaling offset of the component relative to the parent
      * @param nscale New scale offset
-     * @return This object
+     * @return This component
      */
     public final Component setScaleOffset(Vector3f nscale){
         this.scaleoffset = nscale;
@@ -228,20 +256,27 @@ public abstract class Component{
         for(Component c : children) c.regenScale();
     }
     
+    
+    /**
+     * Called when the scale of a component is changed, override to do something when this happens<br>
+     * Note, this happens whenever the true scale is changed, not just the offset, so it will be called if the scale
+     * of the parent of this component is changed
+     * @param nscale New true scale of this component
+     */
     public void onScaleChange(Vector3f nscale){
         
     }
     
     /**
-     * gets the total scaling factor for the object, derived by multiplying the parent's scale by the current offset
-     * @return Final object scale
+     * Gets the true scaling factor of this component
+     * @return Final component scale
      */
     public Vector3f getScale(){
         return scale;
     }
     
     /**
-     * Set whether the position offset should be absolute or take rotation into account (See {@link #getPosition() getPosition()})
+     * Set whether the position offset should be absolute or take the rotation of the parent into account
      * @param abs True for absolute, false for relative
      */
     public void setAbsoluteOffset(boolean abs){
@@ -249,7 +284,7 @@ public abstract class Component{
     }
     
     /**
-     * Returns whether or not there is absolute offset enabled
+     * Returns whether or not absolute offset is enabled
      * @return Current state of absolute offset
      */
     public boolean isAbsoluteOffset(){
@@ -257,7 +292,7 @@ public abstract class Component{
     }
 
     /**
-     * Called once by WorldEngine per update cycle, override for functionality
+     * Called once per update cycle, override for functionality
      * @param delta Delta time since last update cycle in seconds
      */
     public void update(float delta){}
@@ -266,10 +301,10 @@ public abstract class Component{
      * Called by various sources for serialization of the component, and by default only serializes position, rotation, and scale offsets<br><br>
      * 
      * For correct functionality, the variables serialized here must match the variables deserialized in {@link #deserialize(com.opengg.core.world.Deserializer) deserialize()}<br>
-     * In addition, any object that overrides this must also override the {@link #Component() default constructor} for the serializer to function<br><br>
+     * In addition, any component that overrides this must also override the {@linkplain #Component() default constructor} for the serializer to function<br><br>
      * 
-     * It is recommended to allow for complete recreation of the object using these two methods
-     * @param out Output stream used for writing objects to the buffer
+     * It is recommended to allow for complete recreation of the component using these two methods
+     * @param out Output stream used for writing components to the buffer
      */
     public void serialize(GGOutputStream out) throws IOException{
         out.write(posoffset);
@@ -285,11 +320,11 @@ public abstract class Component{
      * Called for deserialization of a byte stream to a component, and by default only deserializes position, rotation, and scale<br><br>
      * 
      * For correct functionality, variable deserialization here must match the variables serialized in {@link #serialize(com.opengg.core.world.Serializer) serialize()}<br>
-     * In addition, any object that overrides this must also override the {@link #Component() default constructor} for the deserializer to function<br><br>
+     * In addition, any component that overrides this must also override the {@link #Component() default constructor} for the deserializer to function<br><br>
      * 
      * As this method is normally run on a separate thread, any methods that have OpenGL calls have to be run in an {@link com.opengg.core.engine.Executable executable} to be run in the main thread. <br>
-     * It is recommended to allow for complete recreation of the object using these methods
-     * @param in Input steam used for reading objects from the buffer
+     * It is recommended to allow for complete recreation of the component using these methods
+     * @param in Input steam used for reading components from the buffer
      */
     public void deserialize(GGInputStream in) throws IOException{
         posoffset = in.readVector3f();
@@ -308,29 +343,52 @@ public abstract class Component{
     public World getWorld(){
         return parent.getWorld();
     }
-      
+    
+    /**
+     * Returns if the component is currently enabled for rendering and updating
+     * @return if the component is currently enabled
+     */
     public boolean isEnabled(){
         return enabled;
     }
     
+    /**
+     * Sets if the component should be currently enabled for rendering and updating
+     * @param enabled if the component should be currently enabled 
+     */
     public void setEnabled(boolean enabled){
         this.enabled = enabled;
     }
     
+    /**
+     *  If the component is marked for serialization, eg for world saving or networking
+     * @return If should serialize
+     */
     public boolean shouldSerialize(){
         return serialize;
     }
     
+    /**
+     * Sets if serialization should occur, eg for world saving and loading
+     * @param serialize Should serialize
+     */
     public void setSerializable(boolean serialize){
         this.serialize = serialize;
     }
     
+    /**
+     * Called when a component is removed, override if needed. It should not be called directly
+     */
     public void finalizeComponent(){
-        for(Component child : children){
-            child.finalizeComponent();
-        }
+
     }
-    
+    /**
+     * Attaches a component to this component<br>
+     * This contains checks to prevent a component to be attached to itself. Additionally, it goes
+     * through the cleanup of removing a component from its existing parent, and calls {@link #setParentInfo(com.opengg.core.world.components.Component) }
+     * @param c Component to be attached
+     * @return This component
+     */
     public Component attach(Component c) {
         if(c == this)
             return this;
@@ -351,10 +409,18 @@ public abstract class Component{
         return parent;
     }
     
+    /**
+     * Removes a component from this component's child list by list index
+     * @param i Index of component
+     */
     public void remove(int i){
         children.remove(i);
     }
     
+    /**
+     * Removes a component from this component's child list
+     * @param w Component to be removed
+     */
     public void remove(Component w){
         children.remove(w);
     }

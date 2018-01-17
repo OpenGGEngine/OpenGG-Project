@@ -39,51 +39,39 @@ public class ConnectionListener implements Runnable{
     @Override
     public void run() {
         while(!close && !OpenGG.getEnded()){
-            try {
-                Socket s = ssocket.accept();
-                String ip = s.getInetAddress().getHostAddress();
+            String ip;
+            ServerClient sc;
+            try (Socket s = ssocket.accept()) {
+                ip = s.getInetAddress().getHostAddress();
                 Date d = Calendar.getInstance().getTime();
-                ServerClient sc = new ServerClient();
+                sc = new ServerClient();
                 sc.ip = s.getInetAddress();
                 sc.timeConnected = d;
                 sc.id = curid;
                 curid++;
-                
                 GGConsole.log("User connecting from " + ip);
-                
                 BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));
                 PrintWriter out = new PrintWriter(new OutputStreamWriter(s.getOutputStream()), true);
-                
                 String handshake = in.readLine();
-                
                 if(!handshake.equals("hey server")){GGConsole.log("Connection with " + ip + " failed");}
-                
                 out.println("hey client");
                 handshake = in.readLine();
-                
                 if(!handshake.equals("oh shit we out here")){GGConsole.log("Connection with " + ip + " failed");}
-                               
                 out.println(server.name);
                 sc.name = in.readLine();
-                
                 GGConsole.log(ip + " connected to server, sending game state");
-                
                 byte[] bytes = Serializer.serialize(WorldEngine.getCurrent());
-                
                 out.println(bytes.length);
-                
                 s.getOutputStream().write(bytes);
-                
                 out.println(server.packetsize);
-                s.close();
-                
                 GGConsole.log(ip + " connected to server.");
-                
+
                 server.addServerClient(sc);
+                
+                
             } catch (IOException ex) {
                 GGConsole.warning("Client failed to connect!");
-            }
-            
+            }           
         }
     }
     

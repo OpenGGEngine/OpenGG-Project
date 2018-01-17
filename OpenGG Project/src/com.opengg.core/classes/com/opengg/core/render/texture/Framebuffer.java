@@ -129,7 +129,7 @@ public class Framebuffer {
     private void attachTexture(int width, int height, int format, int intformat, int input, int attachment){ 
         Texture tex = new Texture(GL_TEXTURE_2D, format, intformat, input);
         tex.bind();
-        tex.set2DData(new TextureData(width, height, null, "none"));
+        tex.set2DData(new TextureData(width, height, 4, null, "none"));
         
         fb.bind(GL_FRAMEBUFFER);
         fb.attachTexture(attachment, tex.getID(), 0);
@@ -179,7 +179,7 @@ public class Framebuffer {
     public void disableRendering(){
         glFlush();
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        glViewport(0, 0, OpenGG.getWindow().getWidth(), OpenGG.getWindow().getHeight());
+        glViewport(0, 0, WindowController.getWindow().getWidth(), WindowController.getWindow().getHeight());
         
     }
     

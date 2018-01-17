@@ -6,7 +6,6 @@
 
 package com.opengg.core.physics;
 
-import com.opengg.core.physics.PhysicsEntity;
 import com.opengg.core.physics.collision.ColliderGroup;
 import com.opengg.core.physics.collision.CollisionManager;
 import java.util.ArrayList;

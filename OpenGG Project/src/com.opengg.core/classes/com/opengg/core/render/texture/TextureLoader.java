@@ -39,7 +39,7 @@ public class TextureLoader {
                 throw new IOException("Failed to load texture!");
             }
 
-            TextureData data = new TextureData(w.get(), h.get(), image, path);
+            TextureData data = new TextureData(w.get(), h.get(), 4, image, path);
             return data;
         }
     }

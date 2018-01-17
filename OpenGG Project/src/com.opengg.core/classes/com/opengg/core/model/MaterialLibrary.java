@@ -21,7 +21,7 @@ import java.util.HashMap;
  */
 public class MaterialLibrary {
 
-    public HashMap<String, Material> mats = new HashMap<String, Material>();
+    public HashMap<String, Material> mats = new HashMap<>();
 
     public MaterialLibrary(){
         

@@ -38,7 +38,7 @@ public class TerrainComponent extends RenderComponent{
     }
     
     public void enableCollider(){
-        final int sectionsize = 16;
+        final int sectionsize = 8;
         float[][] map = terrain.getMap();
         int length = map.length;
         int width = map[0].length;

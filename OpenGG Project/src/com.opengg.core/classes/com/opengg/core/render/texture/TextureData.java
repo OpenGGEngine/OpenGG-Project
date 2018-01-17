@@ -15,13 +15,15 @@ import java.nio.Buffer;
 public class TextureData {
     public int width;
     public int height;
+    public int channels;
     public Buffer buffer;
     public String source;
     public boolean complete = false;
     
-    public TextureData(int width, int height, Buffer buffer, String source) {
+    public TextureData(int width, int height, int channels, Buffer buffer, String source) {
         this.width = width;
         this.height = height;
+        this.channels = channels;
         this.buffer = buffer;
         this.source = source;
     }

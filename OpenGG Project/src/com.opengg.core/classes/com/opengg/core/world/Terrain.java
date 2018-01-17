@@ -374,7 +374,7 @@ public class Terrain {
     }
     
     public Texture getHeightmap(){
-        TextureData data = new TextureData(map.length, map[0].length, getHeightmapBuffer(), "autogen");
+        TextureData data = new TextureData(map.length, map[0].length, 4, getHeightmapBuffer(), "autogen");
         return Texture.get2DTexture(data);
     }
     

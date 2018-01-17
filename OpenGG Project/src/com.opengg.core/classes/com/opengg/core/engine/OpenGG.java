@@ -49,7 +49,8 @@ public class OpenGG{
     private OpenGG(){}
     
     /**
-     * Initializes the OpenGG Engine. This gives full runtime control of the program to OpenGG, so no code will run past this call until the engine closes
+     * Initializes the OpenGG Engine. This gives full runtime control of the program to OpenGG,
+     * so no code will run past this call until the engine closes
      * @param app Instance of the OpenGG-driven application
      * @param info Window information
      */
@@ -136,7 +137,7 @@ public class OpenGG{
             runHeadless();
     }
     
-    public static void runHeadless(){
+    private static void runHeadless(){
         while(!end){
             float delta = time.getDeltaSec();
             app.update(delta);
@@ -157,7 +158,7 @@ public class OpenGG{
         writeLog();
     }
     
-    public static void run(){
+    private static void run(){
         while (!getWindow().shouldClose() && !end) {
             float delta = time.getDeltaSec();
             processExecutables(delta);
@@ -216,8 +217,7 @@ public class OpenGG{
         GGConsole.log("LWJGL has been loaded");
     }
     
-    public static void getVMOptions(){
-          
+    private static void getVMOptions(){ 
         String verb = System.getProperty("gg.verbose");
         String stest = System.getProperty("gg.istest");
         if(verb != null)
@@ -229,29 +229,55 @@ public class OpenGG{
                 test = true;
     }
     
+    /**
+     * Marks the current instance of OpenGG to end safely on the next update cycle, will run all cleanup code
+     */
     public static void endApplication(){
         GGConsole.log("Application end has been requested");
         end = true;
     }
     
+    /**
+     * Force ends the application immediately.<br>
+     * Because it forces the application, including all other threads, to end (basically calling {@code System.exit(0)}), 
+     * it does not cleanup resources currently in use.
+     * Only use in extreme circumstances (like in case of a program freeze)
+     */
     public static void forceEnd(){
-        GGConsole.warning("Application has been asked to force quit");
+        GGConsole.warning("Application is force quitting");
+        System.exit(0);
         force = true;
         end = true;
     }
     
+    /**
+     * Returns the current {@link com.opengg.core.render.window.Window} for this instance
+     * @return The current window
+     */
     public static Window getWindow() {
         return WindowController.getWindow();
     }
 
+    /**
+     * Returns the current {@link GGApplication} for this instance
+     * @return The current GGApplication
+     */
     public static GGApplication getApp() {
         return app;
     }
     
+    /**
+     * Returns if the application is marked to end or has ended
+     * @return If marked or actually has ended
+     */
     public static boolean getEnded(){
         return end;
     }
     
+    /**
+     * Returns if the LWJGL library's natives have been loaded and initialized
+     * @return If LWJGL has been initialized
+     */
     public static boolean lwjglInitialized(){
         return lwjglinit;
     }
@@ -282,10 +308,18 @@ public class OpenGG{
         GGConsole.writeLog(startTime, error, "error");
     }
 
+    /**
+     * Returns the starting time for this OpenGG instance, starting from the initial call to OpenGG.initialize()
+     * @return Start time
+     */
     public static Date getStartTime() {
         return startTime;
     }
     
+    /**
+     * Returns if the thread in which this method is called is the main thread
+     * @return If is in main thread
+     */
     public static boolean inMainThread(){
         return mainthread == Thread.currentThread();
     }
@@ -294,14 +328,30 @@ public class OpenGG{
         executables.add(e);
     }
     
+    /**
+     * Gives the engine the given {@link Executable} to run in the next cycle.<br>
+     * This functionality is useful to be able to run functions that require the main thread (For example requiring OpenGL calls)
+     * @param e Overrided executable to be run
+     */
     public static void asyncExec(Executable e){
         exec(new ExecutableContainer(e));
     }
     
+    /**
+     * Gives the engine the given {@link Executable} to run in the amount of seconds given with one cycle length deviation 
+     * @param seconds In how many seconds to run the executable
+     * @param e Overrided executable to be run
+     */
     public static void asyncExec(float seconds, Executable e){
         exec(new ExecutableContainer(e, seconds));
     }
     
+    /**
+     * Gives the engine the given {@link Executable} to run in the next cycle.<br>
+     * This functionality is useful to be able to run functions that require the main thread (For example requiring OpenGL calls).<br>
+     * This version blocks the current thread until the executable is run
+     * @param e Overrided executable to be run
+     */
     public static void syncExec(Executable e){
         ExecutableContainer execcont = new ExecutableContainer(e);
         
@@ -314,12 +364,12 @@ public class OpenGG{
 
         while(!(execcont.executed)){
             try{
-        	Thread.sleep(5);
+        	Thread.sleep(2);
             }catch(InterruptedException ex){}
         }
     }
     
-    public static boolean hasExecutables(){
+    private static boolean hasExecutables(){
         for(ExecutableContainer ex : executables){
             if(ex.elapsed > ex.timetoexec){
                 return true;
@@ -328,7 +378,7 @@ public class OpenGG{
         return false;
     }
     
-    public static void processExecutables(float delta){   
+    private static void processExecutables(float delta){   
         for(ExecutableContainer ex : executables){
             ex.elapsed += delta;
         }
