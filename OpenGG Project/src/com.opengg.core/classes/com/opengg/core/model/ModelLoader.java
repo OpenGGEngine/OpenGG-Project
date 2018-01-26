@@ -73,11 +73,11 @@ public class ModelLoader {
                 m = new Material(name, texpath, in);
             }
 
-            m.loadTextures();
             meshes.add(new Mesh(vdata, indices, m, false));
         }
 
         String test = in.readString();
+        
         if (!(test.equals("animcheck"))) {
             throw new RuntimeException("Failed anti-corruption check!");
         }

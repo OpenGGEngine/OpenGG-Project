@@ -49,7 +49,7 @@ public class OpenGG{
     private OpenGG(){}
     
     /**
-     * Initializes the OpenGG Engine. This gives full runtime control of the program to OpenGG,
+     * Initializes the OpenGG Engine. This gives full runtime control of the thread to OpenGG,
      * so no code will run past this call until the engine closes
      * @param app Instance of the OpenGG-driven application
      * @param info Window information
@@ -100,7 +100,14 @@ public class OpenGG{
         head = client;
         app = ggapp;
         
+        
+        ThreadManager.initialize();
+        ThreadManager.runRunnable(new GGConsole(), "consolethread");
+        GGConsole.addListener(new OpenGGCommandExtender());
+        GGConsole.log("OpenGG initializing, running on " + System.getProperty("os.name") + ", " + System.getProperty("os.arch"));
+        
         Resource.initialize();
+        
         getVMOptions();
         
         ExtensionManager.loadStep(Extension.NONE);
@@ -109,13 +116,8 @@ public class OpenGG{
         
         ExtensionManager.loadStep(Extension.LWJGL);
         
-        ThreadManager.initialize();
         SystemInfo.querySystemInfo();
         Config.reloadConfigs();
-        
-        ThreadManager.runRunnable(new GGConsole(), "consolethread");
-        GGConsole.addListener(new OpenGGCommandExtender());
-        GGConsole.log("OpenGG initializing, running on " + System.getProperty("os.name") + ", " + System.getProperty("os.arch"));
 
         ExtensionManager.loadStep(Extension.CONFIG);
         
@@ -282,6 +284,10 @@ public class OpenGG{
         return lwjglinit;
     }
 
+    /**
+     * Returns if the logging setting is verbose
+     * @return If the logging is set to verbose
+     */
     public static boolean isVerbose() {
         return verbose;
     }

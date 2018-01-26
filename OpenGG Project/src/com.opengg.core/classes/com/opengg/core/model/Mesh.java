@@ -63,4 +63,46 @@ public class Mesh {
         
         material.toFileFormat(out);
     }
+
+    public List<Face> getFaces() {
+        return faces;
+    }
+
+    public void setFaces(List<Face> faces) {
+        this.faces = faces;
+    }
+
+    public FloatBuffer getVBOdata() {
+        return vbodata;
+    }
+
+    public void setVBOdata(FloatBuffer vbodata) {
+        this.vbodata = vbodata;
+    }
+
+    public IntBuffer getIndexData() {
+        return inddata;
+    }
+
+    public void getIndexData(IntBuffer inddata) {
+        this.inddata = inddata;
+    }
+
+    public Material getMaterial() {
+        return material;
+    }
+
+    public void setMaterial(Material material) {
+        this.material = material;
+    }
+
+    public boolean isAnimated() {
+        return animated;
+    }
+
+    public void setAnimated(boolean animated) {
+        this.animated = animated;
+    }
+    
+    
 }

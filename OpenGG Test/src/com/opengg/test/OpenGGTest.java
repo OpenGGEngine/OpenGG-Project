@@ -10,6 +10,8 @@ import com.opengg.core.engine.OpenGG;
 import com.opengg.core.engine.ProjectionData;
 import com.opengg.core.engine.RenderEngine;
 import com.opengg.core.engine.Resource;
+import com.opengg.core.engine.ResourceManager;
+import com.opengg.core.engine.ResourceRequest;
 import com.opengg.core.engine.WorldEngine;
 import com.opengg.core.gui.GUI;
 import com.opengg.core.gui.GUIText;
@@ -17,11 +19,9 @@ import com.opengg.core.io.ControlType;
 import static com.opengg.core.io.input.keyboard.Key.*;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
-import com.opengg.core.model.ModelLoader;
 import com.opengg.core.model.ModelManager;
 import com.opengg.core.physics.PhysicsRenderer;
 import com.opengg.core.physics.collision.AABB;
-import com.opengg.core.physics.collision.CapsuleCollider;
 import com.opengg.core.physics.collision.ColliderGroup;
 import com.opengg.core.physics.collision.ConvexHull;
 import com.opengg.core.render.Text;
@@ -37,12 +37,8 @@ import com.opengg.core.world.components.LightComponent;
 import com.opengg.core.world.components.ModelRenderComponent;
 import com.opengg.core.world.components.TerrainComponent;
 import com.opengg.core.world.components.physics.PhysicsComponent;
-import com.opengg.core.world.generators.SmoothPerlinGenerator;
-import java.io.IOException;
 import java.util.ArrayList;
 
-//import java.util.logging.Level;
-//import java.util.logging.Logger;
 
 public class OpenGGTest extends GGApplication{
     private GGFont font;
@@ -89,6 +85,17 @@ public class OpenGGTest extends GGApplication{
                 + " the guardians of peace and justice in the galaxy, to settle the conflict...", new Vector2f(), 1f, 0.5f, false);
         GUI.addItem("aids", new GUIText(text, font, new Vector2f(0f,0)));
         
+        ResourceRequest request = new ResourceRequest(Resource.getModelPath("goldleaf"), ResourceRequest.MODEL);
+        ResourceManager.prefetch(request);
+        try {
+            Thread.sleep(2);
+        } catch (InterruptedException ex) {
+            
+        }
+        System.out.println(ResourceManager.isRequested(Resource.getModelPath("goldleaf")));
+        System.out.println(ResourceManager.isProcessing(Resource.getModelPath("goldleaf")));
+        System.out.println(ModelManager.getModel(Resource.getModelPath("goldleaf")));
+        
         //WorldEngine.useWorld(WorldEngine.loadWorld("world1"));
         
         FreeFlyComponent player = new FreeFlyComponent();
@@ -99,7 +106,7 @@ public class OpenGGTest extends GGApplication{
         WorldEngine.getCurrent().attach(new LightComponent(new Light(new Vector3f(0,20,2), new Vector3f(1,1,1), 100000, 0))); 
         //WorldEngine.getCurrent().attach(new ModelRenderComponent(Resource.getModel("goldleaf")).setScaleOffset(new Vector3f(0.1f)).setRotationOffset(new Vector3f(-90,0,0)));  
 
-        Terrain t = Terrain.generate(Resource.getTextureData("heightmap.jpg"));
+        Terrain t = Terrain.generate(Resource.getTextureData("h2.gif"));
         TerrainComponent tc = new TerrainComponent(t);
         tc.enableCollider();
         tc.setBlotmap(Resource.getTexture("blendMap.png"));

@@ -30,7 +30,8 @@ public class ModelManager{
     }  
     
     public static void addModel( Model model){
-        modellist.put(model.getName(), model);
+        if(!modellist.containsKey(model.getName()))
+            modellist.put(model.getName(), model);
     }
     
     public static Model getModel(String path){
@@ -47,7 +48,7 @@ public class ModelManager{
             return model;
         try{
             model = ModelLoader.forceLoadModel(path);
-            if(model != null){
+            if(model != null ){
                 addModel(model);
                 return model;
             }else{

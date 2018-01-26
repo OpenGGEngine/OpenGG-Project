@@ -13,7 +13,7 @@ package com.opengg.core.engine;
 public interface Executable {
     /**
      * Method called during execution, override in lambda expression or directly
-     * To use, call {@code OpenGG.addExecutable(() -> {
+     * To use, call {@code OpenGG.asyncExec(() -> {
      *          //Async code here
      *      });}
      */
