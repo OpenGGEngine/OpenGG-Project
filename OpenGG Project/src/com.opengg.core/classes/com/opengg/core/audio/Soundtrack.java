@@ -12,38 +12,66 @@ import java.util.List;
 import static org.lwjgl.openal.AL10.AL_STOPPED;
 
 /**
- *
+ * Soundtrack containing a list of songs
  * @author Javier
  */
 public class Soundtrack {
+    /**
+     * List of songs in soundtrack
+     */
     List<Sound> soundtrack = new ArrayList<>();
+    /**
+     * Current sound
+     */
     Sound current;
     
+    /**
+     * Creates an empty soundtrack
+     */
     public Soundtrack(){
     }
     
+    /**
+     * Adds a song to the soundtrack, loaded from the given path
+     * @param path Path to song
+     */
     public void addSong(String path){
         soundtrack.add(new Sound(path));
         if(current == null)
             current = soundtrack.get(0);
     }
     
+    /**
+     * Adds a song to the soundtrack, loaded from the given data
+     * @param data Sound data
+     */
     public void addSong(SoundData data){
         soundtrack.add(new Sound(data));
         if(current == null)
             current = soundtrack.get(0);
     }
     
+    /**
+     * Adds a song to the soundtrack, directly from the sound
+     * @param sound Sound to add
+     */
     public void addSong(Sound sound){
         soundtrack.add(sound);
         if(current == null)
             current = soundtrack.get(0);
     }
     
+    /**
+     * Gets the currently playing or paused song
+     * @return Current sound
+     */
     public Sound getCurrentSound(){
         return current;
     }
     
+    /**
+     * Goes to the next sound in the track
+     */
     public void next(){
         Sound next;
         try{
@@ -57,20 +85,32 @@ public class Soundtrack {
         current = next;
     }
     
+    /**
+     * Stops the soundtrack
+     */
     public void stop(){
         current.stop();
     }
     
+    /**
+     * Rewinds and plays the current song
+     */
     public void play(){
         current.rewind();
         current.play();
     }
     
+    /**
+     * Polls if the song ended, should rarely be called
+     */
     public void update(){
         if(current.getSoundSource().getState() == AL_STOPPED)
             next();
     }
     
+    /**
+     * Shuffles soundtrack
+     */
     public void shuffle(){
         stop();
         current.rewind();

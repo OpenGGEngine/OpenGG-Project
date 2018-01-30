@@ -18,7 +18,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
+ * Controller for the bind system<br>
+ * The bind system converts the specific commands from a keyboard, mouse, or other input devices to
+ * {@link Action Actions}, which is sent to {@link ActionTransmitter ActionTransmitters} that are added to this controller.
+ * This allows for configurations to be easily saved, by simply connecting a key to a command purely through Strings
  * @author Javier
  */
 public class BindController implements KeyboardListener, MouseButtonListener{
@@ -34,31 +37,59 @@ public class BindController implements KeyboardListener, MouseButtonListener{
         bc = new BindController();
     }
     
+    /**
+     * Adds a {@link com.opengg.core.io.Bind} to the system, using the given information
+     * @param type Type of control to use, which can be either KEYBOARD, MOUSE, and JOYSTICK
+     * @param action Case sensitive name of action to be linked to key
+     * @param key Key ID of the key to link, which depends on the input type
+     */
     public static void addBind(ControlType type, String action, int key){
         binds.add(new Bind(type, action, key));
     }
     
+    /**
+     * Adds the given {@link com.opengg.core.io.Bind} to the system
+     * @param b Premate Bind to be added
+     */
     public static void addBind(Bind b){
         binds.add(b);
     }
     
+    /**
+     * Adds an {@link ActionTransmitter} to the system, which will receive all future commands 
+     * @param controller ActionTransmitter to be added
+     */
     public static void addController(ActionTransmitter controller){
         controllers.add(controller);
     }
     
+    /**
+     * Clears all previous {@link ActionTransmitter ActionTransmitters}, and adds the given one to the list
+     * @param controller Transmitter to use as unique transmitter
+     */
     public static void setOnlyController(ActionTransmitter controller){
         controllers.clear();
         controllers.add(controller);
     }
     
+    /**
+     * Clears all transmitters from the system;
+     */
     public static void clearControllers(){
         controllers.clear();
     }
     
+    /**
+     * Gets all {@link ActionTransmitter ActionTransmit}
+     * @return 
+     */
     public static List<ActionTransmitter> getBindControllers(){
         return controllers;
     }
     
+    /**
+     * Prints all current binds to the default PrintStream
+     */
     public static void printBinds(){
         for(Bind bind : binds){
             System.out.println(bind.action + ", " + bind.type + ", " + bind.button);

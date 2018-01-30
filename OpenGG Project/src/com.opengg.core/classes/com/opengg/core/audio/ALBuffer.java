@@ -16,7 +16,7 @@ import static org.lwjgl.openal.AL10.alGenBuffers;
 import static org.lwjgl.openal.AL10.alGetBufferi;
 
 /**
- * Object version of an OpenAL buffer
+ * Direct, low abstraction object version of an OpenAL buffer
  * @author Javier
  */
 public class ALBuffer {
@@ -58,17 +58,24 @@ public class ALBuffer {
     }
     
     /**
-     * Returns the 
-     * @return 
+     * Returns the amount of channels in the buffer data
+     * @return Amount of channels, between 1 and 7
      */
     public int getChannels(){
         return alGetBufferi(id, AL_CHANNELS);
     }
     
+    /**
+     * Returns the sound data associated with this buffer
+     * @return Sound data in buffer
+     */
     public SoundData getData(){
         return data;
     }
     
+    /**
+     * Deletes the buffer from OpenAL
+     */
     public void remove(){
         alDeleteBuffers(id);
     }

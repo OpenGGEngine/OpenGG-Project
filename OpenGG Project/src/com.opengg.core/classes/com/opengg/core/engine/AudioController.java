@@ -24,7 +24,7 @@ import static org.lwjgl.openal.AL10.alListener3f;
 import org.lwjgl.openal.ALC;
 
 /**
- *
+ * Primary controller and manager for the OpenAL audio engine
  * @author Javier
  */
 public class AudioController {
@@ -50,6 +50,9 @@ public class AudioController {
         SoundManager.initialize();
     }
     
+    /**
+     * Scans for and prints out any OpenAL errors that have arisen since the last call to this method
+     */
     public static void checkForALErrors(){
         int i;
         while((i = alGetError()) != AL_NO_ERROR){
@@ -57,6 +60,10 @@ public class AudioController {
         }
     }
     
+    /**
+     * Restarts the engine, restarting all sounds and refreshing the soundtrack<br>
+     * Note, this will stop any ongoing non-soundtrack sounds
+     */
     public static void restart(){
         for(Sound sound : sounds){
             sound.stop();
@@ -74,14 +81,26 @@ public class AudioController {
             GGConsole.error("OpenAL Error in AudioHandler: " + i);
     }
     
+    /**
+     * Adds a sound to be managed by the controller
+     * @param s Sound to be managed
+     */
     public static void addAudioSource(Sound s){
         sounds.add(s);
     }
     
+    /**
+     * Removes a sound from being managed by the controller
+     * @param s Sound to be removed
+     */
     public static void removeAudioSource(Sound s){
         sounds.remove(s);
     }
     
+    /**
+     * Sets the global/master volume for all managed sounds
+     * @param ngain New volume
+     */
     public static void setGlobalGain(float ngain){
         gain = ngain;
         for(Sound sound : sounds){
@@ -89,6 +108,10 @@ public class AudioController {
         }
     }
     
+    /**
+     * Returns the current master volume/gain
+     * @return Current gain
+     */
     public static float getGlobalGain(){
         return gain;
     }
@@ -97,9 +120,12 @@ public class AudioController {
         return initialized;
     }
     
+    /**
+     * Destroys and frees all sounds and closes the OpenAL context
+     */
     static void destroy(){
         for(Sound sound : sounds){
-            
+            sound.remove();
         }
         ALC.destroy();
     }

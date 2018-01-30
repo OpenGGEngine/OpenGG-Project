@@ -10,13 +10,32 @@ import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
 
 /**
- *
+ * Structure containing all data associated with a given sound
  * @author Javier
  */
 public class SoundData {
+    /**
+     * Buffer containing the actual sound
+     */
     ShortBuffer data;
+    
+    /**
+     * Origin of the sound, normally the relative path from which the sound was loaded
+     */
     String origin;
+    
+    /**
+     * Amount of channels in this sound
+     */
     int channels;
+    
+    /**
+     * Format of this sound
+     */
     int format;
+    
+    /**
+     * Sound sample rate, in kHz
+     */
     int samplerate;
 }
