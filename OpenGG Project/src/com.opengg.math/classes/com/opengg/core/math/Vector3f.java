@@ -16,6 +16,8 @@ import org.lwjgl.system.MemoryUtil;
  * @author Javier
  */
 public class Vector3f implements Serializable{
+    private static Vector3f zerovector = new Vector3f();
+    
     private float x;
     private float y;
     private float z;
@@ -59,30 +61,56 @@ public class Vector3f implements Serializable{
         this.z = v.z;
     }
     
+    /**
+     * Creates a new vector based off of another mutable vector
+     * @param v Mutable vector to be copied
+     */
     public Vector3f(Vector3fm v) {
         this.x = v.x;
         this.y = v.y;
         this.z = v.z;
     }
     
+    /**
+     * Creates a new vector based off of the first 3 elements of a Vector4f
+     * @param v Vector to be copied
+     */
     public Vector3f(Vector4f v) {
         this.x = v.x;
         this.y = v.y;
         this.z = v.z;
     }
 
+    /**
+     * Returns x value of vector
+     * @return x value
+     */
     public float x(){
         return x;
     }
     
+    /**
+     * Returns y value of vector
+     * @return y value
+     */
     public float y(){
         return y;
     }
     
+    /**
+     * Returns z value of vector
+     * @return z value
+     */
     public float z(){
         return z;
     }
     
+    /**
+     * Returns the value requested<br>
+     * Passing in 0 returns x, 1 returns y, and 2 returns z
+     * @param val Value to acquire
+     * @return Value requested
+     */
     public float get(int val){
         switch(val){
             case 0: return x;
@@ -92,18 +120,38 @@ public class Vector3f implements Serializable{
         }
     }
     
+    /**
+     * Creates a new vector copied from this vector, with the x value set to the parameter
+     * @param nx New x value
+     * @return New vector
+     */
     public Vector3f setX(float nx){
         return new Vector3f(nx,y,z);
     }
     
+    /**
+     * Creates a new vector copied from this vector, with the y value set to the parameter
+     * @param ny New y value
+     * @return New vector
+     */
     public Vector3f setY(float ny){
         return new Vector3f(x,ny,z);
     }
     
+    /**
+     * Creates a new vector copied from this vector, with the z value set to the parameter
+     * @param nz New z value
+     * @return New vector
+     */
     public Vector3f setZ(float nz){
         return new Vector3f(x,y,nz);
     }
     
+    /**
+     * Adds a vector to a copy of the current vector, and returns the copy
+     * @param v Vector to be added
+     * @return Sum of two vectors
+     */
     public Vector3f add(Vector3f v){
         return new Vector3f(this).addThis(v);
     }
@@ -126,6 +174,11 @@ public class Vector3f implements Serializable{
         return this;
     }
     
+    /**
+     * Adds a float to all elements of a copy of this vector, and returns the copy
+     * @param f Float to be added
+     * @return Sum of the vector and float
+     */
     public Vector3f add(float f){
         return new Vector3f(this).addThis(f);
     }
@@ -135,6 +188,11 @@ public class Vector3f implements Serializable{
         return this;
     }
     
+    /**
+     * Subtracts a vector from a copy of the current vector, and returns the copy
+     * @param v Vector to be subtracted
+     * @return Difference between the two vectors
+     */
     public Vector3f subtract(Vector3f v){
         return new Vector3f(this).subtractThis(v);
     }
@@ -151,6 +209,11 @@ public class Vector3f implements Serializable{
         return diff;
     }
     
+    /**
+     * Subtracts a float from all elements of a copy of this vector, and returns the copy
+     * @param f Float to be subtracted
+     * @return Difference between the vector and float
+     */
     public Vector3f subtract(float f){
         return new Vector3f(this).addThis(f);
     }
@@ -199,22 +262,59 @@ public class Vector3f implements Serializable{
         return this;
     }
     
+    /**
+     * Returns the Euclidean distance between this point and the given point
+     * @param v Point to get distance to
+     * @return Distance to point
+     */
     public float getDistance(Vector3f v) {
         return (float) Math.sqrt(this.getDistanceSquared(v));
     }
     
+    /**
+     * Returns the square of the Euclidean distance between this point and the given point<br>
+     * This method is useful if the distance is needed for comparison purposes only, 
+     * as it avoids an expensive square root that {@link #getDistance} uses
+     * @param v Point to get distance to
+     * @return Square of distance to point
+     */
     public float getDistanceSquared(Vector3f v){
         return (float) (Math.pow((this.x - v.x), 2) + Math.pow((this.y - v.y), 2) + Math.pow((this.z - v.z), 2));
     }
     
+    /**
+     * Returns the distance between two points
+     * @param v1 Point one
+     * @param v2 Point two
+     * @return Distance between v1 and v2
+     */
     public static float getDistance(Vector3f v1, Vector3f v2){
-        return (float) Math.sqrt(Math.pow((v2.x - v1.x), 2)+Math.pow((v2.y - v1.y), 2)+Math.pow((v2.z - v1.z), 2));  
+        return v1.getDistance(v2);
     }
     
+    /**
+     * Returns the Euclidean length of this vector
+     * @return Length of vector
+     */
     public float length() {
         return (float) Math.sqrt(lengthSquared());
     }
     
+    /**
+     * Returns the square of the Euclidean length of this vector<br>
+     * This method is useful if lengths just need to be compared,
+     * as it avoids an expensive square root in {@link #length}
+     * @return 
+     */
+    public float lengthSquared() {
+        return x * x + y * y + z * z;
+    }
+    
+    /**
+     * Return the inverse of this vector<br>
+     * This is acquired by multiplying all elements by -1
+     * @return Inverse vector
+     */
     public Vector3f inverse() {
         return new Vector3f(this).invertThis();
     }
@@ -224,6 +324,10 @@ public class Vector3f implements Serializable{
         return this;
     }
 
+    /**
+     * Returns the reciprocal of this vector<br>
+     * @return Reciprocal
+     */
     public Vector3f reciprocal(){
         return new Vector3f(this).reciprocateThis();
     }
@@ -233,32 +337,67 @@ public class Vector3f implements Serializable{
          return this;
     }
     
+    /**
+     * Returns a normalized version of this Vector3f<br>
+     * This normalized vector has a length of 1, and properly scales
+     * all elements. Note, since this method in practice is <code>return multiply(1/length());</code>,
+     * a zero vector will cause a divide by 0 error
+     * @return Normalized vector
+     * @exception ArithmeticException Thrown if the vector to normalize is (0,0,0)
+     */
     public Vector3f normalize() {
         return multiply(1f/length());
     }
 
+    /**
+     * Static version of {@link #dot(com.opengg.core.math.Vector3f) }
+     * @param v1 First vector to dot
+     * @param v2 Second vector to dot
+     * @return Dot product of those two vectors
+     */
     public static float dot(Vector3f v1, Vector3f v2){
         return v1.dot(v2);
     }
     
+    /**
+     * Returns the dot product of this vector and another<br>
+     * The dot product in this situation is simply <code>x * v.x + y * v.y + z * v.z</code>
+     * @param v Vector to dot this one with
+     * @return Dot product of this vector
+     */
     public float dot(Vector3f v) {
         return x * v.x + y * v.y + z * v.z;
     }
     
+    /**
+     * Static version of {@link #cross(com.opengg.core.math.Vector3f) }
+     * @param v1 First element to cross
+     * @param v2 Second element to cross
+     * @return Cross product of vectors
+     */
     public static Vector3f cross(Vector3f v1, Vector3f v2){
         return v1.cross(v2);
     }
     
+    /**
+     * Returns the cross product of this vector and the given vector<br>
+     * The cross product is the vector perpendicular to the plane formed by the two given
+     * vectors, with its length being dependent on the length and angle between the two given vectors
+     * @param v Vector3f to cross this with
+     * @return Cross product of this vector and another
+     */
     public Vector3f cross(Vector3f v) {
         return new Vector3f(y * v.z - z * v.y,
                    z * v.x - x * v.z,
                    x * v.y - y * v.x);
     }
-    
-    public float lengthSquared() {
-        return x * x + y * y + z * z;
-    }
- 
+
+    /**
+     * Returns the the absolute value version of this vector<br>
+     * In practice, this method returns a vector where 
+     * all elements of this object are positive
+     * @return Absolute value vector
+     */
     public Vector3f abs(){
         return new Vector3f(this.absThis());
     }
@@ -324,6 +463,14 @@ public class Vector3f implements Serializable{
         return f;
     }
     
+    /**
+     * Does a linear interpolation between the two given vectors<br>
+     * The returned vector is percentage t between the first and second vector
+     * @param sv Starting vector
+     * @param other Ending vector
+     * @param t Percentage through interpolation
+     * @return Interpolated vector
+     */
     public static Vector3f lerp(Vector3f sv, Vector3f other, float t ){
         return new Vector3f().lerpThis(sv, other, t);
     }
@@ -335,6 +482,11 @@ public class Vector3f implements Serializable{
         return this;
     }
 
+    /**
+     * Returns this vector reflected across the given normal
+     * @param normal Normal to reflect across
+     * @return Reflected normal
+     */
     public Vector3f reflect(Vector3f normal){
         return new Vector3f(this).reflectThis(normal);
     }
@@ -347,7 +499,14 @@ public class Vector3f implements Serializable{
         return this;
     }
     
+    /**
+     * Returns the average vector given a list of vectors<br>
+     * This gets the average of each element and creates a new vector based off of each average
+     * @param vectors List of vectors to average 
+     * @return Average of the given list
+     */
     public static Vector3f averageOf(Vector3f... vectors){
+        if(vectors.length == 0) return zerovector;
         float nx=0, ny=0, nz=0;
         for(Vector3f v : vectors){
             nx += v.x;
@@ -357,15 +516,42 @@ public class Vector3f implements Serializable{
         return new Vector3f(nx/vectors.length, ny/vectors.length, nz/vectors.length);
     }
     
+    /**
+     * Returns a FloatBuffer containing the vector<br>
+     * This FloatBuffer is by default allocated into the stack, 
+     * containing the elements of the vector in xyz order.
+     * Additionally, the buffer is flipped prior to returning.
+     * @return FloatBuffer containing the vector
+     */
     public FloatBuffer getBuffer() {
         try(MemoryStack stack = MemoryStack.stackPush()){
-            FloatBuffer buffer = stack.callocFloat(3);
+            FloatBuffer buffer = stack.mallocFloat(3);
             buffer.put(x).put(y).put(z);
             buffer.flip();
             return buffer;
         }
     }
     
+    /**
+     * Returns a ByteBuffer containing the vector<br>
+     * This ByteBuffer is by default allocated into the stack, 
+     * containing the elements of the vector in xyz order.
+     * Additionally, the buffer is flipped prior to returning.
+     * @return ByteBuffer containing the vector
+     */
+    public ByteBuffer getByteBuffer() {
+        try(MemoryStack stack = MemoryStack.stackPush()){
+            ByteBuffer buffer = stack.malloc(12);
+            buffer.putFloat(x).putFloat(y).putFloat(z);
+            buffer.flip();
+            return buffer;
+        }
+    }
+    
+    /**
+     * Returns a byte array containing the vector in xyz order
+     * @return 
+     */
     public byte[] toByteArray(){   
         ByteBuffer b = MemoryUtil.memAlloc(12);
         return ByteBuffer.allocate(12).putFloat(x).putFloat(y).putFloat(z).array();
