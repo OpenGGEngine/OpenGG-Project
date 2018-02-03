@@ -10,6 +10,7 @@ import com.opengg.core.console.GGConsole;
 import com.opengg.core.engine.OpenGG;
 import com.opengg.core.math.Vector3fm;
 import com.opengg.core.math.Vector3f;
+import com.opengg.core.system.Allocator;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.nio.FloatBuffer;
@@ -124,12 +125,7 @@ public class ModelUtil {
             
         }
 
-        FloatBuffer verticeAttributes;
-        if(OpenGG.lwjglInitialized()){
-            verticeAttributes = MemoryUtil.memAllocFloat(faceVertexList.size() * 12);
-        }else{
-            verticeAttributes = FloatBuffer.allocate(faceVertexList.size() * 12);
-        }
+        FloatBuffer verticeAttributes = Allocator.allocFloat(faceVertexList.size() * 12);
         
         for (FaceVertex vertex : faceVertexList) {
             verticeAttributes.put(vertex.v.x());
@@ -152,12 +148,8 @@ public class ModelUtil {
 
         int indicesCount = mesh.faces.size() * 6;
         
-        IntBuffer indices;
-        if(OpenGG.lwjglInitialized()){
-            indices = MemoryUtil.memAllocInt(indicesCount);
-        }else{
-            indices = IntBuffer.allocate(indicesCount);
-        }
+        IntBuffer indices = Allocator.allocInt(indicesCount);
+
 
         for (Face face : mesh.faces) {
             
@@ -217,12 +209,7 @@ public class ModelUtil {
             }
         }       
         
-        FloatBuffer verticeAttributes;
-        if(OpenGG.lwjglInitialized()){
-            verticeAttributes = MemoryUtil.memAllocFloat(faceVertexList.size() * 12);
-        }else{
-            verticeAttributes = FloatBuffer.allocate(faceVertexList.size() * 12);
-        }
+        FloatBuffer verticeAttributes = Allocator.allocFloat(faceVertexList.size() * 12);
         
         for (FaceVertex vertex : faceVertexList) {
             verticeAttributes.put(vertex.v.x());
@@ -258,12 +245,7 @@ public class ModelUtil {
         
         
         int indicesCount = mesh.faces.size() * 3;
-        IntBuffer indices;
-        if(OpenGG.lwjglInitialized()){
-            indices = MemoryUtil.memAllocInt(indicesCount);
-        }else{
-            indices = IntBuffer.allocate(indicesCount);
-        }
+        IntBuffer indices = Allocator.allocInt(indicesCount);
         
         for (Face face : mesh.faces) {
             FaceVertex vertex = face.v1;

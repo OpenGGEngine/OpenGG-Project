@@ -10,6 +10,7 @@ import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.math.Vector3fm;
+import com.opengg.core.system.Allocator;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -140,7 +141,7 @@ public class GGInputStream extends InputStream{
     
     public FloatBuffer readFloatBuffer() throws IOException{
         int len = readInt();
-        FloatBuffer fb = MemoryUtil.memAllocFloat(len);
+        FloatBuffer fb = Allocator.allocFloat(len);
         for(int i = 0; i < len; i++){
             fb.put(readFloat());
         }
@@ -150,7 +151,7 @@ public class GGInputStream extends InputStream{
     
     public IntBuffer readIntBuffer() throws IOException{
         int len = readInt();
-        IntBuffer ib = MemoryUtil.memAllocInt(len);
+        IntBuffer ib = Allocator.allocInt(len);
         for(int i = 0; i < len; i++){
             ib.put(readInt());
         }
@@ -160,7 +161,7 @@ public class GGInputStream extends InputStream{
     
     public ByteBuffer readByteBuffer() throws IOException{
         int len = readInt();
-        ByteBuffer bb = MemoryUtil.memAlloc(len);
+        ByteBuffer bb = Allocator.alloc(len);
         for(int i = 0; i < len; i++){
             bb.put(readByte());
         }

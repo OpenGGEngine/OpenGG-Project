@@ -6,7 +6,9 @@
 package com.opengg.core.math;
 
 /**
- *
+ * Utility class for math functions<br><br>
+ * This includes collision detection, float equality, table based trigonometry, 
+ * and other fast implementations of mathematical functions 
  * @author Warren
  */
 import java.util.ArrayList;
@@ -17,13 +19,34 @@ import java.util.Random;
 
 public final class FastMath {
 
+    /**
+     * Multiply nanoseconds by this to get seconds
+     */
     public static final float nanoToSec = 1 / 1000000000f;
 
-    // ---
+    /**
+     * Default rounding error for floats, used in {@link #isEqual(float, float) }
+     */
     public static final float FLOAT_ROUNDING_ERROR = 0.000001f; // 32 bits
+    
+    /**
+     * Pi constant to 7 decimals
+     */
     public static final float PI = 3.1415927f;
+    
+    /**
+     * 2 * {@link #PI}
+     */
     public static final float PI2 = PI * 2;
+    
+    /**
+     * 0.5 * {@link #PI}
+     */
     static final double PIHalf = PI * 0.5;
+    
+    /**
+     * e, the base of the natural logarithm, to 7 decimals
+     */
     public static final float E = 2.7182818f;
 
     static private final int SIN_BITS = 14; // 16KB. Adjust for accuracy.
@@ -36,14 +59,23 @@ public final class FastMath {
     static private final float degToIndex = SIN_COUNT / degFull;
 
     /**
-     * multiply by this to convert from radians to degrees
+     * Multiply radians by this to get degrees
      */
     public static final float radiansToDegrees = 180f / PI;
-    public static final float radDeg = radiansToDegrees;
+    
     /**
-     * multiply by this to convert from degrees to radians
+     * Shorthand for {@link #radiansToDegrees}
+     */
+    public static final float radDeg = radiansToDegrees;
+    
+    /**
+     * Multiply degrees by this to get radians
      */
     public static final float degreesToRadians = PI / 180;
+    
+    /**
+     * Shorthand for {@link #degreesToRadians}
+     */
     public static final float degRad = degreesToRadians;
 
     static private class Sin {
@@ -61,12 +93,18 @@ public final class FastMath {
     }
 
     /**
-     * Returns the sine in radians from a lookup table.
+     * Returns the sine function for the given radians, indexed from a lookup table 
      */
     public static float sin(float radians) {
         return Sin.table[(int) (radians * radToIndex) & SIN_MASK];
     }
 
+    /**
+     * Gets the cosine of the given angle given the sine, for efficiency
+     * @param sin Sine function of given angle
+     * @param angle Angle
+     * @return cos(angle) using sine
+     */
     public static double cosFromSin(double sin, double angle) {
         //if (Options.FASTMATH)
         //return sin(angle + PIHalf);
@@ -83,21 +121,21 @@ public final class FastMath {
     }
 
     /**
-     * Returns the cosine in radians from a lookup table.
+     * Returns the cosine function for the given radians, indexed from a lookup table 
      */
     public static float cos(float radians) {
         return Sin.table[(int) ((radians + PI / 2) * radToIndex) & SIN_MASK];
     }
 
     /**
-     * Returns the sine in radians from a lookup table.
+     * RReturns the sine function for the given degrees, indexed from a lookup table 
      */
     public static float sinDeg(float degrees) {
         return Sin.table[(int) (degrees * degToIndex) & SIN_MASK];
     }
 
     /**
-     * Returns the cosine in radians from a lookup table.
+     * Returns the cosine function for the given degrees, indexed from a lookup table 
      */
     public static float cosDeg(float degrees) {
         return Sin.table[(int) ((degrees + 90) * degToIndex) & SIN_MASK];
@@ -286,11 +324,19 @@ public final class FastMath {
         return value + 1;
     }
 
+    /**
+     * Returns if a value is a perfect power of two, such that an integer x exists where 2^x=value
+     * @param value
+     * @return 
+     */
     public static boolean isPowerOfTwo(int value) {
         return value != 0 && (value & value - 1) == 0;
     }
 
-    // ---
+    /**
+     * {@code short} version of {@link #clamp(int,int,int)}
+     * @see #clamp(int,int,int)
+     */
     public static short clamp(short value, short min, short max) {
         if (value < min) {
             return min;
@@ -301,6 +347,15 @@ public final class FastMath {
         return value;
     }
 
+    /**
+     * Clamps the given value to the range of {@code [min, max]}<br>
+     * If the value is between min and max, it stays the same, otherwise
+     * it will be set to {@code min} if it is below {@code min} and {@code max} if it is above {@code max}
+     * @param value Value to be clamped
+     * @param min Lower bound of range
+     * @param max Upper bound of range
+     * @return Clamped value
+     */
     public static int clamp(int value, int min, int max) {
         if (value < min) {
             return min;
@@ -311,6 +366,10 @@ public final class FastMath {
         return value;
     }
 
+    /**
+     * {@code long} version of {@link #clamp(int,int,int)}
+     * @see #clamp(int,int,int)
+     */
     public static long clamp(long value, long min, long max) {
         if (value < min) {
             return min;
@@ -321,6 +380,10 @@ public final class FastMath {
         return value;
     }
 
+    /**
+     * {@code float} version of {@link #clamp(int,int,int)}
+     * @see #clamp(int,int,int)
+     */
     public static float clamp(float value, float min, float max) {
         if (value < min) {
             return min;
@@ -331,6 +394,10 @@ public final class FastMath {
         return value;
     }
 
+    /**
+     * {@code double} version of {@link #clamp(int,int,int)}
+     * @see #clamp(int,int,int)
+     */
     public static double clamp(double value, double min, double max) {
         if (value < min) {
             return min;
@@ -475,6 +542,7 @@ public final class FastMath {
      * @param b the second value.
      * @param tolerance represent an upper bound below which the two values are
      * considered equal.
+     * @return If a and b are equal
      */
     public static boolean isEqual(float a, float b, float tolerance) {
         return Math.abs(a - b) <= tolerance;
@@ -494,6 +562,18 @@ public final class FastMath {
         return log(2, value);
     }
     
+    /**
+     * Returns the closest point on the line given by {@code a, b} to {@code point}
+     * 
+     * This computes the point of closest approach of the line defined by {@code a, b} to the point {@code point}.
+     * If {@code segClamp} is true, however, it will treat the line as a line segment, clamping the closest approach
+     * to the segment
+     * @param a First point defining the line/line segment
+     * @param b Second point defining the line/line segment
+     * @param point Point to approach
+     * @param segClamp If closest approach should be locked to line segment
+     * @return Closest approach to point {@code point}
+     */
     public static Vector3f closestPointTo(Vector3f a, Vector3f b, Vector3f point, boolean segClamp){
         Vector3f ap = point.subtract(a);
         Vector3f ab = b.subtract(a);

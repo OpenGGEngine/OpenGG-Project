@@ -6,6 +6,7 @@
 
 package com.opengg.core.audio;
 
+import com.opengg.core.system.Allocator;
 import java.io.File;
 import java.io.IOException;
 import java.nio.IntBuffer;
@@ -13,7 +14,6 @@ import java.nio.ShortBuffer;
 import static org.lwjgl.openal.AL10.AL_FORMAT_MONO16;
 import static org.lwjgl.openal.AL10.AL_FORMAT_STEREO16;
 import static org.lwjgl.stb.STBVorbis.stb_vorbis_decode_filename;
-import org.lwjgl.system.MemoryUtil;
 
 /**
  * Utility class to facilitate audio file loading
@@ -27,11 +27,15 @@ public class AudioLoader {
      * @throws IOException If file does not exist
      */
     public static SoundData loadVorbis(String path) throws IOException{
-        IntBuffer samplerate= MemoryUtil.memAllocInt(1);
-        IntBuffer channels = MemoryUtil.memAllocInt(1);
-        if(!(new File(path).exists()))
+        IntBuffer samplerate= Allocator.stackAllocInt(1);
+        IntBuffer channels = Allocator.stackAllocInt(1);
+        if(!(new File(path).exists())){
+            Allocator.popStack();
+            Allocator.popStack();
             throw new IOException("Failed to find file at " + new File(path).getAbsolutePath());
+        }
         ShortBuffer buffer = stb_vorbis_decode_filename(path, channels, samplerate);
+        Allocator.register(buffer, Allocator.LWJGL_DEFAULT);
         
         SoundData data = new SoundData();
         data.channels = channels.get();
@@ -39,6 +43,10 @@ public class AudioLoader {
         data.format = data.channels == 2 ? AL_FORMAT_STEREO16 : AL_FORMAT_MONO16;
         data.data = buffer;
         data.origin = path;
+        
+        Allocator.popStack();
+        Allocator.popStack();
+        
         return data;
     }
 }

@@ -7,6 +7,7 @@ package com.opengg.core.render.objects;
 
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
+import com.opengg.core.system.Allocator;
 import java.nio.Buffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -18,7 +19,7 @@ import org.lwjgl.system.MemoryUtil;
  */
 public class ObjectBuffers {
     public static Buffer[] getSquare(Vector2f v1, Vector2f v2, float z1 ,float transparency, boolean flippedTex){
-        FloatBuffer sq = MemoryUtil.memAllocFloat(4*12);
+        FloatBuffer sq = Allocator.allocFloat(4*12);
 
         
         sq.put(v1.x).put(v1.y).put(z1).put(1).put(0).put(0).put(transparency).put(1f).put(0f).put(0f).put(0).put(0);
@@ -27,7 +28,7 @@ public class ObjectBuffers {
         sq.put(v2.x).put(v1.y).put(z1).put(0).put(0).put(1).put(transparency).put(1f).put(0f).put(0f).put(1).put(0);           
         sq.flip();
         
-        IntBuffer indices = MemoryUtil.memAllocInt(6);
+        IntBuffer indices = Allocator.allocInt(6);
         indices.put(new int[]{0,1,2,
             2,3,0});
         indices.flip();
@@ -35,7 +36,7 @@ public class ObjectBuffers {
     }
 
     static FloatBuffer getSquare(float x1, float z1, float x2, float z2, float y1,float y2, float y3, float y4,  float transparency,boolean flippedTex){
-        FloatBuffer sq = MemoryUtil.memAllocFloat(6*12);
+        FloatBuffer sq = Allocator.allocFloat(6*12);
         int i, i2;
         if(flippedTex){
             i = 1;
@@ -58,7 +59,7 @@ public class ObjectBuffers {
     }
 
     static FloatBuffer createDefaultBufferData(int size){
-        FloatBuffer f = MemoryUtil.memAllocFloat(size);
+        FloatBuffer f = Allocator.allocFloat(size);
         for(int i = 0; i < size; i++){
             f.put(0);
         }
@@ -67,7 +68,7 @@ public class ObjectBuffers {
     }
     
     static Buffer[] genCube(float size){
-        FloatBuffer sq = MemoryUtil.memAllocFloat(8*12);
+        FloatBuffer sq = Allocator.allocFloat(8*12);
         
         sq.put(new float[]{-size,-size,-size});
         sq.put(new float[]{1,1,1,1,1,1,1,1,1});
@@ -95,7 +96,7 @@ public class ObjectBuffers {
         
         sq.flip();
         
-        IntBuffer ib = MemoryUtil.memAllocInt(6 * 6);
+        IntBuffer ib = Allocator.allocInt(6 * 6);
         
         ib.put(new int[]{
                 1,2,0,
@@ -116,7 +117,7 @@ public class ObjectBuffers {
         return new Buffer[]{sq,ib};
     }
     static Buffer[] genQuadPrism(Vector3f c1, Vector3f c2){
-        FloatBuffer d = MemoryUtil.memAllocFloat(8*12);
+        FloatBuffer d = Allocator.allocFloat(8*12);
         d.put(c1.x()).put(c1.y()).put(c1.z()).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);
         d.put(c1.x()).put(c1.y()).put(c2.z()).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0).put(1);
         d.put(c1.x()).put(c2.y()).put(c2.z()).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);
@@ -128,7 +129,7 @@ public class ObjectBuffers {
         d.put(c2.x()).put(c2.y()).put(c1.z()).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0).put(0);
         d.flip();
         
-        IntBuffer d2 = MemoryUtil.memAllocInt(6*4);
+        IntBuffer d2 = Allocator.allocInt(6*4);
         d2.put(new int[]{0,1,3,1,2,3});
         d2.put(new int[]{4,6,7,5,6,7});
         

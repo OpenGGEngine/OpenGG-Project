@@ -10,6 +10,7 @@ import com.opengg.core.math.Matrix4f;
 import com.opengg.core.render.GLBuffer;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.shader.VertexArrayFormat;
+import com.opengg.core.system.Allocator;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.List;
@@ -43,7 +44,7 @@ public class DrawnObject implements Drawable {
         limit = vertices.limit();
         vertLimit = limit/format.getVertexLength();
         
-        ind = MemoryUtil.memAllocInt(vertLimit);
+        ind = Allocator.allocInt(vertLimit);
         for(int i = 0; i < vertLimit; i++){
             ind.put(i);
         }
@@ -63,7 +64,7 @@ public class DrawnObject implements Drawable {
             limit = b.limit();
             vertLimit = limit/format.getVertexLength();
 
-            ind = MemoryUtil.memAllocInt(vertLimit);
+            ind = Allocator.allocInt(vertLimit);
             for(long i = 0; i < vertLimit; i++){
                 ind.put((int) i);
             }
@@ -117,7 +118,7 @@ public class DrawnObject implements Drawable {
         limit = vertices.limit();
         vertLimit = limit/vertSize;
         
-        ind = MemoryUtil.memAllocInt(vertLimit);
+        ind = Allocator.allocInt(vertLimit);
         for(long i = 0; i < vertLimit; i++){
             ind.put((int) i);
         }

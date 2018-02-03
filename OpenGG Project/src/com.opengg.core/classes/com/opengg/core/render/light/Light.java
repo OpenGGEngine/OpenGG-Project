@@ -9,6 +9,7 @@ package com.opengg.core.render.light;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.texture.Framebuffer;
+import com.opengg.core.system.Allocator;
 import java.nio.FloatBuffer;
 import static org.lwjgl.opengl.GL11.GL_RGBA8;
 import static org.lwjgl.opengl.GL30.GL_COLOR_ATTACHMENT0;
@@ -54,7 +55,7 @@ public class Light {
     }
 
     public FloatBuffer getBuffer(){
-        FloatBuffer fb = MemoryUtil.memAllocFloat(bfsize);
+        FloatBuffer fb = Allocator.allocFloat(bfsize);
         fb.put(pos.x()).put(pos.y()).put(pos.z());
         fb.put(0);
         fb.put(color.x()).put(color.y()).put(color.z());

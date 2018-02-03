@@ -7,6 +7,7 @@ import com.opengg.core.io.input.mouse.GLFWMouseButtonHandler;
 import com.opengg.core.io.input.mouse.GLFWMousePosHandler;
 import com.opengg.core.io.input.mouse.MouseController;
 import static com.opengg.core.render.window.WindowOptions.*;
+import com.opengg.core.system.Allocator;
 import com.opengg.core.util.FileUtil;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
@@ -235,16 +236,16 @@ public class GLFWWindow implements Window {
 
     @Override
     public int getWidth() {
-        IntBuffer w = MemoryUtil.memAllocInt(1);
-        IntBuffer h = MemoryUtil.memAllocInt(1);
+        IntBuffer w = Allocator.allocInt(1);
+        IntBuffer h = Allocator.allocInt(1);
         glfwGetFramebufferSize(window, w, h);
         return w.get();
     }
 
     @Override
     public int getHeight() {
-        IntBuffer w = MemoryUtil.memAllocInt(1);
-        IntBuffer h = MemoryUtil.memAllocInt(1);
+        IntBuffer w = Allocator.allocInt(1);
+        IntBuffer h = Allocator.allocInt(1);
         glfwGetFramebufferSize(window, w, h);
         return h.get();
     }

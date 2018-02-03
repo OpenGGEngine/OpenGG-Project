@@ -9,6 +9,7 @@ import com.opengg.core.engine.RenderEngine;
 import com.opengg.core.render.Text;
 import com.opengg.core.model.Material;
 import com.opengg.core.render.drawn.MaterialDrawnObject;
+import com.opengg.core.system.Allocator;
 import java.io.File;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
@@ -100,7 +101,7 @@ public class TextVBOGenerator {
 			curserX = 0;
 			curserY += LINE_HEIGHT * text.getFontSize();
 		}
-                FloatBuffer f = MemoryUtil.memAllocFloat(vertices.size() *12);
+                FloatBuffer f = Allocator.allocFloat(vertices.size() *12);
                 int texpointer = 0;
                 for(int i =0;i<vertices.size();i+=3){
                     //vertices

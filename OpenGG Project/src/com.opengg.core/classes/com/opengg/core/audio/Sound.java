@@ -159,6 +159,6 @@ public class Sound{
      * Frees all resources associated with this source
      */
     public void remove(){
-        AudioController.removeAudioSource(this);
+        so.remove();
     }
 }

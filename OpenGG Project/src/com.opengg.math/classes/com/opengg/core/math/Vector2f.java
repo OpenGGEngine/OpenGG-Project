@@ -5,11 +5,11 @@
  */
 package com.opengg.core.math;
 
+import com.opengg.core.system.Allocator;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import org.lwjgl.system.MemoryStack;
-import org.lwjgl.system.MemoryUtil;
 
 /**
  *
@@ -238,7 +238,7 @@ public class Vector2f implements Serializable{
     }
     
     public static FloatBuffer listToBuffer(Vector2f... list){
-        FloatBuffer f = MemoryUtil.memAllocFloat(3* list.length);
+        FloatBuffer f = Allocator.allocFloat(3* list.length);
         for(Vector2f v : list){ 
            f.put(v.x);
            f.put(v.y);
@@ -264,17 +264,22 @@ public class Vector2f implements Serializable{
         return this;
     }
 
+    public FloatBuffer getStackBuffer() {
+        FloatBuffer buffer = Allocator.stackAllocFloat(2);
+        buffer.put(x).put(y);
+        buffer.flip();
+        return buffer;
+    }
+    
     public FloatBuffer getBuffer() {
-        try(MemoryStack stack = MemoryStack.stackPush()){
-            FloatBuffer buffer = stack.callocFloat(2);
-            buffer.put(x).put(y);
-            buffer.flip();
-            return buffer;
-        }
+        FloatBuffer buffer = Allocator.allocFloat(2);
+        buffer.put(x).put(y);
+        buffer.flip();
+        return buffer;
     }
     
     public byte[] toByteArray(){   
-        ByteBuffer b = MemoryUtil.memAlloc(8);
+        ByteBuffer b = Allocator.alloc(8);
         return b.putFloat(x).putFloat(y).array();
     }
     

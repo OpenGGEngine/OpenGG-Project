@@ -5,6 +5,7 @@
  */
 package com.opengg.core.math;
 
+import com.opengg.core.system.Allocator;
 import java.nio.FloatBuffer;
 import org.lwjgl.system.MemoryStack;
 
@@ -125,16 +126,24 @@ public class Matrix4f {
         this.m33 = arr[3][3];
     }
 
+    public FloatBuffer getStackBuffer() {
+        FloatBuffer buffer = Allocator.stackAllocFloat(16);
+        buffer.put(m00).put(m01).put(m02).put(m03);
+        buffer.put(m10).put(m11).put(m12).put(m13);
+        buffer.put(m20).put(m21).put(m22).put(m23);
+        buffer.put(m30).put(m31).put(m32).put(m33);
+        buffer.flip();
+        return buffer;
+    }
+    
     public FloatBuffer getBuffer() {
-        try(MemoryStack stack = MemoryStack.stackPush()){
-            FloatBuffer buffer = stack.callocFloat(16);
-            buffer.put(m00).put(m01).put(m02).put(m03);
-            buffer.put(m10).put(m11).put(m12).put(m13);
-            buffer.put(m20).put(m21).put(m22).put(m23);
-            buffer.put(m30).put(m31).put(m32).put(m33);
-            buffer.flip();
-            return buffer;
-        }
+        FloatBuffer buffer = Allocator.allocFloat(16);
+        buffer.put(m00).put(m01).put(m02).put(m03);
+        buffer.put(m10).put(m11).put(m12).put(m13);
+        buffer.put(m20).put(m21).put(m22).put(m23);
+        buffer.put(m30).put(m31).put(m32).put(m33);
+        buffer.flip();
+        return buffer;
     }
 
     public Vector4f transform(Vector4f init){

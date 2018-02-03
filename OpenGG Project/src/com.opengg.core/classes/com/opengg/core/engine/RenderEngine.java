@@ -20,6 +20,7 @@ import com.opengg.core.render.shader.VertexArrayObject;
 import com.opengg.core.render.texture.Framebuffer;
 import com.opengg.core.render.texture.TextureManager;
 import com.opengg.core.render.texture.WindowFramebuffer;
+import com.opengg.core.system.Allocator;
 import com.opengg.core.world.Camera;
 import com.opengg.core.world.Skybox;
 import java.util.ArrayList;
@@ -33,7 +34,6 @@ import static org.lwjgl.opengl.GL30.GL_MAJOR_VERSION;
 import static org.lwjgl.opengl.GL30.GL_MINOR_VERSION;
 import static org.lwjgl.opengl.GL31.GL_UNIFORM_BUFFER;
 import static org.lwjgl.opengl.GL32.GL_TEXTURE_CUBE_MAP_SEAMLESS;
-import org.lwjgl.system.MemoryUtil;
 
 /**
  * 
@@ -98,7 +98,7 @@ public class RenderEngine {
 
         setProjectionData(ProjectionData.getPerspective(100, 0.2f, 3000f));
         
-        lightoffset = (MemoryUtil.memAllocFloat(Light.bfsize).capacity());// << 2;
+        lightoffset = (Allocator.allocFloat(Light.bfsize).capacity());// << 2;
 
         groups.add(dlist);
        // groups.add(animlist);

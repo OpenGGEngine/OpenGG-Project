@@ -6,6 +6,7 @@
 module com.opengg.system {
     requires com.opengg.base;
     requires com.opengg.console;
+    requires org.lwjgl;
     
     exports com.opengg.core.system;
 }

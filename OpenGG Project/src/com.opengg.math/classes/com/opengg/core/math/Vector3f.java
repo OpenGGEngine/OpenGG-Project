@@ -5,11 +5,10 @@
  */
 package com.opengg.core.math;
 
+import com.opengg.core.system.Allocator;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
-import org.lwjgl.system.MemoryStack;
-import org.lwjgl.system.MemoryUtil;
 
 /**
  * 3 component immutable vector with linear algebra functions
@@ -453,7 +452,7 @@ public class Vector3f implements Serializable{
     }
     
     public static FloatBuffer listToBuffer(Vector3f... list){
-        FloatBuffer f = MemoryUtil.memAllocFloat(3* list.length);
+        FloatBuffer f = Allocator.allocFloat(3* list.length);
         for(Vector3f v : list){ 
            f.put(v.x);
            f.put(v.y);
@@ -517,19 +516,32 @@ public class Vector3f implements Serializable{
     }
     
     /**
-     * Returns a FloatBuffer containing the vector<br>
+     * Returns a FloatBuffer containing the vector onto the heap<br>
      * This FloatBuffer is by default allocated into the stack, 
      * containing the elements of the vector in xyz order.
      * Additionally, the buffer is flipped prior to returning.
      * @return FloatBuffer containing the vector
      */
     public FloatBuffer getBuffer() {
-        try(MemoryStack stack = MemoryStack.stackPush()){
-            FloatBuffer buffer = stack.mallocFloat(3);
-            buffer.put(x).put(y).put(z);
-            buffer.flip();
-            return buffer;
-        }
+        FloatBuffer buffer = Allocator.allocFloat(3);
+        buffer.put(x).put(y).put(z);
+        buffer.flip();
+        return buffer;
+    }
+    
+    /**
+     * Returns a FloatBuffer containing the vector onto the stack<br>
+     * This FloatBuffer is by default allocated into the stack, 
+     * containing the elements of the vector in xyz order.
+     * Additionally, the buffer is flipped prior to returning.<br>
+     * Note, this must be popped eventually by a call to <@code Allocator.stackPop();>
+     * @return FloatBuffer containing the vector
+     */
+    public FloatBuffer getStackBuffer() {
+        FloatBuffer buffer = Allocator.stackAllocFloat(3);
+        buffer.put(x).put(y).put(z);
+        buffer.flip();
+        return buffer;
     }
     
     /**
@@ -540,12 +552,10 @@ public class Vector3f implements Serializable{
      * @return ByteBuffer containing the vector
      */
     public ByteBuffer getByteBuffer() {
-        try(MemoryStack stack = MemoryStack.stackPush()){
-            ByteBuffer buffer = stack.malloc(12);
-            buffer.putFloat(x).putFloat(y).putFloat(z);
-            buffer.flip();
-            return buffer;
-        }
+        ByteBuffer buffer = Allocator.alloc(12);
+        buffer.putFloat(x).putFloat(y).putFloat(z);
+        buffer.flip();
+        return buffer;
     }
     
     /**
@@ -553,7 +563,7 @@ public class Vector3f implements Serializable{
      * @return 
      */
     public byte[] toByteArray(){   
-        ByteBuffer b = MemoryUtil.memAlloc(12);
+        ByteBuffer b = Allocator.alloc(12);
         return ByteBuffer.allocate(12).putFloat(x).putFloat(y).putFloat(z).array();
         //return b.putFloat(x).putFloat(y).putFloat(z).array();
     }

@@ -5,6 +5,7 @@ package com.opengg.core.io;
 
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
+import com.opengg.core.system.Allocator;
 
 
 import java.io.*;
@@ -14,7 +15,7 @@ import java.nio.FloatBuffer;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;
-import org.lwjgl.system.MemoryUtil;
+
 
 /**
  * @author Oskar
@@ -55,7 +56,7 @@ public class ObjLoader {
     }
 
     private static FloatBuffer reserveData(int size) {
-        return MemoryUtil.memAllocFloat(size);
+        return Allocator.allocFloat(size);
     }
 
     private static float[] asFloats(Vector3f v) {

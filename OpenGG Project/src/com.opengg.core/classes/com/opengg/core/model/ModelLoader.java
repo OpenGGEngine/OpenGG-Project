@@ -9,6 +9,7 @@ import com.opengg.core.console.GGConsole;
 import com.opengg.core.engine.Resource;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Vector3f;
+import com.opengg.core.system.Allocator;
 import com.opengg.core.util.GGInputStream;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
@@ -169,7 +170,7 @@ public class ModelLoader {
             // System.out.println("cap: " + fbt.limit() * 4);
             //  System.out.println("---Entered Loop F---");
 
-            FloatBuffer fb = MemoryUtil.memAllocFloat(fbt.limit());
+            FloatBuffer fb = Allocator.allocFloat(fbt.limit());
             float[] fbg = new float[fb.capacity()];
             int died = 0;
             while (fbt.hasRemaining()) {
@@ -184,7 +185,7 @@ public class ModelLoader {
           //  System.out.println("Float: "+ Arrays.toString(fbg));
 //       
             IntBuffer ibt = ((ByteBuffer) arrays[i + 1]).rewind().asIntBuffer();
-            IntBuffer ib = MemoryUtil.memAllocInt(ibt.limit());
+            IntBuffer ib = Allocator.allocInt(ibt.limit());
 
 //            System.out.println("cap: "+ ib.capacity() );
 //            System.out.println("---Entered Loop---");

@@ -9,6 +9,7 @@ package com.opengg.core.render.shader;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
+import com.opengg.core.system.Allocator;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -150,32 +151,32 @@ public class NativeGLProgram {
      * @param value Value to set
      */
     public void setUniform(int location, Vector3f value) {
-        glProgramUniform3fv(id, location, value.getBuffer());
+        glProgramUniform3fv(id, location, value.getStackBuffer());
+        Allocator.popStack();
     }
 
     public void setUniform(int location, Matrix4f value) {
-        glProgramUniformMatrix4fv(id, location, false, value.getBuffer());
+        glProgramUniformMatrix4fv(id, location, false, value.getStackBuffer());
+        Allocator.popStack();
     }
     
-    public void setUniform(int location, Matrix4f[] matrices) {
-       
+    public void setUniform(int location, Matrix4f[] matrices) {      
             int length = matrices != null ? matrices.length : 0;
-            FloatBuffer fb = MemoryUtil.memAllocFloat(16 * length);
-            for (int i = 0; i < length; i++) {
-                //matrices[i].get(16 * i, fb);
-                Matrix4f wow = matrices[i];
-                if(wow == null){
-                    wow = new Matrix4f();
+            FloatBuffer fb = Allocator.stackAllocFloat(16 * length);
+            for (Matrix4f mat : matrices) {
+                if(mat == null){
+                    mat = new Matrix4f();
                 }
-                fb.put(wow.m00).put(wow.m01).put(wow.m02).put(wow.m03);
-            fb.put(wow.m10).put(wow.m11).put(wow.m12).put(wow.m13);
-            fb.put(wow.m20).put(wow.m21).put(wow.m22).put(wow.m23);
-            fb.put(wow.m30).put(wow.m31).put(wow.m32).put(wow.m33);
+                
+                fb.put(mat.m00).put(mat.m01).put(mat.m02).put(mat.m03);
+                fb.put(mat.m10).put(mat.m11).put(mat.m12).put(mat.m13);
+                fb.put(mat.m20).put(mat.m21).put(mat.m22).put(mat.m23);
+                fb.put(mat.m30).put(mat.m31).put(mat.m32).put(mat.m33);
             }
+            
             fb.flip();
-           
-            glProgramUniformMatrix4fv(id,location, false, fb);
-    
+            glProgramUniformMatrix4fv(id, location, false, fb);
+            Allocator.popStack();
     }
     
     public void setUniformBlockIndex(int bind, String name){
@@ -185,15 +186,19 @@ public class NativeGLProgram {
     }
     
     public ByteBuffer getProgramBinary(){
-        IntBuffer length = MemoryUtil.memAllocInt(1);
-        IntBuffer type = MemoryUtil.memAllocInt(1);
-        ByteBuffer data = MemoryUtil.memAlloc(128*1024);
+        IntBuffer length = Allocator.stackAllocInt(1);
+        IntBuffer type = Allocator.stackAllocInt(1);
+        ByteBuffer data = Allocator.alloc(128*1024);
         glGetProgramBinary(id, length, type, data);
-        int length2 = length.get();
-        ByteBuffer finaldata = MemoryUtil.memAlloc(length2);
-        for(int i = 0; i < length2; i++){
+        
+        int truelength = length.get();
+        ByteBuffer finaldata = Allocator.alloc(truelength);
+        for(int i = 0; i < truelength; i++){
             finaldata.put(data.get());
         }
+                
+        Allocator.popStack();
+        Allocator.popStack();
         finaldata.flip();
         return finaldata;
     }

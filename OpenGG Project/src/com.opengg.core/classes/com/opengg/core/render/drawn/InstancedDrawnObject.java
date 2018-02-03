@@ -9,18 +9,14 @@ import com.opengg.core.engine.RenderEngine;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.render.GLBuffer;
 import com.opengg.core.render.shader.ShaderController;
+import com.opengg.core.system.Allocator;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.List;
-import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
-import static org.lwjgl.opengl.GL11.glGetError;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW;
-import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
 import static org.lwjgl.opengl.GL31.glDrawElementsInstanced;
-import static org.lwjgl.opengl.GL32.GL_TRIANGLES_ADJACENCY;
-import org.lwjgl.system.MemoryStack;
 
 /**
  *
@@ -34,22 +30,20 @@ public class InstancedDrawnObject extends DrawnObject implements Drawable {
     
     public InstancedDrawnObject(FloatBuffer b){
         super(b);
-        try(MemoryStack stack = MemoryStack.stackPush()){
-            FloatBuffer buffer = stack.callocFloat(3);
-            buffer.put(0).put(0).put(0);
-            
-            defInstanceBuffer(buffer);
-        }
+        FloatBuffer buffer = Allocator.stackAllocFloat(3);
+        buffer.put(0).put(0).put(0);
+        buffer.flip();
+        defInstanceBuffer(buffer);
+        Allocator.popStack();
     }
     
     public InstancedDrawnObject(FloatBuffer b, IntBuffer i){
         super(b,i);
-        try(MemoryStack stack = MemoryStack.stackPush()){
-            FloatBuffer buffer = stack.callocFloat(3);
-            buffer.put(0).put(0).put(0);
-            
-            defInstanceBuffer(buffer);
-        }
+        FloatBuffer buffer = Allocator.stackAllocFloat(3);
+        buffer.put(0).put(0).put(0);
+        buffer.flip();
+        defInstanceBuffer(buffer);
+        Allocator.popStack();
     }
     
     public InstancedDrawnObject(FloatBuffer b, FloatBuffer inst){

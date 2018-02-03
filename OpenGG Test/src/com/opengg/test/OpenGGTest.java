@@ -76,7 +76,7 @@ public class OpenGGTest extends GGApplication{
         AudioController.setGlobalGain(0f);
         SoundtrackHandler.setSoundtrack(track);
         
-        font = Resource.getFont("test", "testhhkuhi .png");
+        font = Resource.getFont("test", "test.png");
         text = new Text("Turmoil has engulfed the Galactic Republic. The taxation of trade routes to outlying star systems is in dispute. \n\n"
                 + " Hoping to resolve the matter with a blockade of deadly battleships, "
                 + " the greedy Trade Federation has stopped all shipping to the small planet of Naboo. \n\n"
@@ -87,16 +87,6 @@ public class OpenGGTest extends GGApplication{
         
         ResourceRequest request = new ResourceRequest(Resource.getModelPath("goldleaf"), ResourceRequest.MODEL);
         ResourceManager.prefetch(request);
-        try {
-            Thread.sleep(2);
-        } catch (InterruptedException ex) {
-            
-        }
-        System.out.println(ResourceManager.isRequested(Resource.getModelPath("goldleaf")));
-        System.out.println(ResourceManager.isProcessing(Resource.getModelPath("goldleaf")));
-        System.out.println(ModelManager.getModel(Resource.getModelPath("goldleaf")));
-        
-        //WorldEngine.useWorld(WorldEngine.loadWorld("world1"));
         
         FreeFlyComponent player = new FreeFlyComponent();
         //TestPlayerComponent player = new TestPlayerComponent();

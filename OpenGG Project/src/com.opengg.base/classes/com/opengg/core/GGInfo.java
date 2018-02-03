@@ -15,6 +15,7 @@ public class GGInfo {
     private static boolean initialized = false;
     private static String version = "0.0.1";
     private static boolean verbose = false;
+    private static boolean agressiveMemory = false;
     private static String glversion = "4.2";
 
     public static String getApplicationName() {
@@ -40,4 +41,18 @@ public class GGInfo {
     public static String getGlVersion(){
         return glversion;
     }
+    
+    public static void setVerbose(boolean verb){
+        verbose = verb;
+    }
+
+    public static boolean shouldAgressivelyManageMemory() {
+        return agressiveMemory;
+    }
+
+    public static void setAgressiveMemoryManagement(boolean agressiveMemory) {
+        GGInfo.agressiveMemory = agressiveMemory;
+    }
+    
+    
 }

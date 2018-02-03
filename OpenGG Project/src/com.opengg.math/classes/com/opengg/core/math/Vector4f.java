@@ -6,6 +6,7 @@
 
 package com.opengg.core.math;
 
+import com.opengg.core.system.Allocator;
 import java.nio.FloatBuffer;
 import org.lwjgl.system.MemoryStack;
 
@@ -213,13 +214,18 @@ public class Vector4f {
         return (float) Math.sqrt(lengthSquared());
     }
     
+    public FloatBuffer getStackBuffer() {
+        FloatBuffer buffer = Allocator.stackAllocFloat(4);
+        buffer.put(x).put(y).put(z).put(w);
+        buffer.flip();
+        return buffer;
+    }
+    
     public FloatBuffer getBuffer() {
-        try(MemoryStack stack = MemoryStack.stackPush()){
-            FloatBuffer buffer = stack.callocFloat(4);
-            buffer.put(x).put(y).put(z).put(w);
-            buffer.flip();
-            return buffer;
-        }
+        FloatBuffer buffer = Allocator.allocFloat(4);
+        buffer.put(x).put(y).put(z).put(w);
+        buffer.flip();
+        return buffer;
     }
     
     public Vector3f truncate(){

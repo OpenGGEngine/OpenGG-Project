@@ -14,6 +14,7 @@ import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.render.drawn.DrawnObject;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.texture.TextureData;
+import com.opengg.core.system.Allocator;
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -239,8 +240,8 @@ public class Terrain {
         if(d != null)
             return d;
         
-        FloatBuffer bf = MemoryUtil.memAllocFloat(12 * map.length * map[0].length);
-        IntBuffer indices = MemoryUtil.memAllocInt(6 * (map.length * map[0].length));
+        FloatBuffer bf = Allocator.allocFloat(12 * map.length * map[0].length);
+        IntBuffer indices = Allocator.allocInt(6 * (map.length * map[0].length));
         
         for(int i = 0; i < map.length-1; i++){
             for(int i2 = 0; i2 < map[0].length-1; i2++){
@@ -362,7 +363,7 @@ public class Terrain {
     
     
     public ByteBuffer getHeightmapBuffer(){
-        ByteBuffer texBuffer = MemoryUtil.memAlloc(map.length * map[0].length * 4);
+        ByteBuffer texBuffer = Allocator.alloc(map.length * map[0].length * 4);
         for(int j = 0; j < map.length; j++){
             for(int i = 0; i < map.length; i++){
                 byte val2 = (byte) (map[i][j] * 16);

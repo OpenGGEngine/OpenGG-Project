@@ -6,6 +6,7 @@
 package com.opengg.core.render.texture;
 
 import com.opengg.core.console.GGConsole;
+import com.opengg.core.system.Allocator;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,7 +39,6 @@ import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_Y;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_Z;
 import static org.lwjgl.opengl.GL14.GL_TEXTURE_LOD_BIAS;
 import static org.lwjgl.opengl.GL30.GL_TEXTURE_2D_ARRAY;
-import org.lwjgl.system.MemoryUtil;
 
 
 /**
@@ -135,7 +135,7 @@ public class Texture {
     public void set3DData(TextureData[] datums){
         long blength = 0;
         for(int i = 0; i < datums.length; i++) blength += datums[i].buffer.limit();
-        ByteBuffer full = MemoryUtil.memAlloc((int) blength);
+        ByteBuffer full = Allocator.alloc((int) blength);
         for(TextureData data : datums) full.put((ByteBuffer)data.buffer);
         
         tex.setImageData(type, 0, internalformat, datums[0].width, datums[0].height, datums.length, 0, colorformat, datatype, full);
@@ -146,7 +146,7 @@ public class Texture {
     public void set3DSubData(int xoffset, int yoffset, int zoffset, TextureData[] datums){
         long blength = 0;
         for(int i = 0; i < datums.length; i++) blength += datums[i].buffer.limit();
-        ByteBuffer full = MemoryUtil.memAlloc((int) blength);
+        ByteBuffer full = Allocator.alloc((int) blength);
         for(TextureData data : datums) full.put((ByteBuffer)data.buffer);
         full.flip();
         tdata.addAll(Arrays.asList(datums));
