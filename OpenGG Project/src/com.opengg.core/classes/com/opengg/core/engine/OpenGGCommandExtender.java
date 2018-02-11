@@ -12,6 +12,7 @@ import com.opengg.core.console.GGConsole;
 import com.opengg.core.console.UserCommand;
 import static com.opengg.core.engine.OpenGG.*;
 import com.opengg.core.physics.PhysicsRenderer;
+import com.opengg.core.render.shader.ShaderController;
 
 /**
  *
@@ -69,10 +70,23 @@ public class OpenGGCommandExtender implements ConsoleListener{
             if(command.argCount == 2){
                 if(command.args[0].equalsIgnoreCase("render")){
                     try{
-                        boolean vol = Boolean.parseBoolean(command.args[0].toLowerCase());
+                        boolean vol = Boolean.parseBoolean(command.args[1].toLowerCase());
                         PhysicsRenderer.setEnabled(vol);
                     }catch(Exception e){
                         GGConsole.error(command.args[0] + " is not a valid boolean!");
+                    }
+                }
+            }
+        }
+        
+        if(command.command.equalsIgnoreCase("shader")){
+            if(command.argCount == 3){
+                if(command.args[0].equalsIgnoreCase("uniformfloat")){
+                    try{
+                        float val = Float.parseFloat(command.args[2].toLowerCase());
+                        ShaderController.setUniform(command.args[1], val);
+                    }catch(Exception e){
+                        GGConsole.error("Invalid/malformed float");
                     }
                 }
             }

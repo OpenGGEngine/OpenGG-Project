@@ -31,10 +31,10 @@ public class GUIGroup extends GUIItem {
     }
 
     @Override
-    public void render(float x, float y) {
+    public void render() {
         if (enabled) {
             for (GUIItem item : items.values()) {
-                item.render(x + this.position.x, y + this.position.y);
+                item.render();
             }
         }
     }

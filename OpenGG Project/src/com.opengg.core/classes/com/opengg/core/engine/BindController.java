@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Controller for the bind system<br>
+ * Controller for the bind system<br>chr
  * The bind system converts the specific commands from a keyboard, mouse, or other input devices to
  * {@link Action Actions}, which is sent to {@link ActionTransmitter ActionTransmitters} that are added to this controller.
  * This allows for configurations to be easily saved, by simply connecting a key to a command purely through Strings

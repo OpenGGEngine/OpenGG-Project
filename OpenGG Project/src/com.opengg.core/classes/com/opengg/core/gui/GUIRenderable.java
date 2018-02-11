@@ -27,10 +27,9 @@ public class GUIRenderable extends GUIItem{
         this.d = d;
     }
     
-    @Override
-    public void render(float x, float y){
+    public void render(){
         if(enabled){
-            d.setMatrix(Matrix4f.translate(getPosition().x + x, getPosition().y + y, layer));
+            d.setMatrix(Matrix4f.translate(getPosition().x + parent.getPosition().x, getPosition().y + + parent.getPosition().y, layer));
             d.render();
         }
         

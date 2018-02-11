@@ -28,7 +28,7 @@ public class ResourceManager {
         for(int i = 0; i < THREAD_AMOUNT; i++){
             GGConsole.log("Initializing resource manager with " + THREAD_AMOUNT + " worker thread(s)");
             ResourceProcessorThread thread = new ResourceProcessorThread();
-            ThreadManager.runRunnable(thread);
+            ThreadManager.runRunnable(thread, "ResourceWorkerThread"+i);
             threads.add(thread);
         }
     }

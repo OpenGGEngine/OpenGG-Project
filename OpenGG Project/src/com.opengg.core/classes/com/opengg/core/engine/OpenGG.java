@@ -84,13 +84,13 @@ public class OpenGG{
         GGConsole.log("Window generation successful, using OpenGL context version " + RenderEngine.getGLVersion());
         
         SystemInfo.queryOpenGLInfo();
-        GGConsole.log("System info queried");
+        GGConsole.log("OpenGL instance info acquired");
         
-        initializeRenderEngine();  
-        RenderEngine.checkForGLErrors();
+        RenderEngine.initialize();       
+        AudioController.initialize();
         
-        initializeAudioController();      
         BindController.initialize();
+        GGConsole.log("Bind Controller initialized");
         
         ExtensionManager.loadStep(Extension.GRAPHICS);
     }
@@ -109,27 +109,30 @@ public class OpenGG{
         GGConsole.log("OpenGG initializing, running on " + System.getProperty("os.name") + ", " + System.getProperty("os.arch"));
         
         Resource.initialize();
+        GGConsole.log("Resource system initialized");
         
         getVMOptions();
         
         ExtensionManager.loadStep(Extension.NONE);
-
-        linkLWJGL();
         
         ExtensionManager.loadStep(Extension.LWJGL);
-        
+
         SystemInfo.querySystemInfo();
         Config.reloadConfigs();
+        GGConsole.log("Loaded configuration files");
 
         ExtensionManager.loadStep(Extension.CONFIG);
+        
+        WorldEngine.initialize();
+        GGConsole.log("World Engine initialized");
+        
+        PhysicsEngine.initialize();
+        GGConsole.log("Physics Engine initialized");
         
         if(client)
             initializeLocalClient(info);
 
-        WorldEngine.initialize();
-        PhysicsEngine.initialize();
-        
-        GGConsole.log("Application setup beginning");
+        GGConsole.log("Engine initialization complete, application setup beginning");
         app.setup();
         WorldEngine.useWorld(WorldEngine.getCurrent());
         GGConsole.log("Application setup complete");
@@ -178,7 +181,7 @@ public class OpenGG{
             startFrame();
             app.render();
             ExtensionManager.render();
-            RenderEngine.draw();
+            RenderEngine.render();
             RenderEngine.checkForGLErrors();
             endFrame();                   
         }
@@ -189,37 +192,6 @@ public class OpenGG{
             closeEngine();
         }
         writeLog();
-    }
-    
-    private static void initializeRenderEngine(){
-        if(getWindow().getSuccessfulConstruction() && RenderEngine.isInitialized() == false){
-            RenderEngine.init();
-            GGConsole.log("Render engine initialized");
-        }
-    }
-    
-    private static void initializeAudioController(){
-       if(getWindow().getSuccessfulConstruction() && AudioController.isInitialized() == false){
-            AudioController.init();
-            GGConsole.log("Audio controller initialized");
-        }   
-    }
-    
-    public static void linkLWJGL(){
-        GGConsole.log("Loading native libraries...");
-        if(System.getProperty("os.name").contains("Windows")){
-            System.setProperty("org.lwjgl.librarypath", new File("native" + File.separator + "windows").getAbsolutePath());
-        }else if(System.getProperty("os.name").contains("OS X")){
-           System.setProperty("org.lwjgl.librarypath", new File("native" + File.separator + "osx").getAbsolutePath());
-        }else if(System.getProperty("os.name").contains("Linux")){
-            System.setProperty("org.lwjgl.librarypath", new File("native" + File.separator + "linux").getAbsolutePath());
-        }else{
-            GGConsole.error("OpenGG is not supported on " + System.getProperty("os.name") + ", exiting...");
-            writeLog();
-            System.exit(0);
-        }
-         lwjglinit = true;
-        GGConsole.log("LWJGL has been loaded");
     }
     
     private static void getVMOptions(){ 
@@ -297,7 +269,6 @@ public class OpenGG{
     
     private static void closeEngine(){
         RenderEngine.destroy();      
-        GGConsole.log("Render engine has finalized");
         AudioController.destroy();
         GGConsole.log("Audio controller has been finalized");
         WindowController.destroy();

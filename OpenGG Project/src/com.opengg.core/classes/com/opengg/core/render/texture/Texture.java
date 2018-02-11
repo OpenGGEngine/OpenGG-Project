@@ -25,6 +25,7 @@ import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_S;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_T;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE;
 import static org.lwjgl.opengl.GL11.glBindTexture;
+import static org.lwjgl.opengl.GL11.glGetError;
 import static org.lwjgl.opengl.GL11.glGetFloat;
 import static org.lwjgl.opengl.GL12.GL_TEXTURE_MAX_LOD;
 import static org.lwjgl.opengl.GL12.GL_TEXTURE_MIN_LOD;
@@ -219,6 +220,19 @@ public class Texture {
         texture.setMaximumFilterType(GL_NEAREST);
         texture.generateMipmaps();
         texture.unbind();
+        return texture;
+    }
+    
+    public static Texture get2DFramebufferTexture(int x, int y, int format, int intformat, int input){
+        TextureData data = new TextureData(x, y, 4, null, "framebuffer");
+        
+        Texture texture = new Texture(GL_TEXTURE_2D, format, intformat, input);
+        //texture.setActiveTexture(0);
+        texture.bind();
+        texture.set2DData(data);
+        texture.setTextureWrapType(GL_REPEAT);
+        texture.setMinimumFilterType(GL_LINEAR);
+        texture.setMaximumFilterType(GL_NEAREST);
         return texture;
     }
     

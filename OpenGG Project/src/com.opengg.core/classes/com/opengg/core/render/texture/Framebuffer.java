@@ -9,6 +9,7 @@ import com.opengg.core.console.GGConsole;
 import com.opengg.core.engine.WindowController;
 import com.opengg.core.math.Tuple;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import static org.lwjgl.opengl.GL11.GL_BACK;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
@@ -48,7 +49,7 @@ public class Framebuffer {
     public static final int DEPTH = GL_DEPTH_ATTACHMENT;
     NativeGLFramebuffer fb;
     List<Integer> usedAttachments;
-    List<Tuple<Texture, Integer>> textures;
+    HashMap<Integer, Texture> textures;
     List<NativeGLRenderbuffer> renderbuffers;
     int lx, ly;
     
@@ -81,15 +82,11 @@ public class Framebuffer {
         glDrawBuffers(attachments);
     }
     
-    public void useTexture(int loc, int attachment){
-        for(Tuple<Texture, Integer> textuple : textures){
-            if(attachment == DEPTH){
-                if(textuple.y == DEPTH){
-                    textuple.x.use(loc);
-                }
-            }else if(textuple.y == GL_COLOR_ATTACHMENT0 + attachment){
-                textuple.x.use(loc);
-            }
+    public void useTexture(int attachment, int loc){
+        if(attachment != DEPTH) attachment = GL_COLOR_ATTACHMENT0 + attachment;
+        Texture tex = textures.get(attachment);
+        if(tex != null){
+            tex.use(loc);
         }
     }
     
@@ -126,15 +123,13 @@ public class Framebuffer {
     }
     
     private void attachTexture(int width, int height, int format, int intformat, int input, int attachment){ 
-        Texture tex = new Texture(GL_TEXTURE_2D, format, intformat, input);
-        tex.bind();
-        tex.set2DData(new TextureData(width, height, 4, null, "none"));
+        Texture tex = Texture.get2DFramebufferTexture(width, height, format, intformat, input);
         
         fb.bind(GL_FRAMEBUFFER);
         fb.attachTexture(attachment, tex.getID(), 0);
         checkForCompletion();
 
-        textures.add(new Tuple(tex, attachment));
+        textures.put(attachment, tex);
         usedAttachments.add(attachment);
 
         if(lx < width) lx = width;
@@ -157,11 +152,11 @@ public class Framebuffer {
         bindToRead();
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
         glDrawBuffer(GL_BACK);
-        fb.blit(0, 0, lx, ly, 0, 0, WindowController.getWidth(), WindowController.getHeight(), GL_COLOR_BUFFER_BIT, GL_LINEAR);
+        fb.blit(0, 0, lx, ly, 0, 0, WindowController.getWidth(), WindowController.getHeight(), GL_COLOR_BUFFER_BIT, GL_NEAREST);
     }
     
     public void refresh(){
-        textures = new ArrayList<>();
+        textures = new HashMap<>();
         renderbuffers = new ArrayList<>();
         usedAttachments = new ArrayList<>();
         lx = 0;

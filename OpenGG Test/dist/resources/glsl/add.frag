@@ -5,12 +5,8 @@ layout(location = 0) out vec4 fcolor;
 in vertexData{
     
     vec2 textureCoord;
-    vec3 lightdir;
-    vec3 eyedir;
     vec4 pos;
     vec3 norm;
-    vec4 shadowpos;
-    float visibility;
 };
 
 uniform sampler2D Kd;
@@ -27,5 +23,4 @@ void main() {
 	color1 = color1 + color2;
 	
     fcolor = color1;
-	fcolor = getTex(Kd);
 }

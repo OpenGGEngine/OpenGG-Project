@@ -27,7 +27,7 @@ import java.util.List;
  * @author Javier
  */
 public class ShaderController {
-
+    private static String currentshader = "";
     private static Matrix4f model = new Matrix4f(), view = new Matrix4f(), proj = new Matrix4f();
     private static HashMap<String, ShaderProgram> programs = new HashMap<>();
     private static HashMap<String, ShaderPipeline> pipelines = new HashMap<>();
@@ -114,8 +114,6 @@ public class ShaderController {
         
         use("particlevert", "texturefrag");
         saveCurrentConfiguration("particle");
-        
-        GGConsole.log("Default shaders loaded and validated");
 
         /* Set shader variables */
 
@@ -194,7 +192,9 @@ public class ShaderController {
         
         setMatLinks();
 
-        checkError();     
+        checkError();   
+        
+        GGConsole.log("Shader Controller initialized, loaded " + programs.size() + " shader programs");
     }
     
     private static void setMatLinks(){
@@ -512,6 +512,8 @@ public class ShaderController {
             throw new ShaderException("Failed to find pipeline named " + name);
         }
         
+        currentshader = name;
+        
         currentvert = pipeline.vert;
         currenttesc = pipeline.tesc;
         currenttese = pipeline.tese;
@@ -531,6 +533,10 @@ public class ShaderController {
     
     public static ShaderProgram getProgram(String program){
         return programs.get(program);
+    }
+    
+    public static String getCurrentConfiguration(){
+        return currentshader;
     }
     
     public static boolean loadShader(String name, String loc, int type){

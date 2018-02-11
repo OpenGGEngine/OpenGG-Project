@@ -14,6 +14,7 @@ import com.opengg.core.engine.ResourceManager;
 import com.opengg.core.engine.ResourceRequest;
 import com.opengg.core.engine.WorldEngine;
 import com.opengg.core.gui.GUI;
+import com.opengg.core.gui.GUIController;
 import com.opengg.core.gui.GUIText;
 import com.opengg.core.io.ControlType;
 import static com.opengg.core.io.input.keyboard.Key.*;
@@ -83,7 +84,7 @@ public class OpenGGTest extends GGApplication{
                 + " While the congress of the Republic endlessly debates this alarming chain of events,"
                 + " the Supreme Chancellor has secretly dispatched two Jedi Knights,"
                 + " the guardians of peace and justice in the galaxy, to settle the conflict...", new Vector2f(), 1f, 0.5f, false);
-        GUI.addItem("aids", new GUIText(text, font, new Vector2f(0f,0)));
+        GUIController.getDefault().addItem("aids", new GUIText(text, font, new Vector2f(0f,0)));
         
         ResourceRequest request = new ResourceRequest(Resource.getModelPath("goldleaf"), ResourceRequest.MODEL);
         ResourceManager.prefetch(request);
@@ -144,8 +145,6 @@ public class OpenGGTest extends GGApplication{
                 Resource.getTexturePath("skybox\\majestic_dn.png"),
                 Resource.getTexturePath("skybox\\majestic_rt.png"),
                 Resource.getTexturePath("skybox\\majestic_lf.png")), 1500f));
-        
-        PhysicsRenderer.setEnabled(true);
     }
 
     @Override

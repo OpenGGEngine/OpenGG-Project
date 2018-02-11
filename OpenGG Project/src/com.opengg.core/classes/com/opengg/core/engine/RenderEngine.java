@@ -8,11 +8,13 @@ package com.opengg.core.engine;
 
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.gui.GUI;
+import com.opengg.core.gui.GUIController;
 import com.opengg.core.model.ModelManager;
+import com.opengg.core.physics.PhysicsRenderer;
 import com.opengg.core.render.GLBuffer;
 import com.opengg.core.render.Renderable;
 import com.opengg.core.render.light.Light;
-import com.opengg.core.render.postprocess.PostProcessPipeline;
+import com.opengg.core.render.postprocess.PostProcessController;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.shader.VertexArrayAttribute;
 import com.opengg.core.render.shader.VertexArrayFormat;
@@ -30,8 +32,11 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL14.GL_FUNC_ADD;
 import static org.lwjgl.opengl.GL14.glBlendEquation;
 import static org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW;
+import org.lwjgl.opengl.GL30;
+import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER;
 import static org.lwjgl.opengl.GL30.GL_MAJOR_VERSION;
 import static org.lwjgl.opengl.GL30.GL_MINOR_VERSION;
+import static org.lwjgl.opengl.GL30.glBindFramebuffer;
 import static org.lwjgl.opengl.GL31.GL_UNIFORM_BUFFER;
 import static org.lwjgl.opengl.GL32.GL_TEXTURE_CUBE_MAP_SEAMLESS;
 
@@ -61,9 +66,14 @@ public class RenderEngine {
     /**
      * Initializes the render engine, should rarely if ever be called
      */
-    static void init() {
+    static void initialize() {
         ShaderController.initialize();
-
+        TextureManager.initialize();
+        ModelManager.initialize();
+        GUIController.initialize();
+        PostProcessController.initialize();
+        PhysicsRenderer.initialize();
+        
         vaoformat = new VertexArrayFormat();
         vaoformat.addAttribute(new VertexArrayAttribute("position", 3, 12, GL_FLOAT, 0, 0, false));
         //vaoformat.addAttribute(new VertexArrayAttribute("color", 4, 12, GL_FLOAT, 3, 0, false));
@@ -83,12 +93,8 @@ public class RenderEngine {
         animation.addAttribute(new VertexArrayAttribute("texcoord", 2, 20, GL_FLOAT, 10, 0, false));
         animation.addAttribute(new VertexArrayAttribute("jointindex", 4, 20, GL_FLOAT, 12, 0, false));
         animation.addAttribute(new VertexArrayAttribute("weights", 4, 20, GL_FLOAT, 16, 0, false));
-        TextureManager.initialize();
-        ModelManager.initialize();
 
         sceneTex = WindowFramebuffer.getWindowFramebuffer(1);
-        PostProcessPipeline.initialize(sceneTex);
-
         defaultvao = new VertexArrayObject(vaoformat);
         lightobj = new GLBuffer(GL_UNIFORM_BUFFER, 1600, GL_DYNAMIC_DRAW);
         lightobj.bindBase(ShaderController.getUniqueUniformBufferLocation());
@@ -114,6 +120,8 @@ public class RenderEngine {
         glDepthFunc(GL_LEQUAL);
         glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        
+        GGConsole.log("Render engine initialized");
     }
 
     private static void enableDefaultGroups(){
@@ -140,7 +148,7 @@ public class RenderEngine {
                         d.render();
                     }
                     lights.get(i).getLightbuffer().disableRendering();
-                    lights.get(i).getLightbuffer().useTexture(6 + used, Framebuffer.DEPTH);
+                    lights.get(i).getLightbuffer().useTexture(Framebuffer.DEPTH, 6 + used);
                     used++;
                 }
             }
@@ -158,6 +166,69 @@ public class RenderEngine {
             
         });
         paths.add(path);
+    }
+    
+    static void useLights(){
+        for(int i = 0; i < lights.size(); i++){
+            lightobj.uploadSubData(lights.get(i).getBuffer(), i * lightoffset);
+        }
+        ShaderController.setUniform("numLights", lights.size());
+    }
+    
+    public static void sortOrders(){
+        groups = groups.stream().sorted((RenderGroup o1, RenderGroup o2) -> {
+            if(o1.getOrder() > o2.getOrder()){
+                return 1;
+            }else if(o1.getOrder() < o2.getOrder()){
+                return -1;
+            }else{
+                return 0;
+            }
+        }).collect(Collectors.toList());
+    }
+    
+    public static void render(){
+        ShaderController.setView(camera.getMatrix());
+        ShaderController.setUniform("camera", camera.getPos().inverse());
+        projdata.ratio = WindowController.getWindow().getRatio();
+        projdata.use();
+
+        sceneTex.enableRendering();
+        sceneTex.useEnabledAttachments();
+        useLights();
+        resetConfig();
+        defaultvao.bind();
+        if(skybox != null){
+            ShaderController.useConfiguration("sky");
+            skybox.getCubemap().use(2);
+            skybox.getDrawable().render();
+        }
+        
+        defaultvao.bind();
+        
+        for(RenderPath path : getActiveRenderPaths()){
+            path.render();
+            resetConfig();
+        }       
+        sceneTex.disableRendering();
+        
+        defaultvao.bind();
+        
+        GUI.startGUIPos();
+        PostProcessController.process(sceneTex);
+        GUIController.render();
+    }
+    
+    public static void resetConfig(){
+        glDepthMask(true);
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LEQUAL);
+        
+        glEnable(GL_BLEND);
+        glBlendEquation(GL_FUNC_ADD);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        
+        glDisable(GL_CULL_FACE);
     }
     
     /**
@@ -200,6 +271,10 @@ public class RenderEngine {
         currentvao = vao;
         if(vao == null)
             currentvao = defaultvao;
+    }
+    
+    public static VertexArrayObject getDefaultVAO(){
+        return defaultvao;
     }
     
     public static void setWireframe(boolean wf){
@@ -320,69 +395,8 @@ public class RenderEngine {
         return initialized;
     }
     
-    static void useLights(){
-        for(int i = 0; i < lights.size(); i++){
-            lightobj.uploadSubData(lights.get(i).getBuffer(), i * lightoffset);
-        }
-        ShaderController.setUniform("numLights", lights.size());
-    }
-    
-    public static void sortOrders(){
-        groups = groups.stream().sorted((RenderGroup o1, RenderGroup o2) -> {
-            if(o1.getOrder() > o2.getOrder()){
-                return 1;
-            }else if(o1.getOrder() < o2.getOrder()){
-                return -1;
-            }else{
-                return 0;
-            }
-        }).collect(Collectors.toList());
-    }
-    
-    public static void draw(){
-        ShaderController.setView(camera.getMatrix());
-        ShaderController.setUniform("camera", camera.getPos().inverse());
-        projdata.ratio = WindowController.getWindow().getRatio();
-        projdata.use();
-
-        sceneTex.enableRendering();
-        sceneTex.useEnabledAttachments();
-        useLights();
-        resetConfig();
-
-        if(skybox != null){
-            defaultvao.bind();
-            ShaderController.useConfiguration("sky");
-            skybox.getCubemap().use(2);
-            skybox.getDrawable().render();
-        }
-        
-        defaultvao.bind();
-        
-        for(RenderPath path : getActiveRenderPaths()){
-            path.render();
-            resetConfig();
-        }       
-        
-        sceneTex.disableRendering();
-        GUI.startGUIPos();
-        PostProcessPipeline.process();
-        GUI.render();
-    }
-    
-    public static void resetConfig(){
-        glDepthMask(true);
-        glEnable(GL_DEPTH_TEST);
-        glDepthFunc(GL_LEQUAL);
-        
-        glEnable(GL_BLEND);
-        glBlendEquation(GL_FUNC_ADD);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        
-        glDisable(GL_CULL_FACE);
-    }
-    
     static void destroy(){
-        //TextureManager.destroy();
+        TextureManager.destroy();
+        GGConsole.log("Render engine has released all OpenGL resources and has finalized");
     }
 }

@@ -34,7 +34,7 @@ public class AudioController {
     private static float gain = 1;
     
     private static ArrayList<Sound> sounds = new ArrayList<>();
-    static void init() {
+    static void initialize() {
         device = new ALCDevice(null);
 
         context = device.getContextFromDevice(null);
@@ -48,6 +48,8 @@ public class AudioController {
             initialized = true;
         
         SoundManager.initialize();
+        GGConsole.log("Audio Controller initialized, using OpenAL version " +  AL10.alGetString(AL10.AL_VERSION) 
+                + " from " + AL10.alGetString(AL10.AL_VENDOR));
     }
     
     /**

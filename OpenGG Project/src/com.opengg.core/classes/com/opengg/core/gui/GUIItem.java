@@ -45,7 +45,7 @@ public abstract class GUIItem {
 
     public Vector2f getPosition() {
         if(parent == null)
-            return position;;
+            return position;
         return position.add(parent.getPosition());
     }
 
@@ -61,5 +61,5 @@ public abstract class GUIItem {
         this.parent = parent;
     }
 
-    public abstract void render(float x,float y);
+    public abstract void render();
 }

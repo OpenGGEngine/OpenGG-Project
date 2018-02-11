@@ -18,7 +18,7 @@ public class PhysicsEngine {
     static PhysicsSystem instance;
     
     public static void initialize(){
-        PhysicsRenderer.initialize();
+        
     }
     
     public static void addEntity(PhysicsEntity entity){

@@ -49,10 +49,10 @@ public class GUIText extends GUIRenderable {
     }
 
     @Override
-    public void render(float x, float y) {
+    public void render() {
        
         ShaderController.setDistanceField(1);
-        super.render((this.position.x + x), (this.position.y + y));
+        super.render();
         ShaderController.setDistanceField(0);
     }
 }
