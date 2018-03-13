@@ -12,9 +12,12 @@ import com.opengg.core.math.FastMath;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
+import com.opengg.core.render.drawn.Drawable;
+import com.opengg.core.render.drawn.TexturedDrawnObject;
 import com.opengg.core.render.objects.ObjectCreator;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.texture.Texture;
+import com.opengg.core.render.texture.TextureData;
 import com.opengg.core.render.texture.TextureManager;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
@@ -29,18 +32,22 @@ public class WaterComponent extends RenderComponent{
     float current;
     float tscale;
     float size;
-    Texture texture;
+    TextureData texture;
     
     public WaterComponent(){}
     
-    public WaterComponent(Texture tex, float size){
+    public WaterComponent(TextureData tex, float size){
         this(tex, 0.1f, 100, size);
     }
     
-    public WaterComponent(Texture texture, float movespeed, float tscale, float size){
-        super(ObjectCreator.createSquare(new Vector2f(-size,-size), new Vector2f(size,size), 0));
-        this.size = size;
+    public WaterComponent(TextureData texture, float movespeed, float tscale, float size){
+        OpenGG.asyncExec(() -> {
+            Drawable drawn = ObjectCreator.createSquare(new Vector2f(-size,-size), new Vector2f(size,size), 0);
+            setDrawable(new TexturedDrawnObject(drawn, Texture.get2DSRGBTexture(texture)));
+        });
+        
         this.texture = texture;
+        this.size = size;
         this.tscale = tscale;
         this.movespeed = movespeed;
         this.setRotationOffset(new Quaternionf(new Vector3f(90,0,0)));
@@ -54,7 +61,6 @@ public class WaterComponent extends RenderComponent{
     
     @Override
     public void render(){
-        texture.use(0);
         ShaderController.setUVMultX(tscale);
         ShaderController.setUniform("uvoffsetx", FastMath.sin(current)/4);
         ShaderController.setUniform("uvoffsety", FastMath.sin(current)/4);
@@ -81,12 +87,12 @@ public class WaterComponent extends RenderComponent{
         this.tscale = tscale;
     }
     
-    public Texture getTexture() {
+    public TextureData getTexture() {
         return texture;
     }
 
-    public void setTexture(Texture texture) {
-        this.texture = texture;
+    public void setTexture(TextureData texture) {
+        this.getDrawable();
     }
     
     @Override
@@ -96,7 +102,7 @@ public class WaterComponent extends RenderComponent{
         out.write(movespeed);
         out.write(current);
         out.write(tscale);
-        out.write(texture.getData().get(0).source);
+        out.write(texture.source);
     }
     
     @Override
@@ -106,9 +112,10 @@ public class WaterComponent extends RenderComponent{
         movespeed = in.readFloat();
         current = in.readFloat();
         tscale = in.readFloat();
-        texture = Texture.get2DTexture(TextureManager.loadTexture(in.readString()));
+        texture = TextureManager.loadTexture(in.readString());
         OpenGG.asyncExec(() -> {
-            super.setDrawable(ObjectCreator.createSquare(new Vector2f(-size,-size), new Vector2f(size,size), 0));
+            Drawable drawn = ObjectCreator.createSquare(new Vector2f(-size,-size), new Vector2f(size,size), 0);
+            setDrawable(new TexturedDrawnObject(drawn, Texture.get2DSRGBTexture(texture)));
         });
     }
 }

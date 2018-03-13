@@ -7,7 +7,6 @@ package com.opengg.core.render.texture;
 
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.engine.WindowController;
-import com.opengg.core.math.Tuple;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,13 +20,11 @@ import static org.lwjgl.opengl.GL11.GL_NEAREST;
 import static org.lwjgl.opengl.GL11.GL_RGBA;
 import static org.lwjgl.opengl.GL11.GL_RGBA8;
 import static org.lwjgl.opengl.GL11.GL_STENCIL_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE;
-import static org.lwjgl.opengl.GL11.glBindTexture;
 import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glDrawBuffer;
-import static org.lwjgl.opengl.GL11.glFlush;
 import static org.lwjgl.opengl.GL11.glViewport;
+import static org.lwjgl.opengl.GL14.GL_DEPTH_COMPONENT32;
 import static org.lwjgl.opengl.GL20.glDrawBuffers;
 import static org.lwjgl.opengl.GL30.GL_COLOR_ATTACHMENT0;
 import static org.lwjgl.opengl.GL30.GL_DEPTH24_STENCIL8;
@@ -75,7 +72,7 @@ public class Framebuffer {
        
         int[] attachments = new int[usedAttachments.size()];
         for(int i = 0; i < attachments.length; i++){
-            if(usedAttachments.get(i) == GL_DEPTH_ATTACHMENT) continue;
+            if(usedAttachments.get(i) == DEPTH) continue;
             attachments[i] = usedAttachments.get(i);
         }
 
@@ -100,6 +97,10 @@ public class Framebuffer {
     
     public void attachDepthStencilTexture(int width, int height){
         attachTexture(width, height, GL_DEPTH_STENCIL, GL_DEPTH24_STENCIL8, GL_UNSIGNED_INT_24_8, GL_DEPTH_ATTACHMENT);
+    }
+    
+    public void attachDepthTexture(int width, int height){
+        attachTexture(width, height, GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT32, GL_FLOAT, GL_DEPTH_ATTACHMENT);
     }
     
     public void attachDepthRenderbuffer(int width, int height){
@@ -128,6 +129,7 @@ public class Framebuffer {
         fb.bind(GL_FRAMEBUFFER);
         fb.attachTexture(attachment, tex.getID(), 0);
         checkForCompletion();
+        fb.unbind(GL_FRAMEBUFFER);
 
         textures.put(attachment, tex);
         usedAttachments.add(attachment);
@@ -164,14 +166,17 @@ public class Framebuffer {
     }
     
     public void enableRendering(){
-        glBindTexture(GL_TEXTURE_2D, 0);
         fb.bind(GL_FRAMEBUFFER);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         glViewport(0, 0, lx, ly);
     }
     
+    public void restartRendering(){
+        fb.bind(GL_FRAMEBUFFER);
+        glViewport(0, 0, lx, ly);
+    }
+    
     public void disableRendering(){
-        glFlush();
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glViewport(0, 0, WindowController.getWindow().getWidth(), WindowController.getWindow().getHeight());
         

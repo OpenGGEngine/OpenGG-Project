@@ -14,19 +14,29 @@ import com.opengg.core.render.window.WindowResizeListener;
  * @author Javier
  */
 public class WindowFramebuffer extends Framebuffer implements WindowResizeListener{
-    int colorcount;
+    int targets;
+    boolean fp;
     
     protected WindowFramebuffer(){}
     
     public static WindowFramebuffer getWindowFramebuffer(int targets){
-        WindowFramebuffer wfb = new WindowFramebuffer();
-        wfb.regen(targets);
-        wfb.colorcount = targets;
+        return getWindowFramebuffer(targets, false);
+    }
+    
+    public static WindowFramebuffer getFloatingPointWindowFramebuffer(int targets){
+        return getWindowFramebuffer(targets, true);
+    }
+    
+    private static WindowFramebuffer getWindowFramebuffer(int targets, boolean fp){
+        WindowFramebuffer wfb = new WindowFramebuffer();  
+        wfb.targets = targets;
+        wfb.fp = fp;
+        wfb.regen();
         WindowController.addResizeListener(wfb);
         return wfb;
     }
     
-    private void regen(int targets){
+    private void regen(){
         this.fb = new NativeGLFramebuffer();
         refresh();
         Vector2i size = new Vector2i(WindowController.getWidth(),
@@ -34,15 +44,18 @@ public class WindowFramebuffer extends Framebuffer implements WindowResizeListen
         
         bind();
         for(int i = 0; i < targets; i++){
-            attachColorTexture(size.x, size.y, i);
+            if(fp)
+                attachFloatingPointTexture(size.x, size.y, i);
+            else
+                attachColorTexture(size.x, size.y, i);
         }
-        attachDepthStencilTexture(size.x, size.y);
+        attachDepthTexture(size.x, size.y);
         checkForCompletion();
 
     }
 
     @Override
     public void onResize(Vector2i size) {
-        regen(colorcount);
+        regen();
     }
 }

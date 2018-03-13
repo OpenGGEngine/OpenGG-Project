@@ -5,6 +5,7 @@
  */
 package com.opengg.core.world.components;
 
+import com.opengg.core.engine.OpenGG;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.drawn.Drawable;
@@ -13,6 +14,7 @@ import com.opengg.core.render.light.Light;
 import com.opengg.core.render.objects.ObjectCreator;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.texture.Texture;
+import com.opengg.core.render.texture.TextureData;
 import com.opengg.core.render.texture.TextureManager;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
@@ -30,19 +32,21 @@ public class SunComponent extends RenderComponent{
     LightComponent light;
 
     public SunComponent(){
-        this(Texture.get2DTexture(TextureManager.getDefault()), 0.01f);
+        this(TextureManager.getDefault(), 0.01f);
     }
     
-    public SunComponent(Texture texture){
+    public SunComponent(TextureData texture){
         this(texture, 0.01f);
     }
     
-    public SunComponent(Texture texture, float rotspeed){
+    public SunComponent(TextureData texture, float rotspeed){
         super();
-        Drawable drawn = ObjectCreator.createSquare(new Vector2f(0,0), new Vector2f(1,1), 0f);
-        setDrawable(new TexturedDrawnObject(drawn, texture));
+        OpenGG.asyncExec(() -> {
+            Drawable drawn = ObjectCreator.createSquare(new Vector2f(0,0), new Vector2f(1,1), 0f);
+            setDrawable(new TexturedDrawnObject(drawn, Texture.get2DSRGBTexture(texture)));
+        });
+        
         this.rotspeed = rotspeed;
-        this.texture = texture;
         light = new LightComponent(new Light(new Vector3f(), new Vector3f(1,0.3f,0.3f),100000,10000));
         light.use();
         this.attach(light);

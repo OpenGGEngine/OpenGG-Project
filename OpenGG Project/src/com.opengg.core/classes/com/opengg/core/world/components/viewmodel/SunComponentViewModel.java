@@ -59,7 +59,7 @@ public class SunComponentViewModel extends ViewModel{
 
     @Override
     public Component getFromInitializer(Initializer init) {
-        SunComponent sun = new SunComponent(Texture.get2DTexture((TextureData)init.elements.get(0).value));
+        SunComponent sun = new SunComponent((TextureData)init.elements.get(0).value);
         return sun;
     }
 

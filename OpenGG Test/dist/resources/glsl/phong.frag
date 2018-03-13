@@ -7,7 +7,7 @@ layout(location = 1) out vec4 bright;
 in vertexData{
     
     vec2 textureCoord;
-    vec4 pos;
+    vec3 pos;
     vec3 norm;
 };
 
@@ -123,7 +123,7 @@ vec4 getTex(sampler2D tname){
 vec3 shadify(Light light){
     
 	float distance = length( light.lightpos - pos.xyz ); 
-	float attenuation =  clamp((1.0 - (distance/light.lightdistance) * (distance/light.lightdistance)), 0.0, 10.0);
+	float attenuation =  clamp((1.0 - (distance/light.lightdistance)), 0.0, 10.0);
 	attenuation = attenuation * attenuation;
 
 	vec3 lightDir = normalize(light.lightpos - pos.xyz);
@@ -136,34 +136,32 @@ vec3 shadify(Light light){
 	vec3 fspec = specular * light.color * pow(cosAlpha, specpow) * attenuation;
 	
     vec3 fragColor = fdif + fspec;
-	
-	return fragColor;
+
+    return fragColor;
 }
 
 void process(){
-	if(material.hascolormap){
+	//if(material.hascolormap){
 		color = getTex(Kd);
-	}else{
-		color = vec4(material.kd, 1);
-	}
+	//}else{
+	//	color = vec4(material.kd, 1);
+	//}
 
     diffuse = color.rgb;
 
     trans = color.a;
     
-    if(trans < 0.2) discard;
-    
-    ambient = 0.2f * diffuse;
+    ambient = 0.1f * diffuse;
     
     specular = vec3(1,1,1);
     
     specpow = 32;
-    if(material.hasspecpow){
+    /*if(material.hasspecpow){
         vec4 specpowvec = getTex(Ns);
         specpow = specpowvec.r * 32;
     }else{
         specpow = material.ns;
-    }
+    }*/
 	
     if(material.hasspecmap){
         specular = getTex(Ks).rgb;
@@ -177,7 +175,7 @@ void process(){
 		n = normalize((model * vec4(norm,0.0f)).xyz);
 	}
 	
-	reflectedcolor = texture(cubemap, normalize(reflect(eyedir,n))).xyz;
+	//reflectedcolor = texture(cubemap, normalize(reflect(eyedir,n))).xyz;
 	
 }
 
@@ -185,14 +183,14 @@ void main() {
 
 	genPhong();
 	process();
-	vec3 col = vec3(0,0,0);
+	vec3 col = ambient;
 	int w = 0;
 	for(int i = 0; i < numLights; i++){
 		col += shadify(lights[i]);
 		w++;
 	}
 	
-	//fcolor = vec4(col + ambient, color.a);
-	fcolor = getTex(Kd) + vec4(0.1);
+	fcolor = vec4(col, trans);
+    //fcolor = vec4(ambient,1);
 }
 

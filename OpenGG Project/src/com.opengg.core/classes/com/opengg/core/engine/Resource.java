@@ -149,6 +149,16 @@ public class Resource {
     }
     
     /**
+     * Returns the {@link com.opengg.core.texture.Texture} with the given name using the sRGB format<br>
+     * It is acquired by calling {@link #getTexturePath(java.lang.String) } and passing the result into {@link com.opengg.core.render.texture.Texture#get2DSRGBTexture(java.lang.String) },
+     * @param name Name of texture file to be loaded
+     * @return Texture object loaded from file
+     */
+    public static Texture getSRGBTexture(String name){
+        return Texture.get2DSRGBTexture(getTexturePath(name));
+    }
+    
+    /**
      * Returns the {@link com.opengg.core.texture.TextureData} with the given name <br>
      * It is acquired by calling {@link #getTexturePath(java.lang.String) } and passing the result into {@link com.opengg.core.render.texture.TextureManager#loadTextureData(java.lang.String) },
      * @param name Name of texture file to be loaded

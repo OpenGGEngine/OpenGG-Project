@@ -32,11 +32,8 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL14.GL_FUNC_ADD;
 import static org.lwjgl.opengl.GL14.glBlendEquation;
 import static org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW;
-import org.lwjgl.opengl.GL30;
-import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER;
 import static org.lwjgl.opengl.GL30.GL_MAJOR_VERSION;
 import static org.lwjgl.opengl.GL30.GL_MINOR_VERSION;
-import static org.lwjgl.opengl.GL30.glBindFramebuffer;
 import static org.lwjgl.opengl.GL31.GL_UNIFORM_BUFFER;
 import static org.lwjgl.opengl.GL32.GL_TEXTURE_CUBE_MAP_SEAMLESS;
 
@@ -94,7 +91,7 @@ public class RenderEngine {
         animation.addAttribute(new VertexArrayAttribute("jointindex", 4, 20, GL_FLOAT, 12, 0, false));
         animation.addAttribute(new VertexArrayAttribute("weights", 4, 20, GL_FLOAT, 16, 0, false));
 
-        sceneTex = WindowFramebuffer.getWindowFramebuffer(1);
+        sceneTex = WindowFramebuffer.getFloatingPointWindowFramebuffer(1);
         defaultvao = new VertexArrayObject(vaoformat);
         lightobj = new GLBuffer(GL_UNIFORM_BUFFER, 1600, GL_DYNAMIC_DRAW);
         lightobj.bindBase(ShaderController.getUniqueUniformBufferLocation());
@@ -140,23 +137,30 @@ public class RenderEngine {
             int used = 0;
             for(int i = 0; i < lights.size() && used < 2; i++){
                 if(lights.get(i).hasShadow()){    
-                    //ShaderController.setView(lights.get(i).getView());
-                    
+                    ShaderController.setView(lights.get(i).getView());
+                    ShaderController.setProjection(lights.get(i).getPerspective());
+
                     lights.get(i).getLightbuffer().enableRendering();
                     lights.get(i).getLightbuffer().useEnabledAttachments();
+                    
                     for(RenderGroup d : getActiveRenderGroups()){
                         d.render();
                     }
+                    
                     lights.get(i).getLightbuffer().disableRendering();
-                    lights.get(i).getLightbuffer().useTexture(Framebuffer.DEPTH, 6 + used);
+                    lights.get(i).getLightbuffer().useTexture(Framebuffer.DEPTH, 0);
+                    //lights.get(i).getLightbuffer().blitToWithDepth(sceneTex);
                     used++;
                 }
             }
             
-            sceneTex.enableRendering();
+            sceneTex.restartRendering();
+            sceneTex.useEnabledAttachments();
+            useLights();
+            ShaderController.setView(camera.getMatrix());
+            projdata.use();
             
             for(RenderGroup d : getActiveRenderGroups()){
-                ShaderController.setView(camera.getMatrix());
                 if(d.pipeline.equals("object"))
                     ShaderController.useConfiguration("shadobject");
                 else
@@ -204,8 +208,6 @@ public class RenderEngine {
             skybox.getDrawable().render();
         }
         
-        defaultvao.bind();
-        
         for(RenderPath path : getActiveRenderPaths()){
             path.render();
             resetConfig();
@@ -228,7 +230,10 @@ public class RenderEngine {
         glBlendEquation(GL_FUNC_ADD);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         
-        glDisable(GL_CULL_FACE);
+        //if(cull)
+        //    glEnable(GL_CULL_FACE);
+        //else
+            glDisable(GL_CULL_FACE);
     }
     
     /**
@@ -373,6 +378,7 @@ public class RenderEngine {
 
     public static void setCulling(boolean enable){
         cull = enable;
+        resetConfig();
     }
     
     public static void useCamera(Camera c){

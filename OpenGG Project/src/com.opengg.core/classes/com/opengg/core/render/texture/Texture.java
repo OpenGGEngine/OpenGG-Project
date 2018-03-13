@@ -25,7 +25,6 @@ import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_S;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_T;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE;
 import static org.lwjgl.opengl.GL11.glBindTexture;
-import static org.lwjgl.opengl.GL11.glGetError;
 import static org.lwjgl.opengl.GL11.glGetFloat;
 import static org.lwjgl.opengl.GL12.GL_TEXTURE_MAX_LOD;
 import static org.lwjgl.opengl.GL12.GL_TEXTURE_MIN_LOD;
@@ -39,6 +38,7 @@ import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_X;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_Y;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_Z;
 import static org.lwjgl.opengl.GL14.GL_TEXTURE_LOD_BIAS;
+import static org.lwjgl.opengl.GL21.GL_SRGB_ALPHA;
 import static org.lwjgl.opengl.GL30.GL_TEXTURE_2D_ARRAY;
 
 
@@ -210,8 +210,20 @@ public class Texture {
     }
     
     public static Texture get2DTexture(TextureData data){
+        return get2DTexture(data, GL_RGBA, GL_RGBA8, GL_UNSIGNED_BYTE);
+    }
+    
+    public static Texture get2DSRGBTexture(String path){
+        return get2DSRGBTexture(TextureManager.loadTexture(path));
+    }
+    
+    public static Texture get2DSRGBTexture(TextureData data){
+        return get2DTexture(data, GL_RGBA, GL_SRGB_ALPHA, GL_UNSIGNED_BYTE);
+    }
+    
+    public static Texture get2DTexture(TextureData data, int format, int intformat, int storage){
         data.buffer.rewind();
-        Texture texture = new Texture(GL_TEXTURE_2D);
+        Texture texture = new Texture(GL_TEXTURE_2D, format, intformat, storage);
         texture.setActiveTexture(0);
         texture.bind();
         texture.set2DData(data);
@@ -227,11 +239,10 @@ public class Texture {
         TextureData data = new TextureData(x, y, 4, null, "framebuffer");
         
         Texture texture = new Texture(GL_TEXTURE_2D, format, intformat, input);
-        //texture.setActiveTexture(0);
         texture.bind();
         texture.set2DData(data);
         texture.setTextureWrapType(GL_REPEAT);
-        texture.setMinimumFilterType(GL_LINEAR);
+        texture.setMinimumFilterType(GL_NEAREST);
         texture.setMaximumFilterType(GL_NEAREST);
         return texture;
     }
@@ -246,9 +257,26 @@ public class Texture {
         return getCubemap(data1,data2,data3,data4,data5,data6);
     }
     
-   public static Texture getCubemap(TextureData data1, TextureData data2, TextureData data3, TextureData data4, TextureData data5, TextureData data6){
-        
-        Texture texture = new Texture(GL_TEXTURE_CUBE_MAP);
+    public static Texture getCubemap(TextureData data1, TextureData data2, TextureData data3, TextureData data4, TextureData data5, TextureData data6){
+        return getCubemap(data1, data2, data3, data4, data5, data6, GL_RGBA, GL_RGBA8, GL_UNSIGNED_BYTE);
+    }
+    
+    public static Texture getSRGBCubemap(String path1, String path2, String path3, String path4, String path5, String path6){
+        TextureData data1 = TextureManager.loadTexture(path1, false);
+        TextureData data2 = TextureManager.loadTexture(path2, false);
+        TextureData data3 = TextureManager.loadTexture(path3, false);
+        TextureData data4 = TextureManager.loadTexture(path4, false);
+        TextureData data5 = TextureManager.loadTexture(path5, false);
+        TextureData data6 = TextureManager.loadTexture(path6, false);
+        return getSRGBCubemap(data1,data2,data3,data4,data5,data6);
+    }
+    
+    public static Texture getSRGBCubemap(TextureData data1, TextureData data2, TextureData data3, TextureData data4, TextureData data5, TextureData data6){
+        return getCubemap(data1, data2, data3, data4, data5, data6, GL_RGBA, GL_SRGB_ALPHA, GL_UNSIGNED_BYTE);
+    }
+    
+    public static Texture getCubemap(TextureData data1, TextureData data2, TextureData data3, TextureData data4, TextureData data5, TextureData data6, int format, int intformat, int storage){
+        Texture texture = new Texture(GL_TEXTURE_CUBE_MAP, format, intformat, storage);
         texture.setActiveTexture(0);
         texture.bind();
         texture.setCubemapData(data1, data2, data3, data4, data5, data6);
@@ -267,7 +295,21 @@ public class Texture {
     }
     
     public static Texture getArrayTexture(TextureData... datums){
-        Texture texture = new Texture(GL_TEXTURE_2D_ARRAY);
+        return getArrayTexture(GL_RGBA, GL_RGBA8, GL_UNSIGNED_BYTE, datums);
+    }
+    
+    public static Texture getSRGBArrayTexture(String... paths){
+        TextureData[] datums = new TextureData[paths.length];
+        for(int i = 0; i < paths.length; i++) datums[i] = TextureManager.loadTexture(paths[i]);
+        return  getSRGBArrayTexture(datums);
+    }
+    
+    public static Texture getSRGBArrayTexture(TextureData... datums){
+        return getArrayTexture(GL_RGBA, GL_SRGB_ALPHA, GL_UNSIGNED_BYTE, datums);
+    }
+    
+    public static Texture getArrayTexture(int format, int intformat, int storage, TextureData... datums){
+        Texture texture = new Texture(GL_TEXTURE_2D_ARRAY, format, intformat, storage);
         texture.setActiveTexture(0);
         texture.bind();
         texture.set3DStorage(datums[0].width, datums[0].height, datums.length);

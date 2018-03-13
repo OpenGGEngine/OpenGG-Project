@@ -67,7 +67,7 @@ public class WaterComponentViewModel extends ViewModel{
 
     @Override
     public Component getFromInitializer(Initializer init) {
-        WaterComponent wc = new WaterComponent(Texture.get2DTexture((TextureData)init.elements.get(0).value), (Float)init.elements.get(1).value);
+        WaterComponent wc = new WaterComponent(((TextureData)init.elements.get(0).value), (Float)init.elements.get(1).value);
         return wc;
     }
 
@@ -80,7 +80,7 @@ public class WaterComponentViewModel extends ViewModel{
             ((WaterComponent)component).setMovespeed((Float)element.value);
         
         if(element.internalname.equals("tex"))
-            ((WaterComponent)component).setTexture(Texture.get2DTexture((TextureData)element.value));
+            ((WaterComponent)component).setTexture((TextureData)element.value);
         
     }
 

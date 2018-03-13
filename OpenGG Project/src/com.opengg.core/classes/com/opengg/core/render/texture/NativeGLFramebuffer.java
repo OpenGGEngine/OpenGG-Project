@@ -32,6 +32,10 @@ public class NativeGLFramebuffer {
         glBindFramebuffer(target, id);
     }
     
+    public void unbind(int target){
+        glBindFramebuffer(target, id);
+    }
+    
     public void attachTexture(int attachment, int texture, int layer){
         glFramebufferTexture(GL_FRAMEBUFFER, attachment, texture, layer);
     }

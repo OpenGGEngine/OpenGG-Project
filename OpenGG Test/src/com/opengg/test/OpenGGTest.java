@@ -10,18 +10,16 @@ import com.opengg.core.engine.OpenGG;
 import com.opengg.core.engine.ProjectionData;
 import com.opengg.core.engine.RenderEngine;
 import com.opengg.core.engine.Resource;
-import com.opengg.core.engine.ResourceManager;
-import com.opengg.core.engine.ResourceRequest;
 import com.opengg.core.engine.WorldEngine;
-import com.opengg.core.gui.GUI;
 import com.opengg.core.gui.GUIController;
 import com.opengg.core.gui.GUIText;
 import com.opengg.core.io.ControlType;
 import static com.opengg.core.io.input.keyboard.Key.*;
+import com.opengg.core.math.Matrix4f;
+import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.model.ModelManager;
-import com.opengg.core.physics.PhysicsRenderer;
 import com.opengg.core.physics.collision.AABB;
 import com.opengg.core.physics.collision.ColliderGroup;
 import com.opengg.core.physics.collision.ConvexHull;
@@ -31,8 +29,8 @@ import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.texture.text.GGFont;
 import com.opengg.core.render.window.WindowInfo;
 import com.opengg.core.render.window.WindowOptions;
+import com.opengg.core.world.Camera;
 import com.opengg.core.world.Skybox;
-import com.opengg.core.world.Terrain;
 import com.opengg.core.world.components.FreeFlyComponent;
 import com.opengg.core.world.components.LightComponent;
 import com.opengg.core.world.components.ModelRenderComponent;
@@ -45,8 +43,8 @@ public class OpenGGTest extends GGApplication{
     private GGFont font;
     private Text text;
     private TerrainComponent world;
-    private Texture t2;
-    private AudioListener as;
+    private Texture worldterrain;
+    private AudioListener listener;
     
     public static void main(String[] args){
         WindowInfo w = new WindowInfo();
@@ -78,7 +76,7 @@ public class OpenGGTest extends GGApplication{
         SoundtrackHandler.setSoundtrack(track);
         
         font = Resource.getFont("test", "test.png");
-        text = new Text("Turmoil has engulfed the Galactic Republic. The taxation of trade routes to outlying star systems is in dispute. \n\n"
+        text = new Text("Turmoil has engulfed the Galactic Republic. The taxation of trade routes 0to outlying star systems is in dispute. \n\n"
                 + " Hoping to resolve the matter with a blockade of deadly battleships, "
                 + " the greedy Trade Federation has stopped all shipping to the small planet of Naboo. \n\n"
                 + " While the congress of the Republic endlessly debates this alarming chain of events,"
@@ -86,26 +84,26 @@ public class OpenGGTest extends GGApplication{
                 + " the guardians of peace and justice in the galaxy, to settle the conflict...", new Vector2f(), 1f, 0.5f, false);
         GUIController.getDefault().addItem("aids", new GUIText(text, font, new Vector2f(0f,0)));
         
-        ResourceRequest request = new ResourceRequest(Resource.getModelPath("goldleaf"), ResourceRequest.MODEL);
-        ResourceManager.prefetch(request);
-        
         FreeFlyComponent player = new FreeFlyComponent();
         //TestPlayerComponent player = new TestPlayerComponent();
         player.setPositionOffset(new Vector3f(0,-2,10));
         player.use();
         
-        WorldEngine.getCurrent().attach(new LightComponent(new Light(new Vector3f(0,20,2), new Vector3f(1,1,1), 100000, 0))); 
-        //WorldEngine.getCurrent().attach(new ModelRenderComponent(Resource.getModel("goldleaf")).setScaleOffset(new Vector3f(0.1f)).setRotationOffset(new Vector3f(-90,0,0)));  
+        WorldEngine.getCurrent().attach(new LightComponent(
+                new Light(new Vector3f(20,20,5), new Vector3f(1,1,1), 400, 0,  
+                        new Camera(new Vector3f(0,-5,-50), new Quaternionf(new Vector3f(20,0,0))).getMatrix(), 
+                        Matrix4f.perspective(100f, 1f, 1f, 150f), 1280, 1280))); 
+        WorldEngine.getCurrent().attach(new ModelRenderComponent(Resource.getModel("goldleaf")).setScaleOffset(new Vector3f(0.02f)).setRotationOffset(new Vector3f(-90,0,0)));  
 
-        Terrain t = Terrain.generate(Resource.getTextureData("h2.gif"));
+        /*Terrain t = Terrain.generate(Resource.getTextureData("h2.gif"));
         TerrainComponent tc = new TerrainComponent(t);
         tc.enableCollider();
-        tc.setBlotmap(Resource.getTexture("blendMap.png"));
-        tc.setGroundArray(Texture.getArrayTexture(Resource.getTextureData("grass.png"), Resource.getTextureData("flower2.png"), Resource.getTextureData("dirt.png"), Resource.getTextureData("road.png")));
+        tc.setBlotmap(Resource.getSRGBTexture("blendMap.png"));
+        tc.setGroundArray(Texture.getSRGBArrayTexture(Resource.getTextureData("grass.png"), Resource.getTextureData("flower2.png"), Resource.getTextureData("dirt.png"), Resource.getTextureData("road.png")));
         tc.setPositionOffset(new Vector3f(-100, 20,-100));
         tc.setScaleOffset(new Vector3f(200,30f, 200));
         
-        WorldEngine.getCurrent().attach(tc);
+        WorldEngine.getCurrent().attach(tc);*/
         
         ArrayList<Vector3f> v2 = new ArrayList<>();
         v2.add(new Vector3f(-1,-1,-1));
@@ -138,7 +136,7 @@ public class OpenGGTest extends GGApplication{
         BindController.addBind(ControlType.KEYBOARD, "aim", KEY_K);
         
         RenderEngine.setProjectionData(ProjectionData.getPerspective(100, 0.2f, 3000f));
-        RenderEngine.setSkybox(new Skybox(Texture.getCubemap(
+        RenderEngine.setSkybox(new Skybox(Texture.getSRGBCubemap(
                 Resource.getTexturePath("skybox\\majestic_ft.png"),
                 Resource.getTexturePath("skybox\\majestic_bk.png"),
                 Resource.getTexturePath("skybox\\majestic_up.png"),

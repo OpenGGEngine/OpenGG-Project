@@ -52,6 +52,20 @@ public class Light {
         
         lightbuffer = Framebuffer.generateFramebuffer();
         lightbuffer.attachRenderbuffer(xres, yres, GL_RGBA8, GL_COLOR_ATTACHMENT0);
+        lightbuffer.attachDepthTexture(xres, yres);
+    }
+    
+    public Light(Vector3f pos, Vector3f color, float distance, float distance2, Matrix4f vp, int xres, int yres){
+        this.pos = pos;
+        this.color = color;
+        this.distance = distance;
+        this.distance2 = distance2;
+        shadow = true;
+        view = new Matrix4f();
+        perspective = new Matrix4f();
+        lightbuffer = Framebuffer.generateFramebuffer();
+        lightbuffer.attachRenderbuffer(xres, yres, GL_RGBA8, GL_COLOR_ATTACHMENT0);
+        lightbuffer.attachDepthTexture(xres, yres);
     }
 
     public FloatBuffer getBuffer(){
@@ -95,22 +109,14 @@ public class Light {
         this.shadow = shadow;
     }
 
-    public Matrix4f getView() {
+    public Matrix4f getView(){
         return view;
     }
-
-    public void setView(Matrix4f view) {
-        this.view = view;
-    }
-
-    public Matrix4f getPerspective() {
+    
+    public Matrix4f getPerspective(){
         return perspective;
     }
 
-    public void setPerspective(Matrix4f perspective) {
-        this.perspective = perspective;
-    }
-    
     public Framebuffer getLightbuffer() {
         return lightbuffer;
     }

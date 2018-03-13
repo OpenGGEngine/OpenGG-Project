@@ -50,7 +50,7 @@ public class PostProcessController {
         
         currentBuffer = initial;
         initial.useTexture(0, 0);
-        initial.useTexture(Framebuffer.DEPTH, 1);
+        //initial.useTexture(Framebuffer.DEPTH, 1);
         for(PostProcessingPass pass : passes){
             pass.render();
             switch(pass.op){
@@ -70,5 +70,6 @@ public class PostProcessController {
         }
         
         currentBuffer.blitToBack();
+        RenderEngine.setCulling(true);
     }
 }

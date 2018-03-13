@@ -4,17 +4,12 @@
  * and open the template in the editor.
  */
 module com.opengg.core {
-    requires org.lwjgl.assimp;
-    requires org.lwjgl.egl;
     requires org.lwjgl.glfw;
-    requires org.lwjgl.jawt;
     requires org.lwjgl.nfd;
     requires org.lwjgl.openal;
     requires org.lwjgl.opencl;
     requires org.lwjgl.opengl;
     requires org.lwjgl.stb;
-    requires org.lwjgl.vulkan;
-    requires org.lwjgl.xxhash;
     requires org.lwjgl;
     requires java.logging;
     requires java.desktop;

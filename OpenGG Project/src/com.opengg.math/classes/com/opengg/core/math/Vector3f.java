@@ -16,6 +16,7 @@ import java.nio.FloatBuffer;
  */
 public class Vector3f implements Serializable{
     private static Vector3f zerovector = new Vector3f();
+    private static final long serialVersionUID = 4404184685145307985L;
     
     private float x;
     private float y;
