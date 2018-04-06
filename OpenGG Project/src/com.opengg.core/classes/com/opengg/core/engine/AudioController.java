@@ -75,8 +75,8 @@ public class AudioController {
     }
     
     public static void setListener(AudioListener s){
-        alListener3f(AL_POSITION, s.pos.x(), s.pos.y(), s.pos.z());
-        alListener3f(AL_VELOCITY, s.vel.x(), s.vel.y(), s.vel.z());
+        alListener3f(AL_POSITION, s.pos.x, s.pos.y, s.pos.z);
+        alListener3f(AL_VELOCITY, s.vel.x, s.vel.y, s.vel.z);
 
         int i = AL10.alGetError();
         if(i != AL10.AL_NO_ERROR)

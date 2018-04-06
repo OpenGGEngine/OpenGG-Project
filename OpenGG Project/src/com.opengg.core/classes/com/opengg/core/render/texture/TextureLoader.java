@@ -6,7 +6,7 @@
 
 package com.opengg.core.render.texture;
 
-import com.opengg.core.engine.Resource;
+import com.opengg.core.engine.Resources;
 import com.opengg.core.system.Allocator;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -30,7 +30,7 @@ public class TextureLoader {
 
         stbi_set_flip_vertically_on_load(flip);
 
-        String fpath = Resource.getAbsoluteFromLocal(path);
+        String fpath = Resources.getAbsoluteFromLocal(path);
 
         ByteBuffer image = stbi_load(fpath, w, h, comp, 4);
         if (image == null) {

@@ -980,13 +980,11 @@ public final class FastMath {
         edges.add(new MinkowskiEdge(a, b));
     }
 
-    private static void Sort(Vector2f v) {
+    private static Vector2f Sort(Vector2f v) {
         if (v.x > v.y) {
-            float c;
-            c = v.x;
-            v.x = v.y;
-            v.y = c;
+            return new Vector2f(v.y, v.x);
         }
+        return v;
     }
 
     /// <summary>
@@ -1071,8 +1069,8 @@ public final class FastMath {
         // first project onto an axis-aligned plane, that maximizes the area
         // of the triangles, compute indices: i0,i1. 
         Vector3f A = N.abs();
-        if (A.x() > A.y()) {
-            if (A.x() > A.z()) {
+        if (A.x > A.y) {
+            if (A.x > A.z) {
                 i0 = 1;
                 i1 = 2;
             } else {
@@ -1080,7 +1078,7 @@ public final class FastMath {
                 i1 = 1;
             }
         } else {
-            if (A.z() > A.y()) {
+            if (A.z > A.y) {
                 i0 = 0;
                 i1 = 1;
             } else {
@@ -1250,10 +1248,10 @@ public final class FastMath {
         dd = Vector3f.cross(n1, n2);
 
         // compute and index to the largest component of D 
-        max = (float) Math.abs(dd.x());
+        max = (float) Math.abs(dd.x);
         index = 0;
-        bb = (float) Math.abs(dd.y());
-        cc = (float) Math.abs(dd.z());
+        bb = (float) Math.abs(dd.y);
+        cc = (float) Math.abs(dd.z);
         if (bb > max) {
             max = bb;
             index = 1;
@@ -1300,15 +1298,15 @@ public final class FastMath {
         xxyy = xx * yy;
 
         tmp = a * xxyy;
-        isect1.x = tmp + b * x1 * yy;
-        isect1.y = tmp + c * x0 * yy;
+        isect1.x(tmp + b * x1 * yy);
+        isect1.y(tmp + c * x0 * yy);
 
         tmp = d * xxyy;
-        isect2.x = tmp + e * xx * y1;
-        isect2.y = tmp + f * xx * y0;
+        isect2.x(tmp + e * xx * y1);
+        isect2.y(tmp + f * xx * y0);
 
-        Sort(isect1);
-        Sort(isect2);
+        isect1 = Sort(isect1);
+        isect2 = Sort(isect2);
 
         return !(isect1.y < isect2.x || isect2.y < isect1.x);
     }

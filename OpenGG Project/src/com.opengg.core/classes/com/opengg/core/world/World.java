@@ -7,11 +7,11 @@
 package com.opengg.core.world;
 
 import com.opengg.core.physics.PhysicsSystem;
-import com.opengg.core.engine.RenderEngine;
 import com.opengg.core.engine.RenderGroup;
 import com.opengg.core.exceptions.InvalidParentException;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
+import com.opengg.core.render.texture.TextureData;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
 import com.opengg.core.world.components.Component;
@@ -36,6 +36,7 @@ import java.util.List;
 public class World extends Component{
     public PhysicsSystem physics = new PhysicsSystem();
     public List<RenderGroup> groups = new ArrayList<>();
+    public Skybox skybox;
     
     /**
      * Returns all components attached to this world
@@ -239,6 +240,9 @@ public class World extends Component{
     @Override
     public void serialize(GGOutputStream out) throws IOException{
         super.serialize(out);
+        for(TextureData data : skybox.cube.getData()){
+            out.write(data.source);
+        }
     }
     
     @Override

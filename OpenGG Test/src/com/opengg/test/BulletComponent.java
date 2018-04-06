@@ -6,7 +6,7 @@
 package com.opengg.test;
 
 import com.opengg.core.engine.RenderEngine;
-import com.opengg.core.engine.Resource;
+import com.opengg.core.engine.Resources;
 import com.opengg.core.engine.WorldEngine;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
@@ -36,7 +36,7 @@ public class BulletComponent extends Component{
         this.setRotationOffset(source.getRotation());
         
         this.attach(new PhysicsComponent());
-        bullet = new ModelRenderComponent(Resource.getModel("45acp"));
+        bullet = new ModelRenderComponent(Resources.getModel("45acp"));
         bullet.setRotationOffset(new Quaternionf(new Vector3f(0,0,-90)));
         bullet.setScaleOffset(new Vector3f(0.3f,0.3f,0.3f));
         attach(bullet);

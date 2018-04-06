@@ -16,8 +16,8 @@ import java.nio.FloatBuffer;
  */
 public class Vector2f implements Serializable{
 
-    public float x;
-    public float y;
+    public final float x;
+    public final float y;
 
     /**
      * Creates a default 2d vector with all values set to 0.
@@ -53,66 +53,42 @@ public class Vector2f implements Serializable{
         this.y = v.y;
     }
 
+    public Vector2f x(float x){
+        return new Vector2f(x, this.y);
+    }
+    
+    public Vector2f y(float y){
+        return new Vector2f(this.x, y);
+    }
+    
     public Vector2f add(Vector2f v){
-        return new Vector2f(this).addThis(v);
+        return new Vector2f(x + v.x, y + v.y);
     }
-    
-    public Vector2f addThis(Vector2f v){
-        set(x + v.x, y + v.y);
-        return this;
-    }
-    
+
     public Vector2f add(Vector2f[] v){
         Vector2f sum = new Vector2f(this);
         for(Vector2f n : v)
-             sum.addThis(n);
+             sum.add(n);
         return sum;
     }
     
-    public Vector2f addThis(Vector2f[] v){
-        for(Vector2f n : v)
-             this.addThis(n);
-        return this;
-    }
-    
     public Vector2f add(float f){
-        return new Vector2f(this).addThis(f);
+        return new Vector2f(x + f, y + f);
     }
-    
-    public Vector2f addThis(float f){
-        set(x + f, y + f);
-        return this;
-    }
-    
+
     public Vector2f subtract(Vector2f v){
-        return new Vector2f(this).subtractThis(v);
+        return new Vector2f(x - v.x, y - v.y);
     }
-    
-    public Vector2f subtractThis(Vector2f v){
-        set(x - v.x, y - v.y);
-        return this;
-    }
-    
+
     public Vector2f subtract(Vector2f[] v){
         Vector2f diff = new Vector2f(this);
         for(Vector2f n : v)
-             diff.subtractThis(n);
+             diff.subtract(n);
         return diff;
     }
     
-    public Vector2f subtractThis(Vector2f[] v){
-        for(Vector2f n : v)
-             this.subtractThis(n);
-        return this;
-    }
-    
     public Vector2f subtract(float f){
-        return new Vector2f(this).addThis(f);
-    }
-    
-    public Vector2f subtractThis(float f){
-        set(x - f, y - f);
-        return this;
+        return new Vector2f(x - f, y - f);
     }
     
     public float getDistance(Vector2f v) {
@@ -132,29 +108,15 @@ public class Vector2f implements Serializable{
     }
     
     public Vector2f inverse() {
-        return new Vector2f(this).invertThis();
-    }
-    
-    public Vector2f invertThis() {
-        set(this.x * -1, this.y * -1);
-        return this;
+        return new Vector2f(this.x * -1, this.y * -1);
     }
 
     public Vector2f reciprocal(){
-        return new Vector2f(this).reciprocateThis();
-    }
-    
-    public Vector2f reciprocateThis(){
-         set(1/this.x, 1/this.y);
-         return this;
+        return new Vector2f(1/this.x, 1/this.y);
     }
     
     public Vector2f normalize() {
         return divide(length());
-    }
-    
-    public Vector2f normalizeThis() {
-        return divideThis(length());
     }
 
     public float dot(Vector2f v) {
@@ -170,70 +132,39 @@ public class Vector2f implements Serializable{
         return multiply(1f / scalar);
     }
     
-    public Vector2f divideThis(float scalar) {
-        if (scalar == 0) throw new ArithmeticException("Divide by 0");
-        return multiplyThis(1f / scalar);
-    }
-    
     public Vector2f divide(Vector2f vector) {
         //if (scalar == 0) throw new ArithmeticException("Divide by 0");
-        return divideThis(vector);
+        return multiply(vector.reciprocal());
     }
-    
-    public Vector2f divideThis(Vector2f vector) {
-        //if (scalar == 0) throw new ArithmeticException("Divide by 0");
-        set(x / vector.x, y / vector.y);
-        return this;
-    }
-    
     
     public Vector2f multiply(float scalar) {
-        return new Vector2f(this).multiplyThis(scalar);
-    }
-    
-    public Vector2f multiplyThis(float scalar){
-        set(x * scalar, y * scalar);
-        return this;
+        return new Vector2f(x * scalar, y * scalar);
     }
     
     public Vector2f multiply(Vector2f v) {
-        return new Vector2f(this).multiplyThis(v);
+        return new Vector2f(x * v.x, y * v.y);
     }
-    
-    public Vector2f multiplyThis(Vector2f v){
-        set(x * v.x, y * v.y);
-        return this;
-    }
- 
+
     public Vector2f abs(){
-        return new Vector2f(this.absThis());
-    }
-    
-    public Vector2f absThis(){
-        if(x <= 0) x = -x;
-        if(y <= 0) y = -y;
-        return this;
-    }
-    
-    public void set(float x, float y) {
-        this.x = x;
-        this.y = y;
+        float xx = x < 0 ? -x : x;
+        float xy = y < 0 ? -y : y;
+        return new Vector2f(xx, xy);
     }
 
     public Vector2f closertoZero(float f){
         float signX = x < 0 ? -1 : 1;
         float signY = y < 0 ? -1 : 1;
-        this.x = (Math.abs(x) - f)*signX;
-        this.y = (Math.abs(y) - f)*signY;
-        return this;
+        float xx = (Math.abs(x) - f)*signX;
+        float xy = (Math.abs(y) - f)*signY;
+        return new Vector2f(xx, xy);
     }
     
     public Vector2f closertoZero(Vector2f v){
         float signX = x < 0 ? -1 : 1;
         float signY = y < 0 ? -1 : 1;
-        this.x = (Math.abs(x) - v.x)*signX;
-        this.y = (Math.abs(y) - v.y)*signY;
-        return this;
+        float xx = (Math.abs(x) - v.x)*signX;
+        float xy = (Math.abs(y) - v.y)*signY;
+        return new Vector2f(xx, xy);
     }
     
     public static FloatBuffer listToBuffer(Vector2f... list){
@@ -245,22 +176,18 @@ public class Vector2f implements Serializable{
         f.flip();
         return f;
     }
-    
-    public static Vector2f lerp(Vector2f sv, Vector2f other, float t ){
-        return new Vector2f().lerpThis(sv, other, t);
-    }
-    
-    public Vector2f lerpThis(Vector2f sv, Vector2f other, float t ) {
-        x = sv.x + (other.x - sv.x) * t;
-        y = sv.y + (other.y - sv.y) * t;
-        return this;
+
+    public static Vector2f lerp(Vector2f sv, Vector2f other, float t ) {
+        float x = sv.x + (other.x - sv.x) * t;
+        float y = sv.y + (other.y - sv.y) * t;
+        return new Vector2f(x, y);
     }
 
     public Vector2f reflect(Vector2f normal) {
         float dot = this.dot(normal);
-        x = x - (dot + dot) * normal.x;
-        y = y - (dot + dot) * normal.y;
-        return this;
+        float xx = x - (dot + dot) * normal.x;
+        float xy = y - (dot + dot) * normal.y;
+        return new Vector2f(xx, xy);
     }
 
     public FloatBuffer getStackBuffer() {

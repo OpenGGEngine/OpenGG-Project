@@ -23,9 +23,9 @@ public class AABB extends PhysicsObject{
     
     public AABB(List<Vector3f> points){
         for(Vector3f p : points){
-            if(abs(p.x()) > lwh.x()) lwh = lwh.setX(abs(p.x()));
-            if(abs(p.y()) > lwh.y()) lwh = lwh.setY(abs(p.y()));
-            if(abs(p.z()) > lwh.z()) lwh = lwh.setZ(abs(p.z()));
+            if(abs(p.x) > lwh.x) lwh = lwh.setX(abs(p.x));
+            if(abs(p.y) > lwh.y) lwh = lwh.setY(abs(p.y));
+            if(abs(p.z) > lwh.z) lwh = lwh.setZ(abs(p.z));
         }
         recalculate();
     }
@@ -68,20 +68,20 @@ public class AABB extends PhysicsObject{
     }
     
     public boolean isColliding(AABB x) {
-        return ! (max.x() < x.min.x() || 
-                  max.y() < x.min.y() ||
-                  max.z() < x.min.z() ||
-                  min.x() > x.max.x() || 
-                  min.y() > x.max.y() ||
-                  min.z() > x.max.z());
+        return ! (max.x < x.min.x || 
+                  max.y < x.min.y ||
+                  max.z < x.min.z ||
+                  min.x > x.max.x || 
+                  min.y > x.max.y ||
+                  min.z > x.max.z);
     }
     
     public boolean isColliding(Vector3f pos){
-        return ! (max.x() < pos.x() || 
-                  max.y() < pos.y() ||
-                  max.z() < pos.z() ||
-                  min.x() > pos.x() || 
-                  min.y() > pos.y() ||
-                  min.z() > pos.z());
+        return ! (max.x < pos.x || 
+                  max.y < pos.y ||
+                  max.z < pos.z ||
+                  min.x > pos.x || 
+                  min.y > pos.y ||
+                  min.z > pos.z);
     }
 }

@@ -69,18 +69,17 @@ public class GGInputStream extends InputStream{
     }
     
     public Vector3f readVector3f() throws IOException{
-        Vector3fm v = new Vector3fm();
-        v.x = readFloat();
-        v.y = readFloat();
-        v.z = readFloat();
-        return new Vector3f(v);
+        float x = readFloat();
+        float y = readFloat();
+        float z = readFloat();
+
+        return new Vector3f(x,y,z);
     }
     
     public Vector2f readVector2f() throws IOException{
-        Vector2f v = new Vector2f();
-        v.x = readFloat();
-        v.y = readFloat();
-        return v;
+        float x = readFloat();
+        float y = readFloat();
+        return new Vector2f(x, y);
     }
     
     public Quaternionf readQuaternionf() throws IOException{

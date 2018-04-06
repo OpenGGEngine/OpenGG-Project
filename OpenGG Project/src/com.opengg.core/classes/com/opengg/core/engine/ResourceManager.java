@@ -5,78 +5,130 @@
  */
 package com.opengg.core.engine;
 
+import com.opengg.core.audio.SoundManager;
 import com.opengg.core.console.GGConsole;
-import com.opengg.core.thread.ThreadManager;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
-import java.util.concurrent.PriorityBlockingQueue;
+import com.opengg.core.model.Material;
+import com.opengg.core.model.Mesh;
+import com.opengg.core.model.Model;
+import com.opengg.core.model.ModelManager;
+import com.opengg.core.render.texture.TextureManager;
+import com.opengg.core.thread.ParallelWorkerPool;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
  * @author Javier
  */
 public class ResourceManager {
-    public static final int THREAD_AMOUNT = 1;
-    private static List<ResourceProcessorThread> threads = new ArrayList<>();
-    private static List<ResourceRequest> current = Collections.synchronizedList(new LinkedList<>());
-    private static Queue<ResourceRequest> requests = new PriorityBlockingQueue<>();
+    public static final int THREAD_AMOUNT = 4;
+    private static final Map<ResourceRequest, ResourceFuture> maps = new HashMap<>();
+    private static ParallelWorkerPool<ResourceRequest, Resource> processor;
     
     public static void initialize(){
-        for(int i = 0; i < THREAD_AMOUNT; i++){
-            GGConsole.log("Initializing resource manager with " + THREAD_AMOUNT + " worker thread(s)");
-            ResourceProcessorThread thread = new ResourceProcessorThread();
-            ThreadManager.runRunnable(thread, "ResourceWorkerThread"+i);
-            threads.add(thread);
+        GGConsole.log("Initializing resource manager with " + THREAD_AMOUNT + " worker thread(s)");
+        
+        processor = new ParallelWorkerPool<>(THREAD_AMOUNT, 
+                (ResourceRequest request) -> {
+                    Resource r = processRequest(request);
+                    ResourceFuture future = maps.get(request);
+                    future.r = r;
+                    future.done = true;
+                    maps.remove(request);
+                    return r;
+                    } ,
+                
+                (Resource r) -> {});
+        
+        processor.run();
+    }
+    
+    private static Resource processRequest(ResourceRequest request){
+        maps.get(request).processing = true;
+        
+        if(request.type == ResourceRequest.TEXTURE){
+            return TextureManager.loadTexture(request.location);
         }
-    }
-    
-    public static void prefetch(ResourceRequest request){
-        if(!isRequested(request.location))
-            requests.add(request);
-    }
-    
-    static ResourceRequest getRequest(){
-        return requests.poll();
-    }
-    
-    public static void removePrefetch(String pos){
-        ResourceRequest requestobject = null;
-        for(ResourceRequest request : requests){
-            if(request.location.equalsIgnoreCase(pos)) requestobject = request;
+
+        if(request.type == ResourceRequest.SOUND){
+             return SoundManager.loadSound(request.location);
         }
-        if(requestobject != null) requests.remove(requestobject);
+
+        if(request.type == ResourceRequest.MODEL){
+            Model model = ModelManager.loadModel(request.location);
+            for(Mesh mesh : model.getMeshes()){
+                Material material = mesh.getMaterial();
+                if (material.mapKdFilename != null && !material.mapKdFilename.isEmpty()) {
+                    TextureManager.loadTexture(material.texpath + material.mapKdFilename);
+                }
+                if (material.mapKaFilename != null && !material.mapKaFilename.isEmpty()) {
+                    TextureManager.loadTexture(material.texpath + material.mapKaFilename);
+                }
+                if (material.mapKsFilename != null && !material.mapKsFilename.isEmpty()) {
+                    TextureManager.loadTexture(material.texpath + material.mapKsFilename);
+                }
+                if (material.mapNsFilename != null && !material.mapNsFilename.isEmpty()) {
+                    TextureManager.loadTexture(material.texpath + material.mapNsFilename);
+                }
+                if (material.mapDFilename != null && !material.mapDFilename.isEmpty()) {
+                    TextureManager.loadTexture(material.texpath + material.mapDFilename);
+                }
+                if (material.bumpFilename != null && !material.bumpFilename.isEmpty()) {
+                    TextureManager.loadTexture(material.texpath + material.bumpFilename);
+                }
+            }
+            return model;
+        }
+        return null;
+    }
+    
+    public static Resource get(ResourceRequest request){
+        return prefetch(request).get();
+    }
+    
+    public static ResourceFuture prefetch(ResourceRequest request){
+        ResourceFuture future = new ResourceFuture();
+        future.request = request;
+        
+        if(request.type == ResourceRequest.TEXTURE){
+            Resource r = TextureManager.getTextureData(request.location);
+            if(r != TextureManager.getDefault()){
+                future.r = r;
+                future.done = true;
+                return future;
+            }
+        }
+
+        if(request.type == ResourceRequest.SOUND){
+            Resource r = SoundManager.getSoundData(request.location);
+        }
+
+        if(request.type == ResourceRequest.MODEL){
+           Resource r = ModelManager.getModel(request.location);
+           if(r != null){
+               future.r = r;
+               future.done = true;
+               return future;
+           }
+        }
+        
+        maps.put(request, future);
+        processor.add(request, request.priority);
+
+        return future;
     }
     
     public static boolean isRequested(String pos){
-        for(ResourceRequest request : requests){
-            if(request.location.equalsIgnoreCase(pos)) return true;
+        for(ResourceFuture request : maps.values()){
+            if(request.request.location.equalsIgnoreCase(pos)) return true;
         }
         return false;
     }
     
     public static boolean isProcessing(String pos){
-        for(ResourceRequest request : current){
-            if(request.location.equalsIgnoreCase(pos)) return true;
+        for(ResourceFuture future : maps.values()){
+            if(future.request.location.equalsIgnoreCase(pos) && future.processing) return true;
         }
         return false;
-    }
-    
-    static void addToProcessing(ResourceRequest request){
-        current.add(request);
-    }
-    
-    static void removeFromProcessing(ResourceRequest request){
-        current.remove(request);
-    }
-    
-    public static boolean isProcessing(){
-        return !current.isEmpty();
-    }
-    
-    public static List<ResourceRequest> getCurrent(){
-        return current;
     }
 }

@@ -6,7 +6,7 @@
 package com.opengg.core.world;
 
 import com.opengg.core.console.GGConsole;
-import com.opengg.core.engine.Resource;
+import com.opengg.core.engine.Resources;
 import com.opengg.core.math.Triangle;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
@@ -73,7 +73,7 @@ public class Terrain {
     
     private void generateTexture(String path){
         try {
-            BufferedImage image = ImageIO.read(new FileInputStream(Resource.getAbsoluteFromLocal(path)));
+            BufferedImage image = ImageIO.read(new FileInputStream(Resources.getAbsoluteFromLocal(path)));
 
             int gx = image.getWidth();
             int gz = image.getHeight();
@@ -273,9 +273,9 @@ public class Terrain {
                 float nz = 1;
                 if(i > 0 && i < map.length - 1 && i2  > 0 && i2 < map[0].length - 1){
                     Vector3f normal = calculateNormal(i,i2);
-                    nx = normal.x();
-                    ny = normal.y();
-                    nz = normal.z();
+                    nx = normal.x;
+                    ny = normal.y;
+                    nz = normal.z;
                 }
 
                 bf.put(x).put(y).put(z).put(1).put(1).put(1).put(1).put(nx).put(ny).put(nz).put(u).put(v);
@@ -319,11 +319,11 @@ public class Terrain {
     }
     
     public float barycenterCompute(Vector3f p1, Vector3f p2, Vector3f p3, Vector2f pos){
-        float det = (p2.z() - p3.z()) * (p1.x() - p3.x()) + (p3.x() - p2.x()) * (p1.x() - p3.z());
-        float l1 = ((p2.z() - p3.z()) * (pos.x - p3.x()) + (p3.x() - p2.x()) * (pos.y - p3.z()))/det;
-        float l2 = ((p3.z() - p1.z()) * (pos.x - p3.x()) + (p1.x() - p3.x()) * (pos.y - p3.z()))/det;
+        float det = (p2.z - p3.z) * (p1.x - p3.x) + (p3.x - p2.x) * (p1.x - p3.z);
+        float l1 = ((p2.z - p3.z) * (pos.x - p3.x) + (p3.x - p2.x) * (pos.y - p3.z))/det;
+        float l2 = ((p3.z - p1.z) * (pos.x - p3.x) + (p1.x - p3.x) * (pos.y - p3.z))/det;
         float l3 = 1f - l1 - l2;
-        return l1 * p1.y() + l2 * p2.y() + l3 * p3.y();
+        return l1 * p1.y + l2 * p2.y + l3 * p3.y;
     }
     
     private void normalize(){

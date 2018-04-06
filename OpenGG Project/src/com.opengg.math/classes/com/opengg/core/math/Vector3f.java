@@ -18,9 +18,9 @@ public class Vector3f implements Serializable{
     private static Vector3f zerovector = new Vector3f();
     private static final long serialVersionUID = 4404184685145307985L;
     
-    private float x;
-    private float y;
-    private float z;
+    public final float x;
+    public final float y;
+    public final float z;
 
     /**
      * Creates a default 3d vector with all values set to 0.
@@ -153,24 +153,19 @@ public class Vector3f implements Serializable{
      * @return Sum of two vectors
      */
     public Vector3f add(Vector3f v){
-        return new Vector3f(this).addThis(v);
-    }
-    
-    private Vector3f addThis(Vector3f v){
-        set(x + v.x, y + v.y, z + v.z);
-        return this;
+        return new Vector3f(x + v.x, y + v.y, z + v.z);
     }
     
     public Vector3f add(Vector3f[] v){
         Vector3f sum = new Vector3f(this);
         for(Vector3f n : v)
-             sum.addThis(n);
+             sum.add(n);
         return sum;
     }
     
     private Vector3f addThis(Vector3f[] v){
         for(Vector3f n : v)
-             this.addThis(n);
+             this.add(n);
         return this;
     }
     
@@ -180,12 +175,7 @@ public class Vector3f implements Serializable{
      * @return Sum of the vector and float
      */
     public Vector3f add(float f){
-        return new Vector3f(this).addThis(f);
-    }
-    
-    private Vector3f addThis(float f){
-        set(x + f, y + f, z + f);
-        return this;
+        return new Vector3f(x + f, y + f, z + f);
     }
     
     /**
@@ -194,18 +184,13 @@ public class Vector3f implements Serializable{
      * @return Difference between the two vectors
      */
     public Vector3f subtract(Vector3f v){
-        return new Vector3f(this).subtractThis(v);
-    }
-    
-    private Vector3f subtractThis(Vector3f v){
-        set(x - v.x, y - v.y, z - v.z);
-        return this;
+        return new Vector3f(x - v.x, y - v.y, z - v.z);
     }
     
     public Vector3f subtract(Vector3f[] v){
         Vector3f diff = new Vector3f(this);
         for(Vector3f n : v)
-             diff.subtractThis(n);
+             diff.subtract(n);
         return diff;
     }
     
@@ -215,12 +200,7 @@ public class Vector3f implements Serializable{
      * @return Difference between the vector and float
      */
     public Vector3f subtract(float f){
-        return new Vector3f(this).addThis(f);
-    }
-    
-    private Vector3f subtractThis(float f){
-        set(x - f, y - f, z - f);
-        return this;
+        return new Vector3f(x - f, y - f, z - f);
     }
     
     public Vector3f divide(float scalar) {
@@ -228,38 +208,17 @@ public class Vector3f implements Serializable{
         return multiply(1f / scalar);
     }
     
-    private Vector3f divideThis(float scalar) {
-        if (scalar == 0) throw new ArithmeticException("Divide by 0");
-        return multiplyThis(1f / scalar);
-    }
-    
     public Vector3f divide(Vector3f vector) {
         //if (scalar == 0) throw new ArithmeticException("Divide by 0");
-        return divideThis(vector);
+        return new Vector3f(x / vector.x, y / vector.y, z / vector.z);
     }
-    
-    private Vector3f divideThis(Vector3f vector) {
-        //if (scalar == 0) throw new ArithmeticException("Divide by 0");
-        set(x / vector.x, y / vector.y, z / vector.z);
-        return this;
-    }
-    
+
     public Vector3f multiply(float scalar) {
-        return new Vector3f(this).multiplyThis(scalar);
-    }
-    
-    private Vector3f multiplyThis(float scalar){
-        set(x * scalar, y * scalar, z * scalar);
-        return this;
+        return new Vector3f(x * scalar, y * scalar, z * scalar);
     }
     
     public Vector3f multiply(Vector3f v) {
-        return new Vector3f(this).multiplyThis(v);
-    }
-    
-    private Vector3f multiplyThis(Vector3f v){
-        set(x * v.x, y * v.y, z * v.z);
-        return this;
+        return new Vector3f(x * v.x, y * v.y, z * v.z);
     }
     
     /**
@@ -316,12 +275,7 @@ public class Vector3f implements Serializable{
      * @return Inverse vector
      */
     public Vector3f inverse() {
-        return new Vector3f(this).invertThis();
-    }
-    
-    private Vector3f invertThis() {
-        set(this.x * -1, this.y * -1, this.z * -1);
-        return this;
+        return new Vector3f(this.x * -1, this.y * -1, this.z * -1);
     }
 
     /**
@@ -329,14 +283,9 @@ public class Vector3f implements Serializable{
      * @return Reciprocal
      */
     public Vector3f reciprocal(){
-        return new Vector3f(this).reciprocateThis();
+        return new Vector3f(1/this.x, 1/this.y, 1/this.z);
     }
-    
-    private Vector3f reciprocateThis(){
-         set(1/this.x, 1/this.y, 1/this.z);
-         return this;
-    }
-    
+
     /**
      * Returns a normalized version of this Vector3f<br>
      * This normalized vector has a length of 1, and properly scales
@@ -399,20 +348,10 @@ public class Vector3f implements Serializable{
      * @return Absolute value vector
      */
     public Vector3f abs(){
-        return new Vector3f(this.absThis());
-    }
-    
-    private Vector3f absThis(){
-        if(x < 0) x = -x;
-        if(y < 0) y = -y;
-        if(z < 0) z = -z;
-        return this;
-    }
-    
-    private void set(float x, float y, float z) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
+        float xx = (x < 0) ? -x : x;
+        float yy = (y < 0) ? -y : y;
+        float zz = (z < 0) ? -z : z;
+        return new Vector3f(xx,yy,zz);
     }
     
     public Vector3f transformByQuat(Quaternionf q){
@@ -432,10 +371,10 @@ public class Vector3f implements Serializable{
         float signX = x < 0 ? -1 : 1;
         float signY = y < 0 ? -1 : 1;
         float signZ = z < 0 ? -1 : 1;
-        this.x = (Math.abs(x) - f)*signX;
-        this.y = (Math.abs(y) - f)*signY;
-        this.z = (Math.abs(z) - f)*signZ;
-        return this;
+        float xx = (Math.abs(x) - f)*signX;
+        float xy = (Math.abs(y) - f)*signY;
+        float xz = (Math.abs(z) - f)*signZ;
+        return new Vector3f(xx, xy, xz);
     }
     
     public Vector3f closerToZero(Vector3f v){
@@ -446,10 +385,10 @@ public class Vector3f implements Serializable{
         float signX = x < 0 ? -1 : 1;
         float signY = y < 0 ? -1 : 1;
         float signZ = z < 0 ? -1 : 1;
-        this.x = (Math.abs(x) - v.x)*signX;
-        this.y = (Math.abs(y) - v.y)*signY;
-        this.z = (Math.abs(z) - v.z)*signZ;
-        return this;
+        float xx = (Math.abs(x) - v.x)*signX;
+        float xy = (Math.abs(y) - v.y)*signY;
+        float xz = (Math.abs(z) - v.z)*signZ;
+        return new Vector3f(xx, xy, xz);
     }
     
     public static FloatBuffer listToBuffer(Vector3f... list){
@@ -471,15 +410,11 @@ public class Vector3f implements Serializable{
      * @param t Percentage through interpolation
      * @return Interpolated vector
      */
-    public static Vector3f lerp(Vector3f sv, Vector3f other, float t ){
-        return new Vector3f().lerpThis(sv, other, t);
-    }
-    
-    private Vector3f lerpThis(Vector3f sv, Vector3f other, float t ) {
-        x = sv.x + (other.x - sv.x) * t;
-        y = sv.y + (other.y - sv.y) * t;
-        z = sv.z + (other.z - sv.z) * t;
-        return this;
+    public static Vector3f lerp(Vector3f sv, Vector3f other, float t ) {
+        float xx = sv.x + (other.x - sv.x) * t;
+        float xy = sv.y + (other.y - sv.y) * t;
+        float xz = sv.z + (other.z - sv.z) * t;
+        return new Vector3f(xx, xy, xz);
     }
 
     /**
@@ -487,16 +422,12 @@ public class Vector3f implements Serializable{
      * @param normal Normal to reflect across
      * @return Reflected normal
      */
-    public Vector3f reflect(Vector3f normal){
-        return new Vector3f(this).reflectThis(normal);
-    }
-    
-    private Vector3f reflectThis(Vector3f normal) {
+    public Vector3f reflect(Vector3f normal) {
         float dot = this.dot(normal);
-        x = x - (dot + dot) * normal.x;
-        y = y - (dot + dot) * normal.y;
-        z = z - (dot + dot) * normal.z;
-        return this;
+        float xx = x - (dot + dot) * normal.x;
+        float xy = y - (dot + dot) * normal.y;
+        float xz = z - (dot + dot) * normal.z;
+        return new Vector3f(xx, xy, xz);
     }
     
     /**

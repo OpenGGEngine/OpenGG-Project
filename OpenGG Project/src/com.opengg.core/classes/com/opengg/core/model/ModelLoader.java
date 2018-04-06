@@ -6,7 +6,7 @@
 package com.opengg.core.model;
 
 import com.opengg.core.console.GGConsole;
-import com.opengg.core.engine.Resource;
+import com.opengg.core.engine.Resources;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.system.Allocator;
@@ -34,11 +34,6 @@ import org.lwjgl.system.MemoryUtil;
  * @author Warren
  */
 public class ModelLoader {
-
-    public static Model loadModel(String name) {
-        return ModelManager.loadModel(name);
-    }
-
     /**
      * Creates a new Model object from the given path. Unless you know that a
      * new object is needed, calls to
@@ -51,12 +46,12 @@ public class ModelLoader {
      * @throws IOException Throws if the file is inaccessible, fails to parse
      * due to malformed lengths, or is invalidly formatted
      */
-    public static Model forceLoadModel(String path) throws FileNotFoundException, IOException {
+    static Model loadModel(String path) throws FileNotFoundException, IOException {
         Map<String, Animation> anims = new HashMap<>();
         GGConsole.log("Loading model at " + path + "...");
 
         ArrayList<Mesh> meshes = new ArrayList<>();
-        GGInputStream in = new GGInputStream(new DataInputStream(new BufferedInputStream(new FileInputStream(Resource.getAbsoluteFromLocal(path)))));
+        GGInputStream in = new GGInputStream(new DataInputStream(new BufferedInputStream(new FileInputStream(Resources.getAbsoluteFromLocal(path)))));
         String texpath = path.substring(0, path.lastIndexOf(File.separator) + 1) + "tex" + File.separator;
         int version = in.readInt();
         boolean isanimated = in.readBoolean();
@@ -120,7 +115,7 @@ public class ModelLoader {
     }
 
     public static Model loadNewModel(String path) throws FileNotFoundException, IOException {
-        FileInputStream in = new FileInputStream(Resource.getAbsoluteFromLocal(path));
+        FileInputStream in = new FileInputStream(Resources.getAbsoluteFromLocal(path));
 
         ScatteringByteChannel scatter = in.getChannel();
         ByteBuffer headerlength = ByteBuffer.allocate(12);

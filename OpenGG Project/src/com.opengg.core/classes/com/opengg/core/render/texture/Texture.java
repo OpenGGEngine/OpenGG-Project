@@ -6,6 +6,7 @@
 package com.opengg.core.render.texture;
 
 import com.opengg.core.console.GGConsole;
+import com.opengg.core.engine.Resources;
 import com.opengg.core.system.Allocator;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -214,7 +215,7 @@ public class Texture {
     }
     
     public static Texture get2DSRGBTexture(String path){
-        return get2DSRGBTexture(TextureManager.loadTexture(path));
+        return Resources.getSRGBTexture(path);
     }
     
     public static Texture get2DSRGBTexture(TextureData data){

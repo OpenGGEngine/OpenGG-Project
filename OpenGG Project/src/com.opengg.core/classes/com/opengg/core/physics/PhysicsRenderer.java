@@ -8,7 +8,7 @@ package com.opengg.core.physics;
 import com.opengg.core.engine.PhysicsEngine;
 import com.opengg.core.engine.RenderEngine;
 import com.opengg.core.engine.RenderPath;
-import com.opengg.core.engine.Resource;
+import com.opengg.core.engine.Resources;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
@@ -33,8 +33,8 @@ public class PhysicsRenderer {
     private static Drawable cylinderobj;
     
     public static void initialize(){
-        sphere = Resource.getModel("sphere");
-        cylinder = Resource.getModel("cylinder");
+        sphere = Resources.getModel("sphere");
+        cylinder = Resources.getModel("cylinder");
         
         sphereobj = sphere.getDrawable();
         cylinderobj = cylinder.getDrawable();
@@ -48,7 +48,7 @@ public class PhysicsRenderer {
             }
             RenderEngine.setWireframe(false);
         });
-        path.setEnabled(false);
+        path.setEnabled(true);
         RenderEngine.addRenderPath(path);
     }
     
@@ -67,7 +67,7 @@ public class PhysicsRenderer {
             
             Vector3f cdir = nc.getP1().subtract(nc.getP2()).normalize();
             cylinderobj.setMatrix(new Matrix4f().translate(Vector3f.lerp(nc.getP1(), nc.getP2(), 0.5f))
-                    .rotate(new Quaternionf(new Vector3f(cdir.x(), cdir.y(), cdir.z())))
+                    .rotate(new Quaternionf(new Vector3f(cdir.x, cdir.y, cdir.z)))
                     .scale(new Vector3f(nc.getRadius(), nc.getP1().subtract(nc.getP2()).length(), nc.getRadius())));
             cylinderobj.render();
             

@@ -170,9 +170,9 @@ public class Matrix4f {
     public Matrix4f translate(Vector3f p) {
         Matrix4f translation = new Matrix4f();
 
-        translation.m30 = p.x();
-        translation.m31 = p.y();
-        translation.m32 = p.z();
+        translation.m30 = p.x;
+        translation.m31 = p.y;
+        translation.m32 = p.z;
 
         return this.multiply(translation);
     }
@@ -254,7 +254,7 @@ public class Matrix4f {
     }
     
     public Matrix4f scale(Vector3f scale) {
-        return scale(scale.x(), scale.y(), scale.z());
+        return scale(scale.x, scale.y, scale.z);
     }
 
     public static Matrix4f frustum(float left, float right, float bottom, float top, float near, float far) {

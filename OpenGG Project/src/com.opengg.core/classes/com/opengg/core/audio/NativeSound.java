@@ -107,7 +107,7 @@ public final class NativeSound {
      * @param pos Position
      */
     public void setPosition(Vector3f pos){
-        alSource3f(audioid, AL_POSITION, pos.x(), pos.y(), pos.z());
+        alSource3f(audioid, AL_POSITION, pos.x, pos.y, pos.z);
     }
     
     /**
@@ -115,7 +115,7 @@ public final class NativeSound {
      * @param vel Velocity
      */
     public void setVelocity(Vector3f vel){
-        alSource3f(audioid, AL_VELOCITY, vel.x(), vel.y(), vel.z());
+        alSource3f(audioid, AL_VELOCITY, vel.x, vel.y, vel.z);
     }
     
     /**
@@ -123,7 +123,7 @@ public final class NativeSound {
      * @param dir Direction
      */
     public void setDirection(Vector3f dir){
-        alSource3f(audioid, AL_DIRECTION, dir.x(), dir.z(), dir.z());
+        alSource3f(audioid, AL_DIRECTION, dir.x, dir.z, dir.z);
     }
     
     /**

@@ -44,27 +44,27 @@ public class PlayerComponent extends Component implements Actionable{
     @Override
     public void update(float delta){
         
-        currot = currot.setX(currot.x() + controlrot.x * rotspeed * delta);
-        currot = currot.setY(currot.y() + controlrot.y * rotspeed * delta);
-        currot = currot.setZ(currot.z() + controlrot.z * rotspeed * delta);
+        currot = currot.setX(currot.x + controlrot.x * rotspeed * delta);
+        currot = currot.setY(currot.y + controlrot.y * rotspeed * delta);
+        currot = currot.setZ(currot.z + controlrot.z * rotspeed * delta);
         /*
         this.setRotationOffset(new Quaternionf(currot));
         
         float xvel = control.x * delta * speed;
-        if((abs(playerphysics.getEntity().velocity.x()) < 20))
+        if((abs(playerphysics.getEntity().velocity.x) < 20))
             playerphysics.getEntity().velocity.x += xvel;
         
         if(control.x == 0)
             playerphysics.getEntity().velocity.x /= 2;
         
         float zvel = control.x * delta * speed;
-        if(abs(playerphysics.getEntity().velocity.x()) < 20)
+        if(abs(playerphysics.getEntity().velocity.x) < 20)
             playerphysics.getEntity().velocity.z += zvel; 
         
         if(control.x == 0)
             playerphysics.getEntity().velocity.z /= 2;
             
-        if((control.x == 1) && (getPosition().x() <= getWorld().floorLev + 0.001f))
+        if((control.x == 1) && (getPosition().x <= getWorld().floorLev + 0.001f))
             playerphysics.getEntity().velocity.y += 5;*/
     }
     

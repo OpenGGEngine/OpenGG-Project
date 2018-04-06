@@ -44,11 +44,11 @@ public class FreeFlyComponent extends Component implements Actionable{
     
     @Override
     public void update(float delta){
-        currot = currot.setX(currot.x() + controlrot.x * rotspeed * delta);
-        currot = currot.setY(currot.y() + controlrot.y * rotspeed * delta);
-        currot = currot.setZ(currot.z() + controlrot.z * rotspeed * delta);
-        this.setRotationOffset(new Quaternionf(new Vector3f(0, currot.y(), currot.z())));    
-        head.setRotationOffset(new Quaternionf(new Vector3f(currot.x(),0,0)));
+        currot = currot.setX(currot.x + controlrot.x * rotspeed * delta);
+        currot = currot.setY(currot.y + controlrot.y * rotspeed * delta);
+        currot = currot.setZ(currot.z + controlrot.z * rotspeed * delta);
+        this.setRotationOffset(new Quaternionf(new Vector3f(0, currot.y, currot.z)));    
+        head.setRotationOffset(new Quaternionf(new Vector3f(currot.x,0,0)));
        
         Vector3f nvector = new Vector3f(control).multiply(delta * 15);
         nvector = this.getRotation().transform(nvector);

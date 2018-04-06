@@ -9,7 +9,7 @@ import com.opengg.core.engine.GGApplication;
 import com.opengg.core.engine.OpenGG;
 import com.opengg.core.engine.ProjectionData;
 import com.opengg.core.engine.RenderEngine;
-import com.opengg.core.engine.Resource;
+import com.opengg.core.engine.Resources;
 import com.opengg.core.engine.WorldEngine;
 import com.opengg.core.gui.GUIController;
 import com.opengg.core.gui.GUIText;
@@ -19,10 +19,9 @@ import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
-import com.opengg.core.model.ModelManager;
 import com.opengg.core.physics.collision.AABB;
 import com.opengg.core.physics.collision.ColliderGroup;
-import com.opengg.core.physics.collision.ConvexHull;
+import com.opengg.core.physics.collision.SphereCollider;
 import com.opengg.core.render.Text;
 import com.opengg.core.render.light.Light;
 import com.opengg.core.render.texture.Texture;
@@ -36,7 +35,6 @@ import com.opengg.core.world.components.LightComponent;
 import com.opengg.core.world.components.ModelRenderComponent;
 import com.opengg.core.world.components.TerrainComponent;
 import com.opengg.core.world.components.physics.PhysicsComponent;
-import java.util.ArrayList;
 
 
 public class OpenGGTest extends GGApplication{
@@ -62,20 +60,20 @@ public class OpenGGTest extends GGApplication{
     @Override
     public  void setup(){
         Soundtrack track = new Soundtrack();
-        track.addSong(Resource.getSoundData("windgarden.ogg"));
-        //track.addSong(Resource.getSoundData("battlerock.ogg"));
-        //track.addSong(Resource.getSoundData("floaterland.ogg"));
-        //track.addSong(Resource.getSoundData("hell.ogg"));
-        //track.addSong(Resource.getSoundData("intogalaxy.ogg"));
-        //track.addSong(Resource.getSoundData("koopa.ogg"));
-        //track.addSong(Resource.getSoundData("megaleg.ogg"));
-        //track.addSong(Resource.getSoundData("stardust.ogg"));
+        track.addSong(Resources.getSoundData("windgarden.ogg"));
+        //track.addSong(Resources.getSoundData("battlerock.ogg"));
+        //track.addSong(Resources.getSoundData("floaterland.ogg"));
+        //track.addSong(Resources.getSoundData("hell.ogg"));
+        //track.addSong(Resources.getSoundData("intogalaxy.ogg"));
+        //track.addSong(Resources.getSoundData("koopa.ogg"));
+        //track.addSong(Resources.getSoundData("megaleg.ogg"));
+        //track.addSong(Resources.getSoundData("stardust.ogg"));
         track.shuffle();
         track.play();   
         AudioController.setGlobalGain(0f);
         SoundtrackHandler.setSoundtrack(track);
         
-        font = Resource.getFont("test", "test.png");
+        font = Resources.getFont("test", "test.png");
         text = new Text("Turmoil has engulfed the Galactic Republic. The taxation of trade routes 0to outlying star systems is in dispute. \n\n"
                 + " Hoping to resolve the matter with a blockade of deadly battleships, "
                 + " the greedy Trade Federation has stopped all shipping to the small planet of Naboo. \n\n"
@@ -93,19 +91,19 @@ public class OpenGGTest extends GGApplication{
                 new Light(new Vector3f(20,20,5), new Vector3f(1,1,1), 400, 0,  
                         new Camera(new Vector3f(0,-5,-50), new Quaternionf(new Vector3f(20,0,0))).getMatrix(), 
                         Matrix4f.perspective(100f, 1f, 1f, 150f), 1280, 1280))); 
-        WorldEngine.getCurrent().attach(new ModelRenderComponent(Resource.getModel("goldleaf")).setScaleOffset(new Vector3f(0.02f)).setRotationOffset(new Vector3f(-90,0,0)));  
+        WorldEngine.getCurrent().attach(new ModelRenderComponent(Resources.getModel("goldleaf")).setScaleOffset(new Vector3f(0.02f)).setRotationOffset(new Vector3f(-90,0,0)));  
 
-        /*Terrain t = Terrain.generate(Resource.getTextureData("h2.gif"));
+        /*Terrain t = Terrain.generate(Resources.getTextureData("h2.gif"));
         TerrainComponent tc = new TerrainComponent(t);
         tc.enableCollider();
-        tc.setBlotmap(Resource.getSRGBTexture("blendMap.png"));
-        tc.setGroundArray(Texture.getSRGBArrayTexture(Resource.getTextureData("grass.png"), Resource.getTextureData("flower2.png"), Resource.getTextureData("dirt.png"), Resource.getTextureData("road.png")));
+        tc.setBlotmap(Resources.getSRGBTexture("blendMap.png"));
+        tc.setGroundArray(Texture.getSRGBArrayTexture(Resources.getTextureData("grass.png"), Resources.getTextureData("flower2.png"), Resources.getTextureData("dirt.png"), Resources.getTextureData("road.png")));
         tc.setPositionOffset(new Vector3f(-100, 20,-100));
         tc.setScaleOffset(new Vector3f(200,30f, 200));
         
         WorldEngine.getCurrent().attach(tc);*/
         
-        ArrayList<Vector3f> v2 = new ArrayList<>();
+        /*ArrayList<Vector3f> v2 = new ArrayList<>();
         v2.add(new Vector3f(-1,-1,-1));
         v2.add(new Vector3f(-1,1,-1));
         v2.add(new Vector3f(-1,-1,1));
@@ -117,9 +115,17 @@ public class OpenGGTest extends GGApplication{
         
         ModelRenderComponent physmod = new ModelRenderComponent(ModelManager.getDefaultModel());
         PhysicsComponent phys = new PhysicsComponent();
-        phys.addCollider(new ColliderGroup(new AABB( 3, 3, 3), new ConvexHull(v2)));
+        phys.addCollider(new ColliderGroup(new AABB( 3, 3, 3), new ConvexHull(v2)));*/
         
-        WorldEngine.getCurrent().attach(physmod.attach(phys));
+        //WorldEngine.getCurrent().attach(physmod.attach(phys));
+        
+        for(int i = 0; i < 20; i++){
+            PhysicsComponent sphere = new PhysicsComponent();
+            sphere.getEntity().setPosition(new Vector3f(120f * (float)Math.random(), (float)Math.random() * 40f + 20, (float)Math.random() * 120f));
+            sphere.addCollider(new ColliderGroup(new AABB( 3, 3, 3),  new SphereCollider(1)));
+            WorldEngine.getCurrent().attach(sphere);
+        }
+        
         WorldEngine.getCurrent().attach(player);
 
         BindController.addBind(ControlType.KEYBOARD, "forward", KEY_W);
@@ -136,13 +142,12 @@ public class OpenGGTest extends GGApplication{
         BindController.addBind(ControlType.KEYBOARD, "aim", KEY_K);
         
         RenderEngine.setProjectionData(ProjectionData.getPerspective(100, 0.2f, 3000f));
-        RenderEngine.setSkybox(new Skybox(Texture.getSRGBCubemap(
-                Resource.getTexturePath("skybox\\majestic_ft.png"),
-                Resource.getTexturePath("skybox\\majestic_bk.png"),
-                Resource.getTexturePath("skybox\\majestic_up.png"),
-                Resource.getTexturePath("skybox\\majestic_dn.png"),
-                Resource.getTexturePath("skybox\\majestic_rt.png"),
-                Resource.getTexturePath("skybox\\majestic_lf.png")), 1500f));
+        RenderEngine.setSkybox(new Skybox(Texture.getSRGBCubemap(Resources.getTexturePath("skybox\\majestic_ft.png"),
+                Resources.getTexturePath("skybox\\majestic_bk.png"),
+                Resources.getTexturePath("skybox\\majestic_up.png"),
+                Resources.getTexturePath("skybox\\majestic_dn.png"),
+                Resources.getTexturePath("skybox\\majestic_rt.png"),
+                Resources.getTexturePath("skybox\\majestic_lf.png")), 1500f));
     }
 
     @Override

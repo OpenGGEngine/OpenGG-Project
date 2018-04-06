@@ -6,7 +6,7 @@
 package com.opengg.test;
 
 import com.opengg.core.audio.Sound;
-import com.opengg.core.engine.Resource;
+import com.opengg.core.engine.Resources;
 import com.opengg.core.engine.WorldEngine;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.model.ModelLoader;
@@ -28,11 +28,11 @@ public class GunComponent extends Component{
     public GunComponent(){
         super();
         trigger = new Trigger();
-        ExplosionParticleEmitter epm = new DirectionalExplosionParticleEmitter(5, 0.1f, new Vector3f(1,0,0), 45, Resource.getTexture("smoke.png"));
+        ExplosionParticleEmitter epm = new DirectionalExplosionParticleEmitter(5, 0.1f, new Vector3f(1,0,0), 45, Resources.getTexture("smoke.png"));
         epm.setPositionOffset(new Vector3f(1,0.5f,0));
         epm.setParticleAmountOnTrigger(30);
-        ModelRenderComponent beretta = new ModelRenderComponent(ModelLoader.loadModel("C:\\res\\smithwesson\\smithwesson.bmf"));
-        TriggerableAudioComponent tac = new TriggerableAudioComponent(new Sound(Resource.getSoundData("45acp.ogg")));
+        ModelRenderComponent beretta = new ModelRenderComponent(Resources.getModel("C:\\res\\smithwesson\\smithwesson.bmf"));
+        TriggerableAudioComponent tac = new TriggerableAudioComponent(new Sound(Resources.getSoundData("45acp.ogg")));
         trigger.addSubscriber(tac);
         trigger.addSubscriber(epm);
         attach(epm);

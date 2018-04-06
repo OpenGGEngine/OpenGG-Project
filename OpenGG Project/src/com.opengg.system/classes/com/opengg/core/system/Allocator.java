@@ -23,7 +23,7 @@ import org.lwjgl.system.MemoryUtil;
  * @author Javier
  */
 public class Allocator {
-    private static Map<Buffer, BufferData> buffers = Collections.synchronizedMap(new WeakHashMap<>());
+    //private static Map<Buffer, BufferData> buffers = Collections.synchronizedMap(new WeakHashMap<>());
     
     public static final int DEFAULT = 1, LWJGL_STACK = 2, LWJGL_DEFAULT = 3;
     public static final int FLOAT = 0, INT = 1, SHORT = 2, BYTE = 3, LONG = 4;
@@ -169,13 +169,13 @@ public class Allocator {
         data.size = size; 
         data.type = type;
         
-        buffers.put(buffer, data);
-        GGConsole.logVerbose(getSender() + " allocated " + buffer.getClass().getSimpleName() + " with size " + size + " using allocator " + allocator);
+        //buffers.put(buffer, data);
+        GGConsole.logVerbose("class" + " allocated " + buffer.getClass().getSimpleName() + " with size " + size + " using allocator " + allocator);
     }
     
-    public static int getLiveBufferCount(){
+   /* public static int getLiveBufferCount(){
         return buffers.size();
-    }
+    }*/
     
     public static int getStackFrameIndex(){
         return MemoryStack.stackGet().getFrameIndex();

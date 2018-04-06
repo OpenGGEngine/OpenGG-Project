@@ -48,13 +48,13 @@ public class Quaternionf implements Serializable{
 
     public Quaternionf(float angle, Vector3f axis) {
         setAngle(angle);
-        x = axis.x();
-        y = axis.y();
-        z = axis.z();
+        x = axis.x;
+        y = axis.y;
+        z = axis.z;
     }
     
     public Quaternionf(Vector3f euler){
-        rotationXYZ(euler.x(), euler.y(), euler.z());
+        rotationXYZ(euler.x, euler.y, euler.z);
     }
         
     public Quaternionf(Matrix4f matrix) {
@@ -208,9 +208,9 @@ public class Quaternionf implements Serializable{
     }
 
     public final void setAxis(Vector3f axis){
-        this.x = axis.x();
-        this.y = axis.y();
-        this.z = axis.z();
+        this.x = axis.x;
+        this.y = axis.y;
+        this.z = axis.z;
     }
     
     public static final Quaternionf slerp(final Quaternionf a, final Quaternionf b, float t) {
@@ -258,7 +258,7 @@ public class Quaternionf implements Serializable{
     public Quaternionf invertThisIndirect() {
         Vector3f v = this.toEuler();
         v = v.inverse();
-        return rotationXYZ(v.x(), v.y(), v.z());
+        return rotationXYZ(v.x, v.y, v.z);
     }
     
     public Quaternionf set(float x, float y, float z, float w) {
@@ -328,9 +328,9 @@ public class Quaternionf implements Serializable{
     }
     
     public Vector3f transform(Vector3f v){
-        float x = v.x();
-        float y = v.y();
-        float z = v.z();
+        float x = v.x;
+        float y = v.y;
+        float z = v.z;
         
         float w2 = this.w * this.w;
         float x2 = this.x * this.x;

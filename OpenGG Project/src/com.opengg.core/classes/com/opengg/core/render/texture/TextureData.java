@@ -6,13 +6,14 @@
 
 package com.opengg.core.render.texture;
 
+import com.opengg.core.engine.Resource;
 import java.nio.Buffer;
 
 /**
  *
  * @author Javier
  */
-public class TextureData {
+public class TextureData implements Resource{
     public int width;
     public int height;
     public int channels;
@@ -30,5 +31,15 @@ public class TextureData {
     
     public void setComplete(){
         complete = true;
+    }
+
+    @Override
+    public String getType() {
+        return "texture";
+    }
+
+    @Override
+    public String getSource() {
+        return source;
     }
 }

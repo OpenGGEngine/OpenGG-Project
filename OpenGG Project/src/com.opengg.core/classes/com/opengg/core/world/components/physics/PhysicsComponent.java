@@ -55,7 +55,7 @@ public class PhysicsComponent extends Component {
     
     @Override
     public void onPositionChange(Vector3f npos){
-        entity.setPosition(npos);
+        //entity.setPosition(npos);
     }
     
     @Override

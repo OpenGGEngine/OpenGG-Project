@@ -12,6 +12,7 @@ import com.opengg.core.console.GGConsole;
 import com.opengg.core.console.UserCommand;
 import static com.opengg.core.engine.OpenGG.*;
 import com.opengg.core.physics.PhysicsRenderer;
+import com.opengg.core.physics.collision.CollisionManager;
 import com.opengg.core.render.shader.ShaderController;
 
 /**
@@ -72,6 +73,15 @@ public class OpenGGCommandExtender implements ConsoleListener{
                     try{
                         boolean vol = Boolean.parseBoolean(command.args[1].toLowerCase());
                         PhysicsRenderer.setEnabled(vol);
+                    }catch(Exception e){
+                        GGConsole.error(command.args[0] + " is not a valid boolean!");
+                    }
+                }
+                
+                if(command.args[0].equalsIgnoreCase("parallel")){
+                    try{
+                        boolean parallel = Boolean.parseBoolean(command.args[1].toLowerCase());
+                        CollisionManager.parallelProcessing = parallel;
                     }catch(Exception e){
                         GGConsole.error(command.args[0] + " is not a valid boolean!");
                     }

@@ -38,9 +38,9 @@ public class GGOutputStream extends OutputStream{
     }
     
     public void write(Vector3f v) throws IOException{
-        write(v.x());
-        write(v.y());
-        write(v.z());
+        write(v.x);
+        write(v.y);
+        write(v.z);
     }
     
     public void write(Vector4f v) throws IOException{
@@ -118,9 +118,9 @@ public class GGOutputStream extends OutputStream{
     }
     
     public void writeNormalized(Vector3f v) throws IOException{
-        write(v.x());
-        write(v.x());
-        write(v.x());
+        write(v.x);
+        write(v.x);
+        write(v.x);
     }
     
     public void writeNormalized(Quaternionf q) throws IOException{

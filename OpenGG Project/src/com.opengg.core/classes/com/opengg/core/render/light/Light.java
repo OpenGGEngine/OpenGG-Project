@@ -70,9 +70,9 @@ public class Light {
 
     public FloatBuffer getBuffer(){
         FloatBuffer fb = Allocator.allocFloat(bfsize);
-        fb.put(pos.x()).put(pos.y()).put(pos.z());
+        fb.put(pos.x).put(pos.y).put(pos.z);
         fb.put(0);
-        fb.put(color.x()).put(color.y()).put(color.z());
+        fb.put(color.x).put(color.y).put(color.z);
         fb.put(distance);
         fb.put(distance2);
         fb.put(shadow ? 1 : 0);

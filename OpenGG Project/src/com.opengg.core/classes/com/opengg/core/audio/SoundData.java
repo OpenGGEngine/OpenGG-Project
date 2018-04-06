@@ -6,6 +6,7 @@
 
 package com.opengg.core.audio;
 
+import com.opengg.core.engine.Resource;
 import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
 
@@ -13,7 +14,7 @@ import java.nio.ShortBuffer;
  * Structure containing all data associated with a given sound
  * @author Javier
  */
-public class SoundData {
+public class SoundData implements Resource{
     /**
      * Buffer containing the actual sound
      */
@@ -38,4 +39,14 @@ public class SoundData {
      * Sound sample rate, in kHz
      */
     int samplerate;
+
+    @Override
+    public String getType() {
+        return "sounddata";
+    }
+
+    @Override
+    public String getSource() {
+        return origin;
+    }
 }

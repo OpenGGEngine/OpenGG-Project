@@ -54,9 +54,9 @@ public class Vector4f {
     }
     
     public Vector4f(Vector3f v){
-        this.x = v.x();
-        this.y = v.y();
-        this.z = v.z();
+        this.x = v.x;
+        this.y = v.y;
+        this.z = v.z;
         this.w = 1;
     }
     

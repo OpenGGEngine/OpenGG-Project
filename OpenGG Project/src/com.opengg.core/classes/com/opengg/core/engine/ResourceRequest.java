@@ -15,7 +15,6 @@ public class ResourceRequest implements Comparable{
     public String location;
     public int type;
     public int priority = 5;
-    public boolean completed = false;
     
     public ResourceRequest(String location, int type){
         this.location = location;

@@ -108,7 +108,7 @@ public class OpenGG{
         GGConsole.addListener(new OpenGGCommandExtender());
         GGConsole.log("OpenGG initializing, running on " + System.getProperty("os.name") + ", " + System.getProperty("os.arch"));
         
-        Resource.initialize();
+        Resources.initialize();
         GGConsole.log("Resource system initialized");
         
         getVMOptions();

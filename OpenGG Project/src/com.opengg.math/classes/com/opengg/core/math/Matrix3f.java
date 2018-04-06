@@ -37,15 +37,15 @@ public class Matrix3f {
     public Matrix3f(Vector3f m1,
             Vector3f m2,
             Vector3f m3) {
-        this.m00 = m1.x();
-        this.m01 = m1.y();
-        this.m02 = m1.z();
-        this.m10 = m2.x();
-        this.m11 = m2.y();
-        this.m12 = m2.z();
-        this.m20 = m3.x();
-        this.m21 = m3.y();
-        this.m22 = m3.z();
+        this.m00 = m1.x;
+        this.m01 = m1.y;
+        this.m02 = m1.z;
+        this.m10 = m2.x;
+        this.m11 = m2.y;
+        this.m12 = m2.z;
+        this.m20 = m3.x;
+        this.m21 = m3.y;
+        this.m22 = m3.z;
     }
     
     public Matrix3f(Matrix4f m) {
@@ -74,9 +74,9 @@ public class Matrix3f {
     
     public Vector3f multiply(Vector3f v) {
         Vector3fm result = new Vector3fm();
-        result.x = m00*v.x() + m01* v.y() + m02 * v.z();
-        result.y = m10*v.x() + m11* v.y() + m12 * v.z();
-        result.z = m20*v.x() + m21* v.y() + m22 * v.z();
+        result.x = m00*v.x + m01* v.y + m02 * v.z;
+        result.y = m10*v.x + m11* v.y + m12 * v.z;
+        result.z = m20*v.x + m21* v.y + m22 * v.z;
         return new Vector3f(result);
     }
     

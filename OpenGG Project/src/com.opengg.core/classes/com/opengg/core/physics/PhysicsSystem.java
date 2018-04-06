@@ -54,6 +54,6 @@ public class PhysicsSystem {
             entity.update(delta);
         }
         CollisionManager.testForCollisions(this);
-        CollisionManager.processCollisionResponse();
+        CollisionManager.processCollisions();
     }
 }

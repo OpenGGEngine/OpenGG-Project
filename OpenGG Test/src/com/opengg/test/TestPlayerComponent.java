@@ -87,18 +87,18 @@ public class TestPlayerComponent extends Component implements Actionable{
     
     @Override
     public void update(float delta){
-        currot = currot.setX(currot.x() + controlrot.x * rotspeed * delta);
-        currot = currot.setY(currot.y() + controlrot.y * rotspeed * delta);
-        currot = currot.setZ(currot.z() + controlrot.z * rotspeed * delta);
+        currot = currot.setX(currot.x + controlrot.x * rotspeed * delta);
+        currot = currot.setY(currot.y + controlrot.y * rotspeed * delta);
+        currot = currot.setZ(currot.z + controlrot.z * rotspeed * delta);
                 
-        this.setRotationOffset(new Quaternionf(new Vector3f(0, currot.y(), currot.z())));      
+        this.setRotationOffset(new Quaternionf(new Vector3f(0, currot.y, currot.z)));      
         Vector3f movement = new Vector3f(control.x  * speed, 0 ,control.z  *speed);
         movement = getRotation().transform(movement);
         
-        head.setRotationOffset(new Quaternionf(new Vector3f(currot.x(),0,0)));
+        head.setRotationOffset(new Quaternionf(new Vector3f(currot.x,0,0)));
         
-        force.force = new Vector3f(movement.x(),0,movement.z());
-        if((control.y == 1) && playerphysics.getEntity().lowestContact.y() > 0.6f)
+        force.force = new Vector3f(movement.x,0,movement.z);
+        if((control.y == 1) && playerphysics.getEntity().lowestContact.y > 0.6f)
             playerphysics.getEntity().velocity = playerphysics.getEntity().velocity.add(new Vector3f(0,5,0));
         
         if(aim)

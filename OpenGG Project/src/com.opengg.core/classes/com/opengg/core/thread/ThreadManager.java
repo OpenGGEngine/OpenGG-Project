@@ -23,15 +23,16 @@ public class ThreadManager {
         Thread.setDefaultUncaughtExceptionHandler(new GGThreadExceptionHandler());
     }
     
-    public static void runRunnable(Runnable run){
-        runRunnable(run, "default");
+    public static Thread runRunnable(Runnable run){
+        return runRunnable(run, "default");
     }
     
-    public static void runRunnable(Runnable run, String name){
+    public static Thread runRunnable(Runnable run, String name){
         Thread thread = new Thread(run);
         thread.setName(name);
         thread.start();
         running.add(thread);
+        return thread;
     }
     
     public static void update(){

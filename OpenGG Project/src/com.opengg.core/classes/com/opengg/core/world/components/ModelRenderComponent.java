@@ -7,8 +7,8 @@ package com.opengg.core.world.components;
 
 import com.opengg.core.engine.OpenGG;
 import com.opengg.core.engine.RenderEngine;
+import com.opengg.core.engine.Resources;
 import com.opengg.core.model.Model;
-import com.opengg.core.model.ModelLoader;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
 import java.io.IOException;
@@ -59,7 +59,7 @@ public class ModelRenderComponent extends RenderComponent{
     public void deserialize(GGInputStream in) throws IOException{
         super.deserialize(in);
         String path = in.readString();
-        model = ModelLoader.loadModel(path);
+        model = Resources.getModel(path);
         OpenGG.asyncExec(() -> {
             this.g = model.getDrawable();
         });
