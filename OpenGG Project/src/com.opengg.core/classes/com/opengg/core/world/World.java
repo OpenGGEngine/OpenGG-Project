@@ -38,6 +38,7 @@ public class World extends Component{
     public List<RenderGroup> groups = new ArrayList<>();
     public Skybox skybox;
     
+    
     /**
      * Returns all components attached to this world
      * @return All components in this world

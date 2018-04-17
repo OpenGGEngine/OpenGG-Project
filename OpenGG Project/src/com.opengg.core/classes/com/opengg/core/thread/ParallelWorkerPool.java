@@ -64,9 +64,9 @@ public final class ParallelWorkerPool<T, V> {
     
     public void run(){
         for(int i = 0; i < amount; i++){
-            WorkerThread<T, V> threadsource = new WorkerThread<>(this);
-            Thread thread = ThreadManager.runRunnable(threadsource, "WorkerThreadPool:" + i);
-            workers.add(threadsource);
+            WorkerThread<T, V> threadrunnable = new WorkerThread<>(this);
+            Thread thread = ThreadManager.runRunnable(threadrunnable, "WorkerThreadPool:" + i);
+            workers.add(threadrunnable);
             threads.add(thread);
         }
     }

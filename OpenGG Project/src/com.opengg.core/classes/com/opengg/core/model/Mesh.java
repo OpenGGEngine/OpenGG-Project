@@ -37,7 +37,7 @@ public class Mesh {
     public Mesh(FloatBuffer fb, IntBuffer ib, Material m, boolean animated){
         updateVBO(fb, ib);
         this.material = m;
-        makeadamnfacelist(this, animated);
+        //makeadamnfacelist(this, animated);
     }
     
     public Mesh(FloatBuffer fb, IntBuffer ib, List<Face> faces, Material m){
