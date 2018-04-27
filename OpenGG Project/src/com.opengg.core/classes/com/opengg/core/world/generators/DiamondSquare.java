@@ -46,7 +46,7 @@ public class DiamondSquare implements HeightsGenerator{
         float h = 1;
         for (int i = 0; i < width; i += 2 * step) {
             for (int j = 0; j < height; j += 2 * step) {
-                map[i][j] = (float) (FastMath.random(2 * h));
+                map[i][j] = (FastMath.random(2 * h));
             }
         }
 

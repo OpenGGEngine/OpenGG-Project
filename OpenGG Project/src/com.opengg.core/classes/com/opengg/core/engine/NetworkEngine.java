@@ -81,4 +81,7 @@ public class NetworkEngine {
             return null;
         }
     }
+
+    private NetworkEngine() {
+    }
 }

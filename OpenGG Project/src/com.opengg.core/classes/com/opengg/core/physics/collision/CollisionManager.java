@@ -19,9 +19,9 @@ import java.util.List;
  * @author Javier
  */
 public class CollisionManager {
-    private static List<Collision> collisions = new ArrayList<>();
-    private static List<ColliderGroup> test = new LinkedList<>();
-    private static ColliderGroup coll = new ColliderGroup();
+    private static final List<Collision> collisions = new ArrayList<>();
+    private static final List<ColliderGroup> test = new LinkedList<>();
+    private static final ColliderGroup coll = new ColliderGroup();
     public static boolean parallelProcessing = true;
     
     public static void clearCollisions(){
@@ -70,7 +70,7 @@ public class CollisionManager {
     public static void testForCollisions(PhysicsSystem system){
         collisions.clear();
         //if(parallelProcessing) test.parallelStream().forEach((c) -> testForCollision(c, system));
-         for(ColliderGroup next : test) testForCollision(next, system);
+        for(ColliderGroup next : test) testForCollision(next, system);
     }
 
     public static void processCollisionResponse(Collision col){
@@ -205,10 +205,10 @@ public class CollisionManager {
         for(ColliderGroup next : test){
             PhysicsEntity e = next.parent;
             
-            Vector3f R = Vector3f.averageOf(e.R.toArray(new Vector3f[0]));
-            Vector3f jfv = Vector3f.averageOf(e.jf.toArray(new Vector3f[0]));
-            Vector3f jrv = Vector3f.averageOf(e.jr.toArray(new Vector3f[0]));
-            Vector3f normal = Vector3f.averageOf(e.norms.toArray(new Vector3f[0])).normalize();
+            Vector3f R = Vector3f.averageOf(e.R.toArray(new Vector3f[e.R.size()]));
+            Vector3f jfv = Vector3f.averageOf(e.jf.toArray(new Vector3f[e.jf.size()]));
+            Vector3f jrv = Vector3f.averageOf(e.jr.toArray(new Vector3f[e.jr.size()]));
+            Vector3f normal = Vector3f.averageOf(e.norms.toArray(new Vector3f[e.norms.size()])).normalize();
             float depth = e.depths.stream().max((i,j)->{
                 return i > j ? 1 : 0;
             }).orElse(0f);
@@ -226,5 +226,8 @@ public class CollisionManager {
             e.norms.clear();
             e.depths.clear();
         }
+    }
+
+    private CollisionManager() {
     }
 }

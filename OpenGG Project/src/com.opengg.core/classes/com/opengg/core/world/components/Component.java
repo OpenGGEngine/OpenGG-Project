@@ -31,7 +31,7 @@ public abstract class Component{
     private int id;
     private boolean absoluteOffset = false;
     private boolean enabled = true;
-    public float updatedistance = 0;
+    private float updatedistance = 0;
     private String name = "default";
     private Component parent;
     private Vector3f posoffset = new Vector3f();
@@ -228,7 +228,6 @@ public abstract class Component{
         }else{
             rot = rotoffset;
         }
-        
         onRotationChange(rot);
         for(Component c : children) c.regenRot();
     }
@@ -291,6 +290,14 @@ public abstract class Component{
         return absoluteOffset;
     }
 
+    public float getUpdateDistance() {
+        return updatedistance;
+    }
+
+    public void setUpdateDistance(float updatedistance) {
+        this.updatedistance = updatedistance;
+    }
+    
     /**
      * Called once per update cycle, override for functionality
      * @param delta Delta time since last update cycle in seconds
@@ -396,7 +403,7 @@ public abstract class Component{
             return this;
         if(c.getParent() != null)
             c.getParent().remove(c);
-        c.setParentInfo((Component)this);
+        c.setParentInfo(this);
         children.add(c);
         return this;
     }  

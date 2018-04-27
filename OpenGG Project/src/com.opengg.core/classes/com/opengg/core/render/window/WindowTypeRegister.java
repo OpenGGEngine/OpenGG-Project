@@ -29,4 +29,7 @@ public class WindowTypeRegister {
         }
         return window;
     }
+
+    private WindowTypeRegister() {
+    }
 }

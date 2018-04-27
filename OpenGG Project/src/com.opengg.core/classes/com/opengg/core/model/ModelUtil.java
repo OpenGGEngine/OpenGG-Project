@@ -11,6 +11,7 @@ import com.opengg.core.engine.OpenGG;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3fm;
 import com.opengg.core.math.Vector3f;
+import com.opengg.core.math.Vector4f;
 import com.opengg.core.system.Allocator;
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -305,15 +306,18 @@ public class ModelUtil {
 
             fv.t = new Vector2f(x,y);
             if(animated){
-                fv.j.x = mesh.vbodata.get();
-                fv.j.y = mesh.vbodata.get();
-                fv.j.z = mesh.vbodata.get();
-                fv.j.w = mesh.vbodata.get();
+                x = mesh.vbodata.get();
+                y = mesh.vbodata.get();
+                z = mesh.vbodata.get();
+                float w = mesh.vbodata.get();
                 
-                fv.w.x = mesh.vbodata.get();
-                fv.w.y = mesh.vbodata.get();
-                fv.w.z = mesh.vbodata.get();
-                fv.w.w = mesh.vbodata.get();
+                fv.j = new Vector4f(x,y,z,w);
+                x = mesh.vbodata.get();
+                y = mesh.vbodata.get();
+                z = mesh.vbodata.get();
+                w = mesh.vbodata.get();
+                
+                fv.w = new Vector4f(x,y,z,w);
             }
 
             vertices.add(fv);

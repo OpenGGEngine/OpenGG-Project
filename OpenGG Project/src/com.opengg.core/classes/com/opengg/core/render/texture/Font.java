@@ -18,24 +18,24 @@ public class Font {
     }};
    
    //Variables
-    private java.awt.Font font;
-    private FontMetrics fontMetrics;
-    private BufferedImage bufferedImage;
-    private int fontTextureId;
+    private final java.awt.Font font;
+    private final FontMetrics fontMetrics;
+    private final BufferedImage bufferedImage;
+    private final int fontTextureId;
     
     //Getters
     public float getFontImageWidth() {
         return (float) CHARS.values().stream().mapToDouble(e -> fontMetrics.getStringBounds(e, null).getWidth()).max().getAsDouble();
     }
     public float getFontImageHeight() {
-        return (float) CHARS.keySet().size() * (this.getCharHeight());
+        return CHARS.keySet().size() * (this.getCharHeight());
     }
     public float getCharX(char c) {
         String originStr = CHARS.values().stream().filter(e -> e.contains("" + c)).findFirst().orElse("" + c);
         return (float) fontMetrics.getStringBounds(originStr.substring(0, originStr.indexOf(c)), null).getWidth();
     }
     public float getCharY(char c) {
-        float lineId = (float) CHARS.keySet().stream().filter(i -> CHARS.get(i).contains("" + c)).findFirst().orElse(0);
+        float lineId = CHARS.keySet().stream().filter(i -> CHARS.get(i).contains("" + c)).findFirst().orElse(0);
         return this.getCharHeight() * lineId;
     }
     public float getCharWidth(char c) {
@@ -43,7 +43,7 @@ public class Font {
     }
     public float getCharHeight() {
         //System.out.println(fontMetrics.getMaxAscent() + fontMetrics.getMaxDescent());
-        return (float) (fontMetrics.getMaxAscent() + fontMetrics.getMaxDescent());
+        return (fontMetrics.getMaxAscent() + fontMetrics.getMaxDescent());
     }
     
     //Constructors

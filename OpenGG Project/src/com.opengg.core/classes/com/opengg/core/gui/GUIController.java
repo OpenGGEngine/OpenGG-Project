@@ -45,4 +45,7 @@ public class GUIController {
     public static GUI getDefault(){
         return defaultgui;
     }
+
+    private GUIController() {
+    }
 }

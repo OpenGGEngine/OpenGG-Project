@@ -62,4 +62,7 @@ public class JarClassUtil {
         return classes;
     }
 
+    private JarClassUtil() {
+    }
+
 }

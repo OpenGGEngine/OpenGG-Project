@@ -61,4 +61,7 @@ public class MouseController {
     public static double getY(){
         return handler.getY();
     }
+
+    private MouseController() {
+    }
 }

@@ -140,4 +140,7 @@ public class ObjectBuffers {
         d2.flip();
         return new Buffer[]{d,d2};
     }
+
+    private ObjectBuffers() {
+    }
 }

@@ -10,6 +10,7 @@ import com.opengg.core.math.Vector3f;
 import com.opengg.core.physics.collision.AABB;
 import com.opengg.core.world.components.Component;
 import com.opengg.core.world.components.Zone;
+import com.opengg.core.world.components.triggers.ITrigger;
 import com.opengg.core.world.components.triggers.Triggerable;
 
 /**
@@ -71,7 +72,7 @@ public class ZoneViewModel extends ViewModel{
                 s = s.trim();
                 Component c = WorldEngine.getCurrent().find(s);
                 if(c != null && c instanceof Triggerable)
-                    ((Zone)component).addSubscriber((Triggerable) c);
+                    ((ITrigger)component).addSubscriber((Triggerable) c);
             }
         }
     }

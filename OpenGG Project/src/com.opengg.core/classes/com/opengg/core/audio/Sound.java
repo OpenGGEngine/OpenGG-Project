@@ -156,7 +156,7 @@ public class Sound{
     }
     
     /**
-     * Frees all resources associated with this source
+     * Frees all Resource associated with this source
      */
     public void remove(){
         so.remove();

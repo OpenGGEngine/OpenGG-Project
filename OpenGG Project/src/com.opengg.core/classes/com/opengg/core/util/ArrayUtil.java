@@ -48,4 +48,7 @@ public class ArrayUtil {
                 | ((long) (array[offset + 7] & 0xff));
     }
 
+    private ArrayUtil() {
+    }
+
 }

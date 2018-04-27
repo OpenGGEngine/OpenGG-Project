@@ -25,4 +25,7 @@ public class ClassUtil {
         }
         return valid;
     }
+
+    private ClassUtil() {
+    }
 }

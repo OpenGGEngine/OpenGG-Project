@@ -34,8 +34,8 @@ public class TextureData implements Resource{
     }
 
     @Override
-    public String getType() {
-        return "texture";
+    public Type getType() {
+        return Type.TEXTURE;
     }
 
     @Override

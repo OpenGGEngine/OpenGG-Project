@@ -465,4 +465,7 @@ public class SimplexNoise {
         return 27.0f * (n0 + n1 + n2 + n3 + n4);
     }
 
+    private SimplexNoise() {
+    }
+
 }

@@ -163,12 +163,6 @@ public class Vector3f implements Serializable{
         return sum;
     }
     
-    private Vector3f addThis(Vector3f[] v){
-        for(Vector3f n : v)
-             this.add(n);
-        return this;
-    }
-    
     /**
      * Adds a float to all elements of a copy of this vector, and returns the copy
      * @param f Float to be added
@@ -507,6 +501,15 @@ public class Vector3f implements Serializable{
             return FastMath.isEqual(v.x, x) && FastMath.isEqual(v.y, y)  && FastMath.isEqual(v.z, z);
         }   
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 23 * hash + Float.floatToIntBits(this.x);
+        hash = 23 * hash + Float.floatToIntBits(this.y);
+        hash = 23 * hash + Float.floatToIntBits(this.z);
+        return hash;
     }
     
     @Override

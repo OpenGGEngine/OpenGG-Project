@@ -51,4 +51,7 @@ public class SoundtrackHandler {
         current.shuffle();
         current.play();
     }
+
+    private SoundtrackHandler() {
+    }
 }

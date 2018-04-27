@@ -7,7 +7,7 @@ package com.opengg.core.world;
 
 import com.opengg.core.GGInfo;
 import com.opengg.core.console.GGConsole;
-import com.opengg.core.engine.Resources;
+import com.opengg.core.engine.Resource;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
 import java.io.DataInputStream;
@@ -27,7 +27,7 @@ public class WorldLoader {
     public static World loadWorld(String worldname){
         GGConsole.log("Loading world " + worldname + "...");
         
-        try (GGInputStream in = new GGInputStream(new FileInputStream(Resources.getAbsoluteFromLocal(worldname)))){
+        try (GGInputStream in = new GGInputStream(new FileInputStream(Resource.getAbsoluteFromLocal(worldname)))){
             int worldver = in.readInt();
             String ggversion = in.readString();
             
@@ -50,7 +50,7 @@ public class WorldLoader {
     
     public static void saveWorld(World world, String worldname){
         GGConsole.log("Saving world " + worldname + "...");
-        try(GGOutputStream out = new GGOutputStream(new DataOutputStream(new FileOutputStream(Resources.getAbsoluteFromLocal(worldname))))) {
+        try(GGOutputStream out = new GGOutputStream(new DataOutputStream(new FileOutputStream(Resource.getAbsoluteFromLocal(worldname))))) {
             out.write(1);
             out.write(GGInfo.getVersion());
             
@@ -64,5 +64,8 @@ public class WorldLoader {
             Logger.getLogger("Failed to write to file named " + worldname);
         }
         GGConsole.log("World " + worldname + " has been saved");
+    }
+
+    private WorldLoader() {
     }
 }

@@ -43,8 +43,8 @@ import static org.lwjgl.opengl.GL32.GL_TEXTURE_CUBE_MAP_SEAMLESS;
  */
 public class RenderEngine {
     private static List<RenderGroup> groups = new ArrayList<>();
-    private static List<Light> lights = new ArrayList<>();
-    private static List<RenderPath> paths = new ArrayList<>();
+    private static final List<Light> lights = new ArrayList<>();
+    private static final List<RenderPath> paths = new ArrayList<>();
     private static GLBuffer lightobj;
     private static RenderGroup dlist, animlist;
     private static Skybox skybox;
@@ -403,6 +403,6 @@ public class RenderEngine {
     
     static void destroy(){
         TextureManager.destroy();
-        GGConsole.log("Render engine has released all OpenGL resources and has finalized");
+        GGConsole.log("Render engine has released all OpenGL Resource and has finalized");
     }
 }

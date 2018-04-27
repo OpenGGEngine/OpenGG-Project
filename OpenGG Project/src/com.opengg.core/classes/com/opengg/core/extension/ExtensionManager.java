@@ -46,5 +46,8 @@ public class ExtensionManager {
                 pair.x.render();
         }
     }
+
+    private ExtensionManager() {
+    }
     
 }

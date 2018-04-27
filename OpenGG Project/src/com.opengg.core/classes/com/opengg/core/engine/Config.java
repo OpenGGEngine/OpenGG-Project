@@ -58,4 +58,7 @@ public class Config {
         }
         return null;
     }
+
+    private Config() {
+    }
 }

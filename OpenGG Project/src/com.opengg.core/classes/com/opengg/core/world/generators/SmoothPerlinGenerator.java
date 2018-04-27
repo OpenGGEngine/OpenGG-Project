@@ -51,7 +51,7 @@ public class SmoothPerlinGenerator implements HeightsGenerator{
 
           result=(float) (result+octaves[i].noise(x/frequencys[i], y/frequencys[i])* amplitudes[i]);
         }
-        result = result * 10;
+        result *= 10;
 
         return result;
 

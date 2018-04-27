@@ -12,9 +12,6 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
-import java.util.Collections;
-import java.util.Map;
-import java.util.WeakHashMap;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 
@@ -191,6 +188,9 @@ public class Allocator {
             }
         }
         return (e.getClassName()).substring(e.getClassName().lastIndexOf('.')+1);
+    }
+
+    private Allocator() {
     }
 }
 

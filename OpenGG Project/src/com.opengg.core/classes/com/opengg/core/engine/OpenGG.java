@@ -38,7 +38,7 @@ public class OpenGG{
     
     private static GGApplication app;
     private static boolean lwjglinit = false;
-    private static List<ExecutableContainer> executables = Collections.synchronizedList(new LinkedList<>());
+    private static final List<ExecutableContainer> executables = Collections.synchronizedList(new LinkedList<>());
     private static Date startTime;
     private static boolean head = false;
     private static boolean end = false;
@@ -108,7 +108,7 @@ public class OpenGG{
         GGConsole.addListener(new OpenGGCommandExtender());
         GGConsole.log("OpenGG initializing, running on " + System.getProperty("os.name") + ", " + System.getProperty("os.arch"));
         
-        Resources.initialize();
+        Resource.initialize();
         GGConsole.log("Resource system initialized");
         
         getVMOptions();
@@ -217,7 +217,7 @@ public class OpenGG{
     /**
      * Force ends the application immediately.<br>
      * Because it forces the application, including all other threads, to end (basically calling {@code System.exit(0)}), 
-     * it does not cleanup resources currently in use.
+     * it does not cleanup Resource currently in use.
      * Only use in extreme circumstances (like in case of a program freeze)
      */
     public static void forceEnd(){

@@ -18,14 +18,14 @@ public class Quaternionf implements Serializable{
     /**
      * Angle/Scalar
      */
-    public float w;
+    public final float w;
 
     /**
      * Angle Vector/Axis of Rotation
      *
      * @see Vector3f
      */
-    public float x, y, z;
+    public final float x, y, z;
 
     public Quaternionf() {
         x = y = z = 0;
@@ -47,105 +47,100 @@ public class Quaternionf implements Serializable{
     }
 
     public Quaternionf(float angle, Vector3f axis) {
-        setAngle(angle);
+        while (angle > 360) {
+            angle -= 360;
+        }
+        while (angle < 0) {
+            angle += 360;
+        }
+        w = FastMath.cosDeg((angle) / 2);
         x = axis.x;
         y = axis.y;
         z = axis.z;
     }
     
     public Quaternionf(Vector3f euler){
-        rotationXYZ(euler.x, euler.y, euler.z);
-    }
+        float angleX = euler.x, angleY = euler.y, angleZ = euler.z;
+        angleX = (float)Math.toRadians(angleX);
+        angleY = (float)Math.toRadians(angleY);
+        angleZ = (float)Math.toRadians(angleZ);
         
-    public Quaternionf(Matrix4f matrix) {
-        final float trace = matrix.m11 + matrix.m22 + matrix.m33;
+        float sx = sin(angleX * 0.5f);
+        float cx = (float) cosFromSin(sx, angleX * 0.5f);
+        float sy = sin(angleY * 0.5f);
+        float cy = (float) cosFromSin(sy, angleY * 0.5f);
+        float sz = sin(angleZ * 0.5f);
+        float cz = (float) cosFromSin(sz, angleZ * 0.5f);
 
-        if (trace > 0) {
-            float root = (float) Math.sqrt(trace + 1.0f);
-            w = 0.5f * root;
-            root = 0.5f / root;
-            x = (matrix.m32 - matrix.m23) * root;
-            y = (matrix.m13 - matrix.m31) * root;
-            z = (matrix.m21 - matrix.m12) * root;
-        } else {
-            int[] next = {2, 3, 1};
-
-            int i = 1;
-            if (matrix.m22 > matrix.m11) {
-                i = 2;
-            }
-            if (matrix.m33 > matrix.access(i, i)) {
-                i = 3;
-            }
-            int j = next[i];
-            int k = next[j];
-
-            float root = (float) Math.sqrt(matrix.access(i, i) - matrix.access(j, j) - matrix.access(k, k) + 1.0f);
-            float[] quaternion = {x, y, z};
-            quaternion[i] = 0.5f * root;
-            root = 0.5f / root;
-            w = (matrix.access(k, j) - matrix.access(j, k)) * root;
-            quaternion[j] = (matrix.access(j, i) + matrix.access(i, j)) * root;
-            quaternion[k] = (matrix.access(k, i) + matrix.access(i, k)) * root;
-        }
+        float cycz = cy * cz;
+        float sysz = sy * sz;
+        float sycz = sy * cz;
+        float cysz = cy * sz;
+        w = cx*cycz - sx*sysz;
+        x = sx*cycz + cx*sysz;
+        y = cx*sycz - sx*cysz;
+        z = cx*cysz + sx*sycz;
     }
+//        
+//    public Quaternionf(Matrix4f matrix) {
+//        final float trace = matrix.m11 + matrix.m22 + matrix.m33;
+//
+//        if (trace > 0) {
+//            float root = (float) Math.sqrt(trace + 1.0f);
+//            w = 0.5f * root;
+//            root = 0.5f / root;
+//            x = (matrix.m32 - matrix.m23) * root;
+//            y = (matrix.m13 - matrix.m31) * root;
+//            z = (matrix.m21 - matrix.m12) * root;
+//        } else {
+//            int[] next = {2, 3, 1};
+//
+//            int i = 1;
+//            if (matrix.m22 > matrix.m11) {
+//                i = 2;
+//            }
+//            if (matrix.m33 > matrix.access(i, i)) {
+//                i = 3;
+//            }
+//            int j = next[i];
+//            int k = next[j];
+//
+//            float root = (float) Math.sqrt(matrix.access(i, i) - matrix.access(j, j) - matrix.access(k, k) + 1.0f);
+//            float[] quaternion = {x, y, z};
+//            quaternion[i] = 0.5f * root;
+//            root = 0.5f / root;
+//            w = (matrix.access(k, j) - matrix.access(j, k)) * root;
+//            quaternion[j] = (matrix.access(j, i) + matrix.access(i, j)) * root;
+//            quaternion[k] = (matrix.access(k, i) + matrix.access(i, k)) * root;
+//        }
+//    }
 
     public Quaternionf add(Quaternionf q) {
-        return new Quaternionf(this.x + q.x, this.y + q.y, this.z + q.z, this.w + q.w);
-    }
-
-    public Quaternionf addEquals(Quaternionf q) {
-        this.w += q.w;
-        this.x += q.x;
-        this.y += q.y;
-        this.z += q.z;
-        return new Quaternionf(this);
+        return new Quaternionf(this.w + q.w, this.x + q.x, this.y + q.y, this.z + q.z);
     }
 
     public Quaternionf subtract(final Quaternionf q) {
-        return new Quaternionf(this.x - q.x, this.y - q.y, this.z - q.z, this.w - q.w);
+        return new Quaternionf(this.w - q.w, this.x - q.x, this.y - q.y, this.z - q.z);
     }
 
     public Quaternionf multiply(Quaternionf q){
-        return new Quaternionf(this).multiplyThis(q);
-    }
-    
-    public Quaternionf multiplyThis(Quaternionf q) {
-        set(w * q.x + x * q.w + y * q.z - z * q.y,
-                 w * q.y - x * q.z + y * q.w + z * q.x,
-                 w * q.z + x * q.y - y * q.x + z * q.w,
-                 w * q.w - x * q.x - y * q.y - z * q.z);
-        return this;
+        float nx = w * q.x + x * q.w + y * q.z - z * q.y;
+        float ny = w * q.y - x * q.z + y * q.w + z * q.x;
+        float nz = w * q.z + x * q.y - y * q.x + z * q.w;
+        float nw = w * q.w - x * q.x - y * q.y - z * q.z;
+        return new Quaternionf(nw,nx,ny,nz);
     }
 
     public Quaternionf multiply(final float scalar){
-        return new Quaternionf(this).multiplyThis(scalar);
-    }
-    
-    public Quaternionf multiplyThis(final float scalar) {
-        return multiplyThis(new Quaternionf(scalar,scalar,scalar,scalar));
+        return multiply(new Quaternionf(scalar,scalar,scalar,scalar));
     }
 
-    public Quaternionf divide(Quaternionf divisor){
-        return new Quaternionf(this).divideThis(divisor);
-    }
-    
-    public Quaternionf divideThis(final Quaternionf q) {
-        if (q.w == 0 || q.x == 0 || q.y == 0 || q.z == 0) {
-            throw new ArithmeticException("Divide by zero in quaternion");
-        }
-        return set(this.w / q.w, this.x / q.x, this.y / q.y, this.z / q.z);
+    public Quaternionf divide(Quaternionf q){
+        return new Quaternionf(this.w / q.w, this.x / q.x, this.y / q.y, this.z / q.z);
     }
 
     public Quaternionf divide(final float divisor){
-        return new Quaternionf(this).divideThis(divisor);
-    }
-    
-    public Quaternionf divideThis(final float divisor) {
-        if (divisor == 0) {
-            throw new ArithmeticException("Divide by zero");
-        }
-        return set(this.w / divisor, this.x / divisor, this.y / divisor, this.z / divisor);
+       return new Quaternionf(this.w / divisor, this.x / divisor, this.y / divisor, this.z / divisor);
     }
 
     public float length() {
@@ -153,24 +148,15 @@ public class Quaternionf implements Serializable{
     }
 
     public Quaternionf normalize(){
-        return new Quaternionf(this).normalizeThis();
-    }
-    
-    public Quaternionf normalizeThis() {
-        float magnitude = length();
-        w /= magnitude;
-        x /= magnitude;
-        y /= magnitude;
-        z /= magnitude;
-        return this;
+        return new Quaternionf(this.divide(this.length()));
     }
 
     public Matrix4f convertMatrix() {
-        this.normalize();
+        Quaternionf q = this.normalize();
         return new Matrix4f(
-                1.0f - 2.0f * y * y - 2.0f * z * z,     2.0f * x * y + 2.0f * z * w,            2.0f * x * z - 2.0f * y * w,
-                2.0f * x * y - 2.0f * z * w,            1.0f - 2.0f * x * x - 2.0f * z * z,     2.0f * y * z + 2.0f * x * w,
-                2.0f * x * z + 2.0f * y * w,            2.0f * y * z - 2.0f * x * w,            1.0f - 2.0f * x * x - 2.0f * y * y);
+                1.0f - 2.0f * q.y * q.y - 2.0f * q.z * q.z,     2.0f * q.x * q.y + 2.0f * q.z * q.w,            2.0f * q.x * q.z - 2.0f * q.y * q.w,
+                2.0f * q.x * q.y - 2.0f * q.z * q.w,            1.0f - 2.0f * q.x * q.x - 2.0f * q.z * q.z,     2.0f * q.y * q.z + 2.0f * q.x * q.w,
+                2.0f * q.x * q.z + 2.0f * q.y * q.w,            2.0f * q.y * q.z - 2.0f * q.x * q.w,            1.0f - 2.0f * q.x * q.x - 2.0f * q.y * y);
     }
     
 
@@ -186,7 +172,7 @@ public class Quaternionf implements Serializable{
         return this.x * otherQuat.x + this.y * otherQuat.y + this.z * otherQuat.z + this.w * otherQuat.w;
     }
 
-    public final void addDegrees(float degrees) {
+    public Quaternionf addDegrees(float degrees) {
         float res = angle() + degrees;
         while (res > 360) {
             res -= 360;
@@ -194,23 +180,21 @@ public class Quaternionf implements Serializable{
         while (res < 0) {
             res += 360;
         }
-        w = FastMath.cosDeg((res) / 2);
+        return new Quaternionf(FastMath.cosDeg((res) / 2),x,y,z);
     }
     
-    public final void setAngle(float degrees) {
+    public Quaternionf setAngle(float degrees) {
         while (degrees > 360) {
             degrees -= 360;
         }
         while (degrees < 0) {
             degrees += 360;
         }
-        w = FastMath.cosDeg((degrees) / 2);
+        return new Quaternionf(FastMath.cosDeg((degrees) / 2),x,y,z);
     }
 
-    public final void setAxis(Vector3f axis){
-        this.x = axis.x;
-        this.y = axis.y;
-        this.z = axis.z;
+    public final Quaternionf setAxis(Vector3f axis){
+        return new Quaternionf(w,axis.x,axis.y,axis.z);
     }
     
     public static final Quaternionf slerp(final Quaternionf a, final Quaternionf b, float t) {
@@ -231,73 +215,22 @@ public class Quaternionf implements Serializable{
         }
 
         float theta = (float) Math.acos(cosine);
-        float sine = (float) sin(theta);
-        float beta = (float) sin((1 - t) * theta) / sine;
-        float alpha = (float) sin(t * theta) / sine * flip;
+        float sine = sin(theta);
+        float beta = sin((1 - t) * theta) / sine;
+        float alpha = sin(t * theta) / sine * flip;
 
         return a.multiply(beta).add(b.multiply(alpha));
     }
     
     public Quaternionf invert() {
-        return new Quaternionf(this).invertThis();
-    }
-    
-    public Quaternionf invertThis() {
         float invNorm = 1.0f / (x * x + y * y + z * z + w * w);
-        x = -x * invNorm;
-        y = -y * invNorm;
-        z = -z * invNorm;
-        w = w * invNorm;
-        return this;
+        return new Quaternionf(w*invNorm,-x*invNorm,-y*invNorm,-z*invNorm);
     }
-    
+
     public Quaternionf invertIndirect() {
-        return new Quaternionf(this).invertThisIndirect();
-    }
-    
-    public Quaternionf invertThisIndirect() {
         Vector3f v = this.toEuler();
         v = v.inverse();
-        return rotationXYZ(v.x, v.y, v.z);
-    }
-    
-    public Quaternionf set(float x, float y, float z, float w) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.w = w;
-        return this;
-    }
-
-    public Quaternionf set(float x, float y, float z) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        return this;
-    }
-
-    public Quaternionf rotationXYZ(float angleX, float angleY, float angleZ) {   
-        angleX = (float)Math.toRadians(angleX);
-        angleY = (float)Math.toRadians(angleY);
-        angleZ = (float)Math.toRadians(angleZ);
-        
-        float sx = sin(angleX * 0.5f);
-        float cx = (float) cosFromSin(sx, angleX * 0.5f);
-        float sy = sin(angleY * 0.5f);
-        float cy = (float) cosFromSin(sy, angleY * 0.5f);
-        float sz = sin(angleZ * 0.5f);
-        float cz = (float) cosFromSin(sz, angleZ * 0.5f);
-
-        float cycz = cy * cz;
-        float sysz = sy * sz;
-        float sycz = sy * cz;
-        float cysz = cy * sz;
-        w = cx*cycz - sx*sysz;
-        x = sx*cycz + cx*sysz;
-        y = cx*sycz - sx*cysz;
-        z = cx*cysz + sx*sycz;
-
-        return this;
+        return new Quaternionf(v);
     }
     
     public Vector3f toEuler(){
@@ -374,9 +307,7 @@ public class Quaternionf implements Serializable{
             return false;
         if (Float.floatToIntBits(y) != Float.floatToIntBits(other.y))
             return false;
-        if (Float.floatToIntBits(z) != Float.floatToIntBits(other.z))
-            return false;
-        return true;
+        return Float.floatToIntBits(z) == Float.floatToIntBits(other.z);
     }
 
     @Override
@@ -388,10 +319,11 @@ public class Quaternionf implements Serializable{
         hash = 37 * hash + Float.floatToIntBits(this.z);
         return hash;
     }
-    
-    @Override
-    public String toString(){
-        return this.toEuler().toString();
-    }
 
+    @Override
+    public String toString() {
+        return w + ", " + x + ", " + y + ", " + z;
+    }
+   
+    
 }

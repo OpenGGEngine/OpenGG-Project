@@ -14,10 +14,10 @@ import java.nio.FloatBuffer;
  */
 public class Matrix4f {
 
-    public float m00, m01, m02, m03;
-    public float m10, m11, m12, m13;
-    public float m20, m21, m22, m23;
-    public float m30, m31, m32, m33;
+    public final float m00, m01, m02, m03;
+    public final float m10, m11, m12, m13;
+    public final float m20, m21, m22, m23;
+    public final float m30, m31, m32, m33;
 
     /**
      * Default Matrix, generates only 0.
@@ -48,22 +48,22 @@ public class Matrix4f {
             float l10, float l11, float l12, float l13,
             float l20, float l21, float l22, float l23,
             float l30, float l31, float l32, float l33) {
-        m00 = l00;
-        m10 = l10;
-        m20 = l20;
-        m30 = l30;
-        m01 = l01;
-        m11 = l11;
-        m21 = l21;
-        m31 = l31;
-        m02 = l02;
-        m12 = l12;
-        m22 = l22;
-        m32 = l32;
-        m03 = l03;
-        m13 = l13;
-        m23 = l23;
-        m33 = l33;
+        this.m00 = l00;
+        this.m10 = l10;
+        this.m20 = l20;
+        this.m30 = l30;
+        this.m01 = l01;
+        this.m11 = l11;
+        this.m21 = l21;
+        this.m31 = l31;
+        this.m02 = l02;
+        this.m12 = l12;
+        this.m22 = l22;
+        this.m32 = l32;
+        this.m03 = l03;
+        this.m13 = l13;
+        this.m23 = l23;
+        this.m33 = l33;
     }
     
     public Matrix4f(Matrix4f matrix){
@@ -85,20 +85,20 @@ public class Matrix4f {
         m33 = matrix.m33;
     }
 
-    public Matrix4f(float m11, float m12, float m13,
-            float m21, float m22, float m23,
-            float m31, float m32, float m33) {
-        this.m00 = m11;
-        this.m01 = m12;
-        this.m02 = m13;
+    public Matrix4f(float m00, float m01, float m02,
+            float m10, float m11, float m12,
+            float m20, float m21, float m22) {
+        this.m00 = m00;
+        this.m01 = m01;
+        this.m02 = m02;
         this.m03 = 0;
-        this.m10 = m21;
-        this.m11 = m22;
-        this.m12 = m23;
+        this.m10 = m10;
+        this.m11 = m11;
+        this.m12 = m12;
         this.m13 = 0;
-        this.m20 = m31;
-        this.m21 = m32;
-        this.m22 = m33;
+        this.m20 = m20;
+        this.m21 = m21;
+        this.m22 = m22;
         this.m23 = 0;
         this.m30 = 0;
         this.m31 = 0;
@@ -158,99 +158,100 @@ public class Matrix4f {
     }
 
     public static Matrix4f translate(float x, float y, float z) {
-        Matrix4f translation = new Matrix4f();
+        float nm30 = x;
+        float nm31 = y;
+        float nm32 = z;
 
-        translation.m30 = x;
-        translation.m31 = y;
-        translation.m32 = z;
+        return new Matrix4f(1,    0,    0,    0,
+                            0,    1,    0,    0,
+                            0,    0,    1,    0,
+                            nm30, nm31, nm32, 1);
 
-        return translation;
     }
     
     public Matrix4f translate(Vector3f p) {
-        Matrix4f translation = new Matrix4f();
+        float nm30 = p.x;
+        float nm31 = p.y;
+        float nm32 = p.z;
 
-        translation.m30 = p.x;
-        translation.m31 = p.y;
-        translation.m32 = p.z;
-
-        return this.multiply(translation);
+        return this.multiply(Matrix4f.translate(p.x,p.y,p.z));
     }
-
+    
     public Matrix4f add(Matrix4f other) {
-        Matrix4f result = new Matrix4f();
+        float nm00 = this.m00 + other.m00;
+        float nm10 = this.m10 + other.m10;
+        float nm20 = this.m20 + other.m20;
+        float nm30 = this.m30 + other.m30;
+        float nm01 = this.m01 + other.m01;
+        float nm11 = this.m11 + other.m11;
+        float nm21 = this.m21 + other.m21;
+        float nm31 = this.m31 + other.m31;
+        float nm02 = this.m02 + other.m02;
+        float nm12 = this.m12 + other.m12;
+        float nm22 = this.m22 + other.m22;
+        float nm32 = this.m32 + other.m32;
+        float nm03 = this.m03 + other.m03;
+        float nm13 = this.m13 + other.m13;
+        float nm23 = this.m23 + other.m23;
+        float nm33 = this.m33 + other.m33;
 
-        result.m00 = this.m00 + other.m00;
-        result.m10 = this.m10 + other.m10;
-        result.m20 = this.m20 + other.m20;
-        result.m30 = this.m30 + other.m30;
-
-        result.m01 = this.m01 + other.m01;
-        result.m11 = this.m11 + other.m11;
-        result.m21 = this.m21 + other.m21;
-        result.m31 = this.m31 + other.m31;
-
-        result.m02 = this.m02 + other.m02;
-        result.m12 = this.m12 + other.m12;
-        result.m22 = this.m22 + other.m22;
-        result.m32 = this.m32 + other.m32;
-
-        result.m03 = this.m03 + other.m03;
-        result.m13 = this.m13 + other.m13;
-        result.m23 = this.m23 + other.m23;
-        result.m33 = this.m33 + other.m33;
-
-        return result;
+        return new Matrix4f(nm00, nm01, nm02, nm03,
+                            nm10, nm11, nm12, nm13,
+                            nm20, nm21, nm22, nm23,
+                            nm30, nm31, nm32, nm33);
     }
     
     public Matrix4f multiply(Matrix4f other) {
-        Matrix4f result = new Matrix4f();
+        float nm00 = this.m00 * other.m00 + this.m10 * other.m01 + this.m20 * other.m02 + this.m30 * other.m03;
+        float nm01 = this.m01 * other.m00 + this.m11 * other.m01 + this.m21 * other.m02 + this.m31 * other.m03;
+        float nm02 = this.m02 * other.m00 + this.m12 * other.m01 + this.m22 * other.m02 + this.m32 * other.m03;
+        float nm03 = this.m03 * other.m00 + this.m13 * other.m01 + this.m23 * other.m02 + this.m33 * other.m03;
 
-        result.m00 = this.m00 * other.m00 + this.m10 * other.m01 + this.m20 * other.m02 + this.m30 * other.m03;
-        result.m01 = this.m01 * other.m00 + this.m11 * other.m01 + this.m21 * other.m02 + this.m31 * other.m03;
-        result.m02 = this.m02 * other.m00 + this.m12 * other.m01 + this.m22 * other.m02 + this.m32 * other.m03;
-        result.m03 = this.m03 * other.m00 + this.m13 * other.m01 + this.m23 * other.m02 + this.m33 * other.m03;
+        float nm10 = this.m00 * other.m10 + this.m10 * other.m11 + this.m20 * other.m12 + this.m30 * other.m13;
+        float nm11 = this.m01 * other.m10 + this.m11 * other.m11 + this.m21 * other.m12 + this.m31 * other.m13;
+        float nm12 = this.m02 * other.m10 + this.m12 * other.m11 + this.m22 * other.m12 + this.m32 * other.m13;
+        float nm13 = this.m03 * other.m10 + this.m13 * other.m11 + this.m23 * other.m12 + this.m33 * other.m13;
 
-        result.m10 = this.m00 * other.m10 + this.m10 * other.m11 + this.m20 * other.m12 + this.m30 * other.m13;
-        result.m11 = this.m01 * other.m10 + this.m11 * other.m11 + this.m21 * other.m12 + this.m31 * other.m13;
-        result.m12 = this.m02 * other.m10 + this.m12 * other.m11 + this.m22 * other.m12 + this.m32 * other.m13;
-        result.m13 = this.m03 * other.m10 + this.m13 * other.m11 + this.m23 * other.m12 + this.m33 * other.m13;
+        float nm20 = this.m00 * other.m20 + this.m10 * other.m21 + this.m20 * other.m22 + this.m30 * other.m23;
+        float nm21 = this.m01 * other.m20 + this.m11 * other.m21 + this.m21 * other.m22 + this.m31 * other.m23;
+        float nm22 = this.m02 * other.m20 + this.m12 * other.m21 + this.m22 * other.m22 + this.m32 * other.m23;
+        float nm23 = this.m03 * other.m20 + this.m13 * other.m21 + this.m23 * other.m22 + this.m33 * other.m23;
 
-        result.m20 = this.m00 * other.m20 + this.m10 * other.m21 + this.m20 * other.m22 + this.m30 * other.m23;
-        result.m21 = this.m01 * other.m20 + this.m11 * other.m21 + this.m21 * other.m22 + this.m31 * other.m23;
-        result.m22 = this.m02 * other.m20 + this.m12 * other.m21 + this.m22 * other.m22 + this.m32 * other.m23;
-        result.m23 = this.m03 * other.m20 + this.m13 * other.m21 + this.m23 * other.m22 + this.m33 * other.m23;
+        float nm30 = this.m00 * other.m30 + this.m10 * other.m31 + this.m20 * other.m32 + this.m30 * other.m33;
+        float nm31 = this.m01 * other.m30 + this.m11 * other.m31 + this.m21 * other.m32 + this.m31 * other.m33;
+        float nm32 = this.m02 * other.m30 + this.m12 * other.m31 + this.m22 * other.m32 + this.m32 * other.m33;
+        float nm33 = this.m03 * other.m30 + this.m13 * other.m31 + this.m23 * other.m32 + this.m33 * other.m33;
 
-        result.m30 = this.m00 * other.m30 + this.m10 * other.m31 + this.m20 * other.m32 + this.m30 * other.m33;
-        result.m31 = this.m01 * other.m30 + this.m11 * other.m31 + this.m21 * other.m32 + this.m31 * other.m33;
-        result.m32 = this.m02 * other.m30 + this.m12 * other.m31 + this.m22 * other.m32 + this.m32 * other.m33;
-        result.m33 = this.m03 * other.m30 + this.m13 * other.m31 + this.m23 * other.m32 + this.m33 * other.m33;
-
-        return result;
+        return new Matrix4f(nm00, nm01, nm02, nm03,
+                            nm10, nm11, nm12, nm13,
+                            nm20, nm21, nm22, nm23,
+                            nm30, nm31, nm32, nm33);
     }
     
     public static Matrix4f perspective(float fovy, float aspect, float near, float far) {
-        Matrix4f perspective = new Matrix4f();
-
         float f = (float) (1f / Math.tan(Math.toRadians(fovy) / 2f));
-        perspective.m00 = f / aspect;
-        perspective.m11 = f;
-        perspective.m22 = (far + near) / (near - far);
-        perspective.m23 = -1f;
-        perspective.m32 = (2f * far * near) / (near - far);
-        perspective.m33 = 0f;
+        float nm00 = f / aspect;
+        float nm11 = f;
+        float nm22 = (far + near) / (near - far);
+        float nm23 = -1f;
+        float nm32 = (2f * far * near) / (near - far);
+        float nm33 = 0f;
 
-        return perspective;
+        return new Matrix4f(nm00, 0,    0,    0,
+                            0,    nm11, 0,    0,
+                            0,    0,    nm22, nm23,
+                            0,    0,    nm32, nm33);
     }
 
     public Matrix4f scale(float x, float y, float z) {
-        Matrix4f scaling = new Matrix4f();
+        float nm00 = x;
+        float nm11 = y;
+        float nm22 = z;
 
-        scaling.m00 = x;
-        scaling.m11 = y;
-        scaling.m22 = z;
-
-        return this.multiply(scaling);
+        return this.multiply(new Matrix4f(nm00, 0,    0,    0,
+                            0,    nm11, 0,    0,
+                            0,    0,    nm22, 0,
+                            0,    0,    0,    1));
     }
     
     public Matrix4f scale(Vector3f scale) {
@@ -258,30 +259,33 @@ public class Matrix4f {
     }
 
     public static Matrix4f frustum(float left, float right, float bottom, float top, float near, float far) {
-        Matrix4f frustum = new Matrix4f();
+        float nm00 = (2f * near) / (right - left);
+        float nm11 = (2f * near) / (top - bottom);
+        float nm20 = (right + left) / (right - left);
+        float nm21 = (top + bottom) / (top - bottom);
+        float nm22 = -(far + near) / (far - near);
+        float nm23 = -1f;
+        float nm32 = -(2f * far * near) / (far - near);
+        float nm33 = 0f;
 
-        frustum.m00 = (2f * near) / (right - left);
-        frustum.m11 = (2f * near) / (top - bottom);
-        frustum.m20 = (right + left) / (right - left);
-        frustum.m21 = (top + bottom) / (top - bottom);
-        frustum.m22 = -(far + near) / (far - near);
-        frustum.m23 = -1f;
-        frustum.m32 = -(2f * far * near) / (far - near);
-        frustum.m33 = 0f;
-
-        return frustum;
+        return new Matrix4f(nm00, 0,    0,    0,
+                            0,    nm11, 0,    0,
+                            nm20, nm21, nm22, nm23,
+                            0,    0,    nm32, nm33);
     }
 
     public static Matrix4f orthographic(float left, float right, float bottom, float top, float near, float far) {
-        Matrix4f ortho = new Matrix4f();
-        ortho.m00 = 2f / (right - left);
-        ortho.m11 = 2f / (top - bottom);
-        ortho.m22 = -2f / (far - near);
-        ortho.m30 = -(right + left) / (right - left);
-        ortho.m31 = -(top + bottom) / (top - bottom);
-        ortho.m32 = -(far + near) / (far - near);
+        float nm00 = 2f / (right - left);
+        float nm11 = 2f / (top - bottom);
+        float nm22 = -2f / (far - near);
+        float nm30 = -(right + left) / (right - left);
+        float nm31 = -(top + bottom) / (top - bottom);
+        float nm32 = -(far + near) / (far - near);
 
-        return ortho;
+        return new Matrix4f(nm00, 0,    0,    0,
+                            0,    nm11, 0,    0,
+                            0,    0,    nm22, 0,
+                            nm30, nm31, nm32, 1);
     }
     
     public Matrix4f invert() {
@@ -315,23 +319,11 @@ public class Matrix4f {
         float nm31 = ( m00 * j - m01 * h + m02 * g) * det;
         float nm32 = (-m30 * d + m31 * b - m32 * a) * det;
         float nm33 = ( m20 * d - m21 * b + m22 * a) * det;
-        m00 = nm00;
-        m01 = nm01;
-        m02 = nm02;
-        m03 = nm03;
-        m10 = nm10;
-        m11 = nm11;
-        m12 = nm12;
-        m13 = nm13;
-        m20 = nm20;
-        m21 = nm21;
-        m22 = nm22;
-        m23 = nm23;
-        m30 = nm30;
-        m31 = nm31;
-        m32 = nm32;
-        m33 = nm33;
-        return this;
+
+        return new Matrix4f(nm00, nm01, nm02, nm03,
+                            nm10, nm11, nm12, nm13,
+                            nm20, nm21, nm22, nm23,
+                            nm30, nm31, nm32, nm33);
     }
 
     public float[][] getArray() {

@@ -16,4 +16,7 @@ public class GLOptions {
     public static void enable(int i){
         glEnable(i);
     }
+
+    private GLOptions() {
+    }
 }

@@ -187,7 +187,6 @@ public class World extends Component{
      * Recursively prints the Component layout of this world to the default {@link java.io.PrintStream}
      */
     public void printLayout(){
-        System.out.println(traversePrint(this));
     }
     
     private String traversePrint(Component c){

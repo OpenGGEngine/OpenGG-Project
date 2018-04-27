@@ -64,7 +64,7 @@ public class ALCDevice {
     }
     
     /**
-     * Closes this device and frees all resources and contexts
+     * Closes this device and frees all Resource and contexts
      */
     public void destroy(){
         alcCloseDevice(device);

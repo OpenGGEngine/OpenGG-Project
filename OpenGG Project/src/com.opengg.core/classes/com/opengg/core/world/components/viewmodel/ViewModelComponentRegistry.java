@@ -136,4 +136,7 @@ public class ViewModelComponentRegistry {
     public static List<ViewModelComponentRegisterInfoContainer> getAllRegistries(){
         return registered;
     }
+
+    private ViewModelComponentRegistry() {
+    }
 }

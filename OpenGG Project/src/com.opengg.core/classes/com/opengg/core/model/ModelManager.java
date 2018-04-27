@@ -22,7 +22,7 @@ public class ModelManager{
     public static void initialize(){
         
         try {
-            defaultm = ModelLoader.loadModel("resources/models/default/default.bmf");
+            defaultm = ModelLoader.loadModel("Resource/models/default/default.bmf");
         } catch (IOException ex) {
             GGConsole.error("Failed to load default model, nonexistent models may crash the program!");
         }

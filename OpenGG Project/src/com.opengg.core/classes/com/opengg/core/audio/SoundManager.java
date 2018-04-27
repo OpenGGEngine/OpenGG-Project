@@ -6,7 +6,7 @@
 package com.opengg.core.audio;
 
 import com.opengg.core.console.GGConsole;
-import com.opengg.core.engine.Resources;
+import com.opengg.core.engine.Resource;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,7 +28,7 @@ public class SoundManager {
     
     public static void initialize(){
         try {
-            defaultdata = AudioLoader.loadVorbis(Resources.getSoundPath("default.ogg"));
+            defaultdata = AudioLoader.loadVorbis(Resource.getSoundPath("default.ogg"));
         } catch (IOException ex) {
             GGConsole.error("Failed to load the default sound, nonexistent sound files may crash the program!");
         }
@@ -85,4 +85,7 @@ public class SoundManager {
             return defaultdata;
         }
     }       
+
+    private SoundManager() {
+    }
 }

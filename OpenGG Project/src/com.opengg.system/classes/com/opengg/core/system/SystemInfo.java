@@ -74,7 +74,7 @@ public class SystemInfo {
     public static void queryOpenGLInfo(){
         String glVersion = GGInfo.getGlVersion();
         glinfo.put("GL Version", glVersion);
-        glinfo.put("GL Initialization", !(glVersion == null || glVersion.equals("")) ? "Initialized successfully" : "Initialization failed");
+        glinfo.put("GL Initialization", !(glVersion == null || glVersion.isEmpty()) ? "Initialized successfully" : "Initialization failed");
     }
     
     public static void queryEngineInfo(){
@@ -119,5 +119,8 @@ public class SystemInfo {
             GGConsole.warning("DxDiag does not exist or cannot be accessed, Java information may be inaccurate");
         }
         
+    }
+
+    private SystemInfo() {
     }
 }

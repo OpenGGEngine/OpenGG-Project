@@ -49,4 +49,7 @@ public class PhysicsEngine {
     public static PhysicsSystem getInstance(){
         return instance;
     }
+
+    private PhysicsEngine() {
+    }
 }

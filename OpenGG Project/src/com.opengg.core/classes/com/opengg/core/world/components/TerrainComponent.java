@@ -7,7 +7,7 @@
 package com.opengg.core.world.components;
 
 import com.opengg.core.engine.OpenGG;
-import com.opengg.core.engine.Resources;
+import com.opengg.core.engine.Resource;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.texture.TextureManager;
@@ -117,7 +117,6 @@ public class TerrainComponent extends RenderComponent{
         System.out.println(s1);
         System.out.println(s2);
         System.out.println(s3);
-        System.out.println(s4);
         OpenGG.asyncExec(()->this.setDrawable(terrain.getDrawable()));
         if(in.readBoolean()){
             enableCollider();

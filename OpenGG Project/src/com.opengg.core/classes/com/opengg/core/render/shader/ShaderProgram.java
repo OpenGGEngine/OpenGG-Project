@@ -35,8 +35,8 @@ public class ShaderProgram {
     NativeGLProgram program;
     public int type;
     
-    private HashMap<String, Integer> ulocs = new HashMap<>();
-    private HashMap<String, Integer> alocs = new HashMap<>();
+    private final HashMap<String, Integer> ulocs = new HashMap<>();
+    private final HashMap<String, Integer> alocs = new HashMap<>();
     
     public ShaderProgram(int type, CharSequence source, String name){
         this.name = name;

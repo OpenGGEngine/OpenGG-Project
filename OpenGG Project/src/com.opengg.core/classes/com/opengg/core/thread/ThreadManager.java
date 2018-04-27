@@ -16,7 +16,7 @@ import java.util.List;
  * @author Javier
  */
 public class ThreadManager {
-    private static List<Thread> running = new ArrayList<>();
+    private static final List<Thread> running = new ArrayList<>();
     private static int closeDelay = 3000;
     
     public static void initialize(){
@@ -74,5 +74,8 @@ public class ThreadManager {
             while(thread.isAlive())
                 thread.stop();
         }
+    }
+
+    private ThreadManager() {
     }
 }

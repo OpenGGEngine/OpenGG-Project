@@ -41,8 +41,8 @@ public class SoundData implements Resource{
     int samplerate;
 
     @Override
-    public String getType() {
-        return "sounddata";
+    public Type getType() {
+        return Type.SOUND;
     }
 
     @Override

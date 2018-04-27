@@ -60,4 +60,7 @@ public class NetworkSerializer {
             GGConsole.error("Error occured during deserialization of packet!");
         }
     }
+
+    private NetworkSerializer() {
+    }
 }

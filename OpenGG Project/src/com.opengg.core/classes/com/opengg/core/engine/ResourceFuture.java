@@ -11,12 +11,22 @@ package com.opengg.core.engine;
  */
 public class ResourceFuture {
     ResourceRequest request;
-    boolean processing;
-    boolean done;
-    Resource r;
+    private boolean processing;
+    private boolean done;
+    private Resource r;
     
     public boolean exists(){
         return done;
+    }
+    
+    ResourceFuture set(Resource r){
+        this.r = r;
+        this.done = true;
+        return this;
+    }
+    
+    public boolean isProcessing(){
+        return processing;
     }
     
     public Resource get(){

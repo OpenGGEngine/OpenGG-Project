@@ -90,6 +90,9 @@ public final class FastMath {
                 table[(int) (i * degToIndex) & SIN_MASK] = (float) Math.sin(i * degreesToRadians);
             }
         }
+
+        private Sin() {
+        }
     }
 
     /**
@@ -1004,13 +1007,9 @@ public final class FastMath {
         if ((f > 0 && d >= 0 && d <= f) || (f < 0 && d <= 0 && d >= f)) {
             e = Ax * Cy - Ay * Cx;
             if (f > 0) {
-                if (e >= 0 && e <= f) {
-                    return true;
-                }
+                return e >= 0 && e <= f;
             } else {
-                if (e <= 0 && e >= f) {
-                    return true;
-                }
+                return e <= 0 && e >= f;
             }
         }
 
@@ -1029,11 +1028,8 @@ public final class FastMath {
         }
 
         // test edge u2,u1 against v0,v1 
-        if (EdgeEdgeTest(v0, v1, u2, u0, i0, i1)) {
-            return true;
-        }
+        return EdgeEdgeTest(v0, v1, u2, u0, i0, i1);
 
-        return false;
     }
 
     private static boolean PointInTri(Vector3f v0, Vector3f u0, Vector3f u1, Vector3f u2, short i0, short i1) {
@@ -1055,9 +1051,7 @@ public final class FastMath {
         d2 = a * v0.get(i0) + b * v0.get(i1) + c;
 
         if (d0 * d1 > 0.0f) {
-            if (d0 * d2 > 0.0f) {
-                return true;
-            }
+            return d0 * d2 > 0.0f;
         }
 
         return false;
@@ -1100,11 +1094,8 @@ public final class FastMath {
         if (PointInTri(v0, u0, u1, u2, i0, i1)) {
             return true;
         }
-        if (PointInTri(u0, v0, v1, v2, i0, i1)) {
-            return true;
-        }
+        return PointInTri(u0, v0, v1, v2, i0, i1);
 
-        return false;
     }
 
     private static float[] ComputeIntervals(float VV0, float VV1, float VV2,
@@ -1248,10 +1239,10 @@ public final class FastMath {
         dd = Vector3f.cross(n1, n2);
 
         // compute and index to the largest component of D 
-        max = (float) Math.abs(dd.x);
+        max = Math.abs(dd.x);
         index = 0;
-        bb = (float) Math.abs(dd.y);
-        cc = (float) Math.abs(dd.z);
+        bb = Math.abs(dd.y);
+        cc = Math.abs(dd.z);
         if (bb > max) {
             max = bb;
             index = 1;
@@ -1316,7 +1307,7 @@ public final class FastMath {
         Vector3f a;
         Vector3f b;
         
-        public Edge(Vector3f a, Vector3f b){
+        Edge(Vector3f a, Vector3f b){
             this.a = a;
             this.b = b;
         }
@@ -1326,7 +1317,7 @@ public final class FastMath {
         MinkowskiSet a;
         MinkowskiSet b;
         
-        public MinkowskiEdge(MinkowskiSet a, MinkowskiSet b){
+        MinkowskiEdge(MinkowskiSet a, MinkowskiSet b){
             this.a = a;
             this.b = b;
         }
@@ -1338,5 +1329,8 @@ public final class FastMath {
     
     public static Vector3f toDegrees(Vector3f rad){
         return rad.multiply(radDeg);
+    }
+
+    private FastMath() {
     }
 }

@@ -40,7 +40,7 @@ public class RenderComponent extends Component implements Renderable{
 
     @Override
     public void render() {
-        m = new Matrix4f().translate(getPosition()).rotate(getRotation()).scale(getScale());
+        m = new Matrix4f().rotate(getRotation()).translate(getPosition()).scale(getScale());
         if((renderDistance > 0) && (getPosition().subtract(RenderEngine.getCurrentCamera().getPos()).length() > renderDistance))
             return;
         if(g != null){
@@ -91,7 +91,7 @@ public class RenderComponent extends Component implements Renderable{
         super.serialize(out);
         out.write(shader);
         out.write(transparent);
-        out.write((float)renderDistance);
+        out.write(renderDistance);
         out.write(format.getAttributes().size());
         for(VertexArrayAttribute attrib : format.getAttributes()){
             out.write(attrib.arrayindex);

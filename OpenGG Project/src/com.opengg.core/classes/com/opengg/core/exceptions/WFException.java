@@ -9,7 +9,7 @@ import java.io.IOException;
  * resource.
  * <p>
  * Instances of this or sub-classes will generally be thrown during
- * loading or saving of WaveFront resources.
+ * loading or saving of WaveFront Resource.
  *
  */
 public class WFException extends IOException {

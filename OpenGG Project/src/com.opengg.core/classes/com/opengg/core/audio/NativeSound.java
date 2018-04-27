@@ -184,7 +184,7 @@ public final class NativeSound {
     }
     
     /**
-     * Removes the source and frees resources used
+     * Removes the source and frees Resource used
      */
     public void remove(){
         alDeleteSources(audioid);

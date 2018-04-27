@@ -8,7 +8,7 @@ package com.opengg.core.physics;
 import com.opengg.core.engine.PhysicsEngine;
 import com.opengg.core.engine.RenderEngine;
 import com.opengg.core.engine.RenderPath;
-import com.opengg.core.engine.Resources;
+import com.opengg.core.engine.Resource;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
@@ -33,8 +33,8 @@ public class PhysicsRenderer {
     private static Drawable cylinderobj;
     
     public static void initialize(){
-        sphere = Resources.getModel("sphere");
-        cylinder = Resources.getModel("cylinder");
+        sphere = Resource.getModel("sphere");
+        cylinder = Resource.getModel("cylinder");
         
         sphereobj = sphere.getDrawable();
         cylinderobj = cylinder.getDrawable();
@@ -74,5 +74,8 @@ public class PhysicsRenderer {
             sphereobj.setMatrix(new Matrix4f().translate(nc.getP2()).scale(new Vector3f(nc.getRadius())));
             sphereobj.render();
         }
+    }
+
+    private PhysicsRenderer() {
     }
 }

@@ -7,7 +7,7 @@
 package com.opengg.core.render.shader;
 
 import com.opengg.core.console.GGConsole;
-import com.opengg.core.engine.Resources;
+import com.opengg.core.engine.Resource;
 import com.opengg.core.exceptions.ShaderException;
 import com.opengg.core.io.FileStringLoader;
 import com.opengg.core.math.Matrix4f;
@@ -28,12 +28,13 @@ import java.util.List;
  */
 public class ShaderController {
     private static String currentshader = "";
-    private static Matrix4f model = new Matrix4f(), view = new Matrix4f(), proj = new Matrix4f();
-    private static HashMap<String, ShaderProgram> programs = new HashMap<>();
-    private static HashMap<String, ShaderPipeline> pipelines = new HashMap<>();
-    private static HashMap<String, String> rnames = new HashMap<>();
-    private static List<String> searchedUniforms = new ArrayList<>();
-    private static List<String> searchedAttribs = new ArrayList<>();
+    private static final Matrix4f model = new Matrix4f();
+    private static Matrix4f view = new Matrix4f(), proj = new Matrix4f();
+    private static final HashMap<String, ShaderProgram> programs = new HashMap<>();
+    private static final HashMap<String, ShaderPipeline> pipelines = new HashMap<>();
+    private static final HashMap<String, String> rnames = new HashMap<>();
+    private static final List<String> searchedUniforms = new ArrayList<>();
+    private static final List<String> searchedAttribs = new ArrayList<>();
     private static String currentvert, currenttesc, currenttese, currentgeom, currentfrag;
     private static int currentBind = 0;
 
@@ -41,31 +42,31 @@ public class ShaderController {
      * Initializes the controller and loads all default shaders
      */
     public static void initialize() {
-        loadShader("mainvert", Resources.getShaderPath("object.vert"), ShaderProgram.VERTEX);
-        loadShader("animvert", Resources.getShaderPath("anim.vert"), ShaderProgram.VERTEX);
-        loadShader("particlevert", Resources.getShaderPath("particle.vert"), ShaderProgram.VERTEX);
-        loadShader("passthroughvert", Resources.getShaderPath("passthrough.vert"), ShaderProgram.VERTEX);
+        loadShader("mainvert", Resource.getShaderPath("object.vert"), ShaderProgram.VERTEX);
+        loadShader("animvert", Resource.getShaderPath("anim.vert"), ShaderProgram.VERTEX);
+        loadShader("particlevert", Resource.getShaderPath("particle.vert"), ShaderProgram.VERTEX);
+        loadShader("passthroughvert", Resource.getShaderPath("passthrough.vert"), ShaderProgram.VERTEX);
 
-        loadShader("maingeom", Resources.getShaderPath("object.geom"), ShaderProgram.GEOMETRY);
-        loadShader("passthroughgeom", Resources.getShaderPath("passthrough.geom"), ShaderProgram.GEOMETRY);
-        loadShader("volumegeom", Resources.getShaderPath("volume.geom"), ShaderProgram.GEOMETRY);
-        loadShader("mainadjgeom", Resources.getShaderPath("objectadj.geom"), ShaderProgram.GEOMETRY);
-        loadShader("passthroughadjgeom", Resources.getShaderPath("passthroughadj.geom"), ShaderProgram.GEOMETRY);
+        loadShader("maingeom", Resource.getShaderPath("object.geom"), ShaderProgram.GEOMETRY);
+        loadShader("passthroughgeom", Resource.getShaderPath("passthrough.geom"), ShaderProgram.GEOMETRY);
+        loadShader("volumegeom", Resource.getShaderPath("volume.geom"), ShaderProgram.GEOMETRY);
+        loadShader("mainadjgeom", Resource.getShaderPath("objectadj.geom"), ShaderProgram.GEOMETRY);
+        loadShader("passthroughadjgeom", Resource.getShaderPath("passthroughadj.geom"), ShaderProgram.GEOMETRY);
 
-        loadShader("mainfrag", Resources.getShaderPath("phong.frag"), ShaderProgram.FRAGMENT);
-        loadShader("shadowfrag", Resources.getShaderPath("phongshadow.frag"), ShaderProgram.FRAGMENT);
-        loadShader("passthroughfrag", Resources.getShaderPath("passthrough.frag"), ShaderProgram.FRAGMENT);
-        loadShader("ssaofrag", Resources.getShaderPath("ssao.frag"), ShaderProgram.FRAGMENT);  
-        loadShader("cubemapfrag", Resources.getShaderPath("cubemap.frag"), ShaderProgram.FRAGMENT); 
-        loadShader("ambientfrag", Resources.getShaderPath("ambient.frag"), ShaderProgram.FRAGMENT); 
-        loadShader("texturefrag", Resources.getShaderPath("texture.frag"), ShaderProgram.FRAGMENT);
-        loadShader("terrainfrag", Resources.getShaderPath("terrainmulti.frag"), ShaderProgram.FRAGMENT);
-        //loadShader("bloomfrag", Resources.getShaderPath("bloom.frag"), ShaderProgram.FRAGMENT);  
-        loadShader("addfrag", Resources.getShaderPath("add.frag"), ShaderProgram.FRAGMENT);  
-        loadShader("guifrag", Resources.getShaderPath("gui.frag"), ShaderProgram.FRAGMENT); 
-        loadShader("barfrag", Resources.getShaderPath("bar.frag"), ShaderProgram.FRAGMENT); 
-        loadShader("hdrfrag", Resources.getShaderPath("hdr.frag"), ShaderProgram.FRAGMENT); 
-        loadShader("waterfrag", Resources.getShaderPath("water.frag"), ShaderProgram.FRAGMENT); 
+        loadShader("mainfrag", Resource.getShaderPath("phong.frag"), ShaderProgram.FRAGMENT);
+        loadShader("shadowfrag", Resource.getShaderPath("phongshadow.frag"), ShaderProgram.FRAGMENT);
+        loadShader("passthroughfrag", Resource.getShaderPath("passthrough.frag"), ShaderProgram.FRAGMENT);
+        loadShader("ssaofrag", Resource.getShaderPath("ssao.frag"), ShaderProgram.FRAGMENT);  
+        loadShader("cubemapfrag", Resource.getShaderPath("cubemap.frag"), ShaderProgram.FRAGMENT); 
+        loadShader("ambientfrag", Resource.getShaderPath("ambient.frag"), ShaderProgram.FRAGMENT); 
+        loadShader("texturefrag", Resource.getShaderPath("texture.frag"), ShaderProgram.FRAGMENT);
+        loadShader("terrainfrag", Resource.getShaderPath("terrainmulti.frag"), ShaderProgram.FRAGMENT);
+        //loadShader("bloomfrag", Resource.getShaderPath("bloom.frag"), ShaderProgram.FRAGMENT);  
+        loadShader("addfrag", Resource.getShaderPath("add.frag"), ShaderProgram.FRAGMENT);  
+        loadShader("guifrag", Resource.getShaderPath("gui.frag"), ShaderProgram.FRAGMENT); 
+        loadShader("barfrag", Resource.getShaderPath("bar.frag"), ShaderProgram.FRAGMENT); 
+        loadShader("hdrfrag", Resource.getShaderPath("hdr.frag"), ShaderProgram.FRAGMENT); 
+        loadShader("waterfrag", Resource.getShaderPath("water.frag"), ShaderProgram.FRAGMENT); 
           
         use("mainvert", "mainfrag");
         saveCurrentConfiguration("object");   
@@ -148,16 +149,16 @@ public class ShaderController {
         setUniform("percent", 1f);
 
         findUniform("uvmultx");
-        setUniform("uvmultx", (float)1f);
+        setUniform("uvmultx", 1f);
 
         findUniform("uvmulty");
-        setUniform("uvmulty", (float)1f);
+        setUniform("uvmulty", 1f);
         
         findUniform("uvoffsetx");
-        setUniform("uvoffsetx", (float)0f);
+        setUniform("uvoffsetx", 0f);
 
         findUniform("uvoffsety");
-        setUniform("uvoffsety", (float)0f);
+        setUniform("uvoffsety", 0f);
 
         findUniform("rot");
         setUniform("rot", new Vector3f(0,0,0));
@@ -289,11 +290,11 @@ public class ShaderController {
     }
     
     public static void setUVMultX(float f){
-        setUniform("uvmultx", (float)f);
+        setUniform("uvmultx", f);
     }
     
     public static void setUVMultY(float f){
-        setUniform("uvmulty", (float)f);
+        setUniform("uvmulty", f);
     }
     
     public static void setInstanced(boolean instanced){
@@ -689,5 +690,8 @@ public class ShaderController {
             GGConsole.error("Failed to find shader file for " + loc);
             return false;
         }
+    }
+
+    private ShaderController() {
     }
 }

@@ -56,7 +56,7 @@ public class Deserializer {
             for(SerialHolder sh2 : ds.components){
                 if(sh2.c.getId() == sh.parent){
                     if(sh2.c instanceof Component){
-                        ((Component)sh2.c).attach(sh.c);
+                        sh2.c.attach(sh.c);
                         continue upper;
                     }else{
                         GGConsole.warning("Component " + sh.c.getId() + " has invalid parent, will not be added");
@@ -115,7 +115,6 @@ public class Deserializer {
                 return;
             } catch (NoSuchMethodException | IllegalArgumentException | InvocationTargetException ex) {
                 GGConsole.error("Failed to load world, could not access default constructor for " + classname);
-                System.out.println(ex.toString());
                 ds.w = null;
                 return;
             }

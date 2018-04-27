@@ -111,7 +111,7 @@ public final class ParallelWorkerPool<T, V> {
 class WorkerThread<T, V> implements Runnable {
     ParallelWorkerPool<T, V> pool;
     
-    public WorkerThread(ParallelWorkerPool<T, V> pool){
+    WorkerThread(ParallelWorkerPool<T, V> pool){
         this.pool = pool;
     }
 

@@ -75,6 +75,9 @@ public class WindowController {
     }
     
     public static float getRatio(){
-        return (float)oldsize.x/(float)oldsize.y;
+        return oldsize.x/(float)oldsize.y;
+    }
+
+    private WindowController() {
     }
 }

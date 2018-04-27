@@ -13,4 +13,7 @@ public final class WindowOptions {
     public static final int FULLSCREEN = 1,
             WINDOWED = 2,
             BORDERLESS = 3;
+
+    private WindowOptions() {
+    }
 }

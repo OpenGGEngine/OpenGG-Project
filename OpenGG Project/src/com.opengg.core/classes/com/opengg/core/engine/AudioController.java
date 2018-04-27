@@ -33,7 +33,7 @@ public class AudioController {
     private static boolean initialized;
     private static float gain = 1;
     
-    private static ArrayList<Sound> sounds = new ArrayList<>();
+    private static final ArrayList<Sound> sounds = new ArrayList<>();
     static void initialize() {
         device = new ALCDevice(null);
 
@@ -130,5 +130,8 @@ public class AudioController {
             sound.remove();
         }
         ALC.destroy();
+    }
+
+    private AudioController() {
     }
 }

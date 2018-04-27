@@ -197,8 +197,8 @@ public class Model implements Resource{
     }
 
     @Override
-    public String getType() {
-        return "model";
+    public Type getType() {
+        return Type.MODEL;
     }
 
     @Override

@@ -9,6 +9,7 @@ import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.texture.TextureManager;
 import com.opengg.core.world.components.Component;
 import com.opengg.core.world.components.particle.ExplosionParticleEmitter;
+import com.opengg.core.world.components.particle.ParticleEmitter;
 
 /**
  *
@@ -63,10 +64,10 @@ public class ExplosionParticleEmitterViewModel extends ViewModel{
     public void onChange(Element element) {
         switch(element.internalname){
             case "tex":
-                ((ExplosionParticleEmitter)component).setTexture((Texture) element.value);
+                ((ParticleEmitter)component).setTexture((Texture) element.value);
                 break;
             case "life":
-                ((ExplosionParticleEmitter)component).setLifeLength((Float) element.value);
+                ((ParticleEmitter)component).setLifeLength((Float) element.value);
                 break;
             case "amount":
                 ((ExplosionParticleEmitter)component).setAmount((Integer) element.value);

@@ -92,7 +92,6 @@ public class BindController implements KeyboardListener, MouseButtonListener{
      */
     public static void printBinds(){
         for(Bind bind : binds){
-            System.out.println(bind.action + ", " + bind.type + ", " + bind.button);
         }
     }
     

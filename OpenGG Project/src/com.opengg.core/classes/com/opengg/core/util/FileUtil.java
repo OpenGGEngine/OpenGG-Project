@@ -25,7 +25,7 @@ public class FileUtil {
     public static String getFileName(String path){
         Path p = Paths.get(path);
         String fname = p.getFileName().toString();
-        int lio = fname.lastIndexOf(".");
+        int lio = fname.lastIndexOf('.');
         return fname.substring(0, lio);
     }
     
@@ -74,5 +74,8 @@ public class FileUtil {
 
         buffer.flip();
         return buffer;
+    }
+
+    private FileUtil() {
     }
 }

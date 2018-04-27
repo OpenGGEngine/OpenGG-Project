@@ -95,9 +95,9 @@ public class SunComponent extends RenderComponent{
     @Override
     public void serialize(GGOutputStream stream) throws IOException{
         super.serialize(stream);
-        stream.write((int)SUN_DIS);
-        stream.write((float)rotspeed);
-        stream.write((float)currot);
+        stream.write(SUN_DIS);
+        stream.write(rotspeed);
+        stream.write(currot);
         stream.write(texture.getData().get(0).source);
     }
     

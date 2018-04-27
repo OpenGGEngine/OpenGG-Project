@@ -25,7 +25,7 @@ import static org.lwjgl.opengl.GL42.glTexStorage3D;
  * @author Javier
  */
 public class NativeGLTexture {
-    private int id;
+    private final int id;
     
     public NativeGLTexture(){
         id = glGenTextures();

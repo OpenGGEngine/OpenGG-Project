@@ -27,9 +27,9 @@ import java.util.List;
  * @author Javier
  */
 public class GGConsole implements Runnable{
-    private static List<GGMessage> messages = new LinkedList<>();
-    private static List<ConsoleListener> listeners = new ArrayList<>();
-    private static BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+    private static final List<GGMessage> messages = new LinkedList<>();
+    private static final List<ConsoleListener> listeners = new ArrayList<>();
+    private static final BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
     private static boolean running = true;
     
     public static List<GGMessage> getAllMessages(){

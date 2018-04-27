@@ -6,11 +6,12 @@
 package com.opengg.core.render.texture;
 
 import com.opengg.core.console.GGConsole;
-import com.opengg.core.engine.Resources;
+import com.opengg.core.engine.Resource;
 import com.opengg.core.system.Allocator;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import org.lwjgl.opengl.EXTTextureFilterAnisotropic;
 import org.lwjgl.opengl.GL;
@@ -141,8 +142,7 @@ public class Texture {
         for(TextureData data : datums) full.put((ByteBuffer)data.buffer);
         
         tex.setImageData(type, 0, internalformat, datums[0].width, datums[0].height, datums.length, 0, colorformat, datatype, full);
-        for(TextureData datum : datums)
-            tdata.add(datum);
+        tdata.addAll(Arrays.asList(datums));
     }
     
     public void set3DSubData(int xoffset, int yoffset, int zoffset, TextureData[] datums){
@@ -195,7 +195,7 @@ public class Texture {
     }
     
     public List<TextureData> getData(){
-        return tdata;
+        return Collections.unmodifiableList(tdata);
     }
     
     public int getID(){
@@ -215,7 +215,7 @@ public class Texture {
     }
     
     public static Texture get2DSRGBTexture(String path){
-        return Resources.getSRGBTexture(path);
+        return Resource.getSRGBTexture(path);
     }
     
     public static Texture get2DSRGBTexture(TextureData data){
@@ -321,5 +321,73 @@ public class Texture {
         texture.generateMipmaps();
         texture.unbind();
         return texture;
+    }
+    
+    public static TextureConfig newConfig(){
+        return TextureConfig.defaultconfig;
+    }
+    
+    public static TextureConfig newSRGBConfig(){
+        return TextureConfig.defaultconfig.internalFormat(GL_SRGB_ALPHA);
+    }
+    
+    public static class TextureConfig{
+        static final TextureConfig defaultconfig = new TextureConfig();
+        
+        final TextureType type;
+        final int minfilter;
+        final int maxfilter;
+        final int wraptype;
+        final int format;
+        final int intformat;
+        final int input;
+        final boolean anisotropic;
+
+        public TextureConfig(){
+            this(TextureType.TEXTURE_2D, GL_LINEAR, GL_LINEAR, GL_REPEAT, GL_RGBA, GL_SRGB_ALPHA, GL_UNSIGNED_BYTE, false);
+        }
+
+        public TextureConfig(TextureType type, int minfilter, int maxfilter, int wraptype, int format, int intformat, int input, boolean anisotropic) {
+            this.type = type;
+            this.minfilter = minfilter;
+            this.maxfilter = maxfilter;
+            this.wraptype = wraptype;
+            this.format = format;
+            this.intformat = intformat;
+            this.input = input;
+            this.anisotropic = anisotropic;
+        }
+        
+        public TextureConfig type(TextureType type) {
+            return new TextureConfig(type, minfilter, maxfilter, wraptype, format, intformat, input, anisotropic);
+        }
+
+        public TextureConfig minimumFilter(int minfilter) {
+            return new TextureConfig(type, minfilter, maxfilter, wraptype, format, intformat, input, anisotropic);
+        }
+
+        public TextureConfig maxFilter(int maxfilter) {
+            return new TextureConfig(type, minfilter, maxfilter, wraptype, format, intformat, input, anisotropic);
+        }
+        
+        public TextureConfig wrapType(int wraptype) {
+            return new TextureConfig(type, minfilter, maxfilter, wraptype, format, intformat, input, anisotropic);
+        }
+        
+        public TextureConfig format(int format) {
+            return new TextureConfig(type, minfilter, maxfilter, wraptype, format, intformat, input, anisotropic);
+        }
+        
+        public TextureConfig internalFormat(int intformat) {
+            return new TextureConfig(type, minfilter, maxfilter, wraptype, format, intformat, input, anisotropic);
+        }
+        
+        public TextureConfig inputType(int input) {
+            return new TextureConfig(type, minfilter, maxfilter, wraptype, format, intformat, input, anisotropic);
+        }
+    }
+
+    public static enum TextureType{
+        TEXTURE_ARRAY, TEXTURE_2D, TEXTURE_3D 
     }
 }

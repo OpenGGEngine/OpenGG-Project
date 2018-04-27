@@ -47,4 +47,7 @@ public class ObjectCreator {
         Buffer[] b = ObjectBuffers.genCube(size);
         return new DrawnObject((FloatBuffer)b[0],(IntBuffer)b[1]);
     }
+
+    private ObjectCreator() {
+    }
 }

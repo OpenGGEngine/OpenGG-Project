@@ -16,8 +16,8 @@ public class KeyboardController {
     
     public static int charToKeycode(char ch){
         if(Character.isAlphabetic(ch))
-            return (int)Character.toUpperCase(ch);
-        else return (int)ch;
+            return Character.toUpperCase(ch);
+        else return ch;
             
     }
     
@@ -55,6 +55,9 @@ public class KeyboardController {
         }catch(NullPointerException e){
             
         }
+    }
+
+    private KeyboardController() {
     }
     
 }

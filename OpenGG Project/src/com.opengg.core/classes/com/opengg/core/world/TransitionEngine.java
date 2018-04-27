@@ -59,4 +59,7 @@ public class TransitionEngine {
         }
         ctf.clearTransitions();
     }
+
+    private TransitionEngine() {
+    }
 }

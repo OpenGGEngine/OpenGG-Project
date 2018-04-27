@@ -5,6 +5,9 @@
  */
 package com.opengg.core;
 
+import java.io.File;
+import java.io.IOException;
+
 /**
  *
  * @author Javier
@@ -12,12 +15,21 @@ package com.opengg.core;
 public class GGInfo {
     private static String appname = "default";
     private static String memallocator = "system";
+    private static String basepath = "";
     private static boolean initialized = false;
     private static String version = "0.0.1";
     private static boolean verbose = false;
     private static boolean agressiveMemory = false;
     private static String glversion = "4.2";
 
+    static{ 
+        try {
+            basepath = new File("").getCanonicalPath();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+    
     public static String getApplicationName() {
         return appname;
     }
@@ -52,6 +64,13 @@ public class GGInfo {
 
     public static void setAgressiveMemoryManagement(boolean agressiveMemory) {
         GGInfo.agressiveMemory = agressiveMemory;
+    }
+
+    public static String getApplicationPath() {
+        return basepath;
+    }
+
+    private GGInfo() {
     }
     
     

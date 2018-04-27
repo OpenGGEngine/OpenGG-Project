@@ -296,4 +296,7 @@ public class CollisionSolver {
         h2.system = m.system;
         return HullGround(h2);
     }
+
+    private CollisionSolver() {
+    }
 }

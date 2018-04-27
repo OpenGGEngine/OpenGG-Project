@@ -49,4 +49,7 @@ public class AudioLoader {
         
         return data;
     }
+
+    private AudioLoader() {
+    }
 }

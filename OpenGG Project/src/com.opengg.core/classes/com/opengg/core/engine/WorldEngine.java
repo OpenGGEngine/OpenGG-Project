@@ -20,7 +20,7 @@ import java.util.List;
  */
 public class WorldEngine{
     private static World curworld;
-    private static List<Component> removal = new LinkedList<>();
+    private static final List<Component> removal = new LinkedList<>();
     private static boolean enabled = true;
     
     public static void initialize(){
@@ -75,18 +75,18 @@ public class WorldEngine{
     }
     
     private static void traverseUpdate(Component c, float delta){
-        if(!c.isEnabled() || ((c.updatedistance > c.getPosition().subtract(RenderEngine.getCurrentCamera().getPos()).length()) && c.updatedistance != 0))
+        if(!c.isEnabled() || ((c.getUpdateDistance() > c.getPosition().subtract(RenderEngine.getCurrentCamera().getPos()).length()) && c.getUpdateDistance() != 0))
             return;
         c.update(delta);
-        for(Component c2 : ((Component)c).getChildren()){
+        for(Component c2 : c.getChildren()){
             traverseUpdate(c2, delta);
         }
     }
     
     /**
-     * Loads {@link com.opengg.core.world.World} from a file located in the resources\worlds directory
+     * Loads {@link com.opengg.core.world.World} from a file located in the Resource\worlds directory
      * in the Binary World Format (with a .bwf extension)
-     * @param file Filename of world, not including the path up to resources\worlds
+     * @param file Filename of world, not including the path up to Resource\worlds
      * @return Loaded world
      */
     public static World loadWorld(String file){
@@ -142,5 +142,8 @@ public class WorldEngine{
      */
     public static World getCurrent(){
         return curworld;
+    }
+
+    private WorldEngine() {
     }
 }

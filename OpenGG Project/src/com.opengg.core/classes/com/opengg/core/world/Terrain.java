@@ -6,7 +6,7 @@
 package com.opengg.core.world;
 
 import com.opengg.core.console.GGConsole;
-import com.opengg.core.engine.Resources;
+import com.opengg.core.engine.Resource;
 import com.opengg.core.math.Triangle;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
@@ -73,7 +73,7 @@ public class Terrain {
     
     private void generateTexture(String path){
         try {
-            BufferedImage image = ImageIO.read(new FileInputStream(Resources.getAbsoluteFromLocal(path)));
+            BufferedImage image = ImageIO.read(new FileInputStream(Resource.getAbsoluteFromLocal(path)));
 
             int gx = image.getWidth();
             int gz = image.getHeight();
@@ -166,9 +166,9 @@ public class Terrain {
         
         for(int i = 0; i < map.length; i++){
             for(int i2 = 0; i2 < map[0].length; i2++){
-                float x = ((float) i * xsquarewidth);
+                float x = (i * xsquarewidth);
                 float y = map[i][i2];
-                float z = ((float) i2 * zsquarewidth);
+                float z = (i2 * zsquarewidth);
 
                 points.add(new Vector3f(x,y,z));
             }
@@ -213,9 +213,9 @@ public class Terrain {
         
         for(int i = 0; i < width; i++){
             for(int i2 = 0; i2 < height; i2++){
-                float x = ((float) (i + sx) * xsquarewidth);
+                float x = ((i + sx) * xsquarewidth);
                 float y = map[i+sx][i2+sy];
-                float z = ((float) (i2 + sy) * zsquarewidth);
+                float z = ((i2 + sy) * zsquarewidth);
 
                 points.add(new Vector3f(x,y,z));
             }
@@ -261,12 +261,12 @@ public class Terrain {
         
         for(int i = 0; i < map.length; i++){
             for(int i2 = 0; i2 < map[0].length; i2++){
-                float x = ((float) i * xsquarewidth);
+                float x = (i * xsquarewidth);
                 float y = map[i][i2];
-                float z = ((float) i2 * zsquarewidth);
+                float z = (i2 * zsquarewidth);
                                 
-                float u = (float) i / (float) map.length;
-                float v = (float) i2 / (float) map[0].length;
+                float u = i / (float) map.length;
+                float v = i2 / (float) map[0].length;
                 
                 float nx = 1;
                 float ny = 1;

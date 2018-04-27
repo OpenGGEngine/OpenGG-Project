@@ -23,7 +23,7 @@ import java.util.List;
  */
 public class PostProcessController {
     public static Drawable drawable;
-    private static List<PostProcessingPass> passes = Collections.synchronizedList(new ArrayList<>());
+    private static final List<PostProcessingPass> passes = Collections.synchronizedList(new ArrayList<>());
     private static Framebuffer utility;
     static Framebuffer currentBuffer = null;
     static Texture t;
@@ -71,5 +71,8 @@ public class PostProcessController {
         
         currentBuffer.blitToBack();
         RenderEngine.setCulling(true);
+    }
+
+    private PostProcessController() {
     }
 }

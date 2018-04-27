@@ -184,4 +184,7 @@ public class Key {
 		JOYSTICK_15   = 14,
 		JOYSTICK_16   = 15,
 		JOYSTICK_LAST = JOYSTICK_16;
+
+    private Key() {
+    }
 }

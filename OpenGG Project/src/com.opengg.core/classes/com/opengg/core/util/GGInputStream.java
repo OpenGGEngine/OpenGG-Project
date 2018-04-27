@@ -83,12 +83,12 @@ public class GGInputStream extends InputStream{
     }
     
     public Quaternionf readQuaternionf() throws IOException{
-        Quaternionf f = new Quaternionf();
-        f.x = readFloat();
-        f.y = readFloat();
-        f.z = readFloat();
-        f.w = readFloat();
-        return f;
+        float x = readFloat();
+        float y = readFloat();
+        float z = readFloat();
+        float w = readFloat();
+
+        return new Quaternionf(x,y,z,w);
     }
     
     public int readInt() throws IOException{
