@@ -21,7 +21,7 @@ public class ExplosionParticleEmitterViewModel extends ViewModel{
     public void createMainViewModel() {
         Element tex = new Element();
         tex.type = Element.TEXTURE;
-        tex.name = "Particle vulkan";
+        tex.name = "Particle texture";
         tex.value = TextureManager.getDefault();
         tex.internalname = "tex";
         

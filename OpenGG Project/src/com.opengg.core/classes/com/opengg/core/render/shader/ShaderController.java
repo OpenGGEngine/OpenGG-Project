@@ -109,7 +109,7 @@ public class ShaderController {
         saveCurrentConfiguration("volume");
         
         use("passthroughvert", "texturefrag");
-        saveCurrentConfiguration("vulkan");
+        saveCurrentConfiguration("texture");
         
         use("passthroughvert", "guifrag");
         saveCurrentConfiguration("gui");
@@ -495,7 +495,7 @@ public class ShaderController {
     }
        
     /**
-     * Binds the sampler named {@code name} to vulkan location {@code loc} in every fragment shader
+     * Binds the sampler named {@code name} to texture location {@code loc} in every fragment shader
      * @param name Name of sampler in shader
      * @param loc New location of sampler
      */

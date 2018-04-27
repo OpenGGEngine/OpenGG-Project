@@ -256,7 +256,7 @@ public class ObjLoader {
                         parseMaterial.diffuseColour[1] = Float.valueOf(rgb[2]);
                         parseMaterial.diffuseColour[2] = Float.valueOf(rgb[3]);
                     } else if (materialLine.startsWith("map_Kd")) {
-                        /*parseMaterial.vulkan = TextureLoader.getTexture("PNG",
+                        /*parseMaterial.texture = TextureLoader.getTexture("PNG",
                                 new FileInputStream(new File(f.getParentFile().getAbsolutePath() + "/" + materialLine
                                         .split(" ")[1])));*/
                         System.out.println("WOrk to do");

@@ -97,9 +97,9 @@ public interface Resource {
     }
     
     /**
-     * Returns the path to a vulkan with the given name, with the format resources/tex/$name$
-     * @param name Name of vulkan, including the respective file ending
-     * @return Relative path to the vulkan
+     * Returns the path to a texture with the given name, with the format resources/tex/$name$
+     * @param name Name of texture, including the respective file ending
+     * @return Relative path to the texture
      */
     public static String getTexturePath(String name){
         String source = validate(name);
@@ -163,7 +163,7 @@ public interface Resource {
     /**
      * Returns the {@link com.opengg.core.render.texture.Texture} with the given name <br>
      * It is acquired by calling {@link #getTexturePath(java.lang.String) } and passing the result into {@link com.opengg.core.render.texture.Texture#get2DTexture(java.lang.String) },
-     * @param name Name of vulkan file to be loaded
+     * @param name Name of texture file to be loaded
      * @return Texture object loaded from file
      */
     public static Texture getTexture(String name){
@@ -173,7 +173,7 @@ public interface Resource {
     /**
      * Returns the {@link com.opengg.core.render.texture.Texture} with the given name using the sRGB format<br>
      * It is acquired by calling {@link #getTexturePath(java.lang.String) } and passing the result into {@link com.opengg.core.render.texture.Texture#get2DSRGBTexture(java.lang.String) },
-     * @param name Name of vulkan file to be loaded
+     * @param name Name of texture file to be loaded
      * @return Texture object loaded from file
      */
     public static Texture getSRGBTexture(String name){
@@ -182,7 +182,7 @@ public interface Resource {
     
     /**
      * Returns the {@link com.opengg.core.render.texture.TextureData} with the given name <br>
-     * @param name Name of vulkan file to be loaded
+     * @param name Name of texture file to be loaded
      * @return Texture data object loaded from file
      */
     public static TextureData getTextureData(String name){

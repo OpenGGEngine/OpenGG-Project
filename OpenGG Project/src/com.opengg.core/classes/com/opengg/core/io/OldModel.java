@@ -87,7 +87,7 @@ public class OldModel {
         public float[] ambientColour = {0.2f, 0.2f, 0.2f};
         public float[] diffuseColour = {0.3f, 1, 1};
         public float[] specularColour = {1, 1, 1};
-        //public Texture vulkan;
+        //public Texture texture;
     }
 
     /** @author Oskar */

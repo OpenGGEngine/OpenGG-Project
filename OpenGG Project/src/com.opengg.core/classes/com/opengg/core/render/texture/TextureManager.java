@@ -24,7 +24,7 @@ public class TextureManager {
         try {
             defaultdata = TextureLoader.loadTexture(Resource.getTexturePath("default.png"));
         } catch (IOException ex) {
-            GGConsole.error("Failed to load the default vulkan, nonexistent textures may crash the program!");
+            GGConsole.error("Failed to load the default texture, nonexistent textures may crash the program!");
         }
     }
     
@@ -64,7 +64,7 @@ public class TextureManager {
             addTexture(data);
             return data;
         }catch(IOException e){
-            GGConsole.warn("Failed to load vulkan at " + path + ", using default instead");
+            GGConsole.warn("Failed to load texture at " + path + ", using default instead");
             return defaultdata;
         }
     }

@@ -64,7 +64,7 @@ public class Font {
         fontMetrics = graphics.getFontMetrics();
         bufferedImage = graphics.getDeviceConfiguration().createCompatibleImage((int) getFontImageWidth(),(int) getFontImageHeight(),Transparency.TRANSLUCENT);
         
-      //Generate vulkan
+      //Generate texture
       fontTextureId = glGenTextures();
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, fontTextureId);
@@ -88,7 +88,7 @@ public class Font {
         imageGraphics.setColor(java.awt.Color.WHITE);
         CHARS.keySet().forEach(i -> imageGraphics.drawString(CHARS.get(i), 0, fontMetrics.getMaxAscent() + (this.getCharHeight() * i)));
         
-        //Generate vulkan data
+        //Generate texture data
         int[] pixels = new int[bufferedImage.getWidth() * bufferedImage.getHeight()];
         bufferedImage.getRGB(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight(), pixels, 0, bufferedImage.getWidth());
         byteBuffer = ByteBuffer.allocateDirect((bufferedImage.getWidth() * bufferedImage.getHeight() * 4));
@@ -122,7 +122,7 @@ public class Font {
         for(int i = 0;i < index;i++){
         imageGraphics.drawString(CHARS.get(i), 0, fontMetrics.getMaxAscent() + (this.getCharHeight() * i));
         }
-        //Generate vulkan data
+        //Generate texture data
         int[] pixels = new int[bufferedImage.getWidth() * bufferedImage.getHeight()];
         bufferedImage.getRGB(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight(), pixels, 0, bufferedImage.getWidth());
         byteBuffer = ByteBuffer.allocateDirect((bufferedImage.getWidth() * bufferedImage.getHeight() * 4));
