@@ -9,7 +9,6 @@ import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
-import com.opengg.core.math.Vector3fm;
 import com.opengg.core.system.Allocator;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -17,7 +16,6 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import org.lwjgl.system.MemoryUtil;
 
 /**
  *
@@ -61,11 +59,10 @@ public class GGInputStream extends InputStream{
         float l32 = readFloat();
         float l33 = readFloat();
 
-        Matrix4f temp = new Matrix4f(l00,l01,l02,l03,
+        return new Matrix4f(l00,l01,l02,l03,
                                     l10,l11,l12,l13,
                                     l20,l21,l22,l23,
                                     l30,l31,l32,l33);
-        return temp;
     }
     
     public Vector3f readVector3f() throws IOException{
@@ -130,12 +127,12 @@ public class GGInputStream extends InputStream{
     }
     
     public String readString() throws IOException{
-        String s = "";
+        StringBuilder s = new StringBuilder();
         int len = readInt();
         for(int i = 0; i < len; i++){
-            s += readChar();
+            s.append(readChar());
         }
-        return s;
+        return s.toString();
     }
     
     public FloatBuffer readFloatBuffer() throws IOException{

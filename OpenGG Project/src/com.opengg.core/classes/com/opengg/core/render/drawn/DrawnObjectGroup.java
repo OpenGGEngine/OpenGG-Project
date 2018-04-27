@@ -24,7 +24,7 @@ public class DrawnObjectGroup implements Drawable {
     }
     
     public DrawnObjectGroup(List<Drawable> objs) {
-        this.objs = objs;
+        this.objs = List.copyOf(objs);
     }
     
     public void add(Drawable d){

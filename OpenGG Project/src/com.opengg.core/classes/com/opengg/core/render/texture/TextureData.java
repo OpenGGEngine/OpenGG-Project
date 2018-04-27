@@ -14,11 +14,11 @@ import java.nio.Buffer;
  * @author Javier
  */
 public class TextureData implements Resource{
-    public int width;
-    public int height;
-    public int channels;
-    public Buffer buffer;
-    public String source;
+    public final int width;
+    public final int height;
+    public final int channels;
+    public final Buffer buffer;
+    public final String source;
     public boolean complete = false;
     
     public TextureData(int width, int height, int channels, Buffer buffer, String source) {

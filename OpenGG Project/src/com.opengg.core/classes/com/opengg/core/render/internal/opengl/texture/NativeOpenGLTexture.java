@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.opengg.core.render.texture;
+package com.opengg.core.render.internal.opengl.texture;
 
 import java.nio.ByteBuffer;
 import static org.lwjgl.opengl.GL11.glBindTexture;
@@ -24,10 +24,10 @@ import static org.lwjgl.opengl.GL42.glTexStorage3D;
  *
  * @author Javier
  */
-public class NativeGLTexture {
+public class NativeOpenGLTexture{
     private final int id;
     
-    public NativeGLTexture(){
+    public NativeOpenGLTexture(){
         id = glGenTextures();
     }
     

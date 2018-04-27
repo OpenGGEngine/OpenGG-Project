@@ -7,7 +7,6 @@
 package com.opengg.core.world.components;
 
 import com.opengg.core.engine.OpenGG;
-import com.opengg.core.engine.Resource;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.texture.TextureManager;
@@ -79,8 +78,7 @@ public class TerrainComponent extends RenderComponent{
     
     public Vector3f getNormalAt(Vector3f pos){
         Vector3f np = pos.subtract(getPosition()).divide(getScale());
-        Vector3f normal = terrain.getNormalAt(np.x, np.z);
-        return normal;
+        return terrain.getNormalAt(np.x, np.z);
     }
     
     @Override

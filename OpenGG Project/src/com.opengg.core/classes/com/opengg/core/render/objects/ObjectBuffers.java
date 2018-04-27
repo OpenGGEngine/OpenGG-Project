@@ -11,7 +11,6 @@ import com.opengg.core.system.Allocator;
 import java.nio.Buffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import org.lwjgl.system.MemoryUtil;
 
 /**
  *

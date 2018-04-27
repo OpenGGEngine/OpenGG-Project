@@ -17,7 +17,7 @@ import java.util.List;
  * @author Javier
  */
 public class Stage {
-    String shader = new String();
+    String shader = "";
     List<Tuple<Integer, Integer>> colorbinds = new ArrayList<>();
     Framebuffer buffer;
     

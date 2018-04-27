@@ -14,7 +14,6 @@ import java.io.File;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
-import org.lwjgl.system.MemoryUtil;
 
 /**
  *

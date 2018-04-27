@@ -10,7 +10,7 @@ import com.opengg.core.console.GGConsole;
 import com.opengg.core.engine.Resource;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
-import java.io.DataInputStream;
+
 import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

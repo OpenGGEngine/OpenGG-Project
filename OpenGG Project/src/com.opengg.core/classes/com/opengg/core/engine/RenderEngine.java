@@ -11,7 +11,7 @@ import com.opengg.core.gui.GUI;
 import com.opengg.core.gui.GUIController;
 import com.opengg.core.model.ModelManager;
 import com.opengg.core.physics.PhysicsRenderer;
-import com.opengg.core.render.GLBuffer;
+import com.opengg.core.render.GraphicsBuffer;
 import com.opengg.core.render.Renderable;
 import com.opengg.core.render.light.Light;
 import com.opengg.core.render.postprocess.PostProcessController;
@@ -45,7 +45,7 @@ public class RenderEngine {
     private static List<RenderGroup> groups = new ArrayList<>();
     private static final List<Light> lights = new ArrayList<>();
     private static final List<RenderPath> paths = new ArrayList<>();
-    private static GLBuffer lightobj;
+    private static GraphicsBuffer lightobj;
     private static RenderGroup dlist, animlist;
     private static Skybox skybox;
     private static boolean initialized;
@@ -65,12 +65,7 @@ public class RenderEngine {
      */
     static void initialize() {
         ShaderController.initialize();
-        TextureManager.initialize();
-        ModelManager.initialize();
-        GUIController.initialize();
-        PostProcessController.initialize();
-        PhysicsRenderer.initialize();
-        
+
         vaoformat = new VertexArrayFormat();
         vaoformat.addAttribute(new VertexArrayAttribute("position", 3, 12, GL_FLOAT, 0, 0, false));
         //vaoformat.addAttribute(new VertexArrayAttribute("color", 4, 12, GL_FLOAT, 3, 0, false));
@@ -93,7 +88,7 @@ public class RenderEngine {
 
         sceneTex = WindowFramebuffer.getFloatingPointWindowFramebuffer(1);
         defaultvao = new VertexArrayObject(vaoformat);
-        lightobj = new GLBuffer(GL_UNIFORM_BUFFER, 1600, GL_DYNAMIC_DRAW);
+        lightobj = GraphicsBuffer.allocate(GL_UNIFORM_BUFFER, 1600, GL_DYNAMIC_DRAW);
         lightobj.bindBase(ShaderController.getUniqueUniformBufferLocation());
         ShaderController.setUniformBlockLocation(lightobj, "LightBuffer");
 
@@ -117,7 +112,13 @@ public class RenderEngine {
         glDepthFunc(GL_LEQUAL);
         glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-        
+
+        TextureManager.initialize();
+        ModelManager.initialize();
+        GUIController.initialize();
+        PostProcessController.initialize();
+        PhysicsRenderer.initialize();
+
         GGConsole.log("Render engine initialized");
     }
 

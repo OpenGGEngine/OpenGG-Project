@@ -6,7 +6,6 @@
 
 package com.opengg.core.gui;
 
-import com.opengg.core.engine.RenderEngine;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.world.Camera;

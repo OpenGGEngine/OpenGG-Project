@@ -6,13 +6,17 @@
 package com.opengg.core.render.drawn;
 
 import com.opengg.core.engine.RenderEngine;
+import com.opengg.core.exceptions.RenderException;
 import com.opengg.core.math.Matrix4f;
-import com.opengg.core.render.GLBuffer;
+import com.opengg.core.render.GraphicsBuffer;
+import com.opengg.core.render.internal.opengl.OpenGLBuffer;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.shader.VertexArrayFormat;
 import com.opengg.core.system.Allocator;
+
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.ArrayList;
 import java.util.List;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
@@ -20,91 +24,89 @@ import static org.lwjgl.opengl.GL11.glDrawElements;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
-import org.lwjgl.system.MemoryUtil;
 
 /**
  *
  * @author Javier
  */
 public class DrawnObject implements Drawable {
-    GLBuffer vbo;
-    GLBuffer evbo;
-    FloatBuffer vertices;
-    IntBuffer ind; 
-    boolean adj = false;
-    boolean vbexist = false, evbexist = false;
-    int limit;
-    int vertLimit;
-    int drawtype = GL_TRIANGLES;
+    private List<GraphicsBuffer> vertexBufferObjects = new ArrayList<>();
+    private GraphicsBuffer elementBuffer;
+    private VertexArrayFormat format;
+    private int elementcount;
+    private int drawtype = GL_TRIANGLES;
     
     Matrix4f model = Matrix4f.translate(0, 0, 0);
-   
-    public DrawnObject(FloatBuffer vertices, VertexArrayFormat format){
-       
-        limit = vertices.limit();
-        vertLimit = limit/format.getVertexLength();
-        
-        ind = Allocator.allocInt(vertLimit);
-        for(int i = 0; i < vertLimit; i++){
-            ind.put(i);
-        }
-        
-        ind.flip();
-        defBuffers(vertices, ind);
-    }
-    
-    public DrawnObject(FloatBuffer b){
-        this(b, RenderEngine.getDefaultFormat());
-    }
-    
-    DrawnObject(List<FloatBuffer> buffers, VertexArrayFormat format){
-      
-        for(FloatBuffer b: buffers){
-        
-            limit = b.limit();
-            vertLimit = limit/format.getVertexLength();
 
-            ind = Allocator.allocInt(vertLimit);
-            for(long i = 0; i < vertLimit; i++){
-                ind.put((int) i);
-            }
-            ind.flip();
+    public DrawnObject(FloatBuffer... b){
+        this(RenderEngine.getDefaultFormat(), b);
+    }
 
-            this.vertices = b;
-        }
-        
-        defBuffers(vertices, ind);
+    public DrawnObject(VertexArrayFormat format, FloatBuffer... vertices){
+        this(format, null, vertices);
     }
-    
-    public DrawnObject(List<FloatBuffer> buffers){
-        this(buffers, RenderEngine.getDefaultFormat());
+
+    public DrawnObject(IntBuffer index, FloatBuffer... vertices){
+        this(RenderEngine.getDefaultFormat(), index, vertices);
     }
-    
-    public DrawnObject(FloatBuffer vertices, IntBuffer index, VertexArrayFormat format){
-        limit = vertices.limit();
-        ind = index;
-        
-        defBuffers(vertices, ind);
+
+    public DrawnObject(VertexArrayFormat format, IntBuffer index, FloatBuffer... vertices){
+        this.format = format;
+        defBuffers(vertices, index);
     }
-    
-    public DrawnObject(FloatBuffer vertices, IntBuffer index){
-        this(vertices, index, RenderEngine.getDefaultFormat());
+
+    public void updateBuffer(int bufferid, FloatBuffer buffer){
+        this.updateBuffer(bufferid, buffer, GL_STATIC_DRAW);
     }
-          
-    private void defBuffers(FloatBuffer b, IntBuffer ind ){
-        vbo = new GLBuffer(GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+
+    public void updateBuffer(int bufferid, FloatBuffer buffer, int buffertype){
+        GraphicsBuffer vbo = createGLBuffer(buffer, buffertype);
+        vertexBufferObjects.set(bufferid, vbo);
+    }
+
+    private OpenGLBuffer createGLBuffer(FloatBuffer buffer, int buffertype){
+        var vbo = new OpenGLBuffer(GL_ARRAY_BUFFER, buffertype);
         vbo.bind();
-        vbo.uploadData(b);
+        vbo.uploadData(buffer);
+        return vbo;
+    }
 
-        evbo = new GLBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW);
-        evbo.bind();
-        evbo.uploadData(ind);
+    private void defBuffers(FloatBuffer[] buffers, IntBuffer ind ){
+        for(GraphicsBuffer graphicsBuffer : vertexBufferObjects){
+            graphicsBuffer.delete();
+        }
+
+        vertexBufferObjects.clear();
+
+        for(var buffer : buffers){
+            GraphicsBuffer vbo = createGLBuffer(buffer, GL_STATIC_DRAW);
+            vertexBufferObjects.add(vbo);
+        }
+
+        var indexbuffer = validateIndexBuffer(format, ind, buffers);
+
+        elementBuffer = new OpenGLBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW);
+        elementBuffer.bind();
+        elementBuffer.uploadData(indexbuffer);
     }
-    
-    public void setAdjacency(boolean adj){
-        this.adj = adj;
+
+    private IntBuffer validateIndexBuffer(VertexArrayFormat format, IntBuffer index, FloatBuffer[] vertices){
+        var finalindex = index;
+
+        if(index == null){
+            int size = format.getVertexLength();
+            elementcount = vertices[0].limit()/size;
+            finalindex = Allocator.allocInt(elementcount);
+            for(int i = 0; i < elementcount; i++){
+                finalindex.put(i);
+            }
+            finalindex.flip();
+        }else{
+            elementcount = index.limit();
+        }
+        return finalindex;
     }
-    
+
     @Override
     public void setMatrix(Matrix4f model){
         this.model = model;
@@ -114,47 +116,23 @@ public class DrawnObject implements Drawable {
         this.drawtype = type;
     }
 
-    public void setBuffer(FloatBuffer vertices, int vertSize){
-        limit = vertices.limit();
-        vertLimit = limit/vertSize;
-        
-        ind = Allocator.allocInt(vertLimit);
-        for(long i = 0; i < vertLimit; i++){
-            ind.put((int) i);
-        }
-        ind.flip();
-        
-        this.vertices = vertices;
-        defBuffers(vertices, ind);
-    }    
-    
-    public FloatBuffer getVertexBuffer(){
-        return vertices;
-    }
-    
-    public IntBuffer getElementBuffer(){
-        return ind;
-    }
-    
-    public GLBuffer getGLVertexBuffer(){
-        return vbo;
-    }
-    
-    public GLBuffer getGLElementBuffer(){
-        return evbo;
-    }
-    
     @Override
-    public void render(){  
+    public void render(){
         ShaderController.setModel(model);
-        evbo.bind();
-        RenderEngine.getCurrentVAO().applyFormat(vbo);
-        glDrawElements(drawtype, ind.limit(), GL_UNSIGNED_INT, 0);
+        elementBuffer.bind();
+
+        if(!RenderEngine.getCurrentVAO().getFormat().equals(format))
+            throw new RenderException("Invalid VAO bound during render");
+
+        RenderEngine.getCurrentVAO().applyFormat(vertexBufferObjects);
+        glDrawElements(drawtype, elementcount, GL_UNSIGNED_INT, 0);
     }
 
     @Override
     public void destroy() {
-        vbo.delete();
-        evbo.delete();
+        for(GraphicsBuffer vbo : vertexBufferObjects){
+            vbo.delete();
+        }
+        elementBuffer.delete();
     }
 }

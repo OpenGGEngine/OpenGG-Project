@@ -32,8 +32,7 @@ public class ModelRenderComponentViewModel extends ViewModel{
 
     @Override
     public Component getFromInitializer(Initializer init) {
-        ModelRenderComponent ncomponent = new ModelRenderComponent((Model)init.elements.get(0).value);
-        return ncomponent;
+        return new ModelRenderComponent((Model)init.elements.get(0).value);
     }
 
     @Override

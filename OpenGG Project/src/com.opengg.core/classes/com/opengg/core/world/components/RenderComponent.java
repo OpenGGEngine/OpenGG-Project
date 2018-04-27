@@ -31,8 +31,8 @@ public class RenderComponent extends Component implements Renderable{
         super();
         format = RenderEngine.getDefaultFormat();
         shader = "object";
-    };
-    
+    }
+
     public RenderComponent(Drawable g){
         this();
         this.g = g;

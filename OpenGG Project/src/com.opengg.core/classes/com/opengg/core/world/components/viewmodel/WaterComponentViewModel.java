@@ -5,7 +5,6 @@
  */
 package com.opengg.core.world.components.viewmodel;
 
-import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.texture.TextureData;
 import com.opengg.core.render.texture.TextureManager;
 import com.opengg.core.world.components.Component;
@@ -67,8 +66,7 @@ public class WaterComponentViewModel extends ViewModel{
 
     @Override
     public Component getFromInitializer(Initializer init) {
-        WaterComponent wc = new WaterComponent(((TextureData)init.elements.get(0).value), (Float)init.elements.get(1).value);
-        return wc;
+        return new WaterComponent(((TextureData)init.elements.get(0).value), (Float)init.elements.get(1).value);
     }
 
     @Override

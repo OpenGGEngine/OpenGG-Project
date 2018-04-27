@@ -7,7 +7,6 @@ package com.opengg.core.engine;
 
 import com.opengg.core.physics.PhysicsSystem;
 import com.opengg.core.physics.PhysicsEntity;
-import com.opengg.core.physics.PhysicsRenderer;
 
 /**
  *

@@ -5,9 +5,7 @@
  */
 module com.opengg.core {
     requires org.lwjgl.glfw;
-    requires org.lwjgl.nfd;
     requires org.lwjgl.openal;
-    requires org.lwjgl.opencl;
     requires org.lwjgl.opengl;
     requires org.lwjgl.stb;
     requires org.lwjgl;
@@ -17,6 +15,7 @@ module com.opengg.core {
     requires com.opengg.base;
     requires com.opengg.system;
     requires com.opengg.console;
+
     exports com.opengg.core.audio;
     exports com.opengg.core.engine;
     exports com.opengg.core.exceptions;

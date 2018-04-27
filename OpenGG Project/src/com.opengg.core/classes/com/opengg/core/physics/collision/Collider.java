@@ -6,8 +6,6 @@
 
 package com.opengg.core.physics.collision;
 
-import com.opengg.core.math.Quaternionf;
-import com.opengg.core.math.Vector3f;
 import com.opengg.core.physics.PhysicsObject;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;

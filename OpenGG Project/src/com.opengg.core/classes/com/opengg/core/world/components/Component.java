@@ -307,7 +307,7 @@ public abstract class Component{
     /**
      * Called by various sources for serialization of the component, and by default only serializes position, rotation, and scale offsets<br><br>
      * 
-     * For correct functionality, the variables serialized here must match the variables deserialized in {@link #deserialize(com.opengg.core.world.Deserializer) deserialize()}<br>
+     * For correct functionality, the variables serialized here must match the variables deserialized in {@link #deserialize(GGInputStream)} ) deserialize()}<br>
      * In addition, any component that overrides this must also override the {@linkplain #Component() default constructor} for the serializer to function<br><br>
      * 
      * It is recommended to allow for complete recreation of the component using these two methods
@@ -326,7 +326,7 @@ public abstract class Component{
     /**
      * Called for deserialization of a byte stream to a component, and by default only deserializes position, rotation, and scale<br><br>
      * 
-     * For correct functionality, variable deserialization here must match the variables serialized in {@link #serialize(com.opengg.core.world.Serializer) serialize()}<br>
+     * For correct functionality, variable deserialization here must match the variables serialized in {@link #serialize(GGOutputStream)} ) serialize()}<br>
      * In addition, any component that overrides this must also override the {@link #Component() default constructor} for the deserializer to function<br><br>
      * 
      * As this method is normally run on a separate thread, any methods that have OpenGL calls have to be run in an {@link com.opengg.core.engine.Executable executable} to be run in the main thread. <br>

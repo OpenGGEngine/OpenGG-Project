@@ -5,11 +5,6 @@
  */
 package com.opengg.core.io;
 
-/**
- *
- * @author warren
- */
-
 import java.awt.image.BufferedImage;
 import java.io.FileOutputStream;
 import java.io.IOException;

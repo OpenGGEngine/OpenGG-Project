@@ -27,7 +27,7 @@ public class PostProcessingPass {
     }
     
     public PostProcessingPass(int op, List<Stage> stages){
-        this.stages = stages;
+        this.stages = List.copyOf(stages);
         this.op = op;
     }
     

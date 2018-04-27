@@ -17,7 +17,7 @@ public class Word {
     private List<GGCharacter> characters = new ArrayList<>();
 
         public List<GGCharacter> getCharacters() {
-            return characters;
+            return List.copyOf(characters);
         }
         public double width = 0;
 

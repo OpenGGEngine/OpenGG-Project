@@ -50,7 +50,7 @@ public class SunComponent extends RenderComponent{
         light = new LightComponent(new Light(new Vector3f(), new Vector3f(1,0.3f,0.3f),100000,10000));
         light.use();
         this.attach(light);
-        this.setShader("texture");
+        this.setShader("vulkan");
     }
     
     @Override

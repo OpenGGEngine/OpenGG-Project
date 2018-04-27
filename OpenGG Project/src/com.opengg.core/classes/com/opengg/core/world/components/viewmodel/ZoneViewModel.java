@@ -55,8 +55,7 @@ public class ZoneViewModel extends ViewModel{
 
     @Override
     public Component getFromInitializer(Initializer init) {
-        Zone zone = new Zone(new AABB((Vector3f) init.get("lwh").value));
-        return zone;
+        return new Zone(new AABB((Vector3f) init.get("lwh").value));
     }
 
     @Override
@@ -71,7 +70,7 @@ public class ZoneViewModel extends ViewModel{
             for(String s : strings){
                 s = s.trim();
                 Component c = WorldEngine.getCurrent().find(s);
-                if(c != null && c instanceof Triggerable)
+                if(c instanceof Triggerable)
                     ((ITrigger)component).addSubscriber((Triggerable) c);
             }
         }

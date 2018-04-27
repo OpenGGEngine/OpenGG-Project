@@ -18,7 +18,8 @@ import java.io.InputStreamReader;
  * @author Javier
  */
 public class FileStringLoader {
-    private FileStringLoader(){};
+    private FileStringLoader(){}
+
     public static CharSequence loadStringSequence(String path) throws IOException{
         StringBuilder builder = new StringBuilder();
 
@@ -32,8 +33,7 @@ public class FileStringLoader {
             throw ex;
         }
 
-        CharSequence source = builder.toString();
-        return source;
+        return builder.toString();
     }
     
 }

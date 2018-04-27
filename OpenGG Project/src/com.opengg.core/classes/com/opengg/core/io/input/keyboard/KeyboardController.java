@@ -12,8 +12,8 @@ package com.opengg.core.io.input.keyboard;
 public class KeyboardController {
     static int counter;
     static IKeyboardHandler handler;
-    static KeyboardListener[] k = new KeyboardListener[32];;
-    
+    static KeyboardListener[] k = new KeyboardListener[32];
+
     public static int charToKeycode(char ch){
         if(Character.isAlphabetic(ch))
             return Character.toUpperCase(ch);

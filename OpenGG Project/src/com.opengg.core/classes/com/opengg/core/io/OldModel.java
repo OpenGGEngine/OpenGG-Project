@@ -5,10 +5,6 @@
  */
 package com.opengg.core.io;
 
-/**
- *
- * @author warren
- */
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 
@@ -91,7 +87,7 @@ public class OldModel {
         public float[] ambientColour = {0.2f, 0.2f, 0.2f};
         public float[] diffuseColour = {0.3f, 1, 1};
         public float[] specularColour = {1, 1, 1};
-        //public Texture texture;
+        //public Texture vulkan;
     }
 
     /** @author Oskar */

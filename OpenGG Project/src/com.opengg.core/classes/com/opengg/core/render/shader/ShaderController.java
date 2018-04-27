@@ -14,13 +14,17 @@ import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.model.Material;
-import com.opengg.core.render.GLBuffer;
+import com.opengg.core.render.GraphicsBuffer;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static com.opengg.core.render.shader.ShaderProgram.ShaderType;
 
 /**
  * Controller/manager for GLSL shaders
@@ -30,9 +34,9 @@ public class ShaderController {
     private static String currentshader = "";
     private static final Matrix4f model = new Matrix4f();
     private static Matrix4f view = new Matrix4f(), proj = new Matrix4f();
-    private static final HashMap<String, ShaderProgram> programs = new HashMap<>();
-    private static final HashMap<String, ShaderPipeline> pipelines = new HashMap<>();
-    private static final HashMap<String, String> rnames = new HashMap<>();
+    private static final Map<String, ShaderProgram> programs = new HashMap<>();
+    private static final Map<String, ShaderPipeline> pipelines = new HashMap<>();
+    private static final Map<String, String> rnames = new HashMap<>();
     private static final List<String> searchedUniforms = new ArrayList<>();
     private static final List<String> searchedAttribs = new ArrayList<>();
     private static String currentvert, currenttesc, currenttese, currentgeom, currentfrag;
@@ -42,31 +46,31 @@ public class ShaderController {
      * Initializes the controller and loads all default shaders
      */
     public static void initialize() {
-        loadShader("mainvert", Resource.getShaderPath("object.vert"), ShaderProgram.VERTEX);
-        loadShader("animvert", Resource.getShaderPath("anim.vert"), ShaderProgram.VERTEX);
-        loadShader("particlevert", Resource.getShaderPath("particle.vert"), ShaderProgram.VERTEX);
-        loadShader("passthroughvert", Resource.getShaderPath("passthrough.vert"), ShaderProgram.VERTEX);
+        loadShader("mainvert", Resource.getShaderPath("object.vert"), ShaderType.VERTEX);
+        loadShader("animvert", Resource.getShaderPath("anim.vert"), ShaderType.VERTEX);
+        loadShader("particlevert", Resource.getShaderPath("particle.vert"), ShaderType.VERTEX);
+        loadShader("passthroughvert", Resource.getShaderPath("passthrough.vert"), ShaderType.VERTEX);
 
-        loadShader("maingeom", Resource.getShaderPath("object.geom"), ShaderProgram.GEOMETRY);
-        loadShader("passthroughgeom", Resource.getShaderPath("passthrough.geom"), ShaderProgram.GEOMETRY);
-        loadShader("volumegeom", Resource.getShaderPath("volume.geom"), ShaderProgram.GEOMETRY);
-        loadShader("mainadjgeom", Resource.getShaderPath("objectadj.geom"), ShaderProgram.GEOMETRY);
-        loadShader("passthroughadjgeom", Resource.getShaderPath("passthroughadj.geom"), ShaderProgram.GEOMETRY);
+        loadShader("maingeom", Resource.getShaderPath("object.geom"), ShaderType.GEOMETRY);
+        loadShader("passthroughgeom", Resource.getShaderPath("passthrough.geom"), ShaderType.GEOMETRY);
+        loadShader("volumegeom", Resource.getShaderPath("volume.geom"), ShaderType.GEOMETRY);
+        loadShader("mainadjgeom", Resource.getShaderPath("objectadj.geom"), ShaderType.GEOMETRY);
+        loadShader("passthroughadjgeom", Resource.getShaderPath("passthroughadj.geom"), ShaderType.GEOMETRY);
 
-        loadShader("mainfrag", Resource.getShaderPath("phong.frag"), ShaderProgram.FRAGMENT);
-        loadShader("shadowfrag", Resource.getShaderPath("phongshadow.frag"), ShaderProgram.FRAGMENT);
-        loadShader("passthroughfrag", Resource.getShaderPath("passthrough.frag"), ShaderProgram.FRAGMENT);
-        loadShader("ssaofrag", Resource.getShaderPath("ssao.frag"), ShaderProgram.FRAGMENT);  
-        loadShader("cubemapfrag", Resource.getShaderPath("cubemap.frag"), ShaderProgram.FRAGMENT); 
-        loadShader("ambientfrag", Resource.getShaderPath("ambient.frag"), ShaderProgram.FRAGMENT); 
-        loadShader("texturefrag", Resource.getShaderPath("texture.frag"), ShaderProgram.FRAGMENT);
-        loadShader("terrainfrag", Resource.getShaderPath("terrainmulti.frag"), ShaderProgram.FRAGMENT);
-        //loadShader("bloomfrag", Resource.getShaderPath("bloom.frag"), ShaderProgram.FRAGMENT);  
-        loadShader("addfrag", Resource.getShaderPath("add.frag"), ShaderProgram.FRAGMENT);  
-        loadShader("guifrag", Resource.getShaderPath("gui.frag"), ShaderProgram.FRAGMENT); 
-        loadShader("barfrag", Resource.getShaderPath("bar.frag"), ShaderProgram.FRAGMENT); 
-        loadShader("hdrfrag", Resource.getShaderPath("hdr.frag"), ShaderProgram.FRAGMENT); 
-        loadShader("waterfrag", Resource.getShaderPath("water.frag"), ShaderProgram.FRAGMENT); 
+        loadShader("mainfrag", Resource.getShaderPath("phong.frag"), ShaderType.FRAGMENT);
+        loadShader("shadowfrag", Resource.getShaderPath("phongshadow.frag"), ShaderType.FRAGMENT);
+        loadShader("passthroughfrag", Resource.getShaderPath("passthrough.frag"), ShaderType.FRAGMENT);
+        loadShader("ssaofrag", Resource.getShaderPath("ssao.frag"), ShaderType.FRAGMENT);
+        loadShader("cubemapfrag", Resource.getShaderPath("cubemap.frag"), ShaderType.FRAGMENT);
+        loadShader("ambientfrag", Resource.getShaderPath("ambient.frag"), ShaderType.FRAGMENT);
+        loadShader("texturefrag", Resource.getShaderPath("texture.frag"), ShaderType.FRAGMENT);
+        loadShader("terrainfrag", Resource.getShaderPath("terrainmulti.frag"), ShaderType.FRAGMENT);
+        //loadShader("bloomfrag", Resource.getShaderPath("bloom.frag"), OpenGLShaderProgram.FRAGMENT);
+        loadShader("addfrag", Resource.getShaderPath("add.frag"), ShaderType.FRAGMENT);
+        loadShader("guifrag", Resource.getShaderPath("gui.frag"), ShaderType.FRAGMENT);
+        loadShader("barfrag", Resource.getShaderPath("bar.frag"), ShaderType.FRAGMENT);
+        loadShader("hdrfrag", Resource.getShaderPath("hdr.frag"), ShaderType.FRAGMENT);
+        loadShader("waterfrag", Resource.getShaderPath("water.frag"), ShaderType.FRAGMENT);
           
         use("mainvert", "mainfrag");
         saveCurrentConfiguration("object");   
@@ -105,7 +109,7 @@ public class ShaderController {
         saveCurrentConfiguration("volume");
         
         use("passthroughvert", "texturefrag");
-        saveCurrentConfiguration("texture");
+        saveCurrentConfiguration("vulkan");
         
         use("passthroughvert", "guifrag");
         saveCurrentConfiguration("gui");
@@ -326,7 +330,7 @@ public class ShaderController {
             if(s.equals(loc))
                 return;
 
-        programs.values().stream().filter((p) -> (p.type == ShaderProgram.VERTEX)).forEach((p) -> {
+        programs.values().stream().filter((p) -> (p.getType() == ShaderProgram.ShaderType.VERTEX)).forEach((p) -> {
             p.findAttributeLocation(loc);
         });
         
@@ -491,12 +495,12 @@ public class ShaderController {
     }
        
     /**
-     * Binds the sampler named {@code name} to texture location {@code loc} in every fragment shader
+     * Binds the sampler named {@code name} to vulkan location {@code loc} in every fragment shader
      * @param name Name of sampler in shader
      * @param loc New location of sampler
      */
     public static void setTextureLocation(String name, int loc){
-        programs.values().stream().filter((p) -> (p.type == ShaderProgram.FRAGMENT)).forEach((p) -> {
+        programs.values().stream().filter((p) -> (p.getType() == ShaderProgram.ShaderType.FRAGMENT)).forEach((p) -> {
             p.setUniform(p.getUniformLocation(name), loc);
         });
     }
@@ -513,10 +517,10 @@ public class ShaderController {
     
     /**
      * Binds the given uniform buffer object to the given GLSL identifier
-     * @param ubo UBO to be bound, as a {@link com.opengg.core.render.GLBuffer}
+     * @param ubo UBO to be bound, as a {@link OpenGLBuffer}
      * @param name Name of buffer in GLSL to bind UBO to
      */
-    public static void setUniformBlockLocation(GLBuffer ubo, String name){
+    public static void setUniformBlockLocation(GraphicsBuffer ubo, String name){
         setUniformBlockLocation(ubo.getBase(), name);
     }
     
@@ -547,15 +551,15 @@ public class ShaderController {
     private static String getUniqueConfigID(ShaderProgram vert, ShaderProgram tesc, ShaderProgram tese, ShaderProgram geom, ShaderProgram frag){
         String st = "";
         st += vert.getId() + ";";
-        
+
         if(tesc != null)
-            st += tesc.getId(); 
+            st += tesc.getId();
         st += ";";
-        
+
         if(tese != null)
             st += tese.getId();
         st += ";";
-        
+
         if(geom != null)
             st += geom.getId();
         st += ";";
@@ -573,17 +577,17 @@ public class ShaderController {
 
             return;
         }else{
-            pipeline = new ShaderPipeline(vert, tesc, tese, geom, frag);
+            pipeline = ShaderPipeline.create(vert, tesc, tese, geom, frag);
         
             pipelines.put(id, pipeline);
             pipeline.bind();
         }
-        
-        currentvert = pipeline.vert;
-        currenttesc = pipeline.tesc;
-        currenttese = pipeline.tese;    
-        currentgeom = pipeline.geom;
-        currentfrag = pipeline.frag;
+
+        currentvert = pipeline.getShader(ShaderType.VERTEX);
+        currenttesc = pipeline.getShader(ShaderType.TESS_CONTROL);
+        currenttese = pipeline.getShader(ShaderType.TESS_EVAL);
+        currentgeom = pipeline.getShader(ShaderType.GEOMETRY);
+        currentfrag = pipeline.getShader(ShaderType.FRAGMENT);
     }
     
     /**
@@ -634,7 +638,7 @@ public class ShaderController {
     /**
      * Uses the configuration with the given name<br><br>
      * 
-     * This name should be the same as the one previously saved in {@link saveCurrentConfiguration(String)}
+     * This name should be the same as the one previously saved in {@link #saveCurrentConfiguration(String)}
      * 
      * @param name Name of configuration
      */
@@ -649,18 +653,18 @@ public class ShaderController {
         
         currentshader = name;
         
-        currentvert = pipeline.vert;
-        currenttesc = pipeline.tesc;
-        currenttese = pipeline.tese;
-        currentgeom = pipeline.geom;
-        currentfrag = pipeline.frag;
+        currentvert = pipeline.getShader(ShaderType.VERTEX);
+        currenttesc = pipeline.getShader(ShaderType.TESS_CONTROL);
+        currenttese = pipeline.getShader(ShaderType.TESS_EVAL);
+        currentgeom = pipeline.getShader(ShaderType.GEOMETRY);
+        currentfrag = pipeline.getShader(ShaderType.FRAGMENT);
         
         pipeline.bind();
     }
     
     public static void clearPipelineCache(){
         for(ShaderPipeline p : pipelines.values()){
-            p.deletePipeline();
+            p.delete();
         }
         pipelines.clear();
     }
@@ -673,10 +677,10 @@ public class ShaderController {
         return currentshader;
     }
     
-    public static boolean loadShader(String name, String loc, int type){
+    public static boolean loadShader(String name, String loc, ShaderType type){
         try {
             CharSequence sec = FileStringLoader.loadStringSequence(URLDecoder.decode(loc, "UTF-8"));
-            programs.put(name, new ShaderProgram(type, sec, name));
+            programs.put(name, ShaderProgram.create(type, sec, name));
             ShaderProgram p = programs.get(name);
             for(String s : searchedUniforms){
                 p.findUniformLocation(s);

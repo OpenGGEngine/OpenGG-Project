@@ -1,7 +1,13 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+
 package com.opengg.core.render.texture;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
@@ -58,7 +64,7 @@ public class Font {
         fontMetrics = graphics.getFontMetrics();
         bufferedImage = graphics.getDeviceConfiguration().createCompatibleImage((int) getFontImageWidth(),(int) getFontImageHeight(),Transparency.TRANSLUCENT);
         
-      //Generate texture
+      //Generate vulkan
       fontTextureId = glGenTextures();
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, fontTextureId);
@@ -80,9 +86,9 @@ public class Font {
  
         // draw every CHAR by line...
         imageGraphics.setColor(java.awt.Color.WHITE);
-        CHARS.keySet().stream().forEach(i -> imageGraphics.drawString(CHARS.get(i), 0, fontMetrics.getMaxAscent() + (this.getCharHeight() * i)));
+        CHARS.keySet().forEach(i -> imageGraphics.drawString(CHARS.get(i), 0, fontMetrics.getMaxAscent() + (this.getCharHeight() * i)));
         
-        //Generate texture data
+        //Generate vulkan data
         int[] pixels = new int[bufferedImage.getWidth() * bufferedImage.getHeight()];
         bufferedImage.getRGB(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight(), pixels, 0, bufferedImage.getWidth());
         byteBuffer = ByteBuffer.allocateDirect((bufferedImage.getWidth() * bufferedImage.getHeight() * 4));
@@ -116,7 +122,7 @@ public class Font {
         for(int i = 0;i < index;i++){
         imageGraphics.drawString(CHARS.get(i), 0, fontMetrics.getMaxAscent() + (this.getCharHeight() * i));
         }
-        //Generate texture data
+        //Generate vulkan data
         int[] pixels = new int[bufferedImage.getWidth() * bufferedImage.getHeight()];
         bufferedImage.getRGB(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight(), pixels, 0, bufferedImage.getWidth());
         byteBuffer = ByteBuffer.allocateDirect((bufferedImage.getWidth() * bufferedImage.getHeight() * 4));

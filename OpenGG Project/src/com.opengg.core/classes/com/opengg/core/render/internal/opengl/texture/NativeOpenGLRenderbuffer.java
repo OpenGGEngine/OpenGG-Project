@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.opengg.core.render.texture;
+package com.opengg.core.render.internal.opengl.texture;
 
 import static org.lwjgl.opengl.GL30.GL_RENDERBUFFER;
 import static org.lwjgl.opengl.GL30.glBindRenderbuffer;
@@ -15,10 +15,10 @@ import static org.lwjgl.opengl.GL30.glRenderbufferStorage;
  *
  * @author Javier
  */
-public class NativeGLRenderbuffer {
-    int id;
+public class NativeOpenGLRenderbuffer{
+    private final int id;
     
-    public NativeGLRenderbuffer(){
+    public NativeOpenGLRenderbuffer(){
         id = glGenRenderbuffers();
     }
     
@@ -29,7 +29,11 @@ public class NativeGLRenderbuffer {
     public void createStorage(int internalformat, int width, int height){
         glRenderbufferStorage(GL_RENDERBUFFER, internalformat, width, height);
     }
-    
+
+    public int getId(){
+        return id;
+    }
+
     public void delete(){
         glDeleteRenderbuffers(id);
     }

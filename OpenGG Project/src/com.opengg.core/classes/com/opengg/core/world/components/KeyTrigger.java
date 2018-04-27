@@ -9,7 +9,7 @@ import com.opengg.core.io.input.keyboard.KeyboardController;
 import com.opengg.core.io.input.keyboard.KeyboardListener;
 import com.opengg.core.world.components.triggers.Trigger;
 import com.opengg.core.world.components.triggers.TriggerInfo;
-import static com.opengg.core.world.components.triggers.TriggerInfo.SINGLE;
+
 import static com.opengg.core.world.components.triggers.TriggerInfo.TOGGLE;
 
 /**

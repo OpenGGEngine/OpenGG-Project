@@ -38,20 +38,17 @@ public final class ParallelWorkerPool<T, V> {
     public ParallelWorkerPool(int amount, WorkerRunnable<T, V> runnable, PostOp<V> postop){
         this(amount, null, runnable, postop);
         source = () -> {
-                while (!OpenGG.getEnded()) {
-                    synchronized (monitor) {
-                        while (queued.isEmpty()) {
-                            try {
-                                monitor.wait();
-                            } catch (InterruptedException ex) {
-                                if(OpenGG.getEnded()) return null;
-                            }
-                        }
-
-                        return queued.poll().t;
+            synchronized (monitor) {
+                while (queued.isEmpty()) {
+                    try {
+                        monitor.wait();
+                    } catch (InterruptedException ex) {
+                        if (OpenGG.getEnded()) return null;
                     }
                 }
-                return null;
+
+                return queued.poll().t;
+            }
             };
     }
 

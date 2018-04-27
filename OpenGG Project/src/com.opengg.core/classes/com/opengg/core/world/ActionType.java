@@ -11,5 +11,5 @@ package com.opengg.core.world;
  * @author Javier
  */
 public enum ActionType {
-    PRESS, RELEASE;
+    PRESS, RELEASE
 }

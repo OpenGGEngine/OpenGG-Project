@@ -13,7 +13,6 @@ import com.opengg.core.system.Allocator;
 import java.nio.FloatBuffer;
 import static org.lwjgl.opengl.GL11.GL_RGBA8;
 import static org.lwjgl.opengl.GL30.GL_COLOR_ATTACHMENT0;
-import org.lwjgl.system.MemoryUtil;
 
 /**
  *

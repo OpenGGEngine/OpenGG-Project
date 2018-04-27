@@ -5,12 +5,6 @@
  */
 package com.opengg.core.world.entities;
 
-import com.opengg.core.math.Vector3f;
-import com.opengg.core.world.World;
-import com.opengg.core.world.entities.resources.EntitySupportEnums.PhysicsType;
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  *
  * @author ethachu19

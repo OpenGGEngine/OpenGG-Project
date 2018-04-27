@@ -5,11 +5,6 @@
  */
 package com.opengg.core.io.input.keyboard;
 
-/**
- *
- * @author Warren
- */
-
 import org.lwjgl.glfw.GLFWKeyCallback;
 import static org.lwjgl.glfw.GLFW.*;
 

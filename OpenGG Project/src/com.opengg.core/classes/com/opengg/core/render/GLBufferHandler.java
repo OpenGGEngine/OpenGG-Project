@@ -14,17 +14,17 @@ import java.util.List;
  * @author Javier
  */
 public class GLBufferHandler {
-    static List<GLBuffer> buffers = new ArrayList<>(); 
+    static List<GraphicsBuffer> buffers = new ArrayList<>();
     
     public static void destroy(){
-        for(GLBuffer buffer : buffers){
+        for(GraphicsBuffer buffer : buffers){
             buffer.delete();
         }
     }
     
     public long getTotalSize(){
         long l = 0;
-        for(GLBuffer buffer : buffers){
+        for(GraphicsBuffer buffer : buffers){
             l += buffer.getSize();
         }
         return l;

@@ -19,7 +19,7 @@ public class TextLine {
 	private List<Word> words = new ArrayList<>();
 
     public List<Word> getWords() {
-        return words;
+        return List.copyOf(words);
     }
 	public double currentLineLength = 0;
 

@@ -6,14 +6,13 @@
 
 package com.opengg.core.render.shader;
 
-import com.opengg.core.console.GGConsole;
-import com.opengg.core.exceptions.ShaderException;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
+import com.opengg.core.render.internal.opengl.shader.OpenGLShaderProgram;
+
 import java.nio.ByteBuffer;
-import java.util.HashMap;
-import static org.lwjgl.opengl.GL11.GL_TRUE;
+
 import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
 import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
 import static org.lwjgl.opengl.GL32.GL_GEOMETRY_SHADER;
@@ -24,164 +23,56 @@ import static org.lwjgl.opengl.GL40.GL_TESS_EVALUATION_SHADER;
  *
  * @author Javier
  */
-public class ShaderProgram {
-    public final static int VERTEX = GL_VERTEX_SHADER, 
-            TESSCONTROL = GL_TESS_CONTROL_SHADER,
-            TESSEVAL = GL_TESS_EVALUATION_SHADER,
-            GEOMETRY = GL_GEOMETRY_SHADER,
-            FRAGMENT = GL_FRAGMENT_SHADER;
-    
-    public String name;
-    NativeGLProgram program;
-    public int type;
-    
-    private final HashMap<String, Integer> ulocs = new HashMap<>();
-    private final HashMap<String, Integer> alocs = new HashMap<>();
-    
-    public ShaderProgram(int type, CharSequence source, String name){
-        this.name = name;
-        this.type = type;
-        program = new NativeGLProgram(type, source);
-    }
-    
-    public void findUniformLocation(String pos){
-        int nid = program.findUniformLocation(pos);
-        ulocs.put(pos, nid);
-    }
-    
-    public int getUniformLocation(String pos){
-        return ulocs.get(pos);
-    }
-    
-    public void bindFragmentDataLocation(int number, CharSequence name) {
-        program.bindFragmentDataLocation(number, name);
-    }
-    
-    public void findAttributeLocation(String name) {
-         int nid = program.findAttributeLocation(name);
-         alocs.put(name, nid);
+public interface ShaderProgram{
+    enum ShaderType{
+        VERTEX, TESS_CONTROL, TESS_EVAL, GEOMETRY, FRAGMENT
     }
 
-    public int getAttributeLocation(String name){
-        return alocs.get(name);
-    }
-    
-    /**
-     * Enables a vertex attribute.
-     *
-     * @param location Location of the vertex attribute
-     */
-    public void enableVertexAttribute(String location) {
-        program.enableVertexAttribute(getAttributeLocation(location));
+    public static ShaderProgram create(ShaderType type, CharSequence source, String name){
+        return new OpenGLShaderProgram(type, source, name);
     }
 
-    /**
-     * Disables a vertex attribute.
-     *
-     * @param location Location of the vertex attribute
-     */
-    public void disableVertexAttribute(String location) {
-        program.disableVertexAttribute(getAttributeLocation(location));
-    }
+    void findUniformLocation(String pos);
 
-    /**
-     * Sets the vertex attribute pointer.
-     *
-     * @param location Location of the vertex attribute
-     * @param size Number of values per vertex
-     * @param type Type of data
-     * @param stride Offset between consecutive generic vertex attributes in
-     * bytes
-     * @param offset Offset of the first component of the first generic vertex
-     * attribute in bytes
-     */
-    public void pointVertexAttribute(String location, int size, int type, int stride, int offset) {
-        program.pointVertexAttribute(getAttributeLocation(location), size, type, stride, offset);
-    }
-    /**
-     * Sets the vertex attribute divisor
-     * 
-     * @param location Location of attribute
-     * @param divisor Set to 0 if not instanced, 1 if instanced
-     */
-    public void setVertexAttribDivisor(String location, int divisor){
-       program.setVertexAttribDivisor(getAttributeLocation(location), divisor);
-    }
-    /**
-     * Sets the uniform variable for specified location.
-     *
-     * @param location Uniform location
-     * @param value Value to set
-     */
-    public void setUniform(int location, int value) {
-        program.setUniform(location, value);
-    }
-    
-    /**
-     * Sets the uniform variable for specified location.
-     *
-     * @param location Uniform location
-     * @param value Value to set
-     */
-    public void setUniform(int location, boolean value) {
-        program.setUniform(location, value);
-    }
+    int getUniformLocation(String pos);
 
-    /**
-     * Sets the uniform variable for specified location.
-     *
-     * @param location Uniform location
-     * @param value Value to set
-     */
-    public void setUniform(int location, float value) {
-        program.setUniform(location, value);
-    }
-    
-    /**
-     * Sets the uniform variable for specified location.
-     *
-     * @param location Uniform location
-     * @param value Value to set
-     */
-    public void setUniform(int location, Vector2f value) {
-        program.setUniform(location, value);
-    }
+    void bindFragmentDataLocation(int number, CharSequence name);
 
-    /**
-     * Sets the uniform variable for specified location.
-     *
-     * @param location Uniform location
-     * @param value Value to set
-     */
-    public void setUniform(int location, Vector3f value) {
-        program.setUniform(location, value);
-    }
+    void findAttributeLocation(String name);
 
-    public void setUniform(int location, Matrix4f value) {
-        program.setUniform(location, value);
-    }
-    
-    public void setUniform(int location, Matrix4f[] matrices) {
-        program.setUniform(location, matrices);
-    }
+    int getAttributeLocation(String name);
 
-    public void setUniformBlockIndex(int bind, String name){
-        program.setUniformBlockIndex(bind, name);
-    }
-    
-    public ByteBuffer getProgramBinary(){
-        return program.getProgramBinary();
-    }
-    
-    public void checkStatus() {
-        int i;
-        if((i = program.checkStatus()) != GL_TRUE){
-            GGConsole.error("Shader " + name + " threw an error on status check: "  + i);
-            throw new ShaderException(("From shader " + name + " with error code " + i + ": " + program.getProgramInfoLog()));
-        }
-    }
-    
-    public int getId(){
-        return program.id;
-    }
+    void enableVertexAttribute(String location);
+
+    void disableVertexAttribute(String location);
+
+    void pointVertexAttribute(String location, int size, int type, int stride, int offset);
+
+    void setVertexAttribDivisor(String location, int divisor);
+
+    void setUniform(int location, int value);
+
+    void setUniform(int location, boolean value);
+
+    void setUniform(int location, float value);
+
+    void setUniform(int location, Vector2f value);
+
+    void setUniform(int location, Vector3f value);
+
+    void setUniform(int location, Matrix4f value);
+
+    void setUniform(int location, Matrix4f[] matrices);
+
+    void setUniformBlockIndex(int bind, String name);
+
+    ByteBuffer getProgramBinary();
+
+    String getName();
+
+    void checkStatus();
+
+    ShaderType getType();
+
+    int getId();
 }

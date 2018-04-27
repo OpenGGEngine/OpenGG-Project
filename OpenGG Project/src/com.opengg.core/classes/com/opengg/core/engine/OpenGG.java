@@ -20,7 +20,7 @@ import com.opengg.core.system.Allocator;
 import com.opengg.core.system.SystemInfo;
 import com.opengg.core.thread.ThreadManager;
 import com.opengg.core.util.Time;
-import java.io.File;
+
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -278,7 +278,8 @@ public class OpenGG{
     }
     
     private static void writeLog(){
-        if(test) return;
+        if(test) {
+        }
         //GGConsole.writeLog(startTime);
     }
     

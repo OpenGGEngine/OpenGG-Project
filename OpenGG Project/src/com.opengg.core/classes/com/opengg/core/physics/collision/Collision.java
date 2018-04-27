@@ -14,7 +14,8 @@ import java.util.List;
  * @author Javier
  */
 public class Collision{
-    Collision(){};
+    Collision(){}
+
     public ColliderGroup thiscollider, other;
     public List<ContactManifold> manifolds = new ArrayList<>();
     

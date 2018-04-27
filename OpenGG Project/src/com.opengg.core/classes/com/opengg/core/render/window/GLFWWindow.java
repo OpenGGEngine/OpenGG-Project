@@ -19,7 +19,7 @@ import static org.lwjgl.glfw.GLFW.*;
 import org.lwjgl.opengl.*;
 import static org.lwjgl.opengl.GL11.*;
 import org.lwjgl.stb.STBImage;
-import org.lwjgl.system.MemoryUtil;
+
 import static org.lwjgl.system.MemoryUtil.*;
 
 public class GLFWWindow implements Window {
@@ -44,7 +44,7 @@ public class GLFWWindow implements Window {
         HEIGHT = winfo.height;
         WIDTH = winfo.width;
 
-        if (glfwInit() != true) {
+        if (!glfwInit()) {
             throw new WindowCreationException("Unable to initialize GLFW");
         }
 

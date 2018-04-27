@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.opengg.core.render.texture;
+package com.opengg.core.render.internal.opengl.texture;
 
 import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER;
 import static org.lwjgl.opengl.GL30.GL_RENDERBUFFER;
@@ -21,10 +21,10 @@ import static org.lwjgl.opengl.GL32.glFramebufferTexture;
  *
  * @author Javier
  */
-public class NativeGLFramebuffer {
-    int id;
+public class NativeOpenGLFramebuffer{
+    private final int id;
     
-    public NativeGLFramebuffer(){
+    public NativeOpenGLFramebuffer(){
         id = glGenFramebuffers();
     }
     
@@ -63,7 +63,11 @@ public class NativeGLFramebuffer {
     public int checkCompleteness(){
         return glCheckFramebufferStatus(GL_FRAMEBUFFER);
     }
-    
+
+    public int getId(){
+        return id;
+    }
+
     public void delete(){
         glDeleteFramebuffers(id);
     }

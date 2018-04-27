@@ -149,7 +149,6 @@ public class CollisionManager {
             e2.norms.addAll(invnorms);
 
         }else if(e1 == null ^ e2 == null){
-            PhysicsEntity e = e1;
             ArrayList<Vector3f> jfs = new ArrayList<>();
             ArrayList<Vector3f> jrs = new ArrayList<>();
             ArrayList<Vector3f> rs = new ArrayList<>();
@@ -158,16 +157,16 @@ public class CollisionManager {
             for(ContactManifold mf : col.manifolds){
                 depths.add(mf.depth);
                 for(Vector3f point : mf.points){
-                    Vector3f R = point.subtract(e.getPosition());
-                    Vector3f v = e.velocity.add(R.cross(e.angvelocity));
+                    Vector3f R = point.subtract(e1.getPosition());
+                    Vector3f v = e1.velocity.add(R.cross(e1.angvelocity));
 
-                    float jdenom = 1/e.mass + (e.inertialMatrix.inverse().multiply(
+                    float jdenom = 1/ e1.mass + (e1.inertialMatrix.inverse().multiply(
                             R.cross(mf.normal)).cross(R)).dot(mf.normal);
-                    float jnum = v.dot(mf.normal) * -(1 + e.restitution);
+                    float jnum = v.dot(mf.normal) * -(1 + e1.restitution);
                     float jr = jnum/jdenom;
 
-                    float jd = e.dynamicfriction * jr;
-                    float js = e.staticfriction * jr;
+                    float jd = e1.dynamicfriction * jr;
+                    float js = e1.staticfriction * jr;
                     Vector3f t = new Vector3f();
                     if(!FastMath.isZero(v.dot(mf.normal))){
                         Vector3f td = v.subtract(mf.normal.multiply(v.dot(mf.normal)));
@@ -176,8 +175,8 @@ public class CollisionManager {
                     }
                     Vector3f jf = t.multiply(-jd);
 
-                    if(js >= v.dot(t)*e.mass || FastMath.isEqual(v.dot(t), 0)){
-                        jf = t.multiply(v.dot(t)*e.mass*-1f);
+                    if(js >= v.dot(t)* e1.mass || FastMath.isEqual(v.dot(t), 0)){
+                        jf = t.multiply(v.dot(t)* e1.mass*-1f);
                     }
 
                     Vector3f jrv = mf.normal.multiply(jr);
@@ -190,11 +189,11 @@ public class CollisionManager {
                 }
             }
 
-            e.R.addAll(rs);
-            e.jf.addAll(jfs);
-            e.jr.addAll(jrs);
-            e.norms.addAll(norms);
-            e.depths.addAll(depths);
+            e1.R.addAll(rs);
+            e1.jf.addAll(jfs);
+            e1.jr.addAll(jrs);
+            e1.norms.addAll(norms);
+            e1.depths.addAll(depths);
         }
     }
     
@@ -205,10 +204,10 @@ public class CollisionManager {
         for(ColliderGroup next : test){
             PhysicsEntity e = next.parent;
             
-            Vector3f R = Vector3f.averageOf(e.R.toArray(new Vector3f[e.R.size()]));
-            Vector3f jfv = Vector3f.averageOf(e.jf.toArray(new Vector3f[e.jf.size()]));
-            Vector3f jrv = Vector3f.averageOf(e.jr.toArray(new Vector3f[e.jr.size()]));
-            Vector3f normal = Vector3f.averageOf(e.norms.toArray(new Vector3f[e.norms.size()])).normalize();
+            Vector3f R = Vector3f.averageOf(e.R.toArray(new Vector3f[0]));
+            Vector3f jfv = Vector3f.averageOf(e.jf.toArray(new Vector3f[0]));
+            Vector3f jrv = Vector3f.averageOf(e.jr.toArray(new Vector3f[0]));
+            Vector3f normal = Vector3f.averageOf(e.norms.toArray(new Vector3f[0])).normalize();
             float depth = e.depths.stream().max((i,j)->{
                 return i > j ? 1 : 0;
             }).orElse(0f);

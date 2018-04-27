@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package com.opengg.core.render.shader;
+package com.opengg.core.render.internal.opengl.shader;
 
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Vector2f;
@@ -22,7 +22,6 @@ import static org.lwjgl.opengl.GL20.glGetAttribLocation;
 import static org.lwjgl.opengl.GL20.glGetProgramInfoLog;
 import static org.lwjgl.opengl.GL20.glGetProgrami;
 import static org.lwjgl.opengl.GL20.glGetUniformLocation;
-import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import static org.lwjgl.opengl.GL30.glBindFragDataLocation;
 import static org.lwjgl.opengl.GL31.glGetUniformBlockIndex;
@@ -34,16 +33,15 @@ import static org.lwjgl.opengl.GL41.glProgramUniform1f;
 import static org.lwjgl.opengl.GL41.glProgramUniform1i;
 import static org.lwjgl.opengl.GL41.glProgramUniform2fv;
 import static org.lwjgl.opengl.GL41.glProgramUniform3fv;
-import org.lwjgl.system.MemoryUtil;
 
 /**
  *
  * @author Javier
  */
-public class NativeGLProgram {
-    public int id;
+public class NativeOpenGLShaderProgram{
+    private final int id;
     
-    public NativeGLProgram(int type, CharSequence source){
+    public NativeOpenGLShaderProgram(int type, CharSequence source){
         id = glCreateShaderProgramv(type, source);
     }
     
@@ -202,7 +200,11 @@ public class NativeGLProgram {
         finaldata.flip();
         return finaldata;
     }
-    
+
+    public int getId(){
+        return id;
+    }
+
     public int checkStatus() {
         return glGetProgrami(id, GL_LINK_STATUS);
     }

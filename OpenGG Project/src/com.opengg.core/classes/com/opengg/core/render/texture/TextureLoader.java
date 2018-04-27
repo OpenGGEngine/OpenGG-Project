@@ -37,7 +37,7 @@ public class TextureLoader {
             Allocator.popStack();
             Allocator.popStack();
             Allocator.popStack();
-            throw new IOException("Failed to load texture!");  
+            throw new IOException("Failed to load vulkan!");
         }
 
         Allocator.register(image, Allocator.LWJGL_DEFAULT);

@@ -7,7 +7,10 @@
 package com.opengg.core.render.shader;
 
 import com.opengg.core.engine.RenderEngine;
-import com.opengg.core.render.GLBuffer;
+import com.opengg.core.render.GraphicsBuffer;
+
+import java.util.List;
+
 import static org.lwjgl.opengl.GL11.GL_BYTE;
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL11.GL_INT;
@@ -18,10 +21,10 @@ import static org.lwjgl.opengl.GL11.GL_INT;
  */
 public class VertexArrayObject {
     VertexArrayFormat format;
-    NativeVertexArrayObject vao;
+    PureVertexArrayObject vao;
     
     public VertexArrayObject(VertexArrayFormat format){
-        vao = new NativeVertexArrayObject();
+        vao = PureVertexArrayObject.create();
         this.format = format;
         findAttributes();
     }
@@ -29,15 +32,19 @@ public class VertexArrayObject {
     public VertexArrayFormat getFormat(){
         return format;
     }
-    
-    public void applyFormat(GLBuffer... buffers){
+
+    public void applyFormat(GraphicsBuffer... buffers){
+        this.applyFormat(List.of(buffers));
+    }
+
+    public void applyFormat(List<GraphicsBuffer> buffers){
         vao.bind();
         int lastloc = 0;
-        buffers[0].bind();
+        buffers.get(0).bind();
         for(VertexArrayAttribute attrib : format.attribs){
             if(attrib.arrayindex != lastloc){
                 lastloc = attrib.arrayindex;
-                buffers[lastloc].bind();
+                buffers.get(lastloc).bind();
             }
             int bytes = 1;
             if(attrib.type == GL_FLOAT) bytes = Float.BYTES;
@@ -53,8 +60,8 @@ public class VertexArrayObject {
     }
 
     public void findAttributes(){
-        for(VertexArrayAttribute attrib : format.attribs){
-            ShaderController.findAttribLocation(attrib.name);
+        for(VertexArrayAttribute attribute : format.attribs){
+            ShaderController.findAttribLocation(attribute.name);
         }
     }
     

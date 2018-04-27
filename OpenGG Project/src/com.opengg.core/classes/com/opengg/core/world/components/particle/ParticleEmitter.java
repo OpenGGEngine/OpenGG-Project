@@ -8,9 +8,10 @@ package com.opengg.core.world.components.particle;
 import com.opengg.core.engine.RenderEngine;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
-import com.opengg.core.render.drawn.InstancedDrawnObject;
+import com.opengg.core.render.drawn.DrawnObject;
 import com.opengg.core.render.objects.ObjectCreator;
 import com.opengg.core.render.texture.Texture;
+import com.opengg.core.system.Allocator;
 import com.opengg.core.world.components.RenderComponent;
 import java.nio.Buffer;
 import java.nio.FloatBuffer;
@@ -43,7 +44,7 @@ public abstract class ParticleEmitter extends RenderComponent{
         Buffer[] buffers = ObjectCreator.createSquareBuffers(new Vector2f(-0.5f,-0.5f), new Vector2f(0.5f,0.5f), 0);
         FloatBuffer fb = (FloatBuffer) buffers[0];
         IntBuffer ib = (IntBuffer) buffers[1];
-        this.setDrawable(new InstancedDrawnObject(fb,ib));
+        this.setDrawable(new DrawnObject(ib, fb, Allocator.allocFloat(3)));
     }
     
     private FloatBuffer createParticleVBO(){
@@ -91,7 +92,7 @@ public abstract class ParticleEmitter extends RenderComponent{
     
     @Override
     public void render(){
-        ((InstancedDrawnObject)getDrawable()).setPositions(createParticleVBO(),particles.size());
+        ((DrawnObject)getDrawable()).updateBuffer(1, createParticleVBO());
         t.use(0);
         super.render();
     }

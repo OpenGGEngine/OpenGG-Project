@@ -283,7 +283,7 @@ public class Terrain {
         }
         bf.flip();
         indices.flip();
-        d = new DrawnObject(bf, indices);
+        d = new DrawnObject(indices);
         return d;
     }
     

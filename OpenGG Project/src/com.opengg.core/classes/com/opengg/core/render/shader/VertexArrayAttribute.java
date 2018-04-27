@@ -10,7 +10,7 @@ package com.opengg.core.render.shader;
  *
  * @author Javier
  */
-public class VertexArrayAttribute {
+public class VertexArrayAttribute{
     public String name;
     public int size;
     public int offset;

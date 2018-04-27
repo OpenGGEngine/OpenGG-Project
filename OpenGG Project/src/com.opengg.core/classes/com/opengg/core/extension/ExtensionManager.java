@@ -23,7 +23,7 @@ public class ExtensionManager {
     
     public static void loadStep(int requirements){
         for(Tuple<Extension, Boolean> pair : extensions){
-            if(pair.y == false){
+            if(!pair.y){
                 if(pair.x.requirement == requirements){
                     GGConsole.log("Loading extension " + pair.x.extname + "...");
                     pair.x.loadExtension();
@@ -36,13 +36,13 @@ public class ExtensionManager {
     
     public static void update(float delta){
         for(Tuple<Extension, Boolean> pair : extensions){
-            if(pair.y == true)
+            if(pair.y)
                 pair.x.update(delta);
         }
     }
     public static void render(){
         for(Tuple<Extension, Boolean> pair : extensions){
-            if(pair.y == true)
+            if(pair.y)
                 pair.x.render();
         }
     }

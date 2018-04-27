@@ -133,7 +133,6 @@ public class ObjLoader {
             while ((line = reader.readLine()) != null) {
                 String prefix = line.split(" ")[0];
                 if (prefix.equals("#")) {
-                    continue;
                 } else if (prefix.equals("v")) {
                     m.getVertices().add(parseVertex(line));
                 } else if (prefix.equals("vn")) {
@@ -141,13 +140,9 @@ public class ObjLoader {
                 } else if (prefix.equals("f")) {
                     m.getFaces().add(parseFace(m.hasNormals(), line));
                 } else if(prefix.equals("usemtl")) {
-                    continue;
                 } else if(prefix.equals("s")) {
-                    continue;
                 } else if(prefix.equals("o")) {
-                    continue;
                 } else if(prefix.equals("mtllib")) {
-                    continue;
                 }else{
                     throw new RuntimeException("OBJ file contains line which cannot be parsed correctly: " + line);
                 }
@@ -261,7 +256,7 @@ public class ObjLoader {
                         parseMaterial.diffuseColour[1] = Float.valueOf(rgb[2]);
                         parseMaterial.diffuseColour[2] = Float.valueOf(rgb[3]);
                     } else if (materialLine.startsWith("map_Kd")) {
-                        /*parseMaterial.texture = TextureLoader.getTexture("PNG",
+                        /*parseMaterial.vulkan = TextureLoader.getTexture("PNG",
                                 new FileInputStream(new File(f.getParentFile().getAbsolutePath() + "/" + materialLine
                                         .split(" ")[1])));*/
                         System.out.println("WOrk to do");

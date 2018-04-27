@@ -80,8 +80,7 @@ public class OpenGGCommandExtender implements ConsoleListener{
                 
                 if(command.args[0].equalsIgnoreCase("parallel")){
                     try{
-                        boolean parallel = Boolean.parseBoolean(command.args[1].toLowerCase());
-                        CollisionManager.parallelProcessing = parallel;
+                        CollisionManager.parallelProcessing = Boolean.parseBoolean(command.args[1].toLowerCase());
                     }catch(Exception e){
                         GGConsole.error(command.args[0] + " is not a valid boolean!");
                     }

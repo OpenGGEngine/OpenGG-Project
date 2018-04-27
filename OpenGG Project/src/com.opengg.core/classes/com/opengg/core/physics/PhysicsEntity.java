@@ -5,7 +5,6 @@
  */
 package com.opengg.core.physics;
 
-import com.opengg.core.math.FastMath;
 import com.opengg.core.math.Matrix3f;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
@@ -164,15 +163,14 @@ public class PhysicsEntity extends PhysicsObject{
     }
     
     public static PhysicsEntity interpolate(PhysicsEntity a, PhysicsEntity b, float alpha) {
-        PhysicsEntity state = b;
-        state.position = a.position.multiply(1 - alpha).add(b.position.multiply(alpha));
-        state.velocity = a.velocity.multiply(1 - alpha).add(b.velocity .multiply(alpha));
+        b.position = a.position.multiply(1 - alpha).add(b.position.multiply(alpha));
+        b.velocity = a.velocity.multiply(1 - alpha).add(b.velocity .multiply(alpha));
         
-        state.rotation = Quaternionf.slerp(a.rotation, b.rotation, alpha);
-        state.angvelocity = a.angvelocity.multiply(1 - alpha).add(b.angvelocity.multiply(alpha));
+        b.rotation = Quaternionf.slerp(a.rotation, b.rotation, alpha);
+        b.angvelocity = a.angvelocity.multiply(1 - alpha).add(b.angvelocity.multiply(alpha));
         
-        state.acceleration = a.acceleration.multiply(1 - alpha).add(b.acceleration.multiply(alpha));
-        state.angaccel = a.angaccel.multiply(1 - alpha).add(b.angaccel.multiply(alpha));
-        return state;
+        b.acceleration = a.acceleration.multiply(1 - alpha).add(b.acceleration.multiply(alpha));
+        b.angaccel = a.angaccel.multiply(1 - alpha).add(b.angaccel.multiply(alpha));
+        return b;
     }
 }

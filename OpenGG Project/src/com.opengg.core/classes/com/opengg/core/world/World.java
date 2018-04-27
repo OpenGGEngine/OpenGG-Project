@@ -29,8 +29,8 @@ import java.util.List;
  * <p>
  * Note, while this is a subclass of component for the purpose of implementation and abstraction, many functions related to
  * positioning and parents either return default values or throw errors, an example of the latter 
- * being {@link com.opengg.core.world.components.Component#getParentInfo()). Otherwise, 
- * commands like {@link com.opengg.core.world.components.Component#attach() }work as intended
+ * being {@link Component#getParent()} ). Otherwise,
+ * commands like {@link Component#attach(Component)}  }work as intended
  * @author Javier
  */
 public class World extends Component{
@@ -190,14 +190,14 @@ public class World extends Component{
     }
     
     private String traversePrint(Component c){
-        String fin = "";
+        StringBuilder fin = new StringBuilder();
         
-        fin += c.getName() + " : " + c.getClass().getSimpleName();
+        fin.append(c.getName()).append(" : ").append(c.getClass().getSimpleName());
         
         for(Component comp : c.getChildren()){
-            fin += " "  + traversePrint(comp) + " \n";
+            fin.append(" ").append(traversePrint(comp)).append(" \n");
         }
-        return fin;
+        return fin.toString();
     }
     
     /**
@@ -228,7 +228,7 @@ public class World extends Component{
     }
     
     /**
-     * Overrides {@link com.opengg.core.world.components.Component#onParentChange()}, throws an exception to
+     * Overrides {@link Component#onParentChange(Component)}, throws an exception to
      * prevent attachment to any other components
      * @throws com.opengg.core.exceptions.InvalidParentException 
      */

@@ -7,6 +7,7 @@
 package com.opengg.core.render.shader;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -35,42 +36,34 @@ public class VertexArrayFormat {
     }
     
     public List<VertexArrayAttribute> getAttributes(){
-        return attribs;
+        return List.copyOf(attribs);
     }
     
     public int getVertexLength(){
-        int l = 0;
-        
-        for(VertexArrayAttribute attrib : attribs){
-            l += attrib.size;
-        }
-        
-        return l;
-        
+        return attribs.stream()
+                .filter(attrib -> attrib.arrayindex == 0)
+                .mapToInt(attrib -> attrib.size)
+                .sum();
     }
-    
+
+    @Override
+    public String toString(){
+        return attribs.toString();
+    }
+
     @Override
     public boolean equals(Object o){
+        if(o == this)
+            return true;
+
         if(!(o instanceof VertexArrayFormat))
             return false;
+
         VertexArrayFormat form = (VertexArrayFormat)o;
-        
-        boolean match = false;
-        init : for(VertexArrayAttribute vaa : attribs){
-            for(VertexArrayAttribute vaa2 : form.attribs){
-                if(vaa.equals(vaa2))
-                    continue init;
-            }
+
+        if(form.attribs.size() != this.attribs.size())
             return false;
-        }
-        
-        init : for(VertexArrayAttribute vaa : form.attribs){
-            for(VertexArrayAttribute vaa2 : attribs){
-                if(vaa.equals(vaa2))
-                    continue init;
-            }
-            return false;
-        }   
+
         return true;
     }
 }

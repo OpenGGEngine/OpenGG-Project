@@ -23,15 +23,13 @@ public class SmoothPerlinGenerator implements HeightsGenerator{
         this.persistence=persistence;
         this.seed=seed;
 
-        int numberOfOctaves=octavecount;
-
-        octaves=new PerlinOctave[numberOfOctaves];
-        frequencys=new double[numberOfOctaves];
-        amplitudes=new double[numberOfOctaves];
+        octaves=new PerlinOctave[octavecount];
+        frequencys=new double[octavecount];
+        amplitudes=new double[octavecount];
 
         Random rnd=new Random(seed);
 
-        for(int i=0;i<numberOfOctaves;i++){
+        for(int i = 0; i< octavecount; i++){
             octaves[i]=new PerlinOctave(rnd.nextInt());
 
             frequencys[i] = Math.pow(2,i);

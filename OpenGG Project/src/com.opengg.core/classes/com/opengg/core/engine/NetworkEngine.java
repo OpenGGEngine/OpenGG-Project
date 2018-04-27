@@ -39,8 +39,7 @@ public class NetworkEngine {
             return null;
         }
         GGConsole.log("Server initialized on ports " + port + " and " + (port + 1));
-        Server server = new Server(name, port, s, ds);
-        return server;
+        return new Server(name, port, s, ds);
     }
     
     public static Client connect(String ip, int port){
@@ -71,9 +70,7 @@ public class NetworkEngine {
 
             GGConsole.log("Connected to " + servname);
 
-            Client c = new Client(ds, address, port, servname, packetsize);
-
-            return c;
+            return new Client(ds, address, port, servname, packetsize);
 
             
         } catch (IOException ex) {
