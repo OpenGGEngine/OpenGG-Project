@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/src/com.opengg.base/com.opengg.base.iml" filepath="$PROJECT_DIR$/src/com.opengg.base/com.opengg.base.iml" />
+      <module fileurl="file://$PROJECT_DIR$/src/com.opengg.console/com.opengg.console.iml" filepath="$PROJECT_DIR$/src/com.opengg.console/com.opengg.console.iml" />
+      <module fileurl="file://$PROJECT_DIR$/src/com.opengg.core/com.opengg.core.iml" filepath="$PROJECT_DIR$/src/com.opengg.core/com.opengg.core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/src/com.opengg.math/com.opengg.math.iml" filepath="$PROJECT_DIR$/src/com.opengg.math/com.opengg.math.iml" />
+      <module fileurl="file://$PROJECT_DIR$/src/com.opengg.system/com.opengg.system.iml" filepath="$PROJECT_DIR$/src/com.opengg.system/com.opengg.system.iml" />
+      <module fileurl="file://$PROJECT_DIR$/src/com.opengg.test/com.opengg.test.iml" filepath="$PROJECT_DIR$/src/com.opengg.test/com.opengg.test.iml" />
+    </modules>
+  </component>
+</project>
