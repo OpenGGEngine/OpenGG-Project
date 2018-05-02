@@ -42,6 +42,7 @@ public abstract class Component{
     private Quaternionf rot = new Quaternionf();
     private Vector3f scale = new Vector3f(1,1,1);
     private boolean serialize = true;
+    private Runnable whenAttachedToWorld = () -> {};
     
     /**
      * Creates a component with a new ID
@@ -103,11 +104,12 @@ public abstract class Component{
     public void onParentChange(Component parent){
         
     }
-    
+
     public final void localOnWorldChange(){
         for(Component c : children) c.localOnWorldChange();
         
         onWorldChange();
+        whenAttachedToWorld.run();
     }
     
     /**
@@ -117,6 +119,14 @@ public abstract class Component{
      */
     public void onWorldChange(){
         
+    }
+
+    /**
+     * Lambda version of {@link #onWorldChange()}
+     * @param onChange Runnable to run on world change
+     */
+    public final void onWorldChange(Runnable onChange){
+        this.whenAttachedToWorld = onChange;
     }
     
     /**
@@ -431,4 +441,5 @@ public abstract class Component{
     public void remove(Component w){
         children.remove(w);
     }
+
 }

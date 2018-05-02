@@ -8,22 +8,29 @@
 package com.opengg.core.engine;
 
 import com.opengg.core.GGInfo;
+import com.opengg.core.audio.AudioController;
 import com.opengg.core.audio.SoundtrackHandler;
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.extension.Extension;
 import com.opengg.core.extension.ExtensionManager;
 import static com.opengg.core.render.window.RenderUtil.endFrame;
 import static com.opengg.core.render.window.RenderUtil.startFrame;
+
+import com.opengg.core.io.input.mouse.MouseController;
+import com.opengg.core.physics.PhysicsEngine;
+import com.opengg.core.render.RenderEngine;
+import com.opengg.core.render.window.WindowController;
 import com.opengg.core.render.window.Window;
 import com.opengg.core.render.window.WindowInfo;
 import com.opengg.core.system.Allocator;
 import com.opengg.core.system.SystemInfo;
 import com.opengg.core.thread.ThreadManager;
 import com.opengg.core.util.Time;
+import com.opengg.core.world.WorldEngine;
 
-import java.util.Calendar;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.util.Collections;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
@@ -33,13 +40,10 @@ import java.util.logging.Logger;
  * Primary controller of all functionality in the OpenGG Engine
  * @author Javier
  */
-public class OpenGG{
-    public static final String version = "0.1";
-    
+public final class OpenGG{
     private static GGApplication app;
-    private static boolean lwjglinit = false;
     private static final List<ExecutableContainer> executables = Collections.synchronizedList(new LinkedList<>());
-    private static Date startTime;
+    private static Instant startTime;
     private static boolean head = false;
     private static boolean end = false;
     private static boolean force = false;
@@ -47,9 +51,9 @@ public class OpenGG{
     private static boolean test = false;
     private static Time time;
     private static Thread mainthread;
-      
+
     private OpenGG(){}
-    
+
     /**
      * Initializes the OpenGG Engine. This gives full runtime control of the thread to OpenGG,
      * so no code will run past this call until the engine closes
@@ -72,49 +76,48 @@ public class OpenGG{
             writeErrorLog();
             System.exit(0);
         }
-        
+
     }
-    
+
     public static void initializeHeadless(GGApplication app){
         initialize(app, null);
     }
-    
-    private static void initializeLocalClient(WindowInfo windowinfo){       
+
+    private static void initializeLocalClient(WindowInfo windowinfo){
         WindowController.setup(windowinfo);
         GGConsole.log("Window generation successful, using OpenGL context version " + RenderEngine.getGLVersion());
-        
+
         SystemInfo.queryOpenGLInfo();
         GGConsole.log("OpenGL instance info acquired");
-        
-        RenderEngine.initialize();       
+
+        RenderEngine.initialize();
         AudioController.initialize();
-        
+
         BindController.initialize();
         GGConsole.log("Bind Controller initialized");
-        
+
         ExtensionManager.loadStep(Extension.GRAPHICS);
     }
-    
+
     private static void initializeLocal(GGApplication ggapp, WindowInfo info, boolean client){
         time = new Time();
-        startTime = Calendar.getInstance().getTime();
+        startTime = Instant.now();
         mainthread = Thread.currentThread();
         head = client;
         app = ggapp;
-        
-        
+
         ThreadManager.initialize();
-        ThreadManager.runRunnable(new GGConsole(), "consolethread");
+        ThreadManager.run(new GGConsole(), "ConsoleListenerThread");
         GGConsole.addListener(new OpenGGCommandExtender());
         GGConsole.log("OpenGG initializing, running on " + System.getProperty("os.name") + ", " + System.getProperty("os.arch"));
-        
+
         Resource.initialize();
         GGConsole.log("Resource system initialized");
-        
+
         getVMOptions();
-        
+
         ExtensionManager.loadStep(Extension.NONE);
-        
+
         ExtensionManager.loadStep(Extension.LWJGL);
 
         SystemInfo.querySystemInfo();
@@ -122,13 +125,13 @@ public class OpenGG{
         GGConsole.log("Loaded configuration files");
 
         ExtensionManager.loadStep(Extension.CONFIG);
-        
+
         WorldEngine.initialize();
         GGConsole.log("World Engine initialized");
-        
+
         PhysicsEngine.initialize();
         GGConsole.log("Physics Engine initialized");
-        
+
         if(client)
             initializeLocalClient(info);
 
@@ -137,38 +140,40 @@ public class OpenGG{
         WorldEngine.useWorld(WorldEngine.getCurrent());
         GGConsole.log("Application setup complete");
         GGConsole.log("OpenGG initialized in " + time.getDeltaMs() + " milliseconds");
-        
+
         if(client)
             run();
         else
             runHeadless();
     }
-    
+
     private static void runHeadless(){
         while(!end){
             float delta = time.getDeltaSec();
             app.update(delta);
             WorldEngine.update(delta);
             processExecutables(delta);
-            
+
             try {
                 Thread.sleep(20);
             } catch (InterruptedException ex) {
                 Logger.getLogger(OpenGG.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        
+
         if(!force){
             GGConsole.log("OpenGG has closed gracefully, application can now be ended");
         }
-        
+
         writeLog();
     }
-    
+
     private static void run(){
         while (!getWindow().shouldClose() && !end) {
             Allocator.update();
-            
+
+            MouseController.update();
+
             float delta = time.getDeltaSec();
             processExecutables(delta);
             app.update(delta);
@@ -176,16 +181,16 @@ public class OpenGG{
             WorldEngine.update(delta);
             PhysicsEngine.updatePhysics(delta);
             SoundtrackHandler.update();
-            
+
             WindowController.update();
             startFrame();
             app.render();
             ExtensionManager.render();
             RenderEngine.render();
             RenderEngine.checkForGLErrors();
-            endFrame();                   
+            endFrame();
         }
-        
+
         GGConsole.log("OpenGG closing...");
         end = true;
         if(!force){
@@ -193,19 +198,18 @@ public class OpenGG{
         }
         writeLog();
     }
-    
-    private static void getVMOptions(){ 
+
+    private static void getVMOptions(){
         String verb = System.getProperty("gg.verbose");
         String stest = System.getProperty("gg.istest");
         if(verb != null)
             if(verb.equals("true"))
                 GGInfo.setVerbose(true);
-        
+
         if(stest != null)
             if(stest.equals("true"))
                 test = true;
     }
-    
     /**
      * Marks the current instance of OpenGG to end safely on the next update cycle, will run all cleanup code
      */
@@ -213,10 +217,10 @@ public class OpenGG{
         GGConsole.log("Application end has been requested");
         end = true;
     }
-    
+
     /**
      * Force ends the application immediately.<br>
-     * Because it forces the application, including all other threads, to end (basically calling {@code System.exit(0)}), 
+     * Because it forces the application, including all other threads, to end (basically calling {@code System.exit(0)}),
      * it does not cleanup Resource currently in use.
      * Only use in extreme circumstances (like in case of a program freeze)
      */
@@ -226,7 +230,7 @@ public class OpenGG{
         force = true;
         end = true;
     }
-    
+
     /**
      * Returns the current {@link com.opengg.core.render.window.Window} for this instance
      * @return The current window
@@ -242,21 +246,13 @@ public class OpenGG{
     public static GGApplication getApp() {
         return app;
     }
-    
+
     /**
      * Returns if the application is marked to end or has ended
      * @return If marked or actually has ended
      */
     public static boolean getEnded(){
         return end;
-    }
-    
-    /**
-     * Returns if the LWJGL library's natives have been loaded and initialized
-     * @return If LWJGL has been initialized
-     */
-    public static boolean lwjglInitialized(){
-        return lwjglinit;
     }
 
     /**
@@ -266,9 +262,9 @@ public class OpenGG{
     public static boolean isVerbose() {
         return verbose;
     }
-    
+
     private static void closeEngine(){
-        RenderEngine.destroy();      
+        RenderEngine.destroy();
         AudioController.destroy();
         GGConsole.log("Audio controller has been finalized");
         WindowController.destroy();
@@ -276,27 +272,27 @@ public class OpenGG{
         GGConsole.log("Thread Manager has closed all remaining threads");
         GGConsole.log("OpenGG has closed gracefully, application can now be ended");
     }
-    
+
     private static void writeLog(){
         if(test) {
         }
         //GGConsole.writeLog(startTime);
     }
-    
+
     private static void writeErrorLog(){
         if(test) return;
         String error = SystemInfo.getInfo();
-        GGConsole.writeLog(startTime, error, "error");
+        GGConsole.writeLog(startTime.atZone(ZoneId.systemDefault()).toString(), error, "error");
     }
 
     /**
      * Returns the starting time for this OpenGG instance, starting from the initial call to OpenGG.initialize()
      * @return Start time
      */
-    public static Date getStartTime() {
+    public static Instant getStartTime() {
         return startTime;
     }
-    
+
     /**
      * Returns if the thread in which this method is called is the main thread
      * @return If is in main thread
@@ -304,11 +300,11 @@ public class OpenGG{
     public static boolean inMainThread(){
         return mainthread == Thread.currentThread();
     }
-    
+
     private static void exec(ExecutableContainer e){
         executables.add(e);
     }
-    
+
     /**
      * Gives the engine the given {@link Executable} to run in the next cycle.<br>
      * This functionality is useful to be able to run functions that require the main thread (For example requiring OpenGL calls)
@@ -317,16 +313,16 @@ public class OpenGG{
     public static void asyncExec(Executable e){
         exec(new ExecutableContainer(e));
     }
-    
+
     /**
-     * Gives the engine the given {@link Executable} to run in the amount of seconds given with one cycle length deviation 
+     * Gives the engine the given {@link Executable} to run in the amount of seconds given with one cycle length deviation
      * @param seconds In how many seconds to run the executable
      * @param e Overrided executable to be run
      */
     public static void asyncExec(float seconds, Executable e){
         exec(new ExecutableContainer(e, seconds));
     }
-    
+
     /**
      * Gives the engine the given {@link Executable} to run in the next cycle.<br>
      * This functionality is useful to be able to run functions that require the main thread (For example requiring OpenGL calls).<br>
@@ -335,12 +331,12 @@ public class OpenGG{
      */
     public static void syncExec(Executable e){
         ExecutableContainer execcont = new ExecutableContainer(e);
-        
+
         if(!inMainThread()){
             GGConsole.error("syncExec cannot be called in OpenGG thread!");
             throw new RuntimeException("syncExec cannot be called in OpenGG thread!");
         }
-        
+
         exec(execcont);
 
         while(!(execcont.executed)){
@@ -349,7 +345,7 @@ public class OpenGG{
             }catch(InterruptedException ex){}
         }
     }
-    
+
     private static boolean hasExecutables(){
         for(ExecutableContainer ex : executables){
             if(ex.elapsed > ex.timetoexec){
@@ -358,8 +354,8 @@ public class OpenGG{
         }
         return false;
     }
-    
-    private static void processExecutables(float delta){   
+
+    private static void processExecutables(float delta){
         for(ExecutableContainer ex : executables){
             ex.elapsed += delta;
         }
@@ -370,17 +366,17 @@ public class OpenGG{
                     tempex.add(ex);
                 }
             }
-            
+
             for(ExecutableContainer ex : tempex){
                 executables.remove(ex);
             }
-            
-            
+
+
             for(ExecutableContainer e : tempex){
                 e.exec.execute();
                 e.executed = true;
             }
         }
-        
+
     }
 }

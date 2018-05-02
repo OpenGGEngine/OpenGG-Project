@@ -6,7 +6,7 @@
 package com.opengg.core.world.components;
 
 import com.opengg.core.engine.OpenGG;
-import com.opengg.core.engine.RenderEngine;
+import com.opengg.core.render.RenderEngine;
 import com.opengg.core.engine.Resource;
 import com.opengg.core.model.Model;
 import com.opengg.core.util.GGInputStream;
@@ -19,7 +19,7 @@ import java.io.IOException;
  * 
  * This Component Renders a Drawable
  */
-public class ModelRenderComponent extends RenderComponent{
+public class ModelRenderComponent extends RenderComponent implements ResourceUser{
     Model model;
     
     public ModelRenderComponent(){}
@@ -63,5 +63,10 @@ public class ModelRenderComponent extends RenderComponent{
         OpenGG.asyncExec(() -> {
             this.g = model.getDrawable();
         });
+    }
+
+    @Override
+    public Resource getResource(){
+        return getModel();
     }
 }

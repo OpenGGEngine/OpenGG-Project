@@ -5,7 +5,7 @@
  */
 package com.opengg.core.world.components.viewmodel;
 
-import com.opengg.core.engine.WorldEngine;
+import com.opengg.core.world.WorldEngine;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.physics.collision.AABB;
 import com.opengg.core.world.components.Component;

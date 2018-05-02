@@ -5,7 +5,7 @@
  */
 package com.opengg.core.render.texture;
 
-import com.opengg.core.engine.WindowController;
+import com.opengg.core.render.window.WindowController;
 import com.opengg.core.math.Vector2i;
 import com.opengg.core.render.window.WindowResizeListener;
 

@@ -6,7 +6,7 @@
 
 package com.opengg.core.physics.collision;
 
-import com.opengg.core.engine.PhysicsEngine;
+import com.opengg.core.physics.PhysicsEngine;
 import com.opengg.core.math.FastMath;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.MinkowskiSet;

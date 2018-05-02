@@ -8,7 +8,7 @@ package com.opengg.core.online.server;
 
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.engine.OpenGG;
-import com.opengg.core.engine.WorldEngine;
+import com.opengg.core.world.WorldEngine;
 import com.opengg.core.world.Serializer;
 import java.io.BufferedReader;
 import java.io.IOException;

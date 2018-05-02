@@ -6,6 +6,9 @@
 
 package com.opengg.core.console;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 
 /**
@@ -29,7 +32,7 @@ public class GGMessage {
         this.message = message;
         this.sender = sender;
         this.level = level;
-        this.time = Calendar.getInstance().getTime().toString();
+        this.time = Instant.now().atZone(ZoneId.systemDefault()).toLocalTime().format(DateTimeFormatter.ISO_TIME);
     }
     
     @Override

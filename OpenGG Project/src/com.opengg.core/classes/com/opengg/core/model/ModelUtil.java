@@ -7,9 +7,7 @@
 package com.opengg.core.model;
 
 import com.opengg.core.console.GGConsole;
-import com.opengg.core.engine.OpenGG;
 import com.opengg.core.math.Vector2f;
-import com.opengg.core.math.Vector3fm;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.math.Vector4f;
 import com.opengg.core.system.Allocator;
@@ -20,7 +18,6 @@ import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import org.lwjgl.system.MemoryUtil;
 
 /**
  *
@@ -329,7 +326,7 @@ public class ModelUtil {
             for(int i = 0; i < vertices.size(); i += 3){
                 Face f = new Face();
 
-                f.v1 = (vertices.get(i + 0));
+                f.v1 = (vertices.get(i));
                 f.v2 = (vertices.get(i + 1));
                 f.v3 = (vertices.get(i + 2));
 
@@ -519,14 +516,14 @@ public class ModelUtil {
     
      public static String readString(DataInputStream in) throws IOException {
         int len = in.readInt();
-        String string = "";
+        StringBuilder string = new StringBuilder();
         if (len != 0) {
             for (int i = 0; i < len; i++) {
-                string += in.readChar();
+                string.append(in.readChar());
             }
         } else {
-            string = "";
+            string = new StringBuilder();
         }
-        return string;
+        return string.toString();
     }
 }

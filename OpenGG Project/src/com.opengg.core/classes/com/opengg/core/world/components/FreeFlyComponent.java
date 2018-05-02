@@ -8,7 +8,10 @@ package com.opengg.core.world.components;
 
 import com.opengg.core.engine.BindController;
 import com.opengg.core.engine.OpenGG;
+import com.opengg.core.io.input.mouse.MouseController;
+import com.opengg.core.io.input.mouse.MouseMoveListener;
 import com.opengg.core.math.Quaternionf;
+import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.math.Vector3fm;
 import com.opengg.core.util.GGInputStream;
@@ -22,12 +25,12 @@ import java.io.IOException;
  *
  * @author Javier
  */
-public class FreeFlyComponent extends Component implements Actionable{
+public class FreeFlyComponent extends Component implements Actionable, MouseMoveListener{
     private UserControlComponent pcontrol;
     private CameraComponent view;
     
     Vector3fm control = new Vector3fm();
-    Vector3fm controlrot = new Vector3fm();
+    Vector2f controlrot = new Vector2f();
     Vector3f currot = new Vector3f();
     float rotspeed = 30;
     float speed = 30;
@@ -44,10 +47,9 @@ public class FreeFlyComponent extends Component implements Actionable{
     
     @Override
     public void update(float delta){
-        currot = currot.setX(currot.x + controlrot.x * rotspeed * delta);
-        currot = currot.setY(currot.y + controlrot.y * rotspeed * delta);
-        currot = currot.setZ(currot.z + controlrot.z * rotspeed * delta);
-        this.setRotationOffset(new Quaternionf(new Vector3f(0, currot.y, currot.z)));    
+        Vector2f mousepos = MouseController.get();
+        currot = new Vector3f(mousepos.multiply(0.4f).y, mousepos.multiply(0.4f).x, 0);
+        this.setRotationOffset(new Quaternionf(new Vector3f(0, currot.y, currot.z)));
         head.setRotationOffset(new Quaternionf(new Vector3f(currot.x,0,0)));
        
         Vector3f nvector = new Vector3f(control).multiply(delta * 15);
@@ -78,16 +80,16 @@ public class FreeFlyComponent extends Component implements Actionable{
                     control.y -= 1;
                     break;
                 case "lookright":
-                    controlrot.y -= 1;
+                    //controlrot.y -= 1;
                     break;
                 case "lookleft":
-                    controlrot.y += 1;
+                    //controlrot.y += 1;
                     break;
                  case "lookup":
-                    controlrot.x += 1;
+                    //controlrot.x += 1;
                     break;
                 case "lookdown":
-                    controlrot.x -= 1;
+                    //controlrot.x -= 1;
                     break;
             }
         }else{
@@ -111,16 +113,16 @@ public class FreeFlyComponent extends Component implements Actionable{
                     control.y += 1;
                     break;
                 case "lookright":
-                    controlrot.y += 1;
+                    //controlrot.y += 1;
                     break;
                 case "lookleft":
-                    controlrot.y -= 1;
+                    //controlrot.y -= 1;
                     break;
                 case "lookup":
-                    controlrot.x -= 1;
+                    //controlrot.x -= 1;
                     break;
                 case "lookdown":
-                    controlrot.x += 1;
+                    //controlrot.x += 1;
                     break;
 
             }
@@ -150,5 +152,10 @@ public class FreeFlyComponent extends Component implements Actionable{
             if(use) use();
         });
         
+    }
+
+    @Override
+    public void onMove(Vector2f pos){
+        this.controlrot = pos;
     }
 }

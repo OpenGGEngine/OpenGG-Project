@@ -7,6 +7,7 @@
 package com.opengg.core.exceptions;
 
 /**
+ * Exception thrown during a generic rendering (OpenGL/Vulkan) issue
  * @author Javier
  */
 public class RenderException extends RuntimeException{

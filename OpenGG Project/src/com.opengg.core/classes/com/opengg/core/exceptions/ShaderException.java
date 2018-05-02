@@ -7,11 +7,11 @@
 package com.opengg.core.exceptions;
 
 /**
- *
+ * Exception thrown during an issue compiling/using a GLSL/VUlkan shader
  * @author Javier
  */
 public class ShaderException
-    extends RuntimeException{
+    extends RenderException{
     private static final long serialVersionUID = 1L;
 	
     public ShaderException() {

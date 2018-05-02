@@ -124,7 +124,7 @@ public class BindController implements KeyboardListener, MouseButtonListener{
     }
 
     @Override
-    public void buttonPressed(int button) {
+    public void onButtonPress(int button){
         for(Bind bind : binds){
             if(bind.button == button && bind.type == ControlType.MOUSEBUTTON){
                 for(ActionTransmitter c : controllers){
@@ -138,7 +138,7 @@ public class BindController implements KeyboardListener, MouseButtonListener{
     }
 
     @Override
-    public void buttonReleased(int button) {
+    public void onButtonRelease(int button){
         for(Bind bind : binds){
             if(bind.button == button && bind.type == ControlType.MOUSEBUTTON){
                 for(ActionTransmitter c : controllers){

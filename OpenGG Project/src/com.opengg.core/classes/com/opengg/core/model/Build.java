@@ -5,10 +5,6 @@
  */
 package com.opengg.core.model;
 
-/**
- *
- * @author Warren
- */
 import com.opengg.core.math.Vector3fm;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
@@ -426,14 +422,12 @@ public class Build implements BuilderInterface {
     }
     
     public String getObjectFileName(){
-        String name = objFilename.substring(objFilename.lastIndexOf(File.separator)+2);
-        return name;
+        return objFilename.substring(objFilename.lastIndexOf(File.separator)+2);
     }
     
     public String getObjectName(){
         String fname = getObjectFileName();
         int fp = fname.lastIndexOf(".");
-        String name = fname.substring(0, fp);
-        return name;
+        return fname.substring(0, fp);
     }
 }

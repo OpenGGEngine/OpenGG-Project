@@ -75,12 +75,13 @@ vec3 diffuse;
 vec4 color;
 
 float getShadowPercent(Light light, int i){
-    vec4 lightspacePos = (light.perspective*light.view)*vec4(pos, 1.0f);
+    vec4 lightspacePos = light.perspective*(light.view*vec4(pos, 1.0f));
     vec3 projCoords = lightspacePos.xyz/lightspacePos.w;
     projCoords = projCoords * 0.5 + 0.5;
     float closestDepth = texture(shadowmap, projCoords.xy).r;
+    //float closestDepth = texture(shadowmap, textureCoord.xy).r;
     float shadow = projCoords.z > closestDepth  ? 1.0 : 0.0; 
-    return light.shadow;
+    return lightspacePos.z;
 }
 
 mat3 cotangent_frame( vec3 N, vec3 p, vec2 uv ){

@@ -12,6 +12,7 @@ import com.opengg.core.render.texture.Framebuffer;
 import com.opengg.core.system.Allocator;
 import java.nio.FloatBuffer;
 import static org.lwjgl.opengl.GL11.GL_RGBA8;
+import static org.lwjgl.opengl.GL11.glGetError;
 import static org.lwjgl.opengl.GL30.GL_COLOR_ATTACHMENT0;
 
 /**
@@ -19,49 +20,39 @@ import static org.lwjgl.opengl.GL30.GL_COLOR_ATTACHMENT0;
  * @author Javier
  */
 public class Light {
-    Vector3f pos = new Vector3f();
-    Vector3f color = new Vector3f();
-    float distance = 10;
-    float distance2 = 50;
-    public boolean changed = false;
-    public static int bfsize = 48;
-    boolean shadow;
-    Matrix4f view;
-    Matrix4f perspective;
-    Framebuffer lightbuffer;
+    public static final int bfsize = 48;
+
+    private Vector3f pos = new Vector3f();
+    private Vector3f color = new Vector3f();
+    private float distance = 10;
+    private float distance2 = 50;
+
+    private boolean shadow;
+    private Matrix4f view;
+    private Matrix4f perspective;
+    private Framebuffer lightbuffer;
+
+    private boolean changed = false;
+    private boolean isActive = true;
   
     public Light(Vector3f pos, Vector3f color, float distance, float distance2){
-        this.pos = pos;
-        this.color = color;
-        this.distance = distance;
-        this.distance2 = distance2;
-        shadow = false;
-        view = new Matrix4f();
-        perspective = new Matrix4f();
+        this(pos, color, distance, distance2, new Matrix4f(), new Matrix4f(), 0, 0, false);
+    }
+
+    public Light(Vector3f pos, Vector3f color, float distance, float distance2, Matrix4f view, Matrix4f perspective, int xres, int yres){
+        this(pos, color, distance, distance2, view, perspective, xres, yres, true);
     }
     
-    public Light(Vector3f pos, Vector3f color, float distance, float distance2, Matrix4f view, Matrix4f perspective, int xres, int yres){
+    public Light(Vector3f pos, Vector3f color, float distance, float distance2, Matrix4f view, Matrix4f perspective, int xres, int yres, boolean shadow){
         this.pos = pos;
         this.color = color;
         this.distance = distance;
         this.distance2 = distance2;
-        shadow = true;
+        this.shadow = shadow;
         this.view = view;
         this.perspective = perspective;
-        
-        lightbuffer = Framebuffer.generateFramebuffer();
-        lightbuffer.attachRenderbuffer(xres, yres, GL_RGBA8, GL_COLOR_ATTACHMENT0);
-        lightbuffer.attachDepthTexture(xres, yres);
-    }
-    
-    public Light(Vector3f pos, Vector3f color, float distance, float distance2, Matrix4f vp, int xres, int yres){
-        this.pos = pos;
-        this.color = color;
-        this.distance = distance;
-        this.distance2 = distance2;
-        shadow = true;
-        view = new Matrix4f();
-        perspective = new Matrix4f();
+
+        if(!shadow) return;
         lightbuffer = Framebuffer.generateFramebuffer();
         lightbuffer.attachRenderbuffer(xres, yres, GL_RGBA8, GL_COLOR_ATTACHMENT0);
         lightbuffer.attachDepthTexture(xres, yres);
@@ -123,8 +114,13 @@ public class Light {
     public void setLightbuffer(Framebuffer lightbuffer) {
         this.lightbuffer = lightbuffer;
     }
+
     public float getDistance() {
         return distance;
+    }
+
+    public boolean isActive(){
+        return isActive;
     }
 
     public void setDistance(float distance) {

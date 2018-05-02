@@ -12,6 +12,8 @@ import com.opengg.core.online.Packet;
 import com.opengg.core.online.server.Server;
 import com.opengg.core.world.Deserializer;
 import com.opengg.core.world.World;
+import com.opengg.core.world.WorldEngine;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;

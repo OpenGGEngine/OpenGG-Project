@@ -6,6 +6,7 @@
 
 package com.opengg.core.engine;
 
+import com.opengg.core.audio.AudioController;
 import com.opengg.core.audio.SoundtrackHandler;
 import com.opengg.core.console.ConsoleListener;
 import com.opengg.core.console.GGConsole;
@@ -14,6 +15,7 @@ import static com.opengg.core.engine.OpenGG.*;
 import com.opengg.core.physics.PhysicsRenderer;
 import com.opengg.core.physics.collision.CollisionManager;
 import com.opengg.core.render.shader.ShaderController;
+import com.opengg.core.world.WorldEngine;
 
 /**
  *

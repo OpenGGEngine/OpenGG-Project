@@ -4,15 +4,13 @@
  * and open the template in the editor.
  */
 
-package com.opengg.core.engine;
+package com.opengg.core.render;
 
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.gui.GUI;
 import com.opengg.core.gui.GUIController;
 import com.opengg.core.model.ModelManager;
 import com.opengg.core.physics.PhysicsRenderer;
-import com.opengg.core.render.GraphicsBuffer;
-import com.opengg.core.render.Renderable;
 import com.opengg.core.render.light.Light;
 import com.opengg.core.render.postprocess.PostProcessController;
 import com.opengg.core.render.shader.ShaderController;
@@ -22,6 +20,7 @@ import com.opengg.core.render.shader.VertexArrayObject;
 import com.opengg.core.render.texture.Framebuffer;
 import com.opengg.core.render.texture.TextureManager;
 import com.opengg.core.render.texture.WindowFramebuffer;
+import com.opengg.core.render.window.WindowController;
 import com.opengg.core.system.Allocator;
 import com.opengg.core.world.Camera;
 import com.opengg.core.world.Skybox;
@@ -42,17 +41,17 @@ import static org.lwjgl.opengl.GL32.GL_TEXTURE_CUBE_MAP_SEAMLESS;
  * @author Javier
  */
 public class RenderEngine {
-    private static List<RenderGroup> groups = new ArrayList<>();
+    private static RenderEnvironment currentEnvironment;
+    private static final List<RenderGroup> groups = new ArrayList<>();
     private static final List<Light> lights = new ArrayList<>();
     private static final List<RenderPath> paths = new ArrayList<>();
-    private static GraphicsBuffer lightobj;
-    private static RenderGroup dlist, animlist;
-    private static Skybox skybox;
+    private static GraphicsBuffer lightBuffer;
+    private static RenderGroup defaultList;
     private static boolean initialized;
-    private static Framebuffer sceneTex;
-    private static VertexArrayFormat vaoformat;
-    private static VertexArrayFormat particle;
-    private static VertexArrayFormat animation;
+    private static Framebuffer sceneFramebuffer;
+    private static VertexArrayFormat defaultVAOFormat;
+    private static VertexArrayFormat particleVAOFormat;
+    private static VertexArrayFormat animationVAOFormat;
     private static boolean cull = true;
     private static int lightoffset;
     private static Camera camera;
@@ -63,34 +62,34 @@ public class RenderEngine {
     /**
      * Initializes the render engine, should rarely if ever be called
      */
-    static void initialize() {
+    public static void initialize() {
         ShaderController.initialize();
 
-        vaoformat = new VertexArrayFormat();
-        vaoformat.addAttribute(new VertexArrayAttribute("position", 3, 12, GL_FLOAT, 0, 0, false));
-        //vaoformat.addAttribute(new VertexArrayAttribute("color", 4, 12, GL_FLOAT, 3, 0, false));
-        vaoformat.addAttribute(new VertexArrayAttribute("normal", 3, 12, GL_FLOAT, 7, 0, false));
-        vaoformat.addAttribute(new VertexArrayAttribute("texcoord", 2, 12, GL_FLOAT, 10, 0, false));
+        defaultVAOFormat = new VertexArrayFormat();
+        defaultVAOFormat.addAttribute(new VertexArrayAttribute("position", 3, 12, GL_FLOAT, 0, 0, false));
+        //defaultVAOFormat.addAttribute(new VertexArrayAttribute("color", 4, 12, GL_FLOAT, 3, 0, false));
+        defaultVAOFormat.addAttribute(new VertexArrayAttribute("normal", 3, 12, GL_FLOAT, 7, 0, false));
+        defaultVAOFormat.addAttribute(new VertexArrayAttribute("texcoord", 2, 12, GL_FLOAT, 10, 0, false));
 
-        particle = new VertexArrayFormat();
-        particle.addAttribute(new VertexArrayAttribute("position", 3, 12, GL_FLOAT, 0, 0, false));
-        particle.addAttribute(new VertexArrayAttribute("offset", 3, 3, GL_FLOAT, 0, 1, true));
-        particle.addAttribute(new VertexArrayAttribute("normal", 3, 12, GL_FLOAT, 7, 0, false));
-        particle.addAttribute(new VertexArrayAttribute("texcoord", 2, 12, GL_FLOAT, 10, 0, false));
+        particleVAOFormat = new VertexArrayFormat();
+        particleVAOFormat.addAttribute(new VertexArrayAttribute("position", 3, 12, GL_FLOAT, 0, 0, false));
+        particleVAOFormat.addAttribute(new VertexArrayAttribute("offset", 3, 3, GL_FLOAT, 0, 1, true));
+        particleVAOFormat.addAttribute(new VertexArrayAttribute("normal", 3, 12, GL_FLOAT, 7, 0, false));
+        particleVAOFormat.addAttribute(new VertexArrayAttribute("texcoord", 2, 12, GL_FLOAT, 10, 0, false));
 
-        animation = new VertexArrayFormat();
-        animation.addAttribute(new VertexArrayAttribute("position", 3, 20, GL_FLOAT, 0, 0, false));
-        //animation.addAttribute(new VertexArrayAttribute("color", 4, 20, GL_FLOAT, 3, 0, false));
-        animation.addAttribute(new VertexArrayAttribute("normal", 3, 20, GL_FLOAT, 7, 0, false));
-        animation.addAttribute(new VertexArrayAttribute("texcoord", 2, 20, GL_FLOAT, 10, 0, false));
-        animation.addAttribute(new VertexArrayAttribute("jointindex", 4, 20, GL_FLOAT, 12, 0, false));
-        animation.addAttribute(new VertexArrayAttribute("weights", 4, 20, GL_FLOAT, 16, 0, false));
+        animationVAOFormat = new VertexArrayFormat();
+        animationVAOFormat.addAttribute(new VertexArrayAttribute("position", 3, 20, GL_FLOAT, 0, 0, false));
+        //animationVAOFormat.addAttribute(new VertexArrayAttribute("color", 4, 20, GL_FLOAT, 3, 0, false));
+        animationVAOFormat.addAttribute(new VertexArrayAttribute("normal", 3, 20, GL_FLOAT, 7, 0, false));
+        animationVAOFormat.addAttribute(new VertexArrayAttribute("texcoord", 2, 20, GL_FLOAT, 10, 0, false));
+        animationVAOFormat.addAttribute(new VertexArrayAttribute("jointindex", 4, 20, GL_FLOAT, 12, 0, false));
+        animationVAOFormat.addAttribute(new VertexArrayAttribute("weights", 4, 20, GL_FLOAT, 16, 0, false));
 
-        sceneTex = WindowFramebuffer.getFloatingPointWindowFramebuffer(1);
-        defaultvao = new VertexArrayObject(vaoformat);
-        lightobj = GraphicsBuffer.allocate(GL_UNIFORM_BUFFER, 1600, GL_DYNAMIC_DRAW);
-        lightobj.bindBase(ShaderController.getUniqueUniformBufferLocation());
-        ShaderController.setUniformBlockLocation(lightobj, "LightBuffer");
+        sceneFramebuffer = WindowFramebuffer.getFloatingPointWindowFramebuffer(1);
+        defaultvao = new VertexArrayObject(defaultVAOFormat);
+        lightBuffer = GraphicsBuffer.allocate(GL_UNIFORM_BUFFER, 1600, GL_DYNAMIC_DRAW);
+        lightBuffer.bindBase(ShaderController.getUniqueUniformBufferLocation());
+        ShaderController.setUniformBlockLocation(lightBuffer, "LightBuffer");
 
         enableDefaultGroups();
 
@@ -98,7 +97,7 @@ public class RenderEngine {
         
         lightoffset = (Allocator.allocFloat(Light.bfsize).capacity());// << 2;
 
-        groups.add(dlist);
+        groups.add(defaultList);
        // groups.add(animlist);
 
         Camera c = new Camera();
@@ -123,8 +122,8 @@ public class RenderEngine {
     }
 
     private static void enableDefaultGroups(){
-        dlist = new RenderGroup("defaultgroup");
-        dlist.setPipeline("object");
+        defaultList = new RenderGroup("defaultgroup");
+        defaultList.setPipeline("object");
         
         RenderPath path = new RenderPath("mainpath", () -> {
             for(RenderGroup d : getActiveRenderGroups()){
@@ -136,6 +135,7 @@ public class RenderEngine {
         RenderPath light = new RenderPath("shadowmap", () -> {
             ShaderController.useConfiguration("passthrough");
             int used = 0;
+            var lights = getActiveLights();
             for(int i = 0; i < lights.size() && used < 2; i++){
                 if(lights.get(i).hasShadow()){    
                     ShaderController.setView(lights.get(i).getView());
@@ -147,16 +147,15 @@ public class RenderEngine {
                     for(RenderGroup d : getActiveRenderGroups()){
                         d.render();
                     }
-                    
+
                     lights.get(i).getLightbuffer().disableRendering();
-                    lights.get(i).getLightbuffer().useTexture(Framebuffer.DEPTH, 0);
-                    //lights.get(i).getLightbuffer().blitToWithDepth(sceneTex);
+                    lights.get(i).getLightbuffer().useTexture(Framebuffer.DEPTH, 6+used);
                     used++;
                 }
             }
             
-            sceneTex.restartRendering();
-            sceneTex.useEnabledAttachments();
+            sceneFramebuffer.restartRendering();
+            sceneFramebuffer.useEnabledAttachments();
             useLights();
             ShaderController.setView(camera.getMatrix());
             projdata.use();
@@ -166,22 +165,37 @@ public class RenderEngine {
                     ShaderController.useConfiguration("shadobject");
                 else
                     ShaderController.useConfiguration(d.pipeline);
-                d.render(); 
+                d.render();
             }
             
         });
         paths.add(path);
     }
-    
+
+    static List<Light> getActiveLights(){
+        var lights = new ArrayList<Light>(groups.size());
+
+        for(var light : lights)
+            if(light.isActive())
+                lights.add(light);
+
+        for(var light : currentEnvironment.getLights())
+            if(light.isActive())
+                lights.add(light);
+
+        return lights;
+    }
+
     static void useLights(){
-        for(int i = 0; i < lights.size(); i++){
-            lightobj.uploadSubData(lights.get(i).getBuffer(), i * lightoffset);
+        var allLights = getActiveLights();
+        for(int i = 0; i < allLights.size(); i++){
+            lightBuffer.uploadSubData(allLights.get(i).getBuffer(), i * lightoffset);
         }
-        ShaderController.setUniform("numLights", lights.size());
+        ShaderController.setUniform("numLights", allLights.size());
     }
     
     public static void sortOrders(){
-        groups = groups.stream().sorted((RenderGroup o1, RenderGroup o2) -> {
+        groups.sort((RenderGroup o1, RenderGroup o2) -> {
             if(o1.getOrder() > o2.getOrder()){
                 return 1;
             }else if(o1.getOrder() < o2.getOrder()){
@@ -189,7 +203,7 @@ public class RenderEngine {
             }else{
                 return 0;
             }
-        }).collect(Collectors.toList());
+        });
     }
     
     public static void render(){
@@ -198,27 +212,27 @@ public class RenderEngine {
         projdata.ratio = WindowController.getWindow().getRatio();
         projdata.use();
 
-        sceneTex.enableRendering();
-        sceneTex.useEnabledAttachments();
+        sceneFramebuffer.enableRendering();
+        sceneFramebuffer.useEnabledAttachments();
         useLights();
         resetConfig();
         defaultvao.bind();
-        if(skybox != null){
+        if(currentEnvironment.getSkybox() != null){
             ShaderController.useConfiguration("sky");
-            skybox.getCubemap().use(2);
-            skybox.getDrawable().render();
+            currentEnvironment.getSkybox().getCubemap().use(2);
+            currentEnvironment.getSkybox().getDrawable().render();
         }
         
         for(RenderPath path : getActiveRenderPaths()){
             path.render();
             resetConfig();
         }       
-        sceneTex.disableRendering();
+        sceneFramebuffer.disableRendering();
         
         defaultvao.bind();
         
         GUI.startGUIPos();
-        PostProcessController.process(sceneTex);
+        PostProcessController.process(sceneFramebuffer);
         GUIController.render();
     }
     
@@ -255,18 +269,19 @@ public class RenderEngine {
     }
     
     public static VertexArrayFormat getDefaultFormat(){
-        return vaoformat;
+        return defaultVAOFormat;
     }
     
     public static VertexArrayFormat getParticleFormat(){
-        return particle;
+        return particleVAOFormat;
     }
+
     public static VertexArrayFormat getAnimationFormat(){
-        return animation;
+        return animationVAOFormat;
     }
     
     public static Framebuffer getSceneFramebuffer(){
-        return sceneTex;
+        return sceneFramebuffer;
     }
     
     public static VertexArrayObject getCurrentVAO(){
@@ -324,7 +339,11 @@ public class RenderEngine {
         for(RenderGroup r : groups)
             if(r.enabled)
                 list.add(r);
-        
+
+        for(RenderGroup r : currentEnvironment.getGroups())
+            if(r.enabled)
+                list.add(r);
+
         return list;
     }
     
@@ -362,26 +381,26 @@ public class RenderEngine {
     }
     
     public static void addRenderable(Renderable r){
-        dlist.add(r);
+        defaultList.add(r);
     }
-    
-    public static void addAnim(Renderable r){
-        animlist.add(r);
-    }
-    
+
     public static Skybox getSkybox(){
-        return skybox;
+        return currentEnvironment.getSkybox();
     }
-    
-    public static void setSkybox(Skybox box){
-        skybox = box;
-    }    
 
     public static void setCulling(boolean enable){
         cull = enable;
         resetConfig();
     }
-    
+
+    public static RenderEnvironment getCurrentEnvironment(){
+        return currentEnvironment;
+    }
+
+    public static void setCurrentEnvironment(RenderEnvironment currentEnvironment){
+        RenderEngine.currentEnvironment = currentEnvironment;
+    }
+
     public static void useCamera(Camera c){
         camera = c;
     }
@@ -402,7 +421,7 @@ public class RenderEngine {
         return initialized;
     }
     
-    static void destroy(){
+    public static void destroy(){
         TextureManager.destroy();
         GGConsole.log("Render engine has released all OpenGL Resource and has finalized");
     }

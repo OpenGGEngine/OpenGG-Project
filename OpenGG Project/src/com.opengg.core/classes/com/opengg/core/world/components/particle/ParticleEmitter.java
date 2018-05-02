@@ -5,7 +5,7 @@
  */
 package com.opengg.core.world.components.particle;
 
-import com.opengg.core.engine.RenderEngine;
+import com.opengg.core.render.RenderEngine;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.drawn.DrawnObject;

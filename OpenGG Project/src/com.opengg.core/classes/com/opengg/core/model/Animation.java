@@ -46,7 +46,7 @@ public class Animation {
     }
     
     public float getFrameDuration(){
-        return (float) (duration/frames.size());
+        return duration/frames.size();
     }
 
     public AnimatedFrame getNextFrame() {

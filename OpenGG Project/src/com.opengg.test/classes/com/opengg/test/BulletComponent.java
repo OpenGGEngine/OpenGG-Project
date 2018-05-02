@@ -5,9 +5,9 @@
  */
 package com.opengg.test;
 
-import com.opengg.core.engine.RenderEngine;
+import com.opengg.core.render.RenderEngine;
 import com.opengg.core.engine.Resource;
-import com.opengg.core.engine.WorldEngine;
+import com.opengg.core.world.WorldEngine;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.light.Light;

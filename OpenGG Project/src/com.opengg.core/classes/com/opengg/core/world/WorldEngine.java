@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  *
  */
-package com.opengg.core.engine;
+package com.opengg.core.world;
 
+import com.opengg.core.physics.PhysicsEngine;
 import com.opengg.core.model.Animator;
-import com.opengg.core.world.TransitionEngine;
-import com.opengg.core.world.World;
-import com.opengg.core.world.WorldLoader;
+import com.opengg.core.render.RenderEngine;
+import com.opengg.core.render.RenderGroup;
 import com.opengg.core.world.components.Component;
 import com.opengg.core.world.components.RenderComponent;
 import java.util.LinkedList;
@@ -109,33 +109,10 @@ public class WorldEngine{
      */
     public static void useWorld(World world){
         world.rescanRenderables();
-        removeRenderables(curworld);
-        addRenderables(world);
+        world.use();
         curworld = world;
-        PhysicsEngine.setInstance(world.physics);
     }
-    
-    /**
-     * Adds all of the render groups from the given {@link com.opengg.core.world.World}
-     * to be rendered
-     * @param world World to get renderables from
-     */
-    public static void addRenderables(World world){
-        for(RenderGroup r : world.groups){
-            RenderEngine.addRenderGroup(r);
-        }
-    }
-    
-    /**
-     * Removes all of the render groups from the given {@link com.opengg.core.world.World}
-     * @param world World to remove renderables from
-     */
-    public static void removeRenderables(World world){
-        for(RenderGroup r : world.groups){
-            RenderEngine.removeRenderGroup(r);
-        }
-    }
-    
+
     /**
      * Returns the current world
      * @return Current world

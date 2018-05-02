@@ -7,7 +7,7 @@
 package com.opengg.core.world.components;
 
 import com.opengg.core.engine.OpenGG;
-import com.opengg.core.engine.RenderEngine;
+import com.opengg.core.render.RenderEngine;
 import com.opengg.core.math.FastMath;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector2f;

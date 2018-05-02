@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import org.lwjgl.system.MemoryUtil;
 
 /**
  * Static handler for loading and processing BMF Model files
@@ -161,7 +160,7 @@ public class ModelLoader {
         //    System.out.println("Matname:" + matname);
         //    System.out.println("The purge: " + arrays.length);
         for (int i = 1; i < arrays.length - 1; i += 3) {
-            FloatBuffer fbt = ((ByteBuffer) arrays[i].rewind()).asFloatBuffer();
+            FloatBuffer fbt = arrays[i].rewind().asFloatBuffer();
             // System.out.println("cap: " + fbt.limit() * 4);
             //  System.out.println("---Entered Loop F---");
 
@@ -179,7 +178,7 @@ public class ModelLoader {
             fb.flip();
           //  System.out.println("Float: "+ Arrays.toString(fbg));
 //       
-            IntBuffer ibt = ((ByteBuffer) arrays[i + 1]).rewind().asIntBuffer();
+            IntBuffer ibt = arrays[i + 1].rewind().asIntBuffer();
             IntBuffer ib = Allocator.allocInt(ibt.limit());
 
 //            System.out.println("cap: "+ ib.capacity() );
@@ -197,7 +196,7 @@ public class ModelLoader {
             ib.flip();
          //   System.out.println("Integer: "+ Arrays.toString(bye));
 
-            ByteBuffer name = ((ByteBuffer) arrays[i + 2].rewind());
+            ByteBuffer name = arrays[i + 2].rewind();
             System.out.println("Limit " +name.limit());
             System.out.println("Man: " +name.position());
             name.flip();
@@ -222,7 +221,7 @@ public class ModelLoader {
         m.convexhull = arrays[arrays.length - 1];
         m.convexhull.rewind();
         while(m.convexhull.hasRemaining()){
-            Vector3f wow = new Vector3f((float)m.convexhull.getFloat(),(float)m.convexhull.getFloat(),(float)m.convexhull.getFloat());
+            Vector3f wow = new Vector3f(m.convexhull.getFloat(), m.convexhull.getFloat(), m.convexhull.getFloat());
             m.ch.add(wow);
             System.out.println(wow.toString());
         }

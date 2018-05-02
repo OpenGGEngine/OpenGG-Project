@@ -13,11 +13,11 @@ import java.io.IOException;
  * @author Javier
  */
 public class GGInfo {
+    public static final String version = "0.1";
     private static String appname = "default";
     private static String memallocator = "system";
     private static String basepath = "";
     private static boolean initialized = false;
-    private static String version = "0.0.1";
     private static boolean verbose = false;
     private static boolean agressiveMemory = false;
     private static String glversion = "4.2";

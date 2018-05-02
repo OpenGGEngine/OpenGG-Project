@@ -5,9 +5,8 @@
  */
 package com.opengg.core.physics;
 
-import com.opengg.core.engine.PhysicsEngine;
-import com.opengg.core.engine.RenderEngine;
-import com.opengg.core.engine.RenderPath;
+import com.opengg.core.render.RenderEngine;
+import com.opengg.core.render.RenderPath;
 import com.opengg.core.engine.Resource;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Quaternionf;

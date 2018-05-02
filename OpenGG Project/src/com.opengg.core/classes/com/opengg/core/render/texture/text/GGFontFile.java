@@ -6,7 +6,7 @@
 package com.opengg.core.render.texture.text;
 
 import com.opengg.core.console.GGConsole;
-import com.opengg.core.engine.WindowController;
+import com.opengg.core.render.window.WindowController;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;

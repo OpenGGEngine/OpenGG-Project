@@ -14,7 +14,7 @@ import org.lwjgl.glfw.GLFWMouseButtonCallback;
  *
  * @author Javier
  */
-public class GLFWMouseButtonHandler extends GLFWMouseButtonCallback implements IMouseButtonHandler{
+public class GLFWMouseButtonHandler extends GLFWMouseButtonCallback implements MouseButtonHandler{
     
     static boolean[] buttons = new boolean[65536];
     

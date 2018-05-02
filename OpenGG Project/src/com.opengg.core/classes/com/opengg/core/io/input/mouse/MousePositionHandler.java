@@ -4,12 +4,16 @@
  * and open the template in the editor.
  */
 
-package com.opengg.core.render;
+package com.opengg.core.io.input.mouse;
+
+import com.opengg.core.math.Vector2f;
 
 /**
  *
  * @author Javier
  */
-public interface Renderable {
-    void render();
+public interface MousePositionHandler{
+    public double getX();
+    public double getY();
+    public Vector2f getPos();
 }

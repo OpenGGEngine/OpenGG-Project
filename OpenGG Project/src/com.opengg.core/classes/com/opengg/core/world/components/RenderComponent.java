@@ -5,7 +5,7 @@
  */
 package com.opengg.core.world.components;
 
-import com.opengg.core.engine.RenderEngine;
+import com.opengg.core.render.RenderEngine;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.render.Renderable;
 import com.opengg.core.render.drawn.Drawable;

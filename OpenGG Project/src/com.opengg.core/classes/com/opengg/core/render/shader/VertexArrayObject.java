@@ -6,7 +6,7 @@
 
 package com.opengg.core.render.shader;
 
-import com.opengg.core.engine.RenderEngine;
+import com.opengg.core.render.RenderEngine;
 import com.opengg.core.render.GraphicsBuffer;
 
 import java.util.List;

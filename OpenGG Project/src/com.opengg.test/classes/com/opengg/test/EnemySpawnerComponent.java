@@ -6,7 +6,7 @@
 
 package com.opengg.test;
 
-import com.opengg.core.engine.WorldEngine;
+import com.opengg.core.world.WorldEngine;
 import com.opengg.core.world.components.Component;
 import com.opengg.core.world.components.triggers.Trigger;
 import com.opengg.core.world.components.triggers.TriggerInfo;

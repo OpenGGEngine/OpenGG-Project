@@ -77,13 +77,11 @@ public class GGConsole implements Runnable{
         listeners.add(listener);
     }
     
-    public static void writeLog(Date date){
-        String dates = DateFormat.getDateTimeInstance().format(date);
-        dates = dates.replace(":", "-");
-        writeLog(date, "", dates);
+    public static void writeLog(String time){
+        writeLog(time, "", time);
     }
     
-    public static void writeLog(Date date, String error, String name){
+    public static void writeLog(String time, String error, String name){
         try(PrintWriter writer = new PrintWriter(new FileOutputStream(new File(new File("").getCanonicalPath()+("logs" + File.separator + name + ".log"))))) {
             for(GGMessage m : messages){
                 writer.println(m.toString());

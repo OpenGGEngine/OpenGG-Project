@@ -6,8 +6,6 @@
 
 package com.opengg.core.audio;
 
-import com.opengg.core.engine.AudioController;
-
 /**
  * High level abstraction of a sound<br>
  * 

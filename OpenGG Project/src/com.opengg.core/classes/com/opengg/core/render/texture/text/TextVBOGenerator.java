@@ -5,7 +5,7 @@
  */
 package com.opengg.core.render.texture.text;
 
-import com.opengg.core.engine.RenderEngine;
+import com.opengg.core.render.RenderEngine;
 import com.opengg.core.render.Text;
 import com.opengg.core.model.Material;
 import com.opengg.core.render.drawn.MaterialDrawnObject;

@@ -23,8 +23,7 @@ public class Face {
     }
 
     @Override
-    public String toString() { 
-        String result = v1 +  ", " + v2 + ", " + v3;
-        return result;
+    public String toString() {
+        return v1 +  ", " + v2 + ", " + v3;
     }
 }  

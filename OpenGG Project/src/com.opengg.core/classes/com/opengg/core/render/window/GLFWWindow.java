@@ -4,11 +4,8 @@ import com.opengg.core.exceptions.WindowCreationException;
 import com.opengg.core.io.input.keyboard.GLFWKeyboardHandler;
 import com.opengg.core.io.input.keyboard.IKeyboardHandler;
 import com.opengg.core.io.input.keyboard.KeyboardController;
-import com.opengg.core.io.input.mouse.GLFWMouseButtonHandler;
-import com.opengg.core.io.input.mouse.GLFWMousePosHandler;
-import com.opengg.core.io.input.mouse.IMouseButtonHandler;
-import com.opengg.core.io.input.mouse.IMousePosHandler;
-import com.opengg.core.io.input.mouse.MouseController;
+import com.opengg.core.io.input.mouse.*;
+
 import static com.opengg.core.render.window.WindowOptions.*;
 import com.opengg.core.system.Allocator;
 import com.opengg.core.util.FileUtil;
@@ -90,12 +87,12 @@ public class GLFWWindow implements Window {
         }
 
         glfwSetKeyCallback(window, keyCallback = new GLFWKeyboardHandler());
-        glfwSetCursorPosCallback(window, mouseCallback = new GLFWMousePosHandler());
+        glfwSetCursorPosCallback(window, mouseCallback = new GLFWMousePositionHandler());
         glfwSetMouseButtonCallback(window, mouseButtonCallback = new GLFWMouseButtonHandler());
 
         KeyboardController.setHandler((IKeyboardHandler) keyCallback);
-        MouseController.setButtonHandler((IMouseButtonHandler) mouseButtonCallback);
-        MouseController.setPosHandler((IMousePosHandler) mouseCallback);
+        MouseController.setButtonHandler((MouseButtonHandler) mouseButtonCallback);
+        MouseController.setPosHandler((MousePositionHandler) mouseCallback);
 
         glfwMakeContextCurrent(window);
         glfwSwapInterval(winfo.vsync ? 1 : 0);

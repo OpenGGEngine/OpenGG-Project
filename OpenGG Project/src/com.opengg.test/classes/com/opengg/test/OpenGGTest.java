@@ -3,14 +3,16 @@ package com.opengg.test;
 import com.opengg.core.audio.AudioListener;
 import com.opengg.core.audio.Soundtrack;
 import com.opengg.core.audio.SoundtrackHandler;
-import com.opengg.core.engine.AudioController;
+import com.opengg.core.audio.AudioController;
 import com.opengg.core.engine.BindController;
 import com.opengg.core.engine.GGApplication;
 import com.opengg.core.engine.OpenGG;
-import com.opengg.core.engine.ProjectionData;
-import com.opengg.core.engine.RenderEngine;
+import com.opengg.core.render.ProjectionData;
+import com.opengg.core.render.RenderEngine;
 import com.opengg.core.engine.Resource;
-import com.opengg.core.engine.WorldEngine;
+import com.opengg.core.render.window.GLFWWindow;
+import com.opengg.core.render.window.WindowController;
+import com.opengg.core.world.WorldEngine;
 import com.opengg.core.gui.GUIController;
 import com.opengg.core.gui.GUIText;
 import com.opengg.core.io.ControlType;
@@ -44,7 +46,8 @@ public class OpenGGTest extends GGApplication{
     private Texture worldterrain;
     private AudioListener listener;
     float i = 0;
-    
+    private FreeFlyComponent player;
+
     public static void main(String[] args){
         WindowInfo w = new WindowInfo();
         w.displaymode = WindowOptions.WINDOWED;
@@ -83,15 +86,15 @@ public class OpenGGTest extends GGApplication{
                 + " the guardians of peace and justice in the galaxy, to settle the conflict...", new Vector2f(), 1f, 0.5f, false);
         GUIController.getDefault().addItem("aids", new GUIText(text, font, new Vector2f(0f,0)));
         
-        FreeFlyComponent player = new FreeFlyComponent();
+        player = new FreeFlyComponent();
         //TestPlayerComponent player = new TestPlayerComponent();
         player.setPositionOffset(new Vector3f(0,-2,10));
         player.use();
         
         WorldEngine.getCurrent().attach(new LightComponent(
-                new Light(new Vector3f(20,20,5), new Vector3f(1,1,1), 400, 0,  
-                        new Camera(new Vector3f(0,-5,-50), new Quaternionf(new Vector3f(20,0,0))).getMatrix(), 
-                        Matrix4f.perspective(100f, 1f, 1f, 150f), 1280, 1280))); 
+                new Light(new Vector3f(20,20,5), new Vector3f(1,1,1), 400, 0,
+                        new Camera(new Vector3f(0,0,0), new Quaternionf(new Vector3f(0,0,0))).getMatrix(),
+                        Matrix4f.perspective(100f, 1f, 1f, 70f), 1280, 1280)));
         WorldEngine.getCurrent().attach(new ModelRenderComponent(Resource.getModel("goldleaf")).setScaleOffset(new Vector3f(0.02f)).setRotationOffset(new Vector3f(-90,0,0)));  
 
         /*Terrain t = Terrain.generate(Resource.getTextureData("h2.gif"));
@@ -124,6 +127,7 @@ public class OpenGGTest extends GGApplication{
             PhysicsComponent sphere = new PhysicsComponent();
             sphere.getEntity().setPosition(new Vector3f(120f * (float)Math.random(), (float)Math.random() * 40f + 20, (float)Math.random() * 120f));
             sphere.addCollider(new ColliderGroup(new AABB( 3, 3, 3),  new SphereCollider(1)));
+            sphere.attach(new LightComponent(new Light(new Vector3f(), new Vector3f(1,1,1), 100, 100)));
             WorldEngine.getCurrent().attach(sphere);
         }
         
@@ -143,18 +147,18 @@ public class OpenGGTest extends GGApplication{
         BindController.addBind(ControlType.KEYBOARD, "aim", KEY_K);
         
         RenderEngine.setProjectionData(ProjectionData.getPerspective(100, 0.2f, 3000f));
-        RenderEngine.setSkybox(new Skybox(Texture.getSRGBCubemap(Resource.getTexturePath("skybox\\majestic_ft.png"),
+        WorldEngine.getCurrent().getRenderEnvironment().setSkybox(new Skybox(Texture.getSRGBCubemap(Resource.getTexturePath("skybox\\majestic_ft.png"),
                 Resource.getTexturePath("skybox\\majestic_bk.png"),
                 Resource.getTexturePath("skybox\\majestic_up.png"),
                 Resource.getTexturePath("skybox\\majestic_dn.png"),
                 Resource.getTexturePath("skybox\\majestic_rt.png"),
                 Resource.getTexturePath("skybox\\majestic_lf.png")), 1500f));
+        ((GLFWWindow)WindowController.getWindow()).setCursorLock(true);
     }
 
     @Override
     public void render() {}
 
     @Override
-    public void update(float delta) {
-    }
+    public void update(float delta){}
 }

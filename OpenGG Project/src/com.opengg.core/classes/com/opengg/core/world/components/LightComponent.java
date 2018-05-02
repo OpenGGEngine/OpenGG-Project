@@ -7,7 +7,7 @@
 package com.opengg.core.world.components;
 
 import com.opengg.core.engine.OpenGG;
-import com.opengg.core.engine.RenderEngine;
+import com.opengg.core.render.RenderEngine;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.light.Light;
 import com.opengg.core.util.GGInputStream;
@@ -19,50 +19,46 @@ import java.io.IOException;
  * @author Javier
  */
 public class LightComponent extends Component{
-    Light l;
+    private Light light;
     
     public LightComponent(){
-        super();
-        l = new Light(new Vector3f(0,0,0),new Vector3f(1,1,1),100,0);
-        use();
+        this(new Light(new Vector3f(0,0,0),new Vector3f(1,1,1),100,0));
     }
     
-    public LightComponent(Light l){
+    public LightComponent(Light light){
         super();
-        this.l = l;
-        this.setPositionOffset(l.getPosition());
-        use();
+        this.light = light;
+        this.setPositionOffset(light.getPosition());
+        onWorldChange(this::use);
     }
 
     public void use(){
-        RenderEngine.addLight(l);
+        getWorld().getRenderEnvironment().addLight(getLight());
     }
     
     @Override
     public void update(float delta) {
-        l.setPosition(getPosition());
+        light.setPosition(getPosition());
     }    
     
     public Light getLight(){
-        return l;
+        return light;
     }
     
     @Override
     public void serialize(GGOutputStream stream) throws IOException{
         super.serialize(stream);
-        stream.write(l.getColor());
-        stream.write(l.getDistance());
-        stream.write(RenderEngine.getLights().contains(l));
+        stream.write(light.getColor());
+        stream.write(light.getDistance());
+        stream.write(getWorld().getRenderEnvironment().getLights().contains(light));
     }
     
     @Override
     public void deserialize(GGInputStream stream) throws IOException{
         super.deserialize(stream);
-        l = new Light(new Vector3f(), stream.readVector3f(), stream.readFloat(), 0);
+        light = new Light(new Vector3f(), stream.readVector3f(), stream.readFloat(), 0);
         boolean use = stream.readBoolean();
         
-        OpenGG.asyncExec(() -> {
-            if(use) use();
-        });
+        OpenGG.asyncExec(this::use);
     }
 }
