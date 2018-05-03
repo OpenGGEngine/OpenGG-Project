@@ -6,6 +6,7 @@
 
 package com.opengg.core.world.components;
 
+import com.opengg.core.Configuration;
 import com.opengg.core.engine.BindController;
 import com.opengg.core.engine.OpenGG;
 import com.opengg.core.io.input.mouse.MouseController;
@@ -48,7 +49,8 @@ public class FreeFlyComponent extends Component implements Actionable, MouseMove
     @Override
     public void update(float delta){
         Vector2f mousepos = MouseController.get();
-        currot = new Vector3f(mousepos.multiply(0.4f).y, mousepos.multiply(0.4f).x, 0);
+        float mult = Configuration.getFloat("sensitivity");
+        currot = new Vector3f(mousepos.multiply(mult).y, mousepos.multiply(mult).x, 0);
         this.setRotationOffset(new Quaternionf(new Vector3f(0, currot.y, currot.z)));
         head.setRotationOffset(new Quaternionf(new Vector3f(currot.x,0,0)));
        

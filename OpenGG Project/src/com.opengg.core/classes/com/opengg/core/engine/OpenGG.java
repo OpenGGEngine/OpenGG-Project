@@ -7,6 +7,7 @@
 
 package com.opengg.core.engine;
 
+import com.opengg.core.Configuration;
 import com.opengg.core.GGInfo;
 import com.opengg.core.audio.AudioController;
 import com.opengg.core.audio.SoundtrackHandler;
@@ -28,8 +29,11 @@ import com.opengg.core.thread.ThreadManager;
 import com.opengg.core.util.Time;
 import com.opengg.core.world.WorldEngine;
 
+import java.io.File;
+import java.io.IOException;
 import java.time.Instant;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -121,7 +125,7 @@ public final class OpenGG{
         ExtensionManager.loadStep(Extension.LWJGL);
 
         SystemInfo.querySystemInfo();
-        Config.reloadConfigs();
+        OpenGG.loadConfigs();
         GGConsole.log("Loaded configuration files");
 
         ExtensionManager.loadStep(Extension.CONFIG);
@@ -210,6 +214,34 @@ public final class OpenGG{
             if(stest.equals("true"))
                 test = true;
     }
+
+    private static void loadConfigs(){
+        var configdir = new File("config/");
+        var allconfigs = recursiveLoadConfigs(configdir);
+        for(var config : allconfigs){
+            try{
+                Configuration.load(config);
+            }catch(IOException e){
+                GGConsole.error("Failed to load configuration file at " + config.getAbsolutePath());
+            }
+        }
+    }
+
+    private static List<File> recursiveLoadConfigs(File directory){
+        var allfiles = directory.listFiles();
+        var allcfgs = new ArrayList<File>();
+        for (var file : allfiles) {
+            if (file.isFile()) {
+                if(file.getAbsolutePath().contains(".ini")){
+                    allcfgs.add(file);
+                }
+            } else if(file.isDirectory()) {
+                recursiveLoadConfigs(file);
+            }
+        }
+        return allcfgs;
+    }
+
     /**
      * Marks the current instance of OpenGG to end safely on the next update cycle, will run all cleanup code
      */
