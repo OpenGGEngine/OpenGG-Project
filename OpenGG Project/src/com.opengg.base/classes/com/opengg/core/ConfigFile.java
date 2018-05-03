@@ -7,14 +7,15 @@
 package com.opengg.core;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
  * @author Javier
  */
 public class ConfigFile {
-    String name;
-    HashMap<String, String> contents;
+    private String name;
+    private HashMap<String, String> contents;
     
     public ConfigFile(String name, HashMap<String, String> contents){
         this.name = name;
@@ -25,8 +26,8 @@ public class ConfigFile {
         return contents.get(name);
     }
     
-    public HashMap<String,String> getAllSettings(){
-        HashMap copy = new HashMap();
+    public Map<String,String> getAllSettings(){
+        Map copy = new HashMap<String, String>();
         for(String id : contents.keySet()){
             copy.put(id, contents.get(id));
         }

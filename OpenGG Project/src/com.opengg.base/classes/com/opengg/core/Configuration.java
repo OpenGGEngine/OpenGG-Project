@@ -20,7 +20,7 @@ import java.util.Set;
  *
  * @author Javier
  */
-public class Configuration{
+public final class Configuration{
     private static final Map<String,ConfigFile> settings = new HashMap<>();
 
     public static void load(File configfile) throws IOException{
@@ -32,7 +32,6 @@ public class Configuration{
         var datamap = new HashMap<String, String>();
 
         for(var entry : propertyset){
-            System.out.println((String)entry.getKey() + ":" + (String)entry.getValue());
             datamap.put((String)entry.getKey(), (String)entry.getValue());
         }
 
@@ -45,11 +44,25 @@ public class Configuration{
     }
     
     public static String get(String key){
+        return getEntry(key).getValue();
+    }
+
+    private static Entry<String, String> getEntry(String key){
         return settings.values().stream()
                 //.filter(s -> s.name.equals(key.substring(0, key.indexOf('.'))))
-                .flatMap(s -> s.getAllSettings().values().stream())
+                .flatMap(s -> s.getAllSettings().entrySet().stream())
+                .filter(set -> set.getKey().equals(key))
                 .findFirst()
                 .get();
+    }
+
+    public static boolean set(String key, String val){
+        var count = settings.values().stream()
+                .filter(maps -> maps.getAllSettings().containsKey(key))
+                .peek(maps -> maps.getAllSettings().replace(key, val))
+                .count();
+
+        return count > 0;
     }
 
     public static float getFloat(String key){

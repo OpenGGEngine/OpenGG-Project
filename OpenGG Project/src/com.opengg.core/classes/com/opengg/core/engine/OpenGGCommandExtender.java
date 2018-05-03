@@ -6,6 +6,7 @@
 
 package com.opengg.core.engine;
 
+import com.opengg.core.Configuration;
 import com.opengg.core.audio.AudioController;
 import com.opengg.core.audio.SoundtrackHandler;
 import com.opengg.core.console.ConsoleListener;
@@ -24,83 +25,106 @@ import com.opengg.core.world.WorldEngine;
 public class OpenGGCommandExtender implements ConsoleListener{
     @Override
     public void onConsoleInput(UserCommand command) {
-        if(command.command.equalsIgnoreCase("quit")){
-            endApplication();
-        }
-        
-        if(command.command.equalsIgnoreCase("fquit")){
-            forceEnd();
-        }
-        
-        if(command.command.equalsIgnoreCase("vol") || command.command.equalsIgnoreCase("volume")){
-            if(command.argCount == 1){
-                try{
-                    float vol = Float.parseFloat(command.args[0]);
-                    AudioController.setGlobalGain(vol);
-                }catch(Exception e){
-                    GGConsole.error(command.args[0] + " is not a valid volume!");
-                }
-            }
-        }
-        
-        if(command.command.equalsIgnoreCase("world")){
-            if(command.argCount == 1){
-                if(command.args[0].equalsIgnoreCase("print_layout")){
-                    WorldEngine.getCurrent().printLayout();
-                }
-            }
-        }
-        
-        if(command.command.equalsIgnoreCase("snd") || command.command.equalsIgnoreCase("sound")){
-            if(command.argCount == 1){
-                if(command.args[0].equalsIgnoreCase("restart")){
-                    AudioController.restart();
-                }else if(command.args[0].equalsIgnoreCase("next_track")){
-                    SoundtrackHandler.getCurrent().next();
-                }
-            }
-        }
-        
-        if(command.command.equalsIgnoreCase("bind")){
-            if(command.argCount == 1){
-                if(command.args[0].equalsIgnoreCase("list")){
-                    BindController.printBinds();
-                }
-            }
-        }
-        
-        if(command.command.equalsIgnoreCase("phys")){
-            if(command.argCount == 2){
-                if(command.args[0].equalsIgnoreCase("render")){
+        switch(command.command){
+            case "quit":
+                endApplication();
+                break;
+
+            case "fquit":
+                forceEnd();
+                break;
+
+            case "volume":
+                if(command.argCount == 1){
                     try{
-                        boolean vol = Boolean.parseBoolean(command.args[1].toLowerCase());
-                        PhysicsRenderer.setEnabled(vol);
+                        float vol = Float.parseFloat(command.args[0]);
+                        AudioController.setGlobalGain(vol);
                     }catch(Exception e){
-                        GGConsole.error(command.args[0] + " is not a valid boolean!");
+                        GGConsole.error(command.args[0] + " is not a valid volume!");
                     }
                 }
-                
-                if(command.args[0].equalsIgnoreCase("parallel")){
-                    try{
-                        CollisionManager.parallelProcessing = Boolean.parseBoolean(command.args[1].toLowerCase());
-                    }catch(Exception e){
-                        GGConsole.error(command.args[0] + " is not a valid boolean!");
+                break;
+
+            case "world":
+                if(command.argCount == 1){
+                    if(command.args[0].equalsIgnoreCase("print_layout")){
+                        WorldEngine.getCurrent().printLayout();
                     }
                 }
-            }
-        }
-        
-        if(command.command.equalsIgnoreCase("shader")){
-            if(command.argCount == 3){
-                if(command.args[0].equalsIgnoreCase("uniformfloat")){
-                    try{
-                        float val = Float.parseFloat(command.args[2].toLowerCase());
-                        ShaderController.setUniform(command.args[1], val);
-                    }catch(Exception e){
-                        GGConsole.error("Invalid/malformed float");
+                break;
+
+            case "snd":
+                if(command.argCount == 1){
+                    if(command.args[0].equalsIgnoreCase("restart")){
+                        AudioController.restart();
+                    }else if(command.args[0].equalsIgnoreCase("next_track")){
+                        SoundtrackHandler.getCurrent().next();
                     }
                 }
-            }
+                break;
+
+            case "bind":
+                if(command.argCount == 1){
+                    if(command.args[0].equalsIgnoreCase("list")){
+                        BindController.printBinds();
+                    }
+                }
+                break;
+
+            case "phys":
+                if(command.argCount == 2){
+                    if(command.args[0].equalsIgnoreCase("render")){
+                        try{
+                            boolean vol = Boolean.parseBoolean(command.args[1].toLowerCase());
+                            PhysicsRenderer.setEnabled(vol);
+                        }catch(Exception e){
+                            GGConsole.error(command.args[0] + " is not a valid boolean!");
+                        }
+                    }
+
+                    if(command.args[0].equalsIgnoreCase("parallel")){
+                        try{
+                            CollisionManager.parallelProcessing = Boolean.parseBoolean(command.args[1].toLowerCase());
+                        }catch(Exception e){
+                            GGConsole.error(command.args[0] + " is not a valid boolean!");
+                        }
+                    }
+                }
+                break;
+
+            case "shader":
+                if(command.argCount == 3){
+                    if(command.args[0].equalsIgnoreCase("uniformfloat")){
+                        try{
+                            float val = Float.parseFloat(command.args[2].toLowerCase());
+                            ShaderController.setUniform(command.args[1], val);
+                        }catch(Exception e){
+                            GGConsole.error("Invalid/malformed float");
+                        }
+                    }
+                }
+                break;
+
+            case "config":
+                if(command.argCount == 2){
+                    if(command.args[0].equalsIgnoreCase("get")){
+                        var input = command.args[1];
+                        try{
+                            GGConsole.log("Value of " + input + " is " + Configuration.get(input));
+                        }catch(Exception e){
+                            GGConsole.warning("Failed to find config named " + input);
+                        }
+                    }
+                }else if(command.argCount == 3){
+                    if(command.args[0].equalsIgnoreCase("set")){
+                        var config = command.args[1];
+                        var newval = command.args[2];
+                        var success = Configuration.set(config, newval);
+                        if(success) GGConsole.log("Changed value in " + config + " to " + newval);
+                        else        GGConsole.warning("Failed to find value named " + config);
+                    }
+                }
+                break;
         }
     }
 }

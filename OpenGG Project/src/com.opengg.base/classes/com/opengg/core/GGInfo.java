@@ -13,7 +13,7 @@ import java.io.IOException;
  * @author Javier
  */
 public class GGInfo {
-    public static final String version = "0.1";
+    private static final String version = "0.1";
     private static String appname = "default";
     private static String memallocator = "system";
     private static String basepath = "";
