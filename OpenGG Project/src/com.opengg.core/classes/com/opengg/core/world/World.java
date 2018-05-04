@@ -6,6 +6,9 @@
 
 package com.opengg.core.world;
 
+import com.opengg.core.GGInfo;
+import com.opengg.core.engine.OpenGG;
+import com.opengg.core.engine.Resource;
 import com.opengg.core.physics.PhysicsEngine;
 import com.opengg.core.physics.PhysicsSystem;
 import com.opengg.core.render.RenderEngine;
@@ -14,7 +17,9 @@ import com.opengg.core.render.RenderGroup;
 import com.opengg.core.exceptions.InvalidParentException;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
+import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.texture.TextureData;
+import com.opengg.core.render.texture.TextureManager;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
 import com.opengg.core.world.components.Component;
@@ -39,6 +44,11 @@ import java.util.List;
 public class World extends Component{
     private PhysicsSystem physics = new PhysicsSystem();
     private RenderEnvironment environment = new RenderEnvironment();
+    private boolean forceUpdate = false;
+
+    public World(){
+        forceUpdate = GGInfo.isServer();
+    }
 
     /**
      * Returns all components attached to this world
@@ -205,6 +215,10 @@ public class World extends Component{
         return environment;
     }
 
+    public boolean isForcedUpdate() {
+        return forceUpdate;
+    }
+
     /**
      * Overrides {@link com.opengg.core.world.components.Component#getPosition()}, always returns 0,0,0
      * @return returns Vector3f containing 0,0,0
@@ -253,6 +267,13 @@ public class World extends Component{
     @Override
     public void deserialize(GGInputStream in) throws IOException{
         super.deserialize(in);
+        var datums = new TextureData[6];
+        for (int i = 0; i < 6; i++) {
+            var instring = in.readString();
+            datums[i] = TextureManager.loadTexture(instring, false);
+        }
+
+        OpenGG.asyncExec(() -> environment.setSkybox(new Skybox(Texture.create(Texture.cubemapConfig(), datums), 1000)));
     }
 
     /**

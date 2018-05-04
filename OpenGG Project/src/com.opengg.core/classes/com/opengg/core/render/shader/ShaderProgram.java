@@ -13,12 +13,6 @@ import com.opengg.core.render.internal.opengl.shader.OpenGLShaderProgram;
 
 import java.nio.ByteBuffer;
 
-import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
-import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
-import static org.lwjgl.opengl.GL32.GL_GEOMETRY_SHADER;
-import static org.lwjgl.opengl.GL40.GL_TESS_CONTROL_SHADER;
-import static org.lwjgl.opengl.GL40.GL_TESS_EVALUATION_SHADER;
-
 /**
  *
  * @author Javier

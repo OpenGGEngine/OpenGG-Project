@@ -40,7 +40,7 @@ public class PostProcessController {
         //PostProcessingPass ssaopass = new PostProcessingPass(ssao, PostProcessingPass.SET);
         //passes.add(ssaopass);
     }
-    
+
     public static void addPass(PostProcessingPass pass){
         passes.add(pass);
     }
@@ -65,7 +65,6 @@ public class PostProcessController {
                     utility.disableRendering();
                     utility.useTexture(0, 0);
                     currentBuffer = utility;
-                    
             }
         }
         

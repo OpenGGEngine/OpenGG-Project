@@ -9,6 +9,7 @@ package com.opengg.core.render.internal.opengl.shader;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
+import com.opengg.core.render.RenderEngine;
 import com.opengg.core.system.Allocator;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
@@ -42,19 +43,23 @@ public class NativeOpenGLShaderProgram{
     private final int id;
     
     public NativeOpenGLShaderProgram(int type, CharSequence source){
-        id = glCreateShaderProgramv(type, source);
+        if(!RenderEngine.validateInitialization()) id = -1;
+        else id = glCreateShaderProgramv(type, source);
     }
     
     public int findUniformLocation(String pos){
+        if(!RenderEngine.validateInitialization()) return -1;
         return glGetUniformLocation(id, pos);
     }
     
     public void bindFragmentDataLocation(int number, CharSequence name) {
+        if(!RenderEngine.validateInitialization()) return;
         glBindFragDataLocation(id, number, name);
     }
     
     public int findAttributeLocation(String name) {
-         return glGetAttribLocation(id, name);
+        if(!RenderEngine.validateInitialization()) return -1;
+        return glGetAttribLocation(id, name);
     }
 
     /**
@@ -129,6 +134,7 @@ public class NativeOpenGLShaderProgram{
      * @param value Value to set
      */
     public void setUniform(int location, float value) {
+        if(!RenderEngine.validateInitialization()) return;
         glProgramUniform1f(id, location, value);
     }
     
@@ -139,6 +145,7 @@ public class NativeOpenGLShaderProgram{
      * @param value Value to set
      */
     public void setUniform(int location, Vector2f value) {
+        if(!RenderEngine.validateInitialization()) return;
         glProgramUniform2fv(id, location, value.getBuffer());
     }
 
@@ -149,16 +156,19 @@ public class NativeOpenGLShaderProgram{
      * @param value Value to set
      */
     public void setUniform(int location, Vector3f value) {
+        if(!RenderEngine.validateInitialization()) return;
         glProgramUniform3fv(id, location, value.getStackBuffer());
         Allocator.popStack();
     }
 
     public void setUniform(int location, Matrix4f value) {
+        if(!RenderEngine.validateInitialization()) return;
         glProgramUniformMatrix4fv(id, location, false, value.getStackBuffer());
         Allocator.popStack();
     }
     
-    public void setUniform(int location, Matrix4f[] matrices) {      
+    public void setUniform(int location, Matrix4f[] matrices) {
+        if(!RenderEngine.validateInitialization()) return;
             int length = matrices != null ? matrices.length : 0;
             FloatBuffer fb = Allocator.stackAllocFloat(16 * length);
             for (Matrix4f mat : matrices) {
@@ -178,12 +188,14 @@ public class NativeOpenGLShaderProgram{
     }
     
     public void setUniformBlockIndex(int bind, String name){
+        if(!RenderEngine.validateInitialization()) return;
         int index = glGetUniformBlockIndex(id, name);
         glUniformBlockBinding(id, index, bind);
         glGetError(); //CATCH 1281 FROM MISSING INDEX
     }
     
     public ByteBuffer getProgramBinary(){
+        if(!RenderEngine.validateInitialization()) return null;
         IntBuffer length = Allocator.stackAllocInt(1);
         IntBuffer type = Allocator.stackAllocInt(1);
         ByteBuffer data = Allocator.alloc(128*1024);
@@ -206,10 +218,12 @@ public class NativeOpenGLShaderProgram{
     }
 
     public int checkStatus() {
+        if(!RenderEngine.validateInitialization()) return -1;
         return glGetProgrami(id, GL_LINK_STATUS);
     }
     
     public String getProgramInfoLog(){
+        if(!RenderEngine.validateInitialization()) return "OpenGL not initialized";
         return glGetProgramInfoLog(id);
     }
 }

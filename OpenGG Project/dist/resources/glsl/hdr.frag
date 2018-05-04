@@ -10,7 +10,6 @@ in vertexData{
 };
 
 uniform sampler2D Kd;
-uniform sampler2D Ka;
 uniform float exposure;
 uniform float gamma;
 

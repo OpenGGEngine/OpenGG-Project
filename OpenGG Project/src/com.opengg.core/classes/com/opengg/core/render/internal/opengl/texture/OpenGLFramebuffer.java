@@ -6,15 +6,13 @@
 package com.opengg.core.render.internal.opengl.texture;
 
 import com.opengg.core.console.GGConsole;
+import com.opengg.core.render.RenderEngine;
 import com.opengg.core.render.window.WindowController;
 import com.opengg.core.render.texture.Framebuffer;
 import com.opengg.core.render.texture.Renderbuffer;
 import com.opengg.core.render.texture.Texture;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL14.GL_DEPTH_COMPONENT32;
@@ -65,21 +63,20 @@ public class OpenGLFramebuffer implements Framebuffer{
     
     @Override
     public void useEnabledAttachments(){
+        if(!RenderEngine.validateInitialization()) return;
         fb.bind(GL_FRAMEBUFFER);
        
-        int[] attachments = new int[usedAttachments.size()];
+        int[] attachments = new int[usedAttachments.size()-1];
         for(int i = 0; i < attachments.length; i++){
             if(usedAttachments.get(i) == DEPTH) continue;
             attachments[i] = usedAttachments.get(i);
         }
-
         glDrawBuffers(attachments);
     }
     
     @Override
     public void useTexture(int attachment, int loc){
-        if(attachment != DEPTH) attachment = GL_COLOR_ATTACHMENT0 + attachment;
-        Texture tex = textures.get(attachment);
+        Texture tex = textures.get(GL_COLOR_ATTACHMENT0 + attachment);
         if(tex != null){
             tex.use(loc);
         }
@@ -135,7 +132,7 @@ public class OpenGLFramebuffer implements Framebuffer{
         
         renderbuffers.add(rb);
         usedAttachments.add(attachment);
-        
+
         if(lx < width) lx = width;
         if(ly < height) ly = height;
     }
@@ -188,7 +185,6 @@ public class OpenGLFramebuffer implements Framebuffer{
     public void disableRendering(){
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glViewport(0, 0, WindowController.getWindow().getWidth(), WindowController.getWindow().getHeight());
-        
     }
     
     @Override

@@ -37,8 +37,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Primary controller of all functionality in the OpenGG Engine
@@ -67,7 +65,6 @@ public final class OpenGG{
     public static void initialize(GGApplication app, WindowInfo info){
         try{
             if(info == null){
-                GGConsole.log("Null WindowInfo, assuming headless");
                 initializeLocal(app, null, false);
             }else{
                 initializeLocal(app, info, true);
@@ -87,7 +84,7 @@ public final class OpenGG{
         initialize(app, null);
     }
 
-    private static void initializeLocalClient(WindowInfo windowinfo){
+    private static void initializeClient(WindowInfo windowinfo){
         WindowController.setup(windowinfo);
         GGConsole.log("Window generation successful, using OpenGL context version " + RenderEngine.getGLVersion());
 
@@ -103,12 +100,19 @@ public final class OpenGG{
         ExtensionManager.loadStep(Extension.GRAPHICS);
     }
 
+    private static void initializeServer(){
+        RenderEngine.initializeForHeadless();
+        GGConsole.log("Render Engine headless initialization complete");
+    }
+
     private static void initializeLocal(GGApplication ggapp, WindowInfo info, boolean client){
         time = new Time();
         startTime = Instant.now();
         mainthread = Thread.currentThread();
         head = client;
         app = ggapp;
+
+        GGInfo.setServer(!client);
 
         ThreadManager.initialize();
         ThreadManager.run(new GGConsole(), "ConsoleListenerThread");
@@ -137,7 +141,9 @@ public final class OpenGG{
         GGConsole.log("Physics Engine initialized");
 
         if(client)
-            initializeLocalClient(info);
+            initializeClient(info);
+        else
+            initializeServer();
 
         GGConsole.log("Engine initialization complete, application setup beginning");
         app.setup();
@@ -153,46 +159,13 @@ public final class OpenGG{
 
     private static void runHeadless(){
         while(!end){
-            float delta = time.getDeltaSec();
-            app.update(delta);
-            WorldEngine.update(delta);
-            processExecutables(delta);
-
+            runUpdate();
             try {
-                Thread.sleep(20);
+                Thread.sleep(5);
             } catch (InterruptedException ex) {
-                Logger.getLogger(OpenGG.class.getName()).log(Level.SEVERE, null, ex);
+                GGConsole.error("OpenGG thread has been interrupted!");
+                break;
             }
-        }
-
-        if(!force){
-            GGConsole.log("OpenGG has closed gracefully, application can now be ended");
-        }
-
-        writeLog();
-    }
-
-    private static void run(){
-        while (!getWindow().shouldClose() && !end) {
-            Allocator.update();
-
-            MouseController.update();
-
-            float delta = time.getDeltaSec();
-            processExecutables(delta);
-            app.update(delta);
-            ExtensionManager.update(delta);
-            WorldEngine.update(delta);
-            PhysicsEngine.updatePhysics(delta);
-            SoundtrackHandler.update();
-
-            WindowController.update();
-            startFrame();
-            app.render();
-            ExtensionManager.render();
-            RenderEngine.render();
-            RenderEngine.checkForGLErrors();
-            endFrame();
         }
 
         GGConsole.log("OpenGG closing...");
@@ -201,6 +174,47 @@ public final class OpenGG{
             closeEngine();
         }
         writeLog();
+    }
+
+    private static void run(){
+        while (!getWindow().shouldClose() && !end) {
+            runUpdate();
+            runInput();
+            runRender();
+        }
+
+        GGConsole.log("OpenGG closing...");
+        end = true;
+        if(!force){
+            closeEngine();
+        }
+        writeLog();
+    }
+
+    private static void runUpdate() {
+        Allocator.update();
+
+        float delta = time.getDeltaSec();
+        processExecutables(delta);
+        app.update(delta);
+        ExtensionManager.update(delta);
+        WorldEngine.update(delta);
+        PhysicsEngine.updatePhysics(delta);
+        SoundtrackHandler.update();
+    }
+
+    private static void runInput() {
+        MouseController.update();
+    }
+
+    private static void runRender() {
+        WindowController.update();
+        startFrame();
+        app.render();
+        ExtensionManager.render();
+        RenderEngine.render();
+        RenderEngine.checkForGLErrors();
+        endFrame();
     }
 
     private static void getVMOptions(){

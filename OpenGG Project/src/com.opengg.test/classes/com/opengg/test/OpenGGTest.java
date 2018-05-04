@@ -7,9 +7,12 @@ import com.opengg.core.audio.AudioController;
 import com.opengg.core.engine.BindController;
 import com.opengg.core.engine.GGApplication;
 import com.opengg.core.engine.OpenGG;
+import com.opengg.core.model.ModelManager;
+import com.opengg.core.online.NetworkEngine;
 import com.opengg.core.render.ProjectionData;
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.engine.Resource;
+import com.opengg.core.render.postprocess.PostProcessController;
 import com.opengg.core.render.window.GLFWWindow;
 import com.opengg.core.render.window.WindowController;
 import com.opengg.core.world.WorldEngine;
@@ -37,6 +40,8 @@ import com.opengg.core.world.components.LightComponent;
 import com.opengg.core.world.components.ModelRenderComponent;
 import com.opengg.core.world.components.TerrainComponent;
 import com.opengg.core.world.components.physics.PhysicsComponent;
+
+import java.util.ArrayList;
 
 
 public class OpenGGTest extends GGApplication{
@@ -87,42 +92,19 @@ public class OpenGGTest extends GGApplication{
         GUIController.getDefault().addItem("aids", new GUIText(text, font, new Vector2f(0f,0)));
         
         player = new FreeFlyComponent();
-        //TestPlayerComponent player = new TestPlayerComponent();
         player.setPositionOffset(new Vector3f(0,-2,10));
         player.use();
-        
+
+        //NetworkEngine.connect("localhost", 25565);
+
+
         WorldEngine.getCurrent().attach(new LightComponent(
                 new Light(new Vector3f(20,20,5), new Vector3f(1,1,1), 400, 0,
                         new Camera(new Vector3f(0,0,0), new Quaternionf(new Vector3f(0,0,0))).getMatrix(),
                         Matrix4f.perspective(100f, 1f, 1f, 70f), 1280, 1280)));
         WorldEngine.getCurrent().attach(new ModelRenderComponent(Resource.getModel("goldleaf")).setScaleOffset(new Vector3f(0.02f)).setRotationOffset(new Vector3f(-90,0,0)));  
 
-        /*Terrain t = Terrain.generate(Resource.getTextureData("h2.gif"));
-        TerrainComponent tc = new TerrainComponent(t);
-        tc.enableCollider();
-        tc.setBlotmap(Resource.getSRGBTexture("blendMap.png"));
-        tc.setGroundArray(Texture.getSRGBArrayTexture(Resource.getTextureData("grass.png"), Resource.getTextureData("flower2.png"), Resource.getTextureData("dirt.png"), Resource.getTextureData("road.png")));
-        tc.setPositionOffset(new Vector3f(-100, 20,-100));
-        tc.setScaleOffset(new Vector3f(200,30f, 200));
-        
-        WorldEngine.getCurrent().attach(tc);*/
-        
-        /*ArrayList<Vector3f> v2 = new ArrayList<>();
-        v2.add(new Vector3f(-1,-1,-1));
-        v2.add(new Vector3f(-1,1,-1));
-        v2.add(new Vector3f(-1,-1,1));
-        v2.add(new Vector3f(-1,1,1));
-        v2.add(new Vector3f(1,-1,-1));
-        v2.add(new Vector3f(1,1,-1));
-        v2.add(new Vector3f(1,-1,1));
-        v2.add(new Vector3f(1,1,1));
-        
-        ModelRenderComponent physmod = new ModelRenderComponent(ModelManager.getDefaultModel());
-        PhysicsComponent phys = new PhysicsComponent();
-        phys.addCollider(new ColliderGroup(new AABB( 3, 3, 3), new ConvexHull(v2)));*/
-        
-        //WorldEngine.getCurrent().attach(physmod.attach(phys));
-        
+
         for(int i = 0; i < 20; i++){
             PhysicsComponent sphere = new PhysicsComponent();
             sphere.getEntity().setPosition(new Vector3f(120f * (float)Math.random(), (float)Math.random() * 40f + 20, (float)Math.random() * 120f));
@@ -131,6 +113,15 @@ public class OpenGGTest extends GGApplication{
             WorldEngine.getCurrent().attach(sphere);
         }
         
+        WorldEngine.getCurrent().attach(player);
+
+        WorldEngine.getCurrent().getRenderEnvironment().setSkybox(new Skybox(Texture.getSRGBCubemap(Resource.getTexturePath("skybox\\majestic_ft.png"),
+                Resource.getTexturePath("skybox\\majestic_bk.png"),
+                Resource.getTexturePath("skybox\\majestic_up.png"),
+                Resource.getTexturePath("skybox\\majestic_dn.png"),
+                Resource.getTexturePath("skybox\\majestic_rt.png"),
+                Resource.getTexturePath("skybox\\majestic_lf.png")), 1500f));
+
         WorldEngine.getCurrent().attach(player);
 
         BindController.addBind(ControlType.KEYBOARD, "forward", KEY_W);
@@ -147,13 +138,9 @@ public class OpenGGTest extends GGApplication{
         BindController.addBind(ControlType.KEYBOARD, "aim", KEY_K);
         
         RenderEngine.setProjectionData(ProjectionData.getPerspective(100, 0.2f, 3000f));
-        WorldEngine.getCurrent().getRenderEnvironment().setSkybox(new Skybox(Texture.getSRGBCubemap(Resource.getTexturePath("skybox\\majestic_ft.png"),
-                Resource.getTexturePath("skybox\\majestic_bk.png"),
-                Resource.getTexturePath("skybox\\majestic_up.png"),
-                Resource.getTexturePath("skybox\\majestic_dn.png"),
-                Resource.getTexturePath("skybox\\majestic_rt.png"),
-                Resource.getTexturePath("skybox\\majestic_lf.png")), 1500f));
+
         ((GLFWWindow)WindowController.getWindow()).setCursorLock(true);
+        RenderEngine.addRenderable(PostProcessController.drawable);
     }
 
     @Override

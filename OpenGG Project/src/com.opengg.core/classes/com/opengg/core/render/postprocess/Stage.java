@@ -22,13 +22,13 @@ public class Stage {
     Framebuffer buffer;
     
     public Stage(String shader){
-        this(shader, new Tuple<>(0,1));
+        this(shader, new Tuple<>(0,0));
     }
     
     public Stage(String shader, Tuple<Integer,Integer>... binds){
         this.shader = shader;
         colorbinds.addAll(List.of(binds));
-        buffer = WindowFramebuffer.getWindowFramebuffer(binds.length);
+        buffer = WindowFramebuffer.getFloatingPointWindowFramebuffer(binds.length);
     }
     
     public void render(){

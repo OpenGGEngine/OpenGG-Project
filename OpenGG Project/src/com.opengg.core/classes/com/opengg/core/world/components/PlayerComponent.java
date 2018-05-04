@@ -64,7 +64,7 @@ public class PlayerComponent extends Component implements Actionable{
         if(control.x == 0)
             playerphysics.getEntity().velocity.z /= 2;
             
-        if((control.x == 1) && (getPosition().x <= getWorld().floorLev + 0.001f))
+        if((control.x == 1) && (getPosition().x <= getData().floorLev + 0.001f))
             playerphysics.getEntity().velocity.y += 5;*/
     }
     

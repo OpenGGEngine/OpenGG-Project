@@ -75,7 +75,7 @@ public class WorldEngine{
     }
     
     private static void traverseUpdate(Component c, float delta){
-        if(!c.isEnabled() || ((c.getUpdateDistance() > c.getPosition().subtract(RenderEngine.getCurrentCamera().getPos()).length()) && c.getUpdateDistance() != 0))
+        if(!c.getWorld().isForcedUpdate() && (!c.isEnabled() || ((c.getUpdateDistance() > c.getPosition().subtract(RenderEngine.getCurrentCamera().getPos()).length()) && c.getUpdateDistance() != 0)))
             return;
         c.update(delta);
         for(Component c2 : c.getChildren()){

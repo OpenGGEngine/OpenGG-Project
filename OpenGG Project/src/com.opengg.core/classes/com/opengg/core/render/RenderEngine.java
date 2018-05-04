@@ -6,7 +6,9 @@
 
 package com.opengg.core.render;
 
+import com.opengg.core.GGInfo;
 import com.opengg.core.console.GGConsole;
+import com.opengg.core.exceptions.RenderException;
 import com.opengg.core.gui.GUI;
 import com.opengg.core.gui.GUIController;
 import com.opengg.core.model.ModelManager;
@@ -63,6 +65,8 @@ public class RenderEngine {
      * Initializes the render engine, should rarely if ever be called
      */
     public static void initialize() {
+        initialized = true;
+
         ShaderController.initialize();
 
         defaultVAOFormat = new VertexArrayFormat();
@@ -119,6 +123,31 @@ public class RenderEngine {
         PhysicsRenderer.initialize();
 
         GGConsole.log("Render engine initialized");
+    }
+
+    public static void initializeForHeadless() {
+        defaultVAOFormat = new VertexArrayFormat();
+        defaultVAOFormat.addAttribute(new VertexArrayAttribute("position", 3, 12, GL_FLOAT, 0, 0, false));
+        //defaultVAOFormat.addAttribute(new VertexArrayAttribute("color", 4, 12, GL_FLOAT, 3, 0, false));
+        defaultVAOFormat.addAttribute(new VertexArrayAttribute("normal", 3, 12, GL_FLOAT, 7, 0, false));
+        defaultVAOFormat.addAttribute(new VertexArrayAttribute("texcoord", 2, 12, GL_FLOAT, 10, 0, false));
+
+        particleVAOFormat = new VertexArrayFormat();
+        particleVAOFormat.addAttribute(new VertexArrayAttribute("position", 3, 12, GL_FLOAT, 0, 0, false));
+        particleVAOFormat.addAttribute(new VertexArrayAttribute("offset", 3, 3, GL_FLOAT, 0, 1, true));
+        particleVAOFormat.addAttribute(new VertexArrayAttribute("normal", 3, 12, GL_FLOAT, 7, 0, false));
+        particleVAOFormat.addAttribute(new VertexArrayAttribute("texcoord", 2, 12, GL_FLOAT, 10, 0, false));
+
+        animationVAOFormat = new VertexArrayFormat();
+        animationVAOFormat.addAttribute(new VertexArrayAttribute("position", 3, 20, GL_FLOAT, 0, 0, false));
+        //animationVAOFormat.addAttribute(new VertexArrayAttribute("color", 4, 20, GL_FLOAT, 3, 0, false));
+        animationVAOFormat.addAttribute(new VertexArrayAttribute("normal", 3, 20, GL_FLOAT, 7, 0, false));
+        animationVAOFormat.addAttribute(new VertexArrayAttribute("texcoord", 2, 20, GL_FLOAT, 10, 0, false));
+        animationVAOFormat.addAttribute(new VertexArrayAttribute("jointindex", 4, 20, GL_FLOAT, 12, 0, false));
+        animationVAOFormat.addAttribute(new VertexArrayAttribute("weights", 4, 20, GL_FLOAT, 16, 0, false));
+
+        TextureManager.initialize();
+        ModelManager.initialize();
     }
 
     private static void enableDefaultGroups(){
@@ -417,7 +446,8 @@ public class RenderEngine {
         return projdata;
     }
     
-    public static boolean isInitialized() {
+    public static boolean validateInitialization() {
+        if(!GGInfo.isServer() && !initialized) throw new RenderException("OpenGL is not initialized!");
         return initialized;
     }
     

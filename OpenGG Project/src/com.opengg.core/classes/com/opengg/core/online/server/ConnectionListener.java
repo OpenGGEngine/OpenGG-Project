@@ -17,6 +17,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.time.Instant;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -25,48 +26,51 @@ import java.util.Date;
  * @author Javier
  */
 public class ConnectionListener implements Runnable{
-    Server server;
-    ServerSocket ssocket;
-    boolean close = false;
-    int curid;
+    private Server server;
+    private boolean close = false;
     
-    public ConnectionListener(ServerSocket r, Server server){
-        this.ssocket = r;
+    public ConnectionListener(Server server){
         this.server = server;
     }
     
     @Override
     public void run() {
         while(!close && !OpenGG.getEnded()){
-            String ip;
-            ServerClient sc;
-            try (Socket s = ssocket.accept()) {
-                ip = s.getInetAddress().getHostAddress();
-                Date d = Calendar.getInstance().getTime();
-                sc = new ServerClient();
-                sc.ip = s.getInetAddress();
-                sc.timeConnected = d;
-                sc.id = curid;
-                curid++;
+            try (Socket s = server.getTCPSocket().accept()) {
+                var ip = s.getInetAddress().getHostAddress();
+                var time = Instant.now();
+
                 GGConsole.log("User connecting from " + ip);
+
                 BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));
                 PrintWriter out = new PrintWriter(new OutputStreamWriter(s.getOutputStream()), true);
+
                 String handshake = in.readLine();
-                if(!handshake.equals("hey server")){GGConsole.log("Connection with " + ip + " failed");}
+
+                if(!handshake.equals("hey server")){
+                    GGConsole.log("Connection with " + ip + " failed");
+                }
                 out.println("hey client");
+
                 handshake = in.readLine();
-                if(!handshake.equals("oh shit we out here")){GGConsole.log("Connection with " + ip + " failed");}
-                out.println(server.name);
-                sc.name = in.readLine();
+                if(!handshake.equals("oh shit we out here")){
+                    GGConsole.log("Connection with " + ip + " failed");
+                }
+
+                out.println(server.getName());
+                var name = in.readLine();
+
                 GGConsole.log(ip + " connected to server, sending game state");
+
                 byte[] bytes = Serializer.serialize(WorldEngine.getCurrent());
                 out.println(bytes.length);
                 s.getOutputStream().write(bytes);
-                out.println(server.packetsize);
+                out.println(server.getPacketSize());
+
                 GGConsole.log(ip + " connected to server.");
 
-                server.addServerClient(sc);
-                
+                var serverClient = new ServerClient(name, s.getInetAddress(), time);
+                server.addServerClient(serverClient);
                 
             } catch (IOException ex) {
                 GGConsole.warning("Client failed to connect!");

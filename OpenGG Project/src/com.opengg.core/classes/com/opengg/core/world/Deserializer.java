@@ -21,39 +21,39 @@ import java.util.List;
  * @author Javier
  */
 public class Deserializer {
-    public static Deserializer ds;
+    public static Deserializer deserializer;
     public GGInputStream b;
     public List<SerialHolder> components = new LinkedList<>();
     public static List<ClassLoader> loaders = new ArrayList<>();
     public World w;
     
-    public static World deserialize(ByteBuffer b){
-        ds = new Deserializer();
-        ds.b = new GGInputStream(b);
+    public static World deserialize(ByteBuffer buffer){
+        deserializer = new Deserializer();
+        deserializer.b = new GGInputStream(buffer);
         try {
-            ds.w = new World();
-            ds.w.deserialize(ds.b);
-            ds.w.setId(0);
-            doList(ds);
+            deserializer.w = new World();
+            deserializer.w.deserialize(deserializer.b);
+            deserializer.w.setId(0);
+            doList(deserializer);
         } catch (IOException ex) {
             GGConsole.error("IOException thrown during deserialization of world!");
         }
         
-        if(ds.w == null)
+        if(deserializer.w == null)
             return null;
         
         int maxid = 0;
-        upper : for(SerialHolder sh : ds.components){
+        upper : for(SerialHolder sh : deserializer.components){
             if(sh.c.getId() > maxid){
                 maxid = sh.c.getId();
             }
             
             if(sh.parent == 0){
-                ds.w.attach(sh.c);
+                deserializer.w.attach(sh.c);
                 continue;
             }
             
-            for(SerialHolder sh2 : ds.components){
+            for(SerialHolder sh2 : deserializer.components){
                 if(sh2.c.getId() == sh.parent){
                     if(sh2.c instanceof Component){
                         sh2.c.attach(sh.c);
@@ -65,7 +65,7 @@ public class Deserializer {
             }
             GGConsole.warning("Component " + sh.c.getId()+ " has invalid parent, will not be added");
         }
-        return ds.w;
+        return deserializer.w;
     }
     
     public static void doList(Deserializer ds) throws IOException{
@@ -75,35 +75,31 @@ public class Deserializer {
             try {
                 int id = ds.b.readInt();
                 int pid = ds.b.readInt();
-                Class c = null;
+                Class clazz = null;
                 try{
-                    c = Class.forName(classname);
+                    clazz = Class.forName(classname);
                 }catch (ClassNotFoundException ex) {
                     for(ClassLoader cl : loaders){
                         try{
-                            c = Class.forName(classname, true, cl);
+                            clazz = Class.forName(classname, true, cl);
                         }catch(ClassNotFoundException e){
-                            
+                           throw new RuntimeException("Failed to create class " + classname + " during deserialization!");
                         }
-                        
                     }
                 }
-                
-                Component comp = (Component)c.getConstructor().newInstance();
+
+                Component comp = (Component)clazz
+                        .getConstructor()
+                        .newInstance();
                 comp.deserialize(ds.b);
                 comp.setId(id);
                 
                 SerialHolder ch = new SerialHolder();
                 ch.c = comp;
                 ch.parent = pid;
-                ch.type = c;
+                ch.type = clazz;
                 ds.components.add(ch);
- 
-                // i have a desire for death
-                // pleeese keel me yes 
-                // yes please kill me yes good
-                // a.. work and no play makes non  y a happy nboy
-                // aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaad
+
                 doList(ds);
             }  catch (SecurityException  ex) {
                 GGConsole.error("Failed to load world, access to " + classname + " is not allowed");

@@ -42,7 +42,7 @@ public class NetworkSerializer {
     public static void deserializeUpdate(byte[] bytes){
         try {
             GGInputStream ds = new GGInputStream(ByteBuffer.wrap(bytes));
-            //long time = ds.readLong();
+            //long time = deserializer.readLong();
             int amount = ds.readInt();
             List<Component> components = WorldEngine.getCurrent().getAll();
             

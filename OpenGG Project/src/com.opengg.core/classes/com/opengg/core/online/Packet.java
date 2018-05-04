@@ -18,19 +18,24 @@ import java.net.InetAddress;
  * @author Javier
  */
 public class Packet implements Serializable{
-    byte[] buf;
-    int port;
-    DatagramPacket dp;
-    InetAddress address;
+    private byte[] data;
+    private int port;
+    private DatagramPacket dp;
+    private InetAddress address;
         
     public static Packet receive(DatagramSocket ds, int size){
         Packet p = new Packet(size);
         p.receive(ds);
         return p;
     }
+
+    public static void send(DatagramSocket ds, byte[] bytes, InetAddress address, int port){
+        Packet p = new Packet(bytes, address, port);
+        p.send(ds);
+    }
     
     public byte[] getData(){
-        return buf;
+        return data;
     }
     
     public int getPort(){
@@ -41,14 +46,9 @@ public class Packet implements Serializable{
         return address;
     }
     
-    public static void send(DatagramSocket ds, byte[] bytes, InetAddress address, int port){
-        Packet p = new Packet(bytes, address, port);
-        p.send(ds);
-    }
-    
     private Packet(int size){
-        buf = new byte[size];
-        dp = new DatagramPacket(buf, size);
+        data = new byte[size];
+        dp = new DatagramPacket(data, size);
     }
     
     private Packet(byte[] bytes, InetAddress address, int port){

@@ -59,7 +59,8 @@ public class WindowController {
     }
             
     public static void destroy(){
-        window.destroy();
+        if(window != null)
+            window.destroy();
     }
     
     public static Vector2i getSize(){

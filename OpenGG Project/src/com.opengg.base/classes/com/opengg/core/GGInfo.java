@@ -20,6 +20,7 @@ public class GGInfo {
     private static boolean initialized = false;
     private static boolean verbose = false;
     private static boolean agressiveMemory = false;
+    private static boolean server = false;
     private static String glversion = "4.2";
 
     static{ 
@@ -49,7 +50,15 @@ public class GGInfo {
     public static boolean isVerbose() {
         return verbose;
     }
-    
+
+    public static boolean isServer() {
+        return server;
+    }
+
+    public static void setServer(boolean server) {
+        GGInfo.server = server;
+    }
+
     public static String getGlVersion(){
         return glversion;
     }

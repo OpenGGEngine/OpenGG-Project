@@ -5,6 +5,8 @@
  */
 package com.opengg.core.render.internal.opengl.texture;
 
+import com.opengg.core.render.RenderEngine;
+
 import static org.lwjgl.opengl.GL30.GL_RENDERBUFFER;
 import static org.lwjgl.opengl.GL30.glBindRenderbuffer;
 import static org.lwjgl.opengl.GL30.glDeleteRenderbuffers;
@@ -19,14 +21,17 @@ public class NativeOpenGLRenderbuffer{
     private final int id;
     
     public NativeOpenGLRenderbuffer(){
-        id = glGenRenderbuffers();
+        if(!RenderEngine.validateInitialization()) id = -1;
+        else id = glGenRenderbuffers();
     }
     
     public void bind(){
+        if(!RenderEngine.validateInitialization()) return;
         glBindRenderbuffer(GL_RENDERBUFFER, id);
     }
     
     public void createStorage(int internalformat, int width, int height){
+        if(!RenderEngine.validateInitialization()) return;
         glRenderbufferStorage(GL_RENDERBUFFER, internalformat, width, height);
     }
 
@@ -35,6 +40,7 @@ public class NativeOpenGLRenderbuffer{
     }
 
     public void delete(){
+        if(!RenderEngine.validateInitialization()) return;
         glDeleteRenderbuffers(id);
     }
 }

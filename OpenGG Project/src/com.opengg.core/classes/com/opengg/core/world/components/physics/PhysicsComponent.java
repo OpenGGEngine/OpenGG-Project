@@ -83,13 +83,22 @@ public class PhysicsComponent extends Component {
     @Override
     public void deserialize(GGInputStream in) throws IOException{
         super.deserialize(in);
-        entity = new PhysicsEntity(this.getWorld().getSystem());
-        entity.mass = in.readFloat();
-        entity.density = in.readFloat();
-        entity.dynamicfriction = in.readFloat();
-        entity.restitution = in.readFloat();
-        entity.velocity = in.readVector3f();
-        entity.angvelocity = in.readVector3f();
+        var mass = in.readFloat();
+        var density = in.readFloat();
+        var dynamicfriction = in.readFloat();
+        var restitution = in.readFloat();
+
+        var velocity = in.readVector3f();
+        var angvelocity = in.readVector3f();
+        this.onWorldChange(() -> {
+            entity = new PhysicsEntity(this.getWorld().getSystem());
+            entity.mass = mass;
+            entity.density = density;
+            entity.dynamicfriction = dynamicfriction;
+            entity.restitution = restitution;
+            entity.velocity = velocity;
+            entity.angvelocity = angvelocity;
+        });
     }
     
     @Override

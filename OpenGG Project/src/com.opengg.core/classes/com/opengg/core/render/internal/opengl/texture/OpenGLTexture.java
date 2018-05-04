@@ -6,6 +6,7 @@
 package com.opengg.core.render.internal.opengl.texture;
 
 import com.opengg.core.console.GGConsole;
+import com.opengg.core.render.RenderEngine;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.texture.TextureData;
 import com.opengg.core.system.Allocator;
@@ -85,6 +86,7 @@ public class OpenGLTexture implements Texture {
     
     @Override
     public void unbind(){
+        if(!RenderEngine.validateInitialization()) return;
         glBindTexture(type, 0);
     }
     

@@ -9,6 +9,7 @@ package com.opengg.core.render.texture;
 
 import com.opengg.core.engine.Resource;
 import com.opengg.core.render.internal.opengl.texture.OpenGLTexture;
+import org.lwjgl.opengl.GL11;
 
 import java.security.InvalidParameterException;
 import java.util.List;
@@ -105,7 +106,7 @@ public interface Texture {
         Texture texture = new OpenGLTexture(GL_TEXTURE_2D, format, intformat, input);
         texture.bind();
         texture.set2DData(data);
-        texture.setTextureWrapType(GL_REPEAT);
+        texture.setTextureWrapType(GL_CLAMP);
         texture.setMinimumFilterType(GL_NEAREST);
         texture.setMaximumFilterType(GL_NEAREST);
         return texture;

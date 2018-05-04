@@ -12,6 +12,7 @@ import com.opengg.core.util.GGOutputStream;
 import com.opengg.core.world.World;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -37,7 +38,7 @@ public abstract class Component{
     private Vector3f posoffset = new Vector3f();
     private Quaternionf rotoffset = new Quaternionf();
     private Vector3f scaleoffset = new Vector3f(1,1,1);
-    protected List<Component> children = new ArrayList<>();
+    protected List<Component> children = Collections.synchronizedList(new ArrayList<>());
     private Vector3f pos = new Vector3f();
     private Quaternionf rot = new Quaternionf();
     private Vector3f scale = new Vector3f(1,1,1);
