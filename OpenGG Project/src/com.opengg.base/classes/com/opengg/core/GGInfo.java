@@ -22,6 +22,7 @@ public class GGInfo {
     private static boolean agressiveMemory = false;
     private static boolean server = false;
     private static String glversion = "4.2";
+    private static int userId = 0;
 
     static{ 
         try {
@@ -77,6 +78,14 @@ public class GGInfo {
 
     public static String getApplicationPath() {
         return basepath;
+    }
+
+    public static int getUserId(){
+        return userId;
+    }
+
+    public static void setUserId(int userId){
+        GGInfo.userId = userId;
     }
 
     private GGInfo() {

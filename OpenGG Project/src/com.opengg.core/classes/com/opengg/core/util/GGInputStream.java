@@ -85,13 +85,19 @@ public class GGInputStream extends InputStream{
         float z = readFloat();
         float w = readFloat();
 
-        return new Quaternionf(x,y,z,w);
+        return new Quaternionf(w,x,y,z);
     }
     
     public int readInt() throws IOException{
         ByteBuffer b = ByteBuffer.allocate(Integer.BYTES).put(readByteArray(Integer.BYTES));
         b.flip();
         return b.getInt();
+    }
+
+    public long readLong() throws IOException{
+        ByteBuffer b = ByteBuffer.allocate(Long.BYTES).put(readByteArray(Long.BYTES));
+        b.flip();
+        return b.getLong();
     }
     
     public float readFloat() throws IOException{

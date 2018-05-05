@@ -13,15 +13,13 @@ import com.opengg.core.math.Vector3f;
 import com.opengg.core.math.Vector3fm;
 import com.opengg.core.physics.Force;
 import com.opengg.core.physics.collision.AABB;
-import com.opengg.core.physics.collision.CapsuleCollider;
 import com.opengg.core.physics.collision.ConvexHull;
-import com.opengg.core.physics.collision.SphereCollider;
 import com.opengg.core.world.Action;
 import com.opengg.core.world.ActionType;
 import com.opengg.core.world.Actionable;
 import com.opengg.core.world.components.CameraComponent;
 import com.opengg.core.world.components.Component;
-import com.opengg.core.world.components.UserControlComponent;
+import com.opengg.core.world.components.ActionTransmitterComponent;
 import com.opengg.core.world.components.WorldObject;
 import com.opengg.core.world.components.physics.CollisionComponent;
 import com.opengg.core.world.components.physics.PhysicsComponent;
@@ -33,7 +31,7 @@ import java.util.ArrayList;
  */
 public class TestPlayerComponent extends Component implements Actionable{
     private final PhysicsComponent playerphysics;
-    private final UserControlComponent controller;
+    private final ActionTransmitterComponent controller;
     private final CameraComponent camera;
     //private final GunComponent gun;
     
@@ -57,7 +55,7 @@ public class TestPlayerComponent extends Component implements Actionable{
         camera = new CameraComponent();
         head.setPositionOffset(new Vector3f(0,2f,0));
         head.setAbsoluteOffset(true);
-        controller = new UserControlComponent();
+        controller = new ActionTransmitterComponent();
         playerphysics = new PhysicsComponent();
         ArrayList<Vector3f> v2 = new ArrayList<>();
         v2.add(new Vector3f(-1,-1,-1));

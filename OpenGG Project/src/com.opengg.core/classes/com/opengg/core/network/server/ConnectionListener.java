@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package com.opengg.core.online.server;
+package com.opengg.core.network.server;
 
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.engine.OpenGG;
@@ -15,13 +15,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.time.Instant;
-import java.util.Calendar;
-import java.util.Date;
 
-/**
+ /**
  *
  * @author Javier
  */
@@ -60,16 +57,19 @@ public class ConnectionListener implements Runnable{
                 out.println(server.getName());
                 var name = in.readLine();
 
+                var serverClient = new ServerClient(name, s.getInetAddress(), time);
+
+                out.println(server.getPacketSize());
+                out.println(serverClient.getId());
+
                 GGConsole.log(ip + " connected to server, sending game state");
 
                 byte[] bytes = Serializer.serialize(WorldEngine.getCurrent());
                 out.println(bytes.length);
                 s.getOutputStream().write(bytes);
-                out.println(server.getPacketSize());
 
                 GGConsole.log(ip + " connected to server.");
 
-                var serverClient = new ServerClient(name, s.getInetAddress(), time);
                 server.addServerClient(serverClient);
                 
             } catch (IOException ex) {

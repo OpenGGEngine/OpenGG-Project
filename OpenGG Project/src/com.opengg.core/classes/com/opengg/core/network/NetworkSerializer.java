@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package com.opengg.core.online;
+package com.opengg.core.network;
 
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.world.WorldEngine;

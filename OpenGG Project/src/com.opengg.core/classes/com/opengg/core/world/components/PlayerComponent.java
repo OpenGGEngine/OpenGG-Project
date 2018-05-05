@@ -22,7 +22,7 @@ import com.opengg.core.world.components.physics.PhysicsComponent;
  */
 public class PlayerComponent extends Component implements Actionable{
     private final PhysicsComponent playerphysics;
-    private final UserControlComponent controller;
+    private final ActionTransmitterComponent controller;
     private final CameraComponent camera;
     
     Vector3fm control = new Vector3fm();
@@ -33,7 +33,7 @@ public class PlayerComponent extends Component implements Actionable{
     
     public PlayerComponent(){
         camera = new CameraComponent();
-        controller = new UserControlComponent();
+        controller = new ActionTransmitterComponent();
         playerphysics = new PhysicsComponent();
         playerphysics.addCollider(new CollisionComponent(new AABB(10,6,10), new CapsuleCollider(new Vector3f(0,3,0),2)));
         attach(camera);

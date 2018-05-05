@@ -347,7 +347,7 @@ public abstract class Component{
     public void deserialize(GGInputStream in) throws IOException{
         posoffset = in.readVector3f();
         rotoffset = in.readQuaternionf();
-        scale = in.readVector3f();
+        scaleoffset = in.readVector3f();
         name = in.readString();
         enabled = in.readBoolean(); enabled = true;
         absoluteOffset = in.readBoolean();

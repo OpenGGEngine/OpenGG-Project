@@ -7,12 +7,10 @@ import com.opengg.core.audio.AudioController;
 import com.opengg.core.engine.BindController;
 import com.opengg.core.engine.GGApplication;
 import com.opengg.core.engine.OpenGG;
-import com.opengg.core.model.ModelManager;
-import com.opengg.core.online.NetworkEngine;
+import com.opengg.core.network.NetworkEngine;
 import com.opengg.core.render.ProjectionData;
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.engine.Resource;
-import com.opengg.core.render.postprocess.PostProcessController;
 import com.opengg.core.render.window.GLFWWindow;
 import com.opengg.core.render.window.WindowController;
 import com.opengg.core.world.WorldEngine;
@@ -20,28 +18,16 @@ import com.opengg.core.gui.GUIController;
 import com.opengg.core.gui.GUIText;
 import com.opengg.core.io.ControlType;
 import static com.opengg.core.io.input.keyboard.Key.*;
-import com.opengg.core.math.Matrix4f;
-import com.opengg.core.math.Quaternionf;
+
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
-import com.opengg.core.physics.collision.AABB;
-import com.opengg.core.physics.collision.ColliderGroup;
-import com.opengg.core.physics.collision.SphereCollider;
 import com.opengg.core.render.Text;
-import com.opengg.core.render.light.Light;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.texture.text.GGFont;
 import com.opengg.core.render.window.WindowInfo;
 import com.opengg.core.render.window.WindowOptions;
-import com.opengg.core.world.Camera;
-import com.opengg.core.world.Skybox;
 import com.opengg.core.world.components.FreeFlyComponent;
-import com.opengg.core.world.components.LightComponent;
-import com.opengg.core.world.components.ModelRenderComponent;
 import com.opengg.core.world.components.TerrainComponent;
-import com.opengg.core.world.components.physics.PhysicsComponent;
-
-import java.util.ArrayList;
 
 
 public class OpenGGTest extends GGApplication{
@@ -90,13 +76,9 @@ public class OpenGGTest extends GGApplication{
                 + " the Supreme Chancellor has secretly dispatched two Jedi Knights,"
                 + " the guardians of peace and justice in the galaxy, to settle the conflict...", new Vector2f(), 1f, 0.5f, false);
         GUIController.getDefault().addItem("aids", new GUIText(text, font, new Vector2f(0f,0)));
-        
-        player = new FreeFlyComponent();
-        player.setPositionOffset(new Vector3f(0,-2,10));
-        player.use();
 
-        //NetworkEngine.connect("localhost", 25565);
-
+        NetworkEngine.connect("localhost", 25565);
+/*
 
         WorldEngine.getCurrent().attach(new LightComponent(
                 new Light(new Vector3f(20,20,5), new Vector3f(1,1,1), 400, 0,
@@ -121,6 +103,10 @@ public class OpenGGTest extends GGApplication{
                 Resource.getTexturePath("skybox\\majestic_dn.png"),
                 Resource.getTexturePath("skybox\\majestic_rt.png"),
                 Resource.getTexturePath("skybox\\majestic_lf.png")), 1500f));
+*/
+        player = new FreeFlyComponent();
+        player.setPositionOffset(new Vector3f(0,-2,10));
+        player.use();
 
         WorldEngine.getCurrent().attach(player);
 
@@ -140,7 +126,6 @@ public class OpenGGTest extends GGApplication{
         RenderEngine.setProjectionData(ProjectionData.getPerspective(100, 0.2f, 3000f));
 
         ((GLFWWindow)WindowController.getWindow()).setCursorLock(true);
-        RenderEngine.addRenderable(PostProcessController.drawable);
     }
 
     @Override

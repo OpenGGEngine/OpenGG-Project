@@ -13,4 +13,5 @@ package com.opengg.core.world;
 public class Action {
     public String name;
     public ActionType type;
+    public int source;
 }

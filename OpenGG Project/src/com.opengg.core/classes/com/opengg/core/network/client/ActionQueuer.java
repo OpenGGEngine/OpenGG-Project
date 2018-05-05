@@ -4,20 +4,20 @@
  * and open the template in the editor.
  */
 
-package com.opengg.core.online.client;
+package com.opengg.core.network.client;
 
 import com.opengg.core.engine.BindController;
+import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
-import com.opengg.core.util.Time;
 import com.opengg.core.world.Action;
 import com.opengg.core.world.ActionTransmitter;
-import com.opengg.core.world.Serializer;
+import com.opengg.core.world.ActionType;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
@@ -55,6 +55,35 @@ public class ActionQueuer implements ActionTransmitter{
             actions.clear();
             lastTime = Instant.now().toEpochMilli();
             return ((ByteArrayOutputStream)out.getStream()).toByteArray();
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    public static List<Action> getFromPacket(byte[] data){
+        var in = new GGInputStream(new ByteArrayInputStream(data));
+        try {
+            long lasttime = in.readLong();
+
+            int actionsize = in.readInt();
+            var actions = new ArrayList<Action>(actionsize);
+            for(int i = 0; i < actionsize; i++){
+                var action = new Action();
+                var type = in.readString();
+
+                switch(type){
+                    case "PRESS":
+                        action.type = ActionType.PRESS;
+                        break;
+                    case "RELEASE":
+                        action.type = ActionType.RELEASE;
+                        break;
+                }
+
+                actions.add(action);
+            }
+
+            return actions;
         } catch (IOException e) {
             return null;
         }

@@ -25,9 +25,9 @@ module com.opengg.core {
     exports com.opengg.core.io.input.keyboard;
     exports com.opengg.core.io.input.mouse;
     exports com.opengg.core.model;
-    exports com.opengg.core.online;
-    exports com.opengg.core.online.client;
-    exports com.opengg.core.online.server;
+    exports com.opengg.core.network;
+    exports com.opengg.core.network.client;
+    exports com.opengg.core.network.server;
     exports com.opengg.core.physics;
     exports com.opengg.core.physics.collision;
     exports com.opengg.core.render;

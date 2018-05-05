@@ -8,7 +8,6 @@ package com.opengg.core.world.components;
 
 import com.opengg.core.Configuration;
 import com.opengg.core.engine.BindController;
-import com.opengg.core.engine.OpenGG;
 import com.opengg.core.io.input.mouse.MouseController;
 import com.opengg.core.io.input.mouse.MouseMoveListener;
 import com.opengg.core.math.Quaternionf;
@@ -26,9 +25,10 @@ import java.io.IOException;
  *
  * @author Javier
  */
-public class FreeFlyComponent extends Component implements Actionable, MouseMoveListener{
-    private UserControlComponent pcontrol;
+public class FreeFlyComponent extends ControlledComponent implements Actionable, MouseMoveListener{
+    private ActionTransmitterComponent pcontrol;
     private CameraComponent view;
+    private int userid = 0;
     
     Vector3fm control = new Vector3fm();
     Vector2f controlrot = new Vector2f();
@@ -38,7 +38,7 @@ public class FreeFlyComponent extends Component implements Actionable, MouseMove
     private final WorldObject head;
     
     public FreeFlyComponent(){
-        pcontrol = new UserControlComponent();
+        pcontrol = new ActionTransmitterComponent();
         view = new CameraComponent();
         head = new WorldObject();
         attach(pcontrol);
@@ -130,7 +130,8 @@ public class FreeFlyComponent extends Component implements Actionable, MouseMove
             }
         }
     }
-    
+
+    @Override
     public void use(){
         BindController.setOnlyController(pcontrol);
         view.use();
@@ -141,7 +142,6 @@ public class FreeFlyComponent extends Component implements Actionable, MouseMove
         super.serialize(stream);
         stream.write(rotspeed);
         stream.write(speed);
-        stream.write(BindController.getBindControllers().contains(pcontrol));
     }
     
     @Override
@@ -149,11 +149,7 @@ public class FreeFlyComponent extends Component implements Actionable, MouseMove
         super.deserialize(stream);
         rotspeed = stream.readFloat();
         speed = stream.readFloat();
-        boolean use = stream.readBoolean();
-        OpenGG.asyncExec(() -> {
-            if(use) use();
-        });
-        
+        useComponent();
     }
 
     @Override
