@@ -262,6 +262,8 @@ public class World extends Component{
         for(TextureData data : environment.getSkybox().getCubemap().getData()){
             out.write(data.source);
         }
+
+        physics.serialize(out);
     }
 
     @Override
@@ -274,6 +276,8 @@ public class World extends Component{
         }
 
         OpenGG.asyncExec(() -> environment.setSkybox(new Skybox(Texture.create(Texture.cubemapConfig(), datums), 1000)));
+
+        physics.deserialize(in);
     }
 
     /**

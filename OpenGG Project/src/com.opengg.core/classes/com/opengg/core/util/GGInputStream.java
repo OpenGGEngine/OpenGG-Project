@@ -27,7 +27,11 @@ public class GGInputStream extends InputStream{
     public GGInputStream(InputStream bais){
         this.in = bais;
     }
-    
+
+    public GGInputStream(byte[] data){
+        this(ByteBuffer.wrap(data));
+    }
+
     public GGInputStream(ByteBuffer buffer){
         if(buffer.hasArray()){
             this.in = new ByteArrayInputStream(buffer.array());
@@ -87,7 +91,13 @@ public class GGInputStream extends InputStream{
 
         return new Quaternionf(w,x,y,z);
     }
-    
+
+    public short readShort() throws IOException{
+        ByteBuffer b = ByteBuffer.allocate(Short.BYTES).put(readByteArray(Short.BYTES));
+        b.flip();
+        return b.getShort();
+    }
+
     public int readInt() throws IOException{
         ByteBuffer b = ByteBuffer.allocate(Integer.BYTES).put(readByteArray(Integer.BYTES));
         b.flip();

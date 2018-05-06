@@ -227,7 +227,7 @@ public class ModelLoader {
         }
         m.ml = ml;
 
-        System.out.println("Model with m: " + m.getMeshes().size());
+        System.out.println("Model with matrix: " + m.getMeshes().size());
         return m;
 
     }

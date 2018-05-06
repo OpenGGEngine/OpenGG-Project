@@ -140,8 +140,8 @@ public class OpenGLFramebuffer implements Framebuffer{
     @Override
     public void blitTo(Framebuffer target){
         bindToRead();
-        target.bindToWrite();  
-        fb.blit(0, 0, getWidth(), getHeight(), 0, 0, target.getWidth(), target.getHeight(), GL_COLOR_BUFFER_BIT, GL_LINEAR);
+        target.bindToWrite();
+        fb.blit(0, 0, getWidth(), getHeight(), 0, 0, target.getWidth(), target.getHeight(), GL_COLOR_BUFFER_BIT, GL_NEAREST);
     }
     
     @Override
@@ -155,8 +155,7 @@ public class OpenGLFramebuffer implements Framebuffer{
     public void blitToBack(){
         bindToRead();
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-        glDrawBuffer(GL_BACK);
-        fb.blit(0, 0, getWidth(), getHeight(), 0, 0, WindowController.getWidth(), WindowController.getHeight(), GL_COLOR_BUFFER_BIT, GL_NEAREST);
+        fb.blit(0, 0, getWidth(), getHeight(), 0, 0, WindowController.getWidth(), WindowController.getHeight(), GL_COLOR_BUFFER_BIT , GL_NEAREST);
     }
     
     @Override

@@ -6,10 +6,17 @@
 
 package com.opengg.core.physics.collision;
 
+import com.opengg.core.console.GGConsole;
+import com.opengg.core.exceptions.ClassInstantiationException;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.physics.PhysicsEntity;
 import com.opengg.core.physics.PhysicsObject;
+import com.opengg.core.util.ClassUtil;
+import com.opengg.core.util.GGInputStream;
+import com.opengg.core.util.GGOutputStream;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -19,7 +26,10 @@ import java.util.List;
  * @author Javier
  */
 public class ColliderGroup extends PhysicsObject{
-    AABB main;
+    public static int idcount;
+    public int id;
+
+    AABB aabb;
     PhysicsEntity parent;
     List<Collider> colliders = new ArrayList<>();
     boolean lastcollided = false;
@@ -28,14 +38,16 @@ public class ColliderGroup extends PhysicsObject{
     public ColliderGroup(){
         this(new AABB(1,1,1), new ArrayList<>());
     }
-    
-    public ColliderGroup(AABB main, List<Collider> all) {
-        setBoundingBox(main);
-        addColliders(all);
-    }
-    
+
     public ColliderGroup(AABB main, Collider... all) {
         this(main, Arrays.asList(all));
+    }
+
+    public ColliderGroup(AABB main, List<Collider> all) {
+        id = idcount;
+        idcount++;
+        setBoundingBox(main);
+        addColliders(all);
     }
     
     public void addCollider(Collider bb) {
@@ -54,7 +66,7 @@ public class ColliderGroup extends PhysicsObject{
     }
     
     public void setBoundingBox(AABB box){
-        this.main = box;
+        this.aabb = box;
         box.parent = this;
     }
     
@@ -63,9 +75,9 @@ public class ColliderGroup extends PhysicsObject{
     }
     
     public Collision testForCollision(ColliderGroup other) {
-        this.main.recalculate();
-        other.main.recalculate();
-        if (!main.isColliding(other.main) && !(this.forcetest || other.forcetest))
+        this.aabb.recalculate();
+        other.aabb.recalculate();
+        if (!aabb.isColliding(other.aabb) && !(this.forcetest || other.forcetest))
             return null;
         Collision c = null;
         for (Collider x: this.colliders) {
@@ -86,7 +98,39 @@ public class ColliderGroup extends PhysicsObject{
 
         return c;
     }
-    
+
+    @Override
+    public void serialize(GGOutputStream out) throws IOException{
+        out.write(id);
+        out.write(aabb.lwh);
+
+        out.write(this.colliders.size());
+        for(var collider : colliders){
+            out.write(collider.getClass().getName());
+            collider.serialize(out);
+        }
+    }
+
+    @Override
+    public void deserialize(GGInputStream in) throws IOException{
+        id = in.readInt();
+        var lwh = in.readVector3f();
+
+        this.setBoundingBox(new AABB(lwh));
+
+        var colsize = in.readInt();
+        for(int i = 0; i < colsize; i++){
+            var classname = in.readString();
+            try {
+                var collider = (Collider)ClassUtil.createByName(classname);
+                collider.deserialize(in);
+                addCollider(collider);
+            } catch (ClassInstantiationException e) {
+                GGConsole.error("Failed to insantiate collider with classname " + classname + ": " + e.getMessage());
+            }
+        }
+    }
+
     @Override
     public Vector3f getPosition(){
         if(parent != null)

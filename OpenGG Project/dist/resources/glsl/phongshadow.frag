@@ -1,4 +1,4 @@
-#version 410 core
+#version 420 core
 #define LIGHTNUM 100
 
 layout(location = 0) out vec4 fcolor;

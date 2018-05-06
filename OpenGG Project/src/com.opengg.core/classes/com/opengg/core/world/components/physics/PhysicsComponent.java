@@ -20,10 +20,13 @@ import java.io.IOException;
  * @author ethachu19
  */
 public class PhysicsComponent extends Component {
-    PhysicsEntity entity;
+    PhysicsEntity entity = new PhysicsEntity();
     
     public PhysicsComponent(){
         entity = new PhysicsEntity();
+        this.onWorldChange(() -> {
+            this.getWorld().getSystem().addEntity(entity);
+        });
     }
     
     public PhysicsComponent(ColliderGroup collider){
@@ -41,16 +44,11 @@ public class PhysicsComponent extends Component {
     }
     
     public void setSystem(PhysicsSystem system){
-        entity.setSystem(system);
+       system.addEntity(entity);
     }
     
     public PhysicsEntity getEntity(){
         return entity;
-    }
-    
-    @Override
-    public void onWorldChange(){
-        entity.setSystem(this.getWorld().getSystem());
     }
     
     @Override
@@ -65,6 +63,7 @@ public class PhysicsComponent extends Component {
     
     @Override
     public void update(float delta) {
+
         this.getParent().setPositionOffset(entity.position);
         this.getParent().setRotationOffset(entity.rotation);
     }
@@ -72,32 +71,16 @@ public class PhysicsComponent extends Component {
     @Override
     public void serialize(GGOutputStream out) throws IOException{
         super.serialize(out);
-        out.write(entity.mass);
-        out.write(entity.density);
-        out.write(entity.dynamicfriction);
-        out.write(entity.restitution);
-        out.write(entity.velocity);
-        out.write(entity.angvelocity);
+        out.write(entity.id);
     }
     
     @Override
     public void deserialize(GGInputStream in) throws IOException{
         super.deserialize(in);
-        var mass = in.readFloat();
-        var density = in.readFloat();
-        var dynamicfriction = in.readFloat();
-        var restitution = in.readFloat();
-
-        var velocity = in.readVector3f();
-        var angvelocity = in.readVector3f();
+        int id = in.readInt();
         this.onWorldChange(() -> {
-            entity = new PhysicsEntity(this.getWorld().getSystem());
-            entity.mass = mass;
-            entity.density = density;
-            entity.dynamicfriction = dynamicfriction;
-            entity.restitution = restitution;
-            entity.velocity = velocity;
-            entity.angvelocity = angvelocity;
+            this.entity = this.getWorld().getSystem().getById(id);
+            this.getWorld().getSystem().addEntity(entity);
         });
     }
     

@@ -20,7 +20,6 @@ import java.io.IOException;
  * @author Javier
  */
 public class ActionTransmitterComponent extends ControlledComponent implements ActionTransmitter{
-    public int userid;
 
     @Override
     public void use(){
@@ -29,7 +28,7 @@ public class ActionTransmitterComponent extends ControlledComponent implements A
 
     @Override
     public void doAction(Action action){
-        ((Actionable)getParent()).onAction(action);
+        if(isCurrentUser()) ((Actionable)getParent()).onAction(action);
     }
     
     @Override
@@ -37,5 +36,11 @@ public class ActionTransmitterComponent extends ControlledComponent implements A
         if(!(parent instanceof Actionable)){
             throw new InvalidParentException("Controllers must have actionables as parents!");
         }
+    }
+
+    @Override
+    public void deserialize(GGInputStream in) throws IOException {
+        super.deserialize(in);
+        if(isCurrentUser()) use();
     }
 }

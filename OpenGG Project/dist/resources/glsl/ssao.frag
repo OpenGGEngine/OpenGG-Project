@@ -1,11 +1,11 @@
-#version 410 core
+#version 420 core
 
 layout(location = 0) out vec4 fcolor;
 
 in vertexData{
     
     vec2 textureCoord;
-    vec4 pos;
+    vec3 pos;
     vec3 norm;
 };
 

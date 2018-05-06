@@ -11,40 +11,71 @@ import com.opengg.core.util.GGOutputStream;
 import com.opengg.core.world.components.Component;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  *
  * @author Javier
  */
 public class Serializer {
-    static Serializer serializer;
-    GGOutputStream stream;
-    
-    public static byte[] serialize(World w){
+    private GGOutputStream stream;
+    private HashMap<String, Integer> classnames;
+    private World world;
+
+    public static byte[] serialize(World world) {
         try {
 
-            serializer = new Serializer();
-            serializer.stream = new GGOutputStream();
-            
-            w.serialize(serializer.stream);
-            traverse(w.getChildren());          
-            
-            return ((ByteArrayOutputStream)serializer.stream.getStream()).toByteArray();
+            var serializer = new Serializer(world);
+            serializer.serialize();
+
+            return ((ByteArrayOutputStream) serializer.stream.getStream()).toByteArray();
         } catch (IOException ex) {
             GGConsole.error("IOException thrown during serialization of world!");
         }
         return null;
     }
+
+    private Serializer(World world) {
+        this.classnames = new HashMap<>();
+        this.world = world;
+        this.stream = new GGOutputStream();
+    }
+
+    private void serialize() throws IOException {
+        var allcomps = world.getAll();
+
+        var allserializablenames = allcomps
+                .stream()
+                .filter(comp -> comp.shouldSerialize())
+                .map(comp -> comp.getClass().getName())
+                .distinct()
+                .collect(Collectors.toList());
+
+        for(int i = 0; i < allserializablenames.size(); i++){
+            classnames.put(allserializablenames.get(i), i);
+        }
+
+        stream.write(classnames.size());
+
+        for(var entry : classnames.entrySet()){
+            stream.write(entry.getValue());
+            stream.write(entry.getKey());
+        }
+
+        world.serialize(stream);
+        traverse(world.getChildren());
+    }
     
-    private static void traverse(List<Component> components) throws IOException{
-        serializer.stream.write(getAllSerializable(components));
+    private void traverse(List<Component> components) throws IOException{
+        stream.write(getAllSerializable(components));
         for(Component component : components){
             if(component.shouldSerialize()){
-                serializer.stream.write(component.getClass().getName());
-                serializer.stream.write(component.getId());
-                serializer.stream.write(component.getParent().getId());
-                component.serialize(serializer.stream);
+                stream.write(classnames.get(component.getClass().getName()));
+                stream.write(component.getId());
+                stream.write(component.getParent().getId());
+                component.serialize(stream);
                 traverse(component.getChildren());
             }
         }

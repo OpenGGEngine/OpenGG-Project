@@ -65,7 +65,7 @@ public class Material {
 
     //flip your bytebuffers
     public Material(ByteBuffer b) {
-        //   b.flip();
+        //   in.flip();
         name = readString(b);
         this.ka = new Vector3f(b.getFloat(), b.getFloat(), b.getFloat());
         this.kd = new Vector3f(b.getFloat(), b.getFloat(), b.getFloat());

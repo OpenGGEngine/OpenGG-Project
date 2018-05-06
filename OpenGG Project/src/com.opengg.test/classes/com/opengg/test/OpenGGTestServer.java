@@ -4,8 +4,11 @@ import com.opengg.core.audio.AudioListener;
 import com.opengg.core.engine.GGApplication;
 import com.opengg.core.engine.OpenGG;
 import com.opengg.core.network.NetworkEngine;
+import com.opengg.core.network.server.ConnectionListener;
 import com.opengg.core.network.server.Server;
 import com.opengg.core.engine.Resource;
+import com.opengg.core.network.server.ServerClient;
+import com.opengg.core.world.World;
 import com.opengg.core.world.WorldEngine;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Quaternionf;
@@ -46,14 +49,13 @@ public class OpenGGTestServer extends GGApplication{
                 new Light(new Vector3f(20,20,5), new Vector3f(1,1,1), 400, 0,
                         new Camera(new Vector3f(0,0,0), new Quaternionf(new Vector3f(0,0,0))).getMatrix(),
                         Matrix4f.perspective(100f, 1f, 1f, 70f), 1280, 1280)));
-        WorldEngine.getCurrent().attach(new ModelRenderComponent(Resource.getModel("goldleaf")).setScaleOffset(new Vector3f(0.02f)).setRotationOffset(new Vector3f(-90,0,0)));
+        WorldEngine.getCurrent().attach(new ModelRenderComponent(Resource.getModel("goldleaf")).setScaleOffset(new Vector3f(0.02f)).setRotationOffset(new Vector3f(90,0,0)));
 
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 2; i++) {
             PhysicsComponent sphere = new PhysicsComponent();
             sphere.getEntity().setPosition(new Vector3f(120f * (float)Math.random(), (float)Math.random() * 40f + 20, (float)Math.random() * 120f));
             sphere.addCollider(new ColliderGroup(new AABB( 3, 3, 3),  new SphereCollider(1)));
-            sphere.attach(new LightComponent(new Light(new Vector3f(), new Vector3f(1,1,1), 100, 100)));
-            WorldEngine.getCurrent().attach(sphere);
+            WorldEngine.getCurrent().attach(new ModelRenderComponent(Resource.getModel("sphere")).attach(sphere));//.attach(new LightComponent(new Light(new Vector3f(), new Vector3f(1,1,1), 100, 100))));
             components.offer(sphere);
         }
 
@@ -65,6 +67,30 @@ public class OpenGGTestServer extends GGApplication{
                 Resource.getTexturePath("skybox\\majestic_lf.png")), 1500f));
 
         Server server = NetworkEngine.initializeServer("sonicville", 25565);
+        WorldEngine.saveWorld(WorldEngine.getCurrent(), "coolworld.bmf");
+
+        for(int i = 0; i < 20; i++){
+            var ffc = new FreeFlyComponent();
+            ffc.setUserId(i);
+
+            var mod = new ModelRenderComponent(Resource.getModel("sphere"));
+            mod.setPositionOffset(new Vector3f(0, -2,-2));
+            ffc.attach(mod);
+
+            WorldEngine.getCurrent().attach(ffc);
+        }
+
+        server.subscribe(new ConnectionListener() {
+            @Override
+            public void onConnection(ServerClient user) {
+
+            }
+
+            @Override
+            public void onDisconnection(ServerClient user) {
+
+            }
+        });
     }
 
     @Override

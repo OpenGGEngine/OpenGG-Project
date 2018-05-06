@@ -61,7 +61,11 @@ public class GGOutputStream extends OutputStream{
     public void write(long l) throws IOException{
         write(ByteBuffer.allocate(Long.BYTES).putLong(l).array());
     }
-    
+
+    public void write(short i) throws IOException{
+        write(ByteBuffer.allocate(Short.BYTES).putShort(i).array());
+    }
+
     @Override
     public void write(int i) throws IOException{
         write(ByteBuffer.allocate(Integer.BYTES).putInt(i).array());

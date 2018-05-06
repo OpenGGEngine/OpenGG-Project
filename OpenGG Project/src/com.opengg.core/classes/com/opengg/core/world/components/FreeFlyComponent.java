@@ -28,19 +28,19 @@ import java.io.IOException;
 public class FreeFlyComponent extends ControlledComponent implements Actionable, MouseMoveListener{
     private ActionTransmitterComponent pcontrol;
     private CameraComponent view;
-    private int userid = 0;
-    
-    Vector3fm control = new Vector3fm();
-    Vector2f controlrot = new Vector2f();
-    Vector3f currot = new Vector3f();
-    float rotspeed = 30;
-    float speed = 30;
+
+    private Vector3fm control = new Vector3fm();
+    private Vector2f controlrot = new Vector2f();
+    private Vector3f currot = new Vector3f();
+    private float rotspeed = 30;
+    private float speed = 30;
     private final WorldObject head;
     
     public FreeFlyComponent(){
         pcontrol = new ActionTransmitterComponent();
         view = new CameraComponent();
         head = new WorldObject();
+
         attach(pcontrol);
         attach(head);
         head.attach(view);
@@ -48,11 +48,10 @@ public class FreeFlyComponent extends ControlledComponent implements Actionable,
     
     @Override
     public void update(float delta){
-        Vector2f mousepos = MouseController.get();
+        Vector2f mousepos = getMouse();
         float mult = Configuration.getFloat("sensitivity");
         currot = new Vector3f(mousepos.multiply(mult).y, mousepos.multiply(mult).x, 0);
-        this.setRotationOffset(new Quaternionf(new Vector3f(0, currot.y, currot.z)));
-        head.setRotationOffset(new Quaternionf(new Vector3f(currot.x,0,0)));
+        this.setRotationOffset(new Quaternionf(new Vector3f(currot.x, currot.y, currot.z)));
        
         Vector3f nvector = new Vector3f(control).multiply(delta * 15);
         nvector = this.getRotation().transform(nvector);
@@ -133,7 +132,7 @@ public class FreeFlyComponent extends ControlledComponent implements Actionable,
 
     @Override
     public void use(){
-        BindController.setOnlyController(pcontrol);
+        pcontrol.use();
         view.use();
     }
     
@@ -150,6 +149,13 @@ public class FreeFlyComponent extends ControlledComponent implements Actionable,
         rotspeed = stream.readFloat();
         speed = stream.readFloat();
         useComponent();
+
+        this.onWorldChange();
+    }
+
+    @Override
+    public void onUserChange(){
+        pcontrol.setUserId(getUserId());
     }
 
     @Override

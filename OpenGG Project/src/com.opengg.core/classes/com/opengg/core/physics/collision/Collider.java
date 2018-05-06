@@ -19,12 +19,14 @@ public abstract class Collider extends PhysicsObject{
     public abstract Contact isColliding(Collider c);
 
     public void updatePositions(){}
-    
+
+    @Override
     public void serialize(GGOutputStream stream) throws IOException{
         stream.write(position);
         stream.write(rotation);
     }
-    
+
+    @Override
     public void deserialize(GGInputStream stream) throws IOException{
         position = stream.readVector3f();
         rotation = stream.readQuaternionf();

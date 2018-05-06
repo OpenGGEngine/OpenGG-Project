@@ -22,7 +22,7 @@ public class GGInfo {
     private static boolean agressiveMemory = false;
     private static boolean server = false;
     private static String glversion = "4.2";
-    private static int userId = 0;
+    private static int userId = -1;
 
     static{ 
         try {

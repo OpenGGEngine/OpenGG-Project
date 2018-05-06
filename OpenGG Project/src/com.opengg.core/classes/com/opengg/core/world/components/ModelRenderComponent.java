@@ -27,7 +27,7 @@ public class ModelRenderComponent extends RenderComponent implements ResourceUse
     public ModelRenderComponent(Model model){
         super();
         setModel(model);
-        this.transparent = true;
+        this.setTransparency(true);
     }
     
     public Model getModel(){
@@ -37,11 +37,11 @@ public class ModelRenderComponent extends RenderComponent implements ResourceUse
     public void setModel(Model model){
         this.model = model;
         if(model.isanimated){
-            this.shader = "animation";
-            this.format = RenderEngine.getAnimationFormat(); 
+            this.setShader("animation");
+            this.setFormat(RenderEngine.getAnimationFormat());
         }else{
-            this.shader = "object";
-            this.format = RenderEngine.getDefaultFormat();
+            this.setShader("object");
+            this.setFormat(RenderEngine.getDefaultFormat());
         }
         
         OpenGG.asyncExec(() -> {
@@ -61,7 +61,7 @@ public class ModelRenderComponent extends RenderComponent implements ResourceUse
         String path = in.readString();
         model = Resource.getModel(path);
         OpenGG.asyncExec(() -> {
-            this.g = model.getDrawable();
+            setDrawable(model.getDrawable());
         });
     }
 

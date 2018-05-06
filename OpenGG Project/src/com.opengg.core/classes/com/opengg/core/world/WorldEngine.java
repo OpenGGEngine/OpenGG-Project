@@ -47,8 +47,10 @@ public class WorldEngine{
     }
     
     public static void removeMarked(){
-        for(Component c : removal){
-            remove(c);  
+
+        var tempremove = List.copyOf(removal);
+        for(Component c : tempremove){
+            remove(c);
         }
         removal.clear();
     }
@@ -57,7 +59,7 @@ public class WorldEngine{
         c.finalizeComponent();
         if(c instanceof RenderComponent)
             c.getWorld().removeRenderable((RenderComponent)c);
-        TransitionEngine.remove(c); 
+        TransitionEngine.remove(c);
         c.getParent().remove(c);
     }
     

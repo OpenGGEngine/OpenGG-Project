@@ -5,6 +5,11 @@
  */
 package com.opengg.core.util;
 
+import com.opengg.core.exceptions.ClassInstantiationException;
+import com.opengg.core.world.Deserializer;
+
+import java.lang.reflect.InvocationTargetException;
+
 /**
  *
  * @author Javier
@@ -24,6 +29,30 @@ public class ClassUtil {
             }
         }
         return valid;
+    }
+
+    public static Object createByName(String name) throws ClassInstantiationException {
+        Class clazz = null;
+        try{
+            clazz = Class.forName(name);
+        }catch (ClassNotFoundException ex) {
+            for(ClassLoader cl : Deserializer.loaders){
+                try{
+                    clazz = Class.forName(name, true, cl);
+                }catch(ClassNotFoundException e){
+                    throw new RuntimeException("Failed to create class " + name + "!");
+                }
+            }
+        }
+
+        try {
+            Object nclazz = clazz
+                    .getConstructor()
+                    .newInstance();
+            return nclazz;
+        } catch (Exception e) {
+            throw new ClassInstantiationException(e.getMessage());
+        }
     }
 
     private ClassUtil() {

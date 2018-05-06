@@ -9,7 +9,10 @@ package com.opengg.core.network.client;
 import com.opengg.core.GGInfo;
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.engine.OpenGG;
+import com.opengg.core.io.input.mouse.MouseController;
 import com.opengg.core.network.Packet;
+import com.opengg.core.util.GGInputStream;
+import com.opengg.core.util.GGOutputStream;
 import com.opengg.core.world.Deserializer;
 import com.opengg.core.world.World;
 import com.opengg.core.world.WorldEngine;
@@ -34,12 +37,13 @@ public class Client {
     private Socket tcpsocket;
     private DatagramSocket udpsocket;
     private int port;
-    private int latency;
+    private long latency;
+    private long timedifference;
     private int packetsize;
     private boolean running;
-    
+
+    private ActionQueuer queuer;
     private ClientThread input;
-    private ClientResponseThread output;
     
     public Client(Socket tcp, DatagramSocket udp, InetAddress ip, int port){
         this.tcpsocket = tcp;
@@ -48,13 +52,27 @@ public class Client {
         this.port = port;
         this.timeConnected = Instant.now();
         this.input = new ClientThread(this);
-        this.output = new ClientResponseThread(this);
+        this.queuer = ActionQueuer.get();
     }
 
     public void start(){
         new Thread(input).start();
-        new Thread(output).start();
         running = true;
+    }
+
+    public void update(){
+        try {
+            var out = new GGOutputStream();
+
+            out.write(MouseController.get());
+            queuer.writeData(out);
+
+            var data = ((ByteArrayOutputStream)out.getStream()).toByteArray();
+
+            Packet.send(udpsocket, data, address, port);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void doHandshake() throws IOException{
@@ -75,12 +93,26 @@ public class Client {
         packetsize = Integer.decode(in.readLine());
         int id = Integer.decode(in.readLine());
 
+        var start = Instant.now();
+        out.println("Sonic");
+
+        in.readLine();
+        var end = Instant.now();
+
+        latency = end.toEpochMilli() - start.toEpochMilli();
+
+        var time = in.readLine();
+        var longtime = Long.decode(time) + (latency/2);
+
+        timedifference = end.toEpochMilli() - longtime;
+
         GGInfo.setUserId(id);
     }
 
     public void udpHandshake(){
-        for(int i = 0; i < 20; i++){
-            Packet.send(udpsocket, new byte[packetsize], address, port);
+        for(int i = 0; i < 5; i++){
+            var bb = ByteBuffer.wrap(new byte[packetsize]).putInt(GGInfo.getUserId());
+            Packet.send(udpsocket, bb.array(), address, port);
             try{
                 Thread.sleep(10);
             }catch(InterruptedException e){
@@ -94,6 +126,8 @@ public class Client {
 
         int worldsize = Integer.decode(in.readLine());
         byte[] bytes = new byte[worldsize];
+
+        GGConsole.log("Downloading world (" + worldsize + ")");
 
         tcpsocket.getInputStream().read(bytes);
 
@@ -139,35 +173,24 @@ public class Client {
 
                 if(Arrays.equals(bytes, new byte[client.packetsize])) continue;
 
-
-                //NetworkSerializer.deserializeUpdate(bytes);
-            }
-        }
-    }
-
-    private static class ClientResponseThread implements Runnable{
-        Client client;
-        ActionQueuer queuer;
-
-        public ClientResponseThread(Client client){
-            this.client = client;
-            queuer = ActionQueuer.get(client);
-        }
-
-        @Override
-        public void run() {
-            while(client.running && !OpenGG.getEnded()){
-                byte[] actions = queuer.generatePacket();
-
-                Packet.send(client.udpsocket, actions, client.address, client.port);
-
+                var in = new GGInputStream(ByteBuffer.wrap(bytes));
                 try {
-                    Thread.sleep(1000/20);
-                } catch (InterruptedException ex) {
-                    GGConsole.error("Response Thread failed!");
+
+                    long time = in.readLong() + client.timedifference;
+                    short amount = in.readShort();
+                    for (int i = 0; i < amount; i++) {
+                        short id = in.readShort();
+                        var component = WorldEngine.getCurrent().find(id);
+                        if(component != null){
+                            component.deserializeUpdate(in);
+                            component.update((Instant.now().toEpochMilli() - time)/1000);
+                        }
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
+
             }
         }
-
     }
 }

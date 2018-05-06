@@ -5,13 +5,17 @@
  */
 package com.opengg.core.world.components;
 
+import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
 import com.opengg.core.world.World;
+import com.opengg.core.world.WorldEngine;
+
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.Collections;
 import java.util.List;
 
@@ -43,7 +47,7 @@ public abstract class Component{
     private Quaternionf rot = new Quaternionf();
     private Vector3f scale = new Vector3f(1,1,1);
     private boolean serialize = true;
-    private Runnable whenAttachedToWorld = () -> {};
+    private Runnable whenAttachedToWorld = null;
     
     /**
      * Creates a component with a new ID
@@ -86,50 +90,7 @@ public abstract class Component{
     public void setId(int id){
         this.id = id;
     }
-    
-    private void setParentInfo(Component parent){
-        this.parent = parent;
-        
-        regenPos();
-        regenRot();
-        regenScale();
-        
-        if(parent instanceof World) localOnWorldChange();
-        onParentChange(parent);
-    }
-    
-    /**
-     * Called when the parent of this component is changed, override to do something on parent change
-     * @param parent The new parent of this parent
-     */
-    public void onParentChange(Component parent){
-        
-    }
 
-    public final void localOnWorldChange(){
-        for(Component c : children) c.localOnWorldChange();
-        
-        onWorldChange();
-        whenAttachedToWorld.run();
-    }
-    
-    /**
-     * Called when the world of this component is changed, override to do something on world change<br>
-     * Note, this is also called if the parent changes and the parent is in a new world, including the
-     * first time the parent is changed
-     */
-    public void onWorldChange(){
-        
-    }
-
-    /**
-     * Lambda version of {@link #onWorldChange()}
-     * @param onChange Runnable to run on world change
-     */
-    public final void onWorldChange(Runnable onChange){
-        this.whenAttachedToWorld = onChange;
-    }
-    
     /**
      * Sets the local position offset of the object relative to the parent
      * @param npos New position offset
@@ -150,7 +111,7 @@ public abstract class Component{
     public void onPositionChange(Vector3f npos){
         
     }
-    
+
     /**
      * Returns the true position of the component<br>
      * 
@@ -174,12 +135,14 @@ public abstract class Component{
         if(parent != null){
             if(absoluteOffset){
                 pos = parent.getPosition().add(posoffset);
+            }else if(posoffset.equals(Vector3f.identity)) {
+                pos = parent.getPosition();
             }else{
                 pos = parent.getPosition().add(parent.getRotation().transform(posoffset).multiply(parent.getScale()));
             }
         }else{
             pos = posoffset;
-        }     
+        }
         
         for(Component c : children) c.regenPos();
         
@@ -259,8 +222,8 @@ public abstract class Component{
             scale = parent.getScale().multiply(scaleoffset);
         }else{
             scale = scaleoffset;
-        } 
-        
+        }
+
         onScaleChange(scale);
         regenPos();
         for(Component c : children) c.regenScale();
@@ -353,12 +316,38 @@ public abstract class Component{
         absoluteOffset = in.readBoolean();
         updatedistance = in.readInt();
     }
+
+    public void serializeUpdate(GGOutputStream out) throws IOException{
+        var set = new BitSet();
+        set.set(0,true);
+        set.set(1,true);
+        set.set(2,false);
+        set.set(3,enabled);
+
+        out.write(set.toByteArray()[0]);
+        out.write(posoffset);
+        out.write(rotoffset);
+        //out.write(scaleoffset);
+    }
+
+    public void deserializeUpdate(GGInputStream in) throws IOException{
+        var set = BitSet.valueOf(new byte[]{in.readByte()});
+        var getpos = set.get(0);
+        var getrot = set.get(1);
+        var getscale = set.get(2);
+        enabled = set.get(3);
+
+        if(getpos) setPositionOffset(in.readVector3f());;
+        if(getrot) setRotationOffset(in.readQuaternionf());
+        if(getscale) setScaleOffset(in.readVector3f());
+    }
     
     /**
      * Returns the current world of this component
      * @return Current world
      */
     public World getWorld(){
+        if(parent == null) return null;
         return parent.getWorld();
     }
     
@@ -414,10 +403,64 @@ public abstract class Component{
             return this;
         if(c.getParent() != null)
             c.getParent().remove(c);
+
         c.setParentInfo(this);
         children.add(c);
         return this;
-    }  
+    }
+
+    private void setParentInfo(Component parent){
+        if(parent == null){
+            WorldEngine.markForRemoval(this);
+            return;
+        }
+
+        if(getWorld() != parent.getWorld() && parent.getWorld() != null){
+            this.parent = parent;
+            localOnWorldChange();
+        }
+
+        this.parent = parent;
+
+        regenPos();
+        regenRot();
+        regenScale();
+
+        onParentChange(parent);
+    }
+
+    /**
+     * Called when the parent of this component is changed, override to do something on parent change
+     * @param parent The new parent of this parent
+     */
+    public void onParentChange(Component parent){
+
+    }
+
+    public final void localOnWorldChange(){
+        for(Component c : children) c.localOnWorldChange();
+        onWorldChange();
+        if(whenAttachedToWorld != null){
+            whenAttachedToWorld.run();
+        }
+    }
+
+    /**
+     * Called when the world of this component is changed, override to do something on world change<br>
+     * Note, this is also called if the parent changes and the parent is in a new world, including the
+     * first time the parent is changed
+     */
+    public void onWorldChange(){
+
+    }
+
+    /**
+     * Lambda version of {@link #onWorldChange()}
+     * @param onChange Runnable to run on world change
+     */
+    public final void onWorldChange(Runnable onChange){
+        this.whenAttachedToWorld = onChange;
+    }
     
     public List<Component> getChildren(){
         return children;
@@ -434,13 +477,23 @@ public abstract class Component{
     public void remove(int i){
         children.remove(i);
     }
+
+    /**
+     * Removes all components from this component's child list
+     */
+    public void removeAll(){
+        for(var child : children){
+            remove(child);
+        }
+    }
     
     /**
      * Removes a component from this component's child list
-     * @param w Component to be removed
+     * @param child Component to be removed
      */
-    public void remove(Component w){
-        children.remove(w);
+    public void remove(Component child){
+        children.remove(child);
+        child.setParentInfo(null);
     }
 
 }

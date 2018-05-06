@@ -1,4 +1,4 @@
-#version 410 core
+#version 420 core
 #define LIGHTNUM 100
 
 
@@ -7,7 +7,7 @@ layout(location = 0) out vec4 fcolor;
 in vertexData{
     
     vec2 textureCoord;
-    vec4 pos;
+    vec3 pos;
     vec3 norm;
 };
 struct Light

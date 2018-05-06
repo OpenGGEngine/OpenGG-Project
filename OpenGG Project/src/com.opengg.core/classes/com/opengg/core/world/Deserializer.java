@@ -7,12 +7,16 @@
 package com.opengg.core.world;
 
 import com.opengg.core.console.GGConsole;
+import com.opengg.core.exceptions.ClassInstantiationException;
+import com.opengg.core.physics.PhysicsSystem;
+import com.opengg.core.util.ClassUtil;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.world.components.Component;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -21,99 +25,94 @@ import java.util.List;
  * @author Javier
  */
 public class Deserializer {
-    public static Deserializer deserializer;
-    public GGInputStream b;
-    public List<SerialHolder> components = new LinkedList<>();
-    public static List<ClassLoader> loaders = new ArrayList<>();
-    public World w;
+    private GGInputStream in;
+    private List<SerialHolder> components;
+    public static List<ClassLoader> loaders;
+    private HashMap<Integer, String> classnames;
+    private World world;
     
-    public static World deserialize(ByteBuffer buffer){
-        deserializer = new Deserializer();
-        deserializer.b = new GGInputStream(buffer);
+    public static World deserialize(ByteBuffer buffer) {
+        var deserializer = new Deserializer(buffer);
+        return deserializer.deserialize();
+    }
+
+    private Deserializer(ByteBuffer buffer){
+        in = new GGInputStream(buffer);
+        components = new LinkedList<>();
+        loaders = new ArrayList<>();
+        classnames = new HashMap<>();
+    }
+
+    private World deserialize(){
         try {
-            deserializer.w = new World();
-            deserializer.w.deserialize(deserializer.b);
-            deserializer.w.setId(0);
-            doList(deserializer);
+            int namecount = in.readInt();
+            for(int i = 0; i < namecount; i++){
+                var id = in.readInt();
+                var name = in.readString();
+                classnames.put(id, name);
+            }
+
+            world = new World();
+            world.deserialize(in);
+            world.setId(0);
+            doList();
         } catch (IOException ex) {
             GGConsole.error("IOException thrown during deserialization of world!");
         }
         
-        if(deserializer.w == null)
+        if(world == null)
             return null;
         
-        int maxid = 0;
-        upper : for(SerialHolder sh : deserializer.components){
-            if(sh.c.getId() > maxid){
-                maxid = sh.c.getId();
-            }
-            
-            if(sh.parent == 0){
-                deserializer.w.attach(sh.c);
-                continue;
-            }
-            
-            for(SerialHolder sh2 : deserializer.components){
-                if(sh2.c.getId() == sh.parent){
-                    if(sh2.c instanceof Component){
-                        sh2.c.attach(sh.c);
-                        continue upper;
-                    }else{
-                        GGConsole.warning("Component " + sh.c.getId() + " has invalid parent, will not be added");
-                    }   
-                }
-            }
-            GGConsole.warning("Component " + sh.c.getId()+ " has invalid parent, will not be added");
+        int maxid = components.stream()
+                .mapToInt(holder -> holder.comp.getId())
+                .max().getAsInt();
+
+        for(var holder : components){
+            components
+                    .stream()
+                    .filter(holder2 -> holder.parent == holder2.comp.getId())
+                    .map(holder2 -> holder2.comp)
+                    .findFirst()
+                    .ifPresentOrElse(comp -> comp.attach(holder.comp), () -> world.attach(holder.comp));
         }
-        return deserializer.w;
+
+        return world;
     }
     
-    public static void doList(Deserializer ds) throws IOException{
-        int l = ds.b.readInt();
+    private void doList() throws IOException{
+        int l = in.readInt();
         for(int i = 0; i < l; i++){
-            String classname = ds.b.readString();
+            String classname = classnames.get(in.readInt());
             try {
-                int id = ds.b.readInt();
-                int pid = ds.b.readInt();
-                Class clazz = null;
-                try{
-                    clazz = Class.forName(classname);
-                }catch (ClassNotFoundException ex) {
-                    for(ClassLoader cl : loaders){
-                        try{
-                            clazz = Class.forName(classname, true, cl);
-                        }catch(ClassNotFoundException e){
-                           throw new RuntimeException("Failed to create class " + classname + " during deserialization!");
-                        }
-                    }
-                }
+                int id = in.readInt();
+                int pid = in.readInt();
+                Object nclazz = ClassUtil.createByName(classname);
 
-                Component comp = (Component)clazz
-                        .getConstructor()
-                        .newInstance();
-                comp.deserialize(ds.b);
+                Component comp = (Component)nclazz;
+                comp.removeAll();
+                comp.deserialize(in);
                 comp.setId(id);
                 
-                SerialHolder ch = new SerialHolder();
-                ch.c = comp;
-                ch.parent = pid;
-                ch.type = clazz;
-                ds.components.add(ch);
+                var holder = new SerialHolder();
+                holder.comp = comp;
+                holder.parent = pid;
+                holder.type = comp.getClass();
+                components.add(holder);
 
-                doList(ds);
-            }  catch (SecurityException  ex) {
-                GGConsole.error("Failed to load world, access to " + classname + " is not allowed");
-                ds.w = null;
-                return;
-            } catch (InstantiationException | IllegalAccessException ex) {
-                GGConsole.error("Failed to load world, could not create instance of " + classname);
-                ds.w = null;
-                return;
-            } catch (NoSuchMethodException | IllegalArgumentException | InvocationTargetException ex) {
-                GGConsole.error("Failed to load world, could not access default constructor for " + classname);
-                ds.w = null;
-                return;
+                doList();
+            }  catch (ClassInstantiationException ex) {
+                GGConsole.error("Failed to instantiate class " + classname + ": " + ex.getMessage());
             }
         }
+    }
+
+    /**
+     *
+     * @author Javier
+     */
+    public static class SerialHolder {
+        Component comp;
+        int parent;
+        Class type;
     }
 }

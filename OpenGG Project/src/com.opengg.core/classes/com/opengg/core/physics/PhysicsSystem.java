@@ -8,6 +8,10 @@ package com.opengg.core.physics;
 
 import com.opengg.core.physics.collision.ColliderGroup;
 import com.opengg.core.physics.collision.CollisionManager;
+import com.opengg.core.util.GGInputStream;
+import com.opengg.core.util.GGOutputStream;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +20,7 @@ import java.util.List;
  * @author Javier
  */
 public class PhysicsSystem {
-    PhysicsConstants constants = new PhysicsConstants();
+    final PhysicsConstants constants = new PhysicsConstants();
     List<ColliderGroup> colliders = new ArrayList<>();
     List<PhysicsEntity> entities = new ArrayList<>(); 
     
@@ -38,6 +42,7 @@ public class PhysicsSystem {
     
     public void addEntity(PhysicsEntity entity){
         entities.add(entity);
+        entity.setSystemData(this);
     }
     
     public void removeEntity(PhysicsEntity entity){
@@ -55,5 +60,41 @@ public class PhysicsSystem {
         }
         CollisionManager.testForCollisions(this);
         CollisionManager.processCollisions();
+    }
+
+    public void serialize(GGOutputStream out) throws IOException {
+        out.write(constants.BASE);
+        out.write(constants.GRAVITY);
+        out.write((int)entities.size());
+
+        for(var entity : entities){
+            entity.serialize(out);
+        }
+    }
+
+    public void deserialize(GGInputStream in) throws IOException {
+        constants.BASE = in.readFloat();
+        constants.GRAVITY = in.readVector3f();
+
+        entities.clear();
+        int count = in.readInt();
+
+        for(int i = 0; i < count; i++){
+
+            PhysicsEntity entity = new PhysicsEntity();
+            entity.deserialize(in);
+            entities.add(entity);
+        }
+
+        PhysicsEntity.idcount = entities.stream()
+                .mapToInt(entity -> entity.id)
+                .max().orElse(0);
+    }
+
+    public PhysicsEntity getById(int id){
+        for (var entity : entities) {
+            if(entity.id == id) return entity;
+        }
+        return null;
     }
 }

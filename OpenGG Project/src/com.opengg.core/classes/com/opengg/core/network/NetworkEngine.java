@@ -21,7 +21,23 @@ import java.net.Socket;
  * @author Javier
  */
 public class NetworkEngine {
-    public static Server initializeServer(String name, int port){
+    private static Server server;
+    private static Client client;
+
+    public static void update(){
+        if(server != null) server.update();
+        if(client != null) client.update();
+    }
+
+     public static Server getServer() {
+         return server;
+     }
+
+     public static Client getClient() {
+         return client;
+     }
+
+     public static Server initializeServer(String name, int port){
         try {
             var tcpsocket = new ServerSocket(port);
             var udpsocket = new DatagramSocket(port);
@@ -32,9 +48,8 @@ public class NetworkEngine {
             GGConsole.log("Server initialized on port " + port);
 
             server.start();
-
+            NetworkEngine.server = server;
             return server;
-
         } catch (IOException ex) {
             GGConsole.warning("Failed to create server");
             return null;
@@ -47,7 +62,7 @@ public class NetworkEngine {
             var tcp = new Socket(ip, port);
             var udp = new DatagramSocket();
 
-            var client =  new Client(tcp, udp, tcp.getInetAddress(), port);
+            client =  new Client(tcp, udp, tcp.getInetAddress(), port);
 
             client.start();
 
@@ -57,7 +72,7 @@ public class NetworkEngine {
             client.getData();
             GGConsole.log("Downloaded world, joining...");
 
-            Thread.sleep(300);
+            Thread.sleep(1000);
 
             client.udpHandshake();
 

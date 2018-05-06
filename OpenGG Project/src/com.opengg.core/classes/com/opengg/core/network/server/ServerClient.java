@@ -6,10 +6,14 @@
 
 package com.opengg.core.network.server;
 
+import com.opengg.core.math.Vector2f;
 import com.opengg.core.network.Packet;
+import com.opengg.core.network.client.ActionQueuer;
+import com.opengg.core.util.GGInputStream;
 import com.opengg.core.world.Action;
 import com.opengg.core.world.components.ActionTransmitterComponent;
 
+import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.time.Instant;
@@ -31,6 +35,7 @@ public class ServerClient {
     private int port;
     private int id;
     private boolean success;
+    private Vector2f mousepos = new Vector2f();
 
     private List<ActionTransmitterComponent> transmitters;
 
@@ -91,11 +96,22 @@ public class ServerClient {
         this.lastMessage = lastMessage;
     }
 
-    public void useActions(List<Action> actions){
-        for(var trans : transmitters){
-            for(var action : actions){
-                trans.doAction(action);
+    public Vector2f getMousePosition() {
+        return mousepos;
+    }
+
+    public void processData(GGInputStream in){
+        try {
+            mousepos = in.readVector2f();
+            var actions = ActionQueuer.getFromPacket(in);
+
+            for (var trans : transmitters) {
+                for (var action : actions) {
+                    trans.doAction(action);
+                }
             }
+        }catch (IOException e){
+            e.printStackTrace();
         }
     }
 }

@@ -232,9 +232,9 @@ public class CollisionSolver {
             float dist = v.dot(set.x.n);
             Vector3f p1 = set.y.a.subtract(set.x.n.multiply(dist));
             
-            v = set.y.b.subtract(set.x.a);
+            v = set.y.in.subtract(set.x.a);
             dist = v.dot(set.x.n);
-            Vector3f p2 = set.y.b.subtract(set.x.n.multiply(dist));
+            Vector3f p2 = set.y.in.subtract(set.x.n.multiply(dist));
             
             v = set.y.c.subtract(set.x.a);
             dist = v.dot(set.x.n);
@@ -267,7 +267,7 @@ public class CollisionSolver {
 
             f.aabb.recalculate();
             
-            if(!((ColliderGroup)hull.parent).main.isColliding(f.aabb)) continue;
+            if(!((ColliderGroup)hull.parent).aabb.isColliding(f.aabb)) continue;
             Contact tmf = HullHull(hull,h2);
             if(tmf != null) contacts.add(tmf);
         }

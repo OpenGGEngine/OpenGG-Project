@@ -29,8 +29,8 @@ public class PostProcessController {
     static Texture t;
     
     public static void initialize(){
-        utility = WindowFramebuffer.getWindowFramebuffer(1);
-        drawable = ObjectCreator.createSquare(new Vector2f(-1f,-1f), new Vector2f(1f,1f), -0.5f);
+        utility = WindowFramebuffer.getFloatingPointWindowFramebuffer(1);
+        drawable = ObjectCreator.createSquare(new Vector2f(-1f,-1f), new Vector2f(1f,1f), -0.9f);
         
         Stage hdr = new Stage("hdr");
         PostProcessingPass hdrpass = new PostProcessingPass(PostProcessingPass.SET, hdr);
@@ -50,7 +50,6 @@ public class PostProcessController {
         
         currentBuffer = initial;
         initial.useTexture(0, 0);
-        //initial.useTexture(OpenGLFramebuffer.DEPTH, 1);
         for(PostProcessingPass pass : passes){
             pass.render();
             switch(pass.op){

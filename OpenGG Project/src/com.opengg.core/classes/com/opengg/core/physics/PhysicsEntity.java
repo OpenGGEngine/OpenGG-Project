@@ -8,8 +8,13 @@ package com.opengg.core.physics;
 import com.opengg.core.math.Matrix3f;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
+import com.opengg.core.physics.collision.Collider;
 import com.opengg.core.physics.collision.ColliderGroup;
 import com.opengg.core.physics.collision.CollisionManager;
+import com.opengg.core.util.GGInputStream;
+import com.opengg.core.util.GGOutputStream;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,6 +24,10 @@ import java.util.List;
  * @author Javier
  */
 public class PhysicsEntity extends PhysicsObject{
+    static int idcount = 0;
+
+    public int id = 0;
+
     public String name = "default";
     public List<ColliderGroup> colliders = new ArrayList<>();
     public Vector3f centerOfMass = new Vector3f();
@@ -32,10 +41,7 @@ public class PhysicsEntity extends PhysicsObject{
     
     public List<Force> forces = new LinkedList<>();
     public List<Vector3f> rotforces = new LinkedList<>();
-    
-    public Vector3f momentum = new Vector3f();
-    public Vector3f angmomentum = new Vector3f();
-    
+
     public Vector3f acceleration = new Vector3f();
     public Vector3f angaccel = new Vector3f();
     
@@ -55,11 +61,13 @@ public class PhysicsEntity extends PhysicsObject{
     public List<Float> depths = new ArrayList<>();
     
     public PhysicsEntity(){
-        
+        id = idcount;
+        idcount++;
     }
     
     public PhysicsEntity(PhysicsSystem system){
-        this.system = system;
+        this();
+        system.addEntity(this);
     }
 
     public PhysicsEntity(PhysicsSystem system, ColliderGroup collider){
@@ -76,7 +84,7 @@ public class PhysicsEntity extends PhysicsObject{
     }
     
     private void computeLinearMotion(float delta){
-        momentum = computeForces(delta);
+        var momentum = computeForces(delta);
         acceleration = getAccel(momentum);
         
         velocity = velocity.add(acceleration.multiply(delta));
@@ -89,7 +97,7 @@ public class PhysicsEntity extends PhysicsObject{
     }
     
     private void computeAngularMotion(float delta){
-        angmomentum = finalRotForce();
+        var angmomentum = finalRotForce();
         angaccel = angmomentum.divide(mass);
         angvelocity = angvelocity.add(angaccel.multiply(delta));
         rotation = rotation.multiply(new Quaternionf(angvelocity.multiply(delta))).normalize();
@@ -115,8 +123,8 @@ public class PhysicsEntity extends PhysicsObject{
         return fforce;
     }
     
-    private Vector3f getAccel(Vector3f force){
-        Vector3f accel = force.divide(mass);
+    private Vector3f getAccel(Vector3f momemtum){
+        Vector3f accel = momemtum.divide(mass);
         if (gravEffect && !grounded) {
             accel = accel.add(system.getConstants().GRAVITY);
         }
@@ -133,17 +141,15 @@ public class PhysicsEntity extends PhysicsObject{
         return colliders;
     }
     
-    public void setSystem(PhysicsSystem system){
+     void setSystemData(PhysicsSystem system){
         if(this.system != null){
             this.system.removeEntity(this);
             for(ColliderGroup col : getColliders()){
                 system.removeCollider(col);
             }
         }
-        
-        
+
         this.system = system;
-        system.addEntity(this);
         for(ColliderGroup col : getColliders()){
             system.addCollider(col);
         }
@@ -172,5 +178,39 @@ public class PhysicsEntity extends PhysicsObject{
         b.acceleration = a.acceleration.multiply(1 - alpha).add(b.acceleration.multiply(alpha));
         b.angaccel = a.angaccel.multiply(1 - alpha).add(b.angaccel.multiply(alpha));
         return b;
+    }
+
+    @Override
+    public void serialize(GGOutputStream out) throws IOException{
+        out.write(id);
+
+        out.write(velocity);
+        out.write(angvelocity);
+
+        out.write(position);
+        out.write(rotation);
+
+        out.write(colliders.size());
+        for(var collider : colliders){
+            collider.serialize(out);
+        }
+    }
+
+    @Override
+    public void deserialize(GGInputStream in) throws IOException{
+        id = in.readInt();
+
+        velocity = in.readVector3f();
+        angvelocity = in.readVector3f();
+
+        position = in.readVector3f();
+        rotation = in.readQuaternionf();
+
+        int collcount = in.readInt();
+        for (int i = 0; i < collcount; i++) {
+            var collider = new ColliderGroup();
+            collider.deserialize(in);
+            this.addCollider(collider);
+        }
     }
 }

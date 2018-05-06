@@ -149,8 +149,8 @@ public class Matrix4f {
         return init.multiply(this);
     }
     
-    public Matrix4f rotate(Quaternionf q) {
-        return this.multiply(q.convertMatrix());
+    public Matrix4f rotate(Quaternionf quat) {
+        return this.multiply(quat.convertMatrix());
     }
 
     public Matrix4f rotate(float x, float y, float z) {

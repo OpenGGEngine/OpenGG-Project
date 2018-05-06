@@ -18,6 +18,7 @@ import static com.opengg.core.render.window.RenderUtil.endFrame;
 import static com.opengg.core.render.window.RenderUtil.startFrame;
 
 import com.opengg.core.io.input.mouse.MouseController;
+import com.opengg.core.network.NetworkEngine;
 import com.opengg.core.physics.PhysicsEngine;
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.render.window.WindowController;
@@ -161,7 +162,7 @@ public final class OpenGG{
         while(!end){
             runUpdate();
             try {
-                Thread.sleep(5);
+                Thread.sleep(1000/60);
             } catch (InterruptedException ex) {
                 GGConsole.error("OpenGG thread has been interrupted!");
                 break;
@@ -201,6 +202,7 @@ public final class OpenGG{
         WorldEngine.update(delta);
         PhysicsEngine.updatePhysics(delta);
         SoundtrackHandler.update();
+        NetworkEngine.update();
     }
 
     private static void runInput() {

@@ -59,16 +59,7 @@ public class BindController implements KeyboardListener, MouseButtonListener{
      * Adds an {@link ActionTransmitter} to the system, which will receive all future commands 
      * @param controller ActionTransmitter to be added
      */
-    public static void addController(ActionTransmitter controller){
-        controllers.add(controller);
-    }
-    
-    /**
-     * Clears all previous {@link ActionTransmitter ActionTransmitters}, and adds the given one to the list
-     * @param controller Transmitter to use as unique transmitter
-     */
-    public static void setOnlyController(ActionTransmitter controller){
-        controllers.clear();
+    public static void addController(ActionTransmitter controller) {
         controllers.add(controller);
     }
     

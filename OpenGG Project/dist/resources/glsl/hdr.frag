@@ -1,25 +1,27 @@
-#version 410 core
-
+#version 420 core
 layout(location = 0) out vec4 fcolor;
 
 in vertexData{
-    
     vec2 textureCoord;
-    vec4 pos;
+    vec3 pos;
     vec3 norm;
 };
 
-uniform sampler2D Kd;
 uniform float exposure;
 uniform float gamma;
 
+uniform mat4 view;
+
+uniform sampler2D Kd;
+
+
 void main() {   
-    vec3 hdrColor = texture(Kd, textureCoord).rgb;
+    vec3 color = texture(Kd, textureCoord).rgb;
   
     // Exposure tone mapping
-    vec3 mapped = vec3(1.0) - exp(-hdrColor * exposure);
-    // Gamma correction 
-    mapped = pow(mapped, vec3(1.0 / gamma));
+    vec3 mapped = vec3(1.0f) - exp(-color * exposure);
+    // Gamma correction
+    mapped = pow(mapped, vec3(1.0f / gamma));
   
-    fcolor = vec4(mapped, 1.0);
+    fcolor = vec4(mapped, 1.0f);
 }

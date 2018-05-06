@@ -28,12 +28,7 @@ import static org.lwjgl.opengl.GL30.glBindFragDataLocation;
 import static org.lwjgl.opengl.GL31.glGetUniformBlockIndex;
 import static org.lwjgl.opengl.GL31.glUniformBlockBinding;
 import static org.lwjgl.opengl.GL33.glVertexAttribDivisor;
-import static org.lwjgl.opengl.GL41.glCreateShaderProgramv;
-import static org.lwjgl.opengl.GL41.glGetProgramBinary;
-import static org.lwjgl.opengl.GL41.glProgramUniform1f;
-import static org.lwjgl.opengl.GL41.glProgramUniform1i;
-import static org.lwjgl.opengl.GL41.glProgramUniform2fv;
-import static org.lwjgl.opengl.GL41.glProgramUniform3fv;
+import static org.lwjgl.opengl.GL41.*;
 
 /**
  *

@@ -21,7 +21,7 @@ public class GUI{
     }
     
     public static void startGUIPos(){
-        ShaderController.setOrtho(-1, 1, -1, 1, -1.5f, 1.5f);
+        ShaderController.setOrtho(-1, 1, -1, 1, -1f, 1f);
         ShaderController.setView(new Camera().getMatrix());
     }
 

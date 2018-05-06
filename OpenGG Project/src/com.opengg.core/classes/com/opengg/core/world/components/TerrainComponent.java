@@ -32,7 +32,7 @@ public class TerrainComponent extends RenderComponent{
     
     public TerrainComponent(Terrain terrain){
         this.terrain = terrain;
-        this.shader = "terrain";
+        this.setShader("terrain");
         this.setDrawable(terrain.getDrawable());
     }
     
@@ -109,7 +109,7 @@ public class TerrainComponent extends RenderComponent{
         blotmap = Texture.get2DTexture(blot);
         String s1 = in.readString(), s2 = in.readString(), s3 = in.readString(), s4 = in.readString();
         array = Texture.getArrayTexture(s1, s2, s3, s4);
-        this.shader = "terrain";
+        this.setShader("terrain");
         System.out.println(tp);
         System.out.println(blot);
         System.out.println(s1);

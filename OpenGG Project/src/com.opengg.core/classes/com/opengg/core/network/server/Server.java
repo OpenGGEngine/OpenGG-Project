@@ -6,16 +6,23 @@
 
 package com.opengg.core.network.server;
 
+import com.opengg.core.GGInfo;
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.engine.OpenGG;
+import com.opengg.core.math.Vector3f;
 import com.opengg.core.network.Packet;
 import com.opengg.core.network.client.ActionQueuer;
+import com.opengg.core.util.GGInputStream;
+import com.opengg.core.util.GGOutputStream;
 import com.opengg.core.world.WorldEngine;
 import com.opengg.core.world.components.ActionTransmitterComponent;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.ServerSocket;
+import java.nio.ByteBuffer;
 import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -31,38 +38,33 @@ public class Server {
     private List<ServerClient> clients;
     private List<ServerClient> newclients;
 
-    private ConnectionListener clistener;
-    private ServerThread serverthread;
+    private NewConnectionListener clistener;
     private ServerResponseThread serverresponsethread;
 
     private boolean running;
     private int port;
-    private int packetsize = 1024;
+    private final int packetsize = 2048;
+
+    private List<ConnectionListener> listeners;
     
     public Server(String name, int port, ServerSocket ssocket, DatagramSocket dsocket){
         this.name = name;
         this.port = port;
         this.clients = new ArrayList<>();
         this.newclients = new ArrayList<>();
+        this.listeners = new ArrayList<>();
         this.tcpsocket = ssocket;
         this.udpsocket = dsocket;
-        this.clistener = new ConnectionListener(this);
-        this.serverthread = new ServerThread(this, 15);
+        this.clistener = new NewConnectionListener(this);
         this.serverresponsethread = new ServerResponseThread(this);
     }
 
     public void start(){
         running = true;
         new Thread(clistener).start();
-        new Thread(serverthread).start();
         new Thread(serverresponsethread).start();
     }
 
-    public ServerClient getClient(InetAddress ip){
-        return clients.stream()
-                .filter(client -> client.getIp().equals(ip))
-                .findFirst().orElse(null);
-    }
 
     public void update(){
         var alltransmitters = WorldEngine.getCurrent().getAll().stream()
@@ -72,7 +74,7 @@ public class Server {
 
         for(var client : clients){
             for(var transmitter : alltransmitters){
-                if(transmitter.userid == client.getId() && client.getTransmitters().contains(transmitter)){
+                if(transmitter.getUserId() == client.getId() && !client.getTransmitters().contains(transmitter)){
                     client.getTransmitters().add(transmitter);
                 }
             }
@@ -83,17 +85,72 @@ public class Server {
         for(var client : this.clients){
             if(client.getLastMessage() != null && Instant.now().toEpochMilli() - client.getLastMessage().toEpochMilli() > 5000){
                 removal.add(client);
-                GGConsole.log(client.getIp().getHostAddress() + "  has timed out");
+                GGConsole.log(client.getIp().getHostAddress() + " has timed out");
 
                 //todo
             }
         }
 
         clients.removeAll(removal);
+
+        clients.addAll(newclients);
+        newclients.clear();
+        sendState();
+    }
+
+    public void sendState(){
+        try {
+            var allcomps = WorldEngine.getCurrent().getAll();
+            GGOutputStream out = new GGOutputStream();
+
+            out.write(Instant.now().toEpochMilli());
+            out.write((short)allcomps.size());
+
+            for(var comp : allcomps){
+                out.write((short) comp.getId());
+                comp.serializeUpdate(out);
+            }
+
+            var bytes = ((ByteArrayOutputStream)out.getStream()).toByteArray();
+            for(ServerClient sc : clients){ sc.send(udpsocket, bytes); }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public ServerClient getClient(InetAddress ip, int port){
+        var tempclients =  List.copyOf(clients);
+        return tempclients.stream()
+                .filter(client -> client.getIp().equals(ip))
+                .filter(client -> client.getPort() == port)
+                .findFirst().orElse(null);
+    }
+
+    public List<ServerClient> getClients(InetAddress ip){
+        var tempclients =  List.copyOf(clients);
+        return tempclients.stream()
+                .filter(client -> client.getIp().equals(ip))
+                .collect(Collectors.toList());
+    }
+
+    public ServerClient getByID(int id){
+        for(var client : clients){
+            if(client.getId() == id) return client;
+        }
+
+        return null;
+    }
+
+    public void subscribe(ConnectionListener listener){
+        listeners.add(listener);
     }
 
     public void addServerClient(ServerClient sc){
         newclients.add(sc);
+
+        for(var listener : listeners)
+            listener.onConnection(sc);
     }
 
     public String getName() {
@@ -136,12 +193,16 @@ public class Server {
         public void run() {
             while(server.running && !OpenGG.getEnded()){
                 packet = Packet.receive(server.udpsocket, server.packetsize);
-                var source = server.getClient(packet.getAddress());
+
+                var source = server.getClient(packet.getAddress(), packet.getPort());
 
                 if(source == null){
-                    GGConsole.warn("Got packet from unknown source!");
-                    continue;
+                    for(var client : server.getClients(packet.getAddress())){
+                        if(client.getPort() == 0) source = client;
+                    }
                 }
+
+                if(source == null) continue;
 
                 source.setLastMessage(Instant.now());
 
@@ -152,48 +213,14 @@ public class Server {
                     }
 
                     source.initialize(true);
-                    GGConsole.log("User at " + source.getIp() + " connected over UDP");
+                    GGConsole.log("User at " + source.getIp() +":" + source.getPort() + " connected");
 
                     continue;
                 }
 
-                if(Arrays.equals(packet.getData(), new byte[server.packetsize])) continue;
+                if(Arrays.equals(packet.getData(),  ByteBuffer.wrap(new byte[server.packetsize]).putInt(source.getId()).array())) continue;
 
-                source.useActions(ActionQueuer.getFromPacket(packet.getData()));
-            }
-        }
-    }
-
-    /**
-     *
-     * @author Javier
-     */
-    private static class ServerThread implements Runnable{
-        Server server;
-        int bandwidth;
-
-        public ServerThread(Server s, int bandwidth){
-            this.server = s;
-            this.bandwidth = bandwidth;
-        }
-
-        @Override
-        public void run() {
-            while(server.running && !OpenGG.getEnded()){
-                //byte[] bytes = NetworkSerializer.serializeUpdate(WorldEngine.getCurrent().getAll());
-
-                for(ServerClient sc : server.clients){
-                    sc.send(server.udpsocket, new byte[server.packetsize]);
-                }
-
-                server.clients.addAll(server.newclients);
-                server.newclients.clear();
-
-                try {
-                    Thread.sleep(1000/bandwidth);
-                } catch (InterruptedException ex) {
-                    GGConsole.error("Server thread interrupted!");
-                }
+                source.processData(new GGInputStream(packet.getData()));
             }
         }
     }

@@ -118,4 +118,16 @@ public class WaterComponent extends RenderComponent{
             setDrawable(new TexturedDrawnObject(drawn, Texture.get2DSRGBTexture(texture)));
         });
     }
+
+    @Override
+    public void serializeUpdate(GGOutputStream out) throws IOException{
+        super.serializeUpdate(out);
+        out.write(current);
+    }
+
+    @Override
+    public void deserializeUpdate(GGInputStream in) throws IOException{
+        super.deserializeUpdate(in);
+        current = in.readFloat();
+    }
 }

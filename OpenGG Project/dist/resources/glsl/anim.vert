@@ -1,4 +1,4 @@
-#version 410 core
+#version 420 core
 
 in vec3 normal;
 in vec4 weights;

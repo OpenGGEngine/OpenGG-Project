@@ -20,12 +20,12 @@ import java.io.IOException;
  * @author Javier
  */
 public class RenderComponent extends Component implements Renderable{
-    Drawable g;
-    public Matrix4f m = new Matrix4f();
-    String shader;
-    VertexArrayFormat format;
-    boolean transparent;
-    float renderDistance = 0f;
+    private Drawable drawable;
+    private Matrix4f matrix = new Matrix4f();
+    private String shader;
+    private VertexArrayFormat format;
+    private boolean transparent;
+    private float renderDistance = 0f;
     
     public RenderComponent(){
         super();
@@ -33,19 +33,19 @@ public class RenderComponent extends Component implements Renderable{
         shader = "object";
     }
 
-    public RenderComponent(Drawable g){
+    public RenderComponent(Drawable drawable){
         this();
-        this.g = g;
+        this.drawable = drawable;
     }
 
     @Override
     public void render() {
-        m = new Matrix4f().rotate(getRotation()).translate(getPosition()).scale(getScale());
+        matrix = new Matrix4f().scale(getScale()).translate(getPosition()).rotate(getRotation());
         if((renderDistance > 0) && (getPosition().subtract(RenderEngine.getCurrentCamera().getPos()).length() > renderDistance))
             return;
-        if(g != null){
-            g.setMatrix(m);
-            g.render();
+        if(drawable != null){
+            drawable.setMatrix(matrix);
+            drawable.render();
         }
     }
 
@@ -79,11 +79,11 @@ public class RenderComponent extends Component implements Renderable{
     }
     
     public void setDrawable(Drawable d){
-        this.g = d;
+        this.drawable = d;
     }
     
     public Drawable getDrawable(){
-        return g;
+        return drawable;
     }
     
     @Override

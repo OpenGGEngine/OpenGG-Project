@@ -49,13 +49,13 @@ public class ShaderController {
         loadShader("mainvert", Resource.getShaderPath("object.vert"), ShaderType.VERTEX);
         loadShader("animvert", Resource.getShaderPath("anim.vert"), ShaderType.VERTEX);
         loadShader("particlevert", Resource.getShaderPath("particle.vert"), ShaderType.VERTEX);
-        loadShader("passthroughvert", Resource.getShaderPath("passthrough.vert"), ShaderType.VERTEX);
 
         loadShader("maingeom", Resource.getShaderPath("object.geom"), ShaderType.GEOMETRY);
         loadShader("passthroughgeom", Resource.getShaderPath("passthrough.geom"), ShaderType.GEOMETRY);
         loadShader("volumegeom", Resource.getShaderPath("volume.geom"), ShaderType.GEOMETRY);
         loadShader("mainadjgeom", Resource.getShaderPath("objectadj.geom"), ShaderType.GEOMETRY);
         loadShader("passthroughadjgeom", Resource.getShaderPath("passthroughadj.geom"), ShaderType.GEOMETRY);
+
 
         loadShader("mainfrag", Resource.getShaderPath("phong.frag"), ShaderType.FRAGMENT);
         loadShader("shadowfrag", Resource.getShaderPath("phongshadow.frag"), ShaderType.FRAGMENT);
@@ -65,15 +65,16 @@ public class ShaderController {
         loadShader("ambientfrag", Resource.getShaderPath("ambient.frag"), ShaderType.FRAGMENT);
         loadShader("texturefrag", Resource.getShaderPath("texture.frag"), ShaderType.FRAGMENT);
         loadShader("terrainfrag", Resource.getShaderPath("terrainmulti.frag"), ShaderType.FRAGMENT);
+        loadShader("hdrfrag", Resource.getShaderPath("hdr.frag"), ShaderType.FRAGMENT);
         //loadShader("bloomfrag", Resource.getShaderPath("bloom.frag"), OpenGLShaderProgram.FRAGMENT);
         loadShader("addfrag", Resource.getShaderPath("add.frag"), ShaderType.FRAGMENT);
         loadShader("guifrag", Resource.getShaderPath("gui.frag"), ShaderType.FRAGMENT);
         loadShader("barfrag", Resource.getShaderPath("bar.frag"), ShaderType.FRAGMENT);
-        loadShader("hdrfrag", Resource.getShaderPath("hdr.frag"), ShaderType.FRAGMENT);
+
         loadShader("waterfrag", Resource.getShaderPath("water.frag"), ShaderType.FRAGMENT);
-          
+
         use("mainvert", "mainfrag");
-        saveCurrentConfiguration("object");   
+        saveCurrentConfiguration("object");
         
         use("animvert", "mainfrag");
         saveCurrentConfiguration("animation");  
@@ -83,41 +84,41 @@ public class ShaderController {
         
         use("mainvert", "terrainfrag");
         saveCurrentConfiguration("terrain");
-        
+
         use("mainvert", "ambientfrag");
         saveCurrentConfiguration("ambient");     
         
         use("mainvert", "waterfrag");
         saveCurrentConfiguration("water"); 
         
-        use("passthroughvert", "ssaofrag");
+        use("mainvert", "ssaofrag");
         saveCurrentConfiguration("ssao");
         
        // use("passthroughvert", "bloomfrag");
        // saveCurrentConfiguration("bloom");
-        
-        use("passthroughvert", "hdrfrag");
+
+        use("mainvert", "hdrfrag");
         saveCurrentConfiguration("hdr");
 
-        use("passthroughvert", "passthroughfrag");
+        use("mainvert", "passthroughfrag");
         saveCurrentConfiguration("passthrough");
              
-        use("passthroughvert", "cubemapfrag");
+        use("mainvert", "cubemapfrag");
         saveCurrentConfiguration("sky");
         
-        use("passthroughvert", "passthroughfrag");
+        use("mainvert", "passthroughfrag");
         saveCurrentConfiguration("volume");
         
-        use("passthroughvert", "texturefrag");
+        use("mainvert", "texturefrag");
         saveCurrentConfiguration("texture");
         
-        use("passthroughvert", "guifrag");
+        use("mainvert", "guifrag");
         saveCurrentConfiguration("gui");
         
-        use("passthroughvert", "barfrag");
+        use("mainvert", "barfrag");
         saveCurrentConfiguration("bar");
         
-        use("passthroughvert", "addfrag");
+        use("mainvert", "addfrag");
         saveCurrentConfiguration("add");
         
         use("particlevert", "texturefrag");
@@ -381,8 +382,8 @@ public class ShaderController {
      * @param loc Name of uniform
      */
     public static void findUniform(String loc){
-        if(searchedUniforms.contains(loc))
-            return;
+        //if(searchedUniforms.contains(loc))
+        //    return;
         for(ShaderProgram p : programs.values()){
             p.findUniformLocation(loc);
         }
@@ -550,7 +551,8 @@ public class ShaderController {
     
     private static String getUniqueConfigID(ShaderProgram vert, ShaderProgram tesc, ShaderProgram tese, ShaderProgram geom, ShaderProgram frag){
         String st = "";
-        st += vert.getId() + ";";
+        st += vert.getId()
+                + ";";
 
         if(tesc != null)
             st += tesc.getId();
@@ -574,8 +576,6 @@ public class ShaderController {
         ShaderPipeline pipeline;
         if((pipeline = pipelines.get(id)) != null){
             pipeline.bind();
-
-            return;
         }else{
             pipeline = ShaderPipeline.create(vert, tesc, tese, geom, frag);
         
@@ -645,7 +645,9 @@ public class ShaderController {
     public static void useConfiguration(String name){
         String id = rnames.get(name);
         ShaderPipeline pipeline = pipelines.get(id);
-               
+
+        pipeline.bind();
+
         if(pipeline == null){
             GGConsole.error("A shader configuration named " + name + " tried to be used, but no appropriate pipeline was found!");
             throw new ShaderException("Failed to find pipeline named " + name);
@@ -659,7 +661,7 @@ public class ShaderController {
         currentgeom = pipeline.getShader(ShaderType.GEOMETRY);
         currentfrag = pipeline.getShader(ShaderType.FRAGMENT);
         
-        pipeline.bind();
+
     }
     
     public static void clearPipelineCache(){
@@ -682,9 +684,11 @@ public class ShaderController {
             CharSequence sec = FileStringLoader.loadStringSequence(URLDecoder.decode(loc, "UTF-8"));
             programs.put(name, ShaderProgram.create(type, sec, name));
             ShaderProgram p = programs.get(name);
+
             for(String s : searchedUniforms){
                 p.findUniformLocation(s);
             }
+
             p.checkStatus();
             return true;
         } catch (UnsupportedEncodingException ex) {

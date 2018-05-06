@@ -106,8 +106,8 @@ public interface Texture {
         Texture texture = new OpenGLTexture(GL_TEXTURE_2D, format, intformat, input);
         texture.bind();
         texture.set2DData(data);
-        texture.setTextureWrapType(GL_CLAMP);
-        texture.setMinimumFilterType(GL_NEAREST);
+        texture.setTextureWrapType(GL_REPEAT);
+        texture.setMinimumFilterType(GL_LINEAR);
         texture.setMaximumFilterType(GL_NEAREST);
         return texture;
     }

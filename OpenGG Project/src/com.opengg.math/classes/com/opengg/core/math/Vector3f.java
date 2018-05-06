@@ -15,7 +15,7 @@ import java.nio.FloatBuffer;
  * @author Javier
  */
 public class Vector3f implements Serializable{
-    private static Vector3f zerovector = new Vector3f();
+    public static Vector3f identity = new Vector3f();
     private static final long serialVersionUID = 4404184685145307985L;
     
     public final float x;
@@ -431,7 +431,7 @@ public class Vector3f implements Serializable{
      * @return Average of the given list
      */
     public static Vector3f averageOf(Vector3f... vectors){
-        if(vectors.length == 0) return zerovector;
+        if(vectors.length == 0) return identity;
         float nx=0, ny=0, nz=0;
         for(Vector3f v : vectors){
             nx += v.x;

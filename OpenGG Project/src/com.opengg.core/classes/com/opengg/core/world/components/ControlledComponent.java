@@ -1,6 +1,9 @@
 package com.opengg.core.world.components;
 
 import com.opengg.core.GGInfo;
+import com.opengg.core.io.input.mouse.MouseController;
+import com.opengg.core.math.Vector2f;
+import com.opengg.core.network.NetworkEngine;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
 
@@ -17,8 +20,34 @@ public class ControlledComponent extends Component{
 
     }
 
+    public Vector2f getMouse(){
+        if(!GGInfo.isServer() && isCurrentUser()){
+            return MouseController.get();
+        }else{
+            if(GGInfo.isServer()){
+                var user = NetworkEngine.getServer().getByID(userid);
+                if(user != null) return user.getMousePosition();
+            }
+        }
+
+        return new Vector2f();
+    }
+
     public boolean isCurrentUser(){
-        return userid == GGInfo.getUserId();
+        return userid == GGInfo.getUserId() || GGInfo.getUserId() == -1;
+    }
+
+    public int getUserId() {
+        return userid;
+    }
+
+    public void setUserId(int userid) {
+        this.userid = userid;
+        onUserChange();
+    }
+
+    public void onUserChange(){
+
     }
 
     @Override

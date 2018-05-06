@@ -75,7 +75,7 @@ public class MouseController {
     }
 
     public static Vector2f get(){
-        return poshandler.getPos().multiply(-1f);
+        return poshandler.getPos().multiply(1f);
     }
 
     public static Vector2f getRaw(){

@@ -6,6 +6,7 @@
 
 package com.opengg.core.network.client;
 
+import com.opengg.core.console.GGConsole;
 import com.opengg.core.engine.BindController;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
@@ -13,8 +14,6 @@ import com.opengg.core.world.Action;
 import com.opengg.core.world.ActionTransmitter;
 import com.opengg.core.world.ActionType;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -26,50 +25,45 @@ import java.util.List;
  * @author Javier
  */
 public class ActionQueuer implements ActionTransmitter{
-    private long lastTime;
-    private Client client;
+    private int currentpacket;
     private List<ActionContainer> actions = Collections.synchronizedList(new ArrayList<>());
     
     private ActionQueuer(){
         BindController.addController(this);
     }
     
-    public static ActionQueuer get(Client client){
+    public static ActionQueuer get(){
         var queuer = new ActionQueuer();
-        queuer.client = client;
-        queuer.lastTime = Instant.now().toEpochMilli();
+        queuer.currentpacket = 0;
         return queuer;
     }
 
-    public byte[] generatePacket(){
-        var out = new GGOutputStream();
-        try {
-            out.write(lastTime);
+    public void writeData(GGOutputStream out) throws IOException {
 
-            out.write(actions.size());
-            for(ActionContainer action : actions){
-                out.write(action.action.name);
-                out.write(action.action.type.name());
-            }
+        var tempaction = List.copyOf(actions);
 
-            actions.clear();
-            lastTime = Instant.now().toEpochMilli();
-            return ((ByteArrayOutputStream)out.getStream()).toByteArray();
-        } catch (IOException e) {
-            return null;
+        //out.write(currentpacket);
+        out.write(tempaction.size());
+        for (ActionContainer action : tempaction) {
+            out.write(action.action.name);
+            out.write(action.action.type.name());
         }
+
+        actions.removeAll(tempaction);
+        currentpacket++;
+
     }
 
-    public static List<Action> getFromPacket(byte[] data){
-        var in = new GGInputStream(new ByteArrayInputStream(data));
+    public static List<Action> getFromPacket(GGInputStream in){
         try {
-            long lasttime = in.readLong();
-
             int actionsize = in.readInt();
             var actions = new ArrayList<Action>(actionsize);
             for(int i = 0; i < actionsize; i++){
                 var action = new Action();
+                var name = in.readString();
                 var type = in.readString();
+
+                action.name = name;
 
                 switch(type){
                     case "PRESS":
@@ -85,6 +79,7 @@ public class ActionQueuer implements ActionTransmitter{
 
             return actions;
         } catch (IOException e) {
+            GGConsole.error("Failed to load actions");
             return null;
         }
     }
@@ -93,7 +88,7 @@ public class ActionQueuer implements ActionTransmitter{
     public void doAction(Action action) {
         ActionContainer actcont = new ActionContainer();
         actcont.action = action;
-        actcont.delta = Instant.now().toEpochMilli() - lastTime;
+        actcont.delta = Instant.now().toEpochMilli();
         actions.add(actcont);
     }
 }

@@ -1,4 +1,4 @@
-#version 410 core
+#version 420 core
 #define LIGHTNUM 100
 
 layout(location = 0) out vec4 fcolor;
@@ -55,7 +55,7 @@ uniform sampler2D bump;
 uniform samplerCube cubemap;
 uniform Material material;
 
-const float density =0.00137;
+const float density = 0.00137;
 const float gradient = 2.32;
 
 float bloomMin = 0.9;

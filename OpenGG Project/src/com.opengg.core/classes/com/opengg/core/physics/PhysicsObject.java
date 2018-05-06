@@ -8,6 +8,10 @@ package com.opengg.core.physics;
 
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
+import com.opengg.core.util.GGInputStream;
+import com.opengg.core.util.GGOutputStream;
+
+import java.io.IOException;
 
 /**
  *
@@ -55,4 +59,7 @@ public class PhysicsObject {
         return system;
     }
 
+    public void serialize(GGOutputStream out) throws IOException{}
+
+    public void deserialize(GGInputStream in) throws IOException{}
 }
