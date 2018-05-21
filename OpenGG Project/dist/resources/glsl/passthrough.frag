@@ -1,5 +1,6 @@
-#version 420 core
+@version 4.2
 
+@uniforms
 layout(location = 0) out vec4 fcolor;
 
 in vertexData{
@@ -9,6 +10,7 @@ in vertexData{
     vec3 norm;
 };
 
-void main() {   
+@code
+main() {
     fcolor = vec4(1,0,0,1);
 }

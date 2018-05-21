@@ -46,9 +46,12 @@ public class OpenGGTestServer extends GGApplication{
     @Override
     public  void setup(){
         WorldEngine.getCurrent().attach(new LightComponent(
-                new Light(new Vector3f(20,20,5), new Vector3f(1,1,1), 400, 0,
-                        new Camera(new Vector3f(0,0,0), new Quaternionf(new Vector3f(0,0,0))).getMatrix(),
-                        Matrix4f.perspective(100f, 1f, 1f, 70f), 1280, 1280)));
+                new Light(new Vector3f(0,0,0),
+                        new Quaternionf(new Vector3f(0,0,0)),
+                        new Vector3f(1,1,1),
+                        400, 0,
+                        Matrix4f.orthographic(-100,100,-100,100,0,300),
+                        4096, 4096)));
         WorldEngine.getCurrent().attach(new ModelRenderComponent(Resource.getModel("goldleaf")).setScaleOffset(new Vector3f(0.02f)).setRotationOffset(new Vector3f(90,0,0)));
 
         for (int i = 0; i < 2; i++) {

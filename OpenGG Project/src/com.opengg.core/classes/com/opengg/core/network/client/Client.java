@@ -11,6 +11,7 @@ import com.opengg.core.console.GGConsole;
 import com.opengg.core.engine.OpenGG;
 import com.opengg.core.io.input.mouse.MouseController;
 import com.opengg.core.network.Packet;
+import com.opengg.core.network.PacketReceiver;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
 import com.opengg.core.world.Deserializer;
@@ -43,7 +44,7 @@ public class Client {
     private boolean running;
 
     private ActionQueuer queuer;
-    private ClientThread input;
+    private PacketReceiver receiver;
     
     public Client(Socket tcp, DatagramSocket udp, InetAddress ip, int port){
         this.tcpsocket = tcp;
@@ -51,12 +52,14 @@ public class Client {
         this.address = ip;
         this.port = port;
         this.timeConnected = Instant.now();
-        this.input = new ClientThread(this);
+        this.receiver = new PacketReceiver(udpsocket, packetsize);
         this.queuer = ActionQueuer.get();
+
+        receiver.addProccesor((byte) 0, this::processUpdatePacket);
     }
 
     public void start(){
-        new Thread(input).start();
+        receiver.start();
         running = true;
     }
 
@@ -70,6 +73,28 @@ public class Client {
             var data = ((ByteArrayOutputStream)out.getStream()).toByteArray();
 
             Packet.send(udpsocket, data, address, port);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void processUpdatePacket(Packet packet){
+        byte[] bytes = packet.getData();
+        if(Arrays.equals(bytes, new byte[packetsize])) return;
+
+        var in = new GGInputStream(ByteBuffer.wrap(bytes));
+        try {
+
+            long time = in.readLong() + timedifference;
+            short amount = in.readShort();
+            for (int i = 0; i < amount; i++) {
+                short id = in.readShort();
+                var component = WorldEngine.getCurrent().find(id);
+                if(component != null){
+                    component.deserializeUpdate(in);
+                    component.update((Instant.now().toEpochMilli() - time)/1000);
+                }
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -91,6 +116,7 @@ public class Client {
         out.println(OpenGG.getApp().applicationName);
 
         packetsize = Integer.decode(in.readLine());
+        receiver.setPacketSize(packetsize);
         int id = Integer.decode(in.readLine());
 
         var start = Instant.now();
@@ -152,45 +178,11 @@ public class Client {
         return port;
     }
 
-    private static class ClientThread implements Runnable{
-        Client client;
+    public long getLatency(){
+        return latency;
+    }
 
-        public ClientThread(Client client){
-            this.client = client;
-        }
-
-        @Override
-        public void run() {
-            try {
-                Thread.sleep(50);
-            } catch (InterruptedException ex) {
-                GGConsole.error("Response Thread failed!");
-            }
-
-            while(client.running && !OpenGG.getEnded()){
-                Packet p = Packet.receive(client.udpsocket, client.packetsize);
-                byte[] bytes = p.getData();
-
-                if(Arrays.equals(bytes, new byte[client.packetsize])) continue;
-
-                var in = new GGInputStream(ByteBuffer.wrap(bytes));
-                try {
-
-                    long time = in.readLong() + client.timedifference;
-                    short amount = in.readShort();
-                    for (int i = 0; i < amount; i++) {
-                        short id = in.readShort();
-                        var component = WorldEngine.getCurrent().find(id);
-                        if(component != null){
-                            component.deserializeUpdate(in);
-                            component.update((Instant.now().toEpochMilli() - time)/1000);
-                        }
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        }
+    public boolean isRunning(){
+        return running;
     }
 }

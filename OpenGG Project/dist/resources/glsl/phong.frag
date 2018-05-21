@@ -1,6 +1,7 @@
-#version 420 core
-#define LIGHTNUM 100
+@version 420
+@glsl define LIGHTNUM 100
 
+@uniforms
 layout(location = 0) out vec4 fcolor;
 layout(location = 1) out vec4 bright;
 
@@ -25,14 +26,16 @@ struct Material
 };
 
 struct Light
-{ 
-    vec3 lightpos;
-    vec3 color;
+{
+    vec4 lightpos;
+    vec4 color;
+    mat4 view;
+    mat4 perspective;
 	float lightdistance;
 	float lightdistance2;
-	int shadow;
-	mat4 view;
-	mat4 perspective;
+	float shadow;
+	float padding1;
+	vec4 padding2;
 };
 
 layout (std140) uniform LightBuffer {
@@ -55,6 +58,7 @@ uniform sampler2D bump;
 uniform samplerCube cubemap;
 uniform Material material;
 
+@fields
 const float density = 0.00137;
 const float gradient = 2.32;
 
@@ -72,6 +76,7 @@ vec3 specular;
 vec3 diffuse;
 vec4 color;
 
+@code
 mat3 cotangent_frame( vec3 N, vec3 p, vec2 uv ){
     // get edge vectors of the pixel triangle
     vec3 dp1 = dFdx( p );
@@ -98,7 +103,7 @@ vec3 calculatenormal( vec3 N, vec3 V, vec2 texcoord ){
 }
 
 
-void genPhong(){
+genPhong(){
     eyedir = normalize(camera - pos.xyz);
 
     float distance = length(camera - pos.xyz);
@@ -122,25 +127,25 @@ vec4 getTex(sampler2D tname){
 
 vec3 shadify(Light light){
     
-	float distance = length( light.lightpos - pos.xyz ); 
+	float distance = length( light.lightpos.xyz - pos.xyz );
 	float attenuation =  clamp((1.0 - (distance/light.lightdistance)), 0.0, 10.0);
 	attenuation = attenuation * attenuation;
 
-	vec3 lightDir = normalize(light.lightpos - pos.xyz);
+	vec3 lightDir = normalize(light.lightpos.xyz - pos.xyz);
 	vec3 halfwayDir = normalize(lightDir + eyedir);
 
     float cosTheta = max(dot( n,lightDir ), 0.0f );
-    vec3 fdif = diffuse * light.color * cosTheta * attenuation;
+    vec3 fdif = diffuse * light.color.xyz * cosTheta * attenuation;
 	
     float cosAlpha = clamp(max(dot(n, halfwayDir), 0.0), 0, 1);
-	vec3 fspec = specular * light.color * pow(cosAlpha, specpow) * attenuation;
+	vec3 fspec = specular * light.color.xyz * pow(cosAlpha, specpow) * attenuation;
 	
     vec3 fragColor = fdif + fspec;
 
     return fragColor;
 }
 
-void process(){
+process(){
 	//if(material.hascolormap){
 		color = getTex(Kd);
 	//}else{
@@ -179,7 +184,7 @@ void process(){
 	
 }
 
-void main() {   
+main() {
 
 	genPhong();
 	process();

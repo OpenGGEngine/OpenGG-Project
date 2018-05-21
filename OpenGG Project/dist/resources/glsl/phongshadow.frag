@@ -1,11 +1,11 @@
-#version 420 core
-#define LIGHTNUM 100
+@version 4.2
+@glsl define LIGHTNUM 100
 
+@uniforms
 layout(location = 0) out vec4 fcolor;
 layout(location = 1) out vec4 bright;
 
 in vertexData{
-    
     vec2 textureCoord;
     vec3 pos;
     vec3 norm;
@@ -26,13 +26,15 @@ struct Material
 
 struct Light
 {
-    vec3 lightpos;
-    vec3 color;
+    vec4 lightpos;
+    vec4 color;
+    mat4 view;
+    mat4 perspective;
 	float lightdistance;
 	float lightdistance2;
-	int shadow;
-	mat4 view;
-	mat4 perspective;
+	float shadow;
+	float padding1;
+	vec4 padding2;
 };
 
 layout (std140) uniform LightBuffer {
@@ -57,7 +59,8 @@ uniform sampler2D shadowmap3;
 uniform samplerCube cubemap;
 uniform Material material;
 
-const float density =0.00137;
+@fields
+const float density = 0.00137;
 const float gradient = 2.32;
 
 float bloomMin = 0.9;
@@ -74,14 +77,19 @@ vec3 specular;
 vec3 diffuse;
 vec4 color;
 
+@code
 float getShadowPercent(Light light, int i){
-    vec4 lightspacePos = light.perspective*(light.view*vec4(pos, 1.0f));
-    vec3 projCoords = lightspacePos.xyz/lightspacePos.w;
-    projCoords = projCoords * 0.5 + 0.5;
+    vec4 lightspacePos = light.perspective*(light.view * vec4(pos, 1.0f));
+    vec3 projCoords = lightspacePos.xyz;///lightspacePos.w;
+    projCoords = projCoords * 0.5f + 0.5f;
     float closestDepth = texture(shadowmap, projCoords.xy).r;
-    //float closestDepth = texture(shadowmap, textureCoord.xy).r;
-    float shadow = projCoords.z > closestDepth  ? 1.0 : 0.0; 
-    return lightspacePos.z;
+
+    float bias = 0.005*tan(acos(dot(norm, light.lightpos.xyz))); // cosTheta is dot( n,l ), clamped between 0 and 1
+    bias = clamp(bias, 0,0.01);
+    bias = 0.008f;
+
+    float shadow = (projCoords.z -0.5f) - bias > closestDepth  ? 0.0f : 1.0f;
+    return shadow;
 }
 
 mat3 cotangent_frame( vec3 N, vec3 p, vec2 uv ){
@@ -109,8 +117,7 @@ vec3 calculatenormal( vec3 N, vec3 V, vec2 texcoord ){
     return normalize( TBN * map );
 }
 
-
-void genPhong(){
+genPhong(){
     eyedir = normalize(camera - pos.xyz);
 
     float distance = length(camera - pos.xyz);
@@ -124,26 +131,26 @@ vec4 getTex(sampler2D tname){
 }
 
 vec3 shadify(Light light){
-    
-    float distance = length( light.lightpos - pos.xyz ); 
+    vec3 lightToPos = light.lightpos.xyz - pos.xyz;
+    float distance = length(lightToPos);
     float attenuation =  (1.0 - (distance/light.lightdistance));
     attenuation = attenuation * attenuation;
 
-    vec3 lightDir = normalize(light.lightpos - pos.xyz);
+    vec3 lightDir = normalize(lightToPos);
     vec3 halfwayDir = normalize(lightDir + eyedir);
 
     float cosTheta = max(dot( n,lightDir ), 0.0f );
-    vec3 fdif = diffuse * light.color * cosTheta * attenuation;
+    vec3 fdif = diffuse * light.color.xyz * cosTheta * attenuation;
     
     float cosAlpha = clamp(max(dot(n, halfwayDir), 0.0), 0, 1);
-    vec3 fspec = specular * light.color * pow(cosAlpha, specpow) * attenuation;
+    vec3 fspec = specular * light.color.xyz * pow(cosAlpha, specpow) * attenuation;
     
     vec3 fragColor = fdif + fspec;
 
     return fragColor;
 }
 
-void process(){
+process(){
     //if(material.hascolormap){
         color = getTex(Kd);
     //}else{
@@ -182,19 +189,18 @@ void process(){
     
 }
 
-void main() {   
-
+main() {
     genPhong();
     process();
-    vec3 col = ambient;
+    vec3 col = vec3(0,0,0);//ambient;
     int w = 0;
-    for(int i = 0; i < numLights; i++){
-        col += shadify(lights[i]);// * getShadowPercent(lights[i], i);
+    //for(int i = 0; i < numLights; i++){
+        col += shadify(lights[0]) * getShadowPercent(lights[0], 0);
         w++;
-    }
+    //}
     
-    fcolor = vec4(col, trans);
-    fcolor = vec4(vec3(getShadowPercent(lights[0], 0)), trans);
-    //fcolor = vec4(ambient,1);
+    //fcolor = vec4(col, trans);
+    //fcolor = vec4(vec3(getShadowPercent(lights[0], 0)), trans);
+    fcolor = vec4(col + ambient, trans);
 }
 

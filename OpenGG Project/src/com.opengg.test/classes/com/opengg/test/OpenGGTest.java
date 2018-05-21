@@ -18,6 +18,8 @@ import com.opengg.core.render.RenderEngine;
 import com.opengg.core.engine.Resource;
 import com.opengg.core.render.light.Light;
 import com.opengg.core.render.postprocess.PostProcessController;
+import com.opengg.core.render.shader.ShaderController;
+import com.opengg.core.render.shader.ShaderFile;
 import com.opengg.core.render.window.GLFWWindow;
 import com.opengg.core.render.window.WindowController;
 import com.opengg.core.world.Camera;
@@ -49,6 +51,7 @@ public class OpenGGTest extends GGApplication{
     private Texture worldterrain;
     private AudioListener listener;
     float i = 0;
+    Light l;
     private FreeFlyComponent player;
 
     public static void main(String[] args){
@@ -61,7 +64,9 @@ public class OpenGGTest extends GGApplication{
         w.vsync = true;
         w.glmajor = 4;
         w.glminor = 3;
-        OpenGG.initialize(new OpenGGTest(), w);
+        //OpenGG.initialize(new OpenGGTest(), w);
+
+        ShaderController.testInitialize();
     }
 
     @Override
@@ -89,13 +94,16 @@ public class OpenGGTest extends GGApplication{
                 + " the guardians of peace and justice in the galaxy, to settle the conflict...", new Vector2f(), 1f, 0.5f, false);
         GUIController.getDefault().addItem("aids", new GUIText(text, font, new Vector2f(0f,0)));
 
-        NetworkEngine.connect("localhost", 25565);
+        //NetworkEngine.connect("10.0.0.19", 25565);
 
 
-       /* WorldEngine.getCurrent().attach(new LightComponent(
-                new Light(new Vector3f(20,20,5), new Vector3f(1,1,1), 400, 0,
-                        new Camera(new Vector3f(0,0,0), new Quaternionf(new Vector3f(0,0,0))).getMatrix(),
-                        Matrix4f.perspective(100f, 1f, 1f, 70f), 1280, 1280)));
+        WorldEngine.getCurrent().attach(new LightComponent(
+                l = new Light(new Vector3f(0,0,0),
+                        new Quaternionf(new Vector3f(0,0,0)),
+                        new Vector3f(1,1,1),
+                        400, 0,
+                        Matrix4f.orthographic(-100,100,-100,100,0,300),
+                        4096, 4096)));
         WorldEngine.getCurrent().attach(new ModelRenderComponent(Resource.getModel("goldleaf")).setScaleOffset(new Vector3f(0.02f)).setRotationOffset(new Vector3f(90,0,0)));
 
 
@@ -119,7 +127,7 @@ public class OpenGGTest extends GGApplication{
         var model = new ModelRenderComponent(Resource.getModel("sphere"));
         model.setPositionOffset(new Vector3f(0,-2,-2));
 
-        WorldEngine.getCurrent().attach(player.attach(model));*/
+        WorldEngine.getCurrent().attach(player.attach(model));
 
         BindController.addBind(ControlType.KEYBOARD, "forward", KEY_W);
         BindController.addBind(ControlType.KEYBOARD, "backward", KEY_S);
@@ -143,5 +151,8 @@ public class OpenGGTest extends GGApplication{
     public void render() {}
 
     @Override
-    public void update(float delta){}
+    public void update(float delta){
+        i++;
+//        l.setView();
+    }
 }

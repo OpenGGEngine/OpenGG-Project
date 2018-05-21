@@ -1,6 +1,7 @@
-#version 420 core
+@version 4.2
 layout(location = 0) out vec4 fcolor;
 
+@uniforms
 in vertexData{
     vec2 textureCoord;
     vec3 pos;
@@ -14,8 +15,8 @@ uniform mat4 view;
 
 uniform sampler2D Kd;
 
-
-void main() {   
+@code
+main() {   
     vec3 color = texture(Kd, textureCoord).rgb;
   
     // Exposure tone mapping

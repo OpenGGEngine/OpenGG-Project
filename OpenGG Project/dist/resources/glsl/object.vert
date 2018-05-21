@@ -1,5 +1,7 @@
-#version 420 core
+@version 4.20
+@glsl define LIGHTNUM 100
 
+@uniforms
 in vec2 texcoord;
 in vec3 normal;
 in vec4 color;
@@ -10,7 +12,6 @@ out gl_PerVertex{
 };
 
 out vertexData{
-	
 	vec2 textureCoord;
 	vec3 pos;
 	vec3 norm;
@@ -20,7 +21,8 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 
-void main() {
+@code
+main() {
 
     mat4 modelView = view * model;
 

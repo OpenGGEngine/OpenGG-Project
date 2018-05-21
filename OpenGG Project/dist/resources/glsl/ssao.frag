@@ -1,5 +1,6 @@
-#version 420 core
+@version 4.2
 
+@uniforms
 layout(location = 0) out vec4 fcolor;
 
 in vertexData{
@@ -12,12 +13,14 @@ in vertexData{
 uniform sampler2D Kd;
 uniform sampler2D Ka;
 
+@fields
 vec2 camerarange = vec2(1280, 960);
 vec2 screensize = vec2(1280, 960);
 
 float bias = 0.005;
 float vis = 1;
 
+@code
 vec4 getTex(sampler2D tname){
     return texture(tname, textureCoord);
 }
@@ -36,7 +39,7 @@ float compareDepths( in float depth1, in float depth2 ) {
 	return 1-ao;
 }
  
-vec4 ssao(){	
+vec4 ssao(){
 	float depth = readDepth( textureCoord );
 	float d;
  
@@ -121,6 +124,6 @@ vec4 ssao(){
 	return vec4(1-ao);// * texture(Kd,textureCoord) * 2;
 }
 
-void main() {   
+main() {
     fcolor = ssao();
 }

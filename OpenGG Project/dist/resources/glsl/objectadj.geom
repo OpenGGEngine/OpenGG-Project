@@ -1,5 +1,6 @@
-#version 420 core
+@version 420 
 
+@uniforms
 layout(triangles_adjacency) in;
 layout(triangle_strip, max_vertices=3) out;
 
@@ -30,7 +31,8 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 
-void main(){
+@code
+main(){
     for(int i = 0; i < gl_in.length(); i += 2){
         vec4 temppos = gl_in[i].gl_Position;
         norm = norms[i];

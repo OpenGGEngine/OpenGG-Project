@@ -29,6 +29,12 @@ public class NetworkEngine {
         if(client != null) client.update();
     }
 
+    public static boolean running(){
+        if(server != null) return server.isRunning();
+        if(client != null) return client.isRunning();
+        return false;
+    }
+
      public static Server getServer() {
          return server;
      }

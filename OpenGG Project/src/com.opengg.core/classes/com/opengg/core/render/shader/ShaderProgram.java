@@ -19,7 +19,7 @@ import java.nio.ByteBuffer;
  */
 public interface ShaderProgram{
     enum ShaderType{
-        VERTEX, TESS_CONTROL, TESS_EVAL, GEOMETRY, FRAGMENT
+        VERTEX, TESS_CONTROL, TESS_EVAL, GEOMETRY, FRAGMENT, UTIL
     }
 
     public static ShaderProgram create(ShaderType type, CharSequence source, String name){

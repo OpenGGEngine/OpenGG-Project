@@ -1,5 +1,6 @@
-#version 420 core
+@version 4.2
 
+@uniforms
 layout(triangles_adjacency) in;
 layout(triangle_strip, max_vertices=18) out;
 
@@ -39,8 +40,10 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 
+@fields
 float epsilon = 0.0009;
 
+@code
 void EmitQuad(vec3 StartVertex, vec3 EndVertex)
  {
 	mat4 mvp = projection * view;

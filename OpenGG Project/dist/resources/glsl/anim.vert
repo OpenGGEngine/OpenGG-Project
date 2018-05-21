@@ -1,5 +1,6 @@
-#version 420 core
+@version 4.2
 
+@uniforms
 in vec3 normal;
 in vec4 weights;
 in vec2 texcoord;
@@ -18,9 +19,6 @@ out vertexData{
 	vec3 norm;
 };
 
- const int MAX_WEIGHTS = 4;
- const int MAX_JOINTS = 100;
-
 uniform mat4 model;
 uniform mat4 jointsMatrix[MAX_JOINTS];
 uniform mat4 view;
@@ -32,6 +30,11 @@ uniform int mode;
 uniform int inst;
 uniform float divAmount;
 
+@fields
+const int MAX_WEIGHTS = 4;
+const int MAX_JOINTS = 100;
+
+@code
 void main() {
 
     mat4 modelView = view * model;

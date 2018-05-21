@@ -1,5 +1,6 @@
-#version 420 core
+@version 4.2
 
+@uniforms
 layout(location = 0) out vec4 fcolor;
 
 in vertexData{
@@ -11,6 +12,7 @@ in vertexData{
 uniform samplerCube cubemap;
 
 
+@code
 vec4 getCube(){
     return texture(cubemap, normalize(pos.xyz));
 }

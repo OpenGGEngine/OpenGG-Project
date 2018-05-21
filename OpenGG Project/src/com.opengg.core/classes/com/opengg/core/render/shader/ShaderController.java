@@ -6,6 +6,7 @@
 
 package com.opengg.core.render.shader;
 
+import com.opengg.core.GGInfo;
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.engine.Resource;
 import com.opengg.core.exceptions.ShaderException;
@@ -16,6 +17,7 @@ import com.opengg.core.math.Vector3f;
 import com.opengg.core.model.Material;
 import com.opengg.core.render.GraphicsBuffer;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -23,6 +25,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.opengg.core.render.shader.ShaderProgram.ShaderType;
 
@@ -31,21 +34,28 @@ import static com.opengg.core.render.shader.ShaderProgram.ShaderType;
  * @author Javier
  */
 public class ShaderController {
-    private static String currentshader = "";
     private static final Matrix4f model = new Matrix4f();
-    private static Matrix4f view = new Matrix4f(), proj = new Matrix4f();
     private static final Map<String, ShaderProgram> programs = new HashMap<>();
     private static final Map<String, ShaderPipeline> pipelines = new HashMap<>();
     private static final Map<String, String> rnames = new HashMap<>();
+    private static final Map<String, ShaderFile> shaderfiles = new HashMap<>();
     private static final List<String> searchedUniforms = new ArrayList<>();
     private static final List<String> searchedAttribs = new ArrayList<>();
+    private static String currentshader = "";
+    private static Matrix4f view = new Matrix4f(), proj = new Matrix4f();
     private static String currentvert, currenttesc, currenttese, currentgeom, currentfrag;
     private static int currentBind = 0;
+
+    public static void testInitialize(){
+        loadShaderFiles();
+        linkShaders();
+    }
 
     /**
      * Initializes the controller and loads all default shaders
      */
     public static void initialize() {
+
         loadShader("mainvert", Resource.getShaderPath("object.vert"), ShaderType.VERTEX);
         loadShader("animvert", Resource.getShaderPath("anim.vert"), ShaderType.VERTEX);
         loadShader("particlevert", Resource.getShaderPath("particle.vert"), ShaderType.VERTEX);
@@ -126,6 +136,14 @@ public class ShaderController {
 
         /* Set shader variables */
 
+        setUniforms();
+
+        checkError();   
+        
+        GGConsole.log("Shader Controller initialized, loaded " + programs.size() + " shader programs");
+    }
+
+    private static void setUniforms(){
         findUniform("inst");
         setUniform("inst", 0);
 
@@ -134,13 +152,13 @@ public class ShaderController {
 
         findUniform("model");
         setUniform("model", new Matrix4f());
-        
-         findUniform("jointsMatrix");
+
+        findUniform("jointsMatrix");
         setUniform("jointsMatrix", new Matrix4f[50]);
 
         findUniform("projection");
         setUniform("projection", new Matrix4f());
-        
+
         findUniform("cubemap");
         setTextureLocation("cubemap", 2);
 
@@ -149,7 +167,7 @@ public class ShaderController {
 
         findUniform("divAmount");
         setUniform("divAmount", 1f);
-        
+
         findUniform("percent");
         setUniform("percent", 1f);
 
@@ -158,7 +176,7 @@ public class ShaderController {
 
         findUniform("uvmulty");
         setUniform("uvmulty", 1f);
-        
+
         findUniform("uvoffsetx");
         setUniform("uvoffsetx", 0f);
 
@@ -167,45 +185,41 @@ public class ShaderController {
 
         findUniform("rot");
         setUniform("rot", new Vector3f(0,0,0));
-        
+
         findUniform("camera");
         setUniform("camera", new Vector3f(0,0,0));
 
         findUniform("view");
         setUniform("view", new Matrix4f());
-        
+
         findUniform("numLights");
         setUniform("numLights", 1);
 
         findUniform("time");
         setUniform("time", 0f);
-        
+
         findUniform("billboard");
         setUniform("billboard", false);
-        
+
         findUniform("exposure");
         setUniform("exposure", 1f);
-        
+
         findUniform("gamma");
         setUniform("gamma", 2.2f);
-        
-        findUniform("shadowmap"); 
+
+        findUniform("shadowmap");
         setTextureLocation("shadowmap", 6);
 
-        findUniform("shadowmap2"); 
+        findUniform("shadowmap2");
         setTextureLocation("shadowmap2", 7);
-        
-        findUniform("shadowmap3"); 
-        setTextureLocation("shadowmap3", 8);
-        
-        
-        setMatLinks();
 
-        checkError();   
-        
-        GGConsole.log("Shader Controller initialized, loaded " + programs.size() + " shader programs");
+        findUniform("shadowmap3");
+        setTextureLocation("shadowmap3", 8);
+
+
+        setMatLinks();
     }
-    
+
     private static void setMatLinks(){
         findUniform("Kd"); 
         setTextureLocation("Kd", 0);
@@ -700,6 +714,119 @@ public class ShaderController {
         }
     }
 
-    private ShaderController() {
+    private static void loadShaderFiles(){
+        var dir = new File(GGInfo.getApplicationPath() + "\\resources\\glsl\\");
+        var allfiles = dir.list();
+
+        for(var name : allfiles){
+            var filename = name.substring(0, name.indexOf("."));
+            try{
+
+                var processed = new ShaderFile(filename, GGInfo.getApplicationPath() + "\\resources\\glsl\\" + name);
+                shaderfiles.put(filename, processed);
+            }catch(Exception e){
+                if(e.getMessage().equals("Shader test failed to compile, missing tags")){
+
+                }
+
+                var ex = new ShaderException("Exception while loading shader " + name + ": " + e.getMessage());
+                ex.setStackTrace(e.getStackTrace());
+                throw ex;
+            }
+        }
+    }
+
+    private static HashMap<String, String> linkShaders(){
+        var shaders = new ArrayList<ShaderFileHolder>();
+
+        var processing = shaderfiles.entrySet().stream()
+                .unordered()
+                //.parallel()
+                .filter(entry -> !entry.getValue().getType().equals(ShaderFile.ShaderFileType.UTIL))
+                .map(entry -> new ShaderFileHolder(entry.getKey(), entry.getValue()))
+                .peek(ShaderFileHolder::combineFiles)
+                .collect(Collectors.toList());
+
+        return null;
+    }
+
+    private static void compileShaders(){
+
+    }
+
+    private static void createGLShaders(){
+
+    }
+
+    private static void ShaderController() {
+    }
+
+    private static class ShaderFileHolder{
+        ShaderFile.ShaderFileType type;
+        List<ShaderFile> dependencies = new ArrayList<>();
+        String name;
+        ShaderFile source;
+        String fulldata;
+
+        List<ShaderFile.ShaderFunction> funcs = new ArrayList<>();
+        List<ShaderFile.ShaderUniform> uniforms = new ArrayList<>();
+        List<ShaderFile.ShaderField> fields = new ArrayList<>();
+
+        public ShaderFileHolder(String name, ShaderFile source){
+            this.type = source.getType();
+            this.name = name;
+            this.source = source;
+            source.getIncludes().stream()
+                    .map(s -> shaderfiles.get(s))
+                    .forEach(this::addDependency);
+        }
+
+        public void combineFiles(){
+            funcs.addAll(source.getCode());
+            uniforms.addAll(source.getUniforms());
+            fields.addAll(source.getFields());
+
+            for(var file : dependencies){
+                List<ShaderFile.ShaderFunction> addfuncs = new ArrayList<>();
+                for(var func : file.getCode()){
+                    funcs.stream()
+                            .filter(f -> !func.getName().equals(f.getName()))
+                            .findFirst()
+                            .ifPresent(addfuncs::add);
+                }
+
+                funcs.addAll(addfuncs);
+
+                List<ShaderFile.ShaderUniform> addunifs = new ArrayList<>();
+                for(var unif : file.getUniforms()){
+                    uniforms.stream()
+                            .filter(u -> !unif.getName().equals(u.getName()))
+                            .findFirst()
+                            .ifPresent(addunifs::add);
+                }
+
+                uniforms.addAll(addunifs);
+
+                List<ShaderFile.ShaderField> addfields = new ArrayList<>();
+                for(var field : file.getFields()){
+                    fields.stream()
+                            .filter(f -> !field.getName().equals(f.getName()))
+                            .findFirst()
+                            .ifPresent(addfields::add);
+                }
+
+                fields.addAll(addfields);
+            }
+        }
+
+        private void addDependency(ShaderFile file){
+            if(!dependencies.contains(file)){
+                dependencies.add(file);
+
+                file.getIncludes().stream()
+                        .map(s -> shaderfiles.get(s))
+                        .forEach(this::addDependency);
+            }
+        }
     }
 }

@@ -1,5 +1,5 @@
-#version 420 core
-
+@version 4.2
+@uniforms
 layout(location = 0) out vec4 fcolor;
 
 in vertexData{
@@ -12,11 +12,12 @@ in vertexData{
 uniform sampler2D Kd;
 uniform sampler2D Ka;
 
+@code
 vec4 getTex(sampler2D tname){
     return texture(tname, textureCoord);
 }
 
-void main() {   
+main() {
 	vec4 color1 = getTex(Kd);
 	vec4 color2 = getTex(Ka);
 	

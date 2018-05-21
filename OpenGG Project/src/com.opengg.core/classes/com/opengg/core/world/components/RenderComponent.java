@@ -21,7 +21,6 @@ import java.io.IOException;
  */
 public class RenderComponent extends Component implements Renderable{
     private Drawable drawable;
-    private Matrix4f matrix = new Matrix4f();
     private String shader;
     private VertexArrayFormat format;
     private boolean transparent;
@@ -40,7 +39,7 @@ public class RenderComponent extends Component implements Renderable{
 
     @Override
     public void render() {
-        matrix = new Matrix4f().scale(getScale()).translate(getPosition()).rotate(getRotation());
+        var matrix = new Matrix4f().scale(getScale()).translate(getPosition()).rotate(getRotation());
         if((renderDistance > 0) && (getPosition().subtract(RenderEngine.getCurrentCamera().getPos()).length() > renderDistance))
             return;
         if(drawable != null){

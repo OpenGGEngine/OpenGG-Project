@@ -28,7 +28,7 @@ import com.opengg.core.world.Camera;
 import com.opengg.core.world.Skybox;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL14.GL_FUNC_ADD;
 import static org.lwjgl.opengl.GL14.glBlendEquation;
@@ -99,7 +99,7 @@ public class RenderEngine {
 
         setProjectionData(ProjectionData.getPerspective(100, 0.2f, 3000f));
         
-        lightoffset = (Allocator.allocFloat(Light.bfsize).capacity());// << 2;
+        lightoffset = (Allocator.allocFloat(Light.BUFFERSIZE).capacity());// << 2;
 
         groups.add(defaultList);
        // groups.add(animlist);
@@ -172,13 +172,12 @@ public class RenderEngine {
 
                     lights.get(i).getLightbuffer().enableRendering();
                     lights.get(i).getLightbuffer().useEnabledAttachments();
-                    
                     for(RenderGroup d : getActiveRenderGroups()){
                         d.render();
                     }
 
                     lights.get(i).getLightbuffer().disableRendering();
-                    lights.get(i).getLightbuffer().useTexture(Framebuffer.DEPTH, 6+used);
+                    lights.get(i).getLightbuffer().useTexture(Framebuffer.DEPTH, 6 + used);
                     used++;
                 }
             }

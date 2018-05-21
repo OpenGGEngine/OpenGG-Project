@@ -76,7 +76,12 @@ public class OpenGLFramebuffer implements Framebuffer{
     
     @Override
     public void useTexture(int attachment, int loc){
-        Texture tex = textures.get(GL_COLOR_ATTACHMENT0 + attachment);
+        Texture tex;
+        if(attachment != DEPTH)
+            tex = textures.get(GL_COLOR_ATTACHMENT0 + attachment);
+        else
+            tex = textures.get(attachment);
+
         if(tex != null){
             tex.use(loc);
         }

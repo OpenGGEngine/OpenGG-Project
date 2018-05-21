@@ -20,7 +20,7 @@ import java.io.InputStreamReader;
 public class FileStringLoader {
     private FileStringLoader(){}
 
-    public static CharSequence loadStringSequence(String path) throws IOException{
+    public static String loadStringSequence(String path) throws IOException{
         StringBuilder builder = new StringBuilder();
 
         try (InputStream in = new FileInputStream(path);
