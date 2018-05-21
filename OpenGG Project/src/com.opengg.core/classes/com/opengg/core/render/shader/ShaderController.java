@@ -39,6 +39,7 @@ public class ShaderController {
     private static final Map<String, ShaderPipeline> pipelines = new HashMap<>();
     private static final Map<String, String> rnames = new HashMap<>();
     private static final Map<String, ShaderFile> shaderfiles = new HashMap<>();
+    private static final Map<String, ShaderFileHolder> completedfiles = new HashMap<>();
     private static final List<String> searchedUniforms = new ArrayList<>();
     private static final List<String> searchedAttribs = new ArrayList<>();
     private static String currentshader = "";
@@ -49,6 +50,7 @@ public class ShaderController {
     public static void testInitialize(){
         loadShaderFiles();
         linkShaders();
+        compileShaders();
     }
 
     /**
@@ -695,16 +697,8 @@ public class ShaderController {
     
     public static boolean loadShader(String name, String loc, ShaderType type){
         try {
-            CharSequence sec = FileStringLoader.loadStringSequence(URLDecoder.decode(loc, "UTF-8"));
-            programs.put(name, ShaderProgram.create(type, sec, name));
-            ShaderProgram p = programs.get(name);
-
-            for(String s : searchedUniforms){
-                p.findUniformLocation(s);
-            }
-
-            p.checkStatus();
-            return true;
+            String sec = FileStringLoader.loadStringSequence(URLDecoder.decode(loc, "UTF-8"));
+            return createShader(name, type, sec);
         } catch (UnsupportedEncodingException ex) {
             GGConsole.error("Failed to load shader: " + name);
             return false;
@@ -712,6 +706,18 @@ public class ShaderController {
             GGConsole.error("Failed to find shader file for " + loc);
             return false;
         }
+    }
+
+    public static boolean createShader(String name,  ShaderType type, String source){
+        programs.put(name, ShaderProgram.create(type, source, name));
+        ShaderProgram p = programs.get(name);
+
+        for(String s : searchedUniforms){
+            p.findUniformLocation(s);
+        }
+
+        p.checkStatus();
+        return true;
     }
 
     private static void loadShaderFiles(){
@@ -736,9 +742,7 @@ public class ShaderController {
         }
     }
 
-    private static HashMap<String, String> linkShaders(){
-        var shaders = new ArrayList<ShaderFileHolder>();
-
+    private static void linkShaders(){
         var processing = shaderfiles.entrySet().stream()
                 .unordered()
                 //.parallel()
@@ -747,15 +751,13 @@ public class ShaderController {
                 .peek(ShaderFileHolder::combineFiles)
                 .collect(Collectors.toList());
 
-        return null;
+        completedfiles.putAll(processing.stream().collect(Collectors.toMap((sh -> sh.name), (sh -> sh))));
     }
 
-    private static void compileShaders(){
-
-    }
-
-    private static void createGLShaders(){
-
+    private static void compileShaders() {
+        for (var entry : completedfiles.entrySet()) {
+            entry.getValue().compile();
+        }
     }
 
     private static void ShaderController() {
@@ -768,6 +770,7 @@ public class ShaderController {
         ShaderFile source;
         String fulldata;
 
+        List<String> glvals = new ArrayList<>();
         List<ShaderFile.ShaderFunction> funcs = new ArrayList<>();
         List<ShaderFile.ShaderUniform> uniforms = new ArrayList<>();
         List<ShaderFile.ShaderField> fields = new ArrayList<>();
@@ -781,12 +784,59 @@ public class ShaderController {
                     .forEach(this::addDependency);
         }
 
+        public void compile(){
+            String shsource = "";
+
+            shsource += "#version " + source.getVersion().replace(".", "").concat("0") + " core\n";
+
+            for(var glval : glvals){
+                shsource += "#" + glval + "\n";
+            }
+
+            for(var uniform : uniforms){
+                if(uniform.getData().isEmpty())
+                    shsource += uniform.getModifiers() + " " + uniform.getType() + " " + uniform.getName() + ";\n";
+                else
+                    shsource += uniform.getModifiers() + " " + uniform.getType() + " " + uniform.getName() + "{" + uniform.getData() +  "\n};\n";
+            }
+
+            for(var field : fields){
+                if(field.getInitialValue().isEmpty())
+                    shsource += field.getModifiers() + " " + field.getType() + " " + field.getName() + ";\n";
+                else
+                    shsource += field.getModifiers() + " " + field.getType() + " " + field.getName() + " = " + field.getInitialValue() +  ";\n";
+            }
+
+            for(var func : funcs){
+                if(func.getReturntype().isEmpty())
+                    shsource += "void " + func.getName() + "(" + func.getArgs() + "){\n\t" + func.getData() + "\n}\n";
+                else{
+                    shsource += func.getReturntype() + " " + func.getName() + "(" + func.getArgs() + "){\n\t" + func.getData() + "\n}\n";
+                }
+            }
+
+            System.out.println("_________________________________________________");
+            System.out.println(name);
+            System.out.println(shsource);
+        }
+
         public void combineFiles(){
+            glvals.addAll(source.getGlValues());
             funcs.addAll(source.getCode());
             uniforms.addAll(source.getUniforms());
             fields.addAll(source.getFields());
 
             for(var file : dependencies){
+                List<String> addvals = new ArrayList<>();
+                for(var val : file.getCode()){
+                    glvals.stream()
+                            .filter(v -> !val.getName().equals(v))
+                            .findFirst()
+                            .ifPresent(addvals::add);
+                }
+
+                glvals.addAll(addvals);
+
                 List<ShaderFile.ShaderFunction> addfuncs = new ArrayList<>();
                 for(var func : file.getCode()){
                     funcs.stream()

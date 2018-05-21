@@ -7,13 +7,16 @@ import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class ShaderFile{
     private List<String> includes;
-    private List<String> preprocessor;
+    private List<String> glvals;
+    private HashMap<String, String> preprocessor;
     private String data;
+    private String version;
     private ShaderFileType type;
 
     private List<ShaderUniform> uniforms = new ArrayList<>();
@@ -46,6 +49,36 @@ public class ShaderFile{
             }
 
             includes = new ArrayList<>();
+
+            preprocessor = new HashMap<>();
+
+            var lines = data.split("\n");
+
+            for(var line : lines){
+                if(line.indexOf("@") == 0){
+                    String varname = line.substring(0, line.indexOf(" ") == -1 ? line.length() : line.indexOf(" ")).trim();
+                    String varval = line.substring(line.indexOf(" ") == -1 ? line.length() : line.indexOf(" ")).trim();
+
+                    preprocessor.merge(varname, varval, (s1,s2) -> s1 + ":" + s2);
+                }
+            }
+
+            version = preprocessor.getOrDefault("@version", "4.2");
+
+            if(!version.matches("^\\d[.]\\d")){
+                if(version.matches("^\\d[.]\\d\\d")){
+                    version = version.substring(0, version.length()-1);
+                }else{
+                    version = version.charAt(0) + "." + version.charAt(1);
+                }
+            }
+
+            if(!version.matches("^\\d[.]\\d"))
+                throw new ShaderException("Encountered malformed version: " + preprocessor.getOrDefault("@version", "4.2"));
+
+            glvals = Arrays.stream(preprocessor.getOrDefault("@glsl", "").split(":"))
+                    .filter(s -> !s.isEmpty())
+                    .collect(Collectors.toList());
 
             int uniformpos = data.indexOf("@uniforms");
             int fieldpos = data.indexOf("@fields");
@@ -137,7 +170,7 @@ public class ShaderFile{
 
             int typestart = 0;
             if(unifsource.lastIndexOf(" ", namestart-1) == -1){
-                uniform.type = unifsource.substring(0, namestart);
+                uniform.type = unifsource.substring(0, namestart).trim();
             }else{
                 typestart = unifsource.lastIndexOf(" ", namestart-1);
                 uniform.type = unifsource.substring(typestart, namestart).trim();
@@ -191,6 +224,8 @@ public class ShaderFile{
         }
 
         for(var funcsource : allfunctions){
+            System.out.println(funcsource);
+            System.out.println("_______________________________________________");
 
             ShaderFunction function = new ShaderFunction();
 
@@ -234,6 +269,14 @@ public class ShaderFile{
 
     public List<ShaderFunction> getCode(){
         return code;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public List<String> getGlValues() {
+        return glvals;
     }
 
     public static class ShaderFunction{
@@ -314,12 +357,12 @@ public class ShaderFile{
                 name = line.substring(namestart, line.indexOf("=")).trim();
             }else{
                 namestart = line.lastIndexOf(" ");
-                name = line.substring(namestart, line.length()-1).trim();
+                name = line.substring(namestart, line.length()).trim();
             }
 
             int typestart = 0;
             if(line.lastIndexOf(" ", namestart-1) == -1){
-                type = line.substring(0, namestart);
+                type = line.substring(0, namestart).trim();
             }else{
                 typestart = line.lastIndexOf(" ", namestart-1);
                 type = line.substring(typestart, namestart).trim();
