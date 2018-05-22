@@ -1,7 +1,7 @@
 @version 4.2
 @glsl define LIGHTNUM 100
 
-@uniforms
+@fields
 layout(location = 0) out vec4 fcolor;
 
 in vertexData{
@@ -31,7 +31,7 @@ uniform sampler2DArray Kd;
 uniform sampler2D Ka;
 uniform samplerCube cubemap;
 
-@fields
+
 float trans;
 float specpow;
 float visibility = 1.0f;

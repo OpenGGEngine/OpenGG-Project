@@ -1,6 +1,6 @@
 @version 4.2
 
-@uniforms
+@fields
 layout(location = 0) out vec4 fcolor;
 
 in vertexData{
@@ -13,8 +13,8 @@ in vertexData{
 uniform sampler2D Kd;
 uniform sampler2D Ka;
 
-@fields
-vec2 camerarange = vec2(1280, 960);
+
+vec2 camerarange         = vec2(1280, 960);
 vec2 screensize = vec2(1280, 960);
 
 float bias = 0.005;

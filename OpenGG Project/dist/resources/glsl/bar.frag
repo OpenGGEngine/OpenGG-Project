@@ -1,5 +1,5 @@
 @version 4.2
-@uniforms
+@fields
 layout(location = 0) out vec4 fcolor;
 
 in vertexData{

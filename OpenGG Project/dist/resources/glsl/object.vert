@@ -1,7 +1,7 @@
 @version 4.20
 @glsl define LIGHTNUM 100
 
-@uniforms
+@fields
 in vec2 texcoord;
 in vec3 normal;
 in vec4 color;

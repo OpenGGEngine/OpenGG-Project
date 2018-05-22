@@ -64,9 +64,7 @@ public class OpenGGTest extends GGApplication{
         w.vsync = true;
         w.glmajor = 4;
         w.glminor = 3;
-        //OpenGG.initialize(new OpenGGTest(), w);
-
-        ShaderController.testInitialize();
+        OpenGG.initialize(new OpenGGTest(), w);
     }
 
     @Override

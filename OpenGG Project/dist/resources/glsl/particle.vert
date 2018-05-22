@@ -1,7 +1,7 @@
 @version 420 
 
 
-@uniforms
+@fields
 in vec2 texcoord;
 in vec3 normal;
 in vec3 offset;

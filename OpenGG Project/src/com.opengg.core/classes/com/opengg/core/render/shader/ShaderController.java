@@ -8,7 +8,6 @@ package com.opengg.core.render.shader;
 
 import com.opengg.core.GGInfo;
 import com.opengg.core.console.GGConsole;
-import com.opengg.core.engine.Resource;
 import com.opengg.core.exceptions.ShaderException;
 import com.opengg.core.io.FileStringLoader;
 import com.opengg.core.math.Matrix4f;
@@ -19,6 +18,7 @@ import com.opengg.core.render.GraphicsBuffer;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
@@ -39,7 +39,7 @@ public class ShaderController {
     private static final Map<String, ShaderPipeline> pipelines = new HashMap<>();
     private static final Map<String, String> rnames = new HashMap<>();
     private static final Map<String, ShaderFile> shaderfiles = new HashMap<>();
-    private static final Map<String, ShaderFileHolder> completedfiles = new HashMap<>();
+    private static final List<ShaderFileHolder> completedfiles = new ArrayList<>();
     private static final List<String> searchedUniforms = new ArrayList<>();
     private static final List<String> searchedAttribs = new ArrayList<>();
     private static String currentshader = "";
@@ -57,83 +57,60 @@ public class ShaderController {
      * Initializes the controller and loads all default shaders
      */
     public static void initialize() {
+        loadShaderFiles();
+        linkShaders();
+        compileShaders();
+        loadGLShadersFromFiles();
 
-        loadShader("mainvert", Resource.getShaderPath("object.vert"), ShaderType.VERTEX);
-        loadShader("animvert", Resource.getShaderPath("anim.vert"), ShaderType.VERTEX);
-        loadShader("particlevert", Resource.getShaderPath("particle.vert"), ShaderType.VERTEX);
-
-        loadShader("maingeom", Resource.getShaderPath("object.geom"), ShaderType.GEOMETRY);
-        loadShader("passthroughgeom", Resource.getShaderPath("passthrough.geom"), ShaderType.GEOMETRY);
-        loadShader("volumegeom", Resource.getShaderPath("volume.geom"), ShaderType.GEOMETRY);
-        loadShader("mainadjgeom", Resource.getShaderPath("objectadj.geom"), ShaderType.GEOMETRY);
-        loadShader("passthroughadjgeom", Resource.getShaderPath("passthroughadj.geom"), ShaderType.GEOMETRY);
-
-
-        loadShader("mainfrag", Resource.getShaderPath("phong.frag"), ShaderType.FRAGMENT);
-        loadShader("shadowfrag", Resource.getShaderPath("phongshadow.frag"), ShaderType.FRAGMENT);
-        loadShader("passthroughfrag", Resource.getShaderPath("passthrough.frag"), ShaderType.FRAGMENT);
-        loadShader("ssaofrag", Resource.getShaderPath("ssao.frag"), ShaderType.FRAGMENT);
-        loadShader("cubemapfrag", Resource.getShaderPath("cubemap.frag"), ShaderType.FRAGMENT);
-        loadShader("ambientfrag", Resource.getShaderPath("ambient.frag"), ShaderType.FRAGMENT);
-        loadShader("texturefrag", Resource.getShaderPath("texture.frag"), ShaderType.FRAGMENT);
-        loadShader("terrainfrag", Resource.getShaderPath("terrainmulti.frag"), ShaderType.FRAGMENT);
-        loadShader("hdrfrag", Resource.getShaderPath("hdr.frag"), ShaderType.FRAGMENT);
-        //loadShader("bloomfrag", Resource.getShaderPath("bloom.frag"), OpenGLShaderProgram.FRAGMENT);
-        loadShader("addfrag", Resource.getShaderPath("add.frag"), ShaderType.FRAGMENT);
-        loadShader("guifrag", Resource.getShaderPath("gui.frag"), ShaderType.FRAGMENT);
-        loadShader("barfrag", Resource.getShaderPath("bar.frag"), ShaderType.FRAGMENT);
-
-        loadShader("waterfrag", Resource.getShaderPath("water.frag"), ShaderType.FRAGMENT);
-
-        use("mainvert", "mainfrag");
+        use("object.vert", "phong.frag");
         saveCurrentConfiguration("object");
         
-        use("animvert", "mainfrag");
+        use("anim.vert", "phong.frag");
         saveCurrentConfiguration("animation");  
         
-        use("mainvert", "shadowfrag");
+        use("object.vert", "phongshadow.frag");
         saveCurrentConfiguration("shadobject");   
         
-        use("mainvert", "terrainfrag");
+        use("object.vert", "terrainmulti.frag");
         saveCurrentConfiguration("terrain");
 
-        use("mainvert", "ambientfrag");
+        use("object.vert", "ambient.frag");
         saveCurrentConfiguration("ambient");     
         
-        use("mainvert", "waterfrag");
+        use("object.vert", "water.frag");
         saveCurrentConfiguration("water"); 
         
-        use("mainvert", "ssaofrag");
+        use("object.vert", "ssao.frag");
         saveCurrentConfiguration("ssao");
         
        // use("passthroughvert", "bloomfrag");
        // saveCurrentConfiguration("bloom");
 
-        use("mainvert", "hdrfrag");
+        use("object.vert", "hdr.frag");
         saveCurrentConfiguration("hdr");
 
-        use("mainvert", "passthroughfrag");
+        use("object.vert", "passthrough.frag");
         saveCurrentConfiguration("passthrough");
              
-        use("mainvert", "cubemapfrag");
+        use("object.vert", "cubemap.frag");
         saveCurrentConfiguration("sky");
         
-        use("mainvert", "passthroughfrag");
+        use("object.vert", "passthrough.frag");
         saveCurrentConfiguration("volume");
         
-        use("mainvert", "texturefrag");
+        use("object.vert", "texture.frag");
         saveCurrentConfiguration("texture");
         
-        use("mainvert", "guifrag");
+        use("object.vert", "gui.frag");
         saveCurrentConfiguration("gui");
         
-        use("mainvert", "barfrag");
+        use("object.vert", "bar.frag");
         saveCurrentConfiguration("bar");
         
-        use("mainvert", "addfrag");
+        use("object.vert", "add.frag");
         saveCurrentConfiguration("add");
         
-        use("particlevert", "texturefrag");
+        use("particle.vert", "texture.frag");
         saveCurrentConfiguration("particle");
 
         /* Set shader variables */
@@ -694,30 +671,56 @@ public class ShaderController {
     public static String getCurrentConfiguration(){
         return currentshader;
     }
-    
-    public static boolean loadShader(String name, String loc, ShaderType type){
+
+    public static ShaderProgram loadShader(String name, String loc){
+
+        ShaderType type;
+        String ending = loc.substring(loc.lastIndexOf(".") + 1);
+        switch(ending){
+            case "vert":
+                type = ShaderType.VERTEX;
+                break;
+            case "tesc":
+                type = ShaderType.TESS_CONTROL;
+                break;
+            case "tese":
+                type = ShaderType.TESS_EVAL;
+                break;
+            case "geom":
+                type = ShaderType.GEOMETRY;
+                break;
+            case "frag":
+                type = ShaderType.FRAGMENT;
+                break;
+            default:
+                return null;
+        }
+
+        return loadShader(name, loc, type);
+    }
+
+    public static ShaderProgram loadShader(String name, String loc, ShaderType type){
         try {
             String sec = FileStringLoader.loadStringSequence(URLDecoder.decode(loc, "UTF-8"));
             return createShader(name, type, sec);
         } catch (UnsupportedEncodingException ex) {
             GGConsole.error("Failed to load shader: " + name);
-            return false;
+            return null;
         } catch (IOException ex) {
             GGConsole.error("Failed to find shader file for " + loc);
-            return false;
+            return null;
         }
     }
 
-    public static boolean createShader(String name,  ShaderType type, String source){
-        programs.put(name, ShaderProgram.create(type, source, name));
-        ShaderProgram p = programs.get(name);
+    public static ShaderProgram createShader(String name,  ShaderType type, String source){
+        var program = ShaderProgram.create(type, source, name);
 
         for(String s : searchedUniforms){
-            p.findUniformLocation(s);
+            program.findUniformLocation(s);
         }
 
-        p.checkStatus();
-        return true;
+        program.checkStatus();
+        return program;
     }
 
     private static void loadShaderFiles(){
@@ -725,14 +728,20 @@ public class ShaderController {
         var allfiles = dir.list();
 
         for(var name : allfiles){
-            var filename = name.substring(0, name.indexOf("."));
+            var filename = name;
             try{
 
                 var processed = new ShaderFile(filename, GGInfo.getApplicationPath() + "\\resources\\glsl\\" + name);
+                if(processed.getFields().isEmpty() && processed.getIncludes().isEmpty() && processed.getCode().isEmpty())
+                    continue;
                 shaderfiles.put(filename, processed);
             }catch(Exception e){
-                if(e.getMessage().equals("Shader test failed to compile, missing tags")){
-
+                if(e.getMessage().contains("Attempted to load GLSL file as GGSL")){
+                    var program = loadShader(name, filename);
+                    if(program != null){
+                        programs.put(name, program);
+                    }
+                    continue;
                 }
 
                 var ex = new ShaderException("Exception while loading shader " + name + ": " + e.getMessage());
@@ -751,12 +760,63 @@ public class ShaderController {
                 .peek(ShaderFileHolder::combineFiles)
                 .collect(Collectors.toList());
 
-        completedfiles.putAll(processing.stream().collect(Collectors.toMap((sh -> sh.name), (sh -> sh))));
+        completedfiles.addAll(processing);
     }
 
     private static void compileShaders() {
-        for (var entry : completedfiles.entrySet()) {
-            entry.getValue().compile();
+        for (var entry : completedfiles) {
+            entry.compile();
+        }
+    }
+
+    private static void loadGLShadersFromFiles(){
+        for(var entry : completedfiles){
+            String source = entry.fulldata;
+            String name = entry.name;
+            ShaderFile.ShaderFileType type = entry.type;
+
+            ShaderType ntype;
+
+            switch(type){
+                case FRAG:
+                    ntype = ShaderType.FRAGMENT;
+                    break;
+                case VERT:
+                    ntype = ShaderType.VERTEX;
+                    break;
+                case TESSCONTROL:
+                    ntype = ShaderType.TESS_CONTROL;
+                    break;
+                case TESSEVAL:
+                    ntype = ShaderType.TESS_EVAL;
+                    break;
+                case GEOM:
+                    ntype = ShaderType.GEOMETRY;
+                    break;
+                default:
+                    throw new ShaderException("Attempted to load utility shader " + entry.name + " as GLSL");
+            }
+
+            try{
+                var program = createShader(name, ntype, source);
+                programs.put(name, program);
+            }catch(ShaderException e){
+                try{
+                    var errorfile = new File(GGInfo.getApplicationPath() + "\\resources\\glsl\\error.glsl");
+                    errorfile.createNewFile();
+
+                    PrintWriter writer = new PrintWriter(errorfile);
+                    writer.println("COMPILED GGSL ERROR SOURCE: " + e.getMessage().trim());
+                    writer.print(source);
+                    writer.flush();
+                }catch(IOException e1){
+                    e1.printStackTrace();
+                }
+
+                var ne = new ShaderException(e.getMessage());
+                ne.setStackTrace(e.getStackTrace());
+                throw ne;
+            }
         }
     }
 
@@ -772,7 +832,6 @@ public class ShaderController {
 
         List<String> glvals = new ArrayList<>();
         List<ShaderFile.ShaderFunction> funcs = new ArrayList<>();
-        List<ShaderFile.ShaderUniform> uniforms = new ArrayList<>();
         List<ShaderFile.ShaderField> fields = new ArrayList<>();
 
         public ShaderFileHolder(String name, ShaderFile source){
@@ -793,18 +852,21 @@ public class ShaderController {
                 shsource += "#" + glval + "\n";
             }
 
-            for(var uniform : uniforms){
-                if(uniform.getData().isEmpty())
-                    shsource += uniform.getModifiers() + " " + uniform.getType() + " " + uniform.getName() + ";\n";
-                else
-                    shsource += uniform.getModifiers() + " " + uniform.getType() + " " + uniform.getName() + "{" + uniform.getData() +  "\n};\n";
-            }
-
             for(var field : fields){
-                if(field.getInitialValue().isEmpty())
-                    shsource += field.getModifiers() + " " + field.getType() + " " + field.getName() + ";\n";
-                else
-                    shsource += field.getModifiers() + " " + field.getType() + " " + field.getName() + " = " + field.getInitialValue() +  ";\n";
+                if(!field.getLayoutData().isEmpty()){
+                    shsource += "layout(" + field.getLayoutData() + ") ";
+                }
+
+                if(!field.getModifiers().isEmpty())
+                    shsource += field.getModifiers() + " ";
+                shsource += field.getType() + " " + field.getName();
+
+                if(!field.getData().isEmpty())
+                    shsource += " {\n\t" + field.getData() + "\n}";
+
+                if(!field.getInitialValue().isEmpty())
+                    shsource += " = " + field.getInitialValue();
+                shsource += ";\n";
             }
 
             for(var func : funcs){
@@ -815,15 +877,14 @@ public class ShaderController {
                 }
             }
 
-            System.out.println("_________________________________________________");
-            System.out.println(name);
-            System.out.println(shsource);
+            //System.out.println("_________________________________________________");
+            //System.out.println(name);
+            fulldata = shsource;
         }
 
         public void combineFiles(){
             glvals.addAll(source.getGlValues());
             funcs.addAll(source.getCode());
-            uniforms.addAll(source.getUniforms());
             fields.addAll(source.getFields());
 
             for(var file : dependencies){
@@ -846,16 +907,6 @@ public class ShaderController {
                 }
 
                 funcs.addAll(addfuncs);
-
-                List<ShaderFile.ShaderUniform> addunifs = new ArrayList<>();
-                for(var unif : file.getUniforms()){
-                    uniforms.stream()
-                            .filter(u -> !unif.getName().equals(u.getName()))
-                            .findFirst()
-                            .ifPresent(addunifs::add);
-                }
-
-                uniforms.addAll(addunifs);
 
                 List<ShaderFile.ShaderField> addfields = new ArrayList<>();
                 for(var field : file.getFields()){

@@ -26,4 +26,56 @@ public class WindowInfo {
     public String type = "GLFW";
     public boolean resizable = false,
             vsync = false;
+
+    public void width(int width){
+        this.width = width;
+    }
+
+    public void height(int height){
+        this.height = height;
+    }
+
+    public void displayMode(int displaymode){
+        this.displaymode = displaymode;
+    }
+
+    public void redBit(int rbit){
+        this.rbit = rbit;
+    }
+
+    public void greenBit(int gbit){
+        this.gbit = gbit;
+    }
+
+    public void blueBit(int bbit){
+        this.bbit = bbit;
+    }
+
+    public void samples(int samples){
+        this.samples = samples;
+    }
+
+    public void majorVersion(int glmajor){
+        this.glmajor = glmajor;
+    }
+
+    public void minorVersion(int glminor){
+        this.glminor = glminor;
+    }
+
+    public void name(String name){
+        this.name = name;
+    }
+
+    public void type(String type){
+        this.type = type;
+    }
+
+    public void resizable(boolean resizable){
+        this.resizable = resizable;
+    }
+
+    public void vsync(boolean vsync){
+        this.vsync = vsync;
+    }
 }

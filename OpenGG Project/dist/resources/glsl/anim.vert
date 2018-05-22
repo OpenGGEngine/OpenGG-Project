@@ -1,6 +1,6 @@
 @version 4.2
-
-@uniforms
+@glsl define MAX_JOINTS 100
+@fields
 in vec3 normal;
 in vec4 weights;
 in vec2 texcoord;
@@ -30,9 +30,8 @@ uniform int mode;
 uniform int inst;
 uniform float divAmount;
 
-@fields
+
 const int MAX_WEIGHTS = 4;
-const int MAX_JOINTS = 100;
 
 @code
 void main() {

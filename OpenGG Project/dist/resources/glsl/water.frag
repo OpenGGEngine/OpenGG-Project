@@ -1,7 +1,7 @@
 @version 4.2
 @glsl define LIGHTNUM 100
 
-@uniforms
+@fields
 layout(location = 0) out vec4 fcolor;
 
 in vertexData{
@@ -32,7 +32,7 @@ uniform vec3 camera;
 uniform sampler2D Kd;
 uniform samplerCube cubemap;
 
-@fields
+
 float trans;
 float specpow;
 vec3 eyedir;

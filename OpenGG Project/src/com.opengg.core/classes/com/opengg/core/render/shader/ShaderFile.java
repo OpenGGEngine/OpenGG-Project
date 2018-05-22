@@ -19,7 +19,6 @@ public class ShaderFile{
     private String version;
     private ShaderFileType type;
 
-    private List<ShaderUniform> uniforms = new ArrayList<>();
     private List<ShaderField> fields = new ArrayList<>();
     private List<ShaderFunction> code = new ArrayList<>();
 
@@ -27,6 +26,7 @@ public class ShaderFile{
         try{
             data = FileStringLoader.loadStringSequence(URLDecoder.decode(source, "UTF-8"));
 
+            data = data.trim().replaceAll(" +", " ");
             String ending = source.substring(source.lastIndexOf(".") + 1);
             switch(ending){
                 case "vert":
@@ -46,6 +46,10 @@ public class ShaderFile{
                     break;
                 default:
                     type = ShaderFile.ShaderFileType.UTIL;
+            }
+
+            if(data.indexOf("@") == -1 && data.indexOf("#version") != -1){
+                throw new ShaderException("Attempted to load GLSL file as GGSL");
             }
 
             includes = new ArrayList<>();
@@ -88,16 +92,6 @@ public class ShaderFile{
             String fieldsource = "";
             String codesource = "";
 
-            if(uniformpos != -1){
-                if(fieldpos != -1){
-                    uniformsource = data.substring(data.indexOf("\n", uniformpos), fieldpos).trim();
-                }else if(codepos != -1){
-                    uniformsource = data.substring(data.indexOf("\n", uniformpos), codepos).trim();
-                }else{
-                    uniformsource = data.substring(data.indexOf("\n", uniformpos)).trim();
-                }
-            }
-
             if(fieldpos != -1){
                 if(codepos != -1){
                     fieldsource = data.substring(data.indexOf("\n", fieldpos), codepos).trim();
@@ -114,7 +108,6 @@ public class ShaderFile{
                 return;
             }
 
-            processUniforms(uniformsource);
             processFields(fieldsource);
             processFunctions(codesource);
         }catch(IOException e){
@@ -122,75 +115,111 @@ public class ShaderFile{
         }
     }
 
-    private void processUniforms(String uniformsource){
-        List<String> alluniforms = new ArrayList<>();
+    private void processFields(String fullfieldsource){
+        fullfieldsource = fullfieldsource.trim();
+        List<String> allfields = new ArrayList<>();
 
-        uniformsource = uniformsource.trim();
         int currentindex = 0;
         boolean parsed = false;
         while(!parsed){
-            if(uniformsource.indexOf(';', currentindex) == -1) continue;
+            if(fullfieldsource.indexOf(';', currentindex) == -1) continue;
 
-            String next = uniformsource.substring(currentindex, uniformsource.indexOf(';', currentindex) + 1);
+            String next = fullfieldsource.substring(currentindex, fullfieldsource.indexOf(';', currentindex) + 1);
 
             if(next.contains("{")){
 
-                if(uniformsource.indexOf("};", currentindex) == -1){
+                if(fullfieldsource.indexOf("};", currentindex) == -1){
                     throw new ShaderException("Reached end of file while searching for brace at line " + currentindex);
                 }
 
-                next = uniformsource.substring(currentindex, uniformsource.indexOf("};", currentindex) + 2);
-                currentindex = uniformsource.indexOf("};", currentindex) + 2;
+                next = fullfieldsource.substring(currentindex, fullfieldsource.indexOf("};", currentindex) + 2);
+                currentindex = fullfieldsource.indexOf("};", currentindex) + 2;
             }else{
-                currentindex = uniformsource.indexOf(';', currentindex) + 1;
+                currentindex = fullfieldsource.indexOf(';', currentindex) + 1;
             }
 
             next = next.trim();
 
-            alluniforms.add(next);
+            allfields.add(next);
 
-            if(currentindex>= uniformsource.length()) parsed = true;
+            if(currentindex>= fullfieldsource.length()) parsed = true;
         }
 
-        for(var unifsource : alluniforms){
-            ShaderUniform uniform = new ShaderUniform();
-
-            if(unifsource.contains("{")){
-                uniform.data = unifsource.substring(unifsource.indexOf("{") + 1, unifsource.indexOf("}")-1);
-            }
+        for(var line : allfields){
+            String initialvalue = "";
+            String name = "";
+            String type = "";
+            String modifiers = "";
+            String data = "";
+            String layoutdata = "";
+            int loc = -1;
 
             int namestart = 0;
-            if(unifsource.contains("{")){
-                namestart = unifsource.lastIndexOf(" ", unifsource.indexOf("{"));
-                uniform.name = unifsource.substring(namestart, unifsource.indexOf("{")).trim();
-            }else{
-                namestart = unifsource.lastIndexOf(" ", unifsource.indexOf(";"));
-                uniform.name = unifsource.substring(namestart, unifsource.indexOf(";")).trim();
+            int typestart = 0;
+            int valuestart = 0;
+            int layoutstart = 0;
+            boolean hasvalue = false;
+            boolean hasdata = false;
+            boolean haslayout = false;
+
+            if(line.contains("layout")){
+                haslayout = true;
+                layoutstart = line.indexOf("layout");
+                layoutdata = line.substring(line.indexOf("(", layoutstart) + 1, line.indexOf(")", layoutstart));
             }
 
-            int typestart = 0;
-            if(unifsource.lastIndexOf(" ", namestart-1) == -1){
-                uniform.type = unifsource.substring(0, namestart).trim();
+            if(haslayout){
+                if(line.indexOf("=", line.indexOf(")", layoutstart)) != -1){
+                    hasvalue = true;
+                    valuestart = line.indexOf("=", line.indexOf(")", layoutstart));
+                    initialvalue = line.substring(valuestart + 1, line.length()).trim();
+                }
+            }else if(line.contains("=")){
+                hasvalue = true;
+                valuestart = line.indexOf("=");
+                initialvalue = line.substring(valuestart + 1, line.length()-1).trim();
+            }
+
+            if(line.contains("{")){
+                hasdata = true;
+                data = line.substring(line.indexOf("{")+1,line.indexOf("}")).trim();
+            }
+
+            if(hasvalue && !hasdata){
+                name = line.substring(line.lastIndexOf(" ", line.lastIndexOf("=")-2), line.lastIndexOf("=")).trim();
+            }else if(hasdata){
+                name = line.substring(line.lastIndexOf(" ", line.indexOf("{")-2), line.indexOf("{")).trim();
             }else{
-                typestart = unifsource.lastIndexOf(" ", namestart-1);
-                uniform.type = unifsource.substring(typestart, namestart).trim();
+                name = line.substring(line.lastIndexOf(" ", line.indexOf(";")-2), line.indexOf(";")).trim();
+            }
+
+            namestart = line.indexOf(name);
+
+            if(line.lastIndexOf(" ", namestart-2) == -1){
+                type = line.substring(0, namestart).trim();
+            }else{
+                typestart = line.lastIndexOf(" ", namestart-2);
+                type = line.substring(typestart, namestart).trim();
             }
 
             if(typestart != 0){
-                uniform.modifiers = unifsource.substring(0, typestart).trim();
+                modifiers = line.substring(0, typestart).trim();
+                if(haslayout){
+                    modifiers = modifiers.replace(line.substring(line.indexOf("layout"), line.indexOf(")") + 1), "").trim();
+                }
             }
 
-            uniforms.add(uniform);
-        }
-    }
+            ShaderField field = new ShaderField();
+            field.initialvalue = initialvalue;
+            field.data = data;
+            field.modifiers = modifiers;
+            field.name = name;
+            field.type = type;
+            field.loc = loc;
+            field.layoutdata = layoutdata;
 
-    private void processFields(String fullfieldsource){
-        fullfieldsource = fullfieldsource.trim();
-        fields = Arrays.stream(fullfieldsource.split(";"))
-                .map(String::trim)
-                .filter(s -> !s.isEmpty())
-                .map(s -> new ShaderField(s))
-                .collect(Collectors.toList());
+            fields.add(field);
+        }
     }
 
     private void processFunctions(String functionsource){
@@ -214,7 +243,7 @@ public class ShaderFile{
                 bracecounter--;
                 if(bracecounter == 0){
                     allfunctions.add(functionsource.substring(lastfunc, i + 1).trim());
-                    lastfunc = i;
+                    lastfunc = i + 1;
                 }
             }
         }
@@ -224,9 +253,6 @@ public class ShaderFile{
         }
 
         for(var funcsource : allfunctions){
-            System.out.println(funcsource);
-            System.out.println("_______________________________________________");
-
             ShaderFunction function = new ShaderFunction();
 
             function.data = funcsource.substring(funcsource.indexOf("{") + 1, funcsource.lastIndexOf("}")-1).trim();
@@ -257,10 +283,6 @@ public class ShaderFile{
 
     public ShaderFileType getType(){
         return type;
-    }
-
-    public List<ShaderUniform> getUniforms(){
-        return uniforms;
     }
 
     public List<ShaderField> getFields(){
@@ -313,70 +335,15 @@ public class ShaderFile{
         }
     }
 
-    public static class ShaderUniform{
-        private String name = "";
-        private String type = "";
-        private String modifiers = "";
-        private String data = "";
-        private ShaderProgram.ShaderType usetype;
-
-        public String getName(){
-            return name;
-        }
-
-        public String getType(){
-            return type;
-        }
-
-        public String getModifiers(){
-            return modifiers;
-        }
-
-        public String getData(){
-            return data;
-        }
-
-        @Override
-        public String toString(){
-            return "ShaderUniform{" +
-                    "name='" + name + '\'' +
-                    ", type='" + type + '\'' +
-                    ", modifiers='" + modifiers + '\'' +
-                    ", data='" + data + '\'' +
-                    '}';
-        }
-    }
 
     public static class ShaderField{
-        public ShaderField(String line){
-            int namestart = 0;
-            if(line.contains("=")){
-                initialvalue = line.substring(line.indexOf("=") + 1, line.length()-1).trim();
-
-                namestart = line.lastIndexOf(" ", line.indexOf("="));
-                name = line.substring(namestart, line.indexOf("=")).trim();
-            }else{
-                namestart = line.lastIndexOf(" ");
-                name = line.substring(namestart, line.length()).trim();
-            }
-
-            int typestart = 0;
-            if(line.lastIndexOf(" ", namestart-1) == -1){
-                type = line.substring(0, namestart).trim();
-            }else{
-                typestart = line.lastIndexOf(" ", namestart-1);
-                type = line.substring(typestart, namestart).trim();
-            }
-
-            if(typestart != 0){
-                modifiers = line.substring(0, typestart).trim();
-            }
-        }
-
         private String name = "";
         private String type = "";
         private String modifiers = "";
         private String initialvalue = "";
+        private String data = "";
+        private String layoutdata;
+        private int loc = -1;
         private ShaderProgram.ShaderType usetype;
 
         public String getName(){
@@ -385,6 +352,10 @@ public class ShaderFile{
 
         public String getType(){
             return type;
+        }
+
+        public String getData(){
+            return data;
         }
 
         public String getModifiers(){
@@ -395,6 +366,14 @@ public class ShaderFile{
             return initialvalue;
         }
 
+        public String getLayoutData(){
+            return layoutdata;
+        }
+
+        public int getLocation(){
+            return loc;
+        }
+
         @Override
         public String toString(){
             return "ShaderField{" +
@@ -402,6 +381,7 @@ public class ShaderFile{
                     ", type='" + type + '\'' +
                     ", modifiers='" + modifiers + '\'' +
                     ", initialvalue='" + initialvalue + '\'' +
+                    ", loc='" + loc + '\'' +
                     '}';
         }
     }

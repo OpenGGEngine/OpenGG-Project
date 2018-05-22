@@ -1,7 +1,8 @@
 @version 4.2
+@fields
 layout(location = 0) out vec4 fcolor;
 
-@uniforms
+
 in vertexData{
     vec2 textureCoord;
     vec3 pos;

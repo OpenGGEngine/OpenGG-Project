@@ -1,7 +1,7 @@
 @version 420
 @glsl define LIGHTNUM 100
 
-@uniforms
+@fields
 layout(location = 0) out vec4 fcolor;
 layout(location = 1) out vec4 bright;
 
@@ -58,7 +58,7 @@ uniform sampler2D bump;
 uniform samplerCube cubemap;
 uniform Material material;
 
-@fields
+
 const float density = 0.00137;
 const float gradient = 2.32;
 
