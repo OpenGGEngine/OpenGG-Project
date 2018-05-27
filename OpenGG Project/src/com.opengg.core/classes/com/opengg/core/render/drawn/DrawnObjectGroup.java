@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class DrawnObjectGroup implements Drawable {
 
-    List<Drawable> objs = new ArrayList<>();
+    public List<Drawable> objs = new ArrayList<>();
 
 
     

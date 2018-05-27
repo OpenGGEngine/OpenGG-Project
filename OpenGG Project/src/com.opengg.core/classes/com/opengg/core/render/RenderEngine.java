@@ -54,6 +54,7 @@ public class RenderEngine {
     private static VertexArrayFormat defaultVAOFormat;
     private static VertexArrayFormat particleVAOFormat;
     private static VertexArrayFormat animationVAOFormat;
+    public static VertexArrayFormat animation2VAOFormat;
     private static boolean cull = true;
     private static int lightoffset;
     private static Camera camera;
@@ -88,6 +89,15 @@ public class RenderEngine {
         animationVAOFormat.addAttribute(new VertexArrayAttribute("texcoord", 2, 20, GL_FLOAT, 10, 0, false));
         animationVAOFormat.addAttribute(new VertexArrayAttribute("jointindex", 4, 20, GL_FLOAT, 12, 0, false));
         animationVAOFormat.addAttribute(new VertexArrayAttribute("weights", 4, 20, GL_FLOAT, 16, 0, false));
+
+        animation2VAOFormat = new VertexArrayFormat();
+        animation2VAOFormat.addAttribute(new VertexArrayAttribute("position", 3, 19, GL_FLOAT, 0, 0, false));
+        //animationVAOFormat.addAttribute(new VertexArrayAttribute("color", 4, 20, GL_FLOAT, 3, 0, false));
+        animation2VAOFormat.addAttribute(new VertexArrayAttribute("tangent", 3, 19, GL_FLOAT, 3, 0, false));
+        animation2VAOFormat.addAttribute(new VertexArrayAttribute("normal", 3, 19, GL_FLOAT, 6, 0, false));
+        animation2VAOFormat.addAttribute(new VertexArrayAttribute("texcoord", 2, 19, GL_FLOAT, 9, 0, false));
+        animation2VAOFormat.addAttribute(new VertexArrayAttribute("jointindex", 4, 19, GL_FLOAT, 11, 0, false));
+        animation2VAOFormat.addAttribute(new VertexArrayAttribute("weights", 4, 19, GL_FLOAT, 15, 0, false));
 
         sceneFramebuffer = WindowFramebuffer.getFloatingPointWindowFramebuffer(1);
         defaultvao = new VertexArrayObject(defaultVAOFormat);

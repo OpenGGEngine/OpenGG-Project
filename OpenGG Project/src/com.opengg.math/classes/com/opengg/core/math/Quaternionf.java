@@ -197,7 +197,14 @@ public class Quaternionf implements Serializable{
     public final Quaternionf setAxis(Vector3f axis){
         return new Quaternionf(w,axis.x,axis.y,axis.z);
     }
-    
+    public Matrix4f ToRotationMatrix()
+    {
+        Vector3f forward =  new Vector3f(2.0f * (x * z - w * y), 2.0f * (y * z + w * x), 1.0f - 2.0f * (x * x + y * y));
+        Vector3f up = new Vector3f(2.0f * (x * y + w * z), 1.0f - 2.0f * (x * x + z * z), 2.0f * (y * z - w * x));
+        Vector3f right = new Vector3f(1.0f - 2.0f * (y * y + z * z), 2.0f * (x * y - w * z), 2.0f * (x * z + w * y));
+
+        return new Matrix4f().InitRotation(forward, up, right);
+    }
     public static final Quaternionf slerp(final Quaternionf a, final Quaternionf b, float t) {
         if (!(t >= 0 && t <= 1)) {
             throw new ArithmeticException("t not in range");
@@ -221,6 +228,76 @@ public class Quaternionf implements Serializable{
         float alpha = sin(t * theta) / sine * flip;
 
         return a.multiply(beta).add(b.multiply(alpha));
+    }
+
+    public Quaternionf slerp (Quaternionf end, float alpha) {
+        final float d = this.x * end.x + this.y * end.y + this.z * end.z + this.w * end.w;
+        float absDot = d < 0.f ? -d : d;
+
+        // Set the first and second scale for the interpolation
+        float scale0 = 1f - alpha;
+        float scale1 = alpha;
+
+        // Check if the angle between the 2 quaternions was big enough to
+        // warrant such calculations
+        if ((1 - absDot) > 0.1) {// Get the angle between the 2 quaternions,
+            // and then store the sin() of that angle
+            final float angle = (float)Math.acos(absDot);
+            final float invSinTheta = 1f / (float)Math.sin(angle);
+
+            // Calculate the scale for q1 and q2, according to the angle and
+            // it's sine value
+            scale0 = ((float)Math.sin((1f - alpha) * angle) * invSinTheta);
+            scale1 = ((float)Math.sin((alpha * angle)) * invSinTheta);
+        }
+
+        if (d < 0.f) scale1 = -scale1;
+
+        // Calculate the x, y, z and w values for the quaternion by using a
+        // special form of linear interpolation for quaternions.
+        Quaternionf quat = new Quaternionf((scale0 * w) + (scale1 * end.w),
+                (scale0 * x) + (scale1 * end.x),
+                (scale0 * y) + (scale1 * end.y),
+                (scale0 * z) + (scale1 * end.z)
+                );
+        // Return the interpolated quaternion
+        return quat;
+    }
+
+    public Quaternionf NLerp(Quaternionf dest, float lerpFactor, boolean shortest)
+    {
+        Quaternionf correctedDest = dest;
+
+        if(shortest && this.Dot(dest) < 0)
+            correctedDest = new Quaternionf( -dest.w,-dest.x, -dest.y, -dest.z);
+
+        return correctedDest.subtract(this).multiply(lerpFactor).add(this).normalize();
+    }
+
+    public Quaternionf SLerp(Quaternionf dest, float lerpFactor, boolean shortest)
+    {
+        final float EPSILON = 1e3f;
+
+        float cos = this.Dot(dest);
+        Quaternionf correctedDest = dest;
+
+        if(shortest && cos < 0)
+        {
+            cos = -cos;
+            correctedDest = new Quaternionf( -dest.w,-dest.x, -dest.y, -dest.z);
+        }
+
+        if(Math.abs(cos) >= 1 - EPSILON)
+            return NLerp(correctedDest, lerpFactor, false);
+
+        float sin = (float)Math.sqrt(1.0f - cos * cos);
+        float angle = (float)Math.atan2(sin, cos);
+        float invSin =  1.0f/sin;
+
+        float srcFactor = (float)Math.sin((1.0f - lerpFactor) * angle) * invSin;
+        float destFactor = (float)Math.sin((lerpFactor) * angle) * invSin;
+
+        return this.multiply(srcFactor).add(correctedDest.multiply(destFactor));
     }
     
     public Quaternionf invert() {
@@ -260,7 +337,10 @@ public class Quaternionf implements Serializable{
         
         return end;
     }
-    
+    public float Dot(Quaternionf r)
+    {
+        return x * r.x + y * r.y + z * r.z + w * r.w;
+    }
     public Vector3f transform(Vector3f v){
         return this.convertMatrix().transform(new Vector4f(v)).truncate();
     }

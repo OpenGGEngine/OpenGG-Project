@@ -62,4 +62,8 @@ public class Tuple<X, Y> {
     public Y getSecond() {
         return y;
     }
+
+    public String toString(){
+        return "<" + this.x.toString() + "," + this.y.toString()+">";
+    }
 }

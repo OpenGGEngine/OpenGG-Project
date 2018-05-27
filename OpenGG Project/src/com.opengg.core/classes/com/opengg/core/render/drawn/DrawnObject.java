@@ -18,9 +18,8 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
-import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
-import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
-import static org.lwjgl.opengl.GL11.glDrawElements;
+
+import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
@@ -118,14 +117,20 @@ public class DrawnObject implements Drawable {
 
     @Override
     public void render(){
+<<<<<<< HEAD
+
+=======
         if(!RenderEngine.validateInitialization()) return;
+>>>>>>> 68435f87fa1b25ce58450bd17ca4505d8342ff1a
         ShaderController.setModel(model);
+
         elementBuffer.bind();
 
         if(!RenderEngine.getCurrentVAO().getFormat().equals(format))
             throw new RenderException("Invalid VAO bound during render");
 
         RenderEngine.getCurrentVAO().applyFormat(vertexBufferObjects);
+
         glDrawElements(drawtype, elementcount, GL_UNSIGNED_INT, 0);
     }
 

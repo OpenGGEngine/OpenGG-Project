@@ -11,6 +11,8 @@ import com.opengg.core.render.shader.VertexArrayObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.lwjgl.opengl.GL11.glGetError;
+
 /**
  *
  * @author Javier
@@ -88,7 +90,7 @@ public class RenderGroup {
     
     public void render(){
         vao.bind();
-        for(Renderable r : items) r.render(); 
+        for(Renderable r : items) r.render();
         vao.unbind();
     }
     
