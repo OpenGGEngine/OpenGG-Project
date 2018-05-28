@@ -9,6 +9,11 @@ module com.opengg.core {
     requires org.lwjgl.opengl;
     requires org.lwjgl.stb;
     requires org.lwjgl;
+    requires  org.lwjgl.stb.natives;
+    requires org.lwjgl.natives;
+    requires org.lwjgl.glfw.natives;
+    requires org.lwjgl.openal.natives;
+    requires org.lwjgl.opengl.natives;
     requires java.logging;
     requires java.desktop;
     requires com.opengg.math;
@@ -17,6 +22,7 @@ module com.opengg.core {
     requires com.opengg.console;
 
     exports com.opengg.core.audio;
+    exports com.opengg.core.model.modelloaderplus;
     exports com.opengg.core.engine;
     exports com.opengg.core.exceptions;
     exports com.opengg.core.extension;

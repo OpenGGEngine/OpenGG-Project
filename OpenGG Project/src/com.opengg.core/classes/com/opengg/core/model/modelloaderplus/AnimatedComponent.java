@@ -191,7 +191,7 @@ public class AnimatedComponent extends RenderComponent {
 
         if ((bone = findBone(NodeName,mesh)) != null)
         {
-            bone.finalTransformation = (GlobalTransformation).multiply(bone.offsetMatrix);//globalInverseTransform.multiply(GlobalTransformation).multiply(bone.offsetMatrix);
+            bone.finalTransformation = globalInverseTransform.multiply(GlobalTransformation).multiply(bone.offsetMatrix);//globalInverseTransform.multiply(GlobalTransformation).multiply(bone.offsetMatrix);
         }
 
         for (int i = 0 ; i < pNode.children.size(); i++) {
@@ -226,7 +226,6 @@ public class AnimatedComponent extends RenderComponent {
                     boneTransforms[bone.id] = bone.finalTransformation;
                 }
             }
-        System.out.println("---------------frame end-----------");
 
 
     }

@@ -57,45 +57,7 @@ public class ShaderController {
      * Initializes the controller and loads all default shaders
      */
     public static void initialize() {
-<<<<<<< HEAD
-        loadShader("mainvert", Resource.getShaderPath("object.vert"), ShaderType.VERTEX);
-        loadShader("animvert", Resource.getShaderPath("anim.vert"), ShaderType.VERTEX);
-        loadShader("animvert2", Resource.getShaderPath("anim2.vert"), ShaderType.VERTEX);
-        loadShader("particlevert", Resource.getShaderPath("particle.vert"), ShaderType.VERTEX);
-        loadShader("passthroughvert", Resource.getShaderPath("passthrough.vert"), ShaderType.VERTEX);
 
-        loadShader("maingeom", Resource.getShaderPath("object.geom"), ShaderType.GEOMETRY);
-        loadShader("passthroughgeom", Resource.getShaderPath("passthrough.geom"), ShaderType.GEOMETRY);
-        loadShader("volumegeom", Resource.getShaderPath("volume.geom"), ShaderType.GEOMETRY);
-        loadShader("mainadjgeom", Resource.getShaderPath("objectadj.geom"), ShaderType.GEOMETRY);
-        loadShader("passthroughadjgeom", Resource.getShaderPath("passthroughadj.geom"), ShaderType.GEOMETRY);
-
-        loadShader("mainfrag", Resource.getShaderPath("phong.frag"), ShaderType.FRAGMENT);
-        loadShader("shadowfrag", Resource.getShaderPath("phongshadow.frag"), ShaderType.FRAGMENT);
-        loadShader("passthroughfrag", Resource.getShaderPath("passthrough.frag"), ShaderType.FRAGMENT);
-        loadShader("ssaofrag", Resource.getShaderPath("ssao.frag"), ShaderType.FRAGMENT);
-        loadShader("cubemapfrag", Resource.getShaderPath("cubemap.frag"), ShaderType.FRAGMENT);
-        loadShader("ambientfrag", Resource.getShaderPath("ambient.frag"), ShaderType.FRAGMENT);
-        loadShader("texturefrag", Resource.getShaderPath("texture.frag"), ShaderType.FRAGMENT);
-        loadShader("terrainfrag", Resource.getShaderPath("terrainmulti.frag"), ShaderType.FRAGMENT);
-        //loadShader("bloomfrag", Resource.getShaderPath("bloom.frag"), OpenGLShaderProgram.FRAGMENT);
-        loadShader("addfrag", Resource.getShaderPath("add.frag"), ShaderType.FRAGMENT);
-        loadShader("guifrag", Resource.getShaderPath("gui.frag"), ShaderType.FRAGMENT);
-        loadShader("barfrag", Resource.getShaderPath("bar.frag"), ShaderType.FRAGMENT);
-        loadShader("hdrfrag", Resource.getShaderPath("hdr.frag"), ShaderType.FRAGMENT);
-        loadShader("waterfrag", Resource.getShaderPath("water.frag"), ShaderType.FRAGMENT);
-          
-        use("mainvert", "mainfrag");
-        saveCurrentConfiguration("object");   
-        
-        use("animvert", "mainfrag");
-        saveCurrentConfiguration("animation");
-
-        use("animvert2", "mainfrag");
-        saveCurrentConfiguration("animation2");
-
-        use("mainvert", "shadowfrag");
-=======
         loadShaderFiles();
         linkShaders();
         compileShaders();
@@ -105,10 +67,13 @@ public class ShaderController {
         saveCurrentConfiguration("object");
         
         use("anim.vert", "phong.frag");
-        saveCurrentConfiguration("animation");  
+        saveCurrentConfiguration("animation");
+
+        use("anim2.vert", "phong.frag");
+        saveCurrentConfiguration("animation2");
         
         use("object.vert", "phongshadow.frag");
->>>>>>> 68435f87fa1b25ce58450bd17ca4505d8342ff1a
+
         saveCurrentConfiguration("shadobject");   
         
         use("object.vert", "terrainmulti.frag");
@@ -171,15 +136,10 @@ public class ShaderController {
 
         findUniform("model");
         setUniform("model", new Matrix4f());
-<<<<<<< HEAD
-        
+
          findUniform("jointsMatrix");
         setUniform("jointsMatrix", new Matrix4f[200]);
-=======
 
-        findUniform("jointsMatrix");
-        setUniform("jointsMatrix", new Matrix4f[50]);
->>>>>>> 68435f87fa1b25ce58450bd17ca4505d8342ff1a
 
         findUniform("projection");
         setUniform("projection", new Matrix4f());

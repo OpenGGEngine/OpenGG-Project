@@ -1,5 +1,6 @@
-#version 410 core
+@version 4.2
 
+@fields
 in vec3 normal;
 in vec4 weights;
 in vec2 texcoord;
@@ -32,6 +33,7 @@ uniform int mode;
 uniform int inst;
 uniform float divAmount;
 
+@code
 void main() {
 
     mat4 modelView = view * model;
@@ -58,7 +60,7 @@ void main() {
 	
     norm = normal;
 	//norm = vec3(weights.xyz);
-	 pos = ( vec4(pos,1)).xyz;
+	 //pos = ( vec4(pos,1)).xyz;
     vec4 P = view *vec4(pos.xyz,1);
     gl_Position = projection * P;
 }

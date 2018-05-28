@@ -9,6 +9,10 @@ import com.opengg.core.engine.GGApplication;
 import com.opengg.core.engine.OpenGG;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Quaternionf;
+import com.opengg.core.model.ModelLoader;
+import com.opengg.core.model.modelloaderplus.AnimatedComponent;
+import com.opengg.core.model.modelloaderplus.MModel;
+import com.opengg.core.model.modelloaderplus.ModelLoaderPlus;
 import com.opengg.core.network.NetworkEngine;
 import com.opengg.core.physics.collision.AABB;
 import com.opengg.core.physics.collision.ColliderGroup;
@@ -42,6 +46,9 @@ import com.opengg.core.world.components.LightComponent;
 import com.opengg.core.world.components.ModelRenderComponent;
 import com.opengg.core.world.components.TerrainComponent;
 import com.opengg.core.world.components.physics.PhysicsComponent;
+
+import java.io.File;
+import java.io.IOException;
 
 
 public class OpenGGTest extends GGApplication{
@@ -118,7 +125,16 @@ public class OpenGGTest extends GGApplication{
                 Resource.getTexturePath("skybox\\majestic_dn.png"),
                 Resource.getTexturePath("skybox\\majestic_rt.png"),
                 Resource.getTexturePath("skybox\\majestic_lf.png")), 1500f));
-
+        AnimatedComponent component;
+        try {
+            MModel s = ModelLoaderPlus.loadModel(new File("C:/res/model2.bmf"),new File("C:/res/anim2.gga"));
+            component = new AnimatedComponent(s);
+            component.setFormat(RenderEngine.animation2VAOFormat);
+            component.setShader("animation2");
+            WorldEngine.getCurrent().attach(component);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         player = new FreeFlyComponent();
         player.use();
 

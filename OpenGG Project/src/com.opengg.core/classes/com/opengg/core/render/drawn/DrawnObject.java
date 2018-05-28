@@ -117,11 +117,9 @@ public class DrawnObject implements Drawable {
 
     @Override
     public void render(){
-<<<<<<< HEAD
 
-=======
         if(!RenderEngine.validateInitialization()) return;
->>>>>>> 68435f87fa1b25ce58450bd17ca4505d8342ff1a
+
         ShaderController.setModel(model);
 
         elementBuffer.bind();

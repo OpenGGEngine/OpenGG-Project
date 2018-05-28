@@ -92,6 +92,9 @@ public class FreeFlyComponent extends ControlledComponent implements Actionable,
                 case "lookdown":
                     //controlrot.x -= 1;
                     break;
+                case "fire":
+                    System.exit(0);
+                    break;
             }
         }else{
             switch(action.name){

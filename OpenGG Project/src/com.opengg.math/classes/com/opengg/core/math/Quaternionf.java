@@ -82,6 +82,7 @@ public class Quaternionf implements Serializable{
         z = cx*cysz + sx*sycz;
     }
 //        
+//
 //    public Quaternionf(Matrix4f matrix) {
 //        final float trace = matrix.m11 + matrix.m22 + matrix.m33;
 //
