@@ -20,26 +20,63 @@ import static org.lwjgl.opengl.GL21.GL_SRGB_ALPHA;
 import static org.lwjgl.opengl.GL30.GL_TEXTURE_2D_ARRAY;
 
 /**
- *
+ * Represents an instance of a graphics API texture <br><br>
  * @author Javier
+ * @throws com.opengg.core.exceptions.RenderException Thrown if there is no instance of a graphics API in the current thread
  */
 public interface Texture {
-
-
+    /**
+     * Binds the texture to the current texture unit
+     */
     void bind();
 
+    /**
+     * Unbinds the texture from the current texture unit
+     */
     void unbind();
 
+    /**
+     * Sets the current texture unit
+     * @param loc Texture unit
+     */
     void setActiveTexture(int loc);
 
+    /**
+     * Binds the texture to the given texture unit
+     * @param loc Texture unit to bind this texture to
+     */
     void use(int loc);
 
+    /**
+     * Creates an empty 2d storage buffer for this texture
+     * @param width Texture width
+     * @param height Texture heights
+     */
     void set2DStorage(int width, int height);
 
+    /**
+     * Creates an empty 3d storage buffer for this texture
+     * @param width Texture width
+     * @param height Texture height
+     * @param depth Texture depth, or alternatively array size if using array textures
+     */
     void set3DStorage(int width, int height, int depth);
 
+    /**
+     * Uploads the given {@link TextureData} object to the texture<br><br>
+     * This method automatically creates the required storage using the size of the given object
+     * @param data TextureData to create a texture from
+     */
     void set2DData(TextureData data);
 
+    /**
+     * Uploads the given {@link TextureData} object to the texture, starting at the given x and y offsets <br><br>
+     * This method copies the data from the TextureData object from {@code xoffset, yoffset} to {@code xoffset + data.width, yoffset + data.height}
+     * Because this method does not create storage for this texture, instead just updating a subsection, calling it before {@link #set2DStorage(int, int)} will cause an API error
+     * @param xoffset x position offset
+     * @param yoffset y position offset
+     * @param data TextureData to upload starting at the given offsets
+     */
     void set2DSubData(int xoffset, int yoffset, TextureData data);
 
     void setCubemapData(TextureData data1, TextureData data2, TextureData data3, TextureData data4, TextureData data5, TextureData data6);

@@ -15,6 +15,7 @@ import java.util.List;
  *
  * @author Javier
  */
+@ForComponent(Component.class)
 public abstract class ViewModel {
     public Component component;
     List<Element> elements = new ArrayList<>();
@@ -22,35 +23,35 @@ public abstract class ViewModel {
     public ViewModel(){
         Element pos = new Element();
         pos.autoupdate = true;
-        pos.type = Element.VECTOR3F;
+        pos.type = Element.Type.VECTOR3F;
         pos.name = "Position";
         pos.internalname = "pos";
         pos.value = new Vector3f(0,0,0);
         
         Element rot = new Element();
         rot.autoupdate = true;
-        rot.type = Element.VECTOR3F;
+        rot.type = Element.Type.VECTOR3F;
         rot.name = "Rotation";
         rot.internalname = "rot";
         rot.value = new Vector3f(0,0,0);
         
         Element scale = new Element();
         scale.autoupdate = true;
-        scale.type = Element.VECTOR3F;
+        scale.type = Element.Type.VECTOR3F;
         scale.name = "Scale";
         scale.internalname = "scale";
         scale.value = new Vector3f(1,1,1);
         
         Element name = new Element();
         name.autoupdate = true;
-        name.type = Element.STRING;
+        name.type = Element.Type.STRING;
         name.name = "Name";
         name.internalname = "name";
         name.value = "default";
         
         Element update = new Element();
         update.autoupdate = true;
-        update.type = Element.BOOLEAN;
+        update.type = Element.Type.BOOLEAN;
         update.name = "Enabled";
         update.internalname = "enabled";
         update.value = true;
@@ -58,7 +59,7 @@ public abstract class ViewModel {
         
         Element serialize = new Element();
         serialize.autoupdate = true;
-        serialize.type = Element.BOOLEAN;
+        serialize.type = Element.Type.BOOLEAN;
         serialize.name = "Should serialize";
         serialize.internalname = "serialize";
         serialize.value = true;
@@ -66,7 +67,7 @@ public abstract class ViewModel {
         
         Element abs = new Element();
         abs.autoupdate = true;
-        abs.type = Element.BOOLEAN;
+        abs.type = Element.Type.BOOLEAN;
         abs.name = "Is position absolute";
         abs.internalname = "abs";
         abs.value = false;

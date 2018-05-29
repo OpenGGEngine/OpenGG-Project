@@ -12,6 +12,7 @@ import com.opengg.core.world.components.Component;
  *
  * @author Javier
  */
+@ForComponent(CameraComponent.class)
 public class CameraComponentViewModel extends ViewModel{
 
     @Override

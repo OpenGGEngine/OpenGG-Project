@@ -15,6 +15,7 @@ import com.opengg.core.world.components.SunComponent;
  *
  * @author Javier
  */
+@ForComponent(SunComponent.class)
 public class SunComponentViewModel extends ViewModel{
 
     @Override
@@ -22,19 +23,19 @@ public class SunComponentViewModel extends ViewModel{
         
         Element tex = new Element();
         tex.autoupdate = false;
-        tex.type = Element.TEXTURE;
+        tex.type = Element.Type.TEXTURE;
         tex.name = "Sun Texture";
         tex.value = TextureManager.getDefault();
         tex.internalname = "suntex";
         
         Element speed = new Element();
-        speed.type = Element.FLOAT;
+        speed.type = Element.Type.FLOAT;
         speed.name = "Rotation Speed (rad/sec)";
         speed.value = 0.01f;
         speed.internalname = "speed";
         
         Element currot = new Element();
-        currot.type = Element.FLOAT;
+        currot.type = Element.Type.FLOAT;
         currot.name = "Current rotation";
         currot.value = 0f;
         currot.internalname = "currot";
@@ -48,7 +49,7 @@ public class SunComponentViewModel extends ViewModel{
     public Initializer getInitializer(Initializer init) {
         Element tex = new Element();
         tex.autoupdate = false;
-        tex.type = Element.TEXTURE;
+        tex.type = Element.Type.TEXTURE;
         tex.name = "Sun Texture";
         tex.value = TextureManager.getDefault();
         tex.internalname = "suntex";

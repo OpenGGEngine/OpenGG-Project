@@ -13,6 +13,7 @@ import com.opengg.core.world.components.particle.*;
 import com.opengg.core.world.components.physics.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -28,7 +29,7 @@ public class ViewModelComponentRegistry {
         //registerAllFromJar(Resource.getAbsoluteFromLocal("lib" + File.separator + "com.opengg.core.jar"));
     }
     
-    public static void initializeDefault(){
+    private static void initializeDefault(){
         register(ModelRenderComponent.class);
         register(WaterComponent.class);
         register(WorldObject.class);
@@ -49,7 +50,6 @@ public class ViewModelComponentRegistry {
         register(LightComponentViewModel.class);
         register(CameraComponentViewModel.class);
         register(ExplosionParticleEmitterViewModel.class);
-        register(GenericComponentViewModel.class);
         register(ZoneViewModel.class);
         
     }
@@ -89,23 +89,20 @@ public class ViewModelComponentRegistry {
     }
     
     public static void createRegisters(){
-        classsearch: for(Class c : components){
-            for(Class vm : viewmodels){
-                register(c);
-                register(vm);
-                if(c.getSimpleName().equals(vm.getSimpleName().replace("ViewModel", ""))){
-                    ViewModelComponentRegisterInfoContainer register = new ViewModelComponentRegisterInfoContainer();
-                    register.component = c;
-                    register.viewmodel = vm;
-                    boolean found = false;
-                    for(ViewModelComponentRegisterInfoContainer vmcric : registered){
-                        if(c == vmcric.component && vm == vmcric.viewmodel) found = false;
-                    }
-                    if(!found) registered.add(register);
-                    continue classsearch;
-                }
-            }
-        }
+        var vmmap = viewmodels.stream()
+                .collect(Collectors.toMap(v -> ((ForComponent)v.getAnnotation(ForComponent.class)).value(), v -> v));
+
+        var regmap = registered.stream()
+                .collect(Collectors.toMap(v -> v.component, v -> v));
+
+        var containers = components.stream()
+                .filter(c -> vmmap.containsKey(c))
+                .map(c -> new ViewModelComponentRegisterInfoContainer(c, vmmap.get(c)))
+                .filter(vc -> !regmap.containsKey(vc.component))
+                .peek(vc -> regmap.put(vc.component, vc))
+                .collect(Collectors.toList());
+
+        registered.addAll(containers);
         
         GGConsole.log("Created and matched viewmodel registries, found " + (registered.size()) + " component types with viewmodels and " + (components.size() - registered.size()) + " without");
     }
@@ -138,5 +135,19 @@ public class ViewModelComponentRegistry {
     }
 
     private ViewModelComponentRegistry() {
+    }
+
+    /**
+     *
+     * @author Javier
+     */
+    static class ViewModelComponentRegisterInfoContainer {
+        public Class component;
+        public Class viewmodel;
+
+        public ViewModelComponentRegisterInfoContainer(Class c, Class v){
+            this.component = c;
+            this.viewmodel = v;
+        }
     }
 }

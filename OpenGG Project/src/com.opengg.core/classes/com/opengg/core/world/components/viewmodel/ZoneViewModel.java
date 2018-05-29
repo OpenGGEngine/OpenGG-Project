@@ -17,12 +17,13 @@ import com.opengg.core.world.components.triggers.Triggerable;
  *
  * @author Javier
  */
+@ForComponent(Zone.class)
 public class ZoneViewModel extends ViewModel{
 
     @Override
     public void createMainViewModel() {
         Element lwh = new Element();
-        lwh.type = Element.VECTOR3F;
+        lwh.type = Element.Type.VECTOR3F;
         lwh.autoupdate = true;
         lwh.name = "LWH";
         lwh.internalname = "lwh";
@@ -30,7 +31,7 @@ public class ZoneViewModel extends ViewModel{
         lwh.value = new Vector3f(1,1,1);
         
         Element children = new Element();
-        children.type = Element.STRING;
+        children.type = Element.Type.STRING;
         children.autoupdate = false;
         children.name = "Children";
         children.internalname = "children";
@@ -44,7 +45,7 @@ public class ZoneViewModel extends ViewModel{
     @Override
     public Initializer getInitializer(Initializer init) {
         Element lwh = new Element();
-        lwh.type = Element.VECTOR3F;
+        lwh.type = Element.Type.VECTOR3F;
         lwh.autoupdate = true;
         lwh.internalname = "lwh";
         lwh.visible = true;

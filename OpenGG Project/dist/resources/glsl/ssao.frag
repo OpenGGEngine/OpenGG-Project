@@ -1,30 +1,19 @@
 @version 4.2
+@include stdfrag.ggsl
 
 @fields
-layout(location = 0) out vec4 fcolor;
-
-in vertexData{
-    
-    vec2 textureCoord;
-    vec3 pos;
-    vec3 norm;
-};
 
 uniform sampler2D Kd;
 uniform sampler2D Ka;
 
 
-vec2 camerarange         = vec2(1280, 960);
+vec2 camerarange = vec2(1280, 960);
 vec2 screensize = vec2(1280, 960);
 
 float bias = 0.005;
 float vis = 1;
 
 @code
-vec4 getTex(sampler2D tname){
-    return texture(tname, textureCoord);
-}
-
 float readDepth( in vec2 coord ) {
 	return (2.0 * camerarange.x) / (camerarange.y + camerarange.x - texture( Ka, coord ).x * (camerarange.y - camerarange.x));	
 }
@@ -120,8 +109,8 @@ vec4 ssao(){
 	ao+=compareDepths(depth,d)/aoscale;
         
 	ao/=16.0;
-    ao = clamp(ao, 0.0f, 0.5f);
-	return vec4(1-ao);// * texture(Kd,textureCoord) * 2;
+    ao = clamp(ao, 0.5f, 1.0f);
+	return vec4(ao,ao,ao,1) * texture(Kd,textureCoord);
 }
 
 main() {

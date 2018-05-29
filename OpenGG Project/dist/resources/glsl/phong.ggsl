@@ -1,0 +1,39 @@
+@include material.ggsl
+@include light.ggsl
+@include stdfrag.ggsl
+
+@fields
+uniform float uvmultx;
+uniform float uvmulty;
+uniform vec3 camera;
+
+float bloomMin = 0.9;
+float vis = 1;
+vec3 eyedir;
+
+@code
+generatePhongData(){
+    eyedir = normalize(camera - pos.xyz);
+}
+
+vec3 getPhongFrom(Light light){
+    
+	float distance = length( light.lightpos.xyz - pos.xyz );
+	float attenuation =  clamp((1.0 - (distance/light.lightdistance)), 0.0, 10.0);
+	attenuation = attenuation * attenuation;
+
+	vec3 lightDir = normalize(light.lightpos.xyz - pos.xyz);
+	vec3 halfwayDir = normalize(lightDir + eyedir);
+
+    float cosTheta = max(dot( n,lightDir ), 0.0f );
+    vec3 fdif = diffuse * light.color.xyz * cosTheta * attenuation;
+	
+    float cosAlpha = clamp(max(dot(n, halfwayDir), 0.0), 0, 1);
+	vec3 fspec = specular * light.color.xyz * pow(cosAlpha, specpow) * attenuation;
+	
+    vec3 fragColor = fdif + fspec;
+
+    return fragColor;
+}
+
+

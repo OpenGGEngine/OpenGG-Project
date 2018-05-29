@@ -10,23 +10,60 @@ package com.opengg.core.world.components.viewmodel;
  * @author Javier
  */
 public class Element {
-    public static final int INTEGER = 0, 
-            FLOAT = 1, 
-            STRING = 2, 
-            COMPONENT = 3, 
-            VECTOR3F = 4, 
-            VECTOR2F = 5, 
-            VECTOR4F = 6, 
-            QUATERNIONF = 7,
-            BOOLEAN = 8,
-            TEXTURE = 9,
-            MODEL = 10;
-    
     public String name = "Default";
     public String internalname;
     public boolean autoupdate = true;
-    public int type;
+    public Type type;
     public Object value;
     public boolean visible = true;
     public boolean forceupdate = false;
+
+    public Element name(String name){
+        this.name = name;
+        return this;
+    }
+
+    public Element internalName(String internalname){
+        this.internalname = internalname;
+        return this;
+    }
+
+    public Element autoUpdate(boolean autoupdate){
+        this.autoupdate = autoupdate;
+        return this;
+    }
+
+    public Element type(Type type){
+        this.type = type;
+        return this;
+    }
+
+    public Element value(Object value){
+        this.value = value;
+        return this;
+    }
+
+    public Element visible(boolean visible){
+        this.visible = visible;
+        return this;
+    }
+
+    public Element forceUpdate(boolean forceupdate){
+        this.forceupdate = forceupdate;
+        return this;
+    }
+
+    public enum Type{
+        INTEGER,
+        FLOAT,
+        STRING,
+        COMPONENT,
+        VECTOR3F,
+        VECTOR2F,
+        VECTOR4F,
+        QUATERNIONF,
+        BOOLEAN,
+        TEXTURE,
+        MODEL
+    }
 }

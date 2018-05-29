@@ -21,10 +21,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.opengg.core.render.shader.ShaderProgram.ShaderType;
@@ -63,15 +60,15 @@ public class ShaderController {
         compileShaders();
         loadGLShadersFromFiles();
 
-        use("object.vert", "phong.frag");
+        use("object.vert", "object.frag");
         saveCurrentConfiguration("object");
-        
-        use("anim.vert", "phong.frag");
-        saveCurrentConfiguration("animation");
 
-        use("anim2.vert", "phong.frag");
+        use("anim2.vert", "object.frag");
         saveCurrentConfiguration("animation2");
-        
+
+        use("anim.vert", "object.frag");
+        saveCurrentConfiguration("animation");  
+
         use("object.vert", "phongshadow.frag");
 
         saveCurrentConfiguration("shadobject");   
@@ -94,6 +91,9 @@ public class ShaderController {
         use("object.vert", "hdr.frag");
         saveCurrentConfiguration("hdr");
 
+        use("object.vert", "bright.frag");
+        saveCurrentConfiguration("bright");
+
         use("object.vert", "passthrough.frag");
         saveCurrentConfiguration("passthrough");
              
@@ -114,6 +114,12 @@ public class ShaderController {
         
         use("object.vert", "add.frag");
         saveCurrentConfiguration("add");
+
+        use("object.vert", "gaussh.frag");
+        saveCurrentConfiguration("blurh");
+
+        use("object.vert", "gaussv.frag");
+        saveCurrentConfiguration("blurv");
         
         use("particle.vert", "texture.frag");
         saveCurrentConfiguration("particle");
@@ -633,47 +639,47 @@ public class ShaderController {
     public static void saveCurrentConfiguration(String name){
         saveConfiguration(currentvert, currenttesc, currenttese, currentgeom, currentfrag, name);
     }
-    
+
     /**
      * Uses the configuration with the given name<br><br>
-     * 
+     *
      * This name should be the same as the one previously saved in {@link #saveCurrentConfiguration(String)}
-     * 
+     *
      * @param name Name of configuration
      */
     public static void useConfiguration(String name){
         String id = rnames.get(name);
         ShaderPipeline pipeline = pipelines.get(id);
 
-        pipeline.bind();
-
         if(pipeline == null){
             GGConsole.error("A shader configuration named " + name + " tried to be used, but no appropriate pipeline was found!");
             throw new ShaderException("Failed to find pipeline named " + name);
         }
-        
+
+        pipeline.bind();
+
         currentshader = name;
-        
+
         currentvert = pipeline.getShader(ShaderType.VERTEX);
         currenttesc = pipeline.getShader(ShaderType.TESS_CONTROL);
         currenttese = pipeline.getShader(ShaderType.TESS_EVAL);
         currentgeom = pipeline.getShader(ShaderType.GEOMETRY);
         currentfrag = pipeline.getShader(ShaderType.FRAGMENT);
-        
+
 
     }
-    
+
     public static void clearPipelineCache(){
         for(ShaderPipeline p : pipelines.values()){
             p.delete();
         }
         pipelines.clear();
     }
-    
+
     public static ShaderProgram getProgram(String program){
         return programs.get(program);
     }
-    
+
     public static String getCurrentConfiguration(){
         return currentshader;
     }
@@ -736,7 +742,6 @@ public class ShaderController {
         for(var name : allfiles){
             var filename = name;
             try{
-
                 var processed = new ShaderFile(filename, GGInfo.getApplicationPath() + "\\resources\\glsl\\" + name);
                 if(processed.getFields().isEmpty() && processed.getIncludes().isEmpty() && processed.getCode().isEmpty())
                     continue;
@@ -883,8 +888,6 @@ public class ShaderController {
                 }
             }
 
-            //System.out.println("_________________________________________________");
-            //System.out.println(name);
             fulldata = shsource;
         }
 
@@ -894,35 +897,38 @@ public class ShaderController {
             fields.addAll(source.getFields());
 
             for(var file : dependencies){
+
                 List<String> addvals = new ArrayList<>();
-                for(var val : file.getCode()){
-                    glvals.stream()
-                            .filter(v -> !val.getName().equals(v))
-                            .findFirst()
-                            .ifPresent(addvals::add);
+                for(var val : file.getGlValues()){
+                    if(!glvals.stream()
+                            .filter(f -> f.equals(val)).findFirst().isPresent()){
+                        addvals.add(val);
+                    }
                 }
 
-                glvals.addAll(addvals);
+                glvals.addAll(0, addvals);
 
                 List<ShaderFile.ShaderFunction> addfuncs = new ArrayList<>();
                 for(var func : file.getCode()){
-                    funcs.stream()
-                            .filter(f -> !func.getName().equals(f.getName()))
-                            .findFirst()
-                            .ifPresent(addfuncs::add);
+                    if(!funcs.stream()
+                            .filter(f -> f.getName().equals(func.getName())).findFirst().isPresent()){
+                        addfuncs.add(func);
+                    }
                 }
 
-                funcs.addAll(addfuncs);
+                funcs.addAll(0, addfuncs);
 
                 List<ShaderFile.ShaderField> addfields = new ArrayList<>();
+
                 for(var field : file.getFields()){
-                    fields.stream()
-                            .filter(f -> !field.getName().equals(f.getName()))
-                            .findFirst()
-                            .ifPresent(addfields::add);
+                    if(!fields.stream()
+                            .filter(f -> f.getName().equals(field.getName())).findFirst().isPresent()){
+                        addfields.add(field);
+                    }
                 }
 
-                fields.addAll(addfields);
+                fields.addAll(0, addfields);
+
             }
         }
 

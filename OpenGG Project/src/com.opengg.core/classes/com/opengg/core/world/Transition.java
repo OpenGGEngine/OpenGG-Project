@@ -13,10 +13,10 @@ import com.opengg.core.world.components.Component;
  * @author Javier
  */
 public abstract class Transition {
-    Component comp;
-    float duration;
-    float elapsed;
-    boolean running = true;
+    protected Component comp;
+    protected float duration;
+    protected float elapsed;
+    protected boolean running = true;
     
     
     public float duration(){

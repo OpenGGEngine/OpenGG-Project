@@ -14,6 +14,7 @@ import com.opengg.core.world.components.ModelRenderComponent;
  *
  * @author Javier
  */
+@ForComponent(ModelRenderComponent.class)
 public class ModelRenderComponentViewModel extends ViewModel{
     
     @Override
@@ -21,7 +22,7 @@ public class ModelRenderComponentViewModel extends ViewModel{
 
         Element modelpath = new Element();
         modelpath.autoupdate = true;
-        modelpath.type = Element.MODEL;
+        modelpath.type = Element.Type.MODEL;
         modelpath.name = "Model";
         modelpath.internalname = "model";
         modelpath.value = ModelManager.getDefaultModel();
@@ -46,7 +47,7 @@ public class ModelRenderComponentViewModel extends ViewModel{
     public void createMainViewModel() {
         Element modelpath = new Element();
         modelpath.autoupdate = true;
-        modelpath.type = Element.MODEL;
+        modelpath.type = Element.Type.MODEL;
         modelpath.name = "Model";
         modelpath.internalname = "model";
         modelpath.value = ModelManager.getDefaultModel();

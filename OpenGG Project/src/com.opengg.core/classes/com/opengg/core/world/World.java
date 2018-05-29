@@ -33,7 +33,7 @@ import java.util.List;
  * <h1>Represents a world, the highest level object in the component/world system</h1>
  *
  * It contains all of the information required to run a specific instance of the world system.
- * This includes the related instance of the physics engine and all of the render groups for this specific world
+ * This includes the related instance of the physics engine and the render environment for this specific world
  * <p>
  * Note, while this is a subclass of component for the purpose of implementation and abstraction, many functions related to
  * positioning and parents either return default values or throw errors, an example of the latter

@@ -20,14 +20,14 @@ public class TransitionEngine {
     
     public static void add(Transition t){
         for(ComponentTransitionFrame frame : frames){
-            if(frame.comp == t.comp){
+            if(frame.comp == t.getComponent()){
                 frame.add(t);
                 return;
             }
         }
         
         ComponentTransitionFrame frame = new ComponentTransitionFrame();
-        frame.comp = t.comp;
+        frame.comp = t.getComponent();
         frame.add(t);
         frames.add(frame);
     }

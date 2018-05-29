@@ -380,9 +380,8 @@ public final class OpenGG{
     public static void syncExec(Executable e){
         ExecutableContainer execcont = new ExecutableContainer(e);
 
-        if(!inMainThread()){
-            GGConsole.error("syncExec cannot be called in OpenGG thread!");
-            throw new RuntimeException("syncExec cannot be called in OpenGG thread!");
+        if(inMainThread()){
+            e.execute();
         }
 
         exec(execcont);

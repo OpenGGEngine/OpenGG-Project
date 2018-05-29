@@ -5,6 +5,8 @@
  */
 package com.opengg.core.world.structure;
 
+import com.opengg.core.util.GGOutputStream;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,5 +15,13 @@ import java.util.List;
  * @author Javier
  */
 public class WorldStructure {
-    public List<WorldGeometry> geometry = new ArrayList();
+    private List<WorldGeometry> allgeometry = new ArrayList();
+
+    public void addGeometry(WorldGeometry geometry){
+        allgeometry.add(geometry);
+    }
+
+    public void serialize(GGOutputStream out){
+
+    }
 }

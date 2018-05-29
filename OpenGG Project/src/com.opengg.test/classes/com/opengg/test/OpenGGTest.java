@@ -7,6 +7,7 @@ import com.opengg.core.audio.AudioController;
 import com.opengg.core.engine.BindController;
 import com.opengg.core.engine.GGApplication;
 import com.opengg.core.engine.OpenGG;
+import com.opengg.core.gui.GUIFramebufferTexture;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.model.ModelLoader;
@@ -24,6 +25,7 @@ import com.opengg.core.render.light.Light;
 import com.opengg.core.render.postprocess.PostProcessController;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.shader.ShaderFile;
+import com.opengg.core.render.texture.Framebuffer;
 import com.opengg.core.render.window.GLFWWindow;
 import com.opengg.core.render.window.WindowController;
 import com.opengg.core.world.Camera;
@@ -46,6 +48,7 @@ import com.opengg.core.world.components.LightComponent;
 import com.opengg.core.world.components.ModelRenderComponent;
 import com.opengg.core.world.components.TerrainComponent;
 import com.opengg.core.world.components.physics.PhysicsComponent;
+import com.opengg.core.world.components.viewmodel.ViewModelComponentRegistry;
 
 import java.io.File;
 import java.io.IOException;
@@ -155,8 +158,12 @@ public class OpenGGTest extends GGApplication{
         BindController.addBind(ControlType.KEYBOARD, "lookdown", KEY_DOWN);
         BindController.addBind(ControlType.KEYBOARD, "fire", KEY_L);
         BindController.addBind(ControlType.KEYBOARD, "aim", KEY_K);
+
+        ViewModelComponentRegistry.initialize();
+        ViewModelComponentRegistry.createRegisters();
         
         RenderEngine.setProjectionData(ProjectionData.getPerspective(100, 0.2f, 3000f));
+        //GUIController.getDefault().addItem("fb", new GUIFramebufferTexture(RenderEngine.getSceneFramebuffer(), Framebuffer.DEPTH, new Vector2f(0.2f,0.2f)));
 
         ((GLFWWindow)WindowController.getWindow()).setCursorLock(true);
     }

@@ -12,40 +12,41 @@ import com.opengg.core.world.components.physics.PhysicsComponent;
  *
  * @author Javier
  */
+@ForComponent(PhysicsComponent.class)
 public class PhysicsComponentViewModel extends ViewModel{
 
     @Override
     public void createMainViewModel() {
         Element mass = new Element();
-        mass.type = Element.FLOAT;
+        mass.type = Element.Type.FLOAT;
         mass.autoupdate = true;
         mass.name = "Mass";
         mass.internalname = "mass";
         mass.value = 100f;
         
         Element density = new Element();
-        density.type = Element.FLOAT;
+        density.type = Element.Type.FLOAT;
         density.autoupdate = true;
         density.name = "Density";
         density.internalname = "density";
         density.value = 1f;
         
         Element restitution = new Element();
-        restitution.type = Element.FLOAT;
+        restitution.type = Element.Type.FLOAT;
         restitution.autoupdate = true;
         restitution.name = "Restitution";
         restitution.internalname = "restitution";
         restitution.value = 0.5f;
         
         Element sfriction = new Element();
-        sfriction.type = Element.FLOAT;
+        sfriction.type = Element.Type.FLOAT;
         sfriction.autoupdate = true;
         sfriction.name = "Static friction";
         sfriction.internalname = "sfriction";
         sfriction.value = 0.6f;
         
         Element dfriction = new Element();
-        dfriction.type = Element.FLOAT;
+        dfriction.type = Element.Type.FLOAT;
         dfriction.autoupdate = true;
         dfriction.name = "Static friction";
         dfriction.internalname = "sfriction";

@@ -9,7 +9,6 @@ import com.opengg.core.render.RenderEngine;
 import com.opengg.core.exceptions.RenderException;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.render.GraphicsBuffer;
-import com.opengg.core.render.internal.opengl.OpenGLBuffer;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.shader.VertexArrayFormat;
 import com.opengg.core.system.Allocator;
@@ -23,6 +22,7 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
+import static org.lwjgl.opengl.GL42.glDrawElementsInstancedBaseVertexBaseInstance;
 
 /**
  *
@@ -34,6 +34,8 @@ public class DrawnObject implements Drawable {
     private VertexArrayFormat format;
     private int elementcount;
     private int drawtype = GL_TRIANGLES;
+    private int instancecount = 1;
+    private int basevertex = 0;
     
     Matrix4f model = Matrix4f.translate(0, 0, 0);
 
@@ -63,8 +65,8 @@ public class DrawnObject implements Drawable {
         vertexBufferObjects.set(bufferid, vbo);
     }
 
-    private OpenGLBuffer createGLBuffer(FloatBuffer buffer, int buffertype){
-        var vbo = new OpenGLBuffer(GL_ARRAY_BUFFER, buffertype);
+    private GraphicsBuffer createGLBuffer(FloatBuffer buffer, int buffertype){
+        var vbo = GraphicsBuffer.allocate(GL_ARRAY_BUFFER, buffertype);
         vbo.bind();
         vbo.uploadData(buffer);
         return vbo;
@@ -84,7 +86,7 @@ public class DrawnObject implements Drawable {
 
         var indexbuffer = validateIndexBuffer(format, ind, buffers);
 
-        elementBuffer = new OpenGLBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW);
+        elementBuffer = GraphicsBuffer.allocate(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW);
         elementBuffer.bind();
         elementBuffer.uploadData(indexbuffer);
     }
@@ -129,7 +131,7 @@ public class DrawnObject implements Drawable {
 
         RenderEngine.getCurrentVAO().applyFormat(vertexBufferObjects);
 
-        glDrawElements(drawtype, elementcount, GL_UNSIGNED_INT, 0);
+        glDrawElementsInstancedBaseVertexBaseInstance(drawtype, elementcount, GL_UNSIGNED_INT, 0, instancecount, basevertex, 0);
     }
 
     @Override

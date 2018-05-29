@@ -14,25 +14,26 @@ import com.opengg.core.world.components.WaterComponent;
  *
  * @author Javier
  */
+@ForComponent(WaterComponent.class)
 public class WaterComponentViewModel extends ViewModel{
 
     @Override
     public void createMainViewModel() {
         Element tex = new Element();
-        tex.type = Element.TEXTURE;
+        tex.type = Element.Type.TEXTURE;
         tex.internalname = "tex";
         tex.name = "Water Texture";
         tex.autoupdate = true;
         tex.value = TextureManager.getDefault();
         
         Element texsize = new Element();
-        texsize.type = Element.FLOAT;
+        texsize.type = Element.Type.FLOAT;
         texsize.internalname = "size";
         texsize.name = "Water Texture Scale";
         texsize.value = 0.1f;
         
         Element movementspeed = new Element();
-        movementspeed.type = Element.FLOAT;
+        movementspeed.type = Element.Type.FLOAT;
         movementspeed.internalname = "speed";
         movementspeed.name = "Texture Animation Speed";
         movementspeed.value = 100f;
@@ -46,7 +47,7 @@ public class WaterComponentViewModel extends ViewModel{
     public Initializer getInitializer(Initializer init) {
 
         Element tex = new Element();
-        tex.type = Element.TEXTURE;
+        tex.type = Element.Type.TEXTURE;
         tex.internalname = "tex";
         tex.name = "Water Texture";
         tex.autoupdate = true;
@@ -54,7 +55,7 @@ public class WaterComponentViewModel extends ViewModel{
         init.addElement(tex);
         
         Element size = new Element();
-        size.type = Element.FLOAT;
+        size.type = Element.Type.FLOAT;
         size.internalname = "size";
         size.name = "Water Mesh Size";
         size.autoupdate = true;

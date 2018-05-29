@@ -1,0 +1,13 @@
+@fields
+struct Light
+{
+    vec4 lightpos;
+    vec4 color;
+    mat4 view;
+    mat4 perspective;
+	float lightdistance;
+	float lightdistance2;
+	float shadow;
+	float padding1;
+	vec4 padding2;
+};

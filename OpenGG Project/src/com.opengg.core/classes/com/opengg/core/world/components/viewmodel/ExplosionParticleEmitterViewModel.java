@@ -15,30 +15,31 @@ import com.opengg.core.world.components.particle.ParticleEmitter;
  *
  * @author Javier
  */
+@ForComponent(ExplosionParticleEmitter.class)
 public class ExplosionParticleEmitterViewModel extends ViewModel{
 
     @Override
     public void createMainViewModel() {
         Element tex = new Element();
-        tex.type = Element.TEXTURE;
+        tex.type = Element.Type.TEXTURE;
         tex.name = "Particle texture";
         tex.value = TextureManager.getDefault();
         tex.internalname = "tex";
         
         Element life = new Element();
-        life.type = Element.FLOAT;
+        life.type = Element.Type.FLOAT;
         life.name = "Particle life";
         life.value = 1f;
         life.internalname = "life";
         
         Element amount = new Element();
-        amount.type = Element.INTEGER;
+        amount.type = Element.Type.INTEGER;
         amount.name = "Amount per explosion";
         amount.value = 1;
         amount.internalname = "amount";
         
         Element vel = new Element();
-        vel.type = Element.FLOAT;
+        vel.type = Element.Type.FLOAT;
         vel.name = "Particle velocity";
         vel.value = 1f;
         vel.internalname = "vel";

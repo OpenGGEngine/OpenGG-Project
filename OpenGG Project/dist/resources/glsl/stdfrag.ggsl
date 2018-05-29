@@ -1,0 +1,17 @@
+@fields
+layout(location = 0) out vec4 fcolor;
+
+in vertexData{
+    vec2 textureCoord;
+    vec3 pos;
+    vec3 norm;
+};
+
+uniform mat4 view;
+uniform mat4 model;
+uniform mat4 perspective;
+
+@code
+vec4 getTex(sampler2D tname){
+    return texture(tname, textureCoord);
+}

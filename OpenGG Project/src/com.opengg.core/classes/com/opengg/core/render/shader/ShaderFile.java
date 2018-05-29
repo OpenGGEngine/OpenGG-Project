@@ -18,12 +18,14 @@ public class ShaderFile{
     private String data;
     private String version;
     private ShaderFileType type;
+    private String name;
 
     private List<ShaderField> fields = new ArrayList<>();
     private List<ShaderFunction> code = new ArrayList<>();
 
     public ShaderFile(String name, String source){
         try{
+            this.name = name;
             data = FileStringLoader.loadStringSequence(URLDecoder.decode(source, "UTF-8"));
 
             data = data.trim().replaceAll(" +", " ");
@@ -80,9 +82,9 @@ public class ShaderFile{
             if(!version.matches("^\\d[.]\\d"))
                 throw new ShaderException("Encountered malformed version: " + preprocessor.getOrDefault("@version", "4.2"));
 
-            glvals = Arrays.stream(preprocessor.getOrDefault("@glsl", "").split(":"))
-                    .filter(s -> !s.isEmpty())
-                    .collect(Collectors.toList());
+            glvals = valuesFromPreprocessor("@glsl");
+
+            includes = valuesFromPreprocessor("@include");
 
             int uniformpos = data.indexOf("@uniforms");
             int fieldpos = data.indexOf("@fields");
@@ -108,8 +110,8 @@ public class ShaderFile{
                 return;
             }
 
-            processFields(fieldsource);
-            processFunctions(codesource);
+            if(fieldpos != -1) processFields(fieldsource);
+            if(codepos != -1) processFunctions(codesource);
         }catch(IOException e){
             e.printStackTrace();
         }
@@ -117,6 +119,7 @@ public class ShaderFile{
 
     private void processFields(String fullfieldsource){
         fullfieldsource = fullfieldsource.trim();
+        if(fullfieldsource.isEmpty()) return;
         List<String> allfields = new ArrayList<>();
 
         int currentindex = 0;
@@ -299,6 +302,16 @@ public class ShaderFile{
 
     public List<String> getGlValues() {
         return glvals;
+    }
+
+    public String getName(){
+        return name;
+    }
+
+    public List<String> valuesFromPreprocessor(String id){
+        return Arrays.stream(preprocessor.getOrDefault(id, "").split(":"))
+                .filter(s -> !s.isEmpty())
+                .collect(Collectors.toList());
     }
 
     public static class ShaderFunction{

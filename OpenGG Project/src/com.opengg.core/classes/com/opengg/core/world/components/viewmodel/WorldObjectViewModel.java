@@ -12,6 +12,7 @@ import com.opengg.core.world.components.WorldObject;
  *
  * @author Javier
  */
+@ForComponent(WorldObject.class)
 public class WorldObjectViewModel extends ViewModel{
 
     @Override

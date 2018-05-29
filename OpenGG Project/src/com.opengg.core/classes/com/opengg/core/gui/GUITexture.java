@@ -22,6 +22,7 @@ public class GUITexture extends GUIRenderable {
         this.setDrawable(new TexturedDrawnObject(drawn, tex));
         this.setPositionOffset(screenpos);
     }
+
     public void setTexture(Texture t){
         ((TexturedDrawnObject)this.d).tex = t;
     }
