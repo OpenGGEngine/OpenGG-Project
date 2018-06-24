@@ -86,30 +86,44 @@ public class OpenGLFramebuffer implements Framebuffer{
             tex.use(loc);
         }
     }
-    
+
+    @Override
+    public List<Texture> getTextures(){
+        return List.copyOf(textures.values());
+    }
+
     @Override
     public void attachColorTexture(int width, int height, int attachment){
-        attachTexture(width, height, GL_RGBA, GL_RGBA8, GL_UNSIGNED_BYTE,  GL_COLOR_ATTACHMENT0 + attachment);
+        attachTexture(Texture.TextureType.TEXTURE_2D, width, height, GL_RGBA, GL_RGBA8, GL_UNSIGNED_BYTE,  GL_COLOR_ATTACHMENT0 + attachment);
     }
     
     @Override
     public void attachFloatingPointTexture(int width, int height, int attachment){
-        attachTexture(width, height, GL_RGBA, GL_RGBA16F, GL_FLOAT, GL_COLOR_ATTACHMENT0 + attachment);
+        attachTexture(Texture.TextureType.TEXTURE_2D, width, height, GL_RGBA, GL_RGBA16F, GL_FLOAT, GL_COLOR_ATTACHMENT0 + attachment);
     }
     
     @Override
     public void attachDepthStencilTexture(int width, int height){
-        attachTexture(width, height, GL_DEPTH_STENCIL, GL_DEPTH24_STENCIL8, GL_UNSIGNED_INT_24_8, GL_DEPTH_ATTACHMENT);
+        attachTexture(Texture.TextureType.TEXTURE_2D, width, height, GL_DEPTH_STENCIL, GL_DEPTH24_STENCIL8, GL_UNSIGNED_INT_24_8, GL_DEPTH_ATTACHMENT);
     }
     
     @Override
     public void attachDepthTexture(int width, int height){
-        attachTexture(width, height, GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT32, GL_FLOAT, GL_DEPTH_ATTACHMENT);
+        attachTexture(Texture.TextureType.TEXTURE_2D, width, height, GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT32, GL_FLOAT, GL_DEPTH_ATTACHMENT);
     }
 
     @Override
-    public void attachTexture(int width, int height, int format, int intformat, int input, int attachment){
-        Texture tex = Texture.get2DFramebufferTexture(width, height, format, intformat, input);
+    public void attachDepthCubemap(int width, int height){
+        attachTexture(Texture.TextureType.TEXTURE_CUBEMAP, width, height, GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT32, GL_FLOAT, GL_DEPTH_ATTACHMENT);
+    }
+
+    @Override
+    public void attachTexture(Texture.TextureType type, int width, int height, int format, int intformat, int input, int attachment){
+        Texture tex;
+        if(type.equals(Texture.TextureType.TEXTURE_CUBEMAP))
+            tex = Texture.getCubemapFramebufferTexture(width, height, format, intformat, input);
+        else
+            tex = Texture.get2DFramebufferTexture(width, height, format, intformat, input);
 
         fb.bind(GL_FRAMEBUFFER);
         fb.attachTexture(attachment, tex.getID(), 0);

@@ -24,11 +24,24 @@ public class ThreadManager {
     }
     
     public static Thread run(Runnable run){
-        return run(run, "default");
+        return run(run, "Default");
     }
     
     public static Thread run(Runnable run, String name){
+        return run(run, name, false);
+    }
+
+    public static Thread runDaemon(Runnable run){
+        return runDaemon(run, "DefaultDaemon");
+    }
+
+    public static Thread runDaemon(Runnable run, String name){
+        return run(run, name, true);
+    }
+
+    public static Thread run(Runnable run, String name, boolean daemon){
         Thread thread = new Thread(run);
+        thread.setDaemon(daemon);
         thread.setName(name);
         thread.start();
         running.add(thread);

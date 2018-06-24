@@ -141,13 +141,21 @@ public class ViewModelComponentRegistry {
      *
      * @author Javier
      */
-    static class ViewModelComponentRegisterInfoContainer {
-        public Class component;
-        public Class viewmodel;
+    public static class ViewModelComponentRegisterInfoContainer {
+        private Class component;
+        private Class viewmodel;
 
         public ViewModelComponentRegisterInfoContainer(Class c, Class v){
             this.component = c;
             this.viewmodel = v;
+        }
+
+        public Class getComponent(){
+            return component;
+        }
+
+        public Class getViewmodel(){
+            return viewmodel;
         }
     }
 }

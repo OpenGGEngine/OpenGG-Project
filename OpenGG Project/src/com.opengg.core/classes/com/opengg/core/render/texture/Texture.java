@@ -85,26 +85,68 @@ public interface Texture {
 
     void set3DSubData(int xoffset, int yoffset, int zoffset, TextureData[] datums);
 
+    /**
+     * Creates mipmap levels for this texture
+     */
     void generateMipmaps();
 
+    /**
+     * Sets the minimum LOD/mipmap level for this texture
+     * @param mlod Minimum LOD level
+     */
     void setMinimumLOD(int mlod);
 
+    /**
+     * Sets the maximum LOD/mipmap level for this texture
+     * @param mlod Maximum LOD level
+     */
     void setMaximumLOD(int mlod);
 
+    /**
+     * Sets the minimum filter type. This determines how OpenGL interpolates between pixels
+     * @param ftype
+     */
     void setMinimumFilterType(int ftype);
 
+    /**
+     * Sets the maximum filter type. This determines how OpenGL blends pixels when a fragment contains multiple pixels when sampling
+     * @param ftype
+     */
     void setMaximumFilterType(int ftype);
 
+    /**
+     * Sets the anisotropy level
+     * @param level
+     */
     void setAnisotropyLevel(int level);
 
+    /**
+     * Sets the LOD bias for this texture. All LOD levels will be shifted by this bias (for example, if {@code bias} is 2, this texture will be 2 mipmap levels higher than normal
+     * @param bias
+     */
     void setLODBias(int bias);
 
+    /**
+     * Sets the texture wrap type, values can be GL_CLAMP or GL_REPEAT
+     * @param wtype
+     */
     void setTextureWrapType(int wtype);
 
+    /**
+     * Returns all TextureData objets used to create this texture
+     * @return
+     */
     List<TextureData> getData();
 
+    /**
+     * Returns the texture ID for the underlying OpenGL texture
+     * @return
+     */
     int getID();
 
+    /**
+     * Deletes this texture and frees VRAM
+     */
     void delete();
 
     public static Texture get2DTexture(String path){
@@ -143,6 +185,18 @@ public interface Texture {
         Texture texture = new OpenGLTexture(GL_TEXTURE_2D, format, intformat, input);
         texture.bind();
         texture.set2DData(data);
+        texture.setTextureWrapType(GL_CLAMP);
+        texture.setMinimumFilterType(GL_LINEAR);
+        texture.setMaximumFilterType(GL_NEAREST);
+        return texture;
+    }
+
+    public static Texture getCubemapFramebufferTexture(int x, int y, int format, int intformat, int input){
+        TextureData data = new TextureData(x, y, 4, null, "framebuffer");
+
+        Texture texture = new OpenGLTexture(GL_TEXTURE_CUBE_MAP, format, intformat, input);
+        texture.bind();
+        texture.setCubemapData(data, data, data, data, data, data);
         texture.setTextureWrapType(GL_CLAMP);
         texture.setMinimumFilterType(GL_LINEAR);
         texture.setMaximumFilterType(GL_NEAREST);

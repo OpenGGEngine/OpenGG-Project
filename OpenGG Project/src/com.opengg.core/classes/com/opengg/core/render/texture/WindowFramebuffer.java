@@ -9,8 +9,10 @@ import com.opengg.core.render.window.WindowController;
 import com.opengg.core.math.Vector2i;
 import com.opengg.core.render.window.WindowResizeListener;
 
+import java.util.List;
+
 /**
- *
+ * Represents a {@link Framebuffer} that automatically resizes when the window size is changed
  * @author Javier
  */
 public class WindowFramebuffer implements WindowResizeListener, Framebuffer{
@@ -20,11 +22,21 @@ public class WindowFramebuffer implements WindowResizeListener, Framebuffer{
     private Framebuffer underlyingBuffer;
     
     protected WindowFramebuffer(){}
-    
+
+    /**
+     * Create a window framebuffer with {@code targets} color targets in byte format and a depth buffer
+     * @param targets Amount of targets
+     * @return
+     */
     public static WindowFramebuffer getWindowFramebuffer(int targets){
         return getWindowFramebuffer(targets, false);
     }
-    
+
+    /**
+     * Create a window framebuffer with {@code targets} color targets in floating point format and a depth buffer
+     * @param targets Amount of targets
+     * @return
+     */
     public static WindowFramebuffer getFloatingPointWindowFramebuffer(int targets){
         return getWindowFramebuffer(targets, true);
     }
@@ -87,6 +99,11 @@ public class WindowFramebuffer implements WindowResizeListener, Framebuffer{
     }
 
     @Override
+    public List<Texture> getTextures(){
+        return underlyingBuffer.getTextures();
+    }
+
+    @Override
     public void attachColorTexture(int width, int height, int attachment){
         underlyingBuffer.attachColorTexture(width, height, attachment);
     }
@@ -99,6 +116,11 @@ public class WindowFramebuffer implements WindowResizeListener, Framebuffer{
     @Override
     public void attachDepthStencilTexture(int width, int height){
         underlyingBuffer.attachDepthStencilTexture(width, height);
+    }
+
+    @Override
+    public void attachDepthCubemap(int width, int height){
+        underlyingBuffer.attachDepthCubemap(width, height);
     }
 
     @Override
@@ -117,8 +139,8 @@ public class WindowFramebuffer implements WindowResizeListener, Framebuffer{
     }
 
     @Override
-    public void attachTexture(int width, int height, int format, int intformat, int input, int attachment){
-        underlyingBuffer.attachTexture(width, height, format, intformat, input, attachment);
+    public void attachTexture(Texture.TextureType type, int width, int height, int format, int intformat, int input, int attachment){
+        underlyingBuffer.attachTexture(type, width, height, format, intformat, input, attachment);
     }
 
     @Override

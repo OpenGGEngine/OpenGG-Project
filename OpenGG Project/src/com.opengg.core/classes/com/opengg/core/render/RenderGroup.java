@@ -18,14 +18,13 @@ import static org.lwjgl.opengl.GL11.glGetError;
  * @author Javier
  */
 public class RenderGroup {
-    List<Renderable> items = new ArrayList<>();
-    VertexArrayObject vao;
-    String pipeline = "object";
-    String name = "default";
-    boolean transparency = false;
-    boolean shadows = false;
-    boolean enabled = true;
-    int order = 5;
+    private List<Renderable> items = new ArrayList<>();
+    private VertexArrayObject vao;
+    private String pipeline = "object";
+    private String name = "default";
+    private boolean transparency = false;
+    private boolean enabled = true;
+    private int order = 5;
 
     public RenderGroup(String name){
         this.name = name;
@@ -47,14 +46,6 @@ public class RenderGroup {
 
     public void setTransparent(boolean transparency) {
         this.transparency = transparency;
-    }
-    
-    public boolean ifCastsShadows() {
-        return shadows;
-    }
-
-    public void setCastShadows(boolean shadows) {
-        this.shadows = shadows;
     }
 
     public int getOrder() {

@@ -5,23 +5,35 @@
  */
 package com.opengg.core.engine;
 
+import java.util.Arrays;
+import java.util.function.Consumer;
+
 /**
  *
  * @author Javier
  */
 public class ResourceFuture {
+    private Object monitor;
     ResourceRequest request;
     private boolean processing;
     private boolean done;
-    private Resource r;
+    private Resource resource;
+    private Consumer<Resource> func;
     
     public boolean exists(){
         return done;
     }
     
-    ResourceFuture set(Resource r){
-        this.r = r;
+    ResourceFuture set(Resource resource){
+        this.resource = resource;
         this.done = true;
+
+        synchronized(monitor){
+            monitor.notifyAll();
+        }
+
+        OpenGG.syncExec(() -> func.accept(resource));
+
         return this;
     }
     
@@ -30,11 +42,20 @@ public class ResourceFuture {
     }
     
     public Resource get(){
-        while(!done){
-            try {
-                Thread.sleep(1);
-            } catch (InterruptedException ex) { }
+        if(!done){
+            synchronized(monitor){
+                try{
+                    monitor.wait();
+                }catch(InterruptedException e){
+                    e.printStackTrace();
+                }
+            }
         }
-        return r;
+
+        return resource;
+    }
+
+    public void whenComplete(Consumer<Resource> res){
+        this.func = res;
     }
 }

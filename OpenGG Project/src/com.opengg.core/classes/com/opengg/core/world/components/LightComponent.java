@@ -22,7 +22,7 @@ public class LightComponent extends Component{
     private Light light;
     
     public LightComponent(){
-        this(new Light(new Vector3f(0,0,0),new Vector3f(1,1,1),100,0));
+        this(Light.create(new Vector3f(0,0,0),new Vector3f(1,1,1),100,0));
     }
     
     public LightComponent(Light light){
@@ -56,7 +56,7 @@ public class LightComponent extends Component{
     @Override
     public void deserialize(GGInputStream stream) throws IOException{
         super.deserialize(stream);
-        light = new Light(new Vector3f(), stream.readVector3f(), stream.readFloat(), 0);
+        light = Light.create(new Vector3f(), stream.readVector3f(), stream.readFloat(), 0);
         boolean use = stream.readBoolean();
         
         OpenGG.asyncExec(this::use);

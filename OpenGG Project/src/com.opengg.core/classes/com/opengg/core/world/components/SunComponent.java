@@ -47,7 +47,7 @@ public class SunComponent extends RenderComponent{
         });
         
         this.rotspeed = rotspeed;
-        light = new LightComponent(new Light(new Vector3f(), new Vector3f(1,0.3f,0.3f),100000,10000));
+        light = new LightComponent(Light.create(new Vector3f(), new Vector3f(1,0.3f,0.3f),100000,10000));
         light.use();
         this.attach(light);
         this.setShader("texture");

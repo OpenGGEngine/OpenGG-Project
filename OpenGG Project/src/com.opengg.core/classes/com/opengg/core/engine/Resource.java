@@ -16,16 +16,25 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- *
+ * Represents one of the three standard OpenGG resources <br><br>
+ *     This also contains static methods to load resources
  * @author Javier
  */
 public interface Resource {
     public enum Type{
         MODEL, TEXTURE, SOUND
     }
-    
+
+    /**
+     * Returns the type of resource that this Resource represents
+     * @return
+     */
     public Resource.Type getType();
-    
+
+    /**
+     * Returns the source of this resource
+     * @return
+     */
     public String getSource();
     
     public static void initialize(){
@@ -48,15 +57,26 @@ public interface Resource {
         }
         return null;
     }
-    
+
+    /**
+     * Returns if this filename is absolute
+     * @param name Filename
+     * @return
+     */
     public static boolean isAbsolute(String name){
         return new File(name).isAbsolute();
     }
-    
+
+    /**
+     * Returns if the file given by this path exists
+     * @param name Filename
+     * @return
+     */
     public static boolean exists(String name){
         return new File(name).exists();
     }
-    
+
+
     private static String validate(String name){
         if(isAbsolute(name)) return name;
         if(exists(GGInfo.getApplicationPath() + "\\"+ name)) return GGInfo.getApplicationPath() + "\\"+ name;

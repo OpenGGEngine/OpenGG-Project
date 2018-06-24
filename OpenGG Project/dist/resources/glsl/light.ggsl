@@ -1,3 +1,5 @@
+@glsl define LIGHTNUM 100
+@include stdfrag.ggsl
 @fields
 struct Light
 {
@@ -11,3 +13,37 @@ struct Light
 	float padding1;
 	vec4 padding2;
 };
+
+layout (std140) uniform LightBuffer {
+	Light lights[LIGHTNUM];
+};
+
+uniform int numLights;
+uniform int shadow;
+uniform float nearplane;
+uniform float farplane;
+
+uniform sampler2D shadowmap;
+uniform sampler2D shadowmap2;
+uniform sampler2D shadowmap3;
+
+@code
+float getShadowCoverage(Light light){
+    if(light.shadow < 0.001f) return 1;
+    vec4 lightspacePos = light.perspective*(light.view * vec4(pos, 1.0f));
+    vec3 projCoords = lightspacePos.xyz;///lightspacePos.w;
+    projCoords = projCoords * 0.5f + 0.5f;
+    float closestDepth = texture(shadowmap, projCoords.xy).r;
+
+    vec3 lightDir = normalize(light.lightpos.xyz - pos.xyz);
+    float bias = max(0.05 * (1.0 - dot(n, lightDir)), 0.005);
+
+    float shadow = (projCoords.z -0.5f) - bias > closestDepth  ? 0.0f : 1.0f;
+    return shadow;
+}
+
+float LinearizeDepth(float depth)
+{
+    float z = depth * 2.0 - 1.0;
+    return (2.0 * nearplane * farplane) / (farplane + nearplane - z * (farplane - nearplane));
+}

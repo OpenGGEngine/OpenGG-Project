@@ -9,6 +9,8 @@ package com.opengg.core.render.texture;
 
 import com.opengg.core.render.internal.opengl.texture.OpenGLFramebuffer;
 
+import java.util.List;
+
 import static org.lwjgl.opengl.GL30.GL_DEPTH_ATTACHMENT;
 import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER;
 
@@ -33,6 +35,8 @@ public interface Framebuffer{
 
     void useTexture(int attachment, int loc);
 
+    List<Texture> getTextures();
+
     void attachColorTexture(int width, int height, int attachment);
 
     void attachFloatingPointTexture(int width, int height, int attachment);
@@ -41,11 +45,13 @@ public interface Framebuffer{
 
     void attachDepthTexture(int width, int height);
 
+    void attachDepthCubemap(int width, int height);
+
     void attachDepthRenderbuffer(int width, int height);
 
     void attachRenderbuffer(int width, int height, int storage, int attachment);
 
-    void attachTexture(int width, int height, int format, int intformat, int input, int attachment);
+    void attachTexture(Texture.TextureType type, int width, int height, int format, int intformat, int input, int attachment);
 
     void blitTo(Framebuffer target);
 

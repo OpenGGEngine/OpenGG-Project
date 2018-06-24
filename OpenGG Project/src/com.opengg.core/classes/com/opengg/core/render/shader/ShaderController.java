@@ -69,10 +69,6 @@ public class ShaderController {
         use("anim.vert", "object.frag");
         saveCurrentConfiguration("animation");  
 
-        use("object.vert", "phongshadow.frag");
-
-        saveCurrentConfiguration("shadobject");   
-        
         use("object.vert", "terrainmulti.frag");
         saveCurrentConfiguration("terrain");
 
@@ -96,7 +92,10 @@ public class ShaderController {
 
         use("object.vert", "passthrough.frag");
         saveCurrentConfiguration("passthrough");
-             
+
+        use("noprocess.vert", "point.geom", "passthrough.frag");
+        saveCurrentConfiguration("pointshadow");
+
         use("object.vert", "cubemap.frag");
         saveCurrentConfiguration("sky");
         
@@ -143,9 +142,8 @@ public class ShaderController {
         findUniform("model");
         setUniform("model", new Matrix4f());
 
-         findUniform("jointsMatrix");
+        findUniform("jointsMatrix");
         setUniform("jointsMatrix", new Matrix4f[200]);
-
 
         findUniform("projection");
         setUniform("projection", new Matrix4f());
@@ -161,6 +159,9 @@ public class ShaderController {
 
         findUniform("percent");
         setUniform("percent", 1f);
+
+        findUniform("shadow");
+        setUniform("shadow", 1);
 
         findUniform("uvmultx");
         setUniform("uvmultx", 1f);
@@ -197,6 +198,8 @@ public class ShaderController {
 
         findUniform("gamma");
         setUniform("gamma", 2.2f);
+
+        findUniform("shadowMatrices");
 
         findUniform("shadowmap");
         setTextureLocation("shadowmap", 6);
@@ -622,13 +625,12 @@ public class ShaderController {
     
     private static void saveConfiguration(String vert, String tesc, String tese, String geom, String frag, String name){
         ShaderProgram vertprogram = programs.get(vert);
-        ShaderProgram tescprogram = programs.get(geom);
-        ShaderProgram teseprogram = programs.get(geom);
+        ShaderProgram tescprogram = programs.get(tesc);
+        ShaderProgram teseprogram = programs.get(tese);
         ShaderProgram geomprogram = programs.get(geom);
         ShaderProgram fragprogram = programs.get(frag);
         
         String id = getUniqueConfigID(vertprogram, tescprogram, teseprogram, geomprogram, fragprogram);
-        
         rnames.put(name, id);
     }
     
@@ -652,7 +654,6 @@ public class ShaderController {
         ShaderPipeline pipeline = pipelines.get(id);
 
         if(pipeline == null){
-            GGConsole.error("A shader configuration named " + name + " tried to be used, but no appropriate pipeline was found!");
             throw new ShaderException("Failed to find pipeline named " + name);
         }
 
@@ -665,8 +666,6 @@ public class ShaderController {
         currenttese = pipeline.getShader(ShaderType.TESS_EVAL);
         currentgeom = pipeline.getShader(ShaderType.GEOMETRY);
         currentfrag = pipeline.getShader(ShaderType.FRAGMENT);
-
-
     }
 
     public static void clearPipelineCache(){

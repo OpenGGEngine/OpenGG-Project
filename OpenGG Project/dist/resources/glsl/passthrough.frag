@@ -1,5 +1,6 @@
 @version 4.2
-@include stdfrag.ggsl
+@fields
+layout(location = 0) out vec4 fcolor;
 
 @code
 main() {

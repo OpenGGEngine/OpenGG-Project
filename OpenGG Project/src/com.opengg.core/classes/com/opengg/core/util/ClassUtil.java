@@ -46,9 +46,7 @@ public class ClassUtil {
         }
 
         try {
-            Object nclazz = clazz
-                    .getConstructor()
-                    .newInstance();
+            Object nclazz = clazz.getConstructor().newInstance();
             return nclazz;
         } catch (Exception e) {
             throw new ClassInstantiationException(e.getMessage());

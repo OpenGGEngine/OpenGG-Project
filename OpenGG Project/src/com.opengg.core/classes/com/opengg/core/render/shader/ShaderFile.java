@@ -169,15 +169,10 @@ public class ShaderFile{
                 haslayout = true;
                 layoutstart = line.indexOf("layout");
                 layoutdata = line.substring(line.indexOf("(", layoutstart) + 1, line.indexOf(")", layoutstart));
+                line = line.replace(line.substring(line.indexOf("layout"), line.indexOf(")") + 1), "");
             }
 
-            if(haslayout){
-                if(line.indexOf("=", line.indexOf(")", layoutstart)) != -1){
-                    hasvalue = true;
-                    valuestart = line.indexOf("=", line.indexOf(")", layoutstart));
-                    initialvalue = line.substring(valuestart + 1, line.length()).trim();
-                }
-            }else if(line.contains("=")){
+            if(line.contains("=")){
                 hasvalue = true;
                 valuestart = line.indexOf("=");
                 initialvalue = line.substring(valuestart + 1, line.length()-1).trim();
@@ -207,9 +202,6 @@ public class ShaderFile{
 
             if(typestart != 0){
                 modifiers = line.substring(0, typestart).trim();
-                if(haslayout){
-                    modifiers = modifiers.replace(line.substring(line.indexOf("layout"), line.indexOf(")") + 1), "").trim();
-                }
             }
 
             ShaderField field = new ShaderField();
@@ -355,7 +347,7 @@ public class ShaderFile{
         private String modifiers = "";
         private String initialvalue = "";
         private String data = "";
-        private String layoutdata;
+        private String layoutdata = "";
         private int loc = -1;
         private ShaderProgram.ShaderType usetype;
 

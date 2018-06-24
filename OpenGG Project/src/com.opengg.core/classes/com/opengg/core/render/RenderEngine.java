@@ -26,6 +26,8 @@ import com.opengg.core.render.window.WindowController;
 import com.opengg.core.system.Allocator;
 import com.opengg.core.world.Camera;
 import com.opengg.core.world.Skybox;
+import com.opengg.core.world.WorldEngine;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -172,26 +174,25 @@ public class RenderEngine {
         });
         
         RenderPath light = new RenderPath("shadowmap", () -> {
-            ShaderController.useConfiguration("passthrough");
             int used = 0;
             var lights = getActiveLights();
+            glCullFace(GL_FRONT);
             for(int i = 0; i < lights.size() && used < 2; i++){
-                if(lights.get(i).hasShadow()){    
-                    ShaderController.setView(lights.get(i).getView());
-                    ShaderController.setProjection(lights.get(i).getPerspective());
+                if(lights.get(i).hasShadow()){
+                    lights.get(i).initializeRender();
 
-                    lights.get(i).getLightbuffer().enableRendering();
-                    lights.get(i).getLightbuffer().useEnabledAttachments();
                     for(RenderGroup d : getActiveRenderGroups()){
                         d.render();
                     }
 
-                    lights.get(i).getLightbuffer().disableRendering();
-                    lights.get(i).getLightbuffer().useTexture(Framebuffer.DEPTH, 6 + used);
+                    lights.get(i).finalizeRender(6 + used);
+
+                    WorldEngine.getCurrent().getRenderEnvironment().setSkybox(
+                            new Skybox(lights.get(i).getLightbuffer().getTextures().get(0), 1000f));
                     used++;
                 }
             }
-            
+            glCullFace(GL_BACK);
             sceneFramebuffer.restartRendering();
             sceneFramebuffer.useEnabledAttachments();
             useLights();
@@ -199,15 +200,12 @@ public class RenderEngine {
             projdata.use();
             
             for(RenderGroup d : getActiveRenderGroups()){
-                if(d.pipeline.equals("object"))
-                    ShaderController.useConfiguration("shadobject");
-                else
-                    ShaderController.useConfiguration(d.pipeline);
+                ShaderController.useConfiguration(d.pipeline);
                 d.render();
             }
             
         });
-        paths.add(path);
+        paths.add(light);
     }
 
     static List<Light> getActiveLights(){

@@ -106,12 +106,11 @@ public class OpenGGTest extends GGApplication{
 
 
         WorldEngine.getCurrent().attach(new LightComponent(
-                l = new Light(new Vector3f(0,0,0),
+                Light.createPoint(new Vector3f(0,0,0),
                         new Quaternionf(new Vector3f(0,0,0)),
                         new Vector3f(1,1,1),
                         400, 0,
-                        Matrix4f.orthographic(-100,100,-100,100,0,300),
-                        4096, 4096)));
+                        1024, 1024)));
         WorldEngine.getCurrent().attach(new ModelRenderComponent(Resource.getModel("goldleaf")).setScaleOffset(new Vector3f(0.02f)).setRotationOffset(new Vector3f(90,0,0)));
 
 

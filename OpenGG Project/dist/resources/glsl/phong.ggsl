@@ -33,7 +33,12 @@ vec3 getPhongFrom(Light light){
 	
     vec3 fragColor = fdif + fspec;
 
-    return fragColor;
+    float shadowcover = 0;
+    if(shadow != 0){
+        shadowcover = getShadowCoverage(light);
+    }
+
+    return shadowcover * fragColor;
 }
 
 

@@ -47,8 +47,7 @@ public final class ParallelWorkerPool<T, V> {
                 }
 
                 return queued.poll().t;
-            }
-            };
+            }};
     }
 
     public ParallelWorkerPool(int amount, WorkerDataSource<T> source, WorkerProcessor<T, V> processor, PostOp<V> postop){
@@ -61,7 +60,7 @@ public final class ParallelWorkerPool<T, V> {
     public void run(){
         for(int i = 0; i < amount; i++){
             WorkerThread<T, V> threadrunnable = new WorkerThread<>(this, source, processor, postop);
-            Thread thread = ThreadManager.run(threadrunnable, "WorkerThreadPool:" + i);
+            Thread thread = ThreadManager.runDaemon(threadrunnable, "WorkerThreadPool: " + i);
             workers.add(threadrunnable);
             threads.add(thread);
         }
@@ -127,9 +126,7 @@ class WorkerThread<T, V> implements Runnable {
     @Override
     public void run() {
         while(!OpenGG.getEnded()){
-            T value = source.get();
-            if(OpenGG.getEnded()) return;
-            V returnvalue = processor.process(value);
+            V returnvalue = processor.process(source.get());
             pool.addCompleted(returnvalue);
             postop.process(returnvalue);
         }

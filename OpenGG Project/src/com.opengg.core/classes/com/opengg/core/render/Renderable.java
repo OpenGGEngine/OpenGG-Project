@@ -7,9 +7,12 @@
 package com.opengg.core.render;
 
 /**
- *
+ * Represents an object that has the ability to be rendered
  * @author Javier
  */
 public interface Renderable {
+    /**
+     * Renders this to the current framebuffer
+     */
     void render();
 }
