@@ -179,6 +179,7 @@ public final class OpenGG{
 
     private static void run(){
         while (!getWindow().shouldClose() && !end) {
+
             runUpdate();
             runInput();
             runRender();
@@ -193,11 +194,10 @@ public final class OpenGG{
     }
 
     private static void runUpdate() {
-        Allocator.update();
-
         float delta = time.getDeltaSec();
+
+        Allocator.update();
         processExecutables(delta);
-        app.update(delta);
         ExtensionManager.update(delta);
         WorldEngine.update(delta);
         PhysicsEngine.updatePhysics(delta);

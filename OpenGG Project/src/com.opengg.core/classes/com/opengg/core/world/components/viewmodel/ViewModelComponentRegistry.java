@@ -129,6 +129,14 @@ public class ViewModelComponentRegistry {
         }
         return null;
     }
+
+    public static ViewModelComponentRegisterInfoContainer getByClassname(String classname){
+        for(ViewModelComponentRegisterInfoContainer container : registered){
+            if(container.component.getSimpleName().equalsIgnoreCase(classname))
+                return container;
+        }
+        return null;
+    }
     
     public static List<ViewModelComponentRegisterInfoContainer> getAllRegistries(){
         return registered;

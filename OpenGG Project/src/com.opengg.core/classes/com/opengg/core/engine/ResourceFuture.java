@@ -13,18 +13,18 @@ import java.util.function.Consumer;
  * @author Javier
  */
 public class ResourceFuture {
-    private Object monitor;
+    private Object monitor = new Object();
     ResourceRequest request;
     private boolean processing;
     private boolean done;
     private Resource resource;
-    private Consumer<Resource> func;
+    private Consumer<Resource> func = v -> {};
     
     public boolean exists(){
         return done;
     }
     
-    ResourceFuture set(Resource resource){
+    public ResourceFuture set(Resource resource){
         this.resource = resource;
         this.done = true;
 

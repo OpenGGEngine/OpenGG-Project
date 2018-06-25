@@ -168,7 +168,7 @@ public class RenderEngine {
         
         RenderPath path = new RenderPath("mainpath", () -> {
             for(RenderGroup d : getActiveRenderGroups()){
-                ShaderController.useConfiguration(d.pipeline);
+                ShaderController.useConfiguration(d.getPipeline());
                 d.render(); 
             }
         });
@@ -200,12 +200,12 @@ public class RenderEngine {
             projdata.use();
             
             for(RenderGroup d : getActiveRenderGroups()){
-                ShaderController.useConfiguration(d.pipeline);
+                ShaderController.useConfiguration(d.getPipeline());
                 d.render();
             }
             
         });
-        paths.add(light);
+        paths.add(path);
     }
 
     static List<Light> getActiveLights(){
@@ -360,7 +360,7 @@ public class RenderEngine {
     
     public RenderGroup getRenderGroup(String name){
         for(RenderGroup r : groups)
-            if(r.name.equals(name)) return r;
+            if(r.getName().equals(name)) return r;
         
         return null;
     }
@@ -373,11 +373,11 @@ public class RenderEngine {
         ArrayList<RenderGroup> list = new ArrayList<>(groups.size());
         
         for(RenderGroup r : groups)
-            if(r.enabled)
+            if(r.isEnabled())
                 list.add(r);
 
         for(RenderGroup r : currentEnvironment.getGroups())
-            if(r.enabled)
+            if(r.isEnabled())
                 list.add(r);
 
         return list;

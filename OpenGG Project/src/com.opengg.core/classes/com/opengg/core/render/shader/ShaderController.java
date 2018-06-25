@@ -58,7 +58,7 @@ public class ShaderController {
         loadShaderFiles();
         linkShaders();
         compileShaders();
-        loadGLShadersFromFiles();
+       createGLShaderFromFile();
 
         use("object.vert", "object.frag");
         saveCurrentConfiguration("object");
@@ -93,8 +93,8 @@ public class ShaderController {
         use("object.vert", "passthrough.frag");
         saveCurrentConfiguration("passthrough");
 
-        use("noprocess.vert", "point.geom", "passthrough.frag");
-        saveCurrentConfiguration("pointshadow");
+//        use("noprocess.vert", "point.geom", "passthrough.frag");
+      //  saveCurrentConfiguration("pointshadow");
 
         use("object.vert", "cubemap.frag");
         saveCurrentConfiguration("sky");
@@ -779,7 +779,7 @@ public class ShaderController {
         }
     }
 
-    private static void loadGLShadersFromFiles(){
+    private static void createGLShaderFromFile(){
         for(var entry : completedfiles){
             String source = entry.fulldata;
             String name = entry.name;

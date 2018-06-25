@@ -68,7 +68,15 @@ public class RenderGroup {
     public void setEnabled(boolean enabled){
         this.enabled = enabled;
     }
-    
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public String getName() {
+        return name;
+    }
+
     public RenderGroup add(Renderable r){
         if(!items.contains(r))
             items.add(r);

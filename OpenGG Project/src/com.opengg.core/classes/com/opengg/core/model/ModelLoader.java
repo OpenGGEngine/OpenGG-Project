@@ -71,11 +71,12 @@ public class ModelLoader {
             meshes.add(new Mesh(vdata, indices, m, false));
         }
 
-        String test = in.readString();
-        
-        if (!(test.equals("animcheck"))) {
-            throw new RuntimeException("Failed anti-corruption check!");
-        }
+        //String test = in.readString();
+
+        //if (!(test.equals("animcheck"))) {
+
+        //    throw new RuntimeException("Failed anti-corruption check!");
+        //}
 
         if (isanimated) {
             int numanimations = in.readInt();

@@ -66,8 +66,8 @@ public class GGConsole implements Runnable{
         GGMessage m = new GGMessage(message, getSender(), level);
         messages.add(m);
         System.out.println(m);
-    } 
-    
+    }
+
     private static String getSender(){
         StackTraceElement[] e = Thread.currentThread().getStackTrace();
         return (e[4].getClassName()).substring(e[4].getClassName().lastIndexOf('.')+1);

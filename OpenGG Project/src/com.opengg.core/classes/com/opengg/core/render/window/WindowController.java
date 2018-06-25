@@ -28,10 +28,9 @@ public class WindowController {
     public static void setup(WindowInfo windowinfo){
         WindowTypeRegister.registerWindowType("GLFW", new GLFWWindow());
         
-        Window twin = WindowTypeRegister.getRegisteredWindow(windowinfo.type);
+        window = WindowTypeRegister.getRegisteredWindow(windowinfo.type);
         GGConsole.log("Window registered under the name " + windowinfo.type + " requested and found, creating instance...");
-        twin.setup(windowinfo);
-        window = twin;
+        window.setup(windowinfo);
         oldsize = new Vector2i(windowinfo.width, windowinfo.height);
     }
     
@@ -50,6 +49,7 @@ public class WindowController {
     }
     
     public static void update(){
+
         Vector2i newsize = new Vector2i(window.getWidth(), window.getHeight());
         if(!newsize.equals(oldsize)){
             oldsize = newsize;
