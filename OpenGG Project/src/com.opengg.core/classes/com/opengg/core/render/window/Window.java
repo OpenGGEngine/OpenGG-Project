@@ -24,6 +24,7 @@ public interface Window {
     public String getType();
     public void setIcon(String path) throws Exception;
     public void setVSync(boolean vsync);
+    void setCurrentContext();
 
     default void startFrame(){}
 }

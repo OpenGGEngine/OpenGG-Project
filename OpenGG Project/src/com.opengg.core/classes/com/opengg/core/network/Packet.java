@@ -29,7 +29,15 @@ public class Packet implements Serializable{
         return packet;
     }
 
+    public static void sendGuaranteed(DatagramSocket ds, byte[] bytes, InetAddress address, int port){
+        send(ds, (byte) 1, bytes, address, port);
+    }
+
     public static void send(DatagramSocket ds, byte[] bytes, InetAddress address, int port){
+        send(ds, (byte) 0, bytes, address, port);
+    }
+
+    public static void send(DatagramSocket ds, byte type, byte[] bytes, InetAddress address, int port){
         Packet p = new Packet(bytes, address, port);
         p.send(ds);
     }

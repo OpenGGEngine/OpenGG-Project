@@ -12,7 +12,6 @@ import com.opengg.core.network.server.Server;
 
 import java.io.IOException;
 import java.net.DatagramSocket;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -23,6 +22,8 @@ import java.net.Socket;
 public class NetworkEngine {
     private static Server server;
     private static Client client;
+
+    private static PacketReceiver receiver;
 
     public static void update(){
         if(server != null) server.update();
@@ -48,8 +49,10 @@ public class NetworkEngine {
             var tcpsocket = new ServerSocket(port);
             var udpsocket = new DatagramSocket(port);
 
-
             var server = new Server(name, port, tcpsocket, udpsocket);
+
+            createReceiver(udpsocket, server.getPacketSize());
+            receiver.addProcessor((byte) 0, server::accept);
 
             GGConsole.log("Server initialized on port " + port);
 
@@ -66,9 +69,9 @@ public class NetworkEngine {
         try {
             GGConsole.log("Connecting to " + ip + "...");
             var tcp = new Socket(ip, port);
-            var udp = new DatagramSocket();
+            var udpsocket = new DatagramSocket();
 
-            client =  new Client(tcp, udp, tcp.getInetAddress(), port);
+            client = new Client(tcp, udpsocket, tcp.getInetAddress(), port);
 
             client.start();
 
@@ -80,16 +83,27 @@ public class NetworkEngine {
 
             Thread.sleep(1000);
 
+            createReceiver(udpsocket, client.getPacketSize());
+
+            receiver.addProcessor((byte) 0, client::accept);
+
             client.udpHandshake();
 
             return client;
         } catch (IOException ex) {
             GGConsole.warning("Failed to connect to server!");
+            GGConsole.warn(ex.getLocalizedMessage());
             return null;
         }catch(InterruptedException e){
             e.printStackTrace();
             return null;
         }
+    }
+
+    public static void createReceiver(DatagramSocket socket, int packetsize){
+        receiver = new PacketReceiver(socket, packetsize);
+        receiver.addProcessor((byte) 0, new PacketGuaranteeReceiver());
+        receiver.start();
     }
 
     private NetworkEngine() {

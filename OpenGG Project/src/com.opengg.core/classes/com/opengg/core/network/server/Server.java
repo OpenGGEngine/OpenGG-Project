@@ -11,6 +11,7 @@ import com.opengg.core.console.GGConsole;
 import com.opengg.core.engine.OpenGG;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.network.Packet;
+import com.opengg.core.network.PacketAcceptor;
 import com.opengg.core.network.client.ActionQueuer;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
@@ -39,7 +40,6 @@ public class Server {
     private List<ServerClient> newclients;
 
     private NewConnectionListener clistener;
-    private ServerResponseThread serverresponsethread;
 
     private boolean running;
     private int port;
@@ -56,15 +56,12 @@ public class Server {
         this.tcpsocket = ssocket;
         this.udpsocket = dsocket;
         this.clistener = new NewConnectionListener(this);
-        this.serverresponsethread = new ServerResponseThread(this);
     }
 
     public void start(){
         running = true;
         new Thread(clistener).start();
-        new Thread(serverresponsethread).start();
     }
-
 
     public void update(){
         var alltransmitters = WorldEngine.getCurrent().getAll().stream()
@@ -112,7 +109,8 @@ public class Server {
             }
 
             var bytes = ((ByteArrayOutputStream)out.getStream()).toByteArray();
-            for(ServerClient sc : clients){ sc.send(udpsocket, bytes); }
+            for(ServerClient sc : clients){
+                System.out.println("diddle");sc.send(udpsocket, bytes); }
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -177,51 +175,37 @@ public class Server {
         return packetsize;
     }
 
-    /**
-     *
-     * @author Javier
-     */
-    private static class ServerResponseThread implements Runnable{
-        private Server server;
-        private Packet packet;
+    public void accept(Packet packet){
+        System.out.println("Zoom");
+        var source = getClient(packet.getAddress(), packet.getPort());
 
-        public ServerResponseThread(Server s){
-            this.server = s;
-        }
-
-        @Override
-        public void run() {
-            while(server.running && !OpenGG.getEnded()){
-                packet = Packet.receive(server.udpsocket, server.packetsize);
-
-                var source = server.getClient(packet.getAddress(), packet.getPort());
-
-                if(source == null){
-                    for(var client : server.getClients(packet.getAddress())){
-                        if(client.getPort() == 0) source = client;
-                    }
-                }
-
-                if(source == null) continue;
-
-                source.setLastMessage(Instant.now());
-
-                if(!source.isInitialized()){
-                    source.setPort(packet.getPort());
-                    for(int i = 0; i < 10; i++){
-                        Packet.send(server.udpsocket, new byte[1024], source.getIp(), source.getPort());
-                    }
-
-                    source.initialize(true);
-                    GGConsole.log("User at " + source.getIp() +":" + source.getPort() + " connected");
-
-                    continue;
-                }
-
-                if(Arrays.equals(packet.getData(),  ByteBuffer.wrap(new byte[server.packetsize]).putInt(source.getId()).array())) continue;
-
-                source.processData(new GGInputStream(packet.getData()));
+        if(source == null){
+            for(var client : getClients(packet.getAddress())){
+                if(client.getPort() == 0) source = client;
             }
         }
+
+        if(source == null) return;
+
+        source.setLastMessage(Instant.now());
+
+        if(!source.isInitialized()){
+            source.setPort(packet.getPort());
+            for(int i = 0; i < 10; i++){
+                Packet.send(getUDPSocket(), new byte[1024], source.getIp(), source.getPort());
+            }
+
+            source.initialize(true);
+            GGConsole.log("User at " + source.getIp() +":" + source.getPort() + " connected");
+
+            return;
+        }
+
+        if(Arrays.equals(
+                packet.getData(),
+                ByteBuffer.wrap(new byte[getPacketSize()]).putInt(source.getId()).array()))
+            return;
+
+        source.processData(new GGInputStream(packet.getData()));
     }
 }

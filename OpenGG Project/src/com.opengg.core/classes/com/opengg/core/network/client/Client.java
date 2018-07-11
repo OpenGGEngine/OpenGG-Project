@@ -44,7 +44,6 @@ public class Client {
     private boolean running;
 
     private ActionQueuer queuer;
-    private PacketReceiver receiver;
     
     public Client(Socket tcp, DatagramSocket udp, InetAddress ip, int port){
         this.tcpsocket = tcp;
@@ -52,14 +51,10 @@ public class Client {
         this.address = ip;
         this.port = port;
         this.timeConnected = Instant.now();
-        this.receiver = new PacketReceiver(udpsocket, packetsize);
         this.queuer = ActionQueuer.get();
-
-        receiver.addProccesor((byte) 0, this::processUpdatePacket);
     }
 
     public void start(){
-        receiver.start();
         running = true;
     }
 
@@ -71,14 +66,15 @@ public class Client {
             queuer.writeData(out);
 
             var data = ((ByteArrayOutputStream)out.getStream()).toByteArray();
-
+            System.out.println("sad");
             Packet.send(udpsocket, data, address, port);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void processUpdatePacket(Packet packet){
+    public void accept(Packet packet){
+        System.out.println("cooter master");
         byte[] bytes = packet.getData();
         if(Arrays.equals(bytes, new byte[packetsize])) return;
 
@@ -116,7 +112,6 @@ public class Client {
         out.println(OpenGG.getApp().applicationName);
 
         packetsize = Integer.decode(in.readLine());
-        receiver.setPacketSize(packetsize);
         int id = Integer.decode(in.readLine());
 
         var start = Instant.now();
@@ -151,16 +146,20 @@ public class Client {
         var in = new BufferedReader(new InputStreamReader(tcpsocket.getInputStream()));
 
         int worldsize = Integer.decode(in.readLine());
+        tcpsocket.getOutputStream().write(1);
+
+        GGConsole.log("Downloading world (" + worldsize + " bytes)");
+
         byte[] bytes = new byte[worldsize];
-
-        GGConsole.log("Downloading world (" + worldsize + ")");
-
         tcpsocket.getInputStream().read(bytes);
 
-        World w = Deserializer.deserialize(ByteBuffer.wrap(bytes));
-        WorldEngine.useWorld(w);
-    }
+        var buffer = ByteBuffer.wrap(bytes);
 
+        World w = Deserializer.deserialize(buffer);
+        WorldEngine.useWorld(w);
+
+        GGConsole.log("World downloaded");
+    }
 
     public InetAddress getServerIP() {
         return address;
@@ -184,5 +183,9 @@ public class Client {
 
     public boolean isRunning(){
         return running;
+    }
+
+    public int getPacketSize(){
+        return packetsize;
     }
 }

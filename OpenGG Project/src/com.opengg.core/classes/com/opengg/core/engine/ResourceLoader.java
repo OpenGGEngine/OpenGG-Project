@@ -94,10 +94,9 @@ public final class ResourceLoader {
         if(request.type == ResourceRequest.SOUND){
             Resource r = SoundManager.getSoundData(request.location);
         }
-
         if(request.type == ResourceRequest.MODEL){
            Resource r = ModelManager.getModel(request.location);
-           if(r != null){
+           if(r != ModelManager.getDefaultModel()){
                future.set(r);
                return future;
            }

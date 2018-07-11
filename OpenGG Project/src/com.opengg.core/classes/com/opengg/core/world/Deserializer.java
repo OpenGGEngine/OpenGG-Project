@@ -90,7 +90,11 @@ public class Deserializer {
 
                 Component comp = (Component)nclazz;
                 comp.removeAll();
-                comp.deserialize(in);
+
+                int len = in.readInt();
+
+                byte[] data = in.readByteArray(len);
+                comp.deserialize(new GGInputStream(data));
                 comp.setId(id);
                 
                 var holder = new SerialHolder();

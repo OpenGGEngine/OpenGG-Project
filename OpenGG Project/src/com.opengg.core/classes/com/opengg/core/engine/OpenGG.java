@@ -382,13 +382,14 @@ public final class OpenGG{
 
         if(inMainThread()){
             e.execute();
+            return;
         }
 
         exec(execcont);
 
         while(!(execcont.executed)){
             try{
-        	Thread.sleep(2);
+        	    Thread.sleep(2);
             }catch(InterruptedException ex){}
         }
     }

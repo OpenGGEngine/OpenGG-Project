@@ -137,6 +137,10 @@ public class GGOutputStream extends OutputStream{
     public OutputStream getStream(){
         return out;
     }
+
+    public byte[] asByteArray(){
+        return ((ByteArrayOutputStream) out).toByteArray();
+    }
     
     @Override
     public void flush() throws IOException{

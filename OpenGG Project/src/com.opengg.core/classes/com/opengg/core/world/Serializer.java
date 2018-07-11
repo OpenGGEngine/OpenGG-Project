@@ -75,7 +75,12 @@ public class Serializer {
                 stream.write(classnames.get(component.getClass().getName()));
                 stream.write(component.getId());
                 stream.write(component.getParent().getId());
-                component.serialize(stream);
+
+                var substream = new GGOutputStream();
+                component.serialize(substream);
+
+                stream.write(substream.asByteArray().length);
+                stream.write(substream.asByteArray());
                 traverse(component.getChildren());
             }
         }

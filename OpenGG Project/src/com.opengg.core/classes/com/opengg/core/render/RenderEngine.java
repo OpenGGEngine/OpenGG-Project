@@ -45,6 +45,8 @@ import static org.lwjgl.opengl.GL32.GL_TEXTURE_CUBE_MAP_SEAMLESS;
  * @author Javier
  */
 public class RenderEngine {
+    public static final Object glLock = new Object();
+
     private static RenderEnvironment currentEnvironment;
     private static final List<RenderGroup> groups = new ArrayList<>();
     private static final List<Light> lights = new ArrayList<>();

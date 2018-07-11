@@ -32,7 +32,7 @@ public class ResourceFuture {
             monitor.notifyAll();
         }
 
-        OpenGG.syncExec(() -> func.accept(resource));
+        OpenGG.asyncExec(() -> func.accept(resource));
 
         return this;
     }

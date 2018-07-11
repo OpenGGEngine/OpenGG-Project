@@ -263,5 +263,11 @@ public class GLFWWindow implements Window {
     @Override
     public void setVSync(boolean vsync) {
         glfwSwapInterval(vsync ? 1 : 0);
-    }      
+    }
+
+    @Override
+    public void setCurrentContext(){
+        glfwMakeContextCurrent(window);
+        GL.createCapabilities();
+    }
 }

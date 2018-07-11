@@ -2,19 +2,14 @@ package com.opengg.core.network;
 
 import com.opengg.core.engine.OpenGG;
 import com.opengg.core.math.Tuple;
-import com.opengg.core.util.GGInputStream;
-import com.opengg.core.world.WorldEngine;
+import com.opengg.core.thread.ThreadManager;
 
-import java.io.IOException;
 import java.net.DatagramSocket;
-import java.nio.ByteBuffer;
-import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class PacketReceiver implements Runnable{
-    private final List<Tuple<Byte, PacketProcessor>> processors;
+    private final List<Tuple<Byte, PacketAcceptor>> processors;
     private final DatagramSocket socket;
     private int packetsize;
 
@@ -24,7 +19,7 @@ public class PacketReceiver implements Runnable{
         this.packetsize = packetsize;
     }
 
-    public void addProccesor(byte type, PacketProcessor processor){
+    public void addProcessor(byte type, PacketAcceptor processor){
         processors.add(new Tuple<>(type, processor));
     }
 
@@ -37,24 +32,22 @@ public class PacketReceiver implements Runnable{
     }
 
     public void start(){
-        new Thread(this).start();
+        ThreadManager.runDaemon(this, "PacketReceiver");
     }
 
     @Override
     public void run(){
         while(NetworkEngine.running() && !OpenGG.getEnded()){
+            System.out.println("ffsasdfsdfaasfdfasdfasd");
             Packet packet = Packet.receive(socket, packetsize);
             byte[] bytes = packet.getData();
             byte type = packet.getData()[0];
+            System.out.println("WIllyking");
             for(var processortuple : processors){
-                if(processortuple.x == type)
-                    processortuple.y.onPacketReceive(packet);
+                if(processortuple.x == type || processortuple.x == 0)
+                    processortuple.y.accept(packet);
             }
         }
-    }
-
-    public interface PacketProcessor{
-        void onPacketReceive(Packet packet);
     }
 
 }

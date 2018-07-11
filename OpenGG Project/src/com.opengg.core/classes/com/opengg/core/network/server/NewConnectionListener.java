@@ -70,6 +70,8 @@ public class NewConnectionListener implements Runnable{
 
                 byte[] bytes = Serializer.serialize(WorldEngine.getCurrent());
                 out.println(bytes.length);
+                in.read();
+
                 s.getOutputStream().write(bytes);
 
                 GGConsole.log(ip + " connected to server.");

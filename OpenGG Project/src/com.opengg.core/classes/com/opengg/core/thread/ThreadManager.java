@@ -61,6 +61,8 @@ public class ThreadManager {
     }
     
     public static void destroy(){
+        return;
+        /*
         for(Thread thread : running){
             if(thread.isAlive())
                 thread.interrupt();
@@ -86,7 +88,7 @@ public class ThreadManager {
                 GGConsole.error("Forcing closure of thread " + thread.getName() + ", did not respond to interrupt after " + closeDelay + "ms");
             while(thread.isAlive())
                 thread.stop();
-        }
+        }*/
     }
 
     private ThreadManager() {
