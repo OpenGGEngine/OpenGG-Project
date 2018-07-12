@@ -131,12 +131,12 @@ public class ShaderFile{
 
             if(next.contains("{")){
 
-                if(fullfieldsource.indexOf("};", currentindex) == -1){
+                if(fullfieldsource.indexOf("}", currentindex) == -1){
                     throw new ShaderException("Reached end of file while searching for brace at line " + currentindex);
                 }
 
-                next = fullfieldsource.substring(currentindex, fullfieldsource.indexOf("};", currentindex) + 2);
-                currentindex = fullfieldsource.indexOf("};", currentindex) + 2;
+                next = fullfieldsource.substring(currentindex, fullfieldsource.indexOf("}", currentindex) + 2);
+                currentindex = fullfieldsource.indexOf("}", currentindex) + 2;
             }else{
                 currentindex = fullfieldsource.indexOf(';', currentindex) + 1;
             }
@@ -182,7 +182,6 @@ public class ShaderFile{
                 hasdata = true;
                 data = line.substring(line.indexOf("{")+1,line.indexOf("}")).trim();
             }
-
             if(hasvalue && !hasdata){
                 name = line.substring(line.lastIndexOf(" ", line.lastIndexOf("=")-2), line.lastIndexOf("=")).trim();
             }else if(hasdata){

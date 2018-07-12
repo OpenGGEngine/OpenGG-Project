@@ -102,8 +102,8 @@ public class OpenGGTest extends GGApplication{
                 + " the guardians of peace and justice in the galaxy, to settle the conflict...", new Vector2f(), 1f, 0.5f, false);
         GUIController.getDefault().addItem("aids", new GUIText(text, font, new Vector2f(0f,0)));
 
-        NetworkEngine.connect("localhost", 25565);
-/*
+        //NetworkEngine.connect("localhost", 25565);
+
 
         WorldEngine.getCurrent().attach(new LightComponent(
                 Light.createPoint(new Vector3f(0,0,0),
@@ -128,7 +128,7 @@ public class OpenGGTest extends GGApplication{
                 Resource.getTexturePath("skybox\\majestic_rt.png"),
                 Resource.getTexturePath("skybox\\majestic_lf.png")), 1500f));
         AnimatedComponent component;
-        try {
+        /*try {
             MModel s = ModelLoaderPlus.loadModel(new File("C:/res/model2.bmf"),new File("C:/res/anim2.gga"));
             component = new AnimatedComponent(s);
             component.setFormat(RenderEngine.animation2VAOFormat);
@@ -136,14 +136,14 @@ public class OpenGGTest extends GGApplication{
             WorldEngine.getCurrent().attach(component);
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
         player = new FreeFlyComponent();
         player.use();
 
         var model = new ModelRenderComponent(Resource.getModel("sphere"));
         model.setPositionOffset(new Vector3f(0,-2,-2));
 
-        WorldEngine.getCurrent().attach(player.attach(model));*/
+        WorldEngine.getCurrent().attach(player.attach(model));
 
         BindController.addBind(ControlType.KEYBOARD, "forward", KEY_W);
         BindController.addBind(ControlType.KEYBOARD, "backward", KEY_S);

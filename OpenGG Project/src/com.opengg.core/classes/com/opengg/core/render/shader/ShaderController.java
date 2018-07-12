@@ -751,12 +751,11 @@ public class ShaderController {
                     if(program != null){
                         programs.put(name, program);
                     }
-                    continue;
                 }
 
                 var ex = new ShaderException("Exception while loading shader " + name + ": " + e.getMessage());
                 ex.setStackTrace(e.getStackTrace());
-                throw ex;
+                GGConsole.exception(ex);
             }
         }
     }

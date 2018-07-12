@@ -3,6 +3,10 @@
 layout (triangles) in;
 layout (triangle_strip, max_vertices=18) out;
 
+in gl_PerVertex{
+  vec4 gl_Position;
+} ;
+
 uniform mat4 shadowMatrices[6];
 
 @code

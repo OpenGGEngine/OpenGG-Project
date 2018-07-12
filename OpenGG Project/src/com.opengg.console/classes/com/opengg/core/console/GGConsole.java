@@ -60,7 +60,10 @@ public class GGConsole implements Runnable{
     public static void error(String message){
         write(message, Level.ERROR);
     }
-    
+
+    public static void exception(Throwable message){
+        write(message.getMessage() + " at " + message.getStackTrace()[0].toString(), Level.ERROR);
+    }
     
     private static void write(String message, Level level){
         GGMessage m = new GGMessage(message, getSender(), level);
