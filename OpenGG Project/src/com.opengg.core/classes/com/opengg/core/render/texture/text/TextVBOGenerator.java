@@ -31,7 +31,7 @@ public class TextVBOGenerator {
 	protected MaterialDrawnObject createTextData(Text text, GGFont f) {
 		List<TextLine> lines = createStructure(text);
 		FloatBuffer data = createQuadVertices(text, lines);
-                MaterialDrawnObject t = new MaterialDrawnObject(data, RenderEngine.getDefaultFormat());     
+                MaterialDrawnObject t = new MaterialDrawnObject(data, RenderEngine.getDefaultFormat());
                 t.setM(Material.defaultmaterial);
                 t.getMaterial().Kd = f.texture;
 		return t;
@@ -43,13 +43,13 @@ public class TextVBOGenerator {
 		TextLine currentLine = new TextLine(metaData.getSpaceWidth(), text.getFontSize(), text.getMaxLineSize());
 		Word currentWord = new Word(text.getFontSize());
 		for (char c : chars) {
-                    
+
                         if(c == '\n'){
                             lines.add(currentLine);
                             currentLine = new TextLine(metaData.getSpaceWidth(), text.getFontSize(), text.getMaxLineSize());
                             continue;
                         }
-                    
+
 			int ascii = (int) c;
 			if (ascii == SPACE_ASCII) {
 				boolean added = currentLine.addWord(currentWord);
@@ -112,17 +112,17 @@ public class TextVBOGenerator {
                     f.put(1);
                     f.put(1);
                     f.put(1);
-                    
+
                     //normals
                     f.put(1);
                     f.put(1);
                     f.put(0);
-                    
+
                     //tex coords
                     f.put(textureCoords.get(texpointer));
                     f.put(textureCoords.get(texpointer+1));
-                    texpointer +=2;          
-                    
+                    texpointer +=2;
+
                 }
                 f.flip();
 		return f;
@@ -145,50 +145,50 @@ public class TextVBOGenerator {
 		vertices.add((float) x);
 		vertices.add((float) y);
                 vertices.add((float) 1);
-                
+
 		vertices.add((float) x);
 		vertices.add((float) maxY);
                 vertices.add((float) 1);
-                
+
 		vertices.add((float) maxX);
 		vertices.add((float) maxY);
                 vertices.add((float) 1);
-                
+
 		vertices.add((float) maxX);
 		vertices.add((float) maxY);
                 vertices.add((float) 1);
-                
+
 		vertices.add((float) maxX);
 		vertices.add((float) y);
                 vertices.add((float) 1);
-                
+
 		vertices.add((float) x);
 		vertices.add((float) y);
                 vertices.add((float) 1);
 	}
 
 	private static void addTexCoords(List<Float> texCoords, double x, double y, double maxX, double maxY) {
-                
+
                 y = 1-y;
-            
+
                 maxX += x;
                 maxY = y - maxY;
 
                 texCoords.add((float) x);
 		texCoords.add((float) y);
-                
+
 		texCoords.add((float) x);
 		texCoords.add((float) maxY);
-                
+
 		texCoords.add((float) maxX);
 		texCoords.add((float) maxY);
-                
+
 		texCoords.add((float) maxX);
 		texCoords.add((float) maxY);
-                
+
 		texCoords.add((float) maxX);
 		texCoords.add((float) y);
-                
+
 		texCoords.add((float) x);
 		texCoords.add((float) y);
 	}

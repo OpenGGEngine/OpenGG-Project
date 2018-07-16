@@ -1,76 +1,112 @@
-COMPILED GGSL ERROR SOURCE: From shader fxaa.frag with error code 0: ERROR: 0:13: 'f' : syntax error syntax error
-#version 430 core
+COMPILED GGSL ERROR SOURCE: From shader height.frag with error code 0: 0(19) : error C0000: syntax error, unexpected identifier, expecting "::" at token "LightBuffer"
+#version 420 core
+#define LIGHTNUM 100
+struct Light
+{
+ 
+ vec3 lightpos;
+ vec3 color;
+	float lightdistance;
+	float lightdistance2;
+
+};
 layout(location = 0) out vec4 fcolor;
  in vertexData{
+ 
  vec2 textureCoord;
- vec3 pos;
+ vec4 pos;
  vec3 norm;
 };
+uniform layout (std140)LightBuffer {
+	Light lights[LIGHTNUM];
+};
+ uniform int numLights;
+ uniform mat4 shmvp;
  uniform mat4 view;
  uniform mat4 model;
- uniform mat4 perspective;
- const vec2 u_texelStep =  vec2(0.02f, 0.02f);
- const int u_showEdges =  0;
- const float u_lumaThreshold =  1/8f;
- const float u_mulReduce =  0.1f;
- const float u_minReduce =  0.1f;
- const float u_maxSpan =  0.1f;
- uniform sampler2D Kd;
+ uniform vec3 camera;
+ uniform sampler2DArray Kd;
+ uniform sampler2D Ka;
+ uniform samplerCube cubemap;
+ float trans;
+ float specpow;
+ float visibility =  1.0f;
+ vec3 eyedir;
+ vec3 reflectedcolor;
+ vec3 n;
+ vec3 ambient;
+ vec3 specular;
+ vec3 diffuse;
+ vec4 color;
+ vec4 finalcolor;
+void genPhong(){
+	vec3 positionRelativeToCam = (view * model * vec4(pos.xyz, 1.0f)).xyz;
+ 
+ vec3 posCameraspace = (positionRelativeToCam);
+ eyedir = vec3(0,0,0) - posCameraspace;
+}
+vec3 shadify(Light light){
+	float distance = length( light.lightpos - pos.xyz ); 
+	float attenuation = clamp((1.0 - distance/light.lightdistance), 0.0, 1.0);
+	attenuation = attenuation * attenuation;
+	vec3 lightDir = normalize(light.lightpos - pos.xyz);
+	vec3 halfwayDir = normalize(lightDir + eyedir);
+ float cosTheta = max(dot( n,lightDir ), 0.0f );
+ vec3 fdif = diffuse * light.color * cosTheta * attenuation;
+	
+ float cosAlpha = clamp(max(dot(n, halfwayDir), 0.0), 0, 1);
+	vec3 fspec = specular * light.color * pow(cosAlpha, specpow) * attenuation;
+	
+ vec3 fragColor = fdif + fspec;
+	
+	return fragColor;
+}
+void process(){
+	diffuse = finalcolor.rgb;
+ ambient = 0.2f * diffuse;
+ 
+ specpow = 1;
+ specular = vec3(0);
+ 
+	n = normalize(( model * vec4(norm,0.0f)).xyz);
+	reflectedcolor = texture(cubemap, normalize(reflect(eyedir,n))).xyz;
+}
 vec4 getTex(sampler2D tname){
 	return texture(tname, textureCoord);
 }
 void main(){
-	vec3 rgbM = texture(Kd, textureCoord).rgb;
-			vec3 rgbNW = textureOffset(Kd, textureCoord, ivec2(-1, 1)).rgb;
- vec3 rgbNE = textureOffset(Kd, textureCoord, ivec2(1, 1)).rgb;
- vec3 rgbSW = textureOffset(Kd, textureCoord, ivec2(-1, -1)).rgb;
- vec3 rgbSE = textureOffset(Kd, textureCoord, ivec2(1, -1)).rgb;
-		const vec3 toLuma = vec3(0.299, 0.587, 0.114);
+	vec4 blendMapColor = getTex(Ka);
+ vec2 tiledMapEditor = textureCoord * 120;
+ vec4 wcolor = texture(Kd, vec3(tiledMapEditor,0));
+ vec4 wcolorr = texture(Kd, vec3(tiledMapEditor,1));
+ vec4 wcolorg = texture(Kd, vec3(tiledMapEditor,2));
+ vec4 wcolorb = texture(Kd, vec3(tiledMapEditor,3));
+	float blend = blendMapColor.r;
 	
-		float lumaNW = dot(rgbNW, toLuma);
-	float lumaNE = dot(rgbNE, toLuma);
-	float lumaSW = dot(rgbSW, toLuma);
-	float lumaSE = dot(rgbSE, toLuma);
-	float lumaM = dot(rgbM, toLuma);
-		float lumaMin = min(lumaM, min(min(lumaNW, lumaNE), min(lumaSW, lumaSE)));
-	float lumaMax = max(lumaM, max(max(lumaNW, lumaNE), max(lumaSW, lumaSE)));
-	
-		if (lumaMax - lumaMin < lumaMax * u_lumaThreshold)
-	{
-				fcolor = vec4(rgbM, 1.0);
-		
-		return;
-	} 
-	
-		vec2 samplingDirection;	
-	samplingDirection.x = -((lumaNW + lumaNE) - (lumaSW + lumaSE));
- samplingDirection.y = ((lumaNW + lumaSW) - (lumaNE + lumaSE));
- 
-   float samplingDirectionReduce = max((lumaNW + lumaNE + lumaSW + lumaSE) * 0.25 * u_mulReduce, u_minReduce);
-		float minSamplingDirectionFactor = 1.0 / (min(abs(samplingDirection.x), abs(samplingDirection.y)) + samplingDirectionReduce);
- 
-  samplingDirection = clamp(samplingDirection * minSamplingDirectionFactor, vec2(-u_maxSpan, -u_maxSpan), vec2(u_maxSpan, u_maxSpan)) * u_texelStep;
-	
-		vec3 rgbSampleNeg = texture(Kd, textureCoord + samplingDirection * (1.0/3.0 - 0.5)).rgb;
-	vec3 rgbSamplePos = texture(Kd, textureCoord + samplingDirection * (2.0/3.0 - 0.5)).rgb;
-	vec3 rgbTwoTab = (rgbSamplePos + rgbSampleNeg) * 0.5; 
-		vec3 rgbSampleNegOuter = texture(Kd, textureCoord + samplingDirection * (0.0/3.0 - 0.5)).rgb;
-	vec3 rgbSamplePosOuter = texture(Kd, textureCoord + samplingDirection * (3.0/3.0 - 0.5)).rgb;
-	
-	vec3 rgbFourTab = (rgbSamplePosOuter + rgbSampleNegOuter) * 0.25 + rgbTwoTab * 0.5; 
-	
-		float lumaFourTab = dot(rgbFourTab, toLuma);
-	
-		if (lumaFourTab < lumaMin || lumaFourTab > lumaMax)
-	{
-				fcolor = vec4(rgbTwoTab, 1.0); 
-	}
+	vec4 tcolor = vec4(0);
+	if(blend < 0.2f)
+		tcolor = wcolor;
+	else if(blend < 0.3f)
+		tcolor = mix(wcolor, wcolorr, (blend - 0.2f) * 10.0f);
+	else if(blend < 0.5f)
+		tcolor = wcolorr;
+	else if(blend < 0.6f)
+		tcolor = mix(wcolorr, wcolorg, (blend - 0.5f) * 10.0f);
+	else if(blend < 0.7f)
+		tcolor = wcolorg;
+	else if(blend < 0.8f)
+		tcolor = mix(wcolorg, wcolorb, (blend - 0.7f) * 10.0f);
 	else
-	{
-				fcolor = vec4(rgbFourTab, 1.0);
+		tcolor = wcolorb;
+	
+	finalcolor = tcolor;
+	
+	genPhong();
+	process();
+	vec3 col = vec3(0,0,0);
+	
+	for(int i = 0; i < numLights; i++){
+		col += shadify(lights[i]);
 	}
-		if (u_showEdges != 0)
-	{
-		fcolor.r = 1.0;
-	}
+	fcolor = vec4(col + ambient, 1);
 }

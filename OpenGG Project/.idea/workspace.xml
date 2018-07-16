@@ -10,65 +10,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="19f98b11-1333-449e-965f-6e5421c0bea0" name="Default" comment="refactor.io">
-      <change afterPath="$PROJECT_DIR$/dist/resources/glsl/fxaa.frag" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com.opengg.console/classes/com/opengg/core/console/DefaultLoggerOutputConsumer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com.opengg.console/classes/com/opengg/core/console/LoggerOutputConsumer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/engine/GGGameConsole.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/io/input/keyboard/KeyboardCharacterListener.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com.opengg.math/classes/com/opengg/core/math/util/Spline.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com.opengg.math/classes/com/opengg/core/math/util/Spline2D.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/text/TTF.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/resources/glsl/ambient.frag" beforeDir="false" afterPath="$PROJECT_DIR$/dist/resources/glsl/ambient.frag" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dist/resources/glsl/error.glsl" beforeDir="false" afterPath="$PROJECT_DIR$/dist/resources/glsl/error.glsl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/resources/glsl/light.ggsl" beforeDir="false" afterPath="$PROJECT_DIR$/dist/resources/glsl/light.ggsl" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dist/resources/glsl/point.geom" beforeDir="false" afterPath="$PROJECT_DIR$/dist/resources/glsl/point.geom" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com.opengg.base/classes/com/opengg/core/GGInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com.opengg.base/classes/com/opengg/core/GGInfo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com.opengg.base/classes/module-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com.opengg.base/classes/module-info.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com.opengg.base/com.opengg.base.iml" beforeDir="false" afterPath="$PROJECT_DIR$/src/com.opengg.base/com.opengg.base.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com.opengg.console/classes/com/opengg/core/console/GGConsole.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com.opengg.console/classes/com/opengg/core/console/GGConsole.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com.opengg.console/classes/com/opengg/core/console/GGMessage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com.opengg.console/classes/com/opengg/core/console/GGMessage.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com.opengg.console/classes/com/opengg/core/console/Level.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com.opengg.console/classes/com/opengg/core/console/Level.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com.opengg.console/com.opengg.console.iml" beforeDir="false" afterPath="$PROJECT_DIR$/src/com.opengg.console/com.opengg.console.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/engine/BindController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/engine/BindController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/engine/OpenGG.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/engine/OpenGG.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/engine/OpenGGCommandExtender.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/engine/OpenGGCommandExtender.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/engine/ResourceLoader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/engine/ResourceLoader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/gui/GUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/gui/GUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/gui/GUIController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/gui/GUIController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/gui/GUIText.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/gui/GUIText.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/io/input/keyboard/KeyboardController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/io/input/keyboard/KeyboardController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/physics/collision/CollisionSolver.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/physics/collision/CollisionSolver.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/physics/collision/Mesh.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/physics/collision/Mesh.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/physics/collision/MeshTriangle.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/physics/collision/MeshTriangle.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/physics/collision/TerrainCollider.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/physics/collision/TerrainCollider.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/GLOptions.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/GLOptions.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/RenderEngine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/RenderEngine.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/postprocess/PostProcessController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/postprocess/PostProcessController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/postprocess/PostProcessingPass.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/postprocess/PostProcessingPass.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/postprocess/Stage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/postprocess/Stage.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/resources/glsl/terrainmulti.frag" beforeDir="false" afterPath="$PROJECT_DIR$/dist/resources/glsl/terrainmulti.frag" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/resources/glsl/water.frag" beforeDir="false" afterPath="$PROJECT_DIR$/dist/resources/glsl/water.frag" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/engine/GGGameConsole.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/engine/GGGameConsole.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/shader/ShaderController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/shader/ShaderController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/shader/ShaderFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/shader/ShaderFile.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/texture/Texture.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/texture/Texture.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/thread/GGThreadExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com.opengg.console/classes/com/opengg/core/console/GGThreadExceptionHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/thread/ParallelWorkerPool.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com.opengg.base/classes/com/opengg/core/thread/ParallelWorkerPool.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/thread/ThreadManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com.opengg.base/classes/com/opengg/core/thread/ThreadManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/world/Terrain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/world/Terrain.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/world/World.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/world/World.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/world/components/KeyTrigger.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/world/components/KeyTrigger.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com.opengg.core/classes/module-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com.opengg.core/classes/module-info.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com.opengg.core/com.opengg.core.iml" beforeDir="false" afterPath="$PROJECT_DIR$/src/com.opengg.core/com.opengg.core.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com.opengg.math/classes/com/opengg/core/math/FastMath.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com.opengg.math/classes/com/opengg/core/math/FastMath.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com.opengg.math/classes/com/opengg/core/math/MinkowskiSet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com.opengg.math/classes/com/opengg/core/math/geom/MinkowskiSet.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com.opengg.math/classes/com/opengg/core/math/MinkowskiTriangle.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com.opengg.math/classes/com/opengg/core/math/geom/MinkowskiTriangle.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com.opengg.math/classes/com/opengg/core/math/Simplex.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com.opengg.math/classes/com/opengg/core/math/Simplex.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com.opengg.math/classes/com/opengg/core/math/Triangle.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com.opengg.math/classes/com/opengg/core/math/geom/Triangle.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com.opengg.math/classes/module-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com.opengg.math/classes/module-info.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com.opengg.math/com.opengg.math.iml" beforeDir="false" afterPath="$PROJECT_DIR$/src/com.opengg.math/com.opengg.math.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com.opengg.system/classes/com/opengg/core/system/Allocator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com.opengg.system/classes/com/opengg/core/system/Allocator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com.opengg.system/com.opengg.system.iml" beforeDir="false" afterPath="$PROJECT_DIR$/src/com.opengg.system/com.opengg.system.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com.opengg.test/classes/com/opengg/test/OpenGGTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com.opengg.test/classes/com/opengg/test/OpenGGTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com.opengg.test/com.opengg.test.iml" beforeDir="false" afterPath="$PROJECT_DIR$/src/com.opengg.test/com.opengg.test.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/texture/Font.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/texture/Font.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/texture/text/TextVBOGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/texture/text/TextVBOGenerator.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -91,8 +43,8 @@
       <file leaf-file-name="GGGameConsole.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/engine/GGGameConsole.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-321">
-              <caret line="35" column="43" selection-start-line="35" selection-start-column="43" selection-end-line="35" selection-end-column="43" />
+            <state relative-caret-position="334">
+              <caret line="70" column="28" lean-forward="true" selection-start-line="70" selection-start-column="28" selection-end-line="70" selection-end-column="28" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -103,99 +55,92 @@
       <file leaf-file-name="RenderEngine.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/RenderEngine.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="194">
-              <caret line="123" column="22" lean-forward="true" selection-start-line="123" selection-start-column="22" selection-end-line="123" selection-end-column="22" />
+            <state relative-caret-position="4853">
+              <caret line="277" column="23" selection-start-line="277" selection-start-column="23" selection-end-line="277" selection-end-column="23" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="error.glsl" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/dist/resources/glsl/error.glsl">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="795">
+              <caret line="112" lean-forward="true" selection-start-line="112" selection-end-line="112" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Font.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/texture/Font.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-1012">
+              <caret line="17" column="13" selection-start-line="17" selection-start-column="13" selection-end-line="17" selection-end-column="13" />
               <folding>
-                <element signature="e#16297#16298#0" expanded="true" />
-                <element signature="e#16328#16329#0" expanded="true" />
+                <element signature="e#1704#1705#0" expanded="true" />
+                <element signature="e#1773#1774#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="OpenGGCommandExtender.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/engine/OpenGGCommandExtender.java">
+      <file leaf-file-name="TTF.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/text/TTF.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="24">
-              <caret line="37" column="26" lean-forward="true" selection-start-line="37" selection-start-column="26" selection-end-line="37" selection-end-column="26" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="config.ini" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/dist/config/config.ini">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="69">
-              <caret line="3" column="9" lean-forward="true" selection-start-line="3" selection-start-column="9" selection-end-line="3" selection-end-column="9" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="World.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/world/World.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="406">
-              <caret line="200" column="79" selection-start-line="200" selection-start-column="79" selection-end-line="200" selection-end-column="79" />
-              <folding>
-                <element signature="e#6861#6862#0" expanded="true" />
-                <element signature="e#6913#6914#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="BindController.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/engine/BindController.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="484">
-              <caret line="87" selection-start-line="87" selection-end-line="87" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="GGConsole.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com.opengg.console/classes/com/opengg/core/console/GGConsole.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="276">
-              <caret line="77" column="24" selection-start-line="77" selection-start-column="24" selection-end-line="77" selection-end-column="24" />
-              <folding>
-                <element signature="method#exception#0;class#GGConsole#0" />
-                <element signature="method#consume#0;class#GGConsole#0" />
-                <element signature="method#getSender#0;class#GGConsole#0" />
-                <element signature="method#acceptUserInput#0;class#GGConsole#0" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="GUI.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/gui/GUI.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="222">
-              <caret line="16" column="13" selection-start-line="16" selection-start-column="13" selection-end-line="16" selection-end-column="13" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="KeyboardController.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/io/input/keyboard/KeyboardController.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="482">
-              <caret line="53" column="44" lean-forward="true" selection-start-line="53" selection-start-column="44" selection-end-line="53" selection-end-column="44" />
+            <state relative-caret-position="648">
+              <caret line="182" column="26" lean-forward="true" selection-start-line="182" selection-start-column="26" selection-end-line="182" selection-end-column="26" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#941#942#0" expanded="true" />
-                <element signature="e#967#968#0" expanded="true" />
+                <element signature="e#107#108#0" expanded="true" />
+                <element signature="e#128#129#0" expanded="true" />
+                <element signature="e#5037#5038#0" expanded="true" />
+                <element signature="e#5067#5068#0" expanded="true" />
+                <element signature="e#5114#5115#0" expanded="true" />
+                <element signature="e#5152#5153#0" expanded="true" />
+                <element signature="e#5228#5229#0" expanded="true" />
+                <element signature="e#5286#5287#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="OpenGGTest.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com.opengg.test/classes/com/opengg/test/OpenGGTest.java">
+      <file leaf-file-name="DrawnObject.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/drawn/DrawnObject.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-657">
-              <caret line="118" column="44" lean-forward="true" selection-start-line="118" selection-start-column="44" selection-end-line="118" selection-end-column="44" />
+            <state relative-caret-position="487">
+              <caret line="101" column="34" lean-forward="true" selection-start-line="101" selection-start-column="34" selection-end-line="101" selection-end-column="34" />
+              <folding>
+                <element signature="e#1417#1418#0" expanded="true" />
+                <element signature="e#1473#1474#0" expanded="true" />
+                <element signature="e#1549#1550#0" expanded="true" />
+                <element signature="e#1593#1594#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ObjectBuffers.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/objects/ObjectBuffers.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-2035">
+              <caret line="23" column="116" lean-forward="true" selection-start-line="23" selection-start-column="116" selection-end-line="23" selection-end-column="116" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ShaderController.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/shader/ShaderController.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="924">
+              <caret line="74" column="7" lean-forward="true" selection-start-line="74" selection-start-column="7" selection-end-line="74" selection-end-column="7" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="terrainmulti.frag" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/dist/resources/glsl/terrainmulti.frag">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="414">
+              <caret line="18" column="2" lean-forward="true" selection-start-line="18" selection-start-column="2" selection-end-line="18" selection-end-column="2" />
             </state>
           </provider>
         </entry>
@@ -218,8 +163,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>shadowProj *</find>
-      <find>shadowTransforms.push_back(</find>
       <find>download</find>
       <find>hasE</find>
       <find>u_colorTexture</find>
@@ -248,6 +191,8 @@
       <find>ended</find>
       <find>Allo</find>
       <find>DepthCh</find>
+      <find>compile</find>
+      <find>layout</find>
     </findStrings>
     <replaceStrings>
       <replace>texture</replace>
@@ -286,26 +231,14 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/world/Deserializer.java" />
-        <option value="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/network/server/NewConnectionListener.java" />
-        <option value="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/network/server/Server.java" />
-        <option value="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/network/client/Client.java" />
-        <option value="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/network/NetworkEngine.java" />
-        <option value="$PROJECT_DIR$/src/com.opengg.math/classes/com/opengg/core/math/util/Spline2D.java" />
-        <option value="$PROJECT_DIR$/src/com.opengg.math/classes/module-info.java" />
-        <option value="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/gui/GUI.java" />
-        <option value="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/gui/GUIItem.java" />
         <option value="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/gui/GUIController.java" />
         <option value="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/gui/GUIText.java" />
         <option value="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/postprocess/Stage.java" />
         <option value="$PROJECT_DIR$/dist/resources/glsl/light.ggsl" />
         <option value="$PROJECT_DIR$/dist/resources/glsl/ambient.frag" />
-        <option value="$PROJECT_DIR$/dist/resources/glsl/point.geom" />
-        <option value="$PROJECT_DIR$/dist/resources/glsl/water.frag" />
         <option value="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/postprocess/PostProcessingPass.java" />
         <option value="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/shader/ShaderFile.java" />
         <option value="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/postprocess/PostProcessController.java" />
-        <option value="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/shader/ShaderController.java" />
         <option value="$PROJECT_DIR$/dist/resources/glsl/fxaa.frag" />
         <option value="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/io/input/keyboard/KeyboardCharacterListener.java" />
         <option value="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/engine/GGConsole.java" />
@@ -333,17 +266,29 @@
         <option value="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/GLOptions.java" />
         <option value="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/RenderEngine.java" />
         <option value="$PROJECT_DIR$/src/com.opengg.test/classes/com/opengg/test/OpenGGTest.java" />
-        <option value="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/engine/GGGameConsole.java" />
         <option value="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/engine/BindController.java" />
         <option value="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/engine/OpenGGCommandExtender.java" />
         <option value="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/world/World.java" />
+        <option value="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/Text.java" />
+        <option value="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/texture/text/GGFont.java" />
+        <option value="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/texture/text/TextVBOGenerator.java" />
+        <option value="$PROJECT_DIR$/dist/resources/glsl/water.frag" />
+        <option value="$PROJECT_DIR$/dist/resources/glsl/point.geom" />
+        <option value="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/shader/ShaderController.java" />
+        <option value="$PROJECT_DIR$/dist/resources/glsl/terrainmulti.frag" />
+        <option value="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/text/Text.java" />
+        <option value="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/text/Font.java" />
+        <option value="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/texture/Font.java" />
+        <option value="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/text/TTF.java" />
+        <option value="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/engine/GGGameConsole.java" />
+        <option value="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/drawn/DrawnObject.java" />
       </list>
     </option>
   </component>
   <component name="NamedScopeManager">
     <scope name="LWJGL OpenGL" pattern="lib:org.lwjgl.opengl.*||lib:org.lwjgl.opengl..*" />
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="6" fullScreen="true">
     <option name="x" value="-413" />
     <option name="y" value="-16" />
     <option name="width" value="1940" />
@@ -357,6 +302,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="AndroidView" />
       <pane id="Scope">
         <subPane subId="Project Files">
           <expand>
@@ -368,7 +314,7 @@
           <select />
         </subPane>
       </pane>
-      <pane id="AndroidView" />
+      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -392,7 +338,15 @@
               <item name="com.opengg" type="9c53a853:ProjectViewModuleGroupNode" />
               <item name="com.opengg.test" type="47feb1d3:ProjectViewModuleNode" />
               <item name="dist" type="462c0819:PsiDirectoryNode" />
-              <item name="config" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="OpenGG Project" type="b2602c69:ProjectViewProjectNode" />
+              <item name="com.opengg" type="9c53a853:ProjectViewModuleGroupNode" />
+              <item name="com.opengg.test" type="47feb1d3:ProjectViewModuleNode" />
+              <item name="dist" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+              <item name="glsl" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="OpenGG Project" type="b2602c69:ProjectViewProjectNode" />
@@ -411,23 +365,6 @@
               <item name="com.opengg.base" type="462c0819:PsiDirectoryNode" />
               <item name="classes" type="462c0819:PsiDirectoryNode" />
               <item name="core" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="OpenGG Project" type="b2602c69:ProjectViewProjectNode" />
-              <item name="com.opengg" type="9c53a853:ProjectViewModuleGroupNode" />
-              <item name="com.opengg.base" type="462c0819:PsiDirectoryNode" />
-              <item name="classes" type="462c0819:PsiDirectoryNode" />
-              <item name="core" type="462c0819:PsiDirectoryNode" />
-              <item name="thread" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="OpenGG Project" type="b2602c69:ProjectViewProjectNode" />
-              <item name="com.opengg" type="9c53a853:ProjectViewModuleGroupNode" />
-              <item name="com.opengg.base" type="462c0819:PsiDirectoryNode" />
-              <item name="classes" type="462c0819:PsiDirectoryNode" />
-              <item name="core" type="462c0819:PsiDirectoryNode" />
-              <item name="thread" type="462c0819:PsiDirectoryNode" />
-              <item name="ParallelWorkerPool.java" type="529ef68f:ClassesTreeStructureProvider$PsiClassOwnerTreeNode" />
             </path>
             <path>
               <item name="OpenGG Project" type="b2602c69:ProjectViewProjectNode" />
@@ -480,7 +417,7 @@
               <item name="classes" type="462c0819:PsiDirectoryNode" />
               <item name="core" type="462c0819:PsiDirectoryNode" />
               <item name="render" type="462c0819:PsiDirectoryNode" />
-              <item name="texture" type="462c0819:PsiDirectoryNode" />
+              <item name="text" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="OpenGG Project" type="b2602c69:ProjectViewProjectNode" />
@@ -490,17 +427,11 @@
               <item name="core" type="462c0819:PsiDirectoryNode" />
               <item name="render" type="462c0819:PsiDirectoryNode" />
               <item name="texture" type="462c0819:PsiDirectoryNode" />
-              <item name="text" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="OpenGG Project" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
       <pane id="NBKnowledgePane" />
     </panes>
   </component>
@@ -510,7 +441,7 @@
     <property name="GenerateAntBuildDialog.forceTargetJdk" value="true" />
     <property name="GenerateAntBuildDialog.generateSingleFile" value="true" />
     <property name="GenerateAntBuildDialog.outputFileNameProperty" value="opengg_project" />
-    <property name="SearchEverywhereHistoryKey" value="&#9;FILE&#9;file://C:/Users/javst/Documents/Projects/OpenGG-Project/OpenGG Project/src/com.opengg.core/classes/com/opengg/core/engine/OpenGGCommandExtender.java&#10;OpenGGT&#9;FILE&#9;file://C:/Users/javst/Documents/Projects/OpenGG-Project/OpenGG Project/src/com.opengg.test/classes/com/opengg/test/OpenGGTest.java&#10;OpenGGC&#9;FILE&#9;file://C:/Users/javst/Documents/Projects/OpenGG-Project/OpenGG Project/src/com.opengg.core/classes/com/opengg/core/engine/OpenGGCommandExtender.java&#10;BindC&#9;PSI&#9;JAVA://com.opengg.core.engine.BindController&#10;Text&#9;PSI&#9;JAVA://com.opengg.core.render.Text&#10;GLO&#9;PSI&#9;JAVA://com.opengg.core.render.GLOptions&#10;GGC&#9;FILE&#9;file://C:/Users/javst/Documents/Projects/OpenGG-Project/OpenGG Project/src/com.opengg.console/classes/com/opengg/core/console/GGConsole.java&#10;GUIT&#9;FILE&#9;file://C:/Users/javst/Documents/Projects/OpenGG-Project/OpenGG Project/src/com.opengg.core/classes/com/opengg/core/gui/GUIText.java&#10;GUITE&#9;PSI&#9;JAVA://com.opengg.core.gui.GUIText&#10;GUI&#9;PSI&#9;JAVA://com.opengg.core.gui.GUIController&#10;KEyboard&#9;FILE&#9;file://C:/Users/javst/Documents/Projects/OpenGG-Project/OpenGG Project/src/com.opengg.core/classes/com/opengg/core/io/input/keyboard/KeyboardController.java&#10;opengg&#9;FILE&#9;file://C:/Users/javst/Documents/Projects/OpenGG-Project/OpenGG Project/src/com.opengg.core/classes/com/opengg/core/engine/OpenGG.java&#10;OpenG&#9;FILE&#9;file://C:/Users/javst/Documents/Projects/OpenGG-Project/OpenGG Project/src/com.opengg.test/classes/com/opengg/test/OpenGGTest.java&#10;Terrain&#9;PSI&#9;JAVA://com.opengg.core.world.Terrain&#10;Heigh&#9;PSI&#9;JAVA://com.opengg.core.world.HeightMap&#10;OpenGLT&#9;PSI&#9;JAVA://com.opengg.core.render.internal.opengl.texture.OpenGLTexture&#10;Texture&#9;PSI&#9;JAVA://com.opengg.core.render.texture.Texture&#10;RenderE&#9;PSI&#9;JAVA://com.opengg.core.render.RenderEngine&#10;OpenGG&#9;FILE&#9;file://C:/Users/javst/Documents/Projects/OpenGG-Project/OpenGG Project/src/com.opengg.core/classes/com/opengg/core/engine/OpenGG.java&#10;Allocator&#9;PSI&#9;JAVA://com.opengg.core.system.Allocator&#10;Ope&#9;FILE&#9;file://C:/Users/javst/Documents/Projects/OpenGG-Project/OpenGG Project/src/com.opengg.core/classes/com/opengg/core/engine/OpenGGCommandExtender.java&#10;Keyboa&#9;FILE&#9;file://C:/Users/javst/Documents/Projects/OpenGG-Project/OpenGG Project/src/com.opengg.core/classes/com/opengg/core/io/input/keyboard/KeyboardController.java&#10;Keyb&#9;PSI&#9;JAVA://com.opengg.core.io.input.keyboard.KeyboardController&#10;GLFW&#9;PSI&#9;JAVA://com.opengg.core.io.input.keyboard.GLFWKeyboardHandler&#10;P&#9;FILE&#9;file://C:/Users/javst/Documents/Projects/OpenGG-Project/OpenGG Project/src/com.opengg.core/classes/com/opengg/core/render/postprocess/PostProcessController.java&#10;SHader&#9;FILE&#9;file://C:/Users/javst/Documents/Projects/OpenGG-Project/OpenGG Project/src/com.opengg.core/classes/com/opengg/core/render/shader/ShaderFile.java&#10;PostP&#9;FILE&#9;file://C:/Users/javst/Documents/Projects/OpenGG-Project/OpenGG Project/src/com.opengg.core/classes/com/opengg/core/render/postprocess/PostProcessController.java&#10;ShaderF&#9;FILE&#9;file://C:/Users/javst/Documents/Projects/OpenGG-Project/OpenGG Project/src/com.opengg.core/classes/com/opengg/core/render/shader/ShaderFile.java&#10;Shader&#9;FILE&#9;file://C:/Users/javst/Documents/Projects/OpenGG-Project/OpenGG Project/src/com.opengg.core/classes/com/opengg/core/render/shader/ShaderFile.java&#10;GUIC&#9;FILE&#9;file://C:/Users/javst/Documents/Projects/OpenGG-Project/OpenGG Project/src/com.opengg.core/classes/com/opengg/core/gui/GUIController.java&#10;Bi&#9;FILE&#9;file://C:/Users/javst/Documents/Projects/OpenGG-Project/OpenGG Project/src/com.opengg.core/classes/com/opengg/core/engine/BindController.java&#10;GGI&#9;FILE&#9;file://C:/Users/javst/Documents/Projects/OpenGG-Project/OpenGG Project/src/com.opengg.base/classes/com/opengg/core/GGInfo.java&#10;Thread&#9;FILE&#9;file://C:/Users/Javier/Documents/NetBeansProjects/OpenGG-Project/OpenGG Project/src/com.opengg.core/classes/com/opengg/core/thread/ThreadManager.java&#10;Client&#9;FILE&#9;file://C:/Users/Javier/Documents/NetBeansProjects/OpenGG-Project/OpenGG Project/src/com.opengg.core/classes/com/opengg/core/network/client/Client.java&#10;Server&#9;PSI&#9;JAVA://com.opengg.core.network.server.Server&#10;Window&#9;FILE&#9;file://C:/Users/Javier/Documents/NetBeansProjects/OpenGG-Project/OpenGG Project/src/com.opengg.core/classes/com/opengg/core/render/window/Window.java&#10;Clien&#9;PSI&#9;JAVA://com.opengg.core.network.client.Client&#10;Matr&#9;FILE&#9;file://C:/Users/Javier/Documents/NetBeansProjects/OpenGG-Project/OpenGG Project/src/com.opengg.math/classes/com/opengg/core/math/Matrix4f.java&#10;Matrix4f&#9;PSI&#9;JAVA://com.opengg.core.math.Matrix4f&#10;sha&#9;FILE&#9;file://C:/Users/Javier/Documents/NetBeansProjects/OpenGG-Project/OpenGG Project/src/com.opengg.core/classes/com/opengg/core/render/shader/ShaderController.java&#10;Sha&#9;FILE&#9;file://C:/Users/Javier/Documents/NetBeansProjects/OpenGG-Project/OpenGG Project/src/com.opengg.core/classes/com/opengg/core/render/shader/ShaderController.java&#10;Rend&#9;FILE&#9;file://C:/Users/Javier/Documents/NetBeansProjects/OpenGG-Project/OpenGG Project/src/com.opengg.core/classes/com/opengg/core/render/RenderEngine.java&#10;OpenGGTE&#9;FILE&#9;file://C:/Users/Javier/Documents/NetBeansProjects/OpenGG-Project/OpenGG Project/src/com.opengg.test/classes/com/opengg/test/OpenGGTest.java&#10;TextureT&#9;PSI&#9;JAVA://com.opengg.core.render.texture.Texture.TextureType&#10;Light&#9;FILE&#9;file://C:/Users/Javier/Documents/NetBeansProjects/OpenGG-Project/OpenGG Project/src/com.opengg.core/classes/com/opengg/core/render/light/Light.java&#10;Shad&#9;FILE&#9;file://C:/Users/Javier/Documents/NetBeansProjects/OpenGG-Project/OpenGG Project/src/com.opengg.core/classes/com/opengg/core/render/shader/ShaderController.java&#10;RenderEngine&#9;PSI&#9;JAVA://com.opengg.core.render.RenderEngine&#10;Drawn&#9;FILE&#9;file://C:/Users/Javier/Documents/NetBeansProjects/OpenGG-Project/OpenGG Project/src/com.opengg.core/classes/com/opengg/core/render/drawn/DrawnObject.java&#10;ViewModelCom&#9;FILE&#9;file://C:/Users/Javier/Documents/NetBeansProjects/OpenGG-Project/OpenGG Project/src/com.opengg.core/classes/com/opengg/core/world/components/viewmodel/ViewModelComponentRegistry.java&#10;ViewModel&#9;FILE&#9;file://C:/Users/Javier/Documents/NetBeansProjects/OpenGG-Project/OpenGG Project/src/com.opengg.core/classes/com/opengg/core/world/components/viewmodel/ViewModel.java" />
+    <property name="SearchEverywhereHistoryKey" value="RenderE&#9;FILE&#9;file://E:/Users/Javier/Documents/NetBeansProjects/OpenGG-Project/OpenGG Project/src/com.opengg.core/classes/com/opengg/core/render/RenderEngine.java&#10;OBjectB&#9;PSI&#9;JAVA://com.opengg.core.render.objects.ObjectBuffers&#10;Shader&#9;FILE&#9;file://E:/Users/Javier/Documents/NetBeansProjects/OpenGG-Project/OpenGG Project/src/com.opengg.core/classes/com/opengg/core/render/shader/ShaderController.java&#10;ShaderF&#9;PSI&#9;JAVA://com.opengg.core.render.shader.ShaderFile&#10;ShaderC&#9;PSI&#9;JAVA://com.opengg.core.render.shader.ShaderController&#10;GGGAme&#9;FILE&#9;file://E:/Users/Javier/Documents/NetBeansProjects/OpenGG-Project/OpenGG Project/src/com.opengg.core/classes/com/opengg/core/engine/GGGameConsole.java&#10;OpenGGT&#9;FILE&#9;file://C:/Users/javst/Documents/Projects/OpenGG-Project/OpenGG Project/src/com.opengg.test/classes/com/opengg/test/OpenGGTest.java&#10;OpenGGC&#9;FILE&#9;file://C:/Users/javst/Documents/Projects/OpenGG-Project/OpenGG Project/src/com.opengg.core/classes/com/opengg/core/engine/OpenGGCommandExtender.java&#10;BindC&#9;PSI&#9;JAVA://com.opengg.core.engine.BindController&#10;Text&#9;PSI&#9;JAVA://com.opengg.core.render.Text&#10;GLO&#9;PSI&#9;JAVA://com.opengg.core.render.GLOptions&#10;GGC&#9;FILE&#9;file://C:/Users/javst/Documents/Projects/OpenGG-Project/OpenGG Project/src/com.opengg.console/classes/com/opengg/core/console/GGConsole.java&#10;GUIT&#9;FILE&#9;file://C:/Users/javst/Documents/Projects/OpenGG-Project/OpenGG Project/src/com.opengg.core/classes/com/opengg/core/gui/GUIText.java&#10;GUITE&#9;PSI&#9;JAVA://com.opengg.core.gui.GUIText&#10;GUI&#9;PSI&#9;JAVA://com.opengg.core.gui.GUIController&#10;KEyboard&#9;FILE&#9;file://C:/Users/javst/Documents/Projects/OpenGG-Project/OpenGG Project/src/com.opengg.core/classes/com/opengg/core/io/input/keyboard/KeyboardController.java&#10;opengg&#9;FILE&#9;file://C:/Users/javst/Documents/Projects/OpenGG-Project/OpenGG Project/src/com.opengg.core/classes/com/opengg/core/engine/OpenGG.java&#10;OpenG&#9;FILE&#9;file://C:/Users/javst/Documents/Projects/OpenGG-Project/OpenGG Project/src/com.opengg.test/classes/com/opengg/test/OpenGGTest.java&#10;Terrain&#9;PSI&#9;JAVA://com.opengg.core.world.Terrain&#10;Heigh&#9;PSI&#9;JAVA://com.opengg.core.world.HeightMap&#10;OpenGLT&#9;PSI&#9;JAVA://com.opengg.core.render.internal.opengl.texture.OpenGLTexture&#10;Texture&#9;PSI&#9;JAVA://com.opengg.core.render.texture.Texture&#10;OpenGG&#9;FILE&#9;file://C:/Users/javst/Documents/Projects/OpenGG-Project/OpenGG Project/src/com.opengg.core/classes/com/opengg/core/engine/OpenGG.java&#10;Allocator&#9;PSI&#9;JAVA://com.opengg.core.system.Allocator&#10;Ope&#9;FILE&#9;file://C:/Users/javst/Documents/Projects/OpenGG-Project/OpenGG Project/src/com.opengg.core/classes/com/opengg/core/engine/OpenGGCommandExtender.java&#10;Keyboa&#9;FILE&#9;file://C:/Users/javst/Documents/Projects/OpenGG-Project/OpenGG Project/src/com.opengg.core/classes/com/opengg/core/io/input/keyboard/KeyboardController.java&#10;Keyb&#9;PSI&#9;JAVA://com.opengg.core.io.input.keyboard.KeyboardController&#10;GLFW&#9;PSI&#9;JAVA://com.opengg.core.io.input.keyboard.GLFWKeyboardHandler&#10;P&#9;FILE&#9;file://C:/Users/javst/Documents/Projects/OpenGG-Project/OpenGG Project/src/com.opengg.core/classes/com/opengg/core/render/postprocess/PostProcessController.java&#10;SHader&#9;FILE&#9;file://C:/Users/javst/Documents/Projects/OpenGG-Project/OpenGG Project/src/com.opengg.core/classes/com/opengg/core/render/shader/ShaderFile.java&#10;PostP&#9;FILE&#9;file://C:/Users/javst/Documents/Projects/OpenGG-Project/OpenGG Project/src/com.opengg.core/classes/com/opengg/core/render/postprocess/PostProcessController.java&#10;GUIC&#9;FILE&#9;file://C:/Users/javst/Documents/Projects/OpenGG-Project/OpenGG Project/src/com.opengg.core/classes/com/opengg/core/gui/GUIController.java&#10;Bi&#9;FILE&#9;file://C:/Users/javst/Documents/Projects/OpenGG-Project/OpenGG Project/src/com.opengg.core/classes/com/opengg/core/engine/BindController.java&#10;GGI&#9;FILE&#9;file://C:/Users/javst/Documents/Projects/OpenGG-Project/OpenGG Project/src/com.opengg.base/classes/com/opengg/core/GGInfo.java&#10;Thread&#9;FILE&#9;file://C:/Users/Javier/Documents/NetBeansProjects/OpenGG-Project/OpenGG Project/src/com.opengg.core/classes/com/opengg/core/thread/ThreadManager.java&#10;Client&#9;FILE&#9;file://C:/Users/Javier/Documents/NetBeansProjects/OpenGG-Project/OpenGG Project/src/com.opengg.core/classes/com/opengg/core/network/client/Client.java&#10;Server&#9;PSI&#9;JAVA://com.opengg.core.network.server.Server&#10;Window&#9;FILE&#9;file://C:/Users/Javier/Documents/NetBeansProjects/OpenGG-Project/OpenGG Project/src/com.opengg.core/classes/com/opengg/core/render/window/Window.java&#10;Clien&#9;PSI&#9;JAVA://com.opengg.core.network.client.Client&#10;Matr&#9;FILE&#9;file://C:/Users/Javier/Documents/NetBeansProjects/OpenGG-Project/OpenGG Project/src/com.opengg.math/classes/com/opengg/core/math/Matrix4f.java&#10;Matrix4f&#9;PSI&#9;JAVA://com.opengg.core.math.Matrix4f&#10;sha&#9;FILE&#9;file://C:/Users/Javier/Documents/NetBeansProjects/OpenGG-Project/OpenGG Project/src/com.opengg.core/classes/com/opengg/core/render/shader/ShaderController.java&#10;Sha&#9;FILE&#9;file://C:/Users/Javier/Documents/NetBeansProjects/OpenGG-Project/OpenGG Project/src/com.opengg.core/classes/com/opengg/core/render/shader/ShaderController.java&#10;Rend&#9;FILE&#9;file://C:/Users/Javier/Documents/NetBeansProjects/OpenGG-Project/OpenGG Project/src/com.opengg.core/classes/com/opengg/core/render/RenderEngine.java&#10;OpenGGTE&#9;FILE&#9;file://C:/Users/Javier/Documents/NetBeansProjects/OpenGG-Project/OpenGG Project/src/com.opengg.test/classes/com/opengg/test/OpenGGTest.java&#10;TextureT&#9;PSI&#9;JAVA://com.opengg.core.render.texture.Texture.TextureType&#10;Light&#9;FILE&#9;file://C:/Users/Javier/Documents/NetBeansProjects/OpenGG-Project/OpenGG Project/src/com.opengg.core/classes/com/opengg/core/render/light/Light.java&#10;Shad&#9;FILE&#9;file://C:/Users/Javier/Documents/NetBeansProjects/OpenGG-Project/OpenGG Project/src/com.opengg.core/classes/com/opengg/core/render/shader/ShaderController.java&#10;RenderEngine&#9;PSI&#9;JAVA://com.opengg.core.render.RenderEngine&#10;Drawn&#9;FILE&#9;file://C:/Users/Javier/Documents/NetBeansProjects/OpenGG-Project/OpenGG Project/src/com.opengg.core/classes/com/opengg/core/render/drawn/DrawnObject.java" />
     <property name="extract.method.default.visibility" value="private" />
     <property name="last_directory_selection" value="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core" />
     <property name="last_opened_file_path" value="C:/lib/lwjgl/sources" />
@@ -645,26 +576,24 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1096" extended-state="6" />
+    <frame x="0" y="0" width="2560" height="1440" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info anchor="right" id="Palette" order="3" />
       <window_info anchor="bottom" id="TODO" order="8" weight="0.32969433" />
-      <window_info anchor="bottom" id="Messages" order="13" sideWeight="0.49394295" weight="0.3243243" />
+      <window_info anchor="bottom" id="Messages" order="13" sideWeight="0.49394295" weight="0.3242424" />
       <window_info anchor="right" id="Palette&#9;" order="5" />
       <window_info id="Image Layers" order="3" />
-      <window_info anchor="bottom" id="Regex Tester" order="14" weight="0.32969433" />
       <window_info anchor="right" id="Capture Analysis" order="4" />
       <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.50034696" side_tool="true" weight="0.3293979" />
       <window_info anchor="right" id="Maven Projects" order="7" />
-      <window_info anchor="bottom" id="Run" order="3" sideWeight="0.60860515" weight="0.26091477" />
+      <window_info active="true" anchor="bottom" id="Run" order="3" sideWeight="0.60860515" visible="true" weight="0.26060605" />
       <window_info anchor="bottom" id="Version Control" order="12" />
-      <window_info id="Unicode Browser" order="0" />
       <window_info anchor="bottom" id="Terminal" order="10" weight="0.3286026" />
       <window_info id="Capture Tool" order="5" />
       <window_info id="Designer" order="2" />
-      <window_info content_ui="combo" x="1015" y="130" width="360" height="606" id="Project" order="1" sideWeight="0.8548387" visible="true" weight="0.22547974" />
+      <window_info content_ui="combo" x="1015" y="130" width="360" height="606" id="Project" order="1" sideWeight="0.8548387" visible="true" weight="0.22734499" />
       <window_info anchor="bottom" id="JProfiler" order="14" />
-      <window_info anchor="bottom" id="Find" order="2" weight="0.3108108" />
       <window_info id="Structure" order="6" sideWeight="0.14516129" side_tool="true" weight="0.20286739" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.24946237" />
       <window_info id="UI Designer" order="4" />
@@ -675,6 +604,9 @@
       <window_info anchor="bottom" id="Dependency Viewer" order="1" weight="0.3290566" />
       <window_info anchor="bottom" id="Inspection" order="9" weight="0.4" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info id="Unicode Browser" order="0" />
+      <window_info anchor="bottom" id="Regex Tester" order="14" weight="0.32969433" />
+      <window_info anchor="bottom" id="Find" order="2" weight="0.3108108" />
       <window_info anchor="bottom" id="Cvs" order="7" weight="0.25" />
       <window_info anchor="right" x="0" y="0" width="313" height="775" id="Documentation" order="8" side_tool="true" weight="0.3297491" />
       <window_info id="Learn" order="8" weight="0.3297491" />
@@ -691,22 +623,22 @@
       <window_info active="true" anchor="bottom" id="Run" order="3" sideWeight="0.60860515" visible="true" weight="0.26200873" />
       <window_info anchor="bottom" id="Cvs" order="7" weight="0.25" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.24946237" />
-      <window_info id="Capture Tool" order="5" />
       <window_info id="UI Designer" order="4" />
       <window_info id="Favorites" order="7" sideWeight="0.1468005" side_tool="true" weight="0.19641577" />
       <window_info anchor="bottom" id="Terminal" order="10" weight="0.3286026" />
-      <window_info id="Unicode Browser" order="0" />
+      <window_info id="Capture Tool" order="5" />
       <window_info anchor="right" id="Capture Analysis" order="4" />
       <window_info anchor="bottom" id="Inspection Results" order="0" sideWeight="0.499653" weight="0.32830188" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.50034696" side_tool="true" weight="0.3293979" />
+      <window_info anchor="bottom" id="Regex Tester" order="15" weight="0.32969433" />
       <window_info anchor="right" x="0" y="0" width="313" height="775" id="Documentation" order="8" side_tool="true" weight="0.3297491" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="bottom" id="JProfiler" order="14" />
       <window_info anchor="bottom" id="Dependency Viewer" order="1" weight="0.3290566" />
       <window_info anchor="bottom" id="Version Control" order="12" />
       <window_info anchor="right" id="Maven Projects" order="7" />
-      <window_info anchor="bottom" id="Find" order="2" weight="0.3264192" />
+      <window_info id="Structure" order="6" sideWeight="0.14516129" side_tool="true" weight="0.20286739" />
       <window_info content_ui="combo" x="1015" y="130" width="360" height="606" id="Project" order="1" sideWeight="0.8548387" visible="true" weight="0.22547974" />
       <window_info id="Learn" order="8" weight="0.3297491" />
       <window_info anchor="bottom" id="Messages" order="13" sideWeight="0.49394295" weight="0.32532752" />
@@ -714,10 +646,10 @@
       <window_info anchor="bottom" id="TODO" order="8" weight="0.32969433" />
       <window_info anchor="right" id="Palette&#9;" order="5" />
       <window_info anchor="right" id="Theme Preview" order="6" />
-      <window_info id="Structure" order="6" sideWeight="0.14516129" side_tool="true" weight="0.20286739" />
+      <window_info id="Unicode Browser" order="0" />
       <window_info anchor="bottom" id="Inspection" order="9" weight="0.4" />
       <window_info anchor="right" id="Coverage" order="9" side_tool="true" weight="0.3297491" />
-      <window_info anchor="bottom" id="Regex Tester" order="15" weight="0.32969433" />
+      <window_info anchor="bottom" id="Find" order="2" weight="0.3264192" />
       <window_info anchor="bottom" id="Debug" order="5" sideWeight="0.49687716" weight="0.4843162" />
     </layout-to-restore>
   </component>
@@ -732,7 +664,7 @@
           <properties />
         </line-breakpoint>
       </breakpoints>
-      <option name="time" value="18" />
+      <option name="time" value="19" />
     </breakpoint-manager>
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
@@ -910,186 +842,6 @@
     </buildFile>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/shader/ShaderFile.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2415">
-          <caret line="236" column="39" selection-start-line="236" selection-start-column="39" selection-end-line="236" selection-end-column="39" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="initializer##0;class#ShaderFile#0" />
-            <element signature="method#ShaderFile#0;class#ShaderFile#0" />
-            <element signature="method#process#0;class#ShaderFile#0" />
-            <element signature="method#processStruct#0;class#ShaderFile#0" />
-            <element signature="method#findNextFunc#0;class#ShaderFile#0" />
-            <element signature="method#processFunction#0;class#ShaderFile#0" />
-            <element signature="method#valuesFromPreprocessor#0;class#ShaderFile#0" />
-            <element signature="class#ShaderFunction#0;class#ShaderFile#0" />
-            <element signature="class#ShaderStruct#0;class#ShaderFile#0" />
-            <element signature="class#ShaderField#0;class#ShaderFile#0" />
-            <element signature="class#ShaderFileType#0;class#ShaderFile#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/shader/ShaderController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1633">
-          <caret line="102" column="39" selection-start-line="102" selection-start-column="39" selection-end-line="102" selection-end-column="39" />
-          <folding>
-            <element signature="docComment;class#ShaderController#0" />
-            <element signature="e#1831#1949#0" />
-            <element signature="e#1955#2030#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dist/resources/glsl/fxaa.frag">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="138">
-          <caret line="6" column="40" lean-forward="true" selection-start-line="6" selection-start-column="40" selection-end-line="6" selection-end-column="40" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dist/resources/glsl/water.frag">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="253">
-          <caret line="11" column="2" selection-start-line="11" selection-start-column="2" selection-end-line="11" selection-end-column="2" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dist/resources/glsl/point.geom">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="322">
-          <caret line="14" column="39" lean-forward="true" selection-start-line="14" selection-start-column="39" selection-end-line="14" selection-end-column="39" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dist/resources/glsl/anim.vert">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="207">
-          <caret line="9" column="12" lean-forward="true" selection-start-line="9" selection-start-column="12" selection-end-line="9" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/io/input/keyboard/KeyboardCharacterListener.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="46">
-          <caret line="2" column="16" selection-start-line="2" selection-start-column="16" selection-end-line="2" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/io/input/keyboard/GLFWKeyboardHandler.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="207">
-          <caret line="14" column="13" lean-forward="true" selection-start-line="14" selection-start-column="13" selection-end-line="14" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com.opengg.console/classes/com/opengg/core/console/GGMessage.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="322">
-          <caret line="21" column="16" lean-forward="true" selection-start-line="21" selection-start-column="16" selection-end-line="21" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com.opengg.console/classes/com/opengg/core/console/ConsoleListener.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="184">
-          <caret line="12" column="17" selection-start-line="12" selection-start-column="17" selection-end-line="12" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com.opengg.console/classes/com/opengg/core/console/UserCommand.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="230">
-          <caret line="14" column="13" selection-start-line="14" selection-start-column="13" selection-end-line="14" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com.opengg.console/classes/com/opengg/core/console/Level.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="161">
-          <caret line="11" column="3" lean-forward="true" selection-start-line="11" selection-start-column="3" selection-end-line="11" selection-end-column="3" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com.opengg.console/classes/com/opengg/core/console/ConsoleOutputConsumer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="46">
-          <caret line="2" column="36" lean-forward="true" selection-start-line="2" selection-start-column="36" selection-end-line="2" selection-end-column="36" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com.opengg.console/classes/com/opengg/core/console/LoggerOutputConsumer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="161">
-          <caret line="7" column="5" lean-forward="true" selection-start-line="7" selection-start-column="5" selection-end-line="7" selection-end-column="5" />
-          <folding>
-            <element signature="e#145#146#0" expanded="true" />
-            <element signature="e#178#179#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com.opengg.base/classes/com/opengg/core/ConfigFile.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="23">
-          <caret line="6" column="23" selection-start-line="6" selection-start-column="23" selection-end-line="6" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com.opengg.console/classes/com/opengg/core/console/GGThreadExceptionHandler.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="230">
-          <caret line="15" column="13" selection-start-line="15" selection-start-column="13" selection-end-line="15" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com.opengg.base/classes/com/opengg/core/thread/ThreadManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-989">
-          <caret line="6" column="26" lean-forward="true" selection-start-line="6" selection-start-column="26" selection-end-line="6" selection-end-column="26" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com.opengg.base/classes/module-info.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="138">
-          <caret line="6" column="18" selection-start-line="6" selection-start-column="18" selection-end-line="6" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com.opengg.base/classes/com/opengg/core/GGInfo.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="213">
-          <caret line="87" lean-forward="true" selection-start-line="87" selection-end-line="87" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com.opengg.base/classes/com/opengg/core/thread/ParallelWorkerPool.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="276">
-          <caret line="44" column="44" selection-start-line="44" selection-start-column="44" selection-end-line="44" selection-end-column="44" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com.opengg.console/classes/com/opengg/core/console/DefaultLoggerOutputConsumer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="253">
-          <caret line="11" column="5" lean-forward="true" selection-start-line="11" selection-start-column="5" selection-end-line="11" selection-end-column="5" />
-          <folding>
-            <element signature="e#425#426#0" expanded="true" />
-            <element signature="e#465#466#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com.opengg.core/classes/module-info.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="528">
@@ -1165,17 +917,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/texture/Texture.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="284">
-          <caret line="291" column="46" selection-start-line="291" selection-start-column="46" selection-end-line="291" selection-end-column="46" />
-          <folding>
-            <element signature="e#10710#10711#0" expanded="true" />
-            <element signature="e#10751#10752#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/engine/OpenGG.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-675">
@@ -1195,7 +936,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/gui/GUI.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="222">
+        <state relative-caret-position="230">
           <caret line="16" column="13" selection-start-line="16" selection-start-column="13" selection-end-line="16" selection-end-column="13" />
         </state>
       </provider>
@@ -1211,9 +952,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="222">
           <caret line="135" selection-start-line="135" selection-end-line="135" />
-          <folding>
-            <element signature="e#4580#4581#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1227,63 +965,31 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/texture/text/TextVBOGenerator.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="207">
-          <caret line="21" column="13" selection-start-line="21" selection-start-column="13" selection-end-line="21" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/texture/text/TextLine.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="24">
-          <caret line="14" column="13" selection-start-line="14" selection-start-column="13" selection-end-line="14" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/Text.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-183">
-          <caret line="17" column="18" lean-forward="true" selection-start-line="17" selection-start-column="18" selection-end-line="17" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com.opengg.test/classes/com/opengg/test/OpenGGTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-657">
-          <caret line="118" column="44" lean-forward="true" selection-start-line="118" selection-start-column="44" selection-end-line="118" selection-end-column="44" />
+        <state relative-caret-position="2737">
+          <caret line="126" column="44" selection-start-line="126" selection-start-column="44" selection-end-line="126" selection-end-column="44" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com.opengg.console/classes/com/opengg/core/console/GGConsole.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="276">
-          <caret line="77" column="24" selection-start-line="77" selection-start-column="24" selection-end-line="77" selection-end-column="24" />
-          <folding>
-            <element signature="method#exception#0;class#GGConsole#0" />
-            <element signature="method#consume#0;class#GGConsole#0" />
-            <element signature="method#getSender#0;class#GGConsole#0" />
-            <element signature="method#acceptUserInput#0;class#GGConsole#0" />
-          </folding>
+        <state relative-caret-position="2139">
+          <caret line="98" selection-start-line="98" selection-end-line="98" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/engine/BindController.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="484">
-          <caret line="87" selection-start-line="87" selection-end-line="87" />
+        <state relative-caret-position="1955">
+          <caret line="89" selection-start-line="89" selection-end-line="89" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/io/input/keyboard/KeyboardController.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="482">
-          <caret line="53" column="44" lean-forward="true" selection-start-line="53" selection-start-column="44" selection-end-line="53" selection-end-column="44" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#941#942#0" expanded="true" />
-            <element signature="e#967#968#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="989">
+          <caret line="72" column="13" selection-start-line="72" selection-start-column="13" selection-end-line="72" selection-end-column="13" />
         </state>
       </provider>
     </entry>
@@ -1307,44 +1013,248 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/world/World.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="406">
-          <caret line="200" column="79" selection-start-line="200" selection-start-column="79" selection-end-line="200" selection-end-column="79" />
-          <folding>
-            <element signature="e#6861#6862#0" expanded="true" />
-            <element signature="e#6913#6914#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="3933">
+          <caret line="210" column="5" selection-start-line="210" selection-start-column="5" selection-end-line="210" selection-end-column="5" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/dist/config/config.ini">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="69">
-          <caret line="3" column="9" lean-forward="true" selection-start-line="3" selection-start-column="9" selection-end-line="3" selection-end-column="9" />
+          <caret line="3" column="9" selection-start-line="3" selection-start-column="9" selection-end-line="3" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/texture/text/GGFontFile.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2139">
+          <caret line="20" column="13" selection-start-line="20" selection-start-column="13" selection-end-line="20" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/texture/text/TextLine.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="253">
+          <caret line="16" column="28" lean-forward="true" selection-start-line="16" selection-start-column="28" selection-end-line="16" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/texture/text/Word.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="207">
+          <caret line="15" column="13" selection-start-line="15" selection-start-column="13" selection-end-line="15" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/texture/text/GGCharacter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="161">
+          <caret line="11" column="13" selection-start-line="11" selection-start-column="13" selection-end-line="11" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/texture/text/TextVBOGenerator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="529">
+          <caret line="38" lean-forward="true" selection-start-line="38" selection-end-line="38" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/texture/text/GGFont.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="575">
+          <caret line="32" column="30" selection-start-line="32" selection-start-column="11" selection-end-line="32" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/Text.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1046">
+          <caret line="167" column="30" selection-start-line="167" selection-start-column="11" selection-end-line="167" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/texture/Texture.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="284">
+          <caret line="330" column="32" selection-start-line="330" selection-start-column="32" selection-end-line="330" selection-end-column="32" />
+          <folding>
+            <element signature="e#10751#10752#0" expanded="true" />
+            <element signature="e#10818#10819#0" expanded="true" />
+            <element signature="e#12727#12728#0" expanded="true" />
+            <element signature="e#12777#12778#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dist/resources/glsl/light.ggsl">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dist/resources/glsl/water.frag">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="460">
+          <caret line="20" column="8" lean-forward="true" selection-start-line="20" selection-start-column="8" selection-end-line="20" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dist/resources/glsl/point.geom">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="115">
+          <caret line="5" column="5" selection-start-line="5" selection-start-column="5" selection-end-line="5" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/shader/ShaderFile.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="413">
+          <caret line="33" column="78" lean-forward="true" selection-start-line="33" selection-start-column="78" selection-end-line="33" selection-end-column="78" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/engine/OpenGGCommandExtender.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="24">
-          <caret line="37" column="26" lean-forward="true" selection-start-line="37" selection-start-column="26" selection-end-line="37" selection-end-column="26" />
+        <state relative-caret-position="369">
+          <caret line="50" column="42" selection-start-line="50" selection-start-column="42" selection-end-line="50" selection-end-column="42" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/text/Text.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="863">
+          <caret line="139" column="8" lean-forward="true" selection-start-line="139" selection-start-column="8" selection-end-line="139" selection-end-column="8" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="method#displayCertainCharacters#0;class#Text#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/lib/lwjgl/sources/lwjgl-sources.jar!/org/lwjgl/system/MemoryStack.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="311">
+          <caret line="601" column="30" selection-start-line="601" selection-start-column="30" selection-end-line="601" selection-end-column="30" />
+          <folding>
+            <element signature="e#22807#22808#0" expanded="true" />
+            <element signature="e#22839#22840#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/lib/lwjgl/sources/lwjgl-stb-sources.jar!/org/lwjgl/stb/STBTTAlignedQuad.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="326">
+          <caret line="187" column="19" lean-forward="true" selection-start-line="187" selection-start-column="19" selection-end-line="187" selection-end-column="19" />
+          <folding>
+            <element signature="e#5651#5652#0" expanded="true" />
+            <element signature="e#5697#5698#0" expanded="true" />
+            <element signature="e#6190#6191#0" expanded="true" />
+            <element signature="e#6251#6252#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/shader/ShaderController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="924">
+          <caret line="74" column="7" lean-forward="true" selection-start-line="74" selection-start-column="7" selection-end-line="74" selection-end-column="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dist/resources/glsl/error.glsl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="795">
+          <caret line="112" lean-forward="true" selection-start-line="112" selection-end-line="112" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/texture/Font.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1012">
+          <caret line="17" column="13" selection-start-line="17" selection-start-column="13" selection-end-line="17" selection-end-column="13" />
+          <folding>
+            <element signature="e#1704#1705#0" expanded="true" />
+            <element signature="e#1773#1774#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dist/resources/glsl/terrainmulti.frag">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="414">
+          <caret line="18" column="2" lean-forward="true" selection-start-line="18" selection-start-column="2" selection-end-line="18" selection-end-column="2" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/Renderable.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="276">
+          <caret line="16" column="9" selection-start-line="16" selection-start-column="9" selection-end-line="16" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/drawn/TexturedDrawnObject.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="299">
+          <caret line="18" column="11" selection-start-line="18" selection-start-column="11" selection-end-line="18" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/text/TTF.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="648">
+          <caret line="182" column="26" lean-forward="true" selection-start-line="182" selection-start-column="26" selection-end-line="182" selection-end-column="26" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#107#108#0" expanded="true" />
+            <element signature="e#128#129#0" expanded="true" />
+            <element signature="e#5037#5038#0" expanded="true" />
+            <element signature="e#5067#5068#0" expanded="true" />
+            <element signature="e#5114#5115#0" expanded="true" />
+            <element signature="e#5152#5153#0" expanded="true" />
+            <element signature="e#5228#5229#0" expanded="true" />
+            <element signature="e#5286#5287#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/drawn/DrawnObject.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="487">
+          <caret line="101" column="34" lean-forward="true" selection-start-line="101" selection-start-column="34" selection-end-line="101" selection-end-column="34" />
+          <folding>
+            <element signature="e#1417#1418#0" expanded="true" />
+            <element signature="e#1473#1474#0" expanded="true" />
+            <element signature="e#1549#1550#0" expanded="true" />
+            <element signature="e#1593#1594#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/objects/ObjectBuffers.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2035">
+          <caret line="23" column="116" lean-forward="true" selection-start-line="23" selection-start-column="116" selection-end-line="23" selection-end-column="116" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/RenderEngine.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="194">
-          <caret line="123" column="22" lean-forward="true" selection-start-line="123" selection-start-column="22" selection-end-line="123" selection-end-column="22" />
-          <folding>
-            <element signature="e#16297#16298#0" expanded="true" />
-            <element signature="e#16328#16329#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="4853">
+          <caret line="277" column="23" selection-start-line="277" selection-start-column="23" selection-end-line="277" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com.opengg.math/classes/com/opengg/core/math/Matrix4f.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="311">
+          <caret line="257" column="20" selection-start-line="257" selection-start-column="20" selection-end-line="257" selection-end-column="20" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/engine/GGGameConsole.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-321">
-          <caret line="35" column="43" selection-start-line="35" selection-start-column="43" selection-end-line="35" selection-end-column="43" />
+        <state relative-caret-position="334">
+          <caret line="70" column="28" lean-forward="true" selection-start-line="70" selection-start-column="28" selection-end-line="70" selection-end-column="28" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -1394,7 +1304,7 @@
       </state>
       <state key="JdkListConfigurable.UI">
         <settings>
-          <last-edited>JDK 10</last-edited>
+          <last-edited>10</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>

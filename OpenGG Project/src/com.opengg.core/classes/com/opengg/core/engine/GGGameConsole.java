@@ -15,6 +15,7 @@ import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.render.drawn.TexturedDrawnObject;
 import com.opengg.core.render.objects.ObjectCreator;
 import com.opengg.core.render.shader.ShaderController;
+import com.opengg.core.render.text.TTF;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.texture.text.GGFont;
 
@@ -29,7 +30,7 @@ public class GGGameConsole implements KeyboardListener, KeyboardCharacterListene
     private static Drawable background;
     private static Text userinput;
     private static Text consoletext;
-    private static GGFont font;
+    private static TTF font;
     private static boolean enabled = false;
     private static boolean wasInMenu = false;
 
@@ -43,13 +44,14 @@ public class GGGameConsole implements KeyboardListener, KeyboardCharacterListene
         background = new TexturedDrawnObject(ObjectCreator.createSquare(new Vector2f(-1,-1), new Vector2f(1,1), 0.99f),
                 Texture.ofColor(Color.gray, 0.9f));
 
-        font = Resource.getFont("test", "test.png");
-
+        font = TTF.getTruetypeFont(Resource.getAbsoluteFromLocal("resources\\font\\comicsans.ttf"));
+        //font = Resource.getFont("test", "test.png");
+/*
         consoletext = new Text("", new Vector2f(), 0.5f, 1f, false);
         //consoletext.setNumberOfLines(LINE_AMOUNT);
 
         userinput = new Text("", new Vector2f(0, 0), 0.7f, 1f, false);
-        //j;luserinput.setNumberOfLines(1);
+        //j;luserinput.setNumberOfLines(1);*/
     }
 
     public static void render(){
@@ -63,19 +65,23 @@ public class GGGameConsole implements KeyboardListener, KeyboardCharacterListene
                 .map(m -> m + "\n")
                 .forEach(m -> consolevalue += m);
 
-        userinput.setText(currenttext);
-        consoletext.setText(consolevalue);
+
 
         RenderEngine.setDepthCheck(false);
         background.render();
-
+        var tt = new TexturedDrawnObject(font.useOn("hello knuckles"), Texture.ofColor(Color.RED));
+        tt.setMatrix(new Matrix4f().scale(0.01f,0.1f,1));
+        tt.render();
+/*
+ //userinput.setText(currenttext);
+        //consoletext.setText(consolevalue);
         ShaderController.setDistanceField(1);
-        var userdrawable = userinput.getDrawable(font);
-        userdrawable.setMatrix(Matrix4f.translate(0,-1.9f,0));
-        userdrawable.render();
+        //var userdrawable = userinput.getDrawable(font);
+        //userdrawable.setMatrix(Matrix4f.translate(0,-1.9f,0));
+        //userdrawable.render();
         // .render();
-        consoletext.getDrawable(font).render();
-        ShaderController.setDistanceField(0);
+        //consoletext.getDrawable(font).render();
+        ShaderController.setDistanceField(0);*/
 
         RenderEngine.setDepthCheck(true);
 

@@ -3,7 +3,7 @@
 layout(triangles) in;
 layout(triangle_strip, max_vertices=18) out;
 
-in gl_PerVertex{
+inout gl_PerVertex{
   vec4 gl_Position;
 } gl_in[];
 

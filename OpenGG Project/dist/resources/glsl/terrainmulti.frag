@@ -18,7 +18,7 @@ struct Light
 	float lightdistance2;
 };
 
-layout (std140) uniform LightBuffer {
+layout(std140) uniform LightBuffer {
 	Light lights[LIGHTNUM];
 };
 

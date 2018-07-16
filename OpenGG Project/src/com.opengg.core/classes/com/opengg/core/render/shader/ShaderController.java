@@ -828,7 +828,7 @@ public class ShaderController {
 
                 var ne = new ShaderException(e.getMessage());
                 ne.setStackTrace(e.getStackTrace());
-                throw ne;
+                GGConsole.exception(ne);
             }
         }
     }
