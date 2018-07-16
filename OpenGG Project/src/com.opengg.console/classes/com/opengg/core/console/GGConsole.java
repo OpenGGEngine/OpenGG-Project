@@ -7,6 +7,8 @@
 package com.opengg.core.console;
 
 import com.opengg.core.GGInfo;
+import com.opengg.core.thread.ThreadManager;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -15,25 +17,32 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  *
  * @author Javier
  */
-public class GGConsole implements Runnable{
+public class GGConsole{
     private static final List<GGMessage> messages = new LinkedList<>();
     private static final List<ConsoleListener> listeners = new ArrayList<>();
-    private static final BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+    private static final List<LoggerOutputConsumer> consumers = new ArrayList<>();
     private static boolean running = true;
-    
+
+    public static void initialize(){
+        ThreadManager.setDefaultUncaughtExceptionHandler(new GGThreadExceptionHandler());
+        ThreadManager.runDaemon(() -> {
+            Scanner in = new Scanner(System.in);
+            while (GGInfo.isEnded()){
+                acceptUserInput(in.nextLine());
+            }
+        }, "ConsoleListener");
+
+        GGConsole.addOutputConsumer(new DefaultLoggerOutputConsumer(Level.DEBUG, System.out::println));
+    }
+
     public static List<GGMessage> getAllMessages(){
-        return messages;
+        return List.copyOf(messages);
     }
     
     public static GGMessage getMostRecent(){
@@ -44,9 +53,8 @@ public class GGConsole implements Runnable{
         write(message, Level.INFO);
     }
     
-    public static void logVerbose(String message){
-        if(GGInfo.isVerbose())
-            write(message, Level.INFO);
+    public static void debug(String message){
+        write(message, Level.DEBUG);
     }
             
     public static void warning(String message){
@@ -68,56 +76,38 @@ public class GGConsole implements Runnable{
     private static void write(String message, Level level){
         GGMessage m = new GGMessage(message, getSender(), level);
         messages.add(m);
-        System.out.println(m);
+        consume(m);
+    }
+
+    private static void consume(GGMessage message){
+        for(var consumer : consumers){
+            consumer.onMessage(message);
+        }
+    }
+
+    public static void addOutputConsumer(LoggerOutputConsumer consumer){
+        consumers.add(consumer);
     }
 
     private static String getSender(){
         StackTraceElement[] e = Thread.currentThread().getStackTrace();
         return (e[4].getClassName()).substring(e[4].getClassName().lastIndexOf('.')+1);
     }
-    
-    public static void addListener(ConsoleListener listener){
-        listeners.add(listener);
-    }
-    
-    public static void writeLog(String time){
-        writeLog(time, "", time);
-    }
-    
-    public static void writeLog(String time, String error, String name){
-        try(PrintWriter writer = new PrintWriter(new FileOutputStream(new File(new File("").getCanonicalPath()+("logs" + File.separator + name + ".log"))))) {
-            for(GGMessage m : messages){
-                writer.println(m.toString());
-            }
-            writer.println(error);
-        } catch (IOException ex) {
-            GGConsole.error("Could not create log file!");
+
+    public static void acceptUserInput(String string){
+        String[] strings = string.split(" ");
+
+        UserCommand command = new UserCommand();
+        command.time = Calendar.getInstance().getTime();
+        command.command = strings[0];
+        command.argCount = strings.length - 1;
+        command.args = Arrays.copyOfRange(strings, 1, strings.length);
+        for(ConsoleListener listener : listeners){
+            listener.onConsoleInput(command);
         }
     }
 
-    @Override
-    public void run() {
-        try{
-            while(!Thread.interrupted()){
-                if(in.ready()){
-                    String s = "d";
-                    try {s = in.readLine();} catch (IOException ex) {}
-                    UserCommand command = new UserCommand();
-                    command.time = Calendar.getInstance().getTime();
-                    String[] strings = s.split(" ");
-                    command.command = strings[0];
-                    command.argCount = strings.length - 1;
-                    command.args = Arrays.copyOfRange(strings, 1, strings.length);
-                    for(ConsoleListener listener : listeners){
-                        listener.onConsoleInput(command);
-                    }
-                }
-                Thread.sleep(5);
-            }
-        }catch(IOException e){
-            GGConsole.error("Console failed to access the default input, thread will be forced to close");
-        } catch (InterruptedException ex) {
-            GGConsole.log("Console thread closure requested");
-        }
+    public static void addListener(ConsoleListener listener){
+        listeners.add(listener);
     }
 }

@@ -7,6 +7,7 @@
 package com.opengg.core.world;
 
 import com.opengg.core.GGInfo;
+import com.opengg.core.console.GGConsole;
 import com.opengg.core.engine.OpenGG;
 import com.opengg.core.engine.Resource;
 import com.opengg.core.physics.PhysicsEngine;
@@ -193,6 +194,15 @@ public class World extends Component{
      * Recursively prints the Component layout of this world to the default {@link java.io.PrintStream}
      */
     public void printLayout(){
+        GGConsole.log(printLayout(this, ""));
+    }
+
+    private String printLayout(Component comp, String string){
+        string += comp.getClass().getSimpleName() + ": " + comp.getName() + "\n";
+        for(var child : comp.getChildren()){
+            string = "----" + printLayout(child, string);
+        }
+        return  string;
     }
 
     public void use(){

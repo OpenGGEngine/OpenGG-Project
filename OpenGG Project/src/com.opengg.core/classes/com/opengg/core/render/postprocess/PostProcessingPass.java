@@ -17,6 +17,7 @@ public class PostProcessingPass {
         
     List<Stage> stages = new ArrayList<>();
     int op = SET;
+    private boolean enabled = true;
     
     public PostProcessingPass(int op, Stage stage){
         this(op, List.of(stage));
@@ -30,7 +31,15 @@ public class PostProcessingPass {
         this.stages = List.copyOf(stages);
         this.op = op;
     }
-    
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
     public void render(){
         for(Stage stage : stages){
             stage.render();

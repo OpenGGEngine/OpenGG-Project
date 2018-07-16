@@ -11,6 +11,10 @@ package com.opengg.core.math;
  * and other fast implementations of mathematical functions 
  * @author Warren
  */
+import com.opengg.core.math.geom.MinkowskiSet;
+import com.opengg.core.math.geom.MinkowskiTriangle;
+import com.opengg.core.math.geom.Triangle;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -617,7 +621,7 @@ public final class FastMath {
         return end;
     }
     
-    public static List<MinkowskiSet> minkowskiSum(List<Vector3f> v1, List<Vector3f> v2){    
+    public static List<MinkowskiSet> minkowskiSum(List<Vector3f> v1, List<Vector3f> v2){
         List<MinkowskiSet> sum = new ArrayList<>(v1.size()*v2.size());
         
         for(Vector3f vi : v1)

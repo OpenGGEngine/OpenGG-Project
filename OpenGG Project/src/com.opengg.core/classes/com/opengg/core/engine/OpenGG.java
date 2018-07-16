@@ -48,7 +48,6 @@ public final class OpenGG{
     private static final List<ExecutableContainer> executables = Collections.synchronizedList(new LinkedList<>());
     private static Instant startTime;
     private static boolean head = false;
-    private static boolean end = false;
     private static boolean force = false;
     private static boolean verbose = false;
     private static boolean test = false;
@@ -93,6 +92,7 @@ public final class OpenGG{
         GGConsole.log("OpenGL instance info acquired");
 
         RenderEngine.initialize();
+        GGGameConsole.initialize();
         AudioController.initialize();
 
         BindController.initialize();
@@ -116,7 +116,7 @@ public final class OpenGG{
         GGInfo.setServer(!client);
 
         ThreadManager.initialize();
-        ThreadManager.run(new GGConsole(), "ConsoleListenerThread");
+        GGConsole.initialize();
         GGConsole.addListener(new OpenGGCommandExtender());
         GGConsole.log("OpenGG initializing, running on " + System.getProperty("os.name") + ", " + System.getProperty("os.arch"));
 
@@ -159,7 +159,7 @@ public final class OpenGG{
     }
 
     private static void runHeadless(){
-        while(!end){
+        while(!GGInfo.isEnded()){
             runUpdate();
             try {
                 Thread.sleep(1000/60);
@@ -170,7 +170,7 @@ public final class OpenGG{
         }
 
         GGConsole.log("OpenGG closing...");
-        end = true;
+        GGInfo.setEnded(true);
         if(!force){
             closeEngine();
         }
@@ -178,7 +178,7 @@ public final class OpenGG{
     }
 
     private static void run(){
-        while (!getWindow().shouldClose() && !end) {
+        while (!getWindow().shouldClose() && !GGInfo.isEnded()) {
 
             runUpdate();
             runInput();
@@ -186,7 +186,7 @@ public final class OpenGG{
         }
 
         GGConsole.log("OpenGG closing...");
-        end = true;
+        GGInfo.setEnded(true);
         if(!force){
             closeEngine();
         }
@@ -263,7 +263,7 @@ public final class OpenGG{
      */
     public static void endApplication(){
         GGConsole.log("Application end has been requested");
-        end = true;
+        GGInfo.setEnded(true);
     }
 
     /**
@@ -276,7 +276,7 @@ public final class OpenGG{
         GGConsole.warning("Application is force quitting");
         System.exit(0);
         force = true;
-        end = true;
+        GGInfo.setEnded(true);
     }
 
     /**
@@ -300,7 +300,7 @@ public final class OpenGG{
      * @return If marked or actually has ended
      */
     public static boolean getEnded(){
-        return end;
+        return GGInfo.isEnded();
     }
 
     /**
@@ -330,7 +330,6 @@ public final class OpenGG{
     private static void writeErrorLog(){
         if(test) return;
         String error = SystemInfo.getInfo();
-        GGConsole.writeLog(startTime.atZone(ZoneId.systemDefault()).toString(), error, "error");
     }
 
     /**

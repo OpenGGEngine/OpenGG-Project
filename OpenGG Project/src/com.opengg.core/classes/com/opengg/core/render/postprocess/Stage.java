@@ -17,29 +17,35 @@ import java.util.List;
  * @author Javier
  */
 public class Stage {
-    String shader = "";
-    List<Tuple<Integer, Integer>> colorbinds = new ArrayList<>();
-    Framebuffer buffer;
-    
+    private String shader = "";
+    private List<Tuple<Integer, Integer>> colorbinds = new ArrayList<>();
+    private Framebuffer buffer;
+
     public Stage(String shader){
         this(shader, new Tuple<>(0,0));
     }
-    
+
     public Stage(String shader, Tuple<Integer,Integer>... binds){
         this.shader = shader;
         colorbinds.addAll(List.of(binds));
         buffer = WindowFramebuffer.getFloatingPointWindowFramebuffer(binds.length);
     }
-    
+
+    public String getShader() {
+        return shader;
+    }
+
     public void render(){
         PostProcessController.currentBuffer = buffer;
-        ShaderController.useConfiguration(shader);     
+        ShaderController.useConfiguration(shader);
+
         buffer.enableRendering();
         buffer.useEnabledAttachments();
         PostProcessController.drawable.render();
         buffer.disableRendering();
-        for(Tuple<Integer,Integer> bind : colorbinds){
+        for (Tuple<Integer, Integer> bind : colorbinds) {
             buffer.useTexture(bind.x, bind.y);
         }
+
     }
 }

@@ -5,4 +5,5 @@
  */
 module com.opengg.base {
     exports com.opengg.core;
+    exports com.opengg.core.thread;
 }

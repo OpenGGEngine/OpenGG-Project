@@ -15,6 +15,7 @@ import com.opengg.core.console.UserCommand;
 import static com.opengg.core.engine.OpenGG.*;
 import com.opengg.core.physics.PhysicsRenderer;
 import com.opengg.core.physics.collision.CollisionManager;
+import com.opengg.core.render.postprocess.PostProcessController;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.world.WorldEngine;
 
@@ -39,6 +40,7 @@ public class OpenGGCommandExtender implements ConsoleListener{
                     try{
                         float vol = Float.parseFloat(command.args[0]);
                         AudioController.setGlobalGain(vol);
+                        GGConsole.log("Set volume to " + vol);
                     }catch(Exception e){
                         GGConsole.error(command.args[0] + " is not a valid volume!");
                     }
@@ -47,7 +49,7 @@ public class OpenGGCommandExtender implements ConsoleListener{
 
             case "world":
                 if(command.argCount == 1){
-                    if(command.args[0].equalsIgnoreCase("print_layout")){
+                    if(command.args[0].equalsIgnoreCase("print-layout")){
                         WorldEngine.getCurrent().printLayout();
                     }
                 }
@@ -57,8 +59,9 @@ public class OpenGGCommandExtender implements ConsoleListener{
                 if(command.argCount == 1){
                     if(command.args[0].equalsIgnoreCase("restart")){
                         AudioController.restart();
-                    }else if(command.args[0].equalsIgnoreCase("next_track")){
+                    }else if(command.args[0].equalsIgnoreCase("next-track")){
                         SoundtrackHandler.getCurrent().next();
+                        GGConsole.log("Playing next track");
                     }
                 }
                 break;
@@ -125,6 +128,18 @@ public class OpenGGCommandExtender implements ConsoleListener{
                     }
                 }
                 break;
+            case "pp":
+                if(command.argCount == 2){
+                    if(command.args[0].equalsIgnoreCase("enable")){
+                        PostProcessController.getPass(command.args[1]).setEnabled(true);
+                        GGConsole.log("Enabled post-process path named " + command.args[1]);
+                    }else if(command.args[0].equalsIgnoreCase("disable")){
+                        PostProcessController.getPass(command.args[1]).setEnabled(false);
+                        GGConsole.log("Disabled post-process path named " + command.args[1]);
+
+                    }
+
+                }
         }
     }
 }

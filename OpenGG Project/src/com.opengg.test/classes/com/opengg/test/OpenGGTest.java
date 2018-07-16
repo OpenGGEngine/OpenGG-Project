@@ -7,6 +7,7 @@ import com.opengg.core.audio.AudioController;
 import com.opengg.core.engine.BindController;
 import com.opengg.core.engine.GGApplication;
 import com.opengg.core.engine.OpenGG;
+import com.opengg.core.gui.GUI;
 import com.opengg.core.gui.GUIFramebufferTexture;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Quaternionf;
@@ -52,6 +53,7 @@ import com.opengg.core.world.components.viewmodel.ViewModelComponentRegistry;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.regex.Pattern;
 
 
 public class OpenGGTest extends GGApplication{
@@ -75,6 +77,8 @@ public class OpenGGTest extends GGApplication{
         w.glmajor = 4;
         w.glminor = 3;
         OpenGG.initialize(new OpenGGTest(), w);
+
+        //ShaderController.testInitialize();
     }
 
     @Override
@@ -100,7 +104,11 @@ public class OpenGGTest extends GGApplication{
                 + " While the congress of the Republic endlessly debates this alarming chain of events,"
                 + " the Supreme Chancellor has secretly dispatched two Jedi Knights,"
                 + " the guardians of peace and justice in the galaxy, to settle the conflict...", new Vector2f(), 1f, 0.5f, false);
-        GUIController.getDefault().addItem("aids", new GUIText(text, font, new Vector2f(0f,0)));
+
+        GUI mainview = new GUI();
+       // mainview.getRoot().addItem("aids", new GUIText(text, font));
+
+        GUIController.addAndUse(mainview, "mainview");
 
         //NetworkEngine.connect("localhost", 25565);
 
@@ -155,7 +163,6 @@ public class OpenGGTest extends GGApplication{
         BindController.addBind(ControlType.KEYBOARD, "lookleft", KEY_LEFT);
         BindController.addBind(ControlType.KEYBOARD, "lookup", KEY_UP);
         BindController.addBind(ControlType.KEYBOARD, "lookdown", KEY_DOWN);
-        BindController.addBind(ControlType.KEYBOARD, "fire", KEY_L);
         BindController.addBind(ControlType.KEYBOARD, "aim", KEY_K);
 
         ViewModelComponentRegistry.initialize();

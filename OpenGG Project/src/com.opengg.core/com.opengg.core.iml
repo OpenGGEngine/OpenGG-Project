@@ -12,5 +12,6 @@
     <orderEntry type="module" module-name="com.opengg.console" />
     <orderEntry type="module" module-name="com.opengg.math" />
     <orderEntry type="library" name="lwjgl" level="application" />
+    <orderEntry type="library" name="lwjgl" level="application" />
   </component>
 </module>

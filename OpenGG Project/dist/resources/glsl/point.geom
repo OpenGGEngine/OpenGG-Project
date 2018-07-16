@@ -1,11 +1,11 @@
 @version 4.2
 @fields
-layout (triangles) in;
-layout (triangle_strip, max_vertices=18) out;
+layout(triangles) in;
+layout(triangle_strip, max_vertices=18) out;
 
 in gl_PerVertex{
   vec4 gl_Position;
-} ;
+} gl_in[];
 
 uniform mat4 shadowMatrices[6];
 

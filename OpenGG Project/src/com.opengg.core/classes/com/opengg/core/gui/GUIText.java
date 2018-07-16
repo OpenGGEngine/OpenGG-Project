@@ -26,11 +26,12 @@ public class GUIText extends GUIRenderable {
         this.setDrawable(text.getDrawable(font));
     }
 
+    public GUIText(Text text, GGFont font) {
+        this(text, font, new Vector2f());
+    }
+
     public GUIText(GGFont font, Vector2f pos) {
-        this.text = new Text();
-        this.font = font;
-        this.setPositionOffset(pos);
-        this.setDrawable(text.getDrawable(font));
+        this(new Text(), font, pos);
     }
 
     public void setText(String ntext) {
@@ -50,7 +51,6 @@ public class GUIText extends GUIRenderable {
 
     @Override
     public void render() {
-       
         ShaderController.setDistanceField(1);
         super.render();
         ShaderController.setDistanceField(0);

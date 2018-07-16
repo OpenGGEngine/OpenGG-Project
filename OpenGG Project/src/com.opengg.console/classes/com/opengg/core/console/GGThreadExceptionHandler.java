@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package com.opengg.core.thread;
+package com.opengg.core.console;
 
 import com.opengg.core.console.GGConsole;
 import java.lang.Thread.UncaughtExceptionHandler;

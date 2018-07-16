@@ -9,8 +9,10 @@ package com.opengg.core.render.texture;
 
 import com.opengg.core.engine.Resource;
 import com.opengg.core.render.internal.opengl.texture.OpenGLTexture;
+import com.opengg.core.system.Allocator;
 import org.lwjgl.opengl.GL11;
 
+import java.awt.*;
 import java.security.InvalidParameterException;
 import java.util.List;
 
@@ -276,6 +278,22 @@ public interface Texture {
         texture.generateMipmaps();
         texture.unbind();
         return texture;
+    }
+
+    public static Texture ofColor(Color color){
+        return ofColor(color, color.getTransparency()/255f);
+    }
+
+    public static Texture ofColor(Color color, float transparency){
+        TextureData data = new TextureData(1,1,4, Allocator.alloc(4)
+                .put((byte) color.getRed())
+                .put((byte) color.getGreen())
+                .put((byte) color.getBlue())
+                .put((byte) (transparency*255))
+                .flip(),
+                "internal");
+
+        return create(Texture.config(), data);
     }
 
     public static Texture create(TextureConfig config, String... data){

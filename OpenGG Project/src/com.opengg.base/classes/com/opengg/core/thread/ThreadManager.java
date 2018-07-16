@@ -6,7 +6,6 @@
 
 package com.opengg.core.thread;
 
-import com.opengg.core.console.GGConsole;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,11 +17,19 @@ import java.util.List;
 public class ThreadManager {
     private static final List<Thread> running = new ArrayList<>();
     private static int closeDelay = 3000;
+    private static Thread.UncaughtExceptionHandler handler;
     
     public static void initialize(){
-        Thread.setDefaultUncaughtExceptionHandler(new GGThreadExceptionHandler());
+
     }
-    
+
+    public static void setDefaultUncaughtExceptionHandler(Thread.UncaughtExceptionHandler handler){
+        ThreadManager.handler = handler;
+        for(var thread : running){
+            thread.setUncaughtExceptionHandler(handler);
+        }
+    }
+
     public static Thread run(Runnable run){
         return run(run, "Default");
     }

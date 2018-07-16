@@ -7,7 +7,7 @@ package com.opengg.core.world;
 
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.engine.Resource;
-import com.opengg.core.math.Triangle;
+import com.opengg.core.math.geom.Triangle;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.drawn.Drawable;

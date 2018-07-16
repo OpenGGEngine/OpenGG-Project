@@ -23,6 +23,8 @@ public class GGInfo {
     private static boolean server = false;
     private static String glversion = "4.2";
     private static int userId = -1;
+    private static boolean menu = false;
+    private static boolean ended = false;
 
     static{ 
         try {
@@ -86,6 +88,22 @@ public class GGInfo {
 
     public static void setUserId(int userId){
         GGInfo.userId = userId;
+    }
+
+    public static boolean isMenu() {
+        return menu;
+    }
+
+    public static void setMenu(boolean menu) {
+        GGInfo.menu = menu;
+    }
+
+    public static boolean isEnded() {
+        return ended;
+    }
+
+    public static void setEnded(boolean ended) {
+        GGInfo.ended = ended;
     }
 
     private GGInfo() {

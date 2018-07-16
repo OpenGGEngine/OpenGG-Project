@@ -22,7 +22,7 @@ public class KeyTrigger extends Trigger implements KeyboardListener {
     
     public KeyTrigger(int... key){
         super();
-        KeyboardController.addToPool(this);
+        KeyboardController.addKeyboardListener(this);
         keys = key;
     }
 

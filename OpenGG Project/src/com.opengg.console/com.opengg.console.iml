@@ -8,5 +8,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="com.opengg.base" />
+    <orderEntry type="library" name="lwjgl" level="application" />
   </component>
 </module>

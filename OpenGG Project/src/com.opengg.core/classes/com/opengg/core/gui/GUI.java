@@ -15,15 +15,10 @@ import com.opengg.core.world.Camera;
  * @author Javier
  */
 public class GUI{
-    public static GUIGroup root = new GUIGroup(new Vector2f(0,0));
+    private GUIGroup root = new GUIGroup(new Vector2f(0,0));
+    private boolean menu = false;
     
-    public GUI() {
-    }
-    
-    public static void startGUIPos(){
-        ShaderController.setOrtho(-1, 1, -1, 1, -1f, 1f);
-        ShaderController.setView(new Camera().getMatrix());
-    }
+    public GUI() {}
 
     public void render(){
         root.render();
@@ -31,5 +26,17 @@ public class GUI{
     
     public void addItem(String name, GUIRenderable item){
         root.addItem(name, item);
-    } 
+    }
+
+    public GUIGroup getRoot() {
+        return root;
+    }
+
+    public boolean isMenu() {
+        return menu;
+    }
+
+    public void setMenu(boolean menu) {
+        this.menu = menu;
+    }
 }

@@ -10,5 +10,6 @@
     <orderEntry type="module" module-name="com.opengg.console" />
     <orderEntry type="module" module-name="com.opengg.base" />
     <orderEntry type="library" name="lwjgl" level="application" />
+    <orderEntry type="library" name="lwjgl" level="application" />
   </component>
 </module>

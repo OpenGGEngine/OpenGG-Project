@@ -8,8 +8,8 @@ package com.opengg.core.render;
 
 import com.opengg.core.GGInfo;
 import com.opengg.core.console.GGConsole;
+import com.opengg.core.engine.GGGameConsole;
 import com.opengg.core.exceptions.RenderException;
-import com.opengg.core.gui.GUI;
 import com.opengg.core.gui.GUIController;
 import com.opengg.core.model.ModelManager;
 import com.opengg.core.physics.PhysicsRenderer;
@@ -121,13 +121,13 @@ public class RenderEngine {
         Camera c = new Camera();
         useCamera(c);
 
-        glEnable(GL_BLEND);
+        GLOptions.set(GL_BLEND, true);
         glBlendEquation(GL_FUNC_ADD);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LEQUAL);
-        glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+        GLOptions.set(GL_TEXTURE_CUBE_MAP_SEAMLESS, true);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
         TextureManager.initialize();
@@ -269,9 +269,10 @@ public class RenderEngine {
         
         defaultvao.bind();
         
-        GUI.startGUIPos();
+        enableDefaultVP();
         PostProcessController.process(sceneFramebuffer);
         GUIController.render();
+        GGGameConsole.render();
     }
     
     public static void resetConfig(){
@@ -359,7 +360,12 @@ public class RenderEngine {
         if(!groups.contains(r))
             groups.add(r);
     }
-    
+
+    public static void enableDefaultVP(){
+        ShaderController.setOrtho(-1, 1, -1, 1, -1f, 1f);
+        ShaderController.setView(new Camera().getMatrix());
+    }
+
     public RenderGroup getRenderGroup(String name){
         for(RenderGroup r : groups)
             if(r.getName().equals(name)) return r;
@@ -429,6 +435,10 @@ public class RenderEngine {
     public static void setCulling(boolean enable){
         cull = enable;
         resetConfig();
+    }
+
+    public static void setDepthCheck(boolean check){
+        GLOptions.set(GL_DEPTH_TEST, check);
     }
 
     public static RenderEnvironment getCurrentEnvironment(){

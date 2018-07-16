@@ -6,6 +6,7 @@
 
 package com.opengg.core.engine;
 
+import com.opengg.core.GGInfo;
 import com.opengg.core.io.Bind;
 import com.opengg.core.io.ControlType;
 import com.opengg.core.io.input.keyboard.KeyboardController;
@@ -29,8 +30,10 @@ public class BindController implements KeyboardListener, MouseButtonListener{
     static List<ActionTransmitter> controllers = new ArrayList<>();
     static List<Bind> binds = new ArrayList<>();
 
+    private static boolean enabled = true;
+
     private BindController(){
-        KeyboardController.addToPool(this);
+        KeyboardController.addKeyboardListener(this);
     }
     
     public static void initialize(){
@@ -82,12 +85,20 @@ public class BindController implements KeyboardListener, MouseButtonListener{
      * Prints all current binds to the default PrintStream
      */
     public static void printBinds(){
-        for(Bind bind : binds){
-        }
+
     }
-    
+
+    public static boolean isEnabled() {
+        return enabled;
+    }
+
+    public static void setEnabled(boolean enabled) {
+        BindController.enabled = enabled;
+    }
+
     @Override
     public void keyPressed(int key) {
+        if(!act()) return;
         for(Bind bind : binds){    
             if(bind.button == key && bind.type == ControlType.KEYBOARD){
                 for(ActionTransmitter c : controllers){
@@ -102,6 +113,7 @@ public class BindController implements KeyboardListener, MouseButtonListener{
 
     @Override
     public void keyReleased(int key) {
+        if(!act()) return;
         for(Bind bind : binds){
             if(bind.button == key && bind.type == ControlType.KEYBOARD){
                 for(ActionTransmitter c : controllers){
@@ -116,6 +128,7 @@ public class BindController implements KeyboardListener, MouseButtonListener{
 
     @Override
     public void onButtonPress(int button){
+        if(!act()) return;
         for(Bind bind : binds){
             if(bind.button == button && bind.type == ControlType.MOUSEBUTTON){
                 for(ActionTransmitter c : controllers){
@@ -130,6 +143,7 @@ public class BindController implements KeyboardListener, MouseButtonListener{
 
     @Override
     public void onButtonRelease(int button){
+        if(!act()) return;
         for(Bind bind : binds){
             if(bind.button == button && bind.type == ControlType.MOUSEBUTTON){
                 for(ActionTransmitter c : controllers){
@@ -140,5 +154,9 @@ public class BindController implements KeyboardListener, MouseButtonListener{
                 }
             }
         }
+    }
+
+    private boolean act(){
+        return enabled && !GGInfo.isMenu();
     }
 }

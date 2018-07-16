@@ -9,5 +9,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="com.opengg.system" />
     <orderEntry type="library" name="lwjgl" level="application" />
+    <orderEntry type="library" name="lwjgl" level="application" />
   </component>
 </module>

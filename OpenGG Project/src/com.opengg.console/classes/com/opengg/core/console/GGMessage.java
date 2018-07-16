@@ -34,7 +34,9 @@ public class GGMessage {
         this.level = level;
         this.time = Instant.now().atZone(ZoneId.systemDefault()).toLocalTime().format(DateTimeFormatter.ISO_TIME);
     }
-    
+
+
+
     @Override
     public String toString(){
         return "[" + time + "] " + level + " (" + sender + "): " + message;

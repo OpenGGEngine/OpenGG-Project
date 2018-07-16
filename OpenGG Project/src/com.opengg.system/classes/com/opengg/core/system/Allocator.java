@@ -149,7 +149,6 @@ public class Allocator {
     
     public static void popStack(){
         MemoryStack.stackPop();
-        GGConsole.logVerbose("Stack popped by " + getSender());
     }
     
     public static void register(Buffer buffer, int allocator){
@@ -167,7 +166,6 @@ public class Allocator {
         data.type = type;
         
         //buffers.put(buffer, data);
-        GGConsole.logVerbose("class" + " allocated " + buffer.getClass().getSimpleName() + " with size " + size + " using allocator " + allocator);
     }
     
    /* public static int getLiveBufferCount(){

@@ -5,7 +5,7 @@
  */
 package com.opengg.core.physics.collision;
 
-import com.opengg.core.math.Triangle;
+import com.opengg.core.math.geom.Triangle;
 import com.opengg.core.world.Terrain;
 import java.util.ArrayList;
 import java.util.List;

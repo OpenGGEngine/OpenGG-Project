@@ -5,6 +5,8 @@
  */
 package com.opengg.core.gui;
 
+import com.opengg.core.GGInfo;
+import com.opengg.core.engine.BindController;
 import com.opengg.core.render.shader.ShaderController;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,18 +22,24 @@ public class GUIController {
     
     public static void initialize(){
         defaultgui = new GUI();
-        addGUI(defaultgui, "default");
-        useGUI("default");
+        addAndUse(defaultgui, "default");
     }
     
     public static void useGUI(String name){
         current = guis.get(name);
+        if(current.isMenu()) GGInfo.setMenu(true);
+        else GGInfo.setMenu(false);
     }
     
-    public static void addGUI(GUI gui, String name){
+    public static void add(GUI gui, String name){
         guis.put(name, gui);
     }
-        
+
+    public static void addAndUse(GUI gui, String name){
+        guis.put(name, gui);
+        useGUI(name);
+    }
+
     public static void render(){
         ShaderController.useConfiguration("gui");
         

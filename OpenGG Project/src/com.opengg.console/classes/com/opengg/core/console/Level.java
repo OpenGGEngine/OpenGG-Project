@@ -11,5 +11,5 @@ package com.opengg.core.console;
  * @author Javier
  */
 public enum Level {
-    INFO, WARNING, ERROR;
+    INFO, WARNING, ERROR, DEBUG;
 }

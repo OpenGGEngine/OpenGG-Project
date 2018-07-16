@@ -6,6 +6,7 @@
 
 package com.opengg.core.render;
 
+import static org.lwjgl.opengl.GL11.glDisable;
 import static org.lwjgl.opengl.GL11.glEnable;
 
 /**
@@ -15,6 +16,14 @@ import static org.lwjgl.opengl.GL11.glEnable;
 public class GLOptions {
     public static void enable(int i){
         glEnable(i);
+    }
+
+    public static void set(int i, boolean enable){
+        if(enable){
+            glEnable(i);
+        }else{
+            glDisable(i);
+        }
     }
 
     private GLOptions() {

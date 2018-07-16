@@ -14,9 +14,8 @@ import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.texture.Framebuffer;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.texture.WindowFramebuffer;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+
+import java.util.*;
 
 /**
  *
@@ -24,7 +23,7 @@ import java.util.List;
  */
 public class PostProcessController {
     public static Drawable drawable;
-    private static final List<PostProcessingPass> passes = Collections.synchronizedList(new ArrayList<>());
+    private static final Map<String, PostProcessingPass> passes = new HashMap<>();
     private static Framebuffer utility;
     static Framebuffer currentBuffer = null;
     static Texture t;
@@ -33,36 +32,43 @@ public class PostProcessController {
         utility = WindowFramebuffer.getFloatingPointWindowFramebuffer(1);
         drawable = ObjectCreator.createSquare(new Vector2f(-1f,-1f), new Vector2f(1f,1f), -0.9f);
 
+        Stage ssao = new Stage("ssao");
+        PostProcessingPass ssaopass = new PostProcessingPass(PostProcessingPass.SET, ssao);
+        //passes.put("ssao", ssaopass);
+
+        int blurpasses = 4;
+        Stage[] blurs = new Stage[blurpasses*2+2];
         Stage extract = new Stage("bright", new Tuple<>(0,1), new Tuple<>(1,0));
-        Stage blurv = new Stage("blurh");
-        Stage blurv2 = new Stage("blurh");
-        Stage blurv3 = new Stage("blurh");
-        Stage blurv4 = new Stage("blurh");
-        Stage blurh = new Stage("blurv");
-        Stage blurh2 = new Stage("blurv");
-        Stage blurh3 = new Stage("blurv");
-        Stage blurh4 = new Stage("blurv");
+        blurs[0] = extract;
+        for (int i = 0; i < blurpasses; i++) {
+            Stage blurv = new Stage("blurv");
+            Stage blurh = new Stage("blurh");
+            blurs[i*2+1] = blurh;
+            blurs[i*2+2] = blurv;
+        }
         Stage add = new Stage("add");
-        PostProcessingPass blurpass = new PostProcessingPass(PostProcessingPass.SET,
-                extract, blurh, blurh2, blurh3, blurh4, blurv, blurv2, blurv3, blurv4, add);
-        passes.add(blurpass);
+        blurs[blurpasses*2+1] = add;
+
+        PostProcessingPass bloom = new PostProcessingPass(PostProcessingPass.SET,
+                blurs);
+        passes.put("bloom", bloom);
 
         Stage hdr = new Stage("hdr");
         PostProcessingPass hdrpass = new PostProcessingPass(PostProcessingPass.SET, hdr);
-        passes.add(hdrpass);
+        passes.put("hdr", hdrpass);
 
-        Stage ssao = new Stage("ssao");
-        PostProcessingPass ssaopass = new PostProcessingPass(PostProcessingPass.SET, ssao);
-        //passes.add(ssaopass);
-
-
-
-
+        Stage fxaa = new Stage("fxaa");
+        PostProcessingPass fxaapass = new PostProcessingPass(PostProcessingPass.SET, fxaa);
+        passes.put("fxaa", fxaapass);
 
     }
 
-    public static void addPass(PostProcessingPass pass){
-        passes.add(pass);
+    public static void addPass(String name, PostProcessingPass pass){
+        passes.put(name, pass);
+    }
+
+    public static PostProcessingPass getPass(String name){
+        return passes.get(name);
     }
     
     public static void process(Framebuffer initial){
@@ -71,7 +77,8 @@ public class PostProcessController {
         currentBuffer = initial;
         initial.useTexture(0, 0);
         initial.useTexture(Framebuffer.DEPTH, 1);
-        for(PostProcessingPass pass : passes){
+        for(PostProcessingPass pass : passes.values()){
+            if(!pass.isEnabled()) continue;
             pass.render();
             switch(pass.op){
                 case PostProcessingPass.SET:

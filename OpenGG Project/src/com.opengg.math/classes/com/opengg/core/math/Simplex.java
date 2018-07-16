@@ -6,6 +6,8 @@
 
 package com.opengg.core.math;
 
+import com.opengg.core.math.geom.MinkowskiSet;
+
 /**
  *
  * @author Javier

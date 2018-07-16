@@ -54,11 +54,14 @@ public class ShaderController {
      * Initializes the controller and loads all default shaders
      */
     public static void initialize() {
-
+        long time = System.currentTimeMillis();
         loadShaderFiles();
         linkShaders();
         compileShaders();
-       createGLShaderFromFile();
+        createGLShaderFromFile();
+        long finaltime = System.currentTimeMillis()-time;
+
+        GGConsole.log("Compiled shaders in " + finaltime + " milliseconds");
 
         use("object.vert", "object.frag");
         saveCurrentConfiguration("object");
@@ -80,9 +83,6 @@ public class ShaderController {
         
         use("object.vert", "ssao.frag");
         saveCurrentConfiguration("ssao");
-        
-       // use("passthroughvert", "bloomfrag");
-       // saveCurrentConfiguration("bloom");
 
         use("object.vert", "hdr.frag");
         saveCurrentConfiguration("hdr");
@@ -93,11 +93,14 @@ public class ShaderController {
         use("object.vert", "passthrough.frag");
         saveCurrentConfiguration("passthrough");
 
-//        use("noprocess.vert", "point.geom", "passthrough.frag");
-      //  saveCurrentConfiguration("pointshadow");
+        use("noprocess.vert", "point.geom", "passthrough.frag");
+        saveCurrentConfiguration("pointshadow");
 
         use("object.vert", "cubemap.frag");
         saveCurrentConfiguration("sky");
+
+        use("object.vert", "fxaa.frag");
+        saveCurrentConfiguration("fxaa");
         
         use("object.vert", "passthrough.frag");
         saveCurrentConfiguration("volume");
@@ -755,6 +758,7 @@ public class ShaderController {
 
                 var ex = new ShaderException("Exception while loading shader " + name + ": " + e.getMessage());
                 ex.setStackTrace(e.getStackTrace());
+                //throw ex;
                 GGConsole.exception(ex);
             }
         }
@@ -842,6 +846,7 @@ public class ShaderController {
         List<String> glvals = new ArrayList<>();
         List<ShaderFile.ShaderFunction> funcs = new ArrayList<>();
         List<ShaderFile.ShaderField> fields = new ArrayList<>();
+        List<ShaderFile.ShaderStruct> structs = new ArrayList<>();
 
         public ShaderFileHolder(String name, ShaderFile source){
             this.type = source.getType();
@@ -861,17 +866,22 @@ public class ShaderController {
                 shsource += "#" + glval + "\n";
             }
 
+            for(var struct : structs){
+                shsource += "struct " + struct.getName()
+                        + "{\n"
+                        + struct.getData()
+                        + "\n};\n";
+            }
+
             for(var field : fields){
                 if(!field.getLayoutData().isEmpty()){
                     shsource += "layout(" + field.getLayoutData() + ") ";
                 }
 
                 if(!field.getModifiers().isEmpty())
-                    shsource += field.getModifiers() + " ";
-                shsource += field.getType() + " " + field.getName();
+                    shsource += field.getModifiers().toString().replace("[", "").replace("]", "").replace(",", "");
 
-                if(!field.getData().isEmpty())
-                    shsource += " {\n\t" + field.getData() + "\n}";
+                shsource += field.getType() + " " + field.getName();
 
                 if(!field.getInitialValue().isEmpty())
                     shsource += " = " + field.getInitialValue();
@@ -893,6 +903,7 @@ public class ShaderController {
             glvals.addAll(source.getGlValues());
             funcs.addAll(source.getCode());
             fields.addAll(source.getFields());
+            structs.addAll(source.getStructs());
 
             for(var file : dependencies){
 
@@ -926,6 +937,17 @@ public class ShaderController {
                 }
 
                 fields.addAll(0, addfields);
+
+                List<ShaderFile.ShaderStruct> addstructs = new ArrayList<>();
+
+                for(var struct : file.getStructs()){
+                    if(!structs.stream()
+                            .filter(f -> f.getName().equals(struct.getName())).findFirst().isPresent()){
+                        addstructs.add(struct);
+                    }
+                }
+
+                structs.addAll(0, addstructs);
 
             }
         }
