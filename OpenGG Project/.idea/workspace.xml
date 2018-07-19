@@ -9,19 +9,7 @@
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19f98b11-1333-449e-965f-6e5421c0bea0" name="Default" comment="refactor.io">
-      <change afterPath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/text/TTF.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/resources/glsl/error.glsl" beforeDir="false" afterPath="$PROJECT_DIR$/dist/resources/glsl/error.glsl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/resources/glsl/point.geom" beforeDir="false" afterPath="$PROJECT_DIR$/dist/resources/glsl/point.geom" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/resources/glsl/terrainmulti.frag" beforeDir="false" afterPath="$PROJECT_DIR$/dist/resources/glsl/terrainmulti.frag" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/resources/glsl/water.frag" beforeDir="false" afterPath="$PROJECT_DIR$/dist/resources/glsl/water.frag" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/engine/GGGameConsole.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/engine/GGGameConsole.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/shader/ShaderController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/shader/ShaderController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/texture/Font.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/texture/Font.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/texture/text/TextVBOGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/render/texture/text/TextVBOGenerator.java" afterDir="false" />
-    </list>
+    <list default="true" id="19f98b11-1333-449e-965f-6e5421c0bea0" name="Default" comment="refactor.io" />
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -43,7 +31,7 @@
       <file leaf-file-name="GGGameConsole.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/engine/GGGameConsole.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="334">
+            <state relative-caret-position="1093">
               <caret line="70" column="28" lean-forward="true" selection-start-line="70" selection-start-column="28" selection-end-line="70" selection-end-column="28" />
               <folding>
                 <element signature="imports" expanded="true" />
@@ -288,7 +276,7 @@
   <component name="NamedScopeManager">
     <scope name="LWJGL OpenGL" pattern="lib:org.lwjgl.opengl.*||lib:org.lwjgl.opengl..*" />
   </component>
-  <component name="ProjectFrameBounds" extendedState="6" fullScreen="true">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="-413" />
     <option name="y" value="-16" />
     <option name="width" value="1940" />
@@ -576,8 +564,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="0" width="2560" height="1440" extended-state="6" />
-    <editor active="true" />
+    <frame x="-8" y="-8" width="2576" height="1456" extended-state="6" />
     <layout>
       <window_info anchor="right" id="Palette" order="3" />
       <window_info anchor="bottom" id="TODO" order="8" weight="0.32969433" />
@@ -587,7 +574,7 @@
       <window_info anchor="right" id="Capture Analysis" order="4" />
       <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.50034696" side_tool="true" weight="0.3293979" />
       <window_info anchor="right" id="Maven Projects" order="7" />
-      <window_info active="true" anchor="bottom" id="Run" order="3" sideWeight="0.60860515" visible="true" weight="0.26060605" />
+      <window_info anchor="bottom" id="Run" order="3" sideWeight="0.60860515" weight="0.26060605" />
       <window_info anchor="bottom" id="Version Control" order="12" />
       <window_info anchor="bottom" id="Terminal" order="10" weight="0.3286026" />
       <window_info id="Capture Tool" order="5" />
@@ -1253,7 +1240,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com.opengg.core/classes/com/opengg/core/engine/GGGameConsole.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="334">
+        <state relative-caret-position="1093">
           <caret line="70" column="28" lean-forward="true" selection-start-line="70" selection-start-column="28" selection-end-line="70" selection-end-column="28" />
           <folding>
             <element signature="imports" expanded="true" />
