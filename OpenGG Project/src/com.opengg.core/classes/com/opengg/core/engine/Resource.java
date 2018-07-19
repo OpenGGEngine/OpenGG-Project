@@ -9,6 +9,7 @@ import com.opengg.core.GGInfo;
 import com.opengg.core.audio.SoundData;
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.model.Model;
+import com.opengg.core.render.text.TTF;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.texture.TextureData;
 import com.opengg.core.render.texture.text.GGFont;
@@ -135,7 +136,7 @@ public interface Resource {
     public static String getFontPath(String name){
         String source = validate(name);
         if(source != null) return source;
-        return "resources" + File.separator + "font" + File.separator +  name + ".fnt";
+        return "resources" + File.separator + "font" + File.separator +  name;
     }
     
     /**
@@ -213,6 +214,10 @@ public interface Resource {
         String fpath = getFontPath(fname);
         String tpath = getTexturePath(ftexname);
         return new GGFont(tpath,fpath);
+    }
+
+    public static TTF getTruetypeFont(String path){
+        return TTF.getTruetypeFont(getFontPath(path));
     }
     
     /**

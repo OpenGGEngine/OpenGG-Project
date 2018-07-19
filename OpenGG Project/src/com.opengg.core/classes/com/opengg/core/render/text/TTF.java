@@ -4,6 +4,7 @@ import com.opengg.core.math.Vector2f;
 import com.opengg.core.render.Text;
 import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.render.drawn.DrawnObject;
+import com.opengg.core.render.drawn.TexturedDrawnObject;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.texture.TextureData;
 import com.opengg.core.system.Allocator;
@@ -31,7 +32,7 @@ public class TTF {
     private final int descent;
     private final int lineGap;
     private final int fontheight = 14;
-    private Texture texture;
+    public Texture texture;
 
     private final int WIDTH = 1024;
     private final int HEIGHT = 1024;
@@ -75,12 +76,20 @@ public class TTF {
 
     private STBTTBakedChar.Buffer init(int BITMAP_W, int BITMAP_H) {
         STBTTBakedChar.Buffer cdata = STBTTBakedChar.malloc(96);
-        ByteBuffer bitmap = BufferUtils.createByteBuffer(BITMAP_W * BITMAP_H);
+        ByteBuffer bitmap = Allocator.alloc(BITMAP_W * BITMAP_H);
         stbtt_BakeFontBitmap(ttf, fontheight, bitmap, BITMAP_W, BITMAP_H, 32, cdata);
 
-        TextureData data = new TextureData(BITMAP_W, BITMAP_H, 1, bitmap, "internal");
 
-        texture = Texture.create(Texture.config().internalFormat(GL_ALPHA).format(GL_ALPHA), data);
+        ByteBuffer realmap = Allocator.alloc(BITMAP_W * BITMAP_H * 4);
+        for (int i = 0; i < BITMAP_H * BITMAP_W; i++) {
+            realmap.put((byte) 0xFF).put((byte) 0xFF).put((byte) 0xFF).put(bitmap.get());
+        }
+
+        realmap.flip();
+
+        TextureData data = new TextureData(BITMAP_W, BITMAP_H, 4, realmap, "internal");
+
+        texture = Texture.create(Texture.config(), data);
         return cdata;
     }
 
@@ -175,12 +184,12 @@ public class TTF {
         for(int i = 0; i < poss.size(); i++){
             var uv = uvs.get(i);
             var pos = poss.get(i);
-            data.put(pos.x).put(pos.y).put(0).put(1).put(0).put(0).put(1).put(1f).put(0f).put(0f).put(uv.x).put(uv.y);
+            data.put(pos.x).put(-pos.y).put(0).put(1).put(0).put(0).put(1).put(1f).put(0f).put(0f).put(uv.x).put(uv.y);
         }
 
         data.flip();
 
-        return new DrawnObject(data);
+        return new TexturedDrawnObject(new DrawnObject(data), this.texture);
     }
 
     private static int getCP(String text, int to, int i, IntBuffer cpOut) {
@@ -202,6 +211,18 @@ public class TTF {
 
     public void setKerning(boolean kerning) {
         this.kerning = kerning;
+    }
+
+    public int getAscent() {
+        return ascent;
+    }
+
+    public int getDescent() {
+        return descent;
+    }
+
+    public int getLineGap() {
+        return lineGap;
     }
 
     private static float scale(float center, float offset, float factor) {

@@ -13,6 +13,8 @@ import com.opengg.core.console.ConsoleListener;
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.console.UserCommand;
 import static com.opengg.core.engine.OpenGG.*;
+
+import com.opengg.core.model.ModelManager;
 import com.opengg.core.physics.PhysicsRenderer;
 import com.opengg.core.physics.collision.CollisionManager;
 import com.opengg.core.render.postprocess.PostProcessController;
@@ -33,6 +35,10 @@ public class OpenGGCommandExtender implements ConsoleListener{
 
             case "fquit":
                 forceEnd();
+                break;
+
+            case "ping":
+                GGConsole.log("Pong!");
                 break;
 
             case "volume":
@@ -72,6 +78,18 @@ public class OpenGGCommandExtender implements ConsoleListener{
                         BindController.printBinds();
                     }
                 }
+                break;
+
+            case "model":
+                if(command.argCount == 1){
+                    if(command.args[0].equalsIgnoreCase("clear-cache")){
+                        ModelManager.getModelList();
+                    }
+                }if(command.argCount == 2){
+                if(command.args[0].equalsIgnoreCase("load")){
+                    Resource.getModel(command.args[1]);
+                }
+            }
                 break;
 
             case "phys":

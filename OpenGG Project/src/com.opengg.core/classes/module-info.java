@@ -47,6 +47,7 @@ module com.opengg.core {
     exports com.opengg.core.render.window;
     exports com.opengg.core.states;
     exports com.opengg.core.util;
+    exports com.opengg.core.render.text;
     exports com.opengg.core.world;
     exports com.opengg.core.world.components;
     exports com.opengg.core.world.components.particle;

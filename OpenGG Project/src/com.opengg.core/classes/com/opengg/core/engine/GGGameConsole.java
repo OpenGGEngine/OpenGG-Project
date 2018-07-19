@@ -9,6 +9,7 @@ import com.opengg.core.io.input.keyboard.KeyboardController;
 import com.opengg.core.io.input.keyboard.KeyboardListener;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Vector2f;
+import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.render.Text;
 import com.opengg.core.render.drawn.Drawable;
@@ -33,19 +34,21 @@ public class GGGameConsole implements KeyboardListener, KeyboardCharacterListene
     private static TTF font;
     private static boolean enabled = false;
     private static boolean wasInMenu = false;
+    private static final float FONT_SCALE = 0.002f;
 
-    public static final int LINE_AMOUNT = 40;
+    public static final int LINE_AMOUNT = 30;
 
     public static void initialize(){
         GGGameConsole console = new GGGameConsole();
         KeyboardController.addKeyboardCharacterListener(console);
         KeyboardController.addKeyboardListener(console);
 
-        background = new TexturedDrawnObject(ObjectCreator.createSquare(new Vector2f(-1,-1), new Vector2f(1,1), 0.99f),
+        font = Resource.getTruetypeFont("consolas.ttf");
+        font.setKerning(true);
+
+        background = new TexturedDrawnObject(ObjectCreator.createSquare(new Vector2f(-1,-0.07f), new Vector2f(1,1), 0.99f),
                 Texture.ofColor(Color.gray, 0.9f));
 
-        font = TTF.getTruetypeFont(Resource.getAbsoluteFromLocal("resources\\font\\comicsans.ttf"));
-        //font = Resource.getFont("test", "test.png");
 /*
         consoletext = new Text("", new Vector2f(), 0.5f, 1f, false);
         //consoletext.setNumberOfLines(LINE_AMOUNT);
@@ -65,23 +68,18 @@ public class GGGameConsole implements KeyboardListener, KeyboardCharacterListene
                 .map(m -> m + "\n")
                 .forEach(m -> consolevalue += m);
 
-
-
         RenderEngine.setDepthCheck(false);
         background.render();
-        var tt = new TexturedDrawnObject(font.useOn("hello knuckles"), Texture.ofColor(Color.RED));
-        tt.setMatrix(new Matrix4f().scale(0.01f,0.1f,1));
-        tt.render();
-/*
- //userinput.setText(currenttext);
-        //consoletext.setText(consolevalue);
-        ShaderController.setDistanceField(1);
-        //var userdrawable = userinput.getDrawable(font);
-        //userdrawable.setMatrix(Matrix4f.translate(0,-1.9f,0));
-        //userdrawable.render();
-        // .render();
-        //consoletext.getDrawable(font).render();
-        ShaderController.setDistanceField(0);*/
+
+        var consoledrawable = font.useOn(consolevalue);
+        consoledrawable.setMatrix(new Matrix4f().translate(new Vector3f(-1,0.975f,0)).scale(FONT_SCALE,FONT_SCALE,0.01f));
+        consoledrawable.render();
+
+        var userdrawable = font.useOn(currenttext);
+        userdrawable.setMatrix(new Matrix4f().translate(new Vector3f(-1,-0.05f,0)).scale(FONT_SCALE,FONT_SCALE,0.01f));
+        userdrawable.render();
+
+
 
         RenderEngine.setDepthCheck(true);
 

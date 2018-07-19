@@ -12,6 +12,7 @@ package com.opengg.core.audio;
  * @author Javier
  */
 public class Sound{
+    SoundData data;
     /**
      * Sound buffer used in this sound
      */
@@ -35,14 +36,16 @@ public class Sound{
     /**
      * Creates an empty Sound object
      */
-    public Sound(){}
+    public Sound(){
+        so = new NativeSound(null);
+    }
     
     /**
      * Loads an audio file from the given path and creates a new Sound object based on it
      * @param path Path to sound
      */
     public Sound(String path){
-        setSound(path);
+        this(SoundManager.loadSound(path));
     }
     
     /**
@@ -50,7 +53,10 @@ public class Sound{
      * @param data SoundData to use
      */
     public Sound(SoundData data){
+        so = new NativeSound();
         setSound(data);
+        setGain(1);
+        AudioController.addAudioSource(this);
     }
     
     /**
@@ -124,17 +130,7 @@ public class Sound{
      * @param data New sound data
      */
     public void setSound(SoundData data){
-        buffer = new ALBuffer(data);
-        setSound(buffer);
-    }
-    
-    /**
-     * Sets the sound data for this, given the full ALBuffer
-     * @param buffer New buffer
-     */
-    public void setSound(ALBuffer buffer){
-        so = new NativeSound(buffer);
-        AudioController.addAudioSource(this);
+        so.setBuffer(new ALBuffer(data));
     }
     
     /**

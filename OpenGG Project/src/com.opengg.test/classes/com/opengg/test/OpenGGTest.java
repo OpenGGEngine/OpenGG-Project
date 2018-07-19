@@ -97,7 +97,7 @@ public class OpenGGTest extends GGApplication{
         AudioController.setGlobalGain(0f);
         SoundtrackHandler.setSoundtrack(track);
         
-        font = Resource.getFont("test", "test.png");
+        font = Resource.getFont("test.fnt", "test.png");
         text = new Text("Turmoil has engulfed the Galactic Republic. The taxation of trade routes to outlying star systems is in dispute. \n\n"
                 + " Hoping to resolve the matter with a blockade of deadly battleships, "
                 + " the greedy Trade Federation has stopped all shipping to the small planet of Naboo. \n\n"

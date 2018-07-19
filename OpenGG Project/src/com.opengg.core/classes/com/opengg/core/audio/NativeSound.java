@@ -8,6 +8,9 @@ package com.opengg.core.audio;
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.math.Vector3f;
 import org.lwjgl.openal.AL10;
+
+import java.lang.annotation.Native;
+
 import static org.lwjgl.openal.AL10.*;
 
 
@@ -21,25 +24,26 @@ public final class NativeSound {
      */
     private final int audioid;
     
-    /**
-     * Creates an OpenAL sound source and fills it with the given {@link ALBuffer} <br>
-     * Note, this calls OpenAL commands so an OpenAL context must already exist. 
-     * Additionally, if the sound fails to load it automatically deletes and frees the source
-     * @param buffer ALBuffer containing a valid sound
-     */
-    public NativeSound(ALBuffer buffer){  
+
+    public NativeSound(){
         audioid = alGenSources();
-        setBuffer(buffer);
-        setMinimumGain(0f);
-        setMaximumGain(1f);
-        setPosition(new Vector3f());
-        setVelocity(new Vector3f());
-        
+
         int i = AL10.alGetError();
         if(i != AL10.AL_NO_ERROR){
             GGConsole.error("OpenAL Error in AudioSource Generation: " + i);
             remove();
         }
+    }
+
+    /**
+     * Creates an OpenAL sound source and fills it with the given {@link ALBuffer} <br>
+     * Note, this calls OpenAL commands so an OpenAL context must already exist.
+     * Additionally, if the sound fails to load it automatically deletes and frees the source
+     * @param buffer ALBuffer containing a valid sound
+     */
+    public NativeSound(ALBuffer buffer){
+        this();
+        this.setBuffer(buffer);
     }
     
     /**
