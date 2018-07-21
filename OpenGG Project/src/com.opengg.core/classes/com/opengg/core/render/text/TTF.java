@@ -9,9 +9,7 @@ import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.texture.TextureData;
 import com.opengg.core.system.Allocator;
 import org.lwjgl.BufferUtils;
-import org.lwjgl.stb.STBTTAlignedQuad;
-import org.lwjgl.stb.STBTTBakedChar;
-import org.lwjgl.stb.STBTTFontinfo;
+import org.lwjgl.stb.*;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -23,11 +21,17 @@ import java.util.List;
 import static com.opengg.core.util.FileUtil.ioResourceToByteBuffer;
 import static org.lwjgl.opengl.GL11.GL_ALPHA;
 import static org.lwjgl.stb.STBTruetype.*;
+import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class TTF {
 
     private final ByteBuffer ttf;
     private final STBTTFontinfo fontinfo;
+    //For Oversampled Option
+    private static final float[] scale = {
+            24.0f,
+            1.5f
+    };
     private final int ascent;
     private final int descent;
     private final int lineGap;
@@ -37,14 +41,18 @@ public class TTF {
     private final int WIDTH = 1024;
     private final int HEIGHT = 1024;
     private STBTTBakedChar.Buffer cdata;
+    private STBTTPackedchar.Buffer altCData;
 
     private boolean kerning = false;
+    private boolean isOversampled = false;
 
-    public static TTF getTruetypeFont(String path){
-        return new TTF(path);
+    public static TTF getTruetypeFont(String path){ return getTruetypeFont(path,false); }
+    public static TTF getTruetypeFont(String path,boolean oversample){
+        return new TTF(path,oversample);
     }
 
-    private TTF(String path){
+    private TTF(String path,boolean isOversampled){
+        this.isOversampled = isOversampled;
         try {
             ttf = ioResourceToByteBuffer(path, 512 * 1024);
         } catch (IOException e) {
@@ -70,8 +78,11 @@ public class TTF {
         Allocator.popStack();
         Allocator.popStack();
         Allocator.popStack();
-
-        cdata = init(WIDTH, HEIGHT);
+        if(isOversampled) {
+            altCData = overSampleInit(WIDTH,HEIGHT);
+        }else{
+            cdata = init(WIDTH, HEIGHT);
+        }
     }
 
     private STBTTBakedChar.Buffer init(int BITMAP_W, int BITMAP_H) {
@@ -93,6 +104,51 @@ public class TTF {
         return cdata;
     }
 
+    private STBTTPackedchar.Buffer overSampleInit(int BITMAP_W, int BITMAP_H) {
+        STBTTPackedchar.Buffer cdata = STBTTPackedchar.malloc(96);
+        STBTTPackContext pc = STBTTPackContext.malloc();
+
+        ByteBuffer bitmap = Allocator.alloc(BITMAP_W * BITMAP_H);
+
+        stbtt_PackBegin(pc,bitmap,BITMAP_W,BITMAP_H,0,1,NULL);
+
+        for (int i = 0; i < 2; i++) {
+            int p = (i * 3 + 0) * 128 + 32;
+            cdata.limit(p + 95);
+            cdata.position(p);
+            stbtt_PackSetOversampling(pc, 1, 1);
+            stbtt_PackFontRange(pc, ttf, 0, scale[i], 32, cdata);
+
+            p = (i * 3 + 1) * 128 + 32;
+            cdata.limit(p + 95);
+            cdata.position(p);
+            stbtt_PackSetOversampling(pc, 2, 2);
+            stbtt_PackFontRange(pc, ttf, 0, scale[i], 32, cdata);
+
+            p = (i * 3 + 2) * 128 + 32;
+            cdata.limit(p + 95);
+            cdata.position(p);
+            stbtt_PackSetOversampling(pc, 3, 1);
+            stbtt_PackFontRange(pc, ttf, 0, scale[i], 32, cdata);
+        }
+        cdata.clear();
+        stbtt_PackEnd(pc);
+
+
+        ByteBuffer realmap = Allocator.alloc(BITMAP_W * BITMAP_H * 4);
+        for (int i = 0; i < BITMAP_H * BITMAP_W; i++) {
+            realmap.put((byte) 0xFF).put((byte) 0xFF).put((byte) 0xFF).put(bitmap.get());
+        }
+
+        realmap.flip();
+
+        TextureData data = new TextureData(BITMAP_W, BITMAP_H, 4, realmap, "internal");
+
+        texture = Texture.create(Texture.config(), data);
+        return cdata;
+    }
+
+
     public Drawable useOn(String text){
         float scale = stbtt_ScaleForPixelHeight(fontinfo, fontheight);
 
@@ -105,8 +161,8 @@ public class TTF {
 
         int lineStart = 0;
 
-        float factorX = 1.0f;
-        float factorY = 1.0f;
+        float factorX = 1.5f;
+        float factorY = 1.5f;
 
         float lineY = 0.0f;
 
@@ -134,7 +190,11 @@ public class TTF {
             }
 
             float cpX = x.get(0);
-            stbtt_GetBakedQuad(cdata, WIDTH, HEIGHT, cp - 32, x, y, q, true);
+            if(!isOversampled) {
+                stbtt_GetBakedQuad(cdata, WIDTH, HEIGHT, cp - 32, x, y, q, true);
+            }else {
+                stbtt_GetPackedQuad(altCData, WIDTH, HEIGHT, text.charAt(i), x, y, q, false);
+            }
             x.put(0, scale(cpX, x.get(0), factorX));
             if (isKerningEnabled() && i < to) {
                 getCP(text, to, i, pCodePoint);
