@@ -1,6 +1,6 @@
 @version 4.2
 
-@fields
+
 in vec3 normal;
 in vec4 weights;
 in vec2 texcoord;
@@ -33,7 +33,7 @@ uniform int mode;
 uniform int inst;
 uniform float divAmount;
 
-@code
+
 void main() {
 
     mat4 modelView = view * model;

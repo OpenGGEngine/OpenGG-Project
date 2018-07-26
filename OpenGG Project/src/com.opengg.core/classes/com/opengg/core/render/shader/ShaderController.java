@@ -139,8 +139,8 @@ public class ShaderController {
         findUniform("inst");
         setUniform("inst", 0);
 
-        findUniform("text");
-        setUniform("text", 0);
+        findUniform("impl");
+        setUniform("impl", 0);
 
         findUniform("model");
         setUniform("model", new Matrix4f());
@@ -274,7 +274,7 @@ public class ShaderController {
     }
     
     public static void setDistanceField(int distfield){
-        setUniform("text", distfield);
+        setUniform("impl", distfield);
     }
     
     public static void setView(Matrix4f view){
@@ -955,10 +955,14 @@ public class ShaderController {
         private void addDependency(ShaderFile file){
             if(!dependencies.contains(file)){
                 dependencies.add(file);
-
-                file.getIncludes().stream()
-                        .map(s -> shaderfiles.get(s))
-                        .forEach(this::addDependency);
+                try {
+                    file.getIncludes().stream()
+                            .map(s -> shaderfiles.get(s))
+                            .forEach(this::addDependency);
+                }catch (NullPointerException e){
+                    GGConsole.exception(new ShaderException("Failed to load dependency for " + this.name, e));
+                    throw new ShaderException(e);
+                }
             }
         }
     }

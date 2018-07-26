@@ -362,7 +362,7 @@ public class RenderEngine {
     }
 
     public static void enableDefaultVP(){
-        ShaderController.setOrtho(-1, 1, -1, 1, -1f, 1f);
+        ShaderController.setOrtho(0, 1, 0, 1, -1, 1);
         ShaderController.setView(new Camera().getMatrix());
     }
 

@@ -2,7 +2,7 @@
 @include light.ggsl
 @include stdfrag.ggsl
 
-@fields
+
 uniform float uvmultx;
 uniform float uvmulty;
 uniform vec3 camera;
@@ -11,7 +11,7 @@ float bloomMin = 0.9;
 float vis = 1;
 vec3 eyedir;
 
-@code
+
 generatePhongData(){
     eyedir = normalize(camera - pos.xyz);
 }

@@ -30,7 +30,7 @@ public class PostProcessController {
     
     public static void initialize(){
         utility = WindowFramebuffer.getFloatingPointWindowFramebuffer(1);
-        drawable = ObjectCreator.createSquare(new Vector2f(-1f,-1f), new Vector2f(1f,1f), -0.9f);
+        drawable = ObjectCreator.createSquare(new Vector2f(0f,0f), new Vector2f(1f,1f), -0.9f);
 
         Stage ssao = new Stage("ssao");
         PostProcessingPass ssaopass = new PostProcessingPass(PostProcessingPass.SET, ssao);
@@ -39,10 +39,10 @@ public class PostProcessController {
         int blurpasses = 4;
         Stage[] blurs = new Stage[blurpasses*2+2];
         Stage extract = new Stage("bright", new Tuple<>(0,1), new Tuple<>(1,0));
+        Stage blurv = new Stage("blurv");
+        Stage blurh = new Stage("blurh");
         blurs[0] = extract;
         for (int i = 0; i < blurpasses; i++) {
-            Stage blurv = new Stage("blurv");
-            Stage blurh = new Stage("blurh");
             blurs[i*2+1] = blurh;
             blurs[i*2+2] = blurv;
         }
@@ -60,7 +60,6 @@ public class PostProcessController {
         Stage fxaa = new Stage("fxaa");
         PostProcessingPass fxaapass = new PostProcessingPass(PostProcessingPass.SET, fxaa);
         passes.put("fxaa", fxaapass);
-
     }
 
     public static void addPass(String name, PostProcessingPass pass){

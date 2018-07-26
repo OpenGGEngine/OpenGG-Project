@@ -16,7 +16,7 @@ uniform sampler2D Kd;
 // http://developer.download.nvidia.com/assets/gamedev/files/sdk/11/FXAA_WhitePaper.pdf
 // http://iryoku.com/aacourse/downloads/09-FXAA-3.11-in-15-Slides.pdf
 // http://horde3d.org/wiki/index.php5?title=Shading_Technique_-_FXAA
-@code
+
 main() {
     vec3 rgbM = texture(Kd, textureCoord).rgb;
 

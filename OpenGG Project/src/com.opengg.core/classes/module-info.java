@@ -43,7 +43,7 @@ module com.opengg.core {
     exports com.opengg.core.render.postprocess;
     exports com.opengg.core.render.shader;
     exports com.opengg.core.render.texture;
-    exports com.opengg.core.render.texture.text;
+    exports com.opengg.core.render.text.impl;
     exports com.opengg.core.render.window;
     exports com.opengg.core.states;
     exports com.opengg.core.util;

@@ -1,6 +1,6 @@
 @version 4.2
 @glsl define MAX_JOINTS 100
-@fields
+
 in vec3 normal;
 in vec4 weights;
 in vec2 texcoord;
@@ -33,7 +33,7 @@ uniform float divAmount;
 
 const int MAX_WEIGHTS = 4;
 
-@code
+
 void main() {
 
     mat4 modelView = view * model;

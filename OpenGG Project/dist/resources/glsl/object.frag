@@ -2,11 +2,11 @@
 @include phong.ggsl
 @include stdfrag.ggsl
 
-@fields
+
 uniform Material material;
 float trans;
 
-@code
+
 main() {
 	generatePhongData();
 	useMaterial(material);

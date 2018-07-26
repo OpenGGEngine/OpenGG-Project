@@ -1,6 +1,6 @@
 @glsl define LIGHTNUM 100
 @include stdfrag.ggsl
-@fields
+
 struct Light
 {
     vec4 lightpos;
@@ -27,7 +27,7 @@ uniform sampler2D shadowmap;
 uniform sampler2D shadowmap2;
 uniform sampler2D shadowmap3;
 
-@code
+
 float getShadowCoverage(Light light){
     if(light.shadow < 0.001f) return 1;
     vec4 lightspacePos = light.perspective*(light.view * vec4(pos, 1.0f));

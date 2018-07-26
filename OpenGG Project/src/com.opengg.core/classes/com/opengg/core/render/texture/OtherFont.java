@@ -15,7 +15,7 @@ import java.util.Map;
 
 import static org.lwjgl.opengl.GL11.*;
 
-public class Font {
+public class OtherFont {
 
     //Lets define them characters shall we
     private final Map<Integer, String> CHARS = new HashMap<Integer, String>() {{
@@ -29,7 +29,7 @@ public class Font {
     private final BufferedImage bufferedImage;
 
     //Constructors
-    public Font(String path, String text, float size) throws Exception {
+    public OtherFont(String path, String text, float size) throws Exception {
         this.font = new java.awt.Font("Arial", java.awt.Font.PLAIN, (int) size);
         CHARS.put(0, text);
         //Generate buffered image

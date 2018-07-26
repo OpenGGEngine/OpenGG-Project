@@ -1,7 +1,7 @@
 @version 4.20
 @glsl define LIGHTNUM 100
 
-@fields
+
 in vec2 texcoord;
 in vec3 normal;
 in vec4 color;
@@ -21,7 +21,7 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 
-@code
+
 main() {
 
     mat4 modelView = view * model;

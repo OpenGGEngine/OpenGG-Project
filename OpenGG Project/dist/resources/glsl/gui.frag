@@ -1,6 +1,6 @@
 @version 4.2
 
-@fields
+
 layout(location = 0) out vec4 fcolor;
 
 in vertexData{
@@ -13,7 +13,7 @@ in vertexData{
 uniform sampler2D Kd;
 uniform int  text;
 
-@code
+
 vec4 getTex(sampler2D tname){
     if(text == 1){
         vec4 col = texture(tname, textureCoord);

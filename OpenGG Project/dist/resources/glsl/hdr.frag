@@ -1,13 +1,13 @@
 @version 4.2
 @include stdfrag.ggsl
 
-@fields
+
 uniform float exposure;
 uniform float gamma;
 
 uniform sampler2D Kd;
 
-@code
+
 main() {   
     vec3 color = texture(Kd, textureCoord).rgb;
   

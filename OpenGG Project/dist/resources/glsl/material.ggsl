@@ -1,4 +1,4 @@
-@fields
+
 struct Material
 {
     bool hasnormmap;
@@ -27,7 +27,7 @@ vec4 color;
 float specpow;
 vec3 reflectedcolor;
 
-@code
+
 mat3 cotangent_frame( vec3 N, vec3 p, vec2 uv ){
     // get edge vectors of the pixel triangle
     vec3 dp1 = dFdx( p );

@@ -1,7 +1,7 @@
 @version 420 
 
 
-@fields
+
 in vec2 texcoord;
 in vec3 normal;
 in vec3 offset;
@@ -28,7 +28,7 @@ uniform float divAmount;
 uniform vec3 camera;
 
 
-@code
+
 main() {
     textureCoord = texcoord;
 	norm = normal;

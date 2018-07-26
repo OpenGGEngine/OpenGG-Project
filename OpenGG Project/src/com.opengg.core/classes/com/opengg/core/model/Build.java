@@ -233,7 +233,7 @@ public class Build implements BuilderInterface {
     // > 
     // >     When you assign a map library using the Model program, Model allows
     // >     only one map library per .obj file. You can assign multiple
-    // >     libraries using a text editor.
+    // >     libraries using a impl editor.
     // > 
     // >     filename is the name of the library file where the texture maps are
     // >     defined. There is no default.
@@ -294,7 +294,7 @@ public class Build implements BuilderInterface {
     // > 
     // >     When you assign a material library using the Model program, only
     // >     one map library per .obj file is allowed. You can assign multiple
-    // >     libraries using a text editor.
+    // >     libraries using a impl editor.
     // > 
     // >     filename is the name of the library file that defines the
     // >     materials.  There is no default.

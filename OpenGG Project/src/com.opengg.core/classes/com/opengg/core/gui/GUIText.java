@@ -6,9 +6,9 @@
 package com.opengg.core.gui;
 
 import com.opengg.core.math.Vector2f;
-import com.opengg.core.render.Text;
 import com.opengg.core.render.shader.ShaderController;
-import com.opengg.core.render.texture.text.GGFont;
+import com.opengg.core.render.text.Font;
+import com.opengg.core.render.text.Text;
 
 /**
  *
@@ -17,36 +17,36 @@ import com.opengg.core.render.texture.text.GGFont;
 public class GUIText extends GUIRenderable {
 
     public Text text;
-    GGFont font;
+    Font font;
 
-    public GUIText(Text text, GGFont font, Vector2f pos) {
+    public GUIText(Text text, Font font, Vector2f pos) {
         this.text = text;
         this.font = font;
         this.setPositionOffset(pos);
-        this.setDrawable(text.getDrawable(font));
+        this.setDrawable(font.createFromText(text));
     }
 
-    public GUIText(Text text, GGFont font) {
+    public GUIText(Text text, Font font) {
         this(text, font, new Vector2f());
     }
 
-    public GUIText(GGFont font, Vector2f pos) {
-        this(new Text(), font, pos);
+    public GUIText(Font font, Vector2f pos) {
+        this(Text.from(""), font, pos);
     }
 
     public void setText(String ntext) {
         this.text.setText(ntext);
-        this.setDrawable(text.getDrawable(font));
+        this.setDrawable(font.createFromText(text));
     }
 
     public void setText(Text text) {
         this.text = text;
-        this.setDrawable(text.getDrawable(font));
+        this.setDrawable(font.createFromText(text));
     }
 
-    public void setFont(GGFont font) {
+    public void setFont(Font font) {
         this.font = font;
-        this.setDrawable(text.getDrawable(font));
+        this.setDrawable(font.createFromText(text));
     }
 
     @Override

@@ -8,14 +8,9 @@ import com.opengg.core.engine.BindController;
 import com.opengg.core.engine.GGApplication;
 import com.opengg.core.engine.OpenGG;
 import com.opengg.core.gui.GUI;
-import com.opengg.core.gui.GUIFramebufferTexture;
-import com.opengg.core.math.Matrix4f;
+import com.opengg.core.gui.GUIText;
 import com.opengg.core.math.Quaternionf;
-import com.opengg.core.model.ModelLoader;
 import com.opengg.core.model.modelloaderplus.AnimatedComponent;
-import com.opengg.core.model.modelloaderplus.MModel;
-import com.opengg.core.model.modelloaderplus.ModelLoaderPlus;
-import com.opengg.core.network.NetworkEngine;
 import com.opengg.core.physics.collision.AABB;
 import com.opengg.core.physics.collision.ColliderGroup;
 import com.opengg.core.physics.collision.SphereCollider;
@@ -23,25 +18,19 @@ import com.opengg.core.render.ProjectionData;
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.engine.Resource;
 import com.opengg.core.render.light.Light;
-import com.opengg.core.render.postprocess.PostProcessController;
-import com.opengg.core.render.shader.ShaderController;
-import com.opengg.core.render.shader.ShaderFile;
-import com.opengg.core.render.texture.Framebuffer;
+import com.opengg.core.render.text.Text;
 import com.opengg.core.render.window.GLFWWindow;
 import com.opengg.core.render.window.WindowController;
-import com.opengg.core.world.Camera;
 import com.opengg.core.world.Skybox;
 import com.opengg.core.world.WorldEngine;
 import com.opengg.core.gui.GUIController;
-import com.opengg.core.gui.GUIText;
 import com.opengg.core.io.ControlType;
 import static com.opengg.core.io.input.keyboard.Key.*;
 
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
-import com.opengg.core.render.Text;
 import com.opengg.core.render.texture.Texture;
-import com.opengg.core.render.texture.text.GGFont;
+import com.opengg.core.render.text.impl.GGFont;
 import com.opengg.core.render.window.WindowInfo;
 import com.opengg.core.render.window.WindowOptions;
 import com.opengg.core.world.components.FreeFlyComponent;
@@ -50,10 +39,6 @@ import com.opengg.core.world.components.ModelRenderComponent;
 import com.opengg.core.world.components.TerrainComponent;
 import com.opengg.core.world.components.physics.PhysicsComponent;
 import com.opengg.core.world.components.viewmodel.ViewModelComponentRegistry;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.regex.Pattern;
 
 
 public class OpenGGTest extends GGApplication{
@@ -98,15 +83,19 @@ public class OpenGGTest extends GGApplication{
         SoundtrackHandler.setSoundtrack(track);
         
         font = Resource.getFont("test.fnt", "test.png");
-        text = new Text("Turmoil has engulfed the Galactic Republic. The taxation of trade routes to outlying star systems is in dispute. \n\n"
+        text = Text.from("Turmoil has engulfed the Galactic Republic. The taxation of trade routes to outlying star systems is in dispute. \n\n"
                 + " Hoping to resolve the matter with a blockade of deadly battleships, "
                 + " the greedy Trade Federation has stopped all shipping to the small planet of Naboo. \n\n"
                 + " While the congress of the Republic endlessly debates this alarming chain of events,"
                 + " the Supreme Chancellor has secretly dispatched two Jedi Knights,"
-                + " the guardians of peace and justice in the galaxy, to settle the conflict...", new Vector2f(), 1f, 0.5f, false);
+                + " the guardians of peace and justice in the galaxy, to settle the conflict...")
+                    .size(0.5f)
+                    .kerning(true)
+                    .center(false)
+                    .maxLineSize(0.25f);
 
         GUI mainview = new GUI();
-       // mainview.getRoot().addItem("aids", new GUIText(text, font));
+        mainview.getRoot().addItem("aids", new GUIText(text, font, new Vector2f(1,0)));
 
         GUIController.addAndUse(mainview, "mainview");
 

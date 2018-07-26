@@ -6,29 +6,27 @@
 
 package com.opengg.core.render;
 
-import com.opengg.core.engine.Executable;
-
 /**
  *
  * @author Javier
  */
 public class RenderPath {
     String name = "default";
-    Executable command;
+    Runnable command;
     int priority = 5;
     boolean enabled = true;
     boolean reset;
-    public RenderPath(String name, Executable e){
+    public RenderPath(String name, Runnable e){
         this.name = name;
         this.command = e;
     }
     
-    public void setExecutable(Executable e){
+    public void setRunnable(Runnable e){
         this.command = e;
     }
     
     public void render(){
-        command.execute();
+        command.run();
     }
     
     public void setPriority(int priority){

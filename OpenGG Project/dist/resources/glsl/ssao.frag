@@ -1,7 +1,7 @@
 @version 4.2
 @include stdfrag.ggsl
 
-@fields
+
 
 uniform sampler2D Kd;
 uniform sampler2D Ka;
@@ -13,7 +13,7 @@ vec2 screensize = vec2(1280, 960);
 float bias = 0.005;
 float vis = 1;
 
-@code
+
 float readDepth( in vec2 coord ) {
 	return (2.0 * camerarange.x) / (camerarange.y + camerarange.x - texture( Ka, coord ).x * (camerarange.y - camerarange.x));	
 }

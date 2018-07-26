@@ -1,12 +1,12 @@
 @version 4.2
 @include stdfrag.ggsl
 
-@fields
+
 layout(location = 1) out vec4 bright;
 
 uniform sampler2D Kd;
 
-@code
+
 void main() {
     vec3 val = getTex(Kd).xyz;
     fcolor = vec4(val,1);

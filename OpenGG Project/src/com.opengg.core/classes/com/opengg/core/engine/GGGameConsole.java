@@ -2,7 +2,6 @@ package com.opengg.core.engine;
 
 import com.opengg.core.GGInfo;
 import com.opengg.core.console.GGConsole;
-import com.opengg.core.gui.GUI;
 import com.opengg.core.io.input.keyboard.Key;
 import com.opengg.core.io.input.keyboard.KeyboardCharacterListener;
 import com.opengg.core.io.input.keyboard.KeyboardController;
@@ -11,19 +10,14 @@ import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.RenderEngine;
-import com.opengg.core.render.Text;
 import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.render.drawn.TexturedDrawnObject;
 import com.opengg.core.render.objects.ObjectCreator;
-import com.opengg.core.render.shader.ShaderController;
-import com.opengg.core.render.text.TTF;
+import com.opengg.core.render.text.Font;
+import com.opengg.core.render.text.Text;
 import com.opengg.core.render.texture.Texture;
-import com.opengg.core.render.texture.text.GGFont;
 
 import java.awt.*;
-import java.io.PrintWriter;
-import java.util.Collections;
-import java.util.Scanner;
 
 public class GGGameConsole implements KeyboardListener, KeyboardCharacterListener {
     private static String currenttext = "";
@@ -31,12 +25,12 @@ public class GGGameConsole implements KeyboardListener, KeyboardCharacterListene
     private static Drawable background;
     private static Text userinput;
     private static Text consoletext;
-    private static TTF font;
+    private static Font font;
     private static boolean enabled = false;
     private static boolean wasInMenu = false;
-    private static final float FONT_SCALE = 0.002f;
+    private static final float FONT_SCALE = 0.034f;
 
-    public static final int LINE_AMOUNT = 30;
+    public static final int LINE_AMOUNT = 27;
 
     public static void initialize(){
         GGGameConsole console = new GGGameConsole();
@@ -44,9 +38,9 @@ public class GGGameConsole implements KeyboardListener, KeyboardCharacterListene
         KeyboardController.addKeyboardListener(console);
 
         font = Resource.getTruetypeFont("consolas.ttf");
-        font.setKerning(true);
+        //font.setKerning(true);
 
-        background = new TexturedDrawnObject(ObjectCreator.createSquare(new Vector2f(-1,-0.07f), new Vector2f(1,1), 0.99f),
+        background = new TexturedDrawnObject(ObjectCreator.createSquare(new Vector2f(0,0.47f), new Vector2f(1,1), 0.99f),
                 Texture.ofColor(Color.gray, 0.9f));
 
 /*
@@ -71,15 +65,19 @@ public class GGGameConsole implements KeyboardListener, KeyboardCharacterListene
         RenderEngine.setDepthCheck(false);
         background.render();
 
-        var consoledrawable = font.useOn(consolevalue);
-        consoledrawable.setMatrix(new Matrix4f().translate(new Vector3f(-1,0.975f,0)).scale(FONT_SCALE,FONT_SCALE,0.01f));
+        var consoledrawable = font.createFromText(Text.from(consolevalue)
+                                                    .maxLineSize(1f)
+                                                    .kerning(true)
+                                                    .size(FONT_SCALE));
+        consoledrawable.setMatrix(Matrix4f.translate(0,0.975f,0));
         consoledrawable.render();
 
-        var userdrawable = font.useOn(currenttext);
-        userdrawable.setMatrix(new Matrix4f().translate(new Vector3f(-1,-0.05f,0)).scale(FONT_SCALE,FONT_SCALE,0.01f));
+        var userdrawable = font.createFromText(Text.from(currenttext)
+                                                .maxLineSize(1f)
+                                                .kerning(true)
+                                                .size(FONT_SCALE));
+        userdrawable.setMatrix(Matrix4f.translate(0,0.48f,0));
         userdrawable.render();
-
-
 
         RenderEngine.setDepthCheck(true);
 

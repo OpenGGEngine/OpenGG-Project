@@ -1,16 +1,14 @@
-package com.opengg.core.render.text;
+package com.opengg.core.render.texture;
 
-import com.opengg.core.math.Tuple;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.render.drawn.DrawnObject;
 import com.opengg.core.render.drawn.TexturedDrawnObject;
-import com.opengg.core.render.texture.Texture;
-import com.opengg.core.render.texture.TextureData;
+import com.opengg.core.render.text.Font;
+import com.opengg.core.render.text.Text;
 import com.opengg.core.system.Allocator;
-
-import org.lwjgl.BufferUtils;
-import org.lwjgl.stb.*;
+import org.lwjgl.stb.STBTTAlignedQuad;
+import org.lwjgl.stb.STBTTFontinfo;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -21,36 +19,28 @@ import java.util.List;
 
 import static com.opengg.core.util.FileUtil.ioResourceToByteBuffer;
 import static org.lwjgl.stb.STBTruetype.*;
-import static org.lwjgl.system.MemoryUtil.NULL;
 
-public class TTF implements Font{
-
-    private final ByteBuffer ttf;
-    private final STBTTFontinfo fontinfo;
-    //For Oversampled Option
-    private static final float[] scale = {
-            28f
-    };
-    private final int ascent;
-    private final int descent;
-    private final int lineGap;
-    private final int fontheight = 14;
+public abstract class TTF implements Font{
+    protected ByteBuffer ttf;
+    protected STBTTFontinfo fontinfo;
+    protected int ascent;
+    protected int descent;
+    protected int lineGap;
+    protected int fontheight = 1;
     public Texture texture;
 
-    private final int WIDTH = 1024;
-    private final int HEIGHT = 1024;
-    private STBTTBakedChar.Buffer cdata;
-    private STBTTPackedchar.Buffer altCData;
+    protected final int WIDTH = 1024;
+    protected final int HEIGHT = 1024;
 
-    private boolean isOversampled = false;
+    protected boolean kerning = false;
 
-    public static TTF getTruetypeFont(String path){ return getTruetypeFont(path,false); }
-    public static TTF getTruetypeFont(String path,boolean oversample){
-        return new TTF(path,oversample);
+    public TTF(String path) {
+        initializeFont(path);
+
+        createTexture();
     }
 
-    private TTF(String path,boolean isOversampled){
-        this.isOversampled = isOversampled;
+    private void initializeFont(String path) {
         try {
             ttf = ioResourceToByteBuffer(path, 512 * 1024);
         } catch (IOException e) {
@@ -76,76 +66,9 @@ public class TTF implements Font{
         Allocator.popStack();
         Allocator.popStack();
         Allocator.popStack();
-        if(isOversampled) {
-            altCData = overSampleInit(WIDTH,HEIGHT);
-        }else{
-            cdata = init(WIDTH, HEIGHT);
-        }
-
     }
 
-    private STBTTPackedchar.Buffer overSampleInit(int BITMAP_W, int BITMAP_H) {
-        STBTTPackedchar.Buffer altCData = STBTTPackedchar.malloc(96 * 3 * scale.length + 128);
-        STBTTPackContext pc = STBTTPackContext.malloc();
-
-        ByteBuffer bitmap = Allocator.alloc(BITMAP_W * BITMAP_H);
-
-        stbtt_PackBegin(pc,bitmap,BITMAP_W,BITMAP_H,0,1,NULL);
-
-        for (int i = 0; i < scale.length; i++) {
-            int p = (i * 3 + 0) * 128 + 32;
-            altCData.limit(p + 95);
-            altCData.position(p);
-            stbtt_PackSetOversampling(pc, 1, 1);
-            stbtt_PackFontRange(pc, ttf, 0, scale[i], 32, altCData);
-
-            p = (i * 3 + 1) * 128 + 32;
-            altCData.limit(p + 95);
-            altCData.position(p);
-            stbtt_PackSetOversampling(pc, 2, 2);
-            stbtt_PackFontRange(pc, ttf, 0, scale[i], 32, altCData);
-
-            p = (i * 3 + 2) * 128 + 32;
-            altCData.limit(p + 95);
-            altCData.position(p);
-            stbtt_PackSetOversampling(pc, 3, 1);
-            stbtt_PackFontRange(pc, ttf, 0, scale[i], 32, altCData);
-        }
-        altCData.clear();
-        stbtt_PackEnd(pc);
-
-
-        ByteBuffer realmap = Allocator.alloc(BITMAP_W * BITMAP_H * 4);
-        for (int i = 0; i < BITMAP_H * BITMAP_W; i++) {
-            realmap.put((byte) 0xFF).put((byte) 0xFF).put((byte) 0xFF).put(bitmap.get());
-        }
-
-        realmap.flip();
-
-        TextureData data = new TextureData(BITMAP_W, BITMAP_H, 4, realmap, "internal");
-
-        texture = Texture.create(Texture.config(), data);
-        return altCData;
-    }
-
-    private STBTTBakedChar.Buffer init(int BITMAP_W, int BITMAP_H) {
-        STBTTBakedChar.Buffer cdata = STBTTBakedChar.malloc(96);
-        ByteBuffer bitmap = Allocator.alloc(BITMAP_W * BITMAP_H);
-        stbtt_BakeFontBitmap(ttf, fontheight, bitmap, BITMAP_W, BITMAP_H, 32, cdata);
-
-
-        ByteBuffer realmap = Allocator.alloc(BITMAP_W * BITMAP_H * 4);
-        for (int i = 0; i < BITMAP_H * BITMAP_W; i++) {
-            realmap.put((byte) 0xFF).put((byte) 0xFF).put((byte) 0xFF).put(bitmap.get());
-        }
-
-        realmap.flip();
-
-        TextureData data = new TextureData(BITMAP_W, BITMAP_H, 4, realmap, "internal");
-
-        texture = Texture.create(Texture.config(), data);
-        return cdata;
-    }
+    public abstract void createTexture();
 
     private static int getCP(String text, int to, int i, IntBuffer cpOut) {
         char c1 = text.charAt(i);
@@ -183,13 +106,7 @@ public class TTF implements Font{
 
     @Override
     public Drawable createFromText(Text wholetext) {
-
-
         String text = wholetext.getText();
-
-        if(text.length() == 0){
-            return new DrawnObject(Allocator.allocFloat(0));
-        }
 
         IntBuffer pCodePoint = Allocator.stackAllocInt(1);
         float scale = stbtt_ScaleForPixelHeight(this.fontinfo,28f);
@@ -216,7 +133,11 @@ public class TTF implements Font{
 
             int cp = pCodePoint.get(0);
             if (cp == '\n' || (x1 > wholetext.getMaxLineSize() && wholetext.getMaxLineSize() > 0f)) {
-
+                //if (isLineBBEnabled()) {
+                //    glEnd();
+                //    renderLineBB(lineStart, i - 1, y.get(0), scale);
+                //    glBegin(GL_QUADS);
+                //}
 
                 y.put(0, lineY = y.get(0) + ((ascent - descent + lineGap) * scale * factorY));
                 x.put(0, 0.0f);
@@ -229,11 +150,8 @@ public class TTF implements Font{
             }
 
             float cpX = x.get(0);
-            if(!isOversampled) {
-                stbtt_GetBakedQuad(cdata, WIDTH, HEIGHT, cp, x, y, q, true);
-            }else {
-                stbtt_GetPackedQuad(altCData, WIDTH, HEIGHT, cp, x, y, q, false);
-            }
+
+            q = getQuad(x,y,q,cp);
 
             x.put(0, scale(cpX, x.get(0), factorX));
             if (wholetext.isKerningEnabled() && i < to) {
@@ -280,4 +198,6 @@ public class TTF implements Font{
 
         return new TexturedDrawnObject(new DrawnObject(data), this.texture);
     }
+
+    public abstract STBTTAlignedQuad getQuad(FloatBuffer x, FloatBuffer y, STBTTAlignedQuad q, int cp) ;
 }

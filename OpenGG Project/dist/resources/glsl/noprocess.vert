@@ -1,7 +1,7 @@
 @version 4.20
 @glsl define LIGHTNUM 100
 
-@fields
+
 in vec2 texcoord;
 in vec3 normal;
 in vec4 color;
@@ -17,7 +17,7 @@ out vertexData{
 	vec3 norm;
 };
 
-@code
+
 void main() {
     textureCoord = texcoord;
     pos = position;

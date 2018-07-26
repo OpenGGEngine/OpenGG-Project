@@ -28,13 +28,13 @@ public class ShaderFile{
 
 
     private static final Pattern multilineReplacer = Pattern.compile("/\\*.*?\\*/", Pattern.DOTALL);
-    private static final Pattern structFinderPattern = Pattern.compile("struct\\s.*?\\}\\s*\\;", Pattern.DOTALL | Pattern.MULTILINE);
+    private static final Pattern structFinderPattern = Pattern.compile("struct\\s.*?\\}\\s*?\\;", Pattern.DOTALL | Pattern.MULTILINE);
     private static final Pattern functionFinderPattern = Pattern.compile("\\)\\s*\\{", Pattern.DOTALL | Pattern.MULTILINE);
     private static final Pattern splitterPattern = Pattern.compile(";(?![^{]*})");
     private static final Pattern layoutDataRegex = Pattern.compile("(?<=layout\\()(.*)(?=\\))", Pattern.DOTALL);
     private static final Pattern layoutRegex = Pattern.compile("layout\\(.*\\)", Pattern.DOTALL);
     private static final Pattern valueDataRegex = Pattern.compile("(?<==)(.*)", Pattern.DOTALL);
-    private static final Pattern  valueRegex = Pattern.compile("=.*", Pattern.DOTALL);
+    private static final Pattern valueRegex = Pattern.compile("=.*", Pattern.DOTALL);
     private static final Pattern structPattern = Pattern.compile("(?<=\\{)(.*)(?=\\})", Pattern.DOTALL);
 
     private static Pattern[] modPatterns;
@@ -118,34 +118,11 @@ public class ShaderFile{
 
             includes = valuesFromPreprocessor("@include");
 
-            int uniformpos = data.indexOf("@uniforms");
-            int fieldpos = data.indexOf("@fields");
-            int codepos = data.indexOf("@code");
 
-            String uniformsource = "";
-            String fieldsource = "";
-            String codesource = "";
-
-            if(fieldpos != -1){
-                if(codepos != -1){
-                    fieldsource = data.substring(data.indexOf("\n", fieldpos), codepos).trim();
-                }else{
-                    fieldsource = data.substring(data.indexOf("\n", fieldpos)).trim();
-                }
-            }
-
-            if(codepos != -1){
-                codesource = data.substring(data.indexOf("\n", codepos)).trim();
-            }
-
-            if(codepos == -1 && fieldpos == -1 && uniformpos == -1){
-                return;
-            }
-
-            data = data.replaceAll("@.*\n", "");
+            data = data.replaceAll("@.*?\n", "");
             data = data.replaceAll("\n\n", "\n");
 
-            data = data.replaceAll("//.*\n", "");
+            data = data.replaceAll("//.*?\n", "");
 
             data = multilineReplacer.matcher(data).replaceAll("");
 

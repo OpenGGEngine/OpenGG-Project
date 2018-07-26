@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.opengg.core.render.texture.text;
+package com.opengg.core.render.text.impl;
 
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.render.window.WindowController;

@@ -303,7 +303,7 @@ public abstract class Component{
      * For correct functionality, variable deserialization here must match the variables serialized in {@link #serialize(GGOutputStream)} ) serialize()}<br>
      * In addition, any component that overrides this must also override the {@link #Component() default constructor} for the deserializer to function<br><br>
      * 
-     * As this method is normally run on a separate thread, any methods that have OpenGL calls have to be run in an {@link com.opengg.core.engine.Executable executable} to be run in the main thread. <br>
+     * As this method is normally run on a separate thread, any methods that have OpenGL calls have to be run in an {@link com.opengg.core.engine.Runnable Runnable} to be run in the main thread. <br>
      * It is recommended to allow for complete recreation of the component using these methods
      * @param in Input steam used for reading components from the buffer
      */

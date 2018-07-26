@@ -45,7 +45,6 @@ import java.util.List;
  */
 public final class OpenGG{
     private static GGApplication app;
-    private static final List<ExecutableContainer> executables = Collections.synchronizedList(new LinkedList<>());
     private static Instant startTime;
     private static boolean head = false;
     private static boolean force = false;
@@ -116,6 +115,7 @@ public final class OpenGG{
         GGInfo.setServer(!client);
 
         ThreadManager.initialize();
+        Executor.initialize();
         GGConsole.initialize();
         GGConsole.addListener(new OpenGGCommandExtender());
         GGConsole.log("OpenGG initializing, running on " + System.getProperty("os.name") + ", " + System.getProperty("os.arch"));
@@ -197,7 +197,7 @@ public final class OpenGG{
         float delta = time.getDeltaSec();
 
         Allocator.update();
-        processExecutables(delta);
+        Executor.getExecutor().update(delta);
         ExtensionManager.update(delta);
         WorldEngine.update(delta);
         PhysicsEngine.updatePhysics(delta);
@@ -348,82 +348,31 @@ public final class OpenGG{
         return mainthread == Thread.currentThread();
     }
 
-    private static void exec(ExecutableContainer e){
-        executables.add(e);
-    }
-
     /**
-     * Gives the engine the given {@link Executable} to run in the next cycle.<br>
+     * Gives the engine the given {@link Runnable} to run in the next cycle.<br>
      * This functionality is useful to be able to run functions that require the main thread (For example requiring OpenGL calls)
-     * @param e Overrided executable to be run
+     * @param e Overrided Runnable to be run
      */
-    public static void asyncExec(Executable e){
-        exec(new ExecutableContainer(e));
+    public static Executor.Sleeper asyncExec(Runnable e){
+        return Executor.async(e);
     }
 
     /**
-     * Gives the engine the given {@link Executable} to run in the amount of seconds given with one cycle length deviation
-     * @param seconds In how many seconds to run the executable
-     * @param e Overrided executable to be run
+     * Gives the engine the given {@link Runnable} to run in the amount of seconds given with one cycle length deviation
+     * @param seconds In how many seconds to run the Runnable
+     * @param e Overrided Runnable to be run
      */
-    public static void asyncExec(float seconds, Executable e){
-        exec(new ExecutableContainer(e, seconds));
+    public static Executor.Sleeper asyncExec(float seconds, Runnable e){
+        return Executor.in(seconds, e);
     }
 
     /**
-     * Gives the engine the given {@link Executable} to run in the next cycle.<br>
+     * Gives the engine the given {@link Runnable} to run in the next cycle.<br>
      * This functionality is useful to be able to run functions that require the main thread (For example requiring OpenGL calls).<br>
-     * This version blocks the current thread until the executable is run
-     * @param e Overrided executable to be run
+     * This version blocks the current thread until the Runnable is run
+     * @param e Overrided Runnable to be run
      */
-    public static void syncExec(Executable e){
-        ExecutableContainer execcont = new ExecutableContainer(e);
-
-        if(inMainThread()){
-            e.execute();
-            return;
-        }
-
-        exec(execcont);
-
-        while(!(execcont.executed)){
-            try{
-        	    Thread.sleep(2);
-            }catch(InterruptedException ex){}
-        }
-    }
-
-    private static boolean hasExecutables(){
-        for(ExecutableContainer ex : executables){
-            if(ex.elapsed > ex.timetoexec){
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private static void processExecutables(float delta){
-        for(ExecutableContainer ex : executables){
-            ex.elapsed += delta;
-        }
-        while(hasExecutables()){
-            List<ExecutableContainer> tempex = new LinkedList<>();
-            for(ExecutableContainer ex : executables){
-                if(ex.elapsed > ex.timetoexec){
-                    tempex.add(ex);
-                }
-            }
-
-            for(ExecutableContainer ex : tempex){
-                executables.remove(ex);
-            }
-
-
-            for(ExecutableContainer e : tempex){
-                e.exec.execute();
-                e.executed = true;
-            }
-        }
-
+    public static void syncExec(Runnable e){
+       Executor.sync(e);
     }
 }

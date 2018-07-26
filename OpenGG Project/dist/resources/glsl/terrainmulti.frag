@@ -1,7 +1,7 @@
 @version 4.2
 @glsl define LIGHTNUM 100
 
-@fields
+
 layout(location = 0) out vec4 fcolor;
 
 in vertexData{
@@ -44,7 +44,7 @@ vec3 diffuse;
 vec4 color;
 vec4 finalcolor;
 
-@code
+
 genPhong(){
     vec3 positionRelativeToCam = (view * model * vec4(pos.xyz, 1.0f)).xyz;
     

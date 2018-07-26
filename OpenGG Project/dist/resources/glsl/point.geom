@@ -1,5 +1,5 @@
 @version 4.2
-@fields
+
 layout(triangles) in;
 layout(triangle_strip, max_vertices=18) out;
 
@@ -9,7 +9,7 @@ in gl_PerVertex{
 
 uniform mat4 shadowMatrices[6];
 
-@code
+
 main()
 {
     for(int face = 0; face < 6; ++face)
