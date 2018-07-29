@@ -33,12 +33,18 @@ import javax.imageio.ImageIO;
  * @author Warren
  */
 public class Terrain {
+
+    private static final int MAX_COLOR = 255 * 255 * 255;
+
     Drawable d;
     List<Triangle> mesh;
     
     float[][] map;
     int sizex, sizez;
     float xsquarewidth, zsquarewidth;
+
+    float maxHeight = 10;
+
     String source;
 
     private Terrain(int gridx, int gridz) {
@@ -54,6 +60,7 @@ public class Terrain {
     public static Terrain generate(String data){
         Terrain t = new Terrain(1, 1);
         t.generateTexture(data);
+
         t.xsquarewidth = 1/(float)t.map.length;
         t.zsquarewidth = 1/(float)t.map[0].length;
         t.source = data;
@@ -72,55 +79,49 @@ public class Terrain {
     }
     
     private void generateTexture(String path){
+        GGConsole.log("Generating terrain from " + path);
         try {
             BufferedImage image = ImageIO.read(new FileInputStream(Resource.getAbsoluteFromLocal(path)));
 
-            int gx = image.getWidth();
-            int gz = image.getHeight();
-            map = new float[gx][gz];
-            GGConsole.log("Generating terrain from " + path);
-            
-            for (int i = 0; i < image.getWidth(); i+=1) {
-                for (int j = 0; j < image.getHeight(); j+=1) {
+            this.sizex = image.getWidth();
+            this.sizez = image.getHeight();
+
+            map = new float[this.sizex][this.sizez];
+
+            for (int i = 0; i < this.sizex; i++) {
+                for (int j = 0; j < this.sizez; j++) {
                     map[i][j] = generateHeight(i, j, image) ;        
                 }
             }
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(Terrain.class.getName()).log(Level.SEVERE, null, ex);
+            GGConsole.error(path +" not found.");
+            map = new float[1][1];
         } catch (IOException ex) {
-            Logger.getLogger(Terrain.class.getName()).log(Level.SEVERE, null, ex);
+            GGConsole.error("IOException: " + path);
+            map = new float[1][1];
         }
     }
     
-    private void genProcedural(HeightsGenerator gen, int gx, int gz){   
+    private void genProcedural(HeightsGenerator gen, int gx, int gz){
+        this.sizex = gx;
+        this.sizez = gz;
+
         map = new float[gx][gz];
-         for (int i = 0; i < gx; i+=1) {
-            for (int j = 0; j < gz; j+=1) {
+         for (int i = 0; i < gx; i++) {
+            for (int j = 0; j < gz; j++) {
                 map[i][j] = generateHeight(i,j,gen);
             }    
         }
     }
     private float generateHeight(int x, int z, BufferedImage image) {
-        float height = 0;
         if (x < 0 || x > image.getWidth() || z < 0 || z > image.getHeight()) {
             return 0;
         }
-        try{
-            height = image.getRGB(x, z);
-        }catch(Exception e){
-            if(x == image.getWidth()){
-                x--;
-            }
-            if(z == image.getHeight()){
-                z--;
-            }
-             height = image.getRGB(x, z);
-        }
-        return (float) (((height/100000)*(0.001*10)));
+        return (image.getRGB(x, z) / (float) MAX_COLOR) * maxHeight;
     }
     
     private float generateHeight(int x,int z,HeightsGenerator generator){
-        return generator.getHeight(x,z)*6f;
+        return generator.getHeight(x,z)*maxHeight;
     }
 
     
@@ -141,11 +142,10 @@ public class Terrain {
 
     public List<Triangle> getMesh(){
         if(mesh != null) return mesh;
-        
-        
+
         List<Vector3f> points = new ArrayList<>( map.length * map[0].length);
         List<Integer> indices = new ArrayList<>(6 * (map.length * map[0].length));
-        List<Triangle> triangle = new ArrayList<>((6 * (map.length * map[0].length))/2);
+        List<Triangle> triangle = new ArrayList<>((3 * (map.length * map[0].length)));
         
         for(int i = 0; i < map.length-1; i++){
             for(int i2 = 0; i2 < map[0].length-1; i2++){
@@ -169,7 +169,6 @@ public class Terrain {
                 float x = (i * xsquarewidth);
                 float y = map[i][i2];
                 float z = (i2 * zsquarewidth);
-
                 points.add(new Vector3f(x,y,z));
             }
         }
@@ -186,13 +185,13 @@ public class Terrain {
             triangle.add(t2);
         }
         mesh = triangle;
-        return triangle;
+        return mesh;
     }
     
     public List<Triangle> getMesh(int sx, int sy, int width, int height){
         List<Vector3f> points = new ArrayList<>( width*height);
-        List<Integer> indices = new ArrayList<>(6 * (width*height));
-        List<Triangle> triangle = new ArrayList<>((6 * (width*height))/2);
+        List<Integer> indices = new ArrayList<>(6 * width * height);
+        List<Triangle> triangle = new ArrayList<>(3 * width * height);
         
         for(int i = 0; i < width-1; i++){
             for(int i2 = 0; i2 < height-1; i2++){
@@ -236,11 +235,10 @@ public class Terrain {
     }
     
     public Drawable getDrawable(){
-        if(d != null)
-            return d;
+        if(d != null) return d;
         
         FloatBuffer bf = Allocator.allocFloat(12 * map.length * map[0].length);
-        IntBuffer indices = Allocator.allocInt(6 * (map.length * map[0].length));
+        IntBuffer indices = Allocator.allocInt(6 * map.length * map[0].length);
         
         for(int i = 0; i < map.length-1; i++){
             for(int i2 = 0; i2 < map[0].length-1; i2++){
@@ -279,17 +277,18 @@ public class Terrain {
                 }
 
                 bf.put(x).put(y).put(z).put(1).put(1).put(1).put(1).put(nx).put(ny).put(nz).put(u).put(v);
+
             }
         }
         bf.flip();
         indices.flip();
-        d = new DrawnObject(indices);
-        return d;
+        this.d = new DrawnObject(indices,bf);
+        return this.d;
     }
     
     public Vector3f getNormalAt(float x, float z){
-        int gridx = (int) Math.floor(x / xsquarewidth);
-        int gridz = (int) Math.floor(z / zsquarewidth);
+        int gridx = (int) (x / xsquarewidth);
+        int gridz = (int) (z / zsquarewidth);
         
         if(gridx >= map.length-1 || gridx <= 0 || gridz >= map[0].length-1 || gridz <= 0)
             return null;
@@ -298,8 +297,8 @@ public class Terrain {
     }
     
     public float getHeight(float x, float z){
-        int gridx = (int) Math.floor(x / xsquarewidth);
-        int gridz = (int) Math.floor(z / zsquarewidth);
+        int gridx = (int) (x / xsquarewidth);
+        int gridz = (int) (z / zsquarewidth);
         
         if(gridx >= map.length-1 || gridx <= 0 || gridz >= map[0].length-1 || gridz <= 0)
             return 12345;
@@ -359,12 +358,11 @@ public class Terrain {
         return map;
     }
     
-    
-    
+
     public ByteBuffer getHeightmapBuffer(){
         ByteBuffer texBuffer = Allocator.alloc(map.length * map[0].length * 4);
         for(int j = 0; j < map.length; j++){
-            for(int i = 0; i < map.length; i++){
+            for(int i = 0; i < map[j].length; i++){
                 byte val2 = (byte) (map[i][j] * 16);
                 texBuffer.put(val2).put(val2).put(val2).put((byte)0xFF);
             }

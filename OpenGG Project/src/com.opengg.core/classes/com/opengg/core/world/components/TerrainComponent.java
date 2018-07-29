@@ -26,7 +26,8 @@ public class TerrainComponent extends RenderComponent{
     Terrain terrain;
     boolean collideable;
     public Texture blotmap = Texture.get2DTexture(TextureManager.getDefault());
-    public Texture array;
+    public Texture array = Texture.getArrayTexture(TextureManager.getDefault(),
+            TextureManager.getDefault(),TextureManager.getDefault(),TextureManager.getDefault());
     
     public TerrainComponent(){}
     
@@ -51,8 +52,7 @@ public class TerrainComponent extends RenderComponent{
                 AABB aabb = new AABB(1f/divx/2,10,1f/divz/2f);
                 aabb.setPosition(new Vector3f((1f/divx)*i+(1f/divx*0.5f),0, (1f/divz)*j+(1f/divz*0.5f)));
                 aabb.recalculate();
-                CollisionComponent c = new CollisionComponent(aabb,mesh);
-                this.attach(c);
+                this.attach(new CollisionComponent(aabb,mesh));
                 collideable = true;
             }
         }
@@ -110,11 +110,6 @@ public class TerrainComponent extends RenderComponent{
         String s1 = in.readString(), s2 = in.readString(), s3 = in.readString(), s4 = in.readString();
         array = Texture.getArrayTexture(s1, s2, s3, s4);
         this.setShader("terrain");
-        System.out.println(tp);
-        System.out.println(blot);
-        System.out.println(s1);
-        System.out.println(s2);
-        System.out.println(s3);
         OpenGG.asyncExec(()->this.setDrawable(terrain.getDrawable()));
         if(in.readBoolean()){
             enableCollider();
