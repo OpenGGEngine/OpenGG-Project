@@ -59,6 +59,7 @@ public class RenderEngine {
     private static VertexArrayFormat particleVAOFormat;
     private static VertexArrayFormat animationVAOFormat;
     public static VertexArrayFormat animation2VAOFormat;
+    public static VertexArrayFormat tangentVAOFormat;
     private static boolean cull = true;
     private static int lightoffset;
     private static Camera camera;
@@ -79,6 +80,12 @@ public class RenderEngine {
         //defaultVAOFormat.addAttribute(new VertexArrayAttribute("color", 4, 12, GL_FLOAT, 3, 0, false));
         defaultVAOFormat.addAttribute(new VertexArrayAttribute("normal", 3, 12, GL_FLOAT, 7, 0, false));
         defaultVAOFormat.addAttribute(new VertexArrayAttribute("texcoord", 2, 12, GL_FLOAT, 10, 0, false));
+
+        tangentVAOFormat = new VertexArrayFormat();
+        tangentVAOFormat.addAttribute(new VertexArrayAttribute("position", 3, 11, GL_FLOAT, 0, 0, false));
+        tangentVAOFormat.addAttribute(new VertexArrayAttribute("normal", 3, 11, GL_FLOAT, 3, 0, false));
+        tangentVAOFormat.addAttribute(new VertexArrayAttribute("tangents", 3, 11, GL_FLOAT, 6, 0, false));
+        tangentVAOFormat.addAttribute(new VertexArrayAttribute("texcoord", 2, 11, GL_FLOAT, 9, 0, false));
 
         particleVAOFormat = new VertexArrayFormat();
         particleVAOFormat.addAttribute(new VertexArrayAttribute("position", 3, 12, GL_FLOAT, 0, 0, false));

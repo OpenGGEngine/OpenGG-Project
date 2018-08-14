@@ -21,7 +21,7 @@ import java.nio.charset.Charset;
  */
 public class Material {
 
-    public static final Vector4f DEFAULT_COLOUR = new Vector4f(1.0f, 1.0f, 1.0f, 1.0f);
+    public static final Vector3f DEFAULT_COLOR = new Vector3f(1.0f, 1.0f, 1.0f);
     public static Material defaultmaterial = new Material("default");
     public String name;
     public Vector3f ka = new Vector3f();
