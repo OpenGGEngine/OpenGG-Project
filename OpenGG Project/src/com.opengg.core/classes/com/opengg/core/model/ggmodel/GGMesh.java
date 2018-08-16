@@ -11,46 +11,54 @@ import com.opengg.core.system.Allocator;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class GGMesh {
     FloatBuffer vbo;
     IntBuffer ibo;
     Material main = Material.defaultmaterial; int matIndex = -1;
+    boolean genAnim = false;
 
     private static final int VBO_NOANIM = 11,VBO_ANIM = 19;
 
-    @Deprecated
-    public GGMesh(Vector3f[] positions,Vector3f[] normals, Vector2f[] uvs) throws Exception{
-        throw new Exception("Don't use the non-tangent constructor.");
-    }
-    public GGMesh(Vector3f[] positions,Vector3f[] normals,Vector3f[] tangents, Vector2f[] uvs,int[] indices){
+    ArrayList<GGVertex> vertices = new ArrayList<>();
 
-        vbo = Allocator.allocFloat(positions.length * VBO_NOANIM);
+    GGBone[] bones;
 
-        for(int i = 0;i < positions.length;i++){
-            Vector3f position = positions[i];
+    public GGMesh(ArrayList<GGVertex> vertices,int[] indices,boolean genAnim){
+
+        vbo = Allocator.allocFloat(vertices.size() * (genAnim?VBO_ANIM:VBO_NOANIM));
+
+        for(int i = 0;i < vertices.size();i++){
+            GGVertex vertex = vertices.get(i);
+            Vector3f position = vertex.position;
             vbo.put(position.x).put(position.y).put(position.z);
-            Vector3f normal = normals[i];
+            Vector3f normal = vertex.normal;
             vbo.put(normal.x).put(normal.y).put(normal.z);
-            Vector3f tangent = positions[i];
+            Vector3f tangent = vertex.tangent;
             vbo.put(tangent.x).put(tangent.y).put(tangent.z);
-            Vector2f uv = uvs[i];
+            Vector2f uv = vertex.uvs;
             vbo.put(uv.x).put(uv.y);
+            if(genAnim){
+                vbo.put(vertex.jointIndices.x).put(vertex.jointIndices.y).put(vertex.jointIndices.z).put(vertex.jointIndices.w);
+                vbo.put(vertex.weights.x).put(vertex.weights.y).put(vertex.weights.z).put(vertex.weights.w);
+            }
         }
         vbo.flip();
         ibo = Allocator.allocInt(indices.length);
         ibo.put(indices);
         ibo.flip();
+        this.genAnim = genAnim;
     }
+
     public GGMesh(FloatBuffer vbo,IntBuffer ibo){
         this.vbo = vbo;
         this.ibo = ibo;
     }
 
     public Drawable getDrawable(){
-        System.out.println(this.main.mapKdFilename);
-        DrawnObject temp =new DrawnObject(RenderEngine.tangentVAOFormat,this.ibo,this.vbo);
+        DrawnObject temp =new DrawnObject(genAnim?RenderEngine.tangentAnimVAOFormat:RenderEngine.tangentVAOFormat,this.ibo,this.vbo);
         return new MaterialDrawnObject(temp,this.main);
     }
 

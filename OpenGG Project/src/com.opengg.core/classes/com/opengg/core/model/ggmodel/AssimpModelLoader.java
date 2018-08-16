@@ -1,8 +1,10 @@
 package com.opengg.core.model.ggmodel;
 
 import com.opengg.core.console.GGConsole;
+import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
+import com.opengg.core.math.Vector4f;
 import com.opengg.core.model.Material;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.assimp.*;
@@ -13,8 +15,13 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class AssimpModelLoader {
+
+    private static final int NUM_WEIGHTS = 4;
     public static GGModel loadModel(String path) throws IOException {
         File f = new File(path);
         AIScene scene = Assimp.aiImportFile(f.toString(),Assimp.aiProcess_GenSmoothNormals);
@@ -40,13 +47,17 @@ public class AssimpModelLoader {
 
         ArrayList<GGMesh> meshes = new ArrayList<>();
 
+        boolean animationsEnabled = false;
+
         for(int i = 0;i<pMeshes.capacity();i++){
             AIMesh mesh = AIMesh.create(pMeshes.get());
 
-            Vector3f[] positions = new Vector3f[mesh.mNumVertices()];
-            Vector3f[] normals = new Vector3f[mesh.mNumVertices()];
-            Vector3f[] tangents = new Vector3f[mesh.mNumVertices()];
-            Vector2f[] uvs = new Vector2f[mesh.mNumVertices()];
+            Vector3f positions;
+            Vector3f normals;
+            Vector3f tangents;
+            Vector2f uvs;
+
+            ArrayList<GGVertex> vertices = new ArrayList<>();
 
             int[] indices = new int[mesh.mNumFaces() * 3];
 
@@ -59,21 +70,58 @@ public class AssimpModelLoader {
             //Load Mesh VBO Data
             for(int i2 = 0;i2<mesh.mNumVertices();i2++){
 
-                positions[i2] = assimpToV3(mesh.mVertices().get(i2));
+                positions = assimpToV3(mesh.mVertices().get(i2));
 
-                normals[i2] =  hasNormal ? new Vector3f(1,1,1) : assimpToV3(mesh.mNormals().get(i2));
-                tangents[i2] = hasTangents ? new Vector3f(1,1,1) : assimpToV3(mesh.mTangents().get(i2));
+                normals =  hasNormal ? new Vector3f(1,1,1) : assimpToV3(mesh.mNormals().get(i2));
+                tangents = hasTangents ? new Vector3f(1,1,1) : assimpToV3(mesh.mTangents().get(i2));
 
-                uvs[i2] = hasUVs ? new Vector2f(1,1) : assimpToV2(mesh.mTextureCoords(0).get(i2));
+                uvs = hasUVs ? new Vector2f(1,1) : assimpToV2(mesh.mTextureCoords(0).get(i2));
 
-                //Load animation mesh data
-                if(mesh.mNumBones() > 0){
-                }
-                if(mesh.mNumAnimMeshes() > 0){
-                }
-
+                vertices.add(new GGVertex(positions,normals,tangents,uvs));
 
             }
+            //Load animation mesh data
+            if(animationsEnabled) {
+                Map<Integer, List<VertexWeight>> weightSet = new HashMap<>();
+
+                for (int i3 = 0; i3 < mesh.mNumBones(); i3++) {
+                    AIBone bone = AIBone.create(mesh.mBones().get(i3));
+                    bones[i3] = new GGBone(bone.mName().dataString(), assimpToMat4(bone.mOffsetMatrix()));
+
+                    int numWeights = bone.mNumWeights();
+                    numWeights = NUM_WEIGHTS;
+                    AIVertexWeight.Buffer aiWeights = bone.mWeights();
+                    for (int j = 0; j < numWeights; j++) {
+                        AIVertexWeight aiWeight = aiWeights.get(j);
+                        VertexWeight vw = new VertexWeight(i3, aiWeight.mVertexId(),
+                                aiWeight.mWeight());
+                        List<VertexWeight> vertexWeightList = weightSet.get(vw.getVertexId());
+                        if (vertexWeightList == null) {
+                            vertexWeightList = new ArrayList<>();
+                            weightSet.put(vw.getVertexId(), vertexWeightList);
+                        }
+                        vertexWeightList.add(vw);
+                    }
+                }
+                for (int i6 = 0; i6 < mesh.mNumVertices(); i6++) {
+
+                    List<VertexWeight> vertexWeightList = weightSet.get(i6);
+
+                    if(vertexWeightList == null || vertexWeightList.size() < NUM_WEIGHTS){
+                        vertices.get(i6).jointIndices = new Vector4f(0,0,0,0);
+                        vertices.get(i6).weights = new Vector4f(0,0,0,0);
+                    }else {
+                        VertexWeight vw = vertexWeightList.get(0);
+                        VertexWeight vw2 = vertexWeightList.get(1);
+                        VertexWeight vw3 = vertexWeightList.get(2);
+                        VertexWeight vw4 = vertexWeightList.get(3);
+
+                        vertices.get(i6).jointIndices = new Vector4f(vw.getBoneId(), vw2.getBoneId(), vw3.getBoneId(), vw4.getBoneId());
+                        vertices.get(i6).weights = new Vector4f(vw.getWeight(), vw2.getWeight(), vw3.getWeight(), vw4.getWeight());
+                    }
+                }
+            }
+
             //Load Mesh Index Data
             for(int i2 = 0;i2<mesh.mFaces().capacity();i2++){
                 AIFace face = mesh.mFaces().get(i2);
@@ -82,18 +130,22 @@ public class AssimpModelLoader {
                 indices[i2*3+2] = face.mIndices().get(2);
             }
 
-            GGMesh gmesh  = new GGMesh(positions,normals,tangents,uvs,indices);
+            GGMesh gmesh  = new GGMesh(vertices,indices,animationsEnabled);
 
             if(scene.mNumMaterials() > 0){
                 gmesh.main = materials.get(mesh.mMaterialIndex());
                 gmesh.matIndex = mesh.mMaterialIndex();
             }
 
+            gmesh.bones = bones;
+
             meshes.add(gmesh);
 
         }
         GGConsole.log("Loaded model: " + f.getName());
-        return new GGModel(meshes);
+        GGModel model = new GGModel(meshes);
+        model.isAnim = animationsEnabled;
+        return model;
 
     }
     public static Material processMaterial(AIMaterial material){
@@ -107,7 +159,6 @@ public class AssimpModelLoader {
         Assimp.aiGetMaterialTexture(material, aiTextureType_DIFFUSE, 0, path, (IntBuffer
                 ) null, null, null, null, null, null);
         m.mapKdFilename = path.dataString();
-        System.out.println(m.mapKdFilename);
 
         Vector3f ambient = Material.DEFAULT_COLOR;
         int result = aiGetMaterialColor(material, AI_MATKEY_COLOR_AMBIENT, aiTextureType_NONE, 0, color);
@@ -129,10 +180,26 @@ public class AssimpModelLoader {
 
     }
 
+    public GGAnimation processAnimation(AIAnimation animation){
+        for(int i = 0;i<animation.mNumChannels();i++){
+            //animation.mChannels().get(i)
+        }
+        //animation.mChannels()
+        return new GGAnimation();
+    }
+
     public static Vector3f assimpToV3(AIVector3D a){
         return new Vector3f(a.x(),a.y(),a.z());
     }
     public static Vector2f assimpToV2(AIVector3D a){
         return new Vector2f(a.x(),a.y());
+    }
+    public static Matrix4f assimpToMat4(AIMatrix4x4 aiMatrix4x4) {
+        Matrix4f result = new Matrix4f(aiMatrix4x4.a1(), aiMatrix4x4.b1(), aiMatrix4x4.c1(), aiMatrix4x4.d1()
+                , aiMatrix4x4.a2(), aiMatrix4x4.b2(), aiMatrix4x4.c2(), aiMatrix4x4.d2()
+                , aiMatrix4x4.a3(), aiMatrix4x4.b3(), aiMatrix4x4.c3(), aiMatrix4x4.d3()
+                , aiMatrix4x4.a4(), aiMatrix4x4.b4(), aiMatrix4x4.c4(), aiMatrix4x4.d4());
+
+        return result;
     }
 }

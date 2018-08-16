@@ -9,7 +9,7 @@ public class GGRenderComponent extends RenderComponent {
 
     public GGRenderComponent(GGModel model){
         this.model = model;
-        this.setFormat(RenderEngine.tangentVAOFormat);
+        this.setFormat(model.isAnim?RenderEngine.tangentAnimVAOFormat:RenderEngine.tangentVAOFormat);
         this.setDrawable(model.getDrawable());
     }
 

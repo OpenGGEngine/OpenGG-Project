@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 public class GGModel {
     public ArrayList<GGMesh> meshes = new ArrayList<>();
+    public boolean isAnim = false;
 
     public GGModel(ArrayList<GGMesh> meshes){
         this.meshes = meshes;
