@@ -1,4 +1,4 @@
-package com.opengg.core.model.ggmodel;
+package com.opengg.core.model.ggmodel.io;
 
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.math.Matrix4f;
@@ -6,6 +6,7 @@ import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.math.Vector4f;
 import com.opengg.core.model.Material;
+import com.opengg.core.model.ggmodel.*;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.assimp.*;
 import static org.lwjgl.assimp.Assimp.*;
@@ -29,6 +30,12 @@ public class AssimpModelLoader {
 
         //Load animations
         if(scene.mNumAnimations() > 0){
+            for(int i =0;i<scene.mNumAnimations();i++){
+                AIAnimation anim = AIAnimation.create(scene.mAnimations().get(i));
+                anim.mChannels().get();
+                GGAnimation animation = processAnimation(anim);
+                System.out.println(animation.name);
+            }
             GGConsole.log("Loaded Animations");
         }
 
@@ -145,6 +152,7 @@ public class AssimpModelLoader {
         GGConsole.log("Loaded model: " + f.getName());
         GGModel model = new GGModel(meshes);
         model.isAnim = animationsEnabled;
+        model.materials = materials;
         return model;
 
     }
@@ -180,12 +188,12 @@ public class AssimpModelLoader {
 
     }
 
-    public GGAnimation processAnimation(AIAnimation animation){
+    public static GGAnimation processAnimation(AIAnimation animation){
         for(int i = 0;i<animation.mNumChannels();i++){
             //animation.mChannels().get(i)
         }
         //animation.mChannels()
-        return new GGAnimation();
+        return new GGAnimation(animation.mName().dataString(),animation.mDuration(),animation.mTicksPerSecond());
     }
 
     public static Vector3f assimpToV3(AIVector3D a){

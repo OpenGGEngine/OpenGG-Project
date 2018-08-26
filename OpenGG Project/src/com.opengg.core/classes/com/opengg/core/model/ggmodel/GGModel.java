@@ -1,5 +1,6 @@
 package com.opengg.core.model.ggmodel;
 
+import com.opengg.core.model.Material;
 import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.render.drawn.DrawnObject;
 import com.opengg.core.render.drawn.DrawnObjectGroup;
@@ -8,6 +9,7 @@ import java.util.ArrayList;
 
 public class GGModel {
     public ArrayList<GGMesh> meshes = new ArrayList<>();
+    public ArrayList<Material> materials = new ArrayList<Material>();
     public boolean isAnim = false;
 
     public GGModel(ArrayList<GGMesh> meshes){

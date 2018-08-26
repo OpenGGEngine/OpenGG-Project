@@ -61,7 +61,7 @@ public class MaterialDrawnObject implements Drawable {
     @Override
     public void render() {
         if(mat.Kd != null)
-            mat.Kd.use(0); 
+            mat.Kd.use(0);
         if(mat.norm != null) 
             mat.norm.use(3);
         if(mat.Ks != null) 

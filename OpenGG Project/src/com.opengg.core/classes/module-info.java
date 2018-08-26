@@ -11,6 +11,8 @@ module com.opengg.core {
     requires org.lwjgl;
     requires  org.lwjgl.stb.natives;
     requires org.lwjgl.natives;
+    requires org.lwjgl.assimp.natives;
+    requires org.lwjgl.assimp;
     requires org.lwjgl.glfw.natives;
     requires org.lwjgl.openal.natives;
     requires org.lwjgl.opengl.natives;
@@ -58,4 +60,6 @@ module com.opengg.core {
     exports com.opengg.core.world.entities.physics;
     exports com.opengg.core.world.entities.resources;
     exports com.opengg.core.world.generators;
+    exports com.opengg.core.model.ggmodel;
+    exports com.opengg.core.model.ggmodel.io;
 }

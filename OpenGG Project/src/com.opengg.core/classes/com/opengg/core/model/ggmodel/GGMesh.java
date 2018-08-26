@@ -15,16 +15,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class GGMesh {
-    FloatBuffer vbo;
-    IntBuffer ibo;
-    Material main = Material.defaultmaterial; int matIndex = -1;
-    boolean genAnim = false;
+    public FloatBuffer vbo;
+    public IntBuffer ibo;
+    public Material main = Material.defaultmaterial; public int matIndex = -1;
+    public boolean genAnim = false;
 
     private static final int VBO_NOANIM = 11,VBO_ANIM = 19;
 
     ArrayList<GGVertex> vertices = new ArrayList<>();
 
-    GGBone[] bones;
+    public GGBone[] bones;
 
     public GGMesh(ArrayList<GGVertex> vertices,int[] indices,boolean genAnim){
 
