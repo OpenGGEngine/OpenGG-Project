@@ -1,4 +1,7 @@
 # OpenGG Engine
+
+![alt text](https://scontent.fewr1-4.fna.fbcdn.net/v/t31.0-8/15259623_718596658314758_617464899265180665_o.jpg?_nc_cat=0&oh=665f754448e609118ef5867d74d7b668&oe=5BF8A70A)
+
 ## What is OpenGG
 OpenGG engine is a world class 3D engine designed for optimal efficiancy and performance.
 Because of this, we have decided to use Java as a language of choice. This engine 
