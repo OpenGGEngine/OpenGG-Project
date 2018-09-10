@@ -3,6 +3,7 @@ package com.opengg.core.model.ggmodel;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.model.Material;
+import com.opengg.core.physics.collision.ConvexHull;
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.render.drawn.DrawnObject;
@@ -25,6 +26,8 @@ public class GGMesh {
     ArrayList<GGVertex> vertices = new ArrayList<>();
 
     public GGBone[] bones;
+
+    public ConvexHull convexHull;
 
     public GGMesh(ArrayList<GGVertex> vertices,int[] indices,boolean genAnim){
 

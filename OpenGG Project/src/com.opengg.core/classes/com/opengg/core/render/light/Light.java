@@ -31,7 +31,7 @@ public class Light {
 
     private Vector3f pos = new Vector3f();
     private Quaternionf rot = new Quaternionf();
-    private Vector3f color = new Vector3f();
+    private Vector3f color = new Vector3f(1,1,1);
     private float distance = 10;
     private float distance2 = 50;
     private float type = NONE;

@@ -68,6 +68,8 @@ public class MaterialDrawnObject implements Drawable {
             mat.Ks.use(4); 
         if(mat.Ns != null)
             mat.Ns.use(5);
+        if(mat.em != null)
+            mat.em.use(9);
 
         ShaderController.passMaterial(mat);
 

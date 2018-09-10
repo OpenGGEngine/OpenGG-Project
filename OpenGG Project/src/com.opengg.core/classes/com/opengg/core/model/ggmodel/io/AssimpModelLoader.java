@@ -55,6 +55,7 @@ public class AssimpModelLoader {
         ArrayList<GGMesh> meshes = new ArrayList<>();
 
         boolean animationsEnabled = false;
+        boolean generateHulls = true;
 
         for(int i = 0;i<pMeshes.capacity();i++){
             AIMesh mesh = AIMesh.create(pMeshes.get());
@@ -168,6 +169,16 @@ public class AssimpModelLoader {
                 ) null, null, null, null, null, null);
         m.mapKdFilename = path.dataString();
 
+        path = AIString.calloc();
+        Assimp.aiGetMaterialTexture(material, aiTextureType_SHININESS, 0, path, (IntBuffer
+                ) null, null, null, null, null, null);
+        if(Assimp.aiGetMaterialTextureCount(material,aiTextureType_SHININESS)>0) m.mapNsFilename = path.dataString();
+
+        path = AIString.calloc();
+        Assimp.aiGetMaterialTexture(material, aiTextureType_EMISSIVE, 0, path, (IntBuffer
+                ) null, null, null, null, null, null);
+        if(Assimp.aiGetMaterialTextureCount(material,aiTextureType_EMISSIVE)>0) m.emmFilename = path.dataString();
+
         Vector3f ambient = Material.DEFAULT_COLOR;
         int result = aiGetMaterialColor(material, AI_MATKEY_COLOR_AMBIENT, aiTextureType_NONE, 0, color);
         if (result == 0) {
@@ -182,8 +193,15 @@ public class AssimpModelLoader {
         result = aiGetMaterialColor(material, AI_MATKEY_COLOR_SPECULAR, aiTextureType_NONE, 0, color);
         if (result == 0) {
             specular = new Vector3f(color.r(), color.g(), color.b());
+            System.out.println(specular);
         }
+        float[] temp = new float[1];
 
+        result = aiGetMaterialFloatArray(material,AI_MATKEY_SHININESS,aiTextureType_NONE,0,temp,new int[]{1});
+
+        if(result == 0){
+            m.nsExponent = temp[0];
+        }
         return m;
 
     }

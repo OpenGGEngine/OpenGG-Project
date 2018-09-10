@@ -115,11 +115,7 @@ public class NativeOpenGLShaderProgram{
      * @param value Value to set
      */
     public void setUniform(int location, boolean value) {
-        if(value){
-            glProgramUniform1i(id, location, 1);
-        }else{
-            glProgramUniform1i(id, location, 0);
-        }  
+        glProgramUniform1f(id,location,value?1f:0f);
     }
 
     /**

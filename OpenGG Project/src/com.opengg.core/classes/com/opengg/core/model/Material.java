@@ -42,6 +42,7 @@ public class Material {
     public String decalFilename = "";
     public String dispFilename = "";
     public String bumpFilename = "";
+    public String emmFilename ="";
     public int reflType = BuilderInterface.MTL_REFL_TYPE_UNKNOWN;
     public String reflFilename = "";
     public Texture Kd = null;
@@ -50,6 +51,7 @@ public class Material {
     public Texture Ns = null;
     public Texture D = null;
     public Texture norm = null;
+    public Texture em;
     public String texpath = "";
 
     public boolean hasspecmap = false;
@@ -58,6 +60,7 @@ public class Material {
     public boolean hasreflmap = false;
     public boolean hascolmap = false;
     public boolean hastrans = false;
+    public boolean hasemm = false;
 
     public Material(String name) {
         this.name = name;
@@ -71,11 +74,14 @@ public class Material {
         this.kd = new Vector3f(b.getFloat(), b.getFloat(), b.getFloat());
         this.ks = new Vector3f(b.getFloat(), b.getFloat(), b.getFloat());
         this.mapKdFilename = readString(b);
-
+        this.hascolmap = !this.mapKdFilename.equals("");
         this.mapNsFilename = readString(b);
-
+        this.hasspecmap = !this.mapNsFilename.equals("");
         this.bumpFilename = readString(b);
-
+        this.hasnormmap = !this.bumpFilename.equals("");
+        this.emmFilename = readString(b);
+        this.hasemm = !this.emmFilename.equals("");
+        this.nsExponent = b.getFloat();
     }
 
     public Material(String name, String texpath, GGInputStream in) throws IOException {
@@ -131,6 +137,10 @@ public class Material {
         if (bumpFilename != null && !bumpFilename.isEmpty()) {
             hasnormmap = true;
             norm = Texture.get2DTexture(texpath + bumpFilename);
+        }
+        if (emmFilename != null && !emmFilename.isEmpty()) {
+            hasemm = true;
+            em = Texture.get2DTexture(texpath + emmFilename);
         }
     }
 
@@ -218,7 +228,7 @@ public class Material {
 
     public ByteBuffer toBuffer() throws UnsupportedEncodingException {
         
-        ByteBuffer b = ByteBuffer.allocate(4 + (name.length() ) + (3 * (4 * 3)) + 4 + (this.mapKdFilename.length() ) + 4 + (this.mapNsFilename.length() ) + 4 + (this.bumpFilename.length() ));
+        ByteBuffer b = ByteBuffer.allocate(4 +  4 + (name.length() ) + (3 * (4 * 3)) + 4 + (this.mapKdFilename.length() ) + 4 + (this.mapNsFilename.length() ) + 4 + (this.bumpFilename.length() ) +  4 +(this.emmFilename.length()));
         b.putInt(name.length());
         b.put(ByteBuffer.wrap(name.getBytes(Charset.forName("UTF-8"))));
         b.put(ka.toByteArray());
@@ -230,13 +240,15 @@ public class Material {
         b.put(ByteBuffer.wrap(mapNsFilename.getBytes(Charset.forName("UTF-8"))));
         b.putInt(bumpFilename.length());
         b.put(ByteBuffer.wrap(bumpFilename.getBytes(Charset.forName("UTF-8"))));
-
+        b.putInt(emmFilename.length());
+        b.put(ByteBuffer.wrap(emmFilename.getBytes(Charset.forName("UTF-8"))));
+        b.putFloat((float)nsExponent);
         b.flip();
         return b;
     }
 
     public int getCap() {
-        return 4 + (name.length()) + (3 * (4 * 3)) + 4 + (this.mapKdFilename.length()) + 4 + (this.mapKsFilename.length()) + 4 + (bumpFilename.length());
+        return 4 + 4+(name.length()) + (3 * (4 * 3)) + 4 + (this.mapKdFilename.length()) + 4 + (this.mapKsFilename.length()) + 4 + (bumpFilename.length());
     }
 
 }

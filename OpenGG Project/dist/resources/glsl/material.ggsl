@@ -1,11 +1,11 @@
 
 struct Material
 {
-    bool hasnormmap;
-    bool hasspecmap;
-    bool hasspecpow;
-    bool hasambmap;
-	bool hascolormap;
+    float hasnormmap;
+    float hasambmap;
+    float hasspec;
+	float hascolormap;
+	float hasem;
     vec3 ks;
     vec3 ka;
     vec3 kd;
@@ -16,6 +16,7 @@ uniform sampler2D Kd;
 uniform sampler2D Ka;
 uniform sampler2D Ks;
 uniform sampler2D Ns;
+uniform sampler2D em;
 uniform sampler2D bump;
 uniform samplerCube cubemap;
 
@@ -23,8 +24,10 @@ vec3 n;
 vec3 ambient;
 vec3 specular;
 vec3 diffuse;
+vec3 emmisive;
 vec4 color;
 float specpow;
+vec3 specpowvec;
 vec3 reflectedcolor;
 
 
@@ -52,41 +55,25 @@ vec3 calculatenormal( vec3 N, vec3 V, vec3 map, vec2 texcoord){
     return normalize( TBN * map );
 }
 
-useMaterial(Material mat){
-	//if(material.hascolormap){
-		color = texture(Kd, textureCoord);
-	//}else{
-	//	color = vec4(material.kd, 1);
-	//}
+void useMaterial(Material mat){
+	color = texture(Kd, textureCoord);
+	diffuse = color.rgb;
 
-    diffuse = color.rgb;
+	emmisive = texture(em, textureCoord).xyz * mat.hasem;
 
     trans = color.a;
 
-    ambient = 0.1f * diffuse;
+    ambient = 0.1 * diffuse;
 
-    specular = vec3(1,1,1);
+    specular = vec3(1);
 
-    specpow = 32;
-    /*if(material.hasspecpow){
-        vec4 specpowvec = getTex(Ns);
-        specpow = specpowvec.r * 32;
-    }else{
-        specpow = material.ns;
-    }*/
+    specpow = mat.ns;
 
-    if(mat.hasspecmap){
-        specular = texture(Ks, textureCoord).rgb;
-    }else{
-        specular = material.ks;
-    }
+    specpowvec = (getTex(Ns).xyz * mat.hasspec) + vec3((int(mat.hasspec)-1) * -1);
 
-    if(mat.hasnormmap){
-		n = calculatenormal(normalize((model * vec4(norm,0.0f)).xyz),
-		 pos.xyz-camera, texture(bump, textureCoord).xyz, textureCoord);
-    }else{
-		n = normalize((model * vec4(norm,0.0f)).xyz);
-	}
+	n =  calculatenormal(normalize((model * vec4(norm,0.0f)).xyz),
+         		 pos.xyz-camera, texture(bump, textureCoord).xyz, textureCoord) * mat.hasnormmap
+         		 + normalize((model * vec4(norm,0.0f)).xyz) * (mat.hasnormmap-1) * -1;
 
 	//reflectedcolor = texture(cubemap, normalize(reflect(eyedir,n))).xyz;
 

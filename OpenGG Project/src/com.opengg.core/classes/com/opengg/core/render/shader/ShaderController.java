@@ -213,7 +213,6 @@ public class ShaderController {
         findUniform("shadowmap3");
         setTextureLocation("shadowmap3", 8);
 
-
         setMatLinks();
     }
 
@@ -230,8 +229,11 @@ public class ShaderController {
         findUniform("Ks"); 
         setTextureLocation("Ks", 4);
         
-        findUniform("Ns"); 
+        findUniform("Ns");
         setTextureLocation("Ns", 5);
+
+        findUniform("em");
+        setTextureLocation("em", 9);
         
         findUniform("material.ka");
         setUniform("material.ka", new Vector3f());
@@ -245,20 +247,21 @@ public class ShaderController {
         findUniform("material.ns");
         setUniform("material.ns", 32.0f);
         
-        findUniform("material.hasspecmap");
-        setUniform("material.hasspecmap", false);
+        findUniform("material.hasspec");
+        setUniform("material.hasspec", false);
         
         findUniform("material.hasnormmap");
         setUniform("material.hasnormmap", false);
         
         findUniform("material.hasambmap");
         setUniform("material.hasambmap", false);
-        
-        findUniform("material.hasspecpow");
-        setUniform("material.hasspecpow", false);
+
         
         findUniform("material.hascolormap");
         setUniform("material.hascolormap", false);
+
+        findUniform("material.hasem");
+        setUniform("material.hasem", false);
     }  
     
     public static void setLightPos(Vector3f pos){ 
@@ -319,14 +322,14 @@ public class ShaderController {
     
     public static void passMaterial(Material m){
         setUniform("material.ns", (float) m.nsExponent);
-        setUniform("material.ka", m.ka);
+        setUniform("material.ka",m.ka);
         setUniform("material.kd", m.kd);
         setUniform("material.ks", m.ks);
-        setUniform("material.hasspecmap", m.hasspecmap);
+        setUniform("material.hasspec", m.hasspecmap);
         setUniform("material.hasnormmap", m.hasnormmap);
-        setUniform("material.hasspecpow", m.hasspecpow);
         setUniform("material.hasambmap", m.hasreflmap);
         setUniform("material.hascolormap", m.hascolmap);
+        setUniform("material.hasem", m.hasemm);
     }
     
     public static void setBillBoard(int yes){  
