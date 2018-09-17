@@ -22,6 +22,7 @@ module com.opengg.core {
     requires com.opengg.base;
     requires com.opengg.system;
     requires com.opengg.console;
+    requires org.lwjgl.openvr;
 
     exports com.opengg.core.audio;
     exports com.opengg.core.model.modelloaderplus;

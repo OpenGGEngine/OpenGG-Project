@@ -249,6 +249,9 @@ public class ShaderController {
         
         findUniform("material.hasspec");
         setUniform("material.hasspec", false);
+
+        findUniform("material.hasspecpow");
+        setUniform("material.hasspecpow", false);
         
         findUniform("material.hasnormmap");
         setUniform("material.hasnormmap", false);
@@ -326,6 +329,7 @@ public class ShaderController {
         setUniform("material.kd", m.kd);
         setUniform("material.ks", m.ks);
         setUniform("material.hasspec", m.hasspecmap);
+        setUniform("material.hasspecpow", m.hasspecpow);
         setUniform("material.hasnormmap", m.hasnormmap);
         setUniform("material.hasambmap", m.hasreflmap);
         setUniform("material.hascolormap", m.hascolmap);

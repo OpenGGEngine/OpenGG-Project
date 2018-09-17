@@ -4,6 +4,7 @@ struct Material
     float hasnormmap;
     float hasambmap;
     float hasspec;
+    float hasspecpow;
 	float hascolormap;
 	float hasem;
     vec3 ks;
@@ -65,13 +66,14 @@ void useMaterial(Material mat){
 
     ambient = 0.1 * diffuse;
 
-    specular = vec3(1);
+    specular = getTex(Ks).xyz * mat.hasspec + mat.ks * (1-mat.hasspec);
 
     specpow = mat.ns;
 
-    specpowvec = (getTex(Ns).xyz * mat.hasspec) + vec3((int(mat.hasspec)-1) * -1);
+    specpowvec = (getTex(Ns).xyz * mat.hasspecpow) + vec3(mat.ns * (1-int(mat.hasspecpow)));
 
-	n =  calculatenormal(normalize((model * vec4(norm,0.0f)).xyz),
+
+	n = calculatenormal(normalize((model * vec4(norm,0.0f)).xyz),
          		 pos.xyz-camera, texture(bump, textureCoord).xyz, textureCoord) * mat.hasnormmap
          		 + normalize((model * vec4(norm,0.0f)).xyz) * (mat.hasnormmap-1) * -1;
 

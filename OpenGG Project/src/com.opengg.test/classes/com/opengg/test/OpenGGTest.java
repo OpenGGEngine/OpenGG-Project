@@ -124,7 +124,7 @@ public class OpenGGTest extends GGApplication{
                 Resource.getTexturePath("skybox\\majestic_dn.png"),
                 Resource.getTexturePath("skybox\\majestic_rt.png"),
                 Resource.getTexturePath("skybox\\majestic_lf.png")), 1500f));
-        AnimatedComponent component;
+
         /*try {
             MModel s = ModelLoaderPlus.loadModel(new File("C:/res/model2.bmf"),new File("C:/res/anim2.gga"));
             component = new AnimatedComponent(s);
@@ -158,7 +158,6 @@ public class OpenGGTest extends GGApplication{
         ViewModelComponentRegistry.createRegisters();
         
         RenderEngine.setProjectionData(ProjectionData.getPerspective(100, 0.2f, 3000f));
-        //GUIController.getDefault().addItem("fb", new GUIFramebufferTexture(RenderEngine.getSceneFramebuffer(), Framebuffer.DEPTH, new Vector2f(0.2f,0.2f)));
 
         ((GLFWWindow)WindowController.getWindow()).setCursorLock(false);
     }
