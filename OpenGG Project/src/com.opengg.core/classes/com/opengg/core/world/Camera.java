@@ -49,6 +49,6 @@ public class Camera {
     }
     
     public Matrix4f getMatrix(){
-        return new Matrix4f().rotate(rot).translate(pos);
+        return new Matrix4f().rotate(rot).translate(pos.inverse());
     }
 }

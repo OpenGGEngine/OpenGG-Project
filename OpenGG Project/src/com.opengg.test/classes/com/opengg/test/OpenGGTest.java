@@ -57,7 +57,7 @@ public class OpenGGTest extends GGApplication{
         w.width = 1280;
         w.height = 1024;
         w.resizable = true;
-        w.type = "GLFW";
+        w.type = "OpenVR";
         w.vsync = true;
         w.glmajor = 4;
         w.glminor = 3;
@@ -108,7 +108,7 @@ public class OpenGGTest extends GGApplication{
                         new Vector3f(1,1,1),
                         400, 0,
                         1024, 1024)));
-        WorldEngine.getCurrent().attach(new ModelRenderComponent(Resource.getModel("goldleaf")).setScaleOffset(new Vector3f(0.02f)).setRotationOffset(new Vector3f(90,0,0)));
+        WorldEngine.getCurrent().attach(new ModelRenderComponent(Resource.getModel("goldleaf")).setScaleOffset(new Vector3f(0.001f)).setRotationOffset(new Vector3f(90,0,0)));
 
 
         for (int i = 0; i < 20; i++) {
@@ -137,10 +137,11 @@ public class OpenGGTest extends GGApplication{
         player = new FreeFlyComponent();
         player.use();
 
-        var model = new ModelRenderComponent(Resource.getModel("sphere"));
-        model.setPositionOffset(new Vector3f(0,-2,-2));
+        var model = new ModelRenderComponent(Resource.getModel("45acp"));
+        model.setName("ballmodel");
+        model.setScaleOffset(new Vector3f(1f));
 
-        WorldEngine.getCurrent().attach(player.attach(model));
+        //WorldEngine.getCurrent().attach(model);
 
         BindController.addBind(ControlType.KEYBOARD, "forward", KEY_W);
         BindController.addBind(ControlType.KEYBOARD, "backward", KEY_S);
@@ -159,7 +160,7 @@ public class OpenGGTest extends GGApplication{
         
         RenderEngine.setProjectionData(ProjectionData.getPerspective(100, 0.2f, 3000f));
 
-        ((GLFWWindow)WindowController.getWindow()).setCursorLock(false);
+        //((GLFWWindow)WindowController.getWindow()).setCursorLock(false);
     }
 
     @Override

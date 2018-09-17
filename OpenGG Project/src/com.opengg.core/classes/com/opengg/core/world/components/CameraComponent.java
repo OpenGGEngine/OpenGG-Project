@@ -29,7 +29,7 @@ public class CameraComponent extends Component{
     
     @Override
     public void update(float delta){
-        camera.setPos(getPosition().inverse());
+        camera.setPos(getPosition());
         camera.setRot(getRotation().invert());
     }
     

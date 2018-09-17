@@ -8,6 +8,8 @@ package com.opengg.core.math;
 import com.opengg.core.system.Allocator;
 import java.nio.FloatBuffer;
 
+import static java.lang.Math.*;
+
 /**
  *
  * @author Javier
