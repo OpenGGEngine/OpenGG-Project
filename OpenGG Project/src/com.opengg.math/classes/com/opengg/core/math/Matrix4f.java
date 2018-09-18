@@ -127,8 +127,6 @@ public class Matrix4f {
         this.m33 = arr[3][3];
     }
 
-
-
     public FloatBuffer getStackBuffer() {
         FloatBuffer buffer = Allocator.stackAllocFloat(16);
         buffer.put(m00).put(m01).put(m02).put(m03);

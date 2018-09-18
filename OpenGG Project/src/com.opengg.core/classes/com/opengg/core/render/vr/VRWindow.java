@@ -23,6 +23,9 @@ public class VRWindow implements Window {
     private int devicecount;
     private int[] devices;
 
+    private int leftController;
+    private int rightController;
+
     @Override
     public void setup(WindowInfo info) {
         IntBuffer errHandle =  Allocator.allocInt(1);
@@ -46,13 +49,13 @@ public class VRWindow implements Window {
         //if(!VRCompositor())
 
         String driver = VRSystem.VRSystem_GetStringTrackedDeviceProperty(k_unTrackedDeviceIndex_Hmd, ETrackedDeviceProperty_Prop_TrackingSystemName_String, errHandle);
-        String model = VRSystem.VRSystem_GetStringTrackedDeviceProperty(k_unTrackedDeviceIndex_Hmd, ETrackedDeviceProperty_Prop_ModelNumber_String, errHandle);
-        String serial = VRSystem.VRSystem_GetStringTrackedDeviceProperty(k_unTrackedDeviceIndex_Hmd, ETrackedDeviceProperty_Prop_SerialNumber_String, errHandle);
+        String model  = VRSystem.VRSystem_GetStringTrackedDeviceProperty(k_unTrackedDeviceIndex_Hmd, ETrackedDeviceProperty_Prop_ModelNumber_String,        errHandle);
+        String serial = VRSystem.VRSystem_GetStringTrackedDeviceProperty(k_unTrackedDeviceIndex_Hmd, ETrackedDeviceProperty_Prop_SerialNumber_String,       errHandle);
 
         GGConsole.log("Using " + driver + " tracking system, model " + model + " with serial number " + serial);
 
         int stationCount = 0;
-        int wandCount = 0;
+        int controllerCount = 0;
 
         devices = new int[k_unMaxTrackedDeviceCount-k_unTrackedDeviceIndex_Hmd];
 
@@ -63,7 +66,10 @@ public class VRWindow implements Window {
                 System.out.println(i + "   " + deviceClass);
 
                 if(deviceClass == 4) stationCount++;
-                if(deviceClass == 2) wandCount++;
+                if(deviceClass == 2){
+                    controllerCount++;
+
+                }
 
                 //GGConsole.log("Found device " + VRSystem.VRSystem_GetStringTrackedDeviceProperty(deviceClass, ETracked, errHandle));
 
@@ -87,6 +93,7 @@ public class VRWindow implements Window {
         info.height = recy;
 
         window = new GLFWWindow(); window.setup(info);
+        GGConsole.log("Initialized OpenVR");
     }
 
     @Override

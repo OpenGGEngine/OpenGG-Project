@@ -49,7 +49,7 @@ public class BulletComponent extends Component{
         physics.getEntity().dynamicfriction = 0;
         attach(physics);
 
-        lc = new LightComponent(Light.create(new Vector3f(), new Vector3f(1,0.3f,0.3f),200,300));
+        lc = new LightComponent(Light.createPoint(new Vector3f(), new Vector3f(1,0.3f,0.3f),200));
         attach(lc);
         
         WorldEngine.getCurrent().addRenderable(bullet);

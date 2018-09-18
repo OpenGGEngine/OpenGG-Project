@@ -25,6 +25,7 @@ public interface Window {
     public void setIcon(String path) throws Exception;
     public void setVSync(boolean vsync);
     void setCurrentContext();
+    default void setCursorLock(boolean lock){}
 
     default void startFrame(){}
 }

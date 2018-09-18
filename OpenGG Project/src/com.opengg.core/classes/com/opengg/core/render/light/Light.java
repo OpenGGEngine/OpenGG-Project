@@ -33,7 +33,7 @@ public class Light {
     private Quaternionf rot = new Quaternionf();
     private Vector3f color = new Vector3f(1,1,1);
     private float distance = 10;
-    private float distance2 = 50;
+    private float angle = 20;
     private float type = NONE;
 
     private boolean shadow = false;
@@ -43,28 +43,33 @@ public class Light {
     private boolean changed = false;
     private boolean isActive = true;
 
-    public static Light create(Vector3f pos, Vector3f color, float distance, float distance2){
-        return new Light(pos, new Quaternionf(), color, distance, distance2);
+    public static Light createPoint(Vector3f pos, Vector3f color, float distance){
+        return new Light(pos, new Quaternionf(), color, distance, 360, POINT);
     }
 
-    public static Light createOrtho(Vector3f pos, Quaternionf rot, Vector3f color, float distance, float distance2, Matrix4f perspective, int xres, int yres){
-        Light light = new Light(pos, rot, color, distance, distance2);
-        light.create2DMap(perspective, xres, yres);
-        return light;
-    }
-
-    public static Light createPoint(Vector3f pos, Quaternionf rot, Vector3f color, float distance, float distance2, int xres, int yres){
-        Light light = new Light(pos, rot, color, distance, distance2);
+    public static Light createPointShadow(Vector3f pos, Vector3f color, float distance, int xres, int yres){
+        Light light = new Light(pos, new Quaternionf(), color, distance, 360, POINT);
         light.createCubemap(xres, yres);
         return light;
     }
+
+    public static Light createDirectional(Quaternionf rot, Vector3f color){
+        return new Light(new Vector3f(), rot, color, 100000f, 360, ORTHO);
+    }
+
+    public static Light createDirectionalShadow(Vector3f pos, Quaternionf rot, Vector3f color, float distance, Matrix4f perspective, int xres, int yres){
+        Light light = new Light(pos, rot, color, distance, 360, ORTHO);
+        light.create2DMap(perspective, xres, yres);
+        return light;
+    }
     
-    private Light(Vector3f pos, Quaternionf rot, Vector3f color, float distance, float distance2){
+    private Light(Vector3f pos, Quaternionf rot, Vector3f color, float distance, float angle, float type){
         this.pos = pos;
         this.rot = rot;
         this.color = color;
         this.distance = distance;
-        this.distance2 = distance2;
+        this.angle = angle;
+        this.type = type;
     }
 
     private void create2DMap(Matrix4f perspective, int xres, int yres){
@@ -91,18 +96,23 @@ public class Light {
         fb.put(1f);
         fb.put(color.x).put(color.y).put(color.z);
         fb.put(1f);
+        fb.put(rot.toEuler().getBuffer());
+        fb.put(0);
+
         fb.put(new Matrix4f().translate(pos).getTransposedBuffer());
         fb.put(perspective.getBuffer());
 
         fb.put(distance);
-        fb.put(distance2);
+        fb.put(type);
         fb.put(shadow ? 1 : 0);
-        fb.put(new float[]{0,0,0,0,0});
+        fb.put(angle);
         fb.flip();
         return fb;
     }
 
     public void initializeRender(){
+        if(shadow) throw new IllegalStateException("No shadowmap has been created for this light");
+
         ShaderController.setView(getView());
         ShaderController.setProjection(getPerspective());
         if(type == ORTHO){

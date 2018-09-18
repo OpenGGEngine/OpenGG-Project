@@ -6,7 +6,7 @@
 package com.opengg.core.physics;
 
 import com.opengg.core.render.RenderEngine;
-import com.opengg.core.render.RenderPath;
+import com.opengg.core.render.RenderOperation;
 import com.opengg.core.engine.Resource;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Quaternionf;
@@ -23,7 +23,7 @@ import com.opengg.core.render.drawn.Drawable;
  * @author Javier
  */
 public class PhysicsRenderer {
-    private static RenderPath path;
+    private static RenderOperation path;
     
     private static Model sphere;
     private static Model cylinder;
@@ -38,7 +38,7 @@ public class PhysicsRenderer {
         sphereobj = sphere.getDrawable();
         cylinderobj = cylinder.getDrawable();
         
-        path = new RenderPath("physics", () -> {
+        path = new RenderOperation("physics", () -> {
             RenderEngine.setWireframe(true);
             for(ColliderGroup group : PhysicsEngine.getInstance().getColliders()){
                 for(Collider c : group.getColliders()){

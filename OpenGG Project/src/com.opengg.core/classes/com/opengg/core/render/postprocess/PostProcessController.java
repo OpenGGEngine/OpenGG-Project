@@ -93,9 +93,10 @@ public class PostProcessController {
                     currentBuffer = utility;
             }
         }
-        
+
+        currentBuffer.blitTo(initial);
+
         currentBuffer.blitToBack();
-        RenderEngine.setCulling(true);
     }
 
     private PostProcessController() {

@@ -47,26 +47,32 @@ import static org.lwjgl.opengl.GL32.GL_TEXTURE_CUBE_MAP_SEAMLESS;
 public class RenderEngine {
     public static final Object glLock = new Object();
 
+    private static boolean initialized;
+
     private static RenderEnvironment currentEnvironment;
+
     private static final List<RenderGroup> groups = new ArrayList<>();
     private static final List<Light> lights = new ArrayList<>();
-    private static final List<RenderPath> paths = new ArrayList<>();
-    private static GraphicsBuffer lightBuffer;
-    private static RenderGroup defaultList;
-    private static boolean initialized;
-    private static Framebuffer sceneFramebuffer;
+    private static final List<RenderOperation> paths = new ArrayList<>();
+    private static final List<RenderPass> passes = new ArrayList<>();
+
     private static VertexArrayFormat defaultVAOFormat;
     private static VertexArrayFormat particleVAOFormat;
     private static VertexArrayFormat animationVAOFormat;
     public static VertexArrayFormat animation2VAOFormat;
     public static VertexArrayFormat tangentVAOFormat;
     public static VertexArrayFormat tangentAnimVAOFormat;
+
     private static boolean cull = true;
     private static int lightoffset;
     private static Camera camera;
+
     private static VertexArrayObject currentvao;
     private static VertexArrayObject defaultvao;
     private static ProjectionData projdata;
+    private static GraphicsBuffer lightBuffer;
+    private static RenderGroup defaultList;
+    private static Framebuffer sceneFramebuffer;
 
     /**
      * Initializes the render engine, should rarely if ever be called
@@ -96,7 +102,6 @@ public class RenderEngine {
         tangentAnimVAOFormat.addAttribute(new VertexArrayAttribute("jointindex", 4, 19, GL_FLOAT, 11, 0, false));
         tangentAnimVAOFormat.addAttribute(new VertexArrayAttribute("weights", 4, 19, GL_FLOAT, 15, 0, false));
 
-
         particleVAOFormat = new VertexArrayFormat();
         particleVAOFormat.addAttribute(new VertexArrayAttribute("position", 3, 12, GL_FLOAT, 0, 0, false));
         particleVAOFormat.addAttribute(new VertexArrayAttribute("offset", 3, 3, GL_FLOAT, 0, 1, true));
@@ -120,23 +125,21 @@ public class RenderEngine {
         animation2VAOFormat.addAttribute(new VertexArrayAttribute("jointindex", 4, 19, GL_FLOAT, 11, 0, false));
         animation2VAOFormat.addAttribute(new VertexArrayAttribute("weights", 4, 19, GL_FLOAT, 15, 0, false));
 
-        sceneFramebuffer = WindowFramebuffer.getFloatingPointWindowFramebuffer(1);
         defaultvao = new VertexArrayObject(defaultVAOFormat);
-        lightBuffer = GraphicsBuffer.allocate(GL_UNIFORM_BUFFER, 1600, GL_DYNAMIC_DRAW);
-        lightBuffer.bindBase(ShaderController.getUniqueUniformBufferLocation());
-        ShaderController.setUniformBlockLocation(lightBuffer, "LightBuffer");
+
+        passes.add(new RenderPass(true, true, () -> {}));
 
         enableDefaultGroups();
 
-        setProjectionData(ProjectionData.getPerspective(100, 0.2f, 3000f));
-        
+        lightBuffer = GraphicsBuffer.allocate(GL_UNIFORM_BUFFER, 1600, GL_DYNAMIC_DRAW);
+        lightBuffer.bindBase(ShaderController.getUniqueUniformBufferLocation());
         lightoffset = (Allocator.allocFloat(Light.BUFFERSIZE).capacity());// << 2;
 
-        groups.add(defaultList);
-       // groups.add(animlist);
+        ShaderController.setUniformBlockLocation(lightBuffer, "LightBuffer");
 
         Camera c = new Camera();
         useCamera(c);
+        setProjectionData(ProjectionData.getPerspective(100, 0.2f, 3000f));
 
         GLOptions.set(GL_BLEND, true);
         glBlendEquation(GL_FUNC_ADD);
@@ -146,6 +149,8 @@ public class RenderEngine {
         glDepthFunc(GL_LEQUAL);
         GLOptions.set(GL_TEXTURE_CUBE_MAP_SEAMLESS, true);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+        GGConsole.log("Enabling rendering submanagers");
 
         TextureManager.initialize();
         ModelManager.initialize();
@@ -181,18 +186,66 @@ public class RenderEngine {
         ModelManager.initialize();
     }
 
+    public static void render(){
+        for(RenderPass pass : passes){
+            pass.runOp();
+
+            ShaderController.setView(camera.getMatrix());
+            ShaderController.setUniform("camera", camera.getPos().inverse());
+            projdata.ratio = WindowController.getWindow().getRatio();
+            projdata.use();
+
+            pass.getSceneBuffer().enableRendering();
+            pass.getSceneBuffer().useEnabledAttachments();
+            useLights();
+            resetConfig();
+            defaultvao.bind();
+
+            for(RenderOperation path : getActiveRenderPaths()){
+                path.render();
+                resetConfig();
+            }
+            pass.getSceneBuffer().disableRendering();
+
+            defaultvao.bind();
+
+            enableDefaultVP();
+
+            if(pass.isPostProcessEnabled())
+                PostProcessController.process(pass.getSceneBuffer());
+
+            //if(pass.shouldBlitToBack())
+            //    pass.getSceneBuffer().blitToBack();
+
+            RenderEngine.setCulling(true);
+        }
+
+        GUIController.render();
+        GGGameConsole.render();
+    }
+
     private static void enableDefaultGroups(){
         defaultList = new RenderGroup("defaultgroup");
         defaultList.setPipeline("object");
+
+        groups.add(defaultList);
+
+        RenderOperation skybox = new RenderOperation("skyboxpath", () -> {
+            if(currentEnvironment.getSkybox() != null){
+                ShaderController.useConfiguration("sky");
+                currentEnvironment.getSkybox().getCubemap().use(2);
+                currentEnvironment.getSkybox().getDrawable().render();
+            }
+        });
         
-        RenderPath path = new RenderPath("mainpath", () -> {
+        RenderOperation path = new RenderOperation("mainpath", () -> {
             for(RenderGroup d : getActiveRenderGroups()){
                 ShaderController.useConfiguration(d.getPipeline());
                 d.render(); 
             }
         });
         
-        RenderPath light = new RenderPath("shadowmap", () -> {
+        RenderOperation light = new RenderOperation("shadowmap", () -> {
             int used = 0;
             var lights = getActiveLights();
             glCullFace(GL_FRONT);
@@ -224,6 +277,8 @@ public class RenderEngine {
             }
             
         });
+
+        paths.add(skybox);
         paths.add(path);
     }
 
@@ -260,38 +315,7 @@ public class RenderEngine {
             }
         });
     }
-    
-    public static void render(){
-        ShaderController.setView(camera.getMatrix());
-        ShaderController.setUniform("camera", camera.getPos().inverse());
-        projdata.ratio = WindowController.getWindow().getRatio();
-        projdata.use();
 
-        sceneFramebuffer.enableRendering();
-        sceneFramebuffer.useEnabledAttachments();
-        useLights();
-        resetConfig();
-        defaultvao.bind();
-        if(currentEnvironment.getSkybox() != null){
-            ShaderController.useConfiguration("sky");
-            currentEnvironment.getSkybox().getCubemap().use(2);
-            currentEnvironment.getSkybox().getDrawable().render();
-        }
-        
-        for(RenderPath path : getActiveRenderPaths()){
-            path.render();
-            resetConfig();
-        }       
-        sceneFramebuffer.disableRendering();
-        
-        defaultvao.bind();
-        
-        enableDefaultVP();
-        PostProcessController.process(sceneFramebuffer);
-        GUIController.render();
-        GGGameConsole.render();
-    }
-    
     public static void resetConfig(){
         glDepthMask(true);
         glEnable(GL_DEPTH_TEST);
@@ -335,11 +359,7 @@ public class RenderEngine {
     public static VertexArrayFormat getAnimationFormat(){
         return animationVAOFormat;
     }
-    
-    public static Framebuffer getSceneFramebuffer(){
-        return sceneFramebuffer;
-    }
-    
+
     public static VertexArrayObject getCurrentVAO(){
         return currentvao;
     }
@@ -378,25 +398,20 @@ public class RenderEngine {
             groups.add(r);
     }
 
-    public static void enableDefaultVP(){
-        ShaderController.setOrtho(0, 1, 0, 1, -1, 1);
-        ShaderController.setView(new Camera().getMatrix());
-    }
-
     public RenderGroup getRenderGroup(String name){
         for(RenderGroup r : groups)
             if(r.getName().equals(name)) return r;
-        
+
         return null;
     }
-    
+
     public static List<RenderGroup> getRenderGroups(){
         return groups;
     }
-    
+
     public static List<RenderGroup> getActiveRenderGroups(){
         ArrayList<RenderGroup> list = new ArrayList<>(groups.size());
-        
+
         for(RenderGroup r : groups)
             if(r.isEnabled())
                 list.add(r);
@@ -407,37 +422,37 @@ public class RenderEngine {
 
         return list;
     }
-    
+
     public static void removeRenderGroup(RenderGroup r){
         groups.remove(r);
     }
     
-    public static void addRenderPath(RenderPath r){
+    public static void addRenderPath(RenderOperation r){
         paths.add(r);
     }
     
-    public static RenderPath getRenderPath(String name){
-        for(RenderPath r : paths)
+    public static RenderOperation getRenderPath(String name){
+        for(RenderOperation r : paths)
             if(r.name.equals(name)) return r;
         
         return null;
     }
     
-    public static List<RenderPath> getRenderPaths(){
+    public static List<RenderOperation> getRenderPaths(){
         return paths;
     }
     
-    public static List<RenderPath> getActiveRenderPaths(){
-        ArrayList<RenderPath> list = new ArrayList<>();
+    public static List<RenderOperation> getActiveRenderPaths(){
+        ArrayList<RenderOperation> list = new ArrayList<>();
         
-        for(RenderPath r : paths)
+        for(RenderOperation r : paths)
             if(r.enabled)
                 list.add(r);
         
         return list;
     }
     
-    public static void removeRenderPath(RenderPath r){
+    public static void removeRenderPath(RenderOperation r){
         paths.remove(r);
     }
     
@@ -481,7 +496,12 @@ public class RenderEngine {
     public static ProjectionData getData(){
         return projdata;
     }
-    
+
+    public static void enableDefaultVP(){
+        ShaderController.setOrtho(0, 1, 0, 1, -1, 1);
+        ShaderController.setView(new Camera().getMatrix());
+    }
+
     public static boolean validateInitialization() {
         if(!GGInfo.isServer() && !initialized) throw new RenderException("OpenGL is not initialized!");
         return initialized;

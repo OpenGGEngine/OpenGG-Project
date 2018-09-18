@@ -70,12 +70,11 @@ void useMaterial(Material mat){
 
     specpow = mat.ns;
 
-    specpowvec = (getTex(Ns).xyz * mat.hasspecpow) + vec3(mat.ns * (1-int(mat.hasspecpow)));
-
+    specpowvec = (getTex(Ns).xyz * mat.hasspec) + vec3(mat.ns * (1-int(mat.hasspec)));
 
 	n = calculatenormal(normalize((model * vec4(norm,0.0f)).xyz),
          		 pos.xyz-camera, texture(bump, textureCoord).xyz, textureCoord) * mat.hasnormmap
-         		 + normalize((model * vec4(norm,0.0f)).xyz) * (mat.hasnormmap-1) * -1;
+         		 + normalize((model * vec4(norm,0.0f)).xyz) * (1-mat.hasnormmap);
 
 	//reflectedcolor = texture(cubemap, normalize(reflect(eyedir,n))).xyz;
 

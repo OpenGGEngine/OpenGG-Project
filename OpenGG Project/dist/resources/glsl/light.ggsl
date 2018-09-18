@@ -5,13 +5,13 @@ struct Light
 {
     vec4 lightpos;
     vec4 color;
+    vec4 dir;
     mat4 view;
     mat4 perspective;
 	float lightdistance;
-	float lightdistance2;
+	float type;
 	float shadow;
-	float padding1;
-	vec4 padding2;
+	float angle;
 };
 
 layout(std140) uniform LightBuffer {
@@ -26,7 +26,6 @@ uniform float farplane;
 uniform sampler2D shadowmap;
 uniform sampler2D shadowmap2;
 uniform sampler2D shadowmap3;
-
 
 float getShadowCoverage(Light light){
     if(light.shadow < 0.001f) return 1;

@@ -44,10 +44,10 @@ public class OpenGGTestServer extends GGApplication{
     @Override
     public  void setup(){
         WorldEngine.getCurrent().attach(new LightComponent(
-                Light.createOrtho(new Vector3f(0,0,0),
+                Light.createDirectionalShadow(new Vector3f(0,0,0),
                         new Quaternionf(new Vector3f(0,0,0)),
                         new Vector3f(1,1,1),
-                        400, 0,
+                        400,
                         Matrix4f.orthographic(-100,100,-100,100,0,300),
                         4096, 4096)));
         WorldEngine.getCurrent().attach(new ModelRenderComponent(Resource.getModel("goldleaf")).setScaleOffset(new Vector3f(0.02f)).setRotationOffset(new Vector3f(90,0,0)));
@@ -104,7 +104,7 @@ public class OpenGGTestServer extends GGApplication{
             var sphere = new PhysicsComponent();
             sphere.getEntity().setPosition(new Vector3f(20f * (float)Math.random(), (float)Math.random() * 40f + 20, (float)Math.random() * 20f));
             sphere.addCollider(new ColliderGroup(new AABB( 3, 3, 3),  new SphereCollider(1)));
-            sphere.attach(new LightComponent(Light.create(new Vector3f(), new Vector3f(1,1,1), 100, 100)));
+            sphere.attach(new LightComponent(Light.createPoint(new Vector3f(), new Vector3f(1,1,1), 100)));
             WorldEngine.getCurrent().attach(sphere);
             components.add(sphere);
             var comp =  components.remove();

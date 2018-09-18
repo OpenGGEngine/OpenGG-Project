@@ -16,27 +16,32 @@ generatePhongData(){
 }
 
 vec3 getPhongFrom(Light light){
-    
-	float distance = length( light.lightpos.xyz - pos.xyz );
+    float attenuation = 1.0f;
 
-	float attenuation =  (1.0 - (distance/light.lightdistance));
-    	attenuation = attenuation * attenuation;
+    vec3 lightDir = -light.dir.xyz;
 
-	vec3 lightDir = normalize(light.lightpos.xyz - pos.xyz);
+	if(light.type == 2.0f){
+        lightDir = normalize(-light.dir.xyz);
+	}else{
+		float distance = length( light.lightpos.xyz - pos.xyz );
+	    attenuation =  1.0f / (1.0f + (1.0f / light.lightdistance) * distance * distance);
+	    lightDir = normalize(light.lightpos.xyz - pos.xyz);
+	}
+
 	vec3 halfwayDir = normalize(lightDir + eyedir);
 
     float cosTheta = max(dot( n,lightDir ), 0.0f );
     vec3 fdif = diffuse * cosTheta;
 	
     float cosAlpha = max(dot(n, halfwayDir), 0.0);
-	vec3 fspec = specular * vec3(pow(cosAlpha, specpowvec.x), pow(cosAlpha, specpowvec.y), pow(cosAlpha, specpowvec.z));
-	
-    vec3 fragColor = (fdif + fspec) * attenuation * light.color.rgb;
+	vec3 fspec = specular * specpowvec * pow(cosAlpha, specpow);
 
-    float shadowcover = 0;
+	float shadowcover = 1;
     if(shadow != 0){
         shadowcover = getShadowCoverage(light);
     }
+
+    vec3 fragColor = (fdif + fspec) * attenuation * shadowcover * light.color.rgb;
 
     return fragColor;
 }

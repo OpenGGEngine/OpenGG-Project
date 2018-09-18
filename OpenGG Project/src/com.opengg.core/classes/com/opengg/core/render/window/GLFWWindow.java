@@ -163,6 +163,7 @@ public class GLFWWindow implements Window {
         return glfwGetTime();
     }
 
+    @Override
     public void setCursorLock(boolean locked) {
         if (locked) {
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);

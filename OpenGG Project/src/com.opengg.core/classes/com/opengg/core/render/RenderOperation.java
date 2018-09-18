@@ -10,13 +10,13 @@ package com.opengg.core.render;
  *
  * @author Javier
  */
-public class RenderPath {
+public class RenderOperation {
     String name = "default";
     Runnable command;
     int priority = 5;
     boolean enabled = true;
     boolean reset;
-    public RenderPath(String name, Runnable e){
+    public RenderOperation(String name, Runnable e){
         this.name = name;
         this.command = e;
     }
