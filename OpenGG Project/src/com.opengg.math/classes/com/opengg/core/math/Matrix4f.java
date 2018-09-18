@@ -435,12 +435,18 @@ public class Matrix4f {
     public float access(int x, int y) {
         return getArray()[x][y];
     }
+
+    public Matrix4f set(int x, int y, float val){
+        var array = getArray();
+        array[x][y] = val;
+        return new Matrix4f(array);
+    }
     
     @Override
     public String toString(){
-        return  m00 + ", " + m10 + ", " + m20 + ", " + m30 + ", " + "\n" +
-                m01 + ", " + m11 + ", " + m21 + ", " + m31 + ", " + "\n" +
-                m02 + ", " + m12 + ", " + m22 + ", " + m32 + ", " + "\n" + 
-                m03 + ", " + m13 + ", " + m23 + ", " + m33;
+        return  m00 + ", " + m01 + ", " + m02 + ", " + m03 + ", " + "\n" +
+                m10 + ", " + m11 + ", " + m12 + ", " + m13 + ", " + "\n" +
+                m20 + ", " + m22 + ", " + m22 + ", " + m23 + ", " + "\n" +
+                m30 + ", " + m31 + ", " + m32 + ", " + m33;
     }
 }

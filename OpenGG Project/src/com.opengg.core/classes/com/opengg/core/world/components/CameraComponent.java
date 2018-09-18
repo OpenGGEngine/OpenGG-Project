@@ -24,19 +24,19 @@ public class CameraComponent extends Component{
     }
     
     public void use(){
-        RenderEngine.useCamera(camera);
+        RenderEngine.useView(camera);
     }
     
     @Override
     public void update(float delta){
-        camera.setPos(getPosition());
-        camera.setRot(getRotation().invert());
+        camera.setPosition(getPosition());
+        camera.setRotation(getRotation().invert());
     }
     
     @Override
     public void serialize(GGOutputStream out) throws IOException{
         super.serialize(out);
-        out.write(RenderEngine.getCurrentCamera() == camera);
+        out.write(RenderEngine.getCurrentView() == camera);
     }
     
     @Override

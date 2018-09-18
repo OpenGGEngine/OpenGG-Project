@@ -94,7 +94,11 @@ public class PostProcessController {
             }
         }
 
-        currentBuffer.blitTo(initial);
+        initial.enableRendering();
+        initial.useEnabledAttachments();
+        ShaderController.useConfiguration("texture");
+        drawable.render();
+        initial.disableRendering();
 
         currentBuffer.blitToBack();
     }

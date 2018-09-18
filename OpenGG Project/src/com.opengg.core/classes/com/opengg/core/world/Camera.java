@@ -9,12 +9,13 @@ package com.opengg.core.world;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
+import com.opengg.core.render.View;
 
 /**
  *
  * @author Javier
  */
-public class Camera {
+public class Camera implements View {
     Vector3f pos;
     Quaternionf rot;
     public Camera(){
@@ -32,19 +33,20 @@ public class Camera {
         this.rot = rot;
     }
     
-    public void setPos(Vector3f posi){
+    public void setPosition(Vector3f posi){
         pos = posi;
     }
     
-    public Vector3f getPos(){
+    public Vector3f getPosition(){
         return pos;
     }
     
-    public void setRot(Quaternionf rota){
+    public void setRotation(Quaternionf rota){
         rot = rota;
     }
-    
-    public Quaternionf getRot(){
+
+    @Override
+    public Quaternionf getRotation(){
         return rot;
     }
     

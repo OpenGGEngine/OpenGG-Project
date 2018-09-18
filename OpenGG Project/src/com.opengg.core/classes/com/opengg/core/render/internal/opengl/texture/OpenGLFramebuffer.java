@@ -188,13 +188,21 @@ public class OpenGLFramebuffer implements Framebuffer{
     
     @Override
     public void enableRendering(){
+        enableRendering(0,0,lx,ly, true);
+    }
+
+    @Override
+    public void enableRendering(int x1, int y1, int x2, int y2, boolean clear) {
+        RenderEngine.setCurrentFramebuffer(this);
         fb.bind(GL_FRAMEBUFFER);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-        glViewport(0, 0, lx, ly);
+        if(clear)
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        glViewport(x1, y1, x2, y2);
     }
     
     @Override
     public void restartRendering(){
+        RenderEngine.setCurrentFramebuffer(this);
         fb.bind(GL_FRAMEBUFFER);
         glViewport(0, 0, lx, ly);
     }

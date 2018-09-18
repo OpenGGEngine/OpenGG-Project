@@ -11,19 +11,22 @@ public class RenderPass {
     private boolean isPostProcessEnabled;
 
     private Runnable enableOp;
+    private Consumer<Framebuffer> disableOp;
 
-    public RenderPass(boolean shouldBlitToBack, boolean isPostProcessEnabled, Runnable enableOp) {
-        this.sceneBuffer = WindowFramebuffer.getFloatingPointWindowFramebuffer(2);
+    public RenderPass(boolean shouldBlitToBack, boolean isPostProcessEnabled, Runnable enableOp, Consumer<Framebuffer> disableOp) {
+        this.sceneBuffer = WindowFramebuffer.getWindowFramebuffer(2);
         this.shouldBlitToBack = shouldBlitToBack;
         this.isPostProcessEnabled = isPostProcessEnabled;
         this.enableOp = enableOp;
+        this.disableOp = disableOp;
     }
 
-    public RenderPass(Framebuffer sceneBuffer, boolean blitToMain, boolean isPostProcessEnabled, Runnable enableOp) {
+    public RenderPass(Framebuffer sceneBuffer, boolean blitToMain, boolean isPostProcessEnabled, Runnable enableOp, Consumer<Framebuffer> disableOp) {
         this.sceneBuffer = sceneBuffer;
         this.shouldBlitToBack = blitToMain;
         this.isPostProcessEnabled = isPostProcessEnabled;
         this.enableOp = enableOp;
+        this.disableOp = disableOp;
     }
 
     public Framebuffer getSceneBuffer() {
@@ -46,7 +49,12 @@ public class RenderPass {
         isPostProcessEnabled = postProcessEnabled;
     }
     
-    void runOp(){
+    void runEnableOp(){
         enableOp.run();
     }
+
+    void runDisableOp(){
+        disableOp.accept(sceneBuffer);
+    }
+
 }

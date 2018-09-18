@@ -6,6 +6,7 @@
 
 package com.opengg.core.render;
 
+import com.opengg.core.math.Matrix4f;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.window.WindowController;
 
@@ -15,7 +16,8 @@ import com.opengg.core.render.window.WindowController;
  */
 public class ProjectionData {
     public static final int PERSPECTIVE = 0,
-            ORTHO = 1;
+            ORTHO = 1,
+            CUSTOM = 3;
     
     int type = 0;
     
@@ -29,6 +31,8 @@ public class ProjectionData {
     float maxy;
     float minx;
     float maxx;
+
+    Matrix4f custom;
     
     private ProjectionData(){}
     
@@ -43,9 +47,20 @@ public class ProjectionData {
         
         return data;
     }
+
+    public static ProjectionData getCustom(Matrix4f projection){
+        ProjectionData data = new ProjectionData();
+
+        data.custom = projection;
+        data.type = CUSTOM;
+
+        return data;
+    }
     
     public void use(){
         if(type == PERSPECTIVE)
             ShaderController.setPerspective(fov, ratio, minz, maxz);
+        else if(type == CUSTOM)
+            ShaderController.setProjection(custom);
     }
 }

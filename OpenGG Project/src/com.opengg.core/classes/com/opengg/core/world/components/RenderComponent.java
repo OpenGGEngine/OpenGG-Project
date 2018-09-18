@@ -40,7 +40,7 @@ public class RenderComponent extends Component implements Renderable{
     @Override
     public void render() {
         var matrix = new Matrix4f().scale(getScale()).translate(getPosition()).rotate(getRotation());
-        if((renderDistance > 0) && (getPosition().subtract(RenderEngine.getCurrentCamera().getPos()).length() > renderDistance))
+        if((renderDistance > 0) && (getPosition().subtract(RenderEngine.getCurrentView().getPosition()).length() > renderDistance))
             return;
         if(drawable != null){
             drawable.setMatrix(matrix);

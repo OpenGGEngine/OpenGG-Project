@@ -1,18 +1,26 @@
 package com.opengg.core.render.vr;
 
 import com.opengg.core.console.GGConsole;
+import com.opengg.core.engine.Executor;
 import com.opengg.core.exceptions.WindowCreationException;
+import com.opengg.core.math.FastMath;
+import com.opengg.core.math.Matrix4f;
+import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
+import com.opengg.core.render.ProjectionData;
 import com.opengg.core.render.RenderEngine;
+import com.opengg.core.render.RenderOperation;
+import com.opengg.core.render.RenderPass;
 import com.opengg.core.render.window.GLFWWindow;
 import com.opengg.core.render.window.Window;
 import com.opengg.core.render.window.WindowInfo;
 import com.opengg.core.system.Allocator;
 import com.opengg.core.world.Camera;
-import com.opengg.core.world.WorldEngine;
 import org.lwjgl.openvr.*;
 
+import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.List;
 
 import static org.lwjgl.openvr.VR.*;
 
@@ -84,8 +92,8 @@ public class VRWindow implements Window {
 
         VRSystem.VRSystem_GetRecommendedRenderTargetSize(w, h);
 
-        recx = w.get(0);
-        recy = h.get(0);
+        recx = (int) (w.get(0) * 1.5);
+        recy = (int) (h.get(0) * 1.5);
 
         GGConsole.log("Rendering at " + recx + " x " + recy);
 
@@ -93,11 +101,117 @@ public class VRWindow implements Window {
         info.height = recy;
 
         window = new GLFWWindow(); window.setup(info);
+
+        Executor.async(() -> {
+
+            float lleft, lright, ltop, lbot;
+            float rleft, rright, rtop, rbot;
+
+            FloatBuffer top = Allocator.allocFloat(1), bot = Allocator.allocFloat(1), left = Allocator.allocFloat(1), right = Allocator.allocFloat(1);
+
+            VRSystem.VRSystem_GetProjectionRaw(EVREye_Eye_Left, left, right, top, bot);
+
+            lleft = left.get(0);
+            lright = right.get(0);
+            ltop = top.get(0);
+            lbot = bot.get(0);
+
+            VRSystem.VRSystem_GetProjectionRaw(EVREye_Eye_Right, left, right, top, bot);
+
+            rleft = left.get(0);
+            rright = right.get(0);
+            rtop = top.get(0);
+            rbot = bot.get(0);
+
+            Vector2f tanHalfFov = new Vector2f(
+                    Math.max(Math.max(-lleft, lright), Math.max(-rleft, rright)),
+                    Math.max(Math.max(-ltop, lbot), Math.max(-rtop, rbot)));
+
+            VRTextureBounds leftbounds = VRTextureBounds.create();
+
+            leftbounds.uMin((0.5f + 0.5f  * lleft / tanHalfFov.x)/2);
+            leftbounds.uMax((0.5f + 0.5f  * lright / tanHalfFov.x)/2);
+            leftbounds.vMin(0.5f - 0.5f  * lbot / tanHalfFov.y);
+            leftbounds.vMax(0.5f - 0.5f  * ltop / tanHalfFov.y);
+
+
+            VRTextureBounds rightbounds = VRTextureBounds.create();
+
+            rightbounds.uMin((0.5f + 0.5f  * rleft / tanHalfFov.x)/2 + 0.5f);
+            rightbounds.uMax((0.5f + 0.5f  * rright / tanHalfFov.x)/2 + 0.5f);
+            rightbounds.vMin(0.5f - 0.5f  * rbot / tanHalfFov.y);
+            rightbounds.vMax(0.5f - 0.5f  * rtop / tanHalfFov.y);
+
+            System.out.println(leftbounds.uMin());
+            System.out.println(leftbounds.uMax());
+            System.out.println(leftbounds.vMin());
+            System.out.println(leftbounds.vMax());
+
+            System.out.println(rightbounds.uMin());
+            System.out.println(leftbounds.uMax());
+            System.out.println(rightbounds.vMin());
+            System.out.println(leftbounds.vMax());
+
+            recx = (int) (recx / Math.max(leftbounds.uMax() - leftbounds.uMin(), rightbounds.uMax() - rightbounds.uMin())) /2;
+            recy = (int) (recy / Math.max(leftbounds.vMax() - leftbounds.vMin(), rightbounds.vMax() - rightbounds.vMin()));
+
+            //leftbounds.set(0f,0f,0.5f,1f);
+            //rightbounds.set(0.5f,0,1f,1);
+
+            float aspect = tanHalfFov.x / tanHalfFov.y;
+            float fov = (float) (2.0f * Math.atan(tanHalfFov.y) * FastMath.radDeg);
+
+            ProjectionData data = ProjectionData.getCustom(Matrix4f.perspective(fov, aspect, 0.1f, 1000f));
+
+            var paths = List.copyOf(RenderEngine.getRenderPaths());
+            RenderEngine.getRenderPaths().clear();
+            RenderEngine.addRenderPath(new RenderOperation("vr", () -> {
+
+                data.use();
+
+                var fb = RenderEngine.getCurrentFramebuffer();
+
+                VRView view = new VRView(RenderEngine.getCurrentView());
+                view.setEyeMatrix(VRSystem.VRSystem_GetEyeToHeadTransform(EVREye_Eye_Left, HmdMatrix34.create()));
+                RenderEngine.useView(view);
+
+                fb.enableRendering(0,0,recx/2, recy, true);
+                paths.forEach(RenderOperation::render);
+
+                RenderEngine.useView(new Camera(RenderEngine.getCurrentView().getPosition(), RenderEngine.getCurrentView().getRotation()));
+
+
+
+                view = new VRView(RenderEngine.getCurrentView());
+                view.setEyeMatrix(VRSystem.VRSystem_GetEyeToHeadTransform(EVREye_Eye_Right, HmdMatrix34.create()));
+                RenderEngine.useView(view);
+
+                fb.enableRendering(recx/2,0, recx/2, recy, false);
+                paths.forEach(RenderOperation::render);
+
+                RenderEngine.useView(new Camera(RenderEngine.getCurrentView().getPosition(), RenderEngine.getCurrentView().getRotation()));
+
+            }));
+
+            RenderEngine.getRenderPasses().clear();
+
+            RenderEngine.addRenderPass(new RenderPass(true, true, () -> {
+            }, (f) -> {
+                var vrtexture = Texture.malloc().set(f.getTextures().get(0).getID(), ETextureType_TextureType_OpenGL, EColorSpace_ColorSpace_Linear);
+
+                VRCompositor.VRCompositor_Submit(EVREye_Eye_Left, vrtexture, leftbounds, EVRSubmitFlags_Submit_Default);
+                VRCompositor.VRCompositor_Submit(EVREye_Eye_Right, vrtexture, rightbounds, EVRSubmitFlags_Submit_Default);
+
+                vrtexture.free();
+
+            }));
+        });
+
         GGConsole.log("Initialized OpenVR");
     }
 
     @Override
-    public void endFrame() {
+    public void startFrame(){
         var event = (VREvent) null;
         while(VRSystem.VRSystem_PollNextEvent(event = VREvent.calloc())){
             //System.out.println(event.eventType());
@@ -105,7 +219,7 @@ public class VRWindow implements Window {
 
         var poseRenderBuffers = TrackedDevicePose.calloc(devicecount);
         var poseGameBuffers = TrackedDevicePose.calloc(devicecount);
-        //VRCompositor.nVRCompositor_WaitGetPoses();
+        VRCompositor.VRCompositor_WaitGetPoses(poseRenderBuffers,poseGameBuffers);
         poseRenderBuffers.free();
         poseGameBuffers.free();
 
@@ -115,13 +229,13 @@ public class VRWindow implements Window {
         var matrix = VRUtil.fromVRMatrix43(m43);
 
         Camera camera = new Camera();
-        RenderEngine.useCamera(camera);
-        RenderEngine.getCurrentCamera().setPos(new Vector3f(matrix.m03, matrix.m13, matrix.m23));
-        RenderEngine.getCurrentCamera().setRot(VRUtil.getQuaternionFrom43(m43));
+        RenderEngine.useView(camera);
+        camera.setPosition(new Vector3f(matrix.m03, matrix.m13, matrix.m23));
+        camera.setRotation(VRUtil.getQuaternionFrom43(m43));
 
         hmdRenderBuffers.free();
 
-        var controllerstate = VRControllerState.calloc();
+       /* var controllerstate = VRControllerState.calloc();
         var controllerpose = TrackedDevicePose.calloc();
         VRSystem.VRSystem_GetControllerStateWithPose(ETrackingUniverseOrigin_TrackingUniverseStanding,3, controllerstate, 1, controllerpose);
         m43 = hmdRenderBuffers.get(0).mDeviceToAbsoluteTracking();
@@ -132,8 +246,13 @@ public class VRWindow implements Window {
 
             //WorldEngine.getCurrent().find("ballmodel").setPositionOffset(new Vector3f(matrix.m03, matrix.m13, matrix.m23));
             //WorldEngine.getCurrent().find("ballmodel").setRotationOffset(VRUtil.getQuaternionFrom43(m43));
-        }
+        }*/
 
+        window.startFrame();
+    }
+
+    @Override
+    public void endFrame() {
         window.endFrame();
     }
 

@@ -65,14 +65,14 @@ public class RenderEngine {
 
     private static boolean cull = true;
     private static int lightoffset;
-    private static Camera camera;
+    private static View camera;
 
     private static VertexArrayObject currentvao;
     private static VertexArrayObject defaultvao;
     private static ProjectionData projdata;
     private static GraphicsBuffer lightBuffer;
     private static RenderGroup defaultList;
-    private static Framebuffer sceneFramebuffer;
+    private static Framebuffer currentFramebuffer;
 
     /**
      * Initializes the render engine, should rarely if ever be called
@@ -127,7 +127,7 @@ public class RenderEngine {
 
         defaultvao = new VertexArrayObject(defaultVAOFormat);
 
-        passes.add(new RenderPass(true, true, () -> {}));
+        passes.add(new RenderPass(true, true, () -> {}, f -> {}));
 
         enableDefaultGroups();
 
@@ -137,8 +137,8 @@ public class RenderEngine {
 
         ShaderController.setUniformBlockLocation(lightBuffer, "LightBuffer");
 
-        Camera c = new Camera();
-        useCamera(c);
+        View c = new Camera();
+        useView(c);
         setProjectionData(ProjectionData.getPerspective(100, 0.2f, 3000f));
 
         GLOptions.set(GL_BLEND, true);
@@ -188,10 +188,10 @@ public class RenderEngine {
 
     public static void render(){
         for(RenderPass pass : passes){
-            pass.runOp();
+            pass.runEnableOp();
 
             ShaderController.setView(camera.getMatrix());
-            ShaderController.setUniform("camera", camera.getPos().inverse());
+            ShaderController.setUniform("camera", camera.getPosition().inverse());
             projdata.ratio = WindowController.getWindow().getRatio();
             projdata.use();
 
@@ -218,6 +218,8 @@ public class RenderEngine {
             //    pass.getSceneBuffer().blitToBack();
 
             RenderEngine.setCulling(true);
+
+            pass.runDisableOp();
         }
 
         GUIController.render();
@@ -249,6 +251,7 @@ public class RenderEngine {
             int used = 0;
             var lights = getActiveLights();
             glCullFace(GL_FRONT);
+            var fb = getCurrentFramebuffer();
             for(int i = 0; i < lights.size() && used < 2; i++){
                 if(lights.get(i).hasShadow()){
                     lights.get(i).initializeRender();
@@ -265,8 +268,8 @@ public class RenderEngine {
                 }
             }
             glCullFace(GL_BACK);
-            sceneFramebuffer.restartRendering();
-            sceneFramebuffer.useEnabledAttachments();
+            fb.restartRendering();
+            fb.useEnabledAttachments();
             useLights();
             ShaderController.setView(camera.getMatrix());
             projdata.use();
@@ -409,6 +412,14 @@ public class RenderEngine {
         return groups;
     }
 
+    public static void addRenderPass(RenderPass pass) {
+        passes.add(pass);
+    }
+
+    public static List<RenderPass> getRenderPasses(){
+        return passes;
+    }
+
     public static List<RenderGroup> getActiveRenderGroups(){
         ArrayList<RenderGroup> list = new ArrayList<>(groups.size());
 
@@ -481,11 +492,19 @@ public class RenderEngine {
         RenderEngine.currentEnvironment = currentEnvironment;
     }
 
-    public static void useCamera(Camera c){
+    public static Framebuffer getCurrentFramebuffer() {
+        return currentFramebuffer;
+    }
+
+    public static void setCurrentFramebuffer(Framebuffer currentFramebuffer) {
+        RenderEngine.currentFramebuffer = currentFramebuffer;
+    }
+
+    public static void useView(View c){
         camera = c;
     }
     
-    public static Camera getCurrentCamera(){
+    public static View getCurrentView(){
         return camera;
     }
 
@@ -503,8 +522,9 @@ public class RenderEngine {
     }
 
     public static boolean validateInitialization() {
-        if(!GGInfo.isServer() && !initialized) throw new RenderException("OpenGL is not initialized!");
-        return initialized;
+        //if(!GGInfo.isServer() && !initialized) throw new RenderException("OpenGL is not initialized!");
+        return true;
+        //return initialized;
     }
     
     public static void destroy(){

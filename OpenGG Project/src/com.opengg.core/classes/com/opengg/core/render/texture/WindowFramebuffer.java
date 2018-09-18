@@ -169,6 +169,11 @@ public class WindowFramebuffer implements WindowResizeListener, Framebuffer{
     }
 
     @Override
+    public void enableRendering(int x1, int y1, int x2, int y2, boolean clear) {
+        underlyingBuffer.enableRendering(x1,y1,x2,y2, clear);
+    }
+
+    @Override
     public void restartRendering(){
         underlyingBuffer.restartRendering();
     }

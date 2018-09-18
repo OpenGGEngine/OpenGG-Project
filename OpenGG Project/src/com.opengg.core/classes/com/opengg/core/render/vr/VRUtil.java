@@ -3,6 +3,7 @@ package com.opengg.core.render.vr;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Quaternionf;
 import org.lwjgl.openvr.HmdMatrix34;
+import org.lwjgl.openvr.HmdMatrix44;
 
 import static java.lang.Math.copySign;
 import static java.lang.Math.max;
@@ -15,6 +16,14 @@ public class VRUtil {
                 , mat.m(4*1 + 0), mat.m(4*1 + 1), mat.m(4*1 + 2), mat.m(4*1 + 3)
                 , mat.m(4*2 + 0), mat.m(4*2 + 1), mat.m(4*2 + 2), mat.m(4*2 + 3),
                 0,                  0,                  0,              1);
+    }
+
+    public static Matrix4f fromVRMatrix44(HmdMatrix44 mat){
+        return new Matrix4f(
+                  mat.m(4*0 + 0), mat.m(4*0 + 1), mat.m(4*0 + 2), mat.m(4*0 + 3)
+                , mat.m(4*1 + 0), mat.m(4*1 + 1), mat.m(4*1 + 2), mat.m(4*1 + 3)
+                , mat.m(4*2 + 0), mat.m(4*2 + 1), mat.m(4*2 + 2), mat.m(4*2 + 3)
+                , mat.m(4*3 + 0), mat.m(4*3 + 1), mat.m(4*3 + 2), mat.m(4*3 + 3));
     }
 
     public static Quaternionf getQuaternionFrom43(HmdMatrix34 mat){

@@ -57,7 +57,7 @@ public class OpenGGTest extends GGApplication{
         w.width = 1280;
         w.height = 1024;
         w.resizable = true;
-        w.type = "GLFW";
+        w.type = "OpenVR";
         w.vsync = true;
         w.glmajor = 4;
         w.glminor = 3;
@@ -104,10 +104,9 @@ public class OpenGGTest extends GGApplication{
 
         WorldEngine.getCurrent().attach(new LightComponent(
                 Light.createDirectional(new Quaternionf(new Vector3f(80f,0f,50)),
-                        new Vector3f(1,1,1),
-                        10000f)));
+                        new Vector3f(1,1,1))));
 
-        WorldEngine.getCurrent().attach(new ModelRenderComponent(Resource.getModel("goldleaf")).setScaleOffset(new Vector3f(0.01f)).setRotationOffset(new Vector3f(90,0,0)));
+        WorldEngine.getCurrent().attach(new ModelRenderComponent(Resource.getModel("goldleaf")).setScaleOffset(new Vector3f(0.001f)).setRotationOffset(new Vector3f(90,0,0)));
 
 
         for (int i = 0; i < 20; i++) {
@@ -122,7 +121,7 @@ public class OpenGGTest extends GGApplication{
                 Resource.getTexturePath("skybox\\majestic_up.png"),
                 Resource.getTexturePath("skybox\\majestic_dn.png"),
                 Resource.getTexturePath("skybox\\majestic_rt.png"),
-                Resource.getTexturePath("skybox\\majestic_lf.png")), 1500f));
+                Resource.getTexturePath("skybox\\majestic_lf.png")), 500f));
 
         /*try {
             MModel s = ModelLoaderPlus.loadModel(new File("C:/res/model2.bmf"),new File("C:/res/anim2.gga"));
@@ -140,7 +139,6 @@ public class OpenGGTest extends GGApplication{
         model.setName("ballmodel");
         model.setScaleOffset(new Vector3f(1f));
 
-        WorldEngine.getCurrent().attach(player);
         WorldEngine.getCurrent().attach(model);
 
 

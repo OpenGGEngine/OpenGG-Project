@@ -18,7 +18,7 @@ import java.util.List;
  */
 public class WindowController {
     static Window window;
-    static Vector2i oldsize;
+    static Vector2i oldsize = new Vector2i(1,1);
     
     public static List<WindowResizeListener> listeners = new ArrayList<>();
     

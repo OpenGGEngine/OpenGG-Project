@@ -63,6 +63,8 @@ public interface Framebuffer{
 
     void enableRendering();
 
+    void enableRendering(int x1, int y1, int x2, int y2, boolean clear);
+
     void restartRendering();
 
     void disableRendering();
