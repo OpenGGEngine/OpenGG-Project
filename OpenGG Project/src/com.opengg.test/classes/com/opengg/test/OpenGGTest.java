@@ -57,7 +57,7 @@ public class OpenGGTest extends GGApplication{
         w.width = 1280;
         w.height = 1024;
         w.resizable = true;
-        w.type = "OpenVR";
+        w.type = "GLFW";
         w.vsync = true;
         w.glmajor = 4;
         w.glminor = 3;
@@ -140,6 +140,7 @@ public class OpenGGTest extends GGApplication{
         model.setScaleOffset(new Vector3f(1f));
 
         WorldEngine.getCurrent().attach(model);
+        WorldEngine.getCurrent().attach(player);
 
 
         BindController.addBind(ControlType.KEYBOARD, "forward", KEY_W);

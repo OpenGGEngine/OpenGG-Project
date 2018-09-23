@@ -20,9 +20,9 @@ import java.util.List;
  * @author Javier
  */
 public class PhysicsSystem {
-    final PhysicsConstants constants = new PhysicsConstants();
-    List<ColliderGroup> colliders = new ArrayList<>();
-    List<PhysicsEntity> entities = new ArrayList<>(); 
+    private final PhysicsConstants constants = new PhysicsConstants();
+    private List<ColliderGroup> colliders = new ArrayList<>();
+    private List<PhysicsEntity> entities = new ArrayList<>();
     
     public List<PhysicsEntity> getEntities(){
         return entities;

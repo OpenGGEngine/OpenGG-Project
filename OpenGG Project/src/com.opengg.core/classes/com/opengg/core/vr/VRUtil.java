@@ -1,4 +1,4 @@
-package com.opengg.core.render.vr;
+package com.opengg.core.vr;
 
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Quaternionf;

@@ -25,11 +25,11 @@ public class ViewModelComponentRegistry {
     static List<Class> viewmodels = new ArrayList<>();
     
     public static void initialize(){
-        initializeDefault();
+        createDefaultRegisters();
         //registerAllFromJar(Resource.getAbsoluteFromLocal("lib" + File.separator + "com.opengg.core.jar"));
     }
     
-    private static void initializeDefault(){
+    public static void createDefaultRegisters(){
         register(ModelRenderComponent.class);
         register(WaterComponent.class);
         register(WorldObject.class);
@@ -89,8 +89,16 @@ public class ViewModelComponentRegistry {
     }
     
     public static void createRegisters(){
+        for(Class model : viewmodels){
+            if(!model.isAnnotationPresent(ForComponent.class))
+                GGConsole.warning("Failed to find ForComponent annotation for viewmodel " + model.getName() + ", ignoring");
+        }
+
         var vmmap = viewmodels.stream()
-                .collect(Collectors.toMap(v -> ((ForComponent)v.getAnnotation(ForComponent.class)).value(), v -> v));
+                .filter(v -> v.isAnnotationPresent(ForComponent.class))
+                .collect(Collectors.toMap(
+                        v -> ((ForComponent)v.getAnnotation(ForComponent.class)).value(),
+                        v -> v));
 
         var regmap = registered.stream()
                 .collect(Collectors.toMap(v -> v.component, v -> v));
@@ -114,11 +122,13 @@ public class ViewModelComponentRegistry {
                 register(clazz, false);
             }
         }catch(Exception e){
-            GGConsole.warn("Failed to load jarfile at " + jarpath + ", viewmodels for classes in that jar may be missing!");
+            GGConsole.warn("Failed to load jarfile at " + jarpath + ", viewmodels for classes in that jar may be missing! Reason: " + e.getClass().getName() + ": " + e.getLocalizedMessage() + "(" + e.getStackTrace()[0].toString() + ")");
         }
     }
     
     public static void clearRegistry(){
+        components.clear();
+        viewmodels.clear();
         registered.clear();
     }
     

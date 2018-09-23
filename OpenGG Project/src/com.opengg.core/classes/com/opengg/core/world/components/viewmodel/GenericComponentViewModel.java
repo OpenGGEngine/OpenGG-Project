@@ -11,6 +11,7 @@ import com.opengg.core.world.components.Component;
  *
  * @author Javier
  */
+
 public class GenericComponentViewModel extends ViewModel{
 
     @Override

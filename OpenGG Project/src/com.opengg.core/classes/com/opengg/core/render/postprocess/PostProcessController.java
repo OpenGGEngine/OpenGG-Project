@@ -100,7 +100,7 @@ public class PostProcessController {
         drawable.render();
         initial.disableRendering();
 
-        currentBuffer.blitToBack();
+
     }
 
     private PostProcessController() {

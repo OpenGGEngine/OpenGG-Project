@@ -620,7 +620,28 @@ public final class FastMath {
         end[1] = o2.add(d2.multiply(t2));
         return end;
     }
-    
+
+    public static boolean isPointInPolygon(Vector2f point, List<Vector2f> points) {
+        int j = points.size() - 1 ;
+        boolean oddNodes = false;
+
+        for (int i = 0; i < points.size(); i++) {
+            if ((points.get(i).y < point.y && points.get(j).y >= point.y
+                    ||   points.get(j).y < point.y && points.get(i).y >= point.y)
+                    &&  (points.get(i).x <= point.x || points.get(j).x <= point.x)) {
+
+                oddNodes ^= (points.get(i).x
+                          + (point.y - points.get(i).y)
+                          / (points.get(j).y - points.get(i).y)
+                          * (points.get(j).x - points.get(i).x) < point.x);
+
+            }
+            j = i;
+        }
+
+        return oddNodes;
+    }
+
     public static List<MinkowskiSet> minkowskiSum(List<Vector3f> v1, List<Vector3f> v2){
         List<MinkowskiSet> sum = new ArrayList<>(v1.size()*v2.size());
         
@@ -669,22 +690,6 @@ public final class FastMath {
         return diff;
     }
     
-    //where is the student center
-    public static MinkowskiSet getSupport(Vector3f dir, List<MinkowskiSet> vertices){
-        float max = Float.NEGATIVE_INFINITY;
-        int index = 0;
-        for (int i = 0; i < vertices.size(); i++)
-        {
-            float dot = dir.dot(vertices.get(i).v);
-            if (dot > max)
-            {
-                max = dot;
-                index = i;
-            }
-        }
-        return vertices.get(index);
-    }
-
     public static Simplex runGJK(List<MinkowskiSet> vecs){
         Simplex s = new Simplex();
         
@@ -862,7 +867,23 @@ public final class FastMath {
         }
         return false;
     }
-    
+
+    //where is the student center
+    private static MinkowskiSet getSupport(Vector3f dir, List<MinkowskiSet> vertices){
+        float max = Float.NEGATIVE_INFINITY;
+        int index = 0;
+        for (int i = 0; i < vertices.size(); i++)
+        {
+            float dot = dir.dot(vertices.get(i).v);
+            if (dot > max)
+            {
+                max = dot;
+                index = i;
+            }
+        }
+        return vertices.get(index);
+    }
+
     private static boolean checkOneFace(Simplex s, Vector3f ab, Vector3f ac, Vector3f ad, Vector3f ao, Vector3f abc){
         
         if (abc.cross(ac).dot(ao) > 0) {
@@ -1306,7 +1327,6 @@ public final class FastMath {
         return !(isect1.y < isect2.x || isect2.y < isect1.x);
     }
 
-
     private static class Edge{
         Vector3f a;
         Vector3f b;
@@ -1316,7 +1336,7 @@ public final class FastMath {
             this.b = b;
         }
     }
-    
+
     private static class MinkowskiEdge{
         MinkowskiSet a;
         MinkowskiSet b;

@@ -7,7 +7,7 @@ package com.opengg.core.render.window;
 
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.math.Vector2i;
-import com.opengg.core.render.vr.VRWindow;
+import com.opengg.core.vr.render.VRWindow;
 
 import java.util.ArrayList;
 import java.util.List;

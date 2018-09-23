@@ -1,5 +1,6 @@
 package com.opengg.core.render.text;
 
+import com.opengg.core.console.GGConsole;
 import com.opengg.core.math.Tuple;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.render.drawn.Drawable;
@@ -53,7 +54,8 @@ public class TTF implements Font{
         this.isOversampled = isOversampled;
         try {
             ttf = ioResourceToByteBuffer(path, 512 * 1024);
-        } catch (IOException e) {
+        } catch (Exception e) {
+            GGConsole.warning("Failed to load font at " + path);
             throw new RuntimeException(e);
         }
 

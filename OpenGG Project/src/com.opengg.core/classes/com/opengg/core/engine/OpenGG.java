@@ -201,6 +201,7 @@ public final class OpenGG{
         ExtensionManager.update(delta);
         WorldEngine.update(delta);
         PhysicsEngine.updatePhysics(delta);
+        getApp().update(delta);
         SoundtrackHandler.update();
         NetworkEngine.update();
     }
