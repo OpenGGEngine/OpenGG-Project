@@ -5,6 +5,7 @@ import com.opengg.core.model.Material;
 import com.opengg.core.model.ggmodel.GGMesh;
 import com.opengg.core.model.ggmodel.GGModel;
 import com.opengg.core.system.Allocator;
+import org.lwjgl.system.MemoryUtil;
 
 import java.io.*;
 import java.nio.ByteBuffer;
@@ -16,6 +17,11 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import static org.lwjgl.system.MemoryUtil.memAlloc;
+import static org.lwjgl.system.MemoryUtil.memFree;
+import static org.lwjgl.util.lz4.LZ4.*;
+import static org.lwjgl.util.lz4.LZ4Frame.LZ4F_isError;
 
 public class BMFFile {
     private static final int VERSION = 1;
@@ -30,51 +36,74 @@ public class BMFFile {
         sectors.add(new FileSector(model,FileSector.SectorType.IBO));
         sectors.add(new FileSector(model,FileSector.SectorType.MATERIAL));
 
-        fc.write(generateHeader(sectors));
+        ByteBuffer header = generateHeader(sectors);
 
+        long filesize = sectors.stream().mapToLong(s->s.length).sum()+ header.limit();
+        ByteBuffer uncompressed = Allocator.alloc((int)filesize);
+
+        uncompressed.put(header);
         for(FileSector sector:sectors) {
             for(int i=0;i<sector.subBuffers.length;i++) {
                 while(sector.subBuffers[i].hasRemaining()) {
-                    fc.write(sector.subBuffers[i]);
+                    uncompressed.put(sector.subBuffers[i]);
                 }
             }
         }
+        uncompressed.flip();
+
+        ByteBuffer compressed = memAlloc(LZ4_compressBound(uncompressed.remaining()));
+        long compressedSize = LZ4_compress_default(uncompressed, compressed);
+        compressed.limit((int)compressedSize);
+        compressed = compressed.slice();
+        ByteBuffer filesizebuf = Allocator.alloc(4);
+        filesizebuf.order(ByteOrder.BIG_ENDIAN).putInt(uncompressed.capacity()).flip();
+        fc.write(filesizebuf);
+        fc.write(compressed);
+        memFree(compressed);
         fOut.close();
     }
 
     public static GGModel loadModel(String file) throws FileNotFoundException,IOException{
+
         File f = new File(file);
         FileInputStream fIn = new FileInputStream(f);
-        DataInputStream dis = new DataInputStream(fIn);
-        FileChannel fc = fIn.getChannel();
+        //Get original file size from first 4 bytes.
+        int originalsize = fIn.read()<< 24|(fIn.read()&0xFF)<<16|(fIn.read()&0xFF)<< 8|(fIn.read() & 0xFF);
+        ByteBuffer original = memAlloc(originalsize).order(ByteOrder.BIG_ENDIAN);
+        ByteBuffer compressed  = Allocator.alloc((int)f.length()-4);
+        while(fIn.getChannel().read(compressed) > 0){}
+        compressed.flip();
+        long errorcode = LZ4_decompress_safe(compressed,original);
+        if (LZ4F_isError(errorcode)){
+            GGConsole.error("Decompression Failed: " + errorcode);
+            fIn.close(); memFree(original); return null;
+        }
         //Weak Check for Header Validity
         for(int i=0;i<HEADER_START.length();i++){
-            if(dis.readByte() != HEADER_START.charAt(i)){
+            if(original.get() != HEADER_START.charAt(i)){
                 GGConsole.error("Invalid BMF Header");
                 fIn.close();
                 return null;
             }
         }
-        int vNumber = dis.readInt();
-        int numSector = dis.readInt();
+        int vNumber = original.getInt(); int numSector = original.getInt();
         int[][] capacities = new int[numSector][];
         FileSector.SectorType[] types = new FileSector.SectorType[numSector];
         for(int sector = 0;sector<numSector;sector++){
-            int numSubs = dis.readInt();
+            int numSubs = original.getInt();
             capacities[sector] = new int[numSubs];
-            types[sector] = FileSector.SectorType.values()[dis.readInt()];
+            types[sector] = FileSector.SectorType.values()[original.getInt()];
             for(int i=0;i<numSubs;i++){
-                capacities[sector][i] = dis.readInt();
+                capacities[sector][i] = original.getInt();
             }
         }
-
         boolean hasAnim = false;
         ArrayList<GGMesh> meshes = new ArrayList<>();
 
         GGConsole.log("Loading BMF Model " + f.getName() + " with " + capacities[0].length + " meshes and " + numSector + " sectors.");
         //Load VBO and IBO
-        FileSector fsVBO = new FileSector(types[0],capacities[0],fc);
-        FileSector fsIBO = new FileSector(types[1],capacities[1],fc);
+        FileSector fsVBO = new FileSector(types[0],capacities[0],original);
+        FileSector fsIBO = new FileSector(types[1],capacities[1],original);
 
         for(int i=0;i<fsVBO.subBuffers.length;i++){
             //We dupe the buffers so the model renders
@@ -91,7 +120,7 @@ public class BMFFile {
         model.isAnim = isAnim;
         //Load Optional Sectors
         for(int i=2;i<numSector;i++){
-            FileSector fs = new FileSector(types[i],capacities[i],fc);
+            FileSector fs = new FileSector(types[i],capacities[i],original);
             switch(fs.type){
                 case MATERIAL:
                     ArrayList<Material> material = new ArrayList<Material>();

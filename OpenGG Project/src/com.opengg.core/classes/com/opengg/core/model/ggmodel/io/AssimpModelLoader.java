@@ -193,7 +193,6 @@ public class AssimpModelLoader {
         result = aiGetMaterialColor(material, AI_MATKEY_COLOR_SPECULAR, aiTextureType_NONE, 0, color);
         if (result == 0) {
             specular = new Vector3f(color.r(), color.g(), color.b());
-            System.out.println(specular);
         }
         float[] temp = new float[1];
 

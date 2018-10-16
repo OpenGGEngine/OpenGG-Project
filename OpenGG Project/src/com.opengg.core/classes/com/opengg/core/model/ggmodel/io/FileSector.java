@@ -18,6 +18,8 @@ public class FileSector {
     public ByteBuffer[] subBuffers;
     public SectorType type;
 
+    public long length = 0;
+
     //Initialize Sector from Model
     public FileSector(GGModel model, SectorType type){
         switch(type){
@@ -42,13 +44,15 @@ public class FileSector {
     }
 
     //Initialize Sector from BMF File
-    public FileSector(SectorType type, int[] capacities, FileChannel fc) throws IOException {
+    public FileSector(SectorType type, int[] capacities, ByteBuffer original) throws IOException {
         this.type = type;
         this.subBuffers = new ByteBuffer[capacities.length];
         for(int i=0;i<this.subBuffers.length;i++){
+            byte[] copy = new byte[capacities[i]];
+            original.get(copy);
             ByteBuffer b = Allocator.alloc(capacities[i]);
             b.order(ByteOrder.BIG_ENDIAN);
-            while(b.position()<capacities[i])fc.read(b);
+            b.put(copy);
             b.flip();
             this.subBuffers[i] = b;
         }
@@ -61,6 +65,7 @@ public class FileSector {
             model.meshes.get(i).vbo.rewind();
             while(model.meshes.get(i).vbo.hasRemaining())sub.putFloat(model.meshes.get(i).vbo.get());
             sub.flip();
+            length += sub.limit();
             this.subBuffers[i] = sub;
         }
     }
@@ -72,6 +77,7 @@ public class FileSector {
             model.meshes.get(i).ibo.rewind();
             while(model.meshes.get(i).ibo.hasRemaining()) sub.putInt(model.meshes.get(i).ibo.get());
             sub.flip();
+            length += sub.limit();
             this.subBuffers[i] = sub;
         }
     }
@@ -103,12 +109,14 @@ public class FileSector {
     private void genMatSector(GGModel model) throws UnsupportedEncodingException {
         this.subBuffers = new ByteBuffer[model.materials.size()+1];
 
-        for(int i=0;i<this.subBuffers.length-1;i++)this.subBuffers[i] = model.materials.get(i).toBuffer();
+        for(int i=0;i<this.subBuffers.length-1;i++) {this.subBuffers[i] = model.materials.get(i).toBuffer(); length+=this.subBuffers[i].limit();}
 
         this.subBuffers[this.subBuffers.length-1] = ByteBuffer.allocate(Integer.BYTES*model.meshes.size());
         this.subBuffers[this.subBuffers.length-1].order(ByteOrder.BIG_ENDIAN);
         for(int i=0;i<model.meshes.size();i++) this.subBuffers[this.subBuffers.length-1].putInt(model.meshes.get(i).matIndex);
         this.subBuffers[this.subBuffers.length-1].flip();
+        length+= this.subBuffers[this.subBuffers.length-1].limit();
+
     }
 
     public enum SectorType{

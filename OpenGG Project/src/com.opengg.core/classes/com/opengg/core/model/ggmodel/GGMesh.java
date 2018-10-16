@@ -20,8 +20,9 @@ public class GGMesh {
     public IntBuffer ibo;
     public Material main = Material.defaultmaterial; public int matIndex = -1;
     public boolean genAnim = false;
+    public boolean genTangents = true;
 
-    private static final int VBO_NOANIM = 11,VBO_ANIM = 19;
+    private static final int VBO_NOANIM = 8,VBO_ANIM = 16;
 
     ArrayList<GGVertex> vertices = new ArrayList<>();
 
@@ -31,7 +32,7 @@ public class GGMesh {
 
     public GGMesh(ArrayList<GGVertex> vertices,int[] indices,boolean genAnim){
 
-        vbo = Allocator.allocFloat(vertices.size() * (genAnim?VBO_ANIM:VBO_NOANIM));
+        vbo = Allocator.allocFloat(vertices.size() * (  (genAnim?VBO_ANIM:VBO_NOANIM) + (genTangents?3:4) ) );
 
         for(int i = 0;i < vertices.size();i++){
             GGVertex vertex = vertices.get(i);
@@ -39,8 +40,12 @@ public class GGMesh {
             vbo.put(position.x).put(position.y).put(position.z);
             Vector3f normal = vertex.normal;
             vbo.put(normal.x).put(normal.y).put(normal.z);
-            Vector3f tangent = vertex.tangent;
-            vbo.put(tangent.x).put(tangent.y).put(tangent.z);
+            if(genTangents) {
+                Vector3f tangent = vertex.tangent;
+                vbo.put(tangent.x).put(tangent.y).put(tangent.z);
+            }else{
+                vbo.put(0f).put(0f).put(0f).put(0f);
+            }
             Vector2f uv = vertex.uvs;
             vbo.put(uv.x).put(uv.y);
             if(genAnim){
