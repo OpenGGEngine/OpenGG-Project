@@ -10,6 +10,10 @@ import com.opengg.core.engine.OpenGG;
 import com.opengg.core.gui.GUI;
 import com.opengg.core.gui.GUIText;
 import com.opengg.core.math.Quaternionf;
+import com.opengg.core.model.ggmodel.GGModel;
+import com.opengg.core.model.ggmodel.GGRenderComponent;
+import com.opengg.core.model.ggmodel.io.AssimpModelLoader;
+import com.opengg.core.model.ggmodel.io.BMFFile;
 import com.opengg.core.model.modelloaderplus.AnimatedComponent;
 import com.opengg.core.physics.collision.AABB;
 import com.opengg.core.physics.collision.ColliderGroup;
@@ -40,6 +44,8 @@ import com.opengg.core.world.components.TerrainComponent;
 import com.opengg.core.world.components.physics.PhysicsComponent;
 import com.opengg.core.world.components.viewmodel.ViewModelComponentRegistry;
 
+import java.io.IOException;
+
 
 public class OpenGGTest extends GGApplication{
     private GGFont font;
@@ -54,10 +60,10 @@ public class OpenGGTest extends GGApplication{
     public static void main(String[] args){
         WindowInfo w = new WindowInfo();
         w.displaymode = WindowOptions.WINDOWED;
-        w.width = 1280;
-        w.height = 1024;
+        w.width = 1528;
+        w.height = 650;
         w.resizable = true;
-        w.type = "OpenVR";
+        w.type = "GLFW";
         w.vsync = true;
         w.glmajor = 4;
         w.glminor = 3;
@@ -105,9 +111,23 @@ public class OpenGGTest extends GGApplication{
         WorldEngine.getCurrent().attach(new LightComponent(
                 Light.createDirectional(new Quaternionf(new Vector3f(80f,0f,50)),
                         new Vector3f(1,1,1))));
-
-        WorldEngine.getCurrent().attach(new ModelRenderComponent(Resource.getModel("goldleaf")).setScaleOffset(new Vector3f(0.001f)).setRotationOffset(new Vector3f(90,0,0)));
-
+        long bef2 = System.currentTimeMillis();
+        Resource.getModel("goldleaf");
+        System.out.println("Done: " + (System.currentTimeMillis() - bef2));
+        //WorldEngine.getCurrent().attach(new ModelRenderComponent(Resource.getModel("goldleaf")).setScaleOffset(new Vector3f(0.001f)).setRotationOffset(new Vector3f(90,0,0)));
+        try {
+            long bef = System.currentTimeMillis();
+            GGModel model = AssimpModelLoader.loadModel("C:\\Users\\warre\\Downloads\\Wii - Super Mario Galaxy - Honeyhive Main Planet\\Main Planet\\foresthomeplanet.dae");
+            System.out.println("Done: " + (System.currentTimeMillis() - bef));
+            //BMFFile.writeModel(model,"C:\\Users\\warre\\Downloads\\Wii - Super Mario Galaxy - Honeyhive Main Planet\\Main Planet\\fd.bmf");
+            bef = System.currentTimeMillis();
+            var d = new GGRenderComponent(BMFFile.loadModel("C:\\Users\\warre\\Downloads\\Wii - Super Mario Galaxy - Honeyhive Main Planet\\Main Planet\\fd.bmf"));
+            System.out.println("Done: " + (System.currentTimeMillis() - bef));
+            d.setScaleOffset(new Vector3f(0.01f));
+            WorldEngine.getCurrent().attach(d);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         for (int i = 0; i < 20; i++) {
             PhysicsComponent sphere = new PhysicsComponent();
@@ -134,12 +154,13 @@ public class OpenGGTest extends GGApplication{
         }*/
         player = new FreeFlyComponent();
         player.use();
+        WorldEngine.getCurrent().attach(player);
 
         var model = new ModelRenderComponent(Resource.getModel("45acp"));
         model.setName("ballmodel");
-        model.setScaleOffset(new Vector3f(1f));
+        model.setScaleOffset(new Vector3f(0.2f));
 
-        WorldEngine.getCurrent().attach(model);
+      //  WorldEngine.getCurrent().attach(model);
 
 
         BindController.addBind(ControlType.KEYBOARD, "forward", KEY_W);
@@ -157,9 +178,9 @@ public class OpenGGTest extends GGApplication{
         ViewModelComponentRegistry.initialize();
         ViewModelComponentRegistry.createRegisters();
         
-        RenderEngine.setProjectionData(ProjectionData.getPerspective(100, 0.2f, 3000f));
+        //RenderEngine.setProjectionData(ProjectionData.getPerspective(100, 0.2f, 3000f));
 
-        WindowController.getWindow().setCursorLock(true);
+       // WindowController.getWindow().setCursorLock(true);
     }
 
     @Override

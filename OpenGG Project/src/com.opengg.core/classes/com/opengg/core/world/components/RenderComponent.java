@@ -15,6 +15,8 @@ import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
 import java.io.IOException;
 
+import static org.lwjgl.opengl.GL11C.glGetError;
+
 /**
  *
  * @author Javier

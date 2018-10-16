@@ -1,5 +1,4 @@
-# OpenGG Engine
-
+# OpenGG Engine  ![alt-text](https://img.shields.io/badge/version-0.0.3--pre--alpha-brightgreen.svg) 
 ![alt text](https://scontent.fewr1-4.fna.fbcdn.net/v/t31.0-8/15259623_718596658314758_617464899265180665_o.jpg?_nc_cat=0&oh=665f754448e609118ef5867d74d7b668&oe=5BF8A70A)
 
 ## What is OpenGG
@@ -8,6 +7,22 @@ Because of this, we have decided to use Java as a language of choice. This engin
 technical achievements are unparrelled and are best expierianced if viewed in 1970.
 We are already are better than Bethasda's GameByro and creation engines in terms of 
 performance. Our framerates are comparable to the Witcher 2 on ubersampling mode.
+
+## Features
+
+OpenGG features the following.
+
+|Feature|Description|
+|--------|-----------|
+|World Editor|Supports Component Editing.|
+|Networking|Supports component serialization and deserialization.|
+|Post Processing|Supports effects such as bloom and FXAA.|
+|Lighting|Supports multiple light phong lighting and shadow mapping.|
+|Skybox|Supports cube map skyboxes.|
+|VR|Supports VR with OpenVR bindings.|
+|Input|Supports mouse and keyboard input|
+|Trigger System|Programmable event system|
+|Model Loader|Uses Assimp as a base. Supports animation loading and conversion to a binary intermediate format.|
 
 ## Lore
 ### OBJLoader2
@@ -25,3 +40,5 @@ Netbeans, OpenGGTest, entities, OBJLoader2, OBJLoader 1, OBJLoader 3, GlobalUtil
 
 ## Resurrected
 Entities
+
+[![forthebadge](https://forthebadge.com/images/badges/approved-by-george-costanza.svg)](https://forthebadge.com)

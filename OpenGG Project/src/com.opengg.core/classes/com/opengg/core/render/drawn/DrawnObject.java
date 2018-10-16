@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11C.glGetError;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
@@ -128,7 +129,6 @@ public class DrawnObject implements Drawable {
 
         if(!RenderEngine.getCurrentVAO().getFormat().equals(format))
             throw new RenderException("Invalid VAO bound during render");
-
         RenderEngine.getCurrentVAO().applyFormat(vertexBufferObjects);
 
         glDrawElementsInstancedBaseVertexBaseInstance(drawtype, elementcount, GL_UNSIGNED_INT, 0, instancecount, basevertex, 0);

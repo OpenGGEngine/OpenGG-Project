@@ -27,7 +27,7 @@ import java.util.List;
 public class Deserializer {
     private GGInputStream in;
     private List<SerialHolder> components;
-    public static List<ClassLoader> loaders;
+    public static List<ClassLoader> loaders = new ArrayList<>();;
     private HashMap<Integer, String> classnames;
     private World world;
     
@@ -39,7 +39,6 @@ public class Deserializer {
     private Deserializer(ByteBuffer buffer){
         in = new GGInputStream(buffer);
         components = new LinkedList<>();
-        loaders = new ArrayList<>();
         classnames = new HashMap<>();
     }
 

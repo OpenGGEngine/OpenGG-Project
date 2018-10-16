@@ -1,4 +1,4 @@
-package com.opengg.core.render.vr;
+package com.opengg.core.vr.render;
 
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.engine.Executor;
@@ -11,6 +11,7 @@ import com.opengg.core.render.ProjectionData;
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.render.RenderOperation;
 import com.opengg.core.render.RenderPass;
+import com.opengg.core.vr.VRUtil;
 import com.opengg.core.render.window.GLFWWindow;
 import com.opengg.core.render.window.Window;
 import com.opengg.core.render.window.WindowInfo;
@@ -54,7 +55,6 @@ public class VRWindow implements Window {
         GGConsole.log("Initializing OpenVR system");
 
         OpenVR.create(vrHandle);
-        //if(!VRCompositor())
 
         String driver = VRSystem.VRSystem_GetStringTrackedDeviceProperty(k_unTrackedDeviceIndex_Hmd, ETrackedDeviceProperty_Prop_TrackingSystemName_String, errHandle);
         String model  = VRSystem.VRSystem_GetStringTrackedDeviceProperty(k_unTrackedDeviceIndex_Hmd, ETrackedDeviceProperty_Prop_ModelNumber_String,        errHandle);
@@ -142,16 +142,6 @@ public class VRWindow implements Window {
             rightbounds.vMin(0.5f - 0.5f  * rbot / tanHalfFov.y);
             rightbounds.vMax(0.5f - 0.5f  * rtop / tanHalfFov.y);
 
-            System.out.println(leftbounds.uMin());
-            System.out.println(leftbounds.uMax());
-            System.out.println(leftbounds.vMin());
-            System.out.println(leftbounds.vMax());
-
-            System.out.println(rightbounds.uMin());
-            System.out.println(leftbounds.uMax());
-            System.out.println(rightbounds.vMin());
-            System.out.println(leftbounds.vMax());
-
             recx = (int) (recx / Math.max(leftbounds.uMax() - leftbounds.uMin(), rightbounds.uMax() - rightbounds.uMin())) /2;
             recy = (int) (recy / Math.max(leftbounds.vMax() - leftbounds.vMin(), rightbounds.vMax() - rightbounds.vMin()));
 
@@ -166,7 +156,6 @@ public class VRWindow implements Window {
             var paths = List.copyOf(RenderEngine.getRenderPaths());
             RenderEngine.getRenderPaths().clear();
             RenderEngine.addRenderPath(new RenderOperation("vr", () -> {
-
                 data.use();
 
                 var fb = RenderEngine.getCurrentFramebuffer();

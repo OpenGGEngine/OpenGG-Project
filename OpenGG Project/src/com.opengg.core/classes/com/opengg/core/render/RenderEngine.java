@@ -205,6 +205,7 @@ public class RenderEngine {
                 path.render();
                 resetConfig();
             }
+
             pass.getSceneBuffer().disableRendering();
 
             defaultvao.bind();
@@ -214,8 +215,8 @@ public class RenderEngine {
             if(pass.isPostProcessEnabled())
                 PostProcessController.process(pass.getSceneBuffer());
 
-            //if(pass.shouldBlitToBack())
-            //    pass.getSceneBuffer().blitToBack();
+            if(pass.shouldBlitToBack())
+                pass.getSceneBuffer().blitToBack();
 
             RenderEngine.setCulling(true);
 
@@ -399,6 +400,9 @@ public class RenderEngine {
     public static void addRenderGroup(RenderGroup r){
         if(!groups.contains(r))
             groups.add(r);
+    }
+
+    public static void setSkybox(Skybox skybox) {
     }
 
     public RenderGroup getRenderGroup(String name){

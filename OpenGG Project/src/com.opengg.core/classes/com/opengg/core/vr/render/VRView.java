@@ -1,10 +1,10 @@
-package com.opengg.core.render.vr;
+package com.opengg.core.vr.render;
 
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.View;
-import com.opengg.core.world.Camera;
+import com.opengg.core.vr.VRUtil;
 import org.lwjgl.openvr.HmdMatrix34;
 
 public class VRView implements View {

@@ -5,6 +5,9 @@
  */
 package com.opengg.core.world.components;
 
+import com.opengg.core.animation.Animation;
+import com.opengg.core.animation.Curve;
+import com.opengg.core.console.GGConsole;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
@@ -14,10 +17,7 @@ import com.opengg.core.world.World;
 import com.opengg.core.world.WorldEngine;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.BitSet;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * <h1>Represents any object attachable to another Component that links with the WorldEngine for updating and serializing</h1>
@@ -31,7 +31,7 @@ import java.util.List;
  * code that should be needed to use the features described above, so take care when overriding these default classes.</p>
  * @author Javier
  */
-public abstract class Component{
+public abstract class Component implements Animatable{
     private static int curid = 0;
     private int id;
     private boolean absoluteOffset = false;
@@ -494,6 +494,21 @@ public abstract class Component{
     public void remove(Component child){
         children.remove(child);
         child.setParentInfo(null);
+    }
+    protected void processDefaultAnim(Map.Entry<String,Curve> property ){
+        switch(property.getKey()){
+            case "posoffset":
+                setPositionOffset((Vector3f) property.getValue().getCurrentValue());
+                break;
+            case "scaleoffset":
+                setScaleOffset((Vector3f) property.getValue().getCurrentValue());
+                break;
+        }
+    }
+    public void applyAnimation(Animation a){
+        for(Map.Entry<String,Curve> property :a.properties.entrySet()){
+            processDefaultAnim(property);
+        }
     }
 
 }
