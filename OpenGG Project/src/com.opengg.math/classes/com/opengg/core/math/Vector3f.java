@@ -15,7 +15,7 @@ import java.nio.FloatBuffer;
  * @author Javier
  */
 public class Vector3f implements Serializable{
-    public static Vector3f identity = new Vector3f();
+    public static final Vector3f identity = new Vector3f();
     private static final long serialVersionUID = 4404184685145307985L;
     
     public final float x;
@@ -198,7 +198,6 @@ public class Vector3f implements Serializable{
     }
     
     public Vector3f divide(float scalar) {
-        if (scalar == 0) throw new ArithmeticException("Divide by 0");
         return multiply(1f / scalar);
     }
     
@@ -220,18 +219,18 @@ public class Vector3f implements Serializable{
      * @param v Point to get distance to
      * @return Distance to point
      */
-    public float getDistance(Vector3f v) {
-        return (float) Math.sqrt(this.getDistanceSquared(v));
+    public float distanceTo(Vector3f v) {
+        return (float) Math.sqrt(this.distanceToSquared(v));
     }
     
     /**
      * Returns the square of the Euclidean distance between this point and the given point<br>
      * This method is useful if the distance is needed for comparison purposes only, 
-     * as it avoids an expensive square root that {@link #getDistance} uses
+     * as it avoids an expensive square root that {@link #distanceTo} uses
      * @param v Point to get distance to
      * @return Square of distance to point
      */
-    public float getDistanceSquared(Vector3f v){
+    public float distanceToSquared(Vector3f v){
         return (float) (Math.pow((this.x - v.x), 2) + Math.pow((this.y - v.y), 2) + Math.pow((this.z - v.z), 2));
     }
     
@@ -241,8 +240,8 @@ public class Vector3f implements Serializable{
      * @param v2 Point two
      * @return Distance between v1 and v2
      */
-    public static float getDistance(Vector3f v1, Vector3f v2){
-        return v1.getDistance(v2);
+    public static float distance(Vector3f v1, Vector3f v2){
+        return v1.distanceTo(v2);
     }
     
     /**
@@ -349,13 +348,9 @@ public class Vector3f implements Serializable{
     }
     
     public Vector3f transformByQuat(Quaternionf q){
-        return new Vector3f(this).transformThisByQuat(q);
+        return q.transform(this);
     }
-    
-    private Vector3f transformThisByQuat(Quaternionf q){
-        q.transform(this);
-        return this;
-    }
+
 
     public Vector3f closerToZero(float f){
         return new Vector3f().closerToZeroThis(f);
@@ -384,9 +379,14 @@ public class Vector3f implements Serializable{
         float xz = (Math.abs(z) - v.z)*signZ;
         return new Vector3f(xx, xy, xz);
     }
-    
+
+    /**
+     * Converts the given list of Vector3fs into a {@link FloatBuffer} of size {@code list.size * 3}
+     * @param list Vector3f list to convert
+     * @return FloatBuffer containing vectors
+     */
     public static FloatBuffer listToBuffer(Vector3f... list){
-        FloatBuffer f = Allocator.allocFloat(3* list.length);
+        FloatBuffer f = Allocator.allocFloat(3 * list.length);
         for(Vector3f v : list){ 
            f.put(v.x);
            f.put(v.y);

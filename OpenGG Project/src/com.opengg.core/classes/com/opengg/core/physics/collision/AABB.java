@@ -16,7 +16,6 @@ import java.util.List;
  */
 public class AABB extends PhysicsObject{
     Vector3f lwh = new Vector3f();
-
     
     Vector3f min = new Vector3f(1,1,1);
     Vector3f max = new Vector3f(-1,-1,-1);
@@ -54,17 +53,10 @@ public class AABB extends PhysicsObject{
     public Vector3f[] getAABBVertices(){
         return new Vector3f[] {min, max};
     }
-    
-    public String toString() {
-        return "[" + min.toString() + " , " + max.toString() + "]";
-    }
- 
-    
+
     public void recalculate(){
-        Vector3f tscale = getScale();
-        Vector3f tpos = getPosition();
-        min = new Vector3f(-1,-1,-1).multiply(lwh).multiply(tscale).add(tpos);
-        max = new Vector3f(1,1,1).multiply(lwh).multiply(tscale).add(tpos);
+        min = new Vector3f(-1,-1,-1).multiply(lwh).multiply(getScale()).add(getPosition());
+        max = new Vector3f(1,1,1).multiply(lwh).multiply(getScale()).add(getPosition());
     }
     
     public boolean isColliding(AABB x) {
@@ -84,4 +76,10 @@ public class AABB extends PhysicsObject{
                   min.y > pos.y ||
                   min.z > pos.z);
     }
+
+    @Override
+    public String toString() {
+        return "[" + min.toString() + " , " + max.toString() + "]";
+    }
+
 }

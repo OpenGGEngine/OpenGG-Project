@@ -16,7 +16,7 @@ public class ConvexHullUtil {
         float distance = -10; int p1=0,p2=0;
         for(int i=0;i<vertices.size();i++){
             for(int i2=1;i2<vertices.size();i2++){
-                float calDis = Vector3f.getDistance(vertices.get(i).position,vertices.get(i2).position);
+                float calDis = Vector3f.distance(vertices.get(i).position,vertices.get(i2).position);
                 if(calDis>distance){
                     distance = calDis;
                     point1 = vertices.get(i).position;
@@ -43,10 +43,10 @@ public class ConvexHullUtil {
         return null;
     }
     public float distLinePoint(Vector3f a,Vector3f b,Vector3f c){
-        Vector3f d = c.subtract(b).divide(c.getDistance(b));
+        Vector3f d = c.subtract(b).divide(c.distanceTo(b));
         Vector3f v = a.subtract(b);
         float t = v.dot(d);
         Vector3f p = b.add(d.multiply(t));
-        return p.getDistance(a);
+        return p.distanceTo(a);
     }
 }

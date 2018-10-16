@@ -39,6 +39,11 @@ public class CollisionComponent extends Component{
         collidergroup.addColliders(colliders);
     }
 
+    public CollisionComponent(ColliderGroup group){
+        this();
+        this.collidergroup = group;
+    }
+
     public void addCollider(Collider collider) {
         this.collidergroup.addCollider(collider);
     }

@@ -15,8 +15,6 @@ import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
 import java.io.IOException;
 
-import static org.lwjgl.opengl.GL11C.glGetError;
-
 /**
  *
  * @author Javier
@@ -41,7 +39,7 @@ public class RenderComponent extends Component implements Renderable{
 
     @Override
     public void render() {
-        var matrix = new Matrix4f().scale(getScale()).translate(getPosition()).rotate(getRotation());
+        var matrix = new Matrix4f().translate(getPosition()).rotate(getRotation()).scale(getScale());
         if((renderDistance > 0) && (getPosition().subtract(RenderEngine.getCurrentView().getPosition()).length() > renderDistance))
             return;
         if(drawable != null){
@@ -86,6 +84,12 @@ public class RenderComponent extends Component implements Renderable{
     public Drawable getDrawable(){
         return drawable;
     }
+
+    @Override
+    public void onWorldChange(){
+        this.getWorld().addRenderable(this);
+    }
+
     
     @Override
     public void serialize(GGOutputStream out) throws IOException{

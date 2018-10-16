@@ -5,19 +5,22 @@
  */
 package com.opengg.core.world.components;
 
-import com.opengg.core.animation.Animation;
-import com.opengg.core.animation.Curve;
-import com.opengg.core.console.GGConsole;
-import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Quaternionf;
+import com.opengg.core.math.Tuple;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
+import com.opengg.core.world.AnimationAccessorSet;
 import com.opengg.core.world.World;
 import com.opengg.core.world.WorldEngine;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.BitSet;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * <h1>Represents any object attachable to another Component that links with the WorldEngine for updating and serializing</h1>
@@ -31,7 +34,7 @@ import java.util.*;
  * code that should be needed to use the features described above, so take care when overriding these default classes.</p>
  * @author Javier
  */
-public abstract class Component implements Animatable{
+public abstract class Component{
     private static int curid = 0;
     private int id;
     private boolean absoluteOffset = false;
@@ -264,10 +267,18 @@ public abstract class Component implements Animatable{
         return absoluteOffset;
     }
 
+    /**
+     * Returns the update distance of this component
+     * @return
+     */
     public float getUpdateDistance() {
         return updatedistance;
     }
 
+    /**
+     * Sets the update distance of this component, being in units away from the current camera
+     * @param updatedistance
+     */
     public void setUpdateDistance(float updatedistance) {
         this.updatedistance = updatedistance;
     }
@@ -461,11 +472,26 @@ public abstract class Component implements Animatable{
     public final void onWorldChange(Runnable onChange){
         this.whenAttachedToWorld = onChange;
     }
-    
-    public List<Component> getChildren(){
-        return children;
+
+    public void getAnimationAccessors(AnimationAccessorSet values){
+        values.addVector3f("position", this::getPositionOffset, this::setPositionOffset);
+        values.addVector3f("scale", this::getScale, this::setScaleOffset);
+        values.addQuaternionf("rotation", this::getRotationOffset, this::setRotationOffset);
     }
-    
+
+    /**
+     * Returns a list containing this component's direct children
+     * @return
+     */
+    public List<Component> getChildren(){
+        return Collections.unmodifiableList(children);
+    }
+
+
+    /**
+     * Returns this component's parent, or null it has none
+     * @return
+     */
     public Component getParent(){
         return parent;
     }
@@ -494,21 +520,6 @@ public abstract class Component implements Animatable{
     public void remove(Component child){
         children.remove(child);
         child.setParentInfo(null);
-    }
-    protected void processDefaultAnim(Map.Entry<String,Curve> property ){
-        switch(property.getKey()){
-            case "posoffset":
-                setPositionOffset((Vector3f) property.getValue().getCurrentValue());
-                break;
-            case "scaleoffset":
-                setScaleOffset((Vector3f) property.getValue().getCurrentValue());
-                break;
-        }
-    }
-    public void applyAnimation(Animation a){
-        for(Map.Entry<String,Curve> property :a.properties.entrySet()){
-            processDefaultAnim(property);
-        }
     }
 
 }

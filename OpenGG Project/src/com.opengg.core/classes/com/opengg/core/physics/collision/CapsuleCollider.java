@@ -38,11 +38,11 @@ public class CapsuleCollider extends Collider{
     }
     
     public Vector3f getP1(){
-        return parent.getPosition().add(parent.getRotation().transform(position.add(p1)));
+        return parent.getPosition().add(parent.getRotation().transform(getPosition().add(p1)));
     }
     
     public Vector3f getP2(){
-        return parent.getPosition().add(parent.getRotation().transform(position.add(p2)));
+        return parent.getPosition().add(parent.getRotation().transform(getPosition().add(p2)));
     }
     
     @Override

@@ -62,7 +62,7 @@ public class BulletComponent extends Component{
             RenderEngine.removeLight(lc.getLight());
         }
         
-        if(this.getPosition().getDistance(source.getPosition()) > 500){
+        if(this.getPosition().distanceTo(source.getPosition()) > 500){
             RenderEngine.removeLight(lc.getLight());
             WorldEngine.markForRemoval(this);
             WorldEngine.getCurrent().removeRenderable(bullet);

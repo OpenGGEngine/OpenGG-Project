@@ -1,4 +1,3 @@
-
 struct Material
 {
     float hasnormmap;
@@ -30,6 +29,7 @@ vec4 color;
 float specpow;
 vec3 specpowvec;
 vec3 reflectedcolor;
+float trans;
 
 
 mat3 cotangent_frame( vec3 N, vec3 p, vec2 uv ){

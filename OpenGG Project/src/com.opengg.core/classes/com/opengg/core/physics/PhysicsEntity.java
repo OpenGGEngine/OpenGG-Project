@@ -8,7 +8,6 @@ package com.opengg.core.physics;
 import com.opengg.core.math.Matrix3f;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
-import com.opengg.core.physics.collision.Collider;
 import com.opengg.core.physics.collision.ColliderGroup;
 import com.opengg.core.physics.collision.CollisionManager;
 import com.opengg.core.util.GGInputStream;
@@ -18,6 +17,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -29,7 +29,6 @@ public class PhysicsEntity extends PhysicsObject{
     public int id = 0;
 
     public String name = "default";
-    public List<ColliderGroup> colliders = new ArrayList<>();
     public Vector3f centerOfMass = new Vector3f();
     public Matrix3f inertialMatrix = new Matrix3f(0.4f,0f,0f,0f,0.4f,0f,0f,0f,0.4f);
     public Vector3f lowestContact = new Vector3f(0,-1,0);
@@ -80,7 +79,7 @@ public class PhysicsEntity extends PhysicsObject{
         computeAngularMotion(delta);
         
         lowestContact = new Vector3f(0,-1,0);
-        CollisionManager.addToTest(colliders);
+        CollisionManager.addToTest(getChildren());
     }
     
     private void computeLinearMotion(float delta){
@@ -93,14 +92,14 @@ public class PhysicsEntity extends PhysicsObject{
             velocity = velocity.multiply(1-dynamicfriction*delta);
         }
         
-        position = position.add(velocity.multiply(delta));
+        setPosition(getOffset().add(velocity.multiply(delta)));
     }
     
     private void computeAngularMotion(float delta){
         var angmomentum = finalRotForce();
         angaccel = angmomentum.divide(mass);
         angvelocity = angvelocity.add(angaccel.multiply(delta));
-        rotation = rotation.multiply(new Quaternionf(angvelocity.multiply(delta))).normalize();
+        setRotation(getRotationOffset().multiply(new Quaternionf(angvelocity.multiply(delta))).normalize());
     }
     
     private Vector3f computeForces(float delta) {
@@ -133,27 +132,24 @@ public class PhysicsEntity extends PhysicsObject{
     
         
     public void addCollider(ColliderGroup c){
-        colliders.add(c);
+        children.add(c);
         c.setParent(this);
     }
     
-    public List<ColliderGroup> getColliders() {
-        return colliders;
+    public List<ColliderGroup> getChildren() {
+        return children.stream()
+                .map(c -> (ColliderGroup) c)
+                .collect(Collectors.toList());
     }
-    
-     void setSystemData(PhysicsSystem system){
-        if(this.system != null){
-            this.system.removeEntity(this);
-            for(ColliderGroup col : getColliders()){
-                system.removeCollider(col);
-            }
-        }
 
+    @Override
+    public void onSystemChange(){
+        super.onSystemChange();
         this.system = system;
-        for(ColliderGroup col : getColliders()){
+        for(ColliderGroup col : getChildren()){
             system.addCollider(col);
         }
-    }
+     }
     
     public void addForce(Force force){
         forces.add(force);
@@ -169,10 +165,10 @@ public class PhysicsEntity extends PhysicsObject{
     }
     
     public static PhysicsEntity interpolate(PhysicsEntity a, PhysicsEntity b, float alpha) {
-        b.position = a.position.multiply(1 - alpha).add(b.position.multiply(alpha));
+        b.setPosition(a.getOffset().multiply(1 - alpha).add(b.getOffset().multiply(alpha)));
         b.velocity = a.velocity.multiply(1 - alpha).add(b.velocity .multiply(alpha));
         
-        b.rotation = Quaternionf.slerp(a.rotation, b.rotation, alpha);
+        b.setRotation(Quaternionf.slerp(a.getRotationOffset(), b.getRotationOffset(), alpha));
         b.angvelocity = a.angvelocity.multiply(1 - alpha).add(b.angvelocity.multiply(alpha));
         
         b.acceleration = a.acceleration.multiply(1 - alpha).add(b.acceleration.multiply(alpha));
@@ -187,11 +183,11 @@ public class PhysicsEntity extends PhysicsObject{
         out.write(velocity);
         out.write(angvelocity);
 
-        out.write(position);
-        out.write(rotation);
+        out.write(getOffset());
+        out.write(getRotationOffset());
 
-        out.write(colliders.size());
-        for(var collider : colliders){
+        out.write(children.size());
+        for(var collider : children){
             collider.serialize(out);
         }
     }
@@ -203,8 +199,8 @@ public class PhysicsEntity extends PhysicsObject{
         velocity = in.readVector3f();
         angvelocity = in.readVector3f();
 
-        position = in.readVector3f();
-        rotation = in.readQuaternionf();
+        setPosition(in.readVector3f());
+        setRotation(in.readQuaternionf());
 
         int collcount = in.readInt();
         for (int i = 0; i < collcount; i++) {

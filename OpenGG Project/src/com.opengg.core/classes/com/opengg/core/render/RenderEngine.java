@@ -131,7 +131,7 @@ public class RenderEngine {
 
         enableDefaultGroups();
 
-        lightBuffer = GraphicsBuffer.allocate(GL_UNIFORM_BUFFER, 1600, GL_DYNAMIC_DRAW);
+        lightBuffer = GraphicsBuffer.allocate(GraphicsBuffer.BufferType.UNIFORM_BUFFER, 1600, GraphicsBuffer.UsageType.STREAM_DRAW);
         lightBuffer.bindBase(ShaderController.getUniqueUniformBufferLocation());
         lightoffset = (Allocator.allocFloat(Light.BUFFERSIZE).capacity());// << 2;
 
@@ -191,7 +191,7 @@ public class RenderEngine {
             pass.runEnableOp();
 
             ShaderController.setView(camera.getMatrix());
-            ShaderController.setUniform("camera", camera.getPosition().inverse());
+            ShaderController.setUniform("camera", camera.getPosition());
             projdata.ratio = WindowController.getWindow().getRatio();
             projdata.use();
 

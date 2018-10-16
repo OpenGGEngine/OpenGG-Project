@@ -40,7 +40,7 @@ public class ModelRenderComponent extends RenderComponent implements ResourceUse
             this.setShader("animation");
             this.setFormat(RenderEngine.getAnimationFormat());
         }else{
-            this.setShader("object");
+            this.setShader("material");
             this.setFormat(RenderEngine.getDefaultFormat());
         }
         

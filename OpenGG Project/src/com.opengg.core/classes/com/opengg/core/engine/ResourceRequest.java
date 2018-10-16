@@ -5,6 +5,9 @@
  */
 package com.opengg.core.engine;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
+
 /**
  *
  * @author Javier
@@ -15,6 +18,7 @@ public class ResourceRequest implements Comparable{
     public String location;
     public int type;
     public int priority = 5;
+    public CompletableFuture<Resource> future;
     
     public ResourceRequest(String location, int type){
         this.location = location;

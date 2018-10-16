@@ -39,7 +39,7 @@ public class CollisionManager {
     
     public static void testForCollision(ColliderGroup next, PhysicsSystem system){
         Contact cm = null;
-        for(Collider c : next.colliders){
+        for(Collider c : next.getColliders()){
             Contact nxt = c.isColliding(null);
             if(nxt != null) cm = nxt;
         }
@@ -69,13 +69,13 @@ public class CollisionManager {
     
     public static void testForCollisions(PhysicsSystem system){
         collisions.clear();
-        //if(parallelProcessing) test.parallelStream().forEach((c) -> testForCollision(c, system));
+        //test.parallelStream().peek((c) -> testForCollision(c, system)).close();
         for(ColliderGroup next : test) testForCollision(next, system);
     }
 
     public static void processCollisionResponse(Collision col){
-        PhysicsEntity e1 = col.thiscollider.parent;
-        PhysicsEntity e2 = col.other.parent;
+        PhysicsEntity e1 = (PhysicsEntity) col.thiscollider.parent;
+        PhysicsEntity e2 = (PhysicsEntity) col.other.parent;
         if(e1 != null && e2 != null){
             ArrayList<Vector3f> jfs = new ArrayList<>();
             ArrayList<Vector3f> invjfs = new ArrayList<>();
@@ -202,15 +202,17 @@ public class CollisionManager {
         else for(Collision c : collisions) processCollisionResponse(c);
         
         for(ColliderGroup next : test){
-            PhysicsEntity e = next.parent;
+            PhysicsEntity e = (PhysicsEntity) next.parent;
             
             Vector3f R = Vector3f.averageOf(e.R.toArray(new Vector3f[0]));
             Vector3f jfv = Vector3f.averageOf(e.jf.toArray(new Vector3f[0]));
             Vector3f jrv = Vector3f.averageOf(e.jr.toArray(new Vector3f[0]));
             Vector3f normal = Vector3f.averageOf(e.norms.toArray(new Vector3f[0])).normalize();
-            float depth = e.depths.stream().max((i,j)->{
-                return i > j ? 1 : 0;
-            }).orElse(0f);
+
+            float depth = (float) e.depths.stream().mapToDouble(s -> s)
+                    .average().orElse(0);
+
+
             if(e.norms.isEmpty())continue;
             
             e.setPosition(e.getPosition().add(normal.multiply(depth)));

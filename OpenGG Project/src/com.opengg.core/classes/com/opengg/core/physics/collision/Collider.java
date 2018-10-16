@@ -22,18 +22,14 @@ public abstract class Collider extends PhysicsObject{
 
     @Override
     public void serialize(GGOutputStream stream) throws IOException{
-        stream.write(position);
-        stream.write(rotation);
+        stream.write(getOffset());
+        stream.write(getRotationOffset());
     }
 
     @Override
     public void deserialize(GGInputStream stream) throws IOException{
-        position = stream.readVector3f();
-        rotation = stream.readQuaternionf();
-    }
-    
-    public void setParent(PhysicsObject parent){
-        this.parent = parent;
+        setPosition(stream.readVector3f());
+        setRotation(stream.readQuaternionf());
     }
 }
 

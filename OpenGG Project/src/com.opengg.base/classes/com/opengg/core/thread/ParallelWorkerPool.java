@@ -7,11 +7,13 @@ package com.opengg.core.thread;
 
 import com.opengg.core.GGInfo;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Queue;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.*;
 import java.util.concurrent.PriorityBlockingQueue;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -21,20 +23,21 @@ import java.util.concurrent.PriorityBlockingQueue;
  */
 public final class ParallelWorkerPool<T, V> {
     private static final Object monitor = new Object();
-    private final Queue<V> finished = new LinkedBlockingQueue<>();
     private final Queue<PriorityEncapsulator<T>> queued = new PriorityBlockingQueue<>(100, (v1, v2) -> {return v2.priority - v1.priority;});
-    private final List<WorkerThread<T, V>> workers = new ArrayList<>();
+    private final List<WorkerThread> workers = new ArrayList<>();
     private final ArrayList<Thread> threads = new ArrayList<>();
-    private final WorkerProcessor<T, V> processor;
-    private  WorkerDataSource<T> source;
-    private final PostOp<V> postop;
+
+    private Supplier<T> source;
+    private final Function<T, V> function;
+    private final BiConsumer<T, V> postop;
+
     protected int amount;
     
-    public ParallelWorkerPool(int amount, WorkerProcessor<T, V> runnable){
-        this(amount, runnable, (v) -> {});
+    public ParallelWorkerPool(int amount, Function<T, V> runnable){
+        this(amount, runnable, (t,v) -> {});
     }
     
-    public ParallelWorkerPool(int amount, WorkerProcessor<T, V> runnable, PostOp<V> postop){
+    public ParallelWorkerPool(int amount, Function<T, V> runnable, BiConsumer<T, V> postop){
         this(amount, null, runnable, postop);
         source = () -> {
             synchronized (monitor) {
@@ -50,18 +53,18 @@ public final class ParallelWorkerPool<T, V> {
             }};
     }
 
-    public ParallelWorkerPool(int amount, WorkerDataSource<T> source, WorkerProcessor<T, V> processor, PostOp<V> postop){
+    public ParallelWorkerPool(int amount, Supplier<T> source, Function<T, V> function, BiConsumer<T, V> postop){
         this.amount = amount;
-        this.processor = processor;
+        this.function = function;
         this.source = source;
         this.postop = postop;
     }
     
     public void run(){
         for(int i = 0; i < amount; i++){
-            WorkerThread<T, V> threadrunnable = new WorkerThread<>(this, source, processor, postop);
-            Thread thread = ThreadManager.runDaemon(threadrunnable, "WorkerThreadPool: " + i);
-            workers.add(threadrunnable);
+            WorkerThread worker = new WorkerThread();
+            Thread thread = ThreadManager.runDaemon(worker, "WorkerThreadPool: " + i);
+            workers.add(worker);
             threads.add(thread);
         }
     }
@@ -80,23 +83,23 @@ public final class ParallelWorkerPool<T, V> {
         }
     }
 
-    void addCompleted(V v){
-        this.finished.add(v);
+    public List<T> getQueue(){
+        return Collections.unmodifiableList(queued.stream().map(s -> s.t).collect(Collectors.toUnmodifiableList()));
     }
 
-    public interface WorkerProcessor<T, V>{
-        public V process(T t);
+    public Function<T, V> getFunction() {
+        return function;
     }
-    
-    public interface PostOp<V>{
-        public void process(V v);
+
+    public Supplier<T> getSource() {
+        return source;
     }
-    
-    public interface WorkerDataSource<T>{
-        public T get();
+
+    public BiConsumer<T, V> getPostop() {
+        return postop;
     }
-    
-    class PriorityEncapsulator<T>{
+
+    private class PriorityEncapsulator<T>{
         T t;
         int priority;
         
@@ -105,30 +108,16 @@ public final class ParallelWorkerPool<T, V> {
             this.priority = priority;
         }
     }
-}
 
-class WorkerThread<T, V> implements Runnable {
-    private final ParallelWorkerPool<T,V> pool;
-    private final ParallelWorkerPool.WorkerProcessor<T, V> processor;
-    private final ParallelWorkerPool.WorkerDataSource<T> source;
-    private final ParallelWorkerPool.PostOp<V> postop;
-    
-    WorkerThread(ParallelWorkerPool<T,V> pool,
-                 ParallelWorkerPool.WorkerDataSource<T> source,
-                 ParallelWorkerPool.WorkerProcessor<T, V> processor,
-                 ParallelWorkerPool.PostOp<V> postop){
-        this.pool = pool;
-        this.processor = processor;
-        this.source = source;
-        this.postop = postop;
-    }
-
-    @Override
-    public void run() {
-        while(true){
-            V returnvalue = processor.process(source.get());
-            pool.addCompleted(returnvalue);
-            postop.process(returnvalue);
+    private class WorkerThread implements Runnable {
+        @Override
+        public void run() {
+            while(true){
+                T t = getSource().get();
+                V v = getFunction().apply(t);
+                getPostop().accept(t, v);
+            }
         }
     }
 }
+

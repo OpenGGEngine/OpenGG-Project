@@ -18,10 +18,9 @@ generatePhongData(){
 vec3 getPhongFrom(Light light){
     float attenuation = 1.0f;
 
-    vec3 lightDir = -light.dir.xyz;
+    vec3 lightDir = normalize(-light.dir.xyz);
 
 	if(light.type == 2.0f){
-        lightDir = normalize(-light.dir.xyz);
 	}else{
 		float distance = length( light.lightpos.xyz - pos.xyz );
 	    attenuation =  1.0f / (1.0f + (1.0f / light.lightdistance) * distance * distance);

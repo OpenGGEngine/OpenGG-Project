@@ -60,12 +60,11 @@ public class PhysicsComponent extends Component {
     public void onRotationChange(Quaternionf nrot){
         entity.setRotation(nrot);
     }
-    
+
     @Override
     public void update(float delta) {
-
-        this.getParent().setPositionOffset(entity.position);
-        this.getParent().setRotationOffset(entity.rotation);
+        this.getParent().setPositionOffset(entity.getPosition());
+        this.getParent().setRotationOffset(entity.getRotation());
     }
     
     @Override
@@ -80,7 +79,6 @@ public class PhysicsComponent extends Component {
         int id = in.readInt();
         this.onWorldChange(() -> {
             this.entity = this.getWorld().getSystem().getById(id);
-            this.getWorld().getSystem().addEntity(entity);
         });
     }
     

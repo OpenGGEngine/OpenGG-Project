@@ -7,8 +7,11 @@
 package com.opengg.core.world.components;
 
 import com.opengg.core.engine.OpenGG;
+import com.opengg.core.engine.Resource;
 import com.opengg.core.math.Vector3f;
+import com.opengg.core.physics.collision.ColliderGroup;
 import com.opengg.core.render.texture.Texture;
+import com.opengg.core.render.texture.TextureData;
 import com.opengg.core.render.texture.TextureManager;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
@@ -22,21 +25,47 @@ import java.io.IOException;
  *
  * @author Javier
  */
-public class TerrainComponent extends RenderComponent{
+public class TerrainComponent extends Component{
     Terrain terrain;
     boolean collideable;
-    public Texture blotmap = Texture.get2DTexture(TextureManager.getDefault());
-    public Texture array = Texture.getArrayTexture(TextureManager.getDefault(),
+    private Texture blotmap = Texture.get2DTexture(TextureManager.getDefault());
+    private Texture array = Texture.getArrayTexture(TextureManager.getDefault(),
             TextureManager.getDefault(),TextureManager.getDefault(),TextureManager.getDefault());
     
     public TerrainComponent(){}
     
     public TerrainComponent(Terrain terrain){
         this.terrain = terrain;
-        this.setShader("terrain");
-        this.setDrawable(terrain.getDrawable());
     }
-    
+
+    public void enableRenderable(String blotmap, String s1, String s2, String s3, String s4){
+        this.enableRenderable(Resource.getTextureData(blotmap),
+                Resource.getTextureData(s1), Resource.getTextureData(s2), Resource.getTextureData(s3), Resource.getTextureData(s4));
+    }
+
+    public void enableRenderable(TextureData blotmap, TextureData a1, TextureData a2, TextureData a3, TextureData a4){
+        OpenGG.asyncExec(() -> this.enableRenderable(Texture.create(Texture.config(), blotmap),
+                              Texture.create(Texture.arrayConfig(), a1, a2, a3, a4)));
+    }
+
+    private void enableRenderable(Texture blotmap, Texture array){
+        this.blotmap = blotmap;
+        this.array = array;
+        RenderComponent renderer = new RenderComponent(){
+            @Override
+            public void render(){
+                blotmap.use(1);
+                array.use(0);
+                super.render();
+            }
+        };
+
+        renderer.setShader("terrain");
+        renderer.setDrawable(terrain.getDrawable());
+        renderer.setSerializable(false);
+        this.attach(renderer);
+    }
+
     public void enableCollider(){
         final int sectionsize = 8;
         float[][] map = terrain.getMap();
@@ -48,11 +77,13 @@ public class TerrainComponent extends RenderComponent{
         
         for(int i = 0; i < divx; i++){
             for(int j = 0; j < divz; j++){
-                TerrainCollider mesh = new TerrainCollider(terrain,terrain.getMesh(i*sectionsize, j*sectionsize, sectionsize, sectionsize)); 
+                TerrainCollider mesh = new TerrainCollider(terrain,terrain.getMesh(i*sectionsize, j*sectionsize, sectionsize, sectionsize));
+
                 AABB aabb = new AABB(1f/divx/2,10,1f/divz/2f);
                 aabb.setPosition(new Vector3f((1f/divx)*i+(1f/divx*0.5f),0, (1f/divz)*j+(1f/divz*0.5f)));
-                aabb.recalculate();
-                this.attach(new CollisionComponent(aabb,mesh));
+
+                this.attach(new CollisionComponent(new ColliderGroup(aabb, mesh)));
+
                 collideable = true;
             }
         }
@@ -82,13 +113,6 @@ public class TerrainComponent extends RenderComponent{
     }
     
     @Override
-    public void render(){
-        this.blotmap.use(1);
-        this.array.use(0);
-        super.render();
-    }
-    
-    @Override
     public void serialize(GGOutputStream out) throws IOException{
         super.serialize(out);
         out.write(terrain.getSource());
@@ -105,12 +129,12 @@ public class TerrainComponent extends RenderComponent{
         super.deserialize(in);
         String tp = in.readString();
         terrain = Terrain.generate(tp);
+
         String blot = in.readString();
-        blotmap = Texture.get2DTexture(blot);
+
         String s1 = in.readString(), s2 = in.readString(), s3 = in.readString(), s4 = in.readString();
-        array = Texture.getArrayTexture(s1, s2, s3, s4);
-        this.setShader("terrain");
-        OpenGG.asyncExec(()->this.setDrawable(terrain.getDrawable()));
+
+        enableRenderable(blot, s1, s2, s3, s4);
         if(in.readBoolean()){
             enableCollider();
         }

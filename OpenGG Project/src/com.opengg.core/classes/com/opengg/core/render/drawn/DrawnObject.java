@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL11C.glGetError;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
@@ -40,37 +39,73 @@ public class DrawnObject implements Drawable {
     
     Matrix4f model = Matrix4f.translate(0, 0, 0);
 
-    public DrawnObject(FloatBuffer... b){
-        this(RenderEngine.getDefaultFormat(), b);
+    /**
+     * Creates a drawn object containing the given {@link FloatBuffer FloatBuffers}
+     * <br>
+     * The given buffers are bound to the default {@link com.opengg.core.render.shader.VertexArrayObject} in order of appearance
+     * @param vertices Buffers to add
+     */
+    public DrawnObject(FloatBuffer... vertices){
+        this(RenderEngine.getDefaultFormat(), vertices);
     }
 
+    /**
+     * Creates a drawn object containing the given {@link FloatBuffer FloatBuffers}
+     * <br>
+     * The given buffers are bound to the given {@link com.opengg.core.render.shader.VertexArrayObject} in order of appearance
+     * @param vertices Buffers to add
+     * @param format VertexArrayFormat to use for rendering this object
+     */
     public DrawnObject(VertexArrayFormat format, FloatBuffer... vertices){
         this(format, null, vertices);
     }
 
+    /**
+     * Creates a drawn object containing the given {@link FloatBuffer FloatBuffers}, indexed by the given {@link IntBuffer}
+     * <br>
+     * The given buffers are bound to the default {@link com.opengg.core.render.shader.VertexArrayObject} in order of appearance
+     * @param vertices Buffers to add
+     * @param index Buffer containing the indices to use for the vertices of the object
+     */
     public DrawnObject(IntBuffer index, FloatBuffer... vertices){
         this(RenderEngine.getDefaultFormat(), index, vertices);
     }
 
+    /**
+     * Creates a drawn object containing the given {@link FloatBuffer FloatBuffers}, indexed by the given {@link IntBuffer}
+     * <br>
+     * The given buffers are bound to the default {@link com.opengg.core.render.shader.VertexArrayObject} in order of appearance
+     * @param vertices Buffers to add
+     * @param index Buffer containing the indices to use for the vertices of the object
+     * @param format VertexArrayFormat to add
+     */
     public DrawnObject(VertexArrayFormat format, IntBuffer index, FloatBuffer... vertices){
         this.format = format;
         defBuffers(vertices, index);
     }
 
+    /**
+     * Sets the buffer with the given ID to the given {@link FloatBuffer}
+     * <br>
+     * This sets the buffer to the default buffer type of GL_STATIC_DRAW, optimizing for reading operations
+     * @param bufferid Buffer to replace
+     * @param buffer Buffer to update
+     */
     public void updateBuffer(int bufferid, FloatBuffer buffer){
-        this.updateBuffer(bufferid, buffer, GL_STATIC_DRAW);
+        this.updateBuffer(bufferid, buffer, GraphicsBuffer.UsageType.STATIC_DRAW);
     }
 
-    public void updateBuffer(int bufferid, FloatBuffer buffer, int buffertype){
-        GraphicsBuffer vbo = createGLBuffer(buffer, buffertype);
+    /**
+     * Sets the buffer with the given ID to the given {@link FloatBuffer}
+     * <br>
+     * This sets the buffer to the given buffer type, optimizing for reading operations
+     * @param bufferid Buffer to replace
+     * @param buffer Buffer to update
+     * @param buffertype Type of buffer to upload, of types GL_STATIC_DRAW, GL_DYNAMIC_DRAW, and GL_STREAM_DRAW
+     */
+    public void updateBuffer(int bufferid, FloatBuffer buffer, GraphicsBuffer.UsageType buffertype){
+        GraphicsBuffer vbo = GraphicsBuffer.allocate(GraphicsBuffer.BufferType.VERTEX_ARRAY_BUFFER, buffer, buffertype);
         vertexBufferObjects.set(bufferid, vbo);
-    }
-
-    private GraphicsBuffer createGLBuffer(FloatBuffer buffer, int buffertype){
-        var vbo = GraphicsBuffer.allocate(GL_ARRAY_BUFFER, buffertype);
-        vbo.bind();
-        vbo.uploadData(buffer);
-        return vbo;
     }
 
     private void defBuffers(FloatBuffer[] buffers, IntBuffer ind ){
@@ -81,13 +116,13 @@ public class DrawnObject implements Drawable {
         vertexBufferObjects.clear();
 
         for(var buffer : buffers){
-            GraphicsBuffer vbo = createGLBuffer(buffer, GL_STATIC_DRAW);
+            GraphicsBuffer vbo = GraphicsBuffer.allocate(GraphicsBuffer.BufferType.VERTEX_ARRAY_BUFFER, buffer, GraphicsBuffer.UsageType.STATIC_DRAW);
             vertexBufferObjects.add(vbo);
         }
 
         var indexbuffer = validateIndexBuffer(format, ind, buffers);
 
-        elementBuffer = GraphicsBuffer.allocate(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW);
+        elementBuffer = GraphicsBuffer.allocate(GraphicsBuffer.BufferType.ELEMENT_ARRAY_BUFFER, GraphicsBuffer.UsageType.STATIC_DRAW);
         elementBuffer.bind();
         elementBuffer.uploadData(indexbuffer);
     }
@@ -129,6 +164,7 @@ public class DrawnObject implements Drawable {
 
         if(!RenderEngine.getCurrentVAO().getFormat().equals(format))
             throw new RenderException("Invalid VAO bound during render");
+
         RenderEngine.getCurrentVAO().applyFormat(vertexBufferObjects);
 
         glDrawElementsInstancedBaseVertexBaseInstance(drawtype, elementcount, GL_UNSIGNED_INT, 0, instancecount, basevertex, 0);

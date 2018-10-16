@@ -59,18 +59,18 @@ public class ShaderController {
         linkShaders();
         compileShaders();
         createGLShaderFromFile();
-        long finaltime = System.currentTimeMillis()-time;
+        long finaltime = System.currentTimeMillis() - time;
 
         GGConsole.log("Compiled shaders in " + finaltime + " milliseconds");
 
         use("object.vert", "object.frag");
         saveCurrentConfiguration("object");
 
+        use("object.vert", "material.frag");
+        saveCurrentConfiguration("material");
+
         use("anim2.vert", "object.frag");
         saveCurrentConfiguration("animation2");
-
-        use("anim.vert", "object.frag");
-        saveCurrentConfiguration("animation");  
 
         use("object.vert", "terrainmulti.frag");
         saveCurrentConfiguration("terrain");
@@ -219,6 +219,9 @@ public class ShaderController {
     private static void setMatLinks(){
         findUniform("Kd"); 
         setTextureLocation("Kd", 0);
+
+        findUniform("terrain");
+        setTextureLocation("terrain", 0);
         
         findUniform("Ka");
         setTextureLocation("Ka", 1);

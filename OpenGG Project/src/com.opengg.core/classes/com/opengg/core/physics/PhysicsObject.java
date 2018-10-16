@@ -12,6 +12,8 @@ import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -20,28 +22,46 @@ import java.io.IOException;
 public class PhysicsObject {
     public PhysicsSystem system;
     public PhysicsObject parent;
-    public Vector3f position = new Vector3f();
-    public Quaternionf rotation = new Quaternionf();
-    public Vector3f scale = new Vector3f(1,1,1);
+    protected List<PhysicsObject> children = new ArrayList<>();
+    private Vector3f position = new Vector3f();
+    private Quaternionf rotation = new Quaternionf();
+    private Vector3f offset = new Vector3f();
+    private Quaternionf rotoffset = new Quaternionf();
+    private Vector3f scale = new Vector3f(1,1,1);
 
     public Vector3f getPosition() {
-        if(parent != null)
-            return parent.getPosition().add(parent.getRotation().transform(position).multiply(parent.getScale()));
         return position;
     }
 
-    public void setPosition(Vector3f position) {
-        this.position = position;
+    private void recalculatePosition(){
+        if(parent != null)
+            position = parent.getPosition().add(parent.getRotation().transform(offset).multiply(parent.getScale()));
+        else
+            position = offset;
+
+        children.forEach(PhysicsObject::recalculatePosition);
     }
 
-    public Quaternionf getRotation() {
-        if(parent != null)
-            return rotation.multiply(parent.getRotation());
+    public void setPosition(Vector3f position) {
+        this.offset = position; recalculatePosition();
+    }
+
+    public Quaternionf getRotation(){
         return rotation;
     }
 
+    private void recalculateRotation() {
+        if(parent != null)
+            rotation = rotoffset.multiply(parent.getRotation());
+        else
+            rotation = rotoffset;
+
+        children.forEach(PhysicsObject::recalculatePosition);
+        children.forEach(PhysicsObject::recalculateRotation);
+    }
+
     public void setRotation(Quaternionf rotation) {
-        this.rotation = rotation;
+        this.rotoffset = rotation; recalculateRotation(); recalculatePosition();
     }
 
     public Vector3f getScale() {
@@ -54,7 +74,15 @@ public class PhysicsObject {
     public void setScale(Vector3f scale) {
         this.scale = scale;
     }
-    
+
+    public Vector3f getOffset() {
+        return offset;
+    }
+
+    public Quaternionf getRotationOffset() {
+        return rotoffset;
+    }
+
     public PhysicsSystem getSystem(){
         return system;
     }
@@ -62,4 +90,13 @@ public class PhysicsObject {
     public void serialize(GGOutputStream out) throws IOException{}
 
     public void deserialize(GGInputStream in) throws IOException{}
+
+    public void onSystemChange(){
+        recalculatePosition();
+        recalculateRotation();
+    }
+
+    public void setParent(PhysicsObject object){
+        this.parent = object;
+    }
 }

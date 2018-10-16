@@ -131,11 +131,11 @@ public class TerrainComponentViewModel extends ViewModel{
 
     @Override
     public void updateViews() {
-        getByName("blot").value = ((TerrainComponent)component).blotmap.getData().get(0);
+        /*getByName("blot").value = ((TerrainComponent)component).blotmap.getData().get(0);
         getByName("t1").value = ((TerrainComponent)component).array.getData().get(0);
         getByName("t2").value = ((TerrainComponent)component).array.getData().get(1);
         getByName("t3").value = ((TerrainComponent)component).array.getData().get(2);
-        getByName("t4").value = ((TerrainComponent)component).array.getData().get(3);
+        getByName("t4").value = ((TerrainComponent)component).array.getData().get(3);*/
         
     }
 }

@@ -34,6 +34,8 @@ public class PhysicsSystem {
     
     public void addCollider(ColliderGroup collider){
         colliders.add(collider);
+        collider.system = this;
+        collider.onSystemChange();
     }
     
     public void removeCollider(ColliderGroup collider){
@@ -42,7 +44,8 @@ public class PhysicsSystem {
     
     public void addEntity(PhysicsEntity entity){
         entities.add(entity);
-        entity.setSystemData(this);
+        entity.system = this;
+        entity.onSystemChange();
     }
     
     public void removeEntity(PhysicsEntity entity){

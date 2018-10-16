@@ -111,23 +111,7 @@ public class OpenGGTest extends GGApplication{
         WorldEngine.getCurrent().attach(new LightComponent(
                 Light.createDirectional(new Quaternionf(new Vector3f(80f,0f,50)),
                         new Vector3f(1,1,1))));
-        long bef2 = System.currentTimeMillis();
-        Resource.getModel("goldleaf");
-        System.out.println("Done: " + (System.currentTimeMillis() - bef2));
-        //WorldEngine.getCurrent().attach(new ModelRenderComponent(Resource.getModel("goldleaf")).setScaleOffset(new Vector3f(0.001f)).setRotationOffset(new Vector3f(90,0,0)));
-        try {
-            long bef = System.currentTimeMillis();
-            GGModel model = AssimpModelLoader.loadModel("C:\\Users\\warre\\Downloads\\Wii - Super Mario Galaxy - Honeyhive Main Planet\\Main Planet\\foresthomeplanet.dae");
-            System.out.println("Done: " + (System.currentTimeMillis() - bef));
-            //BMFFile.writeModel(model,"C:\\Users\\warre\\Downloads\\Wii - Super Mario Galaxy - Honeyhive Main Planet\\Main Planet\\fd.bmf");
-            bef = System.currentTimeMillis();
-            var d = new GGRenderComponent(BMFFile.loadModel("C:\\Users\\warre\\Downloads\\Wii - Super Mario Galaxy - Honeyhive Main Planet\\Main Planet\\fd.bmf"));
-            System.out.println("Done: " + (System.currentTimeMillis() - bef));
-            d.setScaleOffset(new Vector3f(0.01f));
-            WorldEngine.getCurrent().attach(d);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
 
         for (int i = 0; i < 20; i++) {
             PhysicsComponent sphere = new PhysicsComponent();
@@ -143,22 +127,14 @@ public class OpenGGTest extends GGApplication{
                 Resource.getTexturePath("skybox\\majestic_rt.png"),
                 Resource.getTexturePath("skybox\\majestic_lf.png")), 500f));
 
-        /*try {
-            MModel s = ModelLoaderPlus.loadModel(new File("C:/res/model2.bmf"),new File("C:/res/anim2.gga"));
-            component = new AnimatedComponent(s);
-            component.setFormat(RenderEngine.animation2VAOFormat);
-            component.setShader("animation2");
-            WorldEngine.getCurrent().attach(component);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
+
         player = new FreeFlyComponent();
         player.use();
         WorldEngine.getCurrent().attach(player);
 
-        var model = new ModelRenderComponent(Resource.getModel("45acp"));
-        model.setName("ballmodel");
-        model.setScaleOffset(new Vector3f(0.2f));
+        ///var model = new ModelRenderComponent(Resource.getModel("45acp"));
+        //model.setName("ballmodel");
+        //model.setScaleOffset(new Vector3f(0.2f));
 
       //  WorldEngine.getCurrent().attach(model);
 

@@ -283,6 +283,7 @@ public final class OpenGG{
     /**
      * Returns the current {@link com.opengg.core.render.window.Window} for this instance
      * @return The current window
+     * @see WindowController#getWindow()
      */
     public static Window getWindow() {
         return WindowController.getWindow();

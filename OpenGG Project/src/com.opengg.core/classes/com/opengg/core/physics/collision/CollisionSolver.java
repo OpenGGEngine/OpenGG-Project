@@ -34,7 +34,7 @@ public class CollisionSolver {
     }
     
     public static Contact SphereSphere(SphereCollider c1, SphereCollider c2){
-        if(c1.getPosition().getDistance(c2.getPosition()) < c1.radius + c2.radius){
+        if(c1.getPosition().distanceTo(c2.getPosition()) < c1.radius + c2.radius){
             ContactManifold data = new ContactManifold();
             data.normal = c1.getPosition().subtract(c2.getPosition()).normalize();
             data.points.add(c1.getPosition().subtract(data.normal.multiply(c1.radius)));
@@ -46,7 +46,7 @@ public class CollisionSolver {
     
     public static Contact SphereCapsule(SphereCollider c1, CapsuleCollider c2){
         Vector3f closest = FastMath.closestPointTo(c2.getP1(), c2.getP2(), c1.getPosition(), true);  
-        if(c1.getPosition().getDistance(closest) < c1.radius + c2.radius){
+        if(c1.getPosition().distanceTo(closest) < c1.radius + c2.radius){
             ContactManifold data = new ContactManifold();
             data.normal = c1.getPosition().subtract(closest);
             data.points.add(c1.getPosition().add(data.normal.divide(c1.radius/c2.radius)));
@@ -59,7 +59,7 @@ public class CollisionSolver {
     
     public static boolean SphereRay(SphereCollider c1, Ray c2){
         Vector3f closest = FastMath.closestPointTo(c2.pos, c2.dir, c1.getPosition(), false);
-        return c1.getPosition().getDistance(closest) < c1.radius;
+        return c1.getPosition().distanceTo(closest) < c1.radius;
     }
     
     public static Contact SphereGround(SphereCollider c1){
@@ -75,7 +75,7 @@ public class CollisionSolver {
     
     public static Contact CapsuleCapsule(CapsuleCollider c1, CapsuleCollider c2){
         Vector3f[] closest = FastMath.closestApproach(c1.getP1(), c1.getP2(), c2.getP1(), c2.getP2(), true, true);
-        if(closest[0].getDistance(closest[1]) < c1.radius + c2.radius){
+        if(closest[0].distanceTo(closest[1]) < c1.radius + c2.radius){
             ContactManifold data = new ContactManifold();
             data.normal = closest[0].subtract(closest[1]);
             data.points.add(closest[0].add(data.normal.divide(c1.radius/c2.radius)));
@@ -88,7 +88,7 @@ public class CollisionSolver {
     
     public static boolean CapsuleRay(CapsuleCollider c1, Ray c2){
         Vector3f[] closest = FastMath.closestApproach(c1.getP1(), c1.getP2(), c2.pos, c2.dir, true, false);
-        return closest[0].getDistance(closest[1]) < c1.radius;
+        return closest[0].distanceTo(closest[1]) < c1.radius;
     }
     
     public static Contact CapsuleGround(CapsuleCollider c1){
@@ -135,11 +135,10 @@ public class CollisionSolver {
     public static Contact HullTerrain(ConvexHull h1, TerrainCollider t2){
         Mesh m = new Mesh(t2.mesh, false);
         m.setParent(t2.parent);
-        m.position = t2.position; 
-        m.rotation = t2.rotation;
-        m.scale = t2.scale;
+        m.setPosition(t2.getOffset());
+        m.setRotation(t2.getRotationOffset());
+        m.setScale(t2.getScale());
         m.system = t2.system;
-        
         Contact c = HullMesh(h1, m);
         
         Vector3f d = h1.getPosition().subtract(t2.getPosition()).divide(t2.getScale());
@@ -254,9 +253,9 @@ public class CollisionSolver {
         List<Vector3f> triAsHull = new ArrayList<>(3);
         ConvexHull h2 = new ConvexHull(triAsHull);
         h2.setParent(mesh.parent);
-        h2.position = mesh.position;
-        h2.rotation = mesh.rotation;
-        h2.scale = mesh.scale;
+        h2.setPosition(mesh.getOffset());
+        h2.setRotation(mesh.getRotationOffset());
+        h2.setScale(mesh.getScale());
         h2.system = mesh.system;
         
         for(MeshTriangle f : mesh.getFaces()){
@@ -266,7 +265,6 @@ public class CollisionSolver {
             triAsHull.add(f.c);
 
             f.aabb.recalculate();
-            
             if(!((ColliderGroup)hull.parent).aabb.isColliding(f.aabb)) continue;
             Contact tmf = HullHull(hull,h2);
             if(tmf != null) contacts.add(tmf);
@@ -288,8 +286,8 @@ public class CollisionSolver {
     public static Contact MeshGround(Mesh m){
         ConvexHull h2 = new ConvexHull(m.getPoints());
         h2.setParent(m.parent);
-        h2.position = m.position;
-        h2.rotation = m.rotation;
+        h2.setPosition(m.getOffset());
+        h2.setRotation(m.getRotationOffset());
         h2.system = m.system;
         return HullGround(h2);
     }

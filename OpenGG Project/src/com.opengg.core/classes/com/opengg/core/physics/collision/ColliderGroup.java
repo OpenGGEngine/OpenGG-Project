@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -29,9 +30,9 @@ public class ColliderGroup extends PhysicsObject{
     public static int idcount;
     public int id;
 
+    private List<Collider> colliders = new ArrayList<>();
+
     AABB aabb;
-    PhysicsEntity parent;
-    List<Collider> colliders = new ArrayList<>();
     boolean lastcollided = false;
     boolean forcetest = false;
     
@@ -50,9 +51,10 @@ public class ColliderGroup extends PhysicsObject{
         addColliders(all);
     }
     
-    public void addCollider(Collider bb) {
-        colliders.add(bb);
-        bb.setParent(this);
+    public void addCollider(Collider collider) {
+        children.add(collider);
+        colliders.add(collider);
+        collider.setParent(this);
     }
     
     public void addColliders(List<Collider> bb) {
@@ -67,21 +69,18 @@ public class ColliderGroup extends PhysicsObject{
     
     public void setBoundingBox(AABB box){
         this.aabb = box;
-        box.parent = this;
+        box.setParent(this);
+        children.add(box);
     }
-    
-    public void setParent(PhysicsEntity parent){
-        this.parent = parent;
-    }
-    
+
     public Collision testForCollision(ColliderGroup other) {
         this.aabb.recalculate();
         other.aabb.recalculate();
         if (!aabb.isColliding(other.aabb) && !(this.forcetest || other.forcetest))
             return null;
         Collision c = null;
-        for (Collider x: this.colliders) {
-            for(Collider y: other.colliders) {
+        for (Collider x: this.getColliders()) {
+            for(Collider y: other.getColliders()) {
                 x.updatePositions();
                 y.updatePositions();
                 Contact data = x.isColliding(y);
@@ -104,8 +103,8 @@ public class ColliderGroup extends PhysicsObject{
         out.write(id);
         out.write(aabb.lwh);
 
-        out.write(this.colliders.size());
-        for(var collider : colliders){
+        out.write(this.children.size());
+        for(var collider : children){
             out.write(collider.getClass().getName());
             collider.serialize(out);
         }
@@ -129,21 +128,5 @@ public class ColliderGroup extends PhysicsObject{
                 GGConsole.error("Failed to insantiate collider with classname " + classname + ": " + e.getMessage());
             }
         }
-    }
-
-    @Override
-    public Vector3f getPosition(){
-        if(parent != null)
-            return parent.getPosition().add(parent.getRotation().transform(position));
-        else
-            return super.getPosition();
-    }
-    
-    @Override
-    public Quaternionf getRotation(){
-        if(parent != null)
-            return parent.getRotation().multiply(rotation);
-        else
-            return super.getRotation();
     }
 }
