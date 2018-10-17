@@ -66,7 +66,6 @@ public class Client {
             queuer.writeData(out);
 
             var data = ((ByteArrayOutputStream)out.getStream()).toByteArray();
-            System.out.println("sad");
             Packet.send(udpsocket, data, address, port);
         } catch (IOException e) {
             e.printStackTrace();
@@ -74,21 +73,21 @@ public class Client {
     }
 
     public void accept(Packet packet){
-        System.out.println("cooter master");
         byte[] bytes = packet.getData();
         if(Arrays.equals(bytes, new byte[packetsize])) return;
 
-        var in = new GGInputStream(ByteBuffer.wrap(bytes));
+        var in = new GGInputStream(bytes);
         try {
 
             long time = in.readLong() + timedifference;
             short amount = in.readShort();
+            var delta = (Instant.now().toEpochMilli() - time)/1000f;
             for (int i = 0; i < amount; i++) {
                 short id = in.readShort();
                 var component = WorldEngine.getCurrent().find(id);
                 if(component != null){
                     component.deserializeUpdate(in);
-                    component.update((Instant.now().toEpochMilli() - time)/1000);
+                    component.update(delta);
                 }
             }
         } catch (IOException e) {

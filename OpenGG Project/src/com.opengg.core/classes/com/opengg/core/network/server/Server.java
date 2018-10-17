@@ -110,7 +110,7 @@ public class Server {
 
             var bytes = ((ByteArrayOutputStream)out.getStream()).toByteArray();
             for(ServerClient sc : clients){
-                System.out.println("diddle");sc.send(udpsocket, bytes); }
+                sc.send(udpsocket, bytes); }
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -176,7 +176,6 @@ public class Server {
     }
 
     public void accept(Packet packet){
-        System.out.println("Zoom");
         var source = getClient(packet.getAddress(), packet.getPort());
 
         if(source == null){

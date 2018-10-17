@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PacketReceiver implements Runnable{
-    private final List<Tuple<Byte, PacketAcceptor>> processors;
+    private final List<Tuple<Byte, PacketAcceptor>> processors; //since im definitely going to forget why the tuple contains a byte its a packet identifier
     private final DatagramSocket socket;
     private int packetsize;
 
@@ -38,11 +38,9 @@ public class PacketReceiver implements Runnable{
     @Override
     public void run(){
         while(NetworkEngine.running() && !OpenGG.getEnded()){
-            System.out.println("ffsasdfsdfaasfdfasdfasd");
             Packet packet = Packet.receive(socket, packetsize);
             byte[] bytes = packet.getData();
             byte type = packet.getData()[0];
-            System.out.println("WIllyking");
             for(var processortuple : processors){
                 if(processortuple.x == type || processortuple.x == 0)
                     processortuple.y.accept(packet);

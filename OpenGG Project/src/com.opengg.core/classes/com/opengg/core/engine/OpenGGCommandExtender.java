@@ -15,6 +15,7 @@ import com.opengg.core.console.UserCommand;
 import static com.opengg.core.engine.OpenGG.*;
 
 import com.opengg.core.model.ModelManager;
+import com.opengg.core.network.NetworkEngine;
 import com.opengg.core.physics.PhysicsRenderer;
 import com.opengg.core.physics.collision.CollisionManager;
 import com.opengg.core.render.postprocess.PostProcessController;
@@ -157,6 +158,11 @@ public class OpenGGCommandExtender implements ConsoleListener{
 
                     }
 
+                }
+                break;
+            case "connect":
+                if(command.argCount == 2){
+                    NetworkEngine.connect(command.args[0], Integer.parseInt(command.args[1]));
                 }
         }
     }

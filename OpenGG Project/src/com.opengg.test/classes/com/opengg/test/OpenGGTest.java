@@ -15,6 +15,7 @@ import com.opengg.core.model.ggmodel.GGRenderComponent;
 import com.opengg.core.model.ggmodel.io.AssimpModelLoader;
 import com.opengg.core.model.ggmodel.io.BMFFile;
 import com.opengg.core.model.modelloaderplus.AnimatedComponent;
+import com.opengg.core.network.NetworkEngine;
 import com.opengg.core.physics.collision.AABB;
 import com.opengg.core.physics.collision.ColliderGroup;
 import com.opengg.core.physics.collision.SphereCollider;
@@ -60,8 +61,8 @@ public class OpenGGTest extends GGApplication{
     public static void main(String[] args){
         WindowInfo w = new WindowInfo();
         w.displaymode = WindowOptions.WINDOWED;
-        w.width = 1528;
-        w.height = 650;
+        w.width = 1280;
+        w.height = 960;
         w.resizable = true;
         w.type = "GLFW";
         w.vsync = true;
@@ -105,9 +106,9 @@ public class OpenGGTest extends GGApplication{
 
         GUIController.addAndUse(mainview, "mainview");
 
-        //NetworkEngine.connect("localhost", 25565);
+        NetworkEngine.connect("localhost", 25565);
 
-
+/*
         WorldEngine.getCurrent().attach(new LightComponent(
                 Light.createDirectional(new Quaternionf(new Vector3f(80f,0f,50)),
                         new Vector3f(1,1,1))));
@@ -117,8 +118,21 @@ public class OpenGGTest extends GGApplication{
             PhysicsComponent sphere = new PhysicsComponent();
             sphere.getEntity().setPosition(new Vector3f(120f * (float)Math.random(), (float)Math.random() * 40f + 200, (float)Math.random() * 120f));
             sphere.addCollider(new ColliderGroup(new AABB( 3, 3, 3),  new SphereCollider(1)));
-            //WorldEngine.getCurrent().attach(new ModelRenderComponent(Resource.getModel("sphere")).attach(sphere));//.attach(new LightComponent(new Light(new Vector3f(), new Vector3f(1,1,1), 100, 100))));
+
         }
+
+
+
+
+        player = new FreeFlyComponent();
+        player.use();
+        WorldEngine.getCurrent().attach(player);
+*/
+        ///var model = new ModelRenderComponent(Resource.getModel("45acp"));
+        //model.setName("ballmodel");
+        //model.setScaleOffset(new Vector3f(0.2f));
+
+      //  WorldEngine.getCurrent().attach(model);
 
         WorldEngine.getCurrent().getRenderEnvironment().setSkybox(new Skybox(Texture.getSRGBCubemap(Resource.getTexturePath("skybox\\majestic_ft.png"),
                 Resource.getTexturePath("skybox\\majestic_bk.png"),
@@ -126,18 +140,6 @@ public class OpenGGTest extends GGApplication{
                 Resource.getTexturePath("skybox\\majestic_dn.png"),
                 Resource.getTexturePath("skybox\\majestic_rt.png"),
                 Resource.getTexturePath("skybox\\majestic_lf.png")), 500f));
-
-
-        player = new FreeFlyComponent();
-        player.use();
-        WorldEngine.getCurrent().attach(player);
-
-        ///var model = new ModelRenderComponent(Resource.getModel("45acp"));
-        //model.setName("ballmodel");
-        //model.setScaleOffset(new Vector3f(0.2f));
-
-      //  WorldEngine.getCurrent().attach(model);
-
 
         BindController.addBind(ControlType.KEYBOARD, "forward", KEY_W);
         BindController.addBind(ControlType.KEYBOARD, "backward", KEY_S);
@@ -156,7 +158,7 @@ public class OpenGGTest extends GGApplication{
         
         //RenderEngine.setProjectionData(ProjectionData.getPerspective(100, 0.2f, 3000f));
 
-       // WindowController.getWindow().setCursorLock(true);
+        //WindowController.getWindow().setCursorLock(true);
     }
 
     @Override

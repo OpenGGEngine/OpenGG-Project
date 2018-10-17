@@ -14,4 +14,13 @@ public class Action {
     public String name;
     public ActionType type;
     public int source;
+
+    @Override
+    public String toString() {
+        return "Action{" +
+                "name='" + name + '\'' +
+                ", type=" + type +
+                ", source=" + source +
+                '}';
+    }
 }

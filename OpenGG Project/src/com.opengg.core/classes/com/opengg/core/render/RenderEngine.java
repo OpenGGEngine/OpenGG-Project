@@ -526,9 +526,8 @@ public class RenderEngine {
     }
 
     public static boolean validateInitialization() {
-        //if(!GGInfo.isServer() && !initialized) throw new RenderException("OpenGL is not initialized!");
-        return true;
-        //return initialized;
+        if(!GGInfo.isServer() && !initialized) throw new RenderException("OpenGL is not initialized!");
+        return initialized;
     }
     
     public static void destroy(){

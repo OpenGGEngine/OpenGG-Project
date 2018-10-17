@@ -6,8 +6,6 @@
 
 package com.opengg.core.world.components;
 
-import com.opengg.core.animation.Animation;
-import com.opengg.core.animation.Curve;
 import com.opengg.core.engine.OpenGG;
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.math.Vector3f;
@@ -65,15 +63,4 @@ public class LightComponent extends Component{
         OpenGG.asyncExec(this::use);
     }
 
-    @Override
-    public void applyAnimation(Animation a) {
-        for(Map.Entry<String,Curve> property :a.properties.entrySet()){
-            processDefaultAnim(property);
-            switch(property.getKey()){
-                case "lightdistance":
-                    light.setDistance((float)property.getValue().getCurrentValue());
-                    break;
-            }
-        }
-    }
 }

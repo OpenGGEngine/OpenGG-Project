@@ -3,7 +3,7 @@ package com.opengg.core.model.ggmodel;
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.world.components.RenderComponent;
 
-import static org.lwjgl.opengl.GL11C.glGetError;
+import static org.lwjgl.opengl.GL11.glGetError;
 
 public class GGRenderComponent extends RenderComponent {
 

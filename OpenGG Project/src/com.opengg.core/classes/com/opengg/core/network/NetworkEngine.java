@@ -51,13 +51,15 @@ public class NetworkEngine {
 
             var server = new Server(name, port, tcpsocket, udpsocket);
 
-            createReceiver(udpsocket, server.getPacketSize());
-            receiver.addProcessor((byte) 0, server::accept);
 
             GGConsole.log("Server initialized on port " + port);
 
             server.start();
             NetworkEngine.server = server;
+
+            createReceiver(udpsocket, server.getPacketSize());
+            receiver.addProcessor((byte) 0, server::accept);
+
             return server;
         } catch (IOException ex) {
             GGConsole.warning("Failed to create server");

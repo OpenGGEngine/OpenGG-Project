@@ -47,11 +47,6 @@ public class RenderComponent extends Component implements Renderable{
             drawable.render();
         }
     }
-
-    @Override
-    public void update(float delta){
-        
-    }
     
     public String getShader() {
         return shader;
@@ -89,7 +84,6 @@ public class RenderComponent extends Component implements Renderable{
     public void onWorldChange(){
         this.getWorld().addRenderable(this);
     }
-
     
     @Override
     public void serialize(GGOutputStream out) throws IOException{
