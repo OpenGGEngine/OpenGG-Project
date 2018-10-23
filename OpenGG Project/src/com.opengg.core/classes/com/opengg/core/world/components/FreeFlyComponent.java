@@ -32,6 +32,8 @@ public class FreeFlyComponent extends ControlledComponent implements Actionable,
     private Vector3fm control = new Vector3fm();
     private Vector2f controlrot = new Vector2f();
     private Vector3f currot = new Vector3f();
+    private Vector3f vel = new Vector3f();
+
     private float rotspeed = 30;
     private float speed = 30;
     private final WorldObject head;
@@ -48,14 +50,18 @@ public class FreeFlyComponent extends ControlledComponent implements Actionable,
     
     @Override
     public void update(float delta){
-        Vector2f mousepos = getMouse();
-        float mult = Configuration.getFloat("sensitivity");
-        currot = new Vector3f(mousepos.multiply(mult).y, mousepos.multiply(mult).x, 0);
-        this.setRotationOffset(new Quaternionf(new Vector3f(currot.x, currot.y, currot.z)));
-       
-        Vector3f nvector = new Vector3f(control).multiply(delta * 15);
-        nvector = this.getRotation().transform(nvector);
-        setPositionOffset(getPositionOffset().add(nvector));
+        if(isCurrentUser()){
+            Vector2f mousepos = getMouse();
+            currot = new Vector3f(mousepos.y, mousepos.x, 0);
+            this.setRotationOffset(new Quaternionf(currot));
+
+            vel = this.getRotation().transform(new Vector3f(control).multiply(delta * 15));
+            setPositionOffset(getPositionOffset().add(vel));
+        }else{
+            System.out.println("User " + this.getUserId() + ":  " + vel);
+            this.setPositionOffset(this.getPositionOffset().add(vel));
+        }
+
     }
     
     @Override
@@ -138,7 +144,19 @@ public class FreeFlyComponent extends ControlledComponent implements Actionable,
         pcontrol.use();
         view.use();
     }
-    
+
+    @Override
+    public void serializeUpdate(GGOutputStream stream) throws IOException{
+        super.serializeUpdate(stream);
+        stream.write(vel);
+    }
+
+    @Override
+    public void deserializeUpdate(GGInputStream stream) throws IOException{
+        super.deserializeUpdate(stream);
+        vel = stream.readVector3f();
+    }
+
     @Override
     public void serialize(GGOutputStream stream) throws IOException{
         super.serialize(stream);

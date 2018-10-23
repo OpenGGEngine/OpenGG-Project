@@ -1,5 +1,6 @@
 package com.opengg.core.model.ggmodel.process;
 
+import com.opengg.core.math.FastMath;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.model.ggmodel.GGVertex;
 import com.opengg.core.physics.collision.ConvexHull;
@@ -31,7 +32,7 @@ public class ConvexHullUtil {
         Vector3f point3 = new Vector3f();
         for(int i=0;i<vertices.size();i++){
             if(i == p1 || i== p2) continue;
-            float calDis = distLinePoint(vertices.get(i).position,point1,point2);
+            float calDis = vertices.get(i).position.distanceTo(FastMath.closestPointTo(point1, point2, vertices.get(i).position, false));
             if(calDis > distance){
                 distance = calDis;
                 point3 = vertices.get(i).position;
@@ -41,12 +42,5 @@ public class ConvexHullUtil {
     }
     public static ConvexHull generateCH(ArrayList<GGVertex> vertices){
         return null;
-    }
-    public float distLinePoint(Vector3f a,Vector3f b,Vector3f c){
-        Vector3f d = c.subtract(b).divide(c.distanceTo(b));
-        Vector3f v = a.subtract(b);
-        float t = v.dot(d);
-        Vector3f p = b.add(d.multiply(t));
-        return p.distanceTo(a);
     }
 }

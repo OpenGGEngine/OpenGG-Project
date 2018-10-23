@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -169,29 +170,14 @@ public class CollisionSolver {
         for(Vector3f v : h1.vertices){
             nlist.add(new Vector4f(v).multiply(h1matrix).truncate());
         }
-        
-        float lowest = Float.MAX_VALUE;
-        List<Vector3f> lowestpoints = new LinkedList<>();
-        for(Vector3f v : nlist){
-            if(FastMath.isEqual(v.y, lowest, FastMath.FLOAT_ROUNDING_ERROR*10)){
-                lowestpoints.add(v);
-            }else if(v.y < lowest-FastMath.FLOAT_ROUNDING_ERROR){
-                lowestpoints.clear();
-                lowest = v.y;
-                lowestpoints.add(v);
-            }
-        }
-        
-        float ground = PhysicsEngine.getInstance().getConstants().BASE;
-        if(lowest > ground) return null;
-        
-        ContactManifold data = new ContactManifold();
-        data.depth = ground - lowest;
-        data.normal = new Vector3f(0,1,0);
-        for(Vector3f low : lowestpoints){
-            data.points.add(new Vector3f(low.x, ground, low.z));
-        }
-        return new Contact(data);
+
+        var manifolds = nlist.stream()
+                .filter(v -> v.y < PhysicsEngine.getInstance().getConstants().BASE)
+                .map(p -> new ContactManifold(new Vector3f(0,1,0), List.of(p), PhysicsEngine.getInstance().getConstants().BASE - p.y))
+                .collect(Collectors.toList());
+
+        if(manifolds.isEmpty()) return null;
+        return new Contact(manifolds);
     }
     
     public static Vector3f barycentric(Vector3f p,Vector3f a, Vector3f b, Vector3f c) {

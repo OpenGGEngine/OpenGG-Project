@@ -6,6 +6,7 @@
 
 package com.opengg.core.network.client;
 
+import com.opengg.core.Configuration;
 import com.opengg.core.GGInfo;
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.engine.OpenGG;
@@ -56,43 +57,6 @@ public class Client {
 
     public void start(){
         running = true;
-    }
-
-    public void update(){
-        try {
-            var out = new GGOutputStream();
-
-            out.write(MouseController.get());
-            queuer.writeData(out);
-
-            var data = ((ByteArrayOutputStream)out.getStream()).toByteArray();
-            Packet.send(udpsocket, data, address, port);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void accept(Packet packet){
-        byte[] bytes = packet.getData();
-        if(Arrays.equals(bytes, new byte[packetsize])) return;
-
-        var in = new GGInputStream(bytes);
-        try {
-
-            long time = in.readLong() + timedifference;
-            short amount = in.readShort();
-            var delta = (Instant.now().toEpochMilli() - time)/1000f;
-            for (int i = 0; i < amount; i++) {
-                short id = in.readShort();
-                var component = WorldEngine.getCurrent().find(id);
-                if(component != null){
-                    component.deserializeUpdate(in);
-                    component.update(delta);
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     public void doHandshake() throws IOException{
@@ -158,6 +122,42 @@ public class Client {
         WorldEngine.useWorld(w);
 
         GGConsole.log("World downloaded");
+    }
+
+    public void update(){
+        try {
+            var out = new GGOutputStream();
+
+            out.write(MouseController.get().multiply(Configuration.getFloat("sensitivity")));
+            queuer.writeData(out);
+
+            var data = ((ByteArrayOutputStream)out.getStream()).toByteArray();
+            Packet.send(udpsocket, data, address, port);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void accept(Packet packet){
+        byte[] bytes = packet.getData();
+        var in = new GGInputStream(bytes);
+        try {
+
+            long time = in.readLong() + timedifference;
+            short amount = in.readShort();
+            var delta = (Instant.now().toEpochMilli() - time)/1000f;
+            for (int i = 0; i < amount; i++) {
+                short id = in.readShort();
+                var component = WorldEngine.getCurrent().find(id);
+
+                if(component != null){
+                    component.deserializeUpdate(in);
+                    component.update(delta);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public InetAddress getServerIP() {

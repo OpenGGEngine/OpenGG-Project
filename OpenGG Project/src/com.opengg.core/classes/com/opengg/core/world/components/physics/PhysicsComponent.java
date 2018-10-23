@@ -58,7 +58,7 @@ public class PhysicsComponent extends Component {
     
     @Override
     public void onRotationChange(Quaternionf nrot){
-        entity.setRotation(nrot);
+        //entity.setRotation(nrot);
     }
 
     @Override

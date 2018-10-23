@@ -18,12 +18,16 @@ import com.opengg.core.model.modelloaderplus.AnimatedComponent;
 import com.opengg.core.network.NetworkEngine;
 import com.opengg.core.physics.collision.AABB;
 import com.opengg.core.physics.collision.ColliderGroup;
+import com.opengg.core.physics.collision.ConvexHull;
 import com.opengg.core.physics.collision.SphereCollider;
 import com.opengg.core.render.ProjectionData;
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.engine.Resource;
+import com.opengg.core.render.drawn.TexturedDrawnObject;
 import com.opengg.core.render.light.Light;
+import com.opengg.core.render.objects.ObjectCreator;
 import com.opengg.core.render.text.Text;
+import com.opengg.core.render.texture.TextureManager;
 import com.opengg.core.render.window.GLFWWindow;
 import com.opengg.core.render.window.WindowController;
 import com.opengg.core.world.Skybox;
@@ -38,14 +42,12 @@ import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.text.impl.GGFont;
 import com.opengg.core.render.window.WindowInfo;
 import com.opengg.core.render.window.WindowOptions;
-import com.opengg.core.world.components.FreeFlyComponent;
-import com.opengg.core.world.components.LightComponent;
-import com.opengg.core.world.components.ModelRenderComponent;
-import com.opengg.core.world.components.TerrainComponent;
+import com.opengg.core.world.components.*;
 import com.opengg.core.world.components.physics.PhysicsComponent;
 import com.opengg.core.world.components.viewmodel.ViewModelComponentRegistry;
 
 import java.io.IOException;
+import java.util.List;
 
 
 public class OpenGGTest extends GGApplication{
@@ -106,33 +108,41 @@ public class OpenGGTest extends GGApplication{
 
         GUIController.addAndUse(mainview, "mainview");
 
-        NetworkEngine.connect("localhost", 25565);
+  //      NetworkEngine.connect("localhost", 25565);
 
-/*
+
         WorldEngine.getCurrent().attach(new LightComponent(
                 Light.createDirectional(new Quaternionf(new Vector3f(80f,0f,50)),
                         new Vector3f(1,1,1))));
 
 
-        for (int i = 0; i < 20; i++) {
-            PhysicsComponent sphere = new PhysicsComponent();
-            sphere.getEntity().setPosition(new Vector3f(120f * (float)Math.random(), (float)Math.random() * 40f + 200, (float)Math.random() * 120f));
-            sphere.addCollider(new ColliderGroup(new AABB( 3, 3, 3),  new SphereCollider(1)));
+        for (int i = 0; i < 3; i++) {
+            PhysicsComponent object = new PhysicsComponent();
+           // object.getEntity().setRotation(new Quaternionf(new Vector3f((float)Math.random()*360, (float)Math.random()*360, (float)Math.random()*360)));
+            object.getEntity().setPosition(new Vector3f(20f * (float)Math.random(), (float)Math.random() * 1f + 30, (float)Math.random() * 20f));
+            object.addCollider(new ColliderGroup(new AABB( 3, 3, 3),  new ConvexHull(List.of(
+                    new Vector3f(-1,-1,-1),
+                    new Vector3f(-1,-1,1),
+                    new Vector3f(-1,1,-1),
+                    new Vector3f(-1,1,1),
+                    new Vector3f(1,-1,-1),
+                    new Vector3f(1,-1,1),
+                    new Vector3f(1,1,-1),
+                    new Vector3f(1,1,1)
+            ))));
+
+            WorldEngine.getCurrent().attach(
+                    new RenderComponent(
+                            new TexturedDrawnObject(ObjectCreator.createCube(1), Texture.create(Texture.config(), TextureManager.getDefault()))).attach(object));
+            System.out.println(object.getEntity().getRotation());
 
         }
-
-
-
 
         player = new FreeFlyComponent();
         player.use();
         WorldEngine.getCurrent().attach(player);
-*/
-        ///var model = new ModelRenderComponent(Resource.getModel("45acp"));
-        //model.setName("ballmodel");
-        //model.setScaleOffset(new Vector3f(0.2f));
 
-      //  WorldEngine.getCurrent().attach(model);
+
 
         WorldEngine.getCurrent().getRenderEnvironment().setSkybox(new Skybox(Texture.getSRGBCubemap(Resource.getTexturePath("skybox\\majestic_ft.png"),
                 Resource.getTexturePath("skybox\\majestic_bk.png"),
@@ -158,7 +168,7 @@ public class OpenGGTest extends GGApplication{
         
         //RenderEngine.setProjectionData(ProjectionData.getPerspective(100, 0.2f, 3000f));
 
-        //WindowController.getWindow().setCursorLock(true);
+        WindowController.getWindow().setCursorLock(true);
     }
 
     @Override

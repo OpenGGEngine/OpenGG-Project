@@ -18,7 +18,15 @@ public class ContactManifold {
     public Vector3f normal;
     public List<Vector3f> points = new ArrayList<>(3);
     public float depth;
-    
+
+    public ContactManifold(){}
+
+    public ContactManifold(Vector3f normal, List<Vector3f> points, float depth) {
+        this.normal = normal;
+        this.points = points;
+        this.depth = depth;
+    }
+
     public ContactManifold reverse(){
         normal = normal.inverse();
         return this;

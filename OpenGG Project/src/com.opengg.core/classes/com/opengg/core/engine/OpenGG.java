@@ -162,7 +162,7 @@ public final class OpenGG{
         while(!GGInfo.isEnded()){
             runUpdate();
             try {
-                Thread.sleep(1000/60);
+                Thread.sleep(1000/120);
             } catch (InterruptedException ex) {
                 GGConsole.error("OpenGG thread has been interrupted!");
                 break;

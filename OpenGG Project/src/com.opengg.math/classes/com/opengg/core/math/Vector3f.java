@@ -9,6 +9,7 @@ import com.opengg.core.system.Allocator;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
+import java.util.List;
 
 /**
  * 3 component immutable vector with linear algebra functions
@@ -346,6 +347,18 @@ public class Vector3f implements Serializable{
         float zz = (z < 0) ? -z : z;
         return new Vector3f(xx,yy,zz);
     }
+
+    /**
+     * Finds and replaces all negative zeros in this vector with positive ones
+     * @return Vector with all negative zeros removed
+     */
+    public Vector3f rezero(){
+        return new Vector3f(
+                x == -0 ? 0 : x,
+                y == -0 ? 0 : y,
+                z == -0 ? 0 : z
+        );
+    }
     
     public Vector3f transformByQuat(Quaternionf q){
         return q.transform(this);
@@ -423,7 +436,11 @@ public class Vector3f implements Serializable{
         float xz = z - (dot + dot) * normal.z;
         return new Vector3f(xx, xy, xz);
     }
-    
+
+    public static Vector3f averageOf(List<Vector3f> vectors){
+        return averageOf(vectors.toArray(new Vector3f[0]));
+    }
+
     /**
      * Returns the average vector given a list of vectors<br>
      * This gets the average of each element and creates a new vector based off of each average

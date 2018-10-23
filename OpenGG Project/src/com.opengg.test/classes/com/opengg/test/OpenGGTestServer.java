@@ -58,6 +58,8 @@ public class OpenGGTestServer extends GGApplication{
             WorldEngine.getCurrent().attach(new ModelRenderComponent(Resource.getModel("sphere")).attach(sphere));
         }
 
+        WorldEngine.getCurrent().attach(new ModelRenderComponent(Resource.getModel("goldleaf")).setScaleOffset(new Vector3f(0.01f,0.01f,0.01f)));
+
         WorldEngine.getCurrent().getRenderEnvironment().setSkybox(new Skybox(Texture.getSRGBCubemap(Resource.getTexturePath("skybox\\majestic_ft.png"),
                 Resource.getTexturePath("skybox\\majestic_bk.png"),
                 Resource.getTexturePath("skybox\\majestic_up.png"),

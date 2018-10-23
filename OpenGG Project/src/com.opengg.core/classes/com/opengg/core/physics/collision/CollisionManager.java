@@ -13,6 +13,7 @@ import com.opengg.core.physics.PhysicsSystem;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -23,20 +24,20 @@ public class CollisionManager {
     private static final List<ColliderGroup> test = new LinkedList<>();
     private static final ColliderGroup coll = new ColliderGroup();
     public static boolean parallelProcessing = true;
-    
+
     public static void clearCollisions(){
         collisions.clear();
         test.clear();
     }
-    
+
     public static void addToTest(ColliderGroup c){
         test.add(c);
     }
-    
+
     public static void addToTest(List<ColliderGroup> c){
         test.addAll(c);
     }
-    
+
     public static void testForCollision(ColliderGroup next, PhysicsSystem system){
         Contact cm = null;
         for(Collider c : next.getColliders()){
@@ -66,169 +67,196 @@ public class CollisionManager {
             }
         }
     }
-    
+
     public static void testForCollisions(PhysicsSystem system){
         collisions.clear();
         //test.parallelStream().peek((c) -> testForCollision(c, system)).close();
         for(ColliderGroup next : test) testForCollision(next, system);
     }
 
-    public static void processCollisionResponse(Collision col){
+    public static void processCollisions(){
+        if(parallelProcessing) collisions.parallelStream().forEach((c) -> { processCollision(c); });
+        else for(Collision c : collisions) processCollision(c);
+
+        for(ColliderGroup next : test){
+            processResponse((PhysicsEntity) next.parent);
+        }
+    }
+
+    public static void processCollision(Collision col){
+        ArrayList<Vector3f> frictions = new ArrayList<>();
+        ArrayList<Vector3f> jrs = new ArrayList<>();
+        ArrayList<Vector3f> r1s = new ArrayList<>();
+        ArrayList<Vector3f> r2s = new ArrayList<>();
+        ArrayList<Vector3f> norms = new ArrayList<>();
+        ArrayList<Float> depths = new ArrayList<>();
+
         PhysicsEntity e1 = (PhysicsEntity) col.thiscollider.parent;
         PhysicsEntity e2 = (PhysicsEntity) col.other.parent;
         if(e1 != null && e2 != null){
-            ArrayList<Vector3f> jfs = new ArrayList<>();
-            ArrayList<Vector3f> invjfs = new ArrayList<>();
-            ArrayList<Vector3f> jrs = new ArrayList<>();
-            ArrayList<Vector3f> invjrs = new ArrayList<>();
-            ArrayList<Vector3f> r1s = new ArrayList<>();
-            ArrayList<Vector3f> r2s = new ArrayList<>();
-            ArrayList<Vector3f> norms = new ArrayList<>();
-            ArrayList<Vector3f> invnorms = new ArrayList<>();
-            ArrayList<Float> depths = new ArrayList<>();
-
-            for(ContactManifold mf : col.manifolds){
-                depths.add(mf.depth);
-                for(Vector3f point : mf.points){
-                    Vector3f R1 = point.subtract(e1.getPosition());
-                    Vector3f R2 = point.subtract(e2.getPosition());
-
-                    Vector3f v1 = e1.velocity.add(R1.cross(e1.angvelocity));
-                    Vector3f v2 = e2.velocity.add(R2.cross(e2.angvelocity));
-
-                    Vector3f vr = v1.subtract(v2);
-
-                    float jdenom = 1/e1.mass + 1/e2.mass + 
-                            (e1.inertialMatrix.inverse().multiply(R1.cross(mf.normal)).cross(R1).add(
-                                    e2.inertialMatrix.multiply(R2.cross(mf.normal)).cross(R2)))
-                                    .dot(mf.normal);
-                    float jnum = (vr.dot(mf.normal)*-(1+(e1.restitution + e2.restitution)/2f));
-                    float jr = jnum/jdenom; //reaction force size
-
-                    float jd = (e1.dynamicfriction+e2.dynamicfriction) * 0.5f * jr; //dynamic friction
-                    float js = (e1.staticfriction+e2.staticfriction) * 0.5f * jr; //static friction
-
-                    Vector3f t = new Vector3f(); //tangent vector to collision
-                    if(!FastMath.isZero(vr.dot(mf.normal))){
-                        Vector3f td = vr.subtract(mf.normal.multiply(vr.dot(mf.normal)));
-                        t = td.normalize();    
-                    }
-                    Vector3f jf = t.multiply(-jd); //friction force for dynamic collision
-
-                    if(js >= vr.dot(t) * (e1.mass+e2.mass)){
-                        jf = t.multiply(vr.dot(t)*(e1.mass+e2.mass)*-1f); //static friction
-                    }
-
-                    Vector3f jrv = mf.normal.multiply(jr); //reaction force along normal vector
-                    Vector3f jfv = jf;
-
-                    jrs.add(jrv);
-                    invjrs.add(jrv.inverse());
-                    
-                    jfs.add(jfv);
-                    invjfs.add(jfv.inverse());
-                    
-                    r1s.add(R1);
-                    r2s.add(R2);
-                    
-                    norms.add(mf.normal);
-                    invnorms.add(mf.normal.inverse());
-                }
-            }
-
-            e1.R.addAll(r1s);
-            e2.R.addAll(r2s);
-            
-            e1.jr.addAll(jrs);
-            e2.jr.addAll(invjrs);
-            
-            e1.jf.addAll(jfs);
-            e2.jf.addAll(invjfs);
-            
-            e1.norms.addAll(norms);
-            e2.norms.addAll(invnorms);
-
+            col.manifolds.stream()
+                    .map(m -> processContact(e1, e2, m))
+                    .collect(Collectors.toList());
         }else if(e1 == null ^ e2 == null){
-            ArrayList<Vector3f> jfs = new ArrayList<>();
-            ArrayList<Vector3f> jrs = new ArrayList<>();
-            ArrayList<Vector3f> rs = new ArrayList<>();
-            ArrayList<Vector3f> norms = new ArrayList<>();
-            ArrayList<Float> depths = new ArrayList<>();
-            for(ContactManifold mf : col.manifolds){
-                depths.add(mf.depth);
-                for(Vector3f point : mf.points){
-                    Vector3f R = point.subtract(e1.getPosition());
-                    Vector3f v = e1.velocity.add(R.cross(e1.angvelocity));
-
-                    float jdenom = 1/ e1.mass + (e1.inertialMatrix.inverse().multiply(
-                            R.cross(mf.normal)).cross(R)).dot(mf.normal);
-                    float jnum = v.dot(mf.normal) * -(1 + e1.restitution);
-                    float jr = jnum/jdenom;
-
-                    float jd = e1.dynamicfriction * jr;
-                    float js = e1.staticfriction * jr;
-                    Vector3f t = new Vector3f();
-                    if(!FastMath.isZero(v.dot(mf.normal))){
-                        Vector3f td = v.subtract(mf.normal.multiply(v.dot(mf.normal)));
-                        t = td.normalize();   
-                        if(FastMath.isZero(td.length())) t = new Vector3f();
-                    }
-                    Vector3f jf = t.multiply(-jd);
-
-                    if(js >= v.dot(t)* e1.mass || FastMath.isEqual(v.dot(t), 0)){
-                        jf = t.multiply(v.dot(t)* e1.mass*-1f);
-                    }
-
-                    Vector3f jrv = mf.normal.multiply(jr);
-                    Vector3f jfv = mf.normal.multiply(jf.length());
-
-                    jrs.add(jrv);
-                    jfs.add(jfv);
-                    rs.add(R);
-                    norms.add(mf.normal);
-                }
-            }
-
-            e1.R.addAll(rs);
-            e1.jf.addAll(jfs);
-            e1.jr.addAll(jrs);
-            e1.norms.addAll(norms);
-            e1.depths.addAll(depths);
+            col.manifolds.stream()
+                    .map(m -> processContact(e1, m))
+                    .peek(m -> e1.responses.add(m))
+                    .collect(Collectors.toList());
         }
     }
-    
-    public static void processCollisions(){ 
-        if(parallelProcessing) collisions.parallelStream().forEach((c) -> { processCollisionResponse(c); });
-        else for(Collision c : collisions) processCollisionResponse(c);
-        
-        for(ColliderGroup next : test){
-            PhysicsEntity e = (PhysicsEntity) next.parent;
-            
-            Vector3f R = Vector3f.averageOf(e.R.toArray(new Vector3f[0]));
-            Vector3f jfv = Vector3f.averageOf(e.jf.toArray(new Vector3f[0]));
-            Vector3f jrv = Vector3f.averageOf(e.jr.toArray(new Vector3f[0]));
-            Vector3f normal = Vector3f.averageOf(e.norms.toArray(new Vector3f[0])).normalize();
 
-            float depth = (float) e.depths.stream().mapToDouble(s -> s)
-                    .average().orElse(0);
+    private static Response processContact(PhysicsEntity e1, ContactManifold manifold) {
+        Response result = new Response();
+        result.depth = manifold.depth;
+        for(Vector3f point : manifold.points){
+            var responseManifold = new ResponseManifold();
 
+            Vector3f R = point.subtract(e1.getPosition());
+            Vector3f v = e1.velocity.add(R.cross(e1.angvelocity));
 
-            if(e.norms.isEmpty())continue;
-            
-            e.setPosition(e.getPosition().add(normal.multiply(depth)));
+            float jnum = v.dot(manifold.normal) * -(1 + e1.restitution);
+            float jdenom = 1/ e1.mass + (e1.inertialMatrix.inverse().multiply(
+                    R.cross(manifold.normal)).cross(R)).dot(manifold.normal);
+            float jr = jnum/jdenom;
 
-            e.angvelocity = e.angvelocity.add(e.inertialMatrix.inverse().multiply(R.cross(normal)).multiply(jrv.length()).divide(e.mass));
-            e.velocity = e.velocity.add(jrv.add(jfv).divide(e.mass));
-            e.lowestContact = normal;
-            
-            e.R.clear();
-            e.jf.clear();
-            e.jr.clear();
-            e.norms.clear();
-            e.depths.clear();
+            float jd = e1.dynamicfriction * jr;
+            float js = e1.staticfriction * jr;
+            Vector3f tan = new Vector3f();
+            if(!v.cross(manifold.normal).rezero().equals(new Vector3f())){
+                tan = v.subtract(manifold.normal.multiply(v.dot(manifold.normal))).normalize();
+            }
+            Vector3f jf = tan.multiply(-jd);
+
+            if(js >= v.dot(tan) * e1.mass ){
+                jf = tan.multiply(v.dot(tan)* e1.mass * -1f);
+            }
+
+            Vector3f jrv = manifold.normal.multiply(jr);
+
+            responseManifold.jr = jrv;
+            responseManifold.jf = jf;
+            responseManifold.R1 = R;
+            responseManifold.normal = manifold.normal;
+
+            result.manifolds.add(responseManifold);
         }
+
+        return result;
+    }
+
+    private static Response processContact(PhysicsEntity e1, PhysicsEntity e2, ContactManifold manifold) {
+        Response result = new Response();
+        result.depth = manifold.depth;
+        for(Vector3f point : manifold.points){
+            var responseManifold = new ResponseManifold();
+
+
+            Vector3f R1 = point.subtract(e1.getPosition());
+            Vector3f R2 = point.subtract(e2.getPosition());
+
+            Vector3f v1 = e1.velocity.add(R1.cross(e1.angvelocity));
+            Vector3f v2 = e2.velocity.add(R2.cross(e2.angvelocity));
+
+            Vector3f v = v1.subtract(v2);
+
+            float jnum = (v.dot(manifold.normal)*-(1+(e1.restitution + e2.restitution)/2f));
+            float jdenom = 1/e1.mass + 1/e2.mass +
+                    (e1.inertialMatrix.inverse().multiply(R1.cross(manifold.normal)).cross(R1).add(
+                            e2.inertialMatrix.multiply(R2.cross(manifold.normal)).cross(R2)))
+                            .dot(manifold.normal);
+
+            float jr = jnum/jdenom; //reaction force size
+
+            float jd = (e1.dynamicfriction+e2.dynamicfriction) * 0.5f * jr; //dynamic friction
+            float js = (e1.staticfriction+e2.staticfriction) * 0.5f * jr; //static friction
+
+            Vector3f tan = new Vector3f(); //tangent vector to collision
+            if(!v.cross(manifold.normal).rezero().equals(new Vector3f())){
+                tan = v.subtract(manifold.normal.multiply(v.dot(manifold.normal))).normalize();
+            }
+            Vector3f jf = tan.multiply(-jd); //friction force for dynamic collision
+
+            if(js >= v.dot(tan) * (e1.mass+e2.mass)){
+                jf = tan.multiply(v.dot(tan)*(e1.mass+e2.mass)*-1f); //static friction
+            }
+
+            Vector3f jrv = manifold.normal.multiply(jr); //reaction force along normal vector
+
+            responseManifold.jr = jrv;
+            responseManifold.jf = jf;
+            responseManifold.R1 = R1;
+            responseManifold.R2 = R2;
+            responseManifold.normal = manifold.normal;
+
+            result.manifolds.add(responseManifold);
+        }
+
+        return result;
+    }
+
+    private static void processResponse(PhysicsEntity e) {
+        if(e.responses.isEmpty()) return;
+        for(var response : e.responses){
+            for(var manifold : response.manifolds){
+                var R = manifold.R1;
+                var jfv = manifold.jf;
+                var jrv = manifold.jr;
+                var normal = manifold.normal;
+                System.out.println(R);
+                e.angvelocity = e.angvelocity.add(e.inertialMatrix.inverse().multiply(R.cross(normal)).multiply(jrv.length()));
+                e.velocity = e.velocity.add(jrv.add(jfv).divide(e.mass));
+            }
+
+            var normal = Vector3f.averageOf(response.manifolds.stream()
+                    .map(s -> s.normal)
+                    .collect(Collectors.toList()));
+
+            e.setPosition(e.getPosition().add(normal.multiply(response.depth)));
+        }
+
+        e.responses.clear();
     }
 
     private CollisionManager() {
+    }
+
+    public static class Response {
+        public List<ResponseManifold> manifolds = new ArrayList<>();
+        float depth;
+
+        public Response() {}
+
+        public Response(float depth) {
+
+            this.depth = depth;
+        }
+
+        public Response invert(){
+            var inverted = new Response();
+
+            inverted.manifolds = manifolds.stream().map(ResponseManifold::invert).collect(Collectors.toList());
+            inverted.depth = depth;
+
+            return inverted;
+        }
+    }
+
+    public static class ResponseManifold{
+        Vector3f jr;
+        Vector3f jf;
+        Vector3f R1;
+        Vector3f R2;
+        Vector3f normal;
+
+        public ResponseManifold invert(){
+            var inverted = new ResponseManifold();
+            inverted.jr = jr.inverse();
+            inverted.jf = jf.inverse();
+            inverted.normal = normal.inverse();
+            inverted.R1 = R2;
+            inverted.R2 = R1;
+
+            return inverted;
+        }
     }
 }

@@ -219,6 +219,10 @@ public abstract class Component{
         regenScale();
         return this;
     }
+
+    public final Component setScaleOffset(float scale){
+        return this.setScaleOffset(new Vector3f(scale));
+    }
     
     private void regenScale(){
         if(parent != null){

@@ -1,5 +1,6 @@
 package com.opengg.core.world.components;
 
+import com.opengg.core.Configuration;
 import com.opengg.core.GGInfo;
 import com.opengg.core.io.input.mouse.MouseController;
 import com.opengg.core.math.Vector2f;
@@ -22,7 +23,7 @@ public class ControlledComponent extends Component{
 
     public Vector2f getMouse(){
         if(!GGInfo.isServer() && isCurrentUser()){
-            return MouseController.get();
+            return MouseController.get().multiply(Configuration.getFloat("sensitivity"));
         }else{
             if(GGInfo.isServer()){
                 var user = NetworkEngine.getServer().getByID(userid);

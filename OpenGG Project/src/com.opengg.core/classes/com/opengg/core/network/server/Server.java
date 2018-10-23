@@ -97,7 +97,7 @@ public class Server {
 
     public void sendState(){
         try {
-            var allcomps = WorldEngine.getCurrent().getAll();
+            var allcomps = WorldEngine.getCurrent().getAll();//.stream().filter(s -> new Random().nextInt(5) == 2).collect(Collectors.toList());
             GGOutputStream out = new GGOutputStream();
 
             out.write(Instant.now().toEpochMilli());
