@@ -196,24 +196,29 @@ public class CollisionManager {
 
     private static void processResponse(PhysicsEntity e) {
         if(e.responses.isEmpty()) return;
+        Vector3f depthchanges = new Vector3f();
+
         for(var response : e.responses){
             for(var manifold : response.manifolds){
                 var R = manifold.R1;
-                var jfv = manifold.jf;
-                var jrv = manifold.jr;
+                var jfv = manifold.jf.divide(response.manifolds.size());
+                var jrv = manifold.jr.divide(response.manifolds.size());
                 var normal = manifold.normal;
-                System.out.println(R);
-                e.angvelocity = e.angvelocity.add(e.inertialMatrix.inverse().multiply(R.cross(normal)).multiply(jrv.length()));
-                e.velocity = e.velocity.add(jrv.add(jfv).divide(e.mass));
+                e.angvelocity = e.angvelocity.subtract(e.inertialMatrix.inverse().multiply(R.cross(normal)).multiply(jrv.length()));
+                //e.velocity = e.velocity.add(jrv.add(jfv).divide(e.mass));
             }
 
             var normal = Vector3f.averageOf(response.manifolds.stream()
                     .map(s -> s.normal)
                     .collect(Collectors.toList()));
 
-            e.setPosition(e.getPosition().add(normal.multiply(response.depth)));
+            AABB depthaabb = new AABB(depthchanges, new Vector3f());
+            if(!depthaabb.isColliding(normal.multiply(response.depth))){
+                depthchanges = depthchanges.add(normal.multiply(response.depth));
+            }
         }
 
+        e.setPosition(e.getPosition().add(depthchanges));
         e.responses.clear();
     }
 

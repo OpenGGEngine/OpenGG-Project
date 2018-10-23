@@ -118,7 +118,7 @@ public class OpenGGTest extends GGApplication{
 
         for (int i = 0; i < 3; i++) {
             PhysicsComponent object = new PhysicsComponent();
-           // object.getEntity().setRotation(new Quaternionf(new Vector3f((float)Math.random()*360, (float)Math.random()*360, (float)Math.random()*360)));
+            object.getEntity().setRotation(new Quaternionf(new Vector3f((float)Math.random()*360, (float)Math.random()*360, (float)Math.random()*360)));
             object.getEntity().setPosition(new Vector3f(20f * (float)Math.random(), (float)Math.random() * 1f + 30, (float)Math.random() * 20f));
             object.addCollider(new ColliderGroup(new AABB( 3, 3, 3),  new ConvexHull(List.of(
                     new Vector3f(-1,-1,-1),
