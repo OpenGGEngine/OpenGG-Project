@@ -9,7 +9,7 @@ module com.opengg.core {
     requires org.lwjgl.opengl;
     requires org.lwjgl.stb;
     requires org.lwjgl;
-    requires  org.lwjgl.stb.natives;
+    requires org.lwjgl.stb.natives;
     requires org.lwjgl.natives;
     requires org.lwjgl.assimp.natives;
     requires org.lwjgl.assimp;

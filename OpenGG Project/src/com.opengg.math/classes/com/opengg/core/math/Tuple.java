@@ -10,7 +10,6 @@ package com.opengg.core.math;
  * @author ethachu19
  */
 public class Tuple<X, Y> {
-
     public X x;
     public Y y;
 
@@ -65,5 +64,16 @@ public class Tuple<X, Y> {
 
     public String toString(){
         return "<" + this.x.toString() + "," + this.y.toString()+">";
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        System.out.println("Dab!");
+        if(obj == null) return false;
+        if(!(obj instanceof Tuple)) return false;
+
+        var tuple = (Tuple) obj;
+
+        return this.x.equals(tuple.x) && this.y.equals(tuple.y);
     }
 }

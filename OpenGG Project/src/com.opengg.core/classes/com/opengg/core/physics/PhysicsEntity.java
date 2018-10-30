@@ -50,7 +50,7 @@ public class PhysicsEntity extends PhysicsObject{
     public float mass = 1f;
     public float density = 1f;
     public float dynamicfriction = 0.4f;
-    public float staticfriction = 0.001f;
+    public float staticfriction = 0.1f;
     public float restitution = -0.5f;
     
     public List<CollisionManager.Response> responses = new ArrayList<>();

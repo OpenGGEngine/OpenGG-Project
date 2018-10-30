@@ -8,6 +8,7 @@ package com.opengg.core.physics;
 
 import com.opengg.core.physics.collision.ColliderGroup;
 import com.opengg.core.physics.collision.CollisionManager;
+import com.opengg.core.physics.collision.Floor;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
 
@@ -20,10 +21,18 @@ import java.util.List;
  * @author Javier
  */
 public class PhysicsSystem {
+    private final ColliderGroup floor = new ColliderGroup();
+
     private final PhysicsConstants constants = new PhysicsConstants();
     private List<ColliderGroup> colliders = new ArrayList<>();
     private List<PhysicsEntity> entities = new ArrayList<>();
-    
+
+    public PhysicsSystem(){
+        floor.setForceTest(true);
+        floor.getColliders().add(new Floor());
+        //colliders.add(floor);
+    }
+
     public List<PhysicsEntity> getEntities(){
         return entities;
     }

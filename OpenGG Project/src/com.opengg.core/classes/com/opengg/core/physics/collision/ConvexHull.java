@@ -28,15 +28,15 @@ public class ConvexHull extends Collider{
     }
 
     @Override
-    public Contact isColliding(Collider c) {
+    public List<ContactManifold> collide(Collider c) {
         if(c instanceof ConvexHull)
             return CollisionSolver.HullHull(this, (ConvexHull)c);
         else if(c instanceof Mesh)
             return CollisionSolver.HullMesh(this, (Mesh)c);
         else if(c instanceof TerrainCollider)
             return CollisionSolver.HullTerrain(this, (TerrainCollider) c);
-        else if(c == null)
+        else if(c instanceof Floor)
             return CollisionSolver.HullGround(this);
-        return null;
+        return new ArrayList<>();
     }
 }

@@ -10,13 +10,14 @@ import com.opengg.core.physics.PhysicsObject;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
 import java.io.IOException;
+import java.util.List;
 
 /**
  *
  * @author Javier
  */
 public abstract class Collider extends PhysicsObject{
-    public abstract Contact isColliding(Collider c);
+    public abstract List<ContactManifold> collide(Collider c);
 
     public void updatePositions(){}
 

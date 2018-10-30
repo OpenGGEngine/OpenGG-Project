@@ -8,9 +8,8 @@ package com.opengg.core.physics.collision;
 
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.exceptions.ClassInstantiationException;
-import com.opengg.core.math.Quaternionf;
-import com.opengg.core.math.Vector3f;
-import com.opengg.core.physics.PhysicsEntity;
+import com.opengg.core.math.Tuple;
+import com.opengg.core.math.UnorderedTuple;
 import com.opengg.core.physics.PhysicsObject;
 import com.opengg.core.util.ClassUtil;
 import com.opengg.core.util.GGInputStream;
@@ -20,7 +19,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static com.opengg.core.physics.collision.ContactManifold.averageContactManifolds;
 
 /**
  *
@@ -32,9 +34,8 @@ public class ColliderGroup extends PhysicsObject{
 
     private List<Collider> colliders = new ArrayList<>();
 
-    AABB aabb;
-    boolean lastcollided = false;
-    boolean forcetest = false;
+    private AABB aabb;
+    private boolean forceTest = false;
     
     public ColliderGroup(){
         this(new AABB(1,1,1), new ArrayList<>());
@@ -73,29 +74,35 @@ public class ColliderGroup extends PhysicsObject{
         children.add(box);
     }
 
-    public Collision testForCollision(ColliderGroup other) {
+    public AABB getBoundingBox() {
+        return aabb;
+    }
+
+    public boolean isForceTest() {
+        return forceTest;
+    }
+
+    public void setForceTest(boolean forceTest) {
+        this.forceTest = forceTest;
+    }
+
+    public Optional<Collision> testForCollision(ColliderGroup other) {
         this.aabb.recalculate();
         other.aabb.recalculate();
-        if (!aabb.isColliding(other.aabb) && !(this.forcetest || other.forcetest))
-            return null;
-        Collision c = null;
-        for (Collider x: this.getColliders()) {
-            for(Collider y: other.getColliders()) {
-                x.updatePositions();
-                y.updatePositions();
-                Contact data = x.isColliding(y);
-                if ((data) != null){
-                    if(c == null){
-                        c = new Collision();
-                        c.thiscollider = this;
-                        c.other = other;
-                    }
-                    c.manifolds.addAll(data.manifolds);
-                }
-            }
-        }
+        if (!aabb.isColliding(other.aabb) && !(this.forceTest || other.forceTest))
+            return Optional.ofNullable((Collision) null);
+        this.getColliders().forEach(Collider::updatePositions);
+        other.getColliders().forEach(Collider::updatePositions);
 
-        return c;
+        var collisions = this.getColliders().stream()
+                .flatMap(s -> other.getColliders().stream()
+                            .map(s2 -> new UnorderedTuple<>(s,s2)))
+                .distinct()
+                .flatMap(t -> t.x.collide(t.y).stream())
+                .filter(t -> t != null)
+                .collect(Collectors.toList());
+
+        return Optional.ofNullable(!collisions.isEmpty() ? new Collision(this, other, averageContactManifolds(collisions)) : null);
     }
 
     @Override
@@ -128,5 +135,9 @@ public class ColliderGroup extends PhysicsObject{
                 GGConsole.error("Failed to insantiate collider with classname " + classname + ": " + e.getMessage());
             }
         }
+    }
+
+    private class CollisionManifoldStorage{
+
     }
 }

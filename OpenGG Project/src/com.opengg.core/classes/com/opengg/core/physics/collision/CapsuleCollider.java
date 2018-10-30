@@ -10,6 +10,9 @@ import com.opengg.core.math.Vector3f;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -46,19 +49,16 @@ public class CapsuleCollider extends Collider{
     }
     
     @Override
-    public Contact isColliding(Collider c) {
+    public List<ContactManifold> collide(Collider c) {
         if(c instanceof SphereCollider){
-            Contact cm = CollisionSolver.SphereCapsule((SphereCollider)c, this);
-            if(cm == null)
-                return cm;
-            else
-                return cm.reverse();
+            List<ContactManifold> cm = CollisionSolver.SphereCapsule((SphereCollider)c, this).stream().map(s -> s.reverse()).collect(Collectors.toList());
+
         }else if(c instanceof CapsuleCollider)
             return CollisionSolver.CapsuleCapsule(this, (CapsuleCollider)c);
         else if(c == null)
             return CollisionSolver.CapsuleGround(this);
         
-        return null;
+        return new ArrayList<>();
     }
     
     @Override

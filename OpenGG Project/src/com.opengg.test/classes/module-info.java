@@ -6,4 +6,5 @@
 module com.opengg.test {
     requires com.opengg.core;
     requires com.opengg.math;
+    requires java.desktop;
 }

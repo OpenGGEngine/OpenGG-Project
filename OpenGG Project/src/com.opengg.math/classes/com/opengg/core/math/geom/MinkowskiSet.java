@@ -28,4 +28,13 @@ public class MinkowskiSet {
         this.b = b;
         this.v = v;
     }
+
+    @Override
+    public String toString() {
+        return "MinkowskiSet{" +
+                "a=" + a +
+                ", b=" + b +
+                ", v=" + v +
+                '}';
+    }
 }

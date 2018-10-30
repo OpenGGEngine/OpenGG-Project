@@ -10,6 +10,7 @@ import com.opengg.core.math.Vector3f;
 import com.opengg.core.model.Face;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -65,13 +66,11 @@ public class Mesh extends Collider{
     }
 
     @Override
-    public Contact isColliding(Collider c) {
+    public List<ContactManifold> collide(Collider c) {
         if(c instanceof Mesh)
             return CollisionSolver.MeshMesh(this, (Mesh)c);
         else if(c instanceof ConvexHull){
-            Contact contact = CollisionSolver.HullMesh((ConvexHull)c, this);
-            if(contact == null) return null;
-            return contact.reverse();
+            return CollisionSolver.HullMesh((ConvexHull)c, this).stream().map(s -> s.reverse()).collect(Collectors.toList());
         }
         else if(c == null)
             return CollisionSolver.MeshGround(this);

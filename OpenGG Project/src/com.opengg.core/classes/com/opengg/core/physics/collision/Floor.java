@@ -1,4 +1,11 @@
 package com.opengg.core.physics.collision;
 
-public class Floor {
+import java.util.ArrayList;
+import java.util.List;
+
+public class Floor extends Collider{
+    @Override
+    public List<ContactManifold> collide(Collider c) {
+        return new ArrayList<>();
+    }
 }

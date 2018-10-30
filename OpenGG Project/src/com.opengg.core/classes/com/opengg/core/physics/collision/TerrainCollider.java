@@ -9,6 +9,7 @@ import com.opengg.core.math.geom.Triangle;
 import com.opengg.core.world.Terrain;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -28,13 +29,12 @@ public class TerrainCollider extends Collider{
     }
     
     @Override
-    public Contact isColliding(Collider c) {
+    public List<ContactManifold> collide(Collider c) {
         if(c instanceof ConvexHull){
-            Contact cc = CollisionSolver.HullTerrain((ConvexHull) c, this);
-            return cc.reverse();
+            List<ContactManifold> cc = CollisionSolver.HullTerrain((ConvexHull) c, this).stream().map(ContactManifold::reverse).collect(Collectors.toList());
         }
             
-        return null;
+        return new ArrayList<>();
     }
     
 }

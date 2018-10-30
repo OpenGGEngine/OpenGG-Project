@@ -39,7 +39,7 @@ public class Ray {
                 || Math.signum(centeredPoint.z) != Math.signum(dir.z)
               )
             return false;
-//        if (box.isColliding(shortestPoint))
+//        if (box.collide(shortestPoint))
 //            return true;
         return false;
     }

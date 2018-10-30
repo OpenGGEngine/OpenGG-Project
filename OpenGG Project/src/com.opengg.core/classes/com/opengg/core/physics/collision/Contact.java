@@ -18,11 +18,11 @@ public class Contact {
     public Contact(ContactManifold manifold){
         manifolds.add(manifold);
     }
-    
+
     public Contact(List<ContactManifold> manifold){
         manifolds.addAll(manifold);
     }
-    
+
     public Contact(){
         
     }

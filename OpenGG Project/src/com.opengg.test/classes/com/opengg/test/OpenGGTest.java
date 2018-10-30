@@ -46,6 +46,7 @@ import com.opengg.core.world.components.*;
 import com.opengg.core.world.components.physics.PhysicsComponent;
 import com.opengg.core.world.components.viewmodel.ViewModelComponentRegistry;
 
+import java.awt.*;
 import java.io.IOException;
 import java.util.List;
 
@@ -116,25 +117,30 @@ public class OpenGGTest extends GGApplication{
                         new Vector3f(1,1,1))));
 
 
-        for (int i = 0; i < 3; i++) {
+        var cube = List.of(
+                new Vector3f(-1,-1,-1),
+                new Vector3f(-1,-1,1),
+                new Vector3f(-1,1,-1),
+                new Vector3f(-1,1,1),
+                new Vector3f(1,-1,-1),
+                new Vector3f(1,-1,1),
+                new Vector3f(1,1,-1),
+                new Vector3f(1,1,1)
+        );
+
+        for (int i = 0; i < 2; i++) {
+            var multiple = i - 0 == 0 ? -1 : 1;
+
             PhysicsComponent object = new PhysicsComponent();
-            object.getEntity().setRotation(new Quaternionf(new Vector3f((float)Math.random()*360, (float)Math.random()*360, (float)Math.random()*360)));
-            object.getEntity().setPosition(new Vector3f(20f * (float)Math.random(), (float)Math.random() * 1f + 30, (float)Math.random() * 20f));
-            object.addCollider(new ColliderGroup(new AABB( 3, 3, 3),  new ConvexHull(List.of(
-                    new Vector3f(-1,-1,-1),
-                    new Vector3f(-1,-1,1),
-                    new Vector3f(-1,1,-1),
-                    new Vector3f(-1,1,1),
-                    new Vector3f(1,-1,-1),
-                    new Vector3f(1,-1,1),
-                    new Vector3f(1,1,-1),
-                    new Vector3f(1,1,1)
-            ))));
+            object.getEntity().velocity = new Vector3f(10 * -multiple, 0, 0);
+            //object.getEntity().setRotation(new Quaternionf(new Vector3f((float)Math.random()*360, (float)Math.random()*360, (float)Math.random()*360)));
+            object.getEntity().setPosition(new Vector3f(20f * multiple, (float)Math.random() * 1f + 30, -20));
+            object.addCollider(new ColliderGroup(new AABB( 3, 3, 3),  new ConvexHull(cube)));
 
             WorldEngine.getCurrent().attach(
                     new RenderComponent(
-                            new TexturedDrawnObject(ObjectCreator.createCube(1), Texture.create(Texture.config(), TextureManager.getDefault()))).attach(object));
-            System.out.println(object.getEntity().getRotation());
+                            new TexturedDrawnObject(ObjectCreator.createCube(1),
+                                    i == 0 ? Texture.ofColor(Color.RED) : Texture.ofColor(Color.BLUE))).attach(object));
 
         }
 

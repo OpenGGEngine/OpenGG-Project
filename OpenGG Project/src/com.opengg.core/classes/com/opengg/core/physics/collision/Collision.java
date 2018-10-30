@@ -17,21 +17,23 @@ public class Collision{
     Collision(){}
 
     public ColliderGroup thiscollider, other;
-    public List<ContactManifold> manifolds = new ArrayList<>();
-    
+    public ContactManifold manifold;
+
+    public Collision(ColliderGroup thiscollider, ColliderGroup other, ContactManifold manifold) {
+        this.thiscollider = thiscollider;
+        this.other = other;
+        this.manifold = manifold;
+    }
+
     public static Collision reverse(Collision c){
         Collision c2 = new Collision();
         c2.other = c.thiscollider;
         c2.thiscollider = c.other;
-        c2.manifolds.addAll(c.manifolds);
+        c2.manifold = c.manifold.reverse();
         return c2;
     }
     
-    public int contains(ColliderGroup c){
-        if(c == thiscollider)
-            return 1;
-        if(c == other)
-            return 2;
-        return 0;
+    public boolean contains(ColliderGroup c){
+        return (c == thiscollider || c == other);
     }
 }

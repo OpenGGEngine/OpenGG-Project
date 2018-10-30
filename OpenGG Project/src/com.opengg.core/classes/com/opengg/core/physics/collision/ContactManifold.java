@@ -9,6 +9,7 @@ package com.opengg.core.physics.collision;
 import com.opengg.core.math.Vector3f;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -25,6 +26,14 @@ public class ContactManifold {
         this.normal = normal;
         this.points = points;
         this.depth = depth;
+    }
+
+    public static ContactManifold averageContactManifolds(List<ContactManifold> manifolds){
+        var normal  = Vector3f.averageOf(manifolds.stream().map(m -> m.normal).collect(Collectors.toList()));
+        var points = manifolds.stream().flatMap(m -> m.points.stream()).collect(Collectors.toList());
+
+        var depth = (float) manifolds.stream().mapToDouble(m -> m.depth).max().getAsDouble();
+        return new ContactManifold(normal, points, depth);
     }
 
     public ContactManifold reverse(){

@@ -16,4 +16,16 @@ public class Simplex {
     public MinkowskiSet a, b, c, d;
     public Vector3f v;
     public int n;
+
+    @Override
+    public String toString() {
+        return "Simplex{" +
+                "a=" + a +
+                ", b=" + b +
+                ", c=" + c +
+                ", d=" + d +
+                ", v=" + v +
+                ", n=" + n +
+                '}';
+    }
 }
