@@ -88,10 +88,11 @@ public class CollisionManager {
         Vector3f R = point.subtract(e1.getPosition());
         Vector3f v = e1.velocity.add(R.cross(e1.angvelocity));
 
-        float jnum = v.multiply(-(1 + e1.restitution)).dot(manifold.normal);
+        float jnum = v.dot(manifold.normal) * -(1 + e1.restitution);//v.multiply(-(1 + e1.restitution)).dot(manifold.normal);
         float jdenom = 1/ e1.mass + (e1.inertialMatrix.inverse().multiply(
                 R.cross(manifold.normal)).cross(R)).dot(manifold.normal);
         float jr = jnum/jdenom;
+
 
         float jd = e1.dynamicfriction * jr;
         float js = e1.staticfriction * jr;
@@ -123,7 +124,6 @@ public class CollisionManager {
 
         var point = Vector3f.averageOf(manifold.points);
 
-        System.out.println(manifold.normal);
 
         Vector3f R1 = point.subtract(e1.getPosition());
         Vector3f R2 = point.subtract(e2.getPosition());
@@ -133,7 +133,7 @@ public class CollisionManager {
 
         Vector3f v = v1.subtract(v2);
 
-        float jnum = v.multiply(-(1 + (e1.restitution + e2.restitution)/2f)).dot(manifold.normal);
+        float jnum = v.dot(manifold.normal) * -(1 + (e1.restitution + e2.restitution) / 2f);
         float jdenom = 1 / e1.mass + 1 / e2.mass +
                 (e1.inertialMatrix.inverse().multiply(R1.cross(manifold.normal)).cross(R1).add(
                         e2.inertialMatrix.multiply(R2.cross(manifold.normal)).cross(R2)))
@@ -176,6 +176,10 @@ public class CollisionManager {
             var R  = response.R1;//Vector3f.averageOf(response.manifolds.stream().map(m -> m.R1).collect(Collectors.toList()));
             var jf = response.jf;//Vector3f.averageOf(response.manifolds.stream().map(m -> m.jf).collect(Collectors.toList()));
             var jr = response.jr;//Vector3f.averageOf(response.manifolds.stream().map(m -> m.jr).collect(Collectors.toList()));
+
+            System.out.println();
+            System.out.println(jf);
+            System.out.println(jr);
 
             var normal = response.normal;//Vector3f.averageOf(response.manifolds.stream().map(s -> s.normal).collect(Collectors.toList()));
 

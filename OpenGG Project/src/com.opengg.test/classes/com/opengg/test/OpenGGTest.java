@@ -129,12 +129,13 @@ public class OpenGGTest extends GGApplication{
         );
 
         for (int i = 0; i < 2; i++) {
-            var multiple = i - 0 == 0 ? -1 : 1;
+            var multiple = i  == 0 ? -1 : 1;
 
             PhysicsComponent object = new PhysicsComponent();
             object.getEntity().velocity = new Vector3f(10 * -multiple, 0, 0);
+            if(i == 1) object.getEntity().mass = 2;
             //object.getEntity().setRotation(new Quaternionf(new Vector3f((float)Math.random()*360, (float)Math.random()*360, (float)Math.random()*360)));
-            object.getEntity().setPosition(new Vector3f(20f * multiple, (float)Math.random() * 1f + 30, -20));
+            object.getEntity().setPosition(new Vector3f(20f * multiple, (float) (Math.random() * 2f + 30f), -20));
             object.addCollider(new ColliderGroup(new AABB( 3, 3, 3),  new ConvexHull(cube)));
 
             WorldEngine.getCurrent().attach(

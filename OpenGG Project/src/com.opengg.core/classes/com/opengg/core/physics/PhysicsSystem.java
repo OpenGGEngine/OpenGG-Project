@@ -30,7 +30,7 @@ public class PhysicsSystem {
     public PhysicsSystem(){
         floor.setForceTest(true);
         floor.getColliders().add(new Floor());
-        //colliders.add(floor);
+        colliders.add(floor);
     }
 
     public List<PhysicsEntity> getEntities(){

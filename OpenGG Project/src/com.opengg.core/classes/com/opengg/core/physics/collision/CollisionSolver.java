@@ -124,7 +124,7 @@ public class CollisionSolver {
         Simplex s = FastMath.runGJK(msum);
         
         if(s == null) return new ArrayList<>();
-        System.out.println(s);
+        //System.out.println(s);
         ContactManifold cm = new ContactManifold();
         MinkowskiTriangle contact = FastMath.runEPA(s, msum);
         
