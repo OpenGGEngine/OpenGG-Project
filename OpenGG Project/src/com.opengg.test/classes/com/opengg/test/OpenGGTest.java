@@ -8,7 +8,9 @@ import com.opengg.core.engine.BindController;
 import com.opengg.core.engine.GGApplication;
 import com.opengg.core.engine.OpenGG;
 import com.opengg.core.gui.GUI;
+import com.opengg.core.gui.GUIButton;
 import com.opengg.core.gui.GUIText;
+import com.opengg.core.io.input.mouse.MouseController;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.model.ggmodel.GGModel;
 import com.opengg.core.model.ggmodel.GGRenderComponent;
@@ -107,6 +109,12 @@ public class OpenGGTest extends GGApplication{
         GUI mainview = new GUI();
         mainview.getRoot().addItem("aids", new GUIText(text, font, new Vector2f(1,0)));
 
+        GUIButton button = new GUIButton(new Vector2f(0.2f,0.4f),new Vector2f(0,0),Texture.create(Texture.config(),TextureManager.getDefault()));
+        mainview.addItem("coke",button);
+        button.setOnClick(() -> System.out.println("Lambdas are bad"));
+        button.setOnRelease(() -> System.out.println("Lambdas are really bad"));
+        MouseController.onButtonPress(button);
+
         GUIController.addAndUse(mainview, "mainview");
 
   //      NetworkEngine.connect("localhost", 25565);
@@ -175,7 +183,7 @@ public class OpenGGTest extends GGApplication{
         
         //RenderEngine.setProjectionData(ProjectionData.getPerspective(100, 0.2f, 3000f));
 
-        WindowController.getWindow().setCursorLock(true);
+        WindowController.getWindow().setCursorLock(false);
     }
 
     @Override
