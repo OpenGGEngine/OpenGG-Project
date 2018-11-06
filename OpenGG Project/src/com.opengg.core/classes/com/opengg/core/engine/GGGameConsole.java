@@ -18,6 +18,8 @@ import com.opengg.core.render.text.Text;
 import com.opengg.core.render.texture.Texture;
 
 import java.awt.*;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public class GGGameConsole implements KeyboardListener, KeyboardCharacterListener {
     private static String currenttext = "";
@@ -57,10 +59,10 @@ public class GGGameConsole implements KeyboardListener, KeyboardCharacterListene
         consolevalue = "";
 
         GGConsole.getAllMessages().stream()
-                .skip(Math.max(GGConsole.getAllMessages().size()-LINE_AMOUNT, 0))
                 .map(m -> m.toString())
                 .map(m -> m + "\n")
-                .forEach(m -> consolevalue += m);
+                .flatMap(m -> Arrays.stream(m.split("\n")))
+                .collect(Collectors.toList());
 
         RenderEngine.setDepthCheck(false);
         background.render();

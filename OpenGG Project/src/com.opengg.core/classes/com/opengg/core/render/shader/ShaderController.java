@@ -8,6 +8,7 @@ package com.opengg.core.render.shader;
 
 import com.opengg.core.GGInfo;
 import com.opengg.core.console.GGConsole;
+import com.opengg.core.engine.Resource;
 import com.opengg.core.exceptions.ShaderException;
 import com.opengg.core.io.FileStringLoader;
 import com.opengg.core.math.Matrix4f;
@@ -15,6 +16,7 @@ import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.model.Material;
 import com.opengg.core.render.GraphicsBuffer;
+import com.opengg.core.render.shader.ggsl.ShaderFile;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,9 +47,13 @@ public class ShaderController {
     private static int currentBind = 0;
 
     public static void testInitialize(){
-        loadShaderFiles();
-        linkShaders();
-        compileShaders();
+        var t = System.nanoTime();
+        new ShaderFile("object", Resource.getShaderPath("light.ggsl"));
+
+        //loadShaderFiles();
+        System.out.println((System.nanoTime()-t)/1_000_000f);
+        //linkShaders();
+        //compileShaders();
     }
 
     /**
@@ -755,9 +761,9 @@ public class ShaderController {
             var filename = name;
             try{
                 var processed = new ShaderFile(filename, GGInfo.getApplicationPath() + "\\resources\\glsl\\" + name);
-                if(processed.getFields().isEmpty() && processed.getIncludes().isEmpty() && processed.getCode().isEmpty())
-                    continue;
-                shaderfiles.put(filename, processed);
+                //if(processed.getFields().isEmpty() && processed.getIncludes().isEmpty() && processed.getCode().isEmpty())
+                //    continue;
+                //shaderfiles.put(filename, processed);
             }catch(Exception e){
                 if(e.getMessage().contains("Attempted to load GLSL file as GGSL")){
                     var program = loadShader(name, filename);

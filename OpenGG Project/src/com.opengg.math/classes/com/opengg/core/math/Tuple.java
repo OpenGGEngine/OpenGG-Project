@@ -68,7 +68,6 @@ public class Tuple<X, Y> {
 
     @Override
     public boolean equals(Object obj) {
-        System.out.println("Dab!");
         if(obj == null) return false;
         if(!(obj instanceof Tuple)) return false;
 

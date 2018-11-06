@@ -86,7 +86,7 @@ public class CollisionManager {
         var point = Vector3f.averageOf(manifold.points);
 
         Vector3f R = point.subtract(e1.getPosition());
-        Vector3f v = e1.velocity.add(R.cross(e1.angvelocity));
+        Vector3f v = e1.velocity;//e1.velocity.add(R.cross(e1.angvelocity));
 
         float jnum = v.dot(manifold.normal) * -(1 + e1.restitution);//v.multiply(-(1 + e1.restitution)).dot(manifold.normal);
         float jdenom = 1/ e1.mass + (e1.inertialMatrix.inverse().multiply(
@@ -94,8 +94,8 @@ public class CollisionManager {
         float jr = jnum/jdenom;
 
 
-        float jd = e1.dynamicfriction * jr;
-        float js = e1.staticfriction * jr;
+        float jd = e1.dynamicfriction * v.dot(manifold.normal) * -1;
+        float js = e1.staticfriction * v.dot(manifold.normal) * -1;
 
         Vector3f tan = new Vector3f();
         if(!v.cross(manifold.normal).rezero().equals(new Vector3f())){
@@ -177,15 +177,15 @@ public class CollisionManager {
             var jf = response.jf;//Vector3f.averageOf(response.manifolds.stream().map(m -> m.jf).collect(Collectors.toList()));
             var jr = response.jr;//Vector3f.averageOf(response.manifolds.stream().map(m -> m.jr).collect(Collectors.toList()));
 
-            System.out.println();
-            System.out.println(jf);
-            System.out.println(jr);
+            //System.out.println();
+            //System.out.println(jf);
+            //System.out.println(jr);
 
             var normal = response.normal;//Vector3f.averageOf(response.manifolds.stream().map(s -> s.normal).collect(Collectors.toList()));
 
             var depth = response.depth;
 
-            //e.angvelocity = e.angvelocity.subtract(e.inertialMatrix.inverse().multiply(R.cross(normal)).multiply(jrv.length()));
+            //e.angvelocity = e.angvelocity.subtract(e.inertialMatrix.inverse().multiply(R.cross(normal)).multiply(jr.length()));
             e.velocity = e.velocity.add(jr.add(jf).divide(e.mass));
 
             AABB depthaabb = new AABB(depthchanges, new Vector3f());

@@ -1,7 +1,8 @@
-package com.opengg.core.render.shader;
+package com.opengg.core.render.shader.ggsl;
 
 import com.opengg.core.exceptions.ShaderException;
 import com.opengg.core.io.FileStringLoader;
+import com.opengg.core.render.shader.ShaderProgram;
 
 import java.io.IOException;
 import java.net.URLDecoder;
@@ -82,55 +83,60 @@ public class ShaderFile{
                     type = ShaderFile.ShaderFileType.UTIL;
             }
 
-            if(data.indexOf("@") == -1 && data.indexOf("#version") != -1){
-                throw new ShaderException("Attempted to load GLSL file as GGSL");
-            }
+            data = runPreprocessor(data);
 
-            includes = new ArrayList<>();
-
-            preprocessor = new HashMap<>();
-
-            var lines = data.split("\n");
-
-            for(var line : lines){
-                if(line.indexOf("@") == 0){
-                    String varname = line.substring(0, line.indexOf(" ") == -1 ? line.length() : line.indexOf(" ")).trim();
-                    String varval = line.substring(line.indexOf(" ") == -1 ? line.length() : line.indexOf(" ")).trim();
-
-                    preprocessor.merge(varname, varval, (s1,s2) -> s1 + ":" + s2);
-                }
-            }
-
-            version = preprocessor.getOrDefault("@version", "4.2");
-
-            if(!version.matches("^\\d[.]\\d")){
-                if(version.matches("^\\d[.]\\d\\d")){
-                    version = version.substring(0, version.length()-1);
-                }else{
-                    version = version.charAt(0) + "." + version.charAt(1);
-                }
-            }
-
-            if(!version.matches("^\\d[.]\\d"))
-                throw new ShaderException("Encountered malformed version: " + preprocessor.getOrDefault("@version", "4.2"));
-
-            glvals = valuesFromPreprocessor("@glsl");
-
-            includes = valuesFromPreprocessor("@include");
-
-
-            data = data.replaceAll("@.*?\n", "");
-            data = data.replaceAll("\n\n", "\n");
-
-            data = data.replaceAll("//.*?\n", "");
-
-            data = multilineReplacer.matcher(data).replaceAll("");
-
-            process(data);
+            new Lexer(data);
 
         }catch(IOException e){
             e.printStackTrace();
         }
+    }
+
+    private String runPreprocessor(String start){
+        if(data.indexOf("@") == -1 && data.indexOf("#version") != -1){
+            throw new ShaderException("Attempted to load GLSL file as GGSL");
+        }
+
+        includes = new ArrayList<>();
+
+        preprocessor = new HashMap<>();
+
+        var lines = data.split("\n");
+
+        for(var line : lines){
+            if(line.indexOf("@") == 0){
+                String varname = line.substring(0, line.indexOf(" ") == -1 ? line.length() : line.indexOf(" ")).trim();
+                String varval = line.substring(line.indexOf(" ") == -1 ? line.length() : line.indexOf(" ")).trim();
+
+                preprocessor.merge(varname, varval, (s1,s2) -> s1 + ":" + s2);
+            }
+        }
+
+        version = preprocessor.getOrDefault("@version", "4.2");
+
+        if(!version.matches("^\\d[.]\\d")){
+            if(version.matches("^\\d[.]\\d\\d")){
+                version = version.substring(0, version.length()-1);
+            }else{
+                version = version.charAt(0) + "." + version.charAt(1);
+            }
+        }
+
+        if(!version.matches("^\\d[.]\\d"))
+            throw new ShaderException("Encountered malformed version: " + preprocessor.getOrDefault("@version", "4.2"));
+
+        glvals = valuesFromPreprocessor("@glsl");
+
+        includes = valuesFromPreprocessor("@include");
+
+
+        data = data.replaceAll("@.*?\n", "");
+        data = data.replaceAll("\n\n", "\n");
+
+        data = data.replaceAll("//.*?\n", "");
+        data = multilineReplacer.matcher(data).replaceAll("");
+
+        return data;
     }
 
     private void process(String data){
@@ -142,7 +148,6 @@ public class ShaderFile{
         }
 
         Matcher functionFinderMatcher = functionFinderPattern.matcher(data);
-
         List<String> funcs = new ArrayList<>();
 
         while (functionFinderMatcher.find()){

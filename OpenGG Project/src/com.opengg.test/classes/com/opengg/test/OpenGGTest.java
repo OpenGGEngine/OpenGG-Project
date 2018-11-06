@@ -26,6 +26,7 @@ import com.opengg.core.engine.Resource;
 import com.opengg.core.render.drawn.TexturedDrawnObject;
 import com.opengg.core.render.light.Light;
 import com.opengg.core.render.objects.ObjectCreator;
+import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.text.Text;
 import com.opengg.core.render.texture.TextureManager;
 import com.opengg.core.render.window.GLFWWindow;
@@ -71,9 +72,9 @@ public class OpenGGTest extends GGApplication{
         w.vsync = true;
         w.glmajor = 4;
         w.glminor = 3;
-        OpenGG.initialize(new OpenGGTest(), w);
+        //OpenGG.initialize(new OpenGGTest(), w);
 
-        //ShaderController.testInitialize();
+        ShaderController.testInitialize();
     }
 
     @Override
@@ -128,13 +129,13 @@ public class OpenGGTest extends GGApplication{
                 new Vector3f(1,1,1)
         );
 
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 1; i++) {
             var multiple = i  == 0 ? -1 : 1;
 
             PhysicsComponent object = new PhysicsComponent();
-            object.getEntity().velocity = new Vector3f(10 * -multiple, 0, 0);
+            object.getEntity().velocity = new Vector3f(10 * -multiple, 5, 0);
             if(i == 1) object.getEntity().mass = 2;
-            //object.getEntity().setRotation(new Quaternionf(new Vector3f((float)Math.random()*360, (float)Math.random()*360, (float)Math.random()*360)));
+            //object.getEntity().setRotation(new Quaternionf(new Vector3f((float)Math.random()*360, 0, 0)));
             object.getEntity().setPosition(new Vector3f(20f * multiple, (float) (Math.random() * 2f + 30f), -20));
             object.addCollider(new ColliderGroup(new AABB( 3, 3, 3),  new ConvexHull(cube)));
 

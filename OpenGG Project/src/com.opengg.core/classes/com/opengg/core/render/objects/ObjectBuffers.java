@@ -7,10 +7,12 @@ package com.opengg.core.render.objects;
 
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
+import com.opengg.core.math.geom.Triangle;
 import com.opengg.core.system.Allocator;
 import java.nio.Buffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.List;
 
 /**
  *
@@ -138,6 +140,10 @@ public class ObjectBuffers {
         
         d2.flip();
         return new Buffer[]{d,d2};
+    }
+
+    public static List<Triangle> getFromPointCloud(List<Vector3f> points){
+        return null;
     }
 
     private ObjectBuffers() {

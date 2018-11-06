@@ -30,7 +30,10 @@ public class PhysicsEntity extends PhysicsObject{
 
     public String name = "default";
     public Vector3f centerOfMass = new Vector3f();
-    public Matrix3f inertialMatrix = new Matrix3f(0.4f,0f,0f,0f,0.4f,0f,0f,0f,0.4f);
+    public Matrix3f inertialMatrix = new Matrix3f(
+            2/3f,-1/4f,-1/4f,
+            -1/4f,2/3f,-1/4f,
+            -1/4f,-1/4f,2/3f);
     public Vector3f lowestContact = new Vector3f(0,-1,0);
     
     public boolean gravEffect = true;

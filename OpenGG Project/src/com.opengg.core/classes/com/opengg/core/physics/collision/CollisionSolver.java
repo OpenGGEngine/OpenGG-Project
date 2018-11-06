@@ -114,8 +114,8 @@ public class CollisionSolver {
 
         Matrix4f h1matrix = new Matrix4f()
                 .translate(h1.getPosition())
-                        .rotate(h1.getRotation())
-                        .scale(h1.getScale());
+                .rotate(h1.getRotation())
+                .scale(h1.getScale());
         Matrix4f h2matrix = new Matrix4f()
                 .translate(h2.getPosition())
                 .rotate(h2.getRotation())
@@ -176,12 +176,11 @@ public class CollisionSolver {
     
     public static List<ContactManifold> HullGround(ConvexHull h1){
         Matrix4f h1matrix = new Matrix4f().translate(h1.getPosition()).rotate(h1.getRotation()).scale(h1.getScale());
-        List<Vector3f> nlist = new ArrayList<>(h1.vertices.size());
-        for(Vector3f v : h1.vertices){
-            nlist.add(new Vector4f(v).multiply(h1matrix).truncate());
-        }
 
-        var points = nlist.stream()
+        var points = h1.vertices.stream()
+                .map(v -> new Vector4f(v))
+                .map(v -> v.multiply(h1matrix))
+                .map(v -> v.truncate())
                 .filter(v -> v.y < PhysicsEngine.getInstance().getConstants().BASE)
                 .collect(Collectors.toList());
 
