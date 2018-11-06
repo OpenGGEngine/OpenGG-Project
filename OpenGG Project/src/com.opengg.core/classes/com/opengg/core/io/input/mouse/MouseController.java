@@ -47,7 +47,7 @@ public class MouseController {
     
     public static void buttonReleased(int key){
         for (var listener : buttonlisteners){
-            listener.onButtonPress(key);
+            listener.onButtonRelease(key);
         }
     }
 

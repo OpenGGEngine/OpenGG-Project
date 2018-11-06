@@ -33,10 +33,6 @@ public class GLFWMouseButtonHandler extends GLFWMouseButtonCallback implements M
         }
     }
 
-    @Override
-    public void callback(long args) {
-        
-    }
     
     @Override
     public boolean isButtonDown(int keycode) {
