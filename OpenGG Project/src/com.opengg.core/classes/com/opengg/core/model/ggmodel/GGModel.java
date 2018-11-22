@@ -11,6 +11,7 @@ public class GGModel {
     public ArrayList<GGMesh> meshes = new ArrayList<>();
     public ArrayList<Material> materials = new ArrayList<Material>();
     public boolean isAnim = false;
+    public String fileLocation;
 
     public GGModel(ArrayList<GGMesh> meshes){
         this.meshes = meshes;

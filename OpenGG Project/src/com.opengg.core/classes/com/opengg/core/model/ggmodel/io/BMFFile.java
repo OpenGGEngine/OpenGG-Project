@@ -4,6 +4,7 @@ import com.opengg.core.console.GGConsole;
 import com.opengg.core.model.Material;
 import com.opengg.core.model.ggmodel.GGMesh;
 import com.opengg.core.model.ggmodel.GGModel;
+import com.opengg.core.model.ggmodel.process.ModelProcess;
 import com.opengg.core.system.Allocator;
 import org.lwjgl.system.MemoryUtil;
 
@@ -23,11 +24,11 @@ import static org.lwjgl.system.MemoryUtil.memFree;
 import static org.lwjgl.util.lz4.LZ4.*;
 import static org.lwjgl.util.lz4.LZ4Frame.LZ4F_isError;
 
-public class BMFFile {
+public class BMFFile extends ModelProcess {
     private static final int VERSION = 1;
     private static final String HEADER_START = "OPENGG-BMF";
 
-    public static void writeModel(GGModel model, String destination) throws IOException {
+    public void writeModel(GGModel model, String destination) throws IOException {
         FileOutputStream fOut = new FileOutputStream(new File(destination));
         FileChannel fc = fOut.getChannel();
 
@@ -40,13 +41,16 @@ public class BMFFile {
 
         long filesize = sectors.stream().mapToLong(s->s.length).sum()+ header.limit();
         ByteBuffer uncompressed = Allocator.alloc((int)filesize);
-
+        this.totaltasks = sectors.stream().mapToInt(s->s.subBuffers.length).sum();
+        this.numcompleted = 0;
         uncompressed.put(header);
         for(FileSector sector:sectors) {
             for(int i=0;i<sector.subBuffers.length;i++) {
                 while(sector.subBuffers[i].hasRemaining()) {
                     uncompressed.put(sector.subBuffers[i]);
                 }
+                numcompleted +=1;
+                broadcast();
             }
         }
         uncompressed.flip();
@@ -164,4 +168,12 @@ public class BMFFile {
     }
 
 
+    @Override
+    public void process(GGModel model) {
+        try {
+            writeModel(model,model.fileLocation);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
