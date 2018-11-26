@@ -13,6 +13,7 @@ import com.opengg.core.world.components.particle.*;
 import com.opengg.core.world.components.physics.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -138,6 +139,18 @@ public class ViewModelComponentRegistry {
                 return container.viewmodel;
         }
         return null;
+    }
+
+    public static ViewModel getViewModelFor(String classname){
+        var info = ViewModelComponentRegistry.getByClassname(classname);
+        Class clazz = info.getComponent();
+        Class vmclazz = ViewModelComponentRegistry.findViewModel(clazz);
+        try {
+            return (ViewModel) Objects.requireNonNull(vmclazz).getDeclaredConstructor().newInstance();
+        } catch (Exception ex) {
+            GGConsole.error("Failed to create instance of a ViewModel for " + clazz.getName() + ", is there a default constructor?");
+            return null;
+        }
     }
 
     public static ViewModelComponentRegisterInfoContainer getByClassname(String classname){
