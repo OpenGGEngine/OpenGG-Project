@@ -25,6 +25,8 @@ module com.opengg.core {
     requires com.opengg.console;
     requires org.lwjgl.openvr;
     requires org.lwjgl.lz4;
+    requires org.lwjgl.tootle;
+    requires org.lwjgl.tootle.natives;
 
     exports com.opengg.core.audio;
     exports com.opengg.core.model.modelloaderplus;
@@ -59,10 +61,8 @@ module com.opengg.core {
     exports com.opengg.core.world.components.physics;
     exports com.opengg.core.world.components.triggers;
     exports com.opengg.core.world.components.viewmodel;
-    exports com.opengg.core.world.entities;
-    exports com.opengg.core.world.entities.physics;
-    exports com.opengg.core.world.entities.resources;
     exports com.opengg.core.world.generators;
     exports com.opengg.core.model.ggmodel;
     exports com.opengg.core.model.ggmodel.io;
+    exports com.opengg.core.model.ggmodel.process;
 }

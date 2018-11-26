@@ -23,9 +23,10 @@ import java.util.Map;
 public class AssimpModelLoader {
 
     private static final int NUM_WEIGHTS = 4;
+
     public static GGModel loadModel(String path) throws IOException {
         File f = new File(path);
-        AIScene scene = Assimp.aiImportFile(f.toString(),Assimp.aiProcess_GenSmoothNormals);
+        AIScene scene = Assimp.aiImportFile(f.toString(),Assimp.aiProcess_GenSmoothNormals|Assimp.aiProcess_Triangulate);
         GGConsole.log("Loading " + f.getName() + " with " +scene.mNumMeshes() + " meshes and " + scene.mNumAnimations() + " animations.");
 
         //Load animations
