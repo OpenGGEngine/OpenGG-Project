@@ -776,6 +776,7 @@ public class ShaderController {
     private static void linkShaders(){
         var processing = shaderfiles.entrySet().stream()
                 .unordered()
+                .parallel()
                 .filter(entry -> !entry.getValue().getType().equals(ShaderFile.ShaderFileType.UTIL))
                 .map(entry -> new ShaderFileHolder(entry.getKey(), entry.getValue()))
                 .peek(ShaderFileHolder::link)

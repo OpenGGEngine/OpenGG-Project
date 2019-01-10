@@ -197,6 +197,7 @@ public final class OpenGG{
         float delta = time.getDeltaSec();
 
         Allocator.update();
+        GGFramerateRenderer.update();
         Executor.getExecutor().update(delta);
         ExtensionManager.update(delta);
         WorldEngine.update(delta);
