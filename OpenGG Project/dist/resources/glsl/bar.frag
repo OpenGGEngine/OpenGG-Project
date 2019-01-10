@@ -13,7 +13,6 @@ uniform sampler2D Kd;
 uniform sampler2D Ka;
 uniform float percent;
 
-
 vec4 getTex(sampler2D tname){
     
 	

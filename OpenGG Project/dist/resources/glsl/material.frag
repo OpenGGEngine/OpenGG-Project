@@ -4,7 +4,7 @@
 
 uniform Material material;
 
-main() {
+void main() {
 	generatePhongData();
 	useMaterial(material);
 	vec3 col = ambient;

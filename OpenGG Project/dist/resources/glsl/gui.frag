@@ -27,7 +27,7 @@ vec4 getTex(sampler2D tname){
 	
     return texture(tname, textureCoord);
 }
-main() {   
+void main() {
     fcolor = getTex(Kd);
     //fcolor = vec4(fcolor.a);
 	//if(fcolor.a < 0.1f)

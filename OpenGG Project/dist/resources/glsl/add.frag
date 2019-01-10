@@ -17,7 +17,7 @@ vec4 getTex(sampler2D tname){
     return texture(tname, textureCoord);
 }
 
-main() {
+void main() {
 	vec4 color1 = getTex(Kd);
 	vec4 color2 = getTex(Ka);
 	

@@ -10,7 +10,8 @@ void main()
 {
     vec2 tex_offset = 1.0 / textureSize(Kd, 0); // gets size of single texel
     vec3 result = texture(Kd, textureCoord).rgb * weight[0]; // current fragment's contribution
-    for(int i = 1; i < 5; ++i)
+
+    for(int i = 1; i < 5; i++)
     {
         result += texture(Kd, textureCoord + vec2(tex_offset.x * i, 0.0)).rgb * weight[i];
         result += texture(Kd, textureCoord - vec2(tex_offset.x * i, 0.0)).rgb * weight[i];

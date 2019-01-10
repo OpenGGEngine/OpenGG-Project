@@ -4,7 +4,7 @@
 
 uniform sampler2DArray terrain;
 
-main() {
+void main() {
 	vec4 blendMapColor = getTex(Ka);
 	float backTextureAmount = 1- (blendMapColor.r + blendMapColor.b +blendMapColor.g);
     vec2 tiledMapEditor = textureCoord * 40;

@@ -22,7 +22,7 @@ uniform mat4 view;
 uniform mat4 projection;
 
 
-main() {
+void main() {
 
     mat4 modelView = view * model;
 

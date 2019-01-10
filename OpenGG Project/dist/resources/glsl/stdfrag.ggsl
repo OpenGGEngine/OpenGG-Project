@@ -7,6 +7,9 @@ in vertexData{
     vec3 norm;
 };
 
+vec3 n;
+
+uniform vec3 camera;
 uniform mat4 view;
 uniform mat4 model;
 uniform mat4 perspective;

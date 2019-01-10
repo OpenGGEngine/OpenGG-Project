@@ -29,7 +29,7 @@ uniform vec3 camera;
 
 
 
-main() {
+void main() {
     textureCoord = texcoord;
 	norm = normal;
 

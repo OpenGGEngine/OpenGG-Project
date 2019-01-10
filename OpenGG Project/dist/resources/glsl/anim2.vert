@@ -48,10 +48,16 @@ void main() {
 						 jointsMatrix[uint(jointindex.y)] * jointindex.w +
 						 jointsMatrix[uint(weights.x)] * weights.z +
 						 jointsMatrix[uint(weights.y)] * weights.w ;*/
-	mat4 BoneTransform = jointsMatrix[uint(jointindex[0])] *weights[0] +
-						 jointsMatrix[uint(jointindex[1])] * weights[1]+
-						 jointsMatrix[uint(jointindex[2])] *weights[2] +
-						 jointsMatrix[uint(jointindex[3])] *weights[3] ;
+	uint index1 = uint(jointindex[0]);
+	uint index2 = uint(jointindex[1]);
+	uint index3 = uint(jointindex[2]);
+	uint index4 = uint(jointindex[3]);
+
+
+	mat4 BoneTransform = jointsMatrix[index1] *weights[0] +
+						 jointsMatrix[index2] * weights[1]+
+						 jointsMatrix[index3] *weights[2] +
+						 jointsMatrix[index4] *weights[3] ;
 						 
 	pos = (  model *BoneTransform * vec4(position, 1.0)).xyz ;
 	

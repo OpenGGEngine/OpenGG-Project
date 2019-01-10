@@ -17,6 +17,7 @@ import com.opengg.core.math.Vector3f;
 import com.opengg.core.model.Material;
 import com.opengg.core.render.GraphicsBuffer;
 import com.opengg.core.render.shader.ggsl.ShaderFile;
+import com.opengg.core.render.shader.ggsl.Token;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,6 +28,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.opengg.core.render.shader.ShaderProgram.ShaderType;
+import static com.opengg.core.render.shader.ggsl.Token.EOF;
 
 /**
  * Controller/manager for GLSL shaders
@@ -47,13 +49,16 @@ public class ShaderController {
     private static int currentBind = 0;
 
     public static void testInitialize(){
+        GGConsole.initialize();
         var t = System.nanoTime();
-        new ShaderFile("object", Resource.getShaderPath("light.ggsl"));
-
+        var ww = new ShaderFile("object", Resource.getShaderPath("anim.vert"));
+        ww.compile();
+        System.out.println(ww.getCompiledSource());
         //loadShaderFiles();
-        System.out.println((System.nanoTime()-t)/1_000_000f);
         //linkShaders();
-        //compileShaders();
+
+        System.out.println((System.nanoTime()-t)/1_000_000f);
+        //
     }
 
     /**
@@ -61,13 +66,13 @@ public class ShaderController {
      */
     public static void initialize() {
         long time = System.currentTimeMillis();
+        GGConsole.log("Loading shaders...");
         loadShaderFiles();
         linkShaders();
-        compileShaders();
         createGLShaderFromFile();
         long finaltime = System.currentTimeMillis() - time;
 
-        GGConsole.log("Compiled shaders in " + finaltime + " milliseconds");
+        GGConsole.log("Loaded shaders in " + finaltime + " milliseconds");
 
         use("object.vert", "object.frag");
         saveCurrentConfiguration("object");
@@ -757,45 +762,26 @@ public class ShaderController {
         var dir = new File(GGInfo.getApplicationPath() + "\\resources\\glsl\\");
         var allfiles = dir.list();
 
-        for(var name : allfiles){
-            var filename = name;
-            try{
-                var processed = new ShaderFile(filename, GGInfo.getApplicationPath() + "\\resources\\glsl\\" + name);
-                //if(processed.getFields().isEmpty() && processed.getIncludes().isEmpty() && processed.getCode().isEmpty())
-                //    continue;
-                //shaderfiles.put(filename, processed);
-            }catch(Exception e){
-                if(e.getMessage().contains("Attempted to load GLSL file as GGSL")){
-                    var program = loadShader(name, filename);
-                    if(program != null){
-                        programs.put(name, program);
-                    }
-                }
+        shaderfiles.putAll(Arrays.stream(allfiles)
+                .parallel()
+                .unordered()
+                .filter(file -> !file.equals("error.glsl"))
+                .map(file -> new ShaderFile(file, GGInfo.getApplicationPath() + "\\resources\\glsl\\" + file))
+                .filter(ShaderFile::isParsed)
+                .peek(ShaderFile::compile)
+                .collect(Collectors.toMap(shader -> shader.getName(), shader -> shader)));
 
-                var ex = new ShaderException("Exception while loading shader " + name + ": " + e.getMessage());
-                ex.setStackTrace(e.getStackTrace());
-                //throw ex;
-                GGConsole.exception(ex);
-            }
-        }
     }
 
     private static void linkShaders(){
         var processing = shaderfiles.entrySet().stream()
                 .unordered()
-                //.parallel()
                 .filter(entry -> !entry.getValue().getType().equals(ShaderFile.ShaderFileType.UTIL))
                 .map(entry -> new ShaderFileHolder(entry.getKey(), entry.getValue()))
-                .peek(ShaderFileHolder::combineFiles)
+                .peek(ShaderFileHolder::link)
                 .collect(Collectors.toList());
 
         completedfiles.addAll(processing);
-    }
-
-    private static void compileShaders() {
-        for (var entry : completedfiles) {
-            entry.compile();
-        }
     }
 
     private static void createGLShaderFromFile(){
@@ -860,9 +846,6 @@ public class ShaderController {
         String fulldata;
 
         List<String> glvals = new ArrayList<>();
-        List<ShaderFile.ShaderFunction> funcs = new ArrayList<>();
-        List<ShaderFile.ShaderField> fields = new ArrayList<>();
-        List<ShaderFile.ShaderStruct> structs = new ArrayList<>();
 
         public ShaderFileHolder(String name, ShaderFile source){
             this.type = source.getType();
@@ -873,99 +856,13 @@ public class ShaderController {
                     .forEach(this::addDependency);
         }
 
-        public void compile(){
-            String shsource = "";
-
-            shsource += "#version " + source.getVersion().replace(".", "").concat("0") + " core\n";
-
-            for(var glval : glvals){
-                shsource += "#" + glval + "\n";
-            }
-
-            for(var struct : structs){
-                shsource += "struct " + struct.getName()
-                        + "{\n"
-                        + struct.getData()
-                        + "\n};\n";
-            }
-
-            for(var field : fields){
-                if(!field.getLayoutData().isEmpty()){
-                    shsource += "layout(" + field.getLayoutData() + ") ";
-                }
-
-                if(!field.getModifiers().isEmpty())
-                    shsource += field.getModifiers().toString().replace("[", "").replace("]", "").replace(",", "");
-
-                shsource += field.getType() + " " + field.getName();
-
-                if(!field.getInitialValue().isEmpty())
-                    shsource += " = " + field.getInitialValue();
-                shsource += ";\n";
-            }
-
-            for(var func : funcs){
-                if(func.getReturntype().isEmpty())
-                    shsource += "void " + func.getName() + "(" + func.getArgs() + "){\n\t" + func.getData() + "\n}\n";
-                else{
-                    shsource += func.getReturntype() + " " + func.getName() + "(" + func.getArgs() + "){\n\t" + func.getData() + "\n}\n";
-                }
-            }
-
-            fulldata = shsource;
-        }
-
-        public void combineFiles(){
-            glvals.addAll(source.getGlValues());
-            funcs.addAll(source.getCode());
-            fields.addAll(source.getFields());
-            structs.addAll(source.getStructs());
-
+        public void link(){
+            fulldata = source.getCompiledSource();
             for(var file : dependencies){
-
-                List<String> addvals = new ArrayList<>();
-                for(var val : file.getGlValues()){
-                    if(!glvals.stream()
-                            .filter(f -> f.equals(val)).findFirst().isPresent()){
-                        addvals.add(val);
-                    }
-                }
-
-                glvals.addAll(0, addvals);
-
-                List<ShaderFile.ShaderFunction> addfuncs = new ArrayList<>();
-                for(var func : file.getCode()){
-                    if(!funcs.stream()
-                            .filter(f -> f.getName().equals(func.getName())).findFirst().isPresent()){
-                        addfuncs.add(func);
-                    }
-                }
-
-                funcs.addAll(0, addfuncs);
-
-                List<ShaderFile.ShaderField> addfields = new ArrayList<>();
-
-                for(var field : file.getFields()){
-                    if(!fields.stream()
-                            .filter(f -> f.getName().equals(field.getName())).findFirst().isPresent()){
-                        addfields.add(field);
-                    }
-                }
-
-                fields.addAll(0, addfields);
-
-                List<ShaderFile.ShaderStruct> addstructs = new ArrayList<>();
-
-                for(var struct : file.getStructs()){
-                    if(!structs.stream()
-                            .filter(f -> f.getName().equals(struct.getName())).findFirst().isPresent()){
-                        addstructs.add(struct);
-                    }
-                }
-
-                structs.addAll(0, addstructs);
-
+                fulldata = file.getCompiledSource() + fulldata;
             }
+
+            fulldata = "#version " + source.getVersion().replace(".", "").concat("0\n")  + fulldata;
         }
 
         private void addDependency(ShaderFile file){
@@ -979,6 +876,9 @@ public class ShaderController {
                     GGConsole.exception(new ShaderException("Failed to load dependency for " + this.name, e));
                     throw new ShaderException(e);
                 }
+            }else{
+                dependencies.remove(file);
+                dependencies.add(file);
             }
         }
     }

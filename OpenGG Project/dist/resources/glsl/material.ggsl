@@ -20,7 +20,6 @@ uniform sampler2D em;
 uniform sampler2D bump;
 uniform samplerCube cubemap;
 
-vec3 n;
 vec3 ambient;
 vec3 specular;
 vec3 diffuse;

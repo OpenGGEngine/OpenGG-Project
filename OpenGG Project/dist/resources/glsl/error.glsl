@@ -1,3 +1,56 @@
-COMPILED GGSL ERROR SOURCE: From shader test.tesc with error code 0:
-#version 420 core
- ;
+COMPILED GGSL ERROR SOURCE: From shader anim2.vert with error code 0: 
+Shader Compile Log:
+Vertex shader failed to compile with the following errors:
+ERROR: 0:45: error(#132) Syntax error: "]" parse error
+ERROR: error(#273) 1 compilation errors.  No code generated
+#version 420
+in vec3 normal;
+in vec4 weights;
+in vec2 texcoord;
+in vec3 tangent;
+in vec3 position;
+in vec4 jointindex;
+out gl_PerVertex {
+vec4 gl_Position;
+} ;
+
+out vertexData {
+vec2 textureCoord;
+vec3 pos;
+vec3 norm;
+} ;
+
+const int MAX_WEIGHTS = 4;
+const int MAX_JOINTS = 200;
+uniform mat4 model;
+uniform mat4 jointsMatrix[MAX_JOINTS];
+uniform mat4 view;
+uniform mat4 projection;
+uniform vec3 rot;
+uniform vec3 lightpos;
+uniform mat4 shmvp;
+uniform int mode;
+uniform int inst;
+uniform float divAmount;
+void main() {
+mat4 modelView = (view * model);
+textureCoord = texcoord;
+vec4 initPos = vec4(0, 0, 0, 0);
+vec4 initNormal = vec4(0, 0, 0, 0);
+vec3 initTan = tangent;
+if((initTan.x == 1)){
+textureCoord.x = 0;
+}else{
+}
+;
+uint index1 = uint(jointindex[0]);
+uint index2 = uint(jointindex[1]);
+uint index3 = uint(jointindex[2]);
+uint index4 = uint(jointindex[3]);
+mat4 BoneTransform = ((((jointsMatrix[] * weights[0]) + (jointsMatrix[index1] * weights[1])) + (jointsMatrix[index2] * weights[2])) + (jointsMatrix[index3] * weights[3]));
+pos = ((model * BoneTransform) * vec4(position, 1.0f)).xyz;
+norm = normal;
+vec4 P = (view * vec4(pos.xyz, 1));
+gl_Position = (projection * P);
+} 
+

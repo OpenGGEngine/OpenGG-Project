@@ -21,6 +21,10 @@ public class Tuple<X, Y> {
         this.y = y;
     }
 
+    public static <X,Y> Tuple<X,Y> of(X x, Y y){
+        return new Tuple<>(x,y);
+    }
+
     public Object get(int index) {
         if (index < 0) {
             throw new IllegalArgumentException("Index cannot be lower than 0");
@@ -62,6 +66,7 @@ public class Tuple<X, Y> {
         return y;
     }
 
+    @Override
     public String toString(){
         return "<" + this.x.toString() + "," + this.y.toString()+">";
     }

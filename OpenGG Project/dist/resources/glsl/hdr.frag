@@ -8,7 +8,7 @@ uniform float gamma;
 uniform sampler2D Kd;
 
 
-main() {   
+void main() {
     vec3 color = texture(Kd, textureCoord).rgb;
   
     // Exposure tone mapping

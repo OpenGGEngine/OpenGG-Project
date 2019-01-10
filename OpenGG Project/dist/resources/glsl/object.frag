@@ -2,8 +2,7 @@
 @include phong.ggsl
 @include stdfrag.ggsl
 
-
-main() {
+void main() {
 	generatePhongData();
 	Material material;
 

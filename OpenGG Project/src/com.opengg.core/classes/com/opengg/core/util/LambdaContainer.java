@@ -8,7 +8,11 @@ public class LambdaContainer<E>{
 
     public E value;
 
-    public <T> LambdaContainer<T> encapsulate(T t){
+    public static <T>  LambdaContainer<T> create(){
+        return new LambdaContainer<>();
+    }
+
+    public static <T> LambdaContainer<T> encapsulate(T t){
         return new LambdaContainer<>(t);
     }
 }

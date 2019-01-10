@@ -9,12 +9,13 @@ public class Lexer {
     private String contents;
     private List<Tuple<Token, String>> tokens;
 
-    public Lexer(String contents){
+    public Lexer(String contents) {
         this.contents = contents;
-        tokens = new ArrayList<>();
-        var dab = System.nanoTime();
-        //System.out.println(contents);
+    }
 
+    public void process(){
+        tokens = new ArrayList<>();
+        contents = " " + contents;
         List<Tuple<Token, Tuple<String,Integer>>> allmatches = new ArrayList<>();
         for(Token token : Token.values()){
             if(token.isSpaced()){
@@ -22,13 +23,11 @@ public class Lexer {
             }
         }
 
-        System.out.println(contents);
-
         for (Token token : Token.values()){
             var matcher = token.getPattern().matcher(contents);
             while (matcher.find()){
                 if(allmatches.stream().filter(s -> s.y.y == matcher.start()).findAny().isPresent()) continue;
-                allmatches.add(new Tuple<>(token, new Tuple<>(matcher.group().trim(), matcher.start())));
+                allmatches.add(new Tuple<>(token, Tuple.of(matcher.group().trim(), matcher.start())));
             }
         }
 
@@ -43,14 +42,12 @@ public class Lexer {
             tokens.add(new Tuple<>(last.x, last.y.x));
 
             allmatches.remove(last);
-            System.out.println(last.x.name() + ": " + last.y.x);
+            //System.out.println(last.x.name() + ": " + last.y.x);
         }
+        tokens.add(Tuple.of(Token.EOF, ""));
+    }
 
-        System.out.println(tokens.stream()
-                .map(t -> t.y)
-                .map(s -> s.equals(";") || s.equals("}") || s.equals("{") ? s + "\n" : s + " ")
-                .collect(Collectors.joining()));
-
-        System.out.println((System.nanoTime()-dab)/1_000_000f);
+    public List<Tuple<Token, String>> getContents(){
+        return tokens;
     }
 }

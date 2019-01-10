@@ -37,7 +37,7 @@ float getShadowCoverage(Light light){
     vec3 lightDir = normalize(light.lightpos.xyz - pos.xyz);
     float bias = max(0.05 * (1.0 - dot(n, lightDir)), 0.005);
 
-    float shadow = (projCoords.z -0.5f) - bias > closestDepth  ? 0.0f : 1.0f;
+    float shadow = (projCoords.z -0.5f) - bias > closestDepth ? 0.0f : 1.0f;
     return shadow;
 }
 

@@ -1,11 +1,13 @@
 package com.opengg.core.render.shader.ggsl;
 
+import com.opengg.core.console.GGConsole;
 import com.opengg.core.exceptions.ShaderException;
 import com.opengg.core.io.FileStringLoader;
 import com.opengg.core.render.shader.ShaderProgram;
 
 import java.io.IOException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -18,25 +20,18 @@ public class ShaderFile{
     private List<String> includes;
     private List<String> glvals;
     private HashMap<String, String> preprocessor;
-    private String data;
     private String version;
     private ShaderFileType type;
     private String name;
 
-    private List<ShaderField> fields = new ArrayList<>();
-    private List<ShaderFunction> code = new ArrayList<>();
-    private List<ShaderStruct> structs = new ArrayList<>();
+    private String compiledsource;
 
+    private Parser.AbstractSyntaxTree tree;
+    private boolean parsed;
 
     private static final Pattern multilineReplacer = Pattern.compile("/\\*.*?\\*/", Pattern.DOTALL);
     private static final Pattern structFinderPattern = Pattern.compile("struct\\s.*?\\}\\s*?\\;", Pattern.DOTALL | Pattern.MULTILINE);
     private static final Pattern functionFinderPattern = Pattern.compile("\\)\\s*\\{", Pattern.DOTALL | Pattern.MULTILINE);
-    private static final Pattern splitterPattern = Pattern.compile(";(?![^{]*})");
-    private static final Pattern layoutDataRegex = Pattern.compile("(?<=layout\\()(.*)(?=\\))", Pattern.DOTALL);
-    private static final Pattern layoutRegex = Pattern.compile("layout\\(.*\\)", Pattern.DOTALL);
-    private static final Pattern valueDataRegex = Pattern.compile("(?<==)(.*)", Pattern.DOTALL);
-    private static final Pattern valueRegex = Pattern.compile("=.*", Pattern.DOTALL);
-    private static final Pattern structPattern = Pattern.compile("(?<=\\{)(.*)(?=\\})", Pattern.DOTALL);
 
     private static Pattern[] modPatterns;
 
@@ -59,7 +54,7 @@ public class ShaderFile{
     public ShaderFile(String name, String source){
         try{
             this.name = name;
-            data = FileStringLoader.loadStringSequence(URLDecoder.decode(source, "UTF-8"));
+            String data = FileStringLoader.loadStringSequence(URLDecoder.decode(source, StandardCharsets.UTF_8));
 
             data = data.trim().replaceAll(" +", " ");
             String ending = source.substring(source.lastIndexOf(".") + 1);
@@ -83,16 +78,24 @@ public class ShaderFile{
                     type = ShaderFile.ShaderFileType.UTIL;
             }
 
-            data = runPreprocessor(data);
+            try{data = runPreprocessor(data);}catch(Exception e){ return;}
 
-            new Lexer(data);
+            var lexer = new Lexer(data);
+            lexer.process();
+
+            var parser = new Parser(lexer);
+            tree = parser.parse();
+            parsed = true;
 
         }catch(IOException e){
+            e.printStackTrace();
+        }catch(Exception e){
+            GGConsole.error("Failed to load shader file " + name + " (from file " + source + "): " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-    private String runPreprocessor(String start){
+    private String runPreprocessor(String data){
         if(data.indexOf("@") == -1 && data.indexOf("#version") != -1){
             throw new ShaderException("Attempted to load GLSL file as GGSL");
         }
@@ -139,156 +142,194 @@ public class ShaderFile{
         return data;
     }
 
-    private void process(String data){
-        Matcher structFinderMatcher = structFinderPattern.matcher(data);
+    public void compile(){
+        compiledsource = tree.nodes.stream()
+                .map(this::process)
+                .map(s -> s + "\n")
+                .collect(Collectors.joining());
 
-        while(structFinderMatcher.find()){
-            processStruct(structFinderMatcher.group());
-            data = data.replace(structFinderMatcher.group(), "");
+        compiledsource = compiledsource.replaceAll(";;", ";");
+        for(var val : glvals){
+            compiledsource = "#" + val + "\n" + compiledsource;
         }
-
-        Matcher functionFinderMatcher = functionFinderPattern.matcher(data);
-        List<String> funcs = new ArrayList<>();
-
-        while (functionFinderMatcher.find()){
-            int start = functionFinderMatcher.start();
-
-            int realstart = 0;
-            if(data.lastIndexOf(";", start) > realstart) realstart = data.lastIndexOf(";", start);
-            if(data.lastIndexOf("}", start) > realstart) realstart = data.lastIndexOf("}", start);
-            realstart++;
-            String nfunc = findNextFunc(data, realstart);
-
-            data = data.replace(nfunc, "");
-            functionFinderMatcher = functionFinderPattern.matcher(data);
-        }
-
-        Arrays.stream(splitterPattern.split(data))
-                .map(String::trim)
-                .forEach(this::processField);
+        //System.out.println(finalvalue);
     }
 
-    private void processField(String line) {
-        if(line.contains("struct")) {
-            processStruct(line);
-            return;
-        }
-        String initialvalue = "";
-        String name = "";
-        String type = "";
-        List<String> fieldmodifiers = new ArrayList<>();
-        String layoutdata = "";
-        int loc = -1;
+    public String process(Parser.Node node){
+        var builder = new StringBuilder();
+        if(node instanceof Parser.Body){
+            var body = (Parser.Body) node;
 
-        int namestart = 0;
-        int typestart = 0;
-        int valuestart = 0;
-        boolean hasvalue = false;
-        boolean hasdata = false;
-
-        Matcher containsLayout = layoutRegex.matcher(line);
-        if(containsLayout.find()){
-            Matcher datamatch = layoutDataRegex.matcher(containsLayout.group());
-
-            datamatch.find();
-            layoutdata = datamatch.group(1);
-            line = line.replace(containsLayout.group(), "");
-        }
-
-        Matcher containsData = valueRegex.matcher(line);
-        if(containsData.find()){
-            Matcher datamatch = valueDataRegex.matcher(containsData.group());
-
-            datamatch.find();
-            initialvalue = datamatch.group(1);
-            line = line.replace(containsData.group(), "");
-        }else{
-            line = line.replaceAll(";\\s*$", "");
-        }
-
-        for(var pattern : modPatterns){
-            Matcher modMatcher = pattern.matcher(line);
-            if(modMatcher.find()){
-                fieldmodifiers.add(pattern.pattern().replace("\\W", ""));
-                line = line.replace(modMatcher.group(), "");
+            for(var node2 : body.expressions){
+                builder.append(process(node2)).append(";\n");
             }
         }
+        else if(node instanceof Parser.Function){
+            var func = (Parser.Function) node;
 
-        line = line.trim();
+            for(var modifier : func.modifiers.modifiers){
+                builder.append(modifier.value + " ");
+            }
 
-        ShaderField field = new ShaderField();
-        field.initialvalue = initialvalue;
-        field.modifiers = fieldmodifiers;
-        field.name = line;
-        field.loc = loc;
-        field.layoutdata = layoutdata;
+            builder.append(func.type).append(" ");
+            builder.append(func.name);
+            builder.append("(");
 
-        fields.add(field);
-    }
+            for(var arg : func.args.args){
+                for(var modifier : arg.modifiers.modifiers){
+                    builder.append(modifier.value).append(" ");
+                }
 
-    private void processStruct(String line) {
-        String name;
-        String data;
+                builder.append(arg.type.value).append(" ");
+                builder.append(arg.name.value);
 
-        line = line.replaceAll("\\s*struct\\s*", "");
-
-        Matcher matcher = structPattern.matcher(line);
-        matcher.find();
-        data = matcher.group();
-
-        name = line.substring(0, line.indexOf("{"));
-
-        ShaderStruct struct = new ShaderStruct();
-        struct.name = name;
-        struct.data = data;
-        structs.add(struct);
-    }
-
-    private String findNextFunc(String source, int start){
-        int bracecounter = 0;
-
-        for(int i = start; i < source.length(); i++){
-            char ch = source.charAt(i);
-
-            if(ch == '{'){
-                bracecounter++;
-            }else if(ch == '}'){
-                bracecounter--;
-                if(bracecounter == 0){
-                    String value = source.substring(start, i + 1);
-                    processFunction(value);
-                    return value;
+                if(func.args.args.indexOf(arg) != func.args.args.size()-1){
+                    builder.append(", ");
                 }
             }
+
+            builder.append(") {\n");
+            builder.append(process(func.body));
+            builder.append("} \n");
+        }
+        else if(node instanceof Parser.Struct){
+            var struct = (Parser.Struct) node;
+
+            for(var modifier : struct.modifiers.modifiers){
+                builder.append(modifier.value + " ");
+            }
+
+
+            builder.append("struct ").append(struct.name).append(" {\n");
+
+            builder.append(process(struct.declarations));
+
+            builder.append("} ").append(struct.variable).append(";\n");
+        }
+        else if(node instanceof Parser.Interface){
+            var interfacee = (Parser.Interface) node;
+
+            for(var modifier : interfacee.modifiers.modifiers){
+                builder.append(modifier.value + " ");
+            }
+
+            builder.append(interfacee.accessor.value).append(" ");
+
+            builder.append(interfacee.name).append(" {\n");
+
+            builder.append(process(interfacee.declarations));
+
+            builder.append("} ").append(interfacee.variable).append(";\n");
+        }
+        else if(node instanceof Parser.If){
+            var iff = (Parser.If) node;
+            builder.append("if(");
+            builder.append(process(iff.conditional)).append("){\n");
+            builder.append(process(iff.then)).append("}else{\n");
+            builder.append(process(iff.els)).append("}\n");
+        }
+        else if(node instanceof Parser.While){
+            var whil = (Parser.While) node;
+            builder.append("while(");
+            builder.append(process(whil.conditional)).append("){\n");
+            builder.append(process(whil.contents)).append("}\n");
+        }
+        else if(node instanceof Parser.For){
+            var forr = (Parser.For) node;
+            builder.append("for(");
+            builder.append(process(forr.assignment));
+            if(!builder.toString().endsWith(";")){
+                builder.append("; ");
+            }else{
+                builder.append(" ");
+            }
+            builder.append(process(forr.conditional)).append("; ");
+            builder.append(process(forr.modifier)).append("){\n");
+            builder.append(process(forr.contents)).append("}\n");
+        }
+        else if(node instanceof Parser.Expression){
+            if(node instanceof Parser.Assignment){
+                if(node instanceof Parser.Declaration){
+                    var dec = (Parser.Declaration) node;
+
+                    for(var mod : dec.modifiers.modifiers){
+                        builder.append(mod.value).append(" ");
+                    }
+
+                    builder.append(dec.type).append(" ");
+                }
+
+                var assign = (Parser.Assignment) node;
+
+                builder.append(assign.name);
+                if(assign.assigntype != null){
+                    builder.append(" ").append(assign.assigntype).append(" ");
+
+                    builder.append(process(assign.value));
+                }
+
+                builder.append(";");
+            }
+            else if(node instanceof Parser.Identifier){
+                builder.append(((Parser.Identifier)node).value);
+            }
+            else if(node instanceof Parser.FloatLiteral){
+                builder.append(Float.valueOf(((Parser.FloatLiteral)node).value)).append("f");
+            }
+            else if(node instanceof Parser.IntegerLiteral){
+                builder.append(Integer.valueOf(((Parser.IntegerLiteral)node).value));
+            }
+            else if(node instanceof Parser.BinaryOp){
+                var binop = (Parser.BinaryOp) node;
+
+                builder.append("(");
+                builder.append(process(binop.left)).append(" ");
+                builder.append(binop.op);
+                builder.append(" ").append(process(binop.right));
+                builder.append(")");
+            }
+            else if(node instanceof Parser.UnaryOp){
+                var unop = (Parser.UnaryOp) node;
+
+                if (unop.after) {
+                    builder.append(process(unop.exp));
+                    builder.append(unop.op);
+                } else {
+                    builder.append(unop.op);
+                    builder.append(process(unop.exp));
+                }
+            }
+            else if(node instanceof Parser.FieldAccessor){
+                var access = (Parser.FieldAccessor)node;
+                builder.append(process(access.value)).append(access.accessor.value);
+            }
+            else if(node instanceof Parser.TernaryOp){
+                var ternary = (Parser.TernaryOp) node;
+
+                builder.append("(");
+                builder.append(process(ternary.conditional)).append(" ? ");
+                builder.append(process(ternary.then)).append(" : ");
+                builder.append(process(ternary.els));
+                builder.append(")");
+            }
+            else if(node instanceof Parser.Return){
+                builder.append("return ").append(process(((Parser.Return)node).returnValue));
+            }
+            else if(node instanceof Parser.FunctionCall){
+                var fcall = (Parser.FunctionCall) node;
+
+                builder.append(fcall.name).append("(");
+                for(var arg : fcall.args.expressions){
+                    builder.append(process(arg));
+                    if(fcall.args.expressions.indexOf(arg) != fcall.args.expressions.size()-1){
+                    builder.append(", ");
+                    }
+                }
+                builder.append(")");
+            }
         }
 
-
-        throw new ShaderException("Reached end of file while parsing");
-
-    }
-
-    private void processFunction(String funcsource) {
-        ShaderFunction function = new ShaderFunction();
-
-        function.data = funcsource.substring(funcsource.indexOf("{") + 1, funcsource.lastIndexOf("}")-1).trim();
-
-        function.args = funcsource.substring(funcsource.indexOf("(") + 1, funcsource.indexOf(")")).trim();
-
-        int namestart = 0;
-        if(funcsource.lastIndexOf(" ", funcsource.indexOf("(")) == -1){
-            function.name = funcsource.substring(0, funcsource.indexOf("(")).trim();;
-        }else{
-            namestart = funcsource.lastIndexOf(" ", funcsource.indexOf("("));
-            function.name = funcsource.substring(namestart, funcsource.indexOf("(")).trim();
-        }
-
-        if(namestart == 0){
-            function.returntype = "";
-        }else{
-            function.returntype = funcsource.substring(0, namestart).trim();
-        }
-
-        code.add(function);
+        return builder.toString();
     }
 
     public List<String> getIncludes(){
@@ -297,18 +338,6 @@ public class ShaderFile{
 
     public ShaderFileType getType(){
         return type;
-    }
-
-    public List<ShaderField> getFields(){
-        return fields;
-    }
-
-    public List<ShaderFunction> getCode(){
-        return code;
-    }
-
-    public List<ShaderStruct> getStructs(){
-        return structs;
     }
 
     public String getVersion() {
@@ -327,6 +356,14 @@ public class ShaderFile{
         return Arrays.stream(preprocessor.getOrDefault(id, "").split(":"))
                 .filter(s -> !s.isEmpty())
                 .collect(Collectors.toList());
+    }
+
+    public boolean isParsed(){
+        return parsed;
+    }
+
+    public String getCompiledSource(){
+        return compiledsource;
     }
 
     public static class ShaderFunction{
@@ -421,7 +458,7 @@ public class ShaderFile{
         public String toString(){
             return "ShaderField{" +
                     "name='" + name + '\'' +
-                    ", type='" + type + '\'' +
+                    ", assigntype='" + type + '\'' +
                     ", modifiers='" + modifiers + '\'' +
                     ", initialvalue='" + initialvalue + '\'' +
                     ", loc='" + loc + '\'' +
