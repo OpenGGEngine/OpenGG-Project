@@ -8,6 +8,7 @@ package com.opengg.core.render;
 
 import com.opengg.core.GGInfo;
 import com.opengg.core.console.GGConsole;
+import com.opengg.core.engine.GGFramerateRenderer;
 import com.opengg.core.engine.GGGameConsole;
 import com.opengg.core.exceptions.RenderException;
 import com.opengg.core.gui.GUIController;
@@ -225,6 +226,7 @@ public class RenderEngine {
 
         GUIController.render();
         GGGameConsole.render();
+        GGFramerateRenderer.render();
     }
 
     private static void enableDefaultGroups(){
