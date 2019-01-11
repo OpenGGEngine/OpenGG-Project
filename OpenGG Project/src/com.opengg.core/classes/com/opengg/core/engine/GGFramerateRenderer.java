@@ -43,10 +43,10 @@ public class GGFramerateRenderer {
                         .kerning(true)
                         .size(FONT_SCALE);
                 display = font.createFromText(displaytext);
-                display.setMatrix(Matrix4f.translate(0.86f,0.975f,0));
 
             }
 
+            display.setMatrix(Matrix4f.translate(0.86f,0.975f,0.3f));
             display.render();
             RenderEngine.setDepthCheck(true);
 

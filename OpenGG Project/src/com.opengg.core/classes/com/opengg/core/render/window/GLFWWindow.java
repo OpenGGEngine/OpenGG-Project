@@ -34,6 +34,7 @@ public class GLFWWindow implements Window {
     GLFWKeyCallback keyCallback;
     GLFWCursorPosCallback mouseCallback;
     GLFWMouseButtonCallback mouseButtonCallback;
+    GLFWScrollCallback mouseScrollCallback;
 
     @Override
     public void setup(WindowInfo winfo) {
@@ -89,10 +90,12 @@ public class GLFWWindow implements Window {
         glfwSetKeyCallback(window, keyCallback = new GLFWKeyboardHandler());
         glfwSetCursorPosCallback(window, mouseCallback = new GLFWMousePositionHandler());
         glfwSetMouseButtonCallback(window, mouseButtonCallback = new GLFWMouseButtonHandler());
+        glfwSetScrollCallback(window, mouseScrollCallback = new GLFWMouseScrollHandler());
 
         KeyboardController.setHandler((IKeyboardHandler) keyCallback);
         MouseController.setButtonHandler((MouseButtonHandler) mouseButtonCallback);
         MouseController.setPosHandler((MousePositionHandler) mouseCallback);
+        MouseController.setScrollHandler((MouseScrollHandler)mouseScrollCallback);
 
         glfwMakeContextCurrent(window);
         glfwSwapInterval(winfo.vsync ? 1 : 0);

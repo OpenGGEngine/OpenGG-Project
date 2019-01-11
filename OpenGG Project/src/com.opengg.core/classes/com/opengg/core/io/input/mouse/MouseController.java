@@ -17,12 +17,19 @@ import java.util.List;
  */
 public class MouseController {
     private static Vector2f old = new Vector2f();
+    private static double oldSX=0,oldSY=0;
     private static int counter;
     private static List<MouseButtonListener> buttonlisteners = new ArrayList<>();
     private static List<MouseMoveListener> poslisteners = new ArrayList<>();
+    private static List<MouseScrollListener> scrollListeners = new ArrayList<>();
     private static MousePositionHandler poshandler;
     private static MouseButtonHandler buttonhandler;
-    
+    private static MouseScrollHandler scrollHandler;
+
+    public static void addScrollListener(MouseScrollListener handle){
+        scrollListeners.add(handle);
+    }
+
     public static void setPosHandler(MousePositionHandler handle){
         poshandler = handle;
     }
@@ -30,6 +37,8 @@ public class MouseController {
     public static void setButtonHandler(MouseButtonHandler handle){
         buttonhandler = handle;
     }
+
+    public static void setScrollHandler(MouseScrollHandler handle){scrollHandler = handle;}
     
     public static void onButtonPress(MouseButtonListener button){
         buttonlisteners.add(button);
@@ -52,14 +61,23 @@ public class MouseController {
     }
 
     public static void update(){
-        if(poshandler.getPos().equals(old))
-            return;
-
-        for(var move: poslisteners){
-            move.onMove(poshandler.getPos());
+        if(oldSX != scrollHandler.getWheelX()||oldSY != scrollHandler.getWheelY()){
+            for(var scrolll:scrollListeners){
+                scrolll.onScroll(scrollHandler.getWheelX(),scrollHandler.getWheelY());
+            }
+            oldSX = scrollHandler.getWheelX();
+            oldSY = scrollHandler.getWheelY();
         }
 
-        old = poshandler.getPos();
+        if(!poshandler.getPos().equals(old)) {
+
+            for (var move : poslisteners) {
+                move.onMove(poshandler.getPos());
+            }
+
+            old = poshandler.getPos();
+        }
+
     }
     
     public static boolean isButtonDown(int button){
