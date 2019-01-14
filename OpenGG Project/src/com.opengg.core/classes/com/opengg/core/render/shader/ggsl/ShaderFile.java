@@ -82,10 +82,10 @@ public class ShaderFile{
 
             var lexer = new Lexer(data);
             lexer.process();
-
             var parser = new Parser(lexer);
             tree = parser.parse();
             parsed = true;
+
 
         }catch(IOException e){
             e.printStackTrace();
@@ -152,7 +152,7 @@ public class ShaderFile{
         for(var val : glvals){
             compiledsource = "#" + val + "\n" + compiledsource;
         }
-        //System.out.println(finalvalue);
+
     }
 
     public String process(Parser.Node node){

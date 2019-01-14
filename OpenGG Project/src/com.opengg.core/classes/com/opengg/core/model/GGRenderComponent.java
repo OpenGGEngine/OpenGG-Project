@@ -1,17 +1,14 @@
-package com.opengg.core.model.ggmodel;
+package com.opengg.core.model;
 
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.world.components.RenderComponent;
 
-import static org.lwjgl.opengl.GL11.glGetError;
-
 public class GGRenderComponent extends RenderComponent {
+    private Model model;
 
-    GGModel model;
-
-    public GGRenderComponent(GGModel model){
+    public GGRenderComponent(Model model){
         this.model = model;
-        this.setFormat(model.isAnim?RenderEngine.tangentAnimVAOFormat:RenderEngine.tangentVAOFormat);
+        this.setFormat(model.isAnim? RenderEngine.tangentAnimVAOFormat: RenderEngine.tangentVAOFormat);
         this.setDrawable(model.getDrawable());
     }
     @Override

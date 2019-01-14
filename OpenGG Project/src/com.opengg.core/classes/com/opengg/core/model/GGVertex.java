@@ -1,4 +1,4 @@
-package com.opengg.core.model.ggmodel;
+package com.opengg.core.model;
 
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;

@@ -1,4 +1,4 @@
-package com.opengg.core.model.ggmodel;
+package com.opengg.core.model;
 
 public class GGFace {
     public GGVertex v1,v2,v3;

@@ -32,12 +32,12 @@ public class PhysicsRenderer {
     private static Drawable cylinderobj;
     
     public static void initialize(){
-        sphere = Resource.getModel("sphere");
+        /*sphere = Resource.getModel("sphere");
         cylinder = Resource.getModel("cylinder");
         
         sphereobj = sphere.getDrawable();
         cylinderobj = cylinder.getDrawable();
-        
+        */
         path = new RenderOperation("physics", () -> {
             RenderEngine.setWireframe(true);
             for(ColliderGroup group : PhysicsEngine.getInstance().getColliders()){

@@ -1,15 +1,14 @@
-package com.opengg.core.model.ggmodel.io;
+package com.opengg.core.model.io;
 
-import com.opengg.core.model.ggmodel.GGBone;
-import com.opengg.core.model.ggmodel.GGMesh;
-import com.opengg.core.model.ggmodel.GGModel;
+import com.opengg.core.model.GGBone;
+import com.opengg.core.model.Mesh;
+import com.opengg.core.model.Model;
 import com.opengg.core.system.Allocator;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.stream.Stream;
@@ -21,7 +20,7 @@ public class FileSector {
     public long length = 0;
 
     //Initialize Sector from Model
-    public FileSector(GGModel model, SectorType type){
+    public FileSector(Model model, SectorType type){
         switch(type){
             case VBO:
                 genVBOSector(model);
@@ -57,7 +56,7 @@ public class FileSector {
             this.subBuffers[i] = b;
         }
     }
-    private void genVBOSector(GGModel model){
+    private void genVBOSector(Model model){
         this.subBuffers = new ByteBuffer[model.meshes.size()];
         for(int i=0;i<model.meshes.size();i++){
             ByteBuffer sub = ByteBuffer.allocateDirect(model.meshes.get(i).vbo.capacity()*Float.BYTES);
@@ -69,7 +68,7 @@ public class FileSector {
             this.subBuffers[i] = sub;
         }
     }
-    private void genIBOSector(GGModel model){
+    private void genIBOSector(Model model){
         this.subBuffers = new ByteBuffer[model.meshes.size()];
         for(int i=0;i<model.meshes.size();i++){
             ByteBuffer sub = ByteBuffer.allocateDirect(model.meshes.get(i).ibo.capacity()*Integer.BYTES);
@@ -81,10 +80,10 @@ public class FileSector {
             this.subBuffers[i] = sub;
         }
     }
-    private void genBonesSector(GGModel model){
+    private void genBonesSector(Model model){
         this.subBuffers = new ByteBuffer[model.meshes.size()];
         for(int i=0;i<model.meshes.size();i++){
-            GGMesh curmesh = model.meshes.get(i);
+            Mesh curmesh = model.meshes.get(i);
             System.out.println(Arrays.toString(curmesh.bones));
             if(curmesh.bones == null || !curmesh.genAnim){
                 this.subBuffers[i] = ByteBuffer.allocate(0);
@@ -106,7 +105,7 @@ public class FileSector {
             }
         }
     }
-    private void genMatSector(GGModel model) throws UnsupportedEncodingException {
+    private void genMatSector(Model model) throws UnsupportedEncodingException {
         this.subBuffers = new ByteBuffer[model.materials.size()+1];
 
         for(int i=0;i<this.subBuffers.length-1;i++) {this.subBuffers[i] = model.materials.get(i).toBuffer(); length+=this.subBuffers[i].limit();}

@@ -19,7 +19,8 @@ public class Lexer {
         List<Tuple<Token, Tuple<String,Integer>>> allmatches = new ArrayList<>();
         for(Token token : Token.values()){
             if(token.isSpaced()){
-                contents = token.getPattern().matcher(contents).replaceAll(" " + token.getMatch() + " ");
+                var matcher = token.getPattern().matcher(contents);
+                contents = matcher.replaceAll(" " + token.getMatch() + " ");
             }
         }
 

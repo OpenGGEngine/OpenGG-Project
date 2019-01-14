@@ -28,7 +28,7 @@ public class ModelWorldGeometry extends WorldGeometry{
 
     @Override
     public void serialize(GGOutputStream out) throws IOException{
-        out.write(model.getSource());
+        out.write(model.getName());
     }
 
     @Override

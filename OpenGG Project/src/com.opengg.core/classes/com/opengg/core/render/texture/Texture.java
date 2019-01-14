@@ -168,17 +168,7 @@ public interface Texture {
     }
 
     public static Texture get2DTexture(TextureData data, int format, int intformat, int storage){
-        data.buffer.rewind();
-        Texture texture = new OpenGLTexture(GL_TEXTURE_2D, format, intformat, storage);
-        texture.setActiveTexture(0);
-        texture.bind();
-        texture.set2DData(data);
-        texture.setTextureWrapType(GL_REPEAT);
-        texture.setMinimumFilterType(GL_LINEAR);
-        texture.setMaximumFilterType(GL_NEAREST);
-        texture.generateMipmaps();
-        texture.unbind();
-        return texture;
+        return create(Texture.config().format(format).internalFormat(intformat).inputType(storage), data);
     }
 
     public static Texture get2DFramebufferTexture(int x, int y, int format, int intformat, int input){
@@ -187,7 +177,7 @@ public interface Texture {
         Texture texture = new OpenGLTexture(GL_TEXTURE_2D, format, intformat, input);
         texture.bind();
         texture.set2DData(data);
-        texture.setTextureWrapType(GL_CLAMP);
+        //texture.setTextureWrapType(GL_CLAMP);
         texture.setMinimumFilterType(GL_LINEAR);
         texture.setMaximumFilterType(GL_NEAREST);
         return texture;
@@ -199,7 +189,7 @@ public interface Texture {
         Texture texture = new OpenGLTexture(GL_TEXTURE_CUBE_MAP, format, intformat, input);
         texture.bind();
         texture.setCubemapData(data, data, data, data, data, data);
-        texture.setTextureWrapType(GL_CLAMP);
+        //texture.setTextureWrapType(GL_CLAMP);
         texture.setMinimumFilterType(GL_LINEAR);
         texture.setMaximumFilterType(GL_NEAREST);
         return texture;
@@ -285,11 +275,15 @@ public interface Texture {
     }
 
     public static Texture ofColor(Color color, float transparency){
+        return ofColor((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue(), (byte) (transparency/255));
+    }
+
+    public static Texture ofColor(byte r, byte g, byte b, byte a){
         TextureData data = new TextureData(1,1,4, Allocator.alloc(4)
-                .put((byte) color.getRed())
-                .put((byte) color.getGreen())
-                .put((byte) color.getBlue())
-                .put((byte) (transparency*255))
+                .put((byte) r)
+                .put((byte) g)
+                .put((byte) b)
+                .put((byte) a)
                 .flip(),
                 "internal");
 
@@ -321,7 +315,7 @@ public interface Texture {
         }
         if(data != null) texture.generateMipmaps();
 
-        texture.setTextureWrapType(config.wraptype);
+        //texture.setTextureWrapType(config.wraptype);
         texture.setMinimumFilterType(config.minfilter);
         texture.setMaximumFilterType(config.maxfilter);
         texture.unbind();

@@ -118,6 +118,11 @@ public class OpenGLFramebuffer implements Framebuffer{
     }
 
     @Override
+    public void attachColorCubemap(int width, int height, int attachment){
+        attachTexture(Texture.TextureType.TEXTURE_CUBEMAP, width, height, GL_RGBA, GL_RGBA8, GL_UNSIGNED_BYTE, GL_COLOR_ATTACHMENT0 + attachment);
+    }
+
+    @Override
     public void attachTexture(Texture.TextureType type, int width, int height, int format, int intformat, int input, int attachment){
         Texture tex;
         if(type.equals(Texture.TextureType.TEXTURE_CUBEMAP))

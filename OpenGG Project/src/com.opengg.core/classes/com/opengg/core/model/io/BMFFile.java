@@ -1,12 +1,11 @@
-package com.opengg.core.model.ggmodel.io;
+package com.opengg.core.model.io;
 
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.model.Material;
-import com.opengg.core.model.ggmodel.GGMesh;
-import com.opengg.core.model.ggmodel.GGModel;
-import com.opengg.core.model.ggmodel.process.ModelProcess;
+import com.opengg.core.model.Mesh;
+import com.opengg.core.model.Model;
+import com.opengg.core.model.process.ModelProcess;
 import com.opengg.core.system.Allocator;
-import org.lwjgl.system.MemoryUtil;
 
 import java.io.*;
 import java.nio.ByteBuffer;
@@ -14,10 +13,8 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.channels.FileChannel;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import static org.lwjgl.system.MemoryUtil.memAlloc;
 import static org.lwjgl.system.MemoryUtil.memFree;
@@ -28,7 +25,7 @@ public class BMFFile extends ModelProcess {
     private static final int VERSION = 1;
     private static final String HEADER_START = "OPENGG-BMF";
 
-    public void writeModel(GGModel model, String destination) throws IOException {
+    public void writeModel(Model model, String destination) throws IOException {
         FileOutputStream fOut = new FileOutputStream(new File(destination));
         FileChannel fc = fOut.getChannel();
 
@@ -67,7 +64,8 @@ public class BMFFile extends ModelProcess {
         fOut.close();
     }
 
-    public static GGModel loadModel(String file) throws FileNotFoundException,IOException{
+    public static Model loadModel(String file) throws FileNotFoundException,IOException{
+        String name = file.substring(Math.max(file.lastIndexOf("\\"), file.lastIndexOf("/")), file.indexOf("."));
 
         File f = new File(file);
         FileInputStream fIn = new FileInputStream(f);
@@ -102,7 +100,7 @@ public class BMFFile extends ModelProcess {
             }
         }
         boolean hasAnim = false;
-        ArrayList<GGMesh> meshes = new ArrayList<>();
+        ArrayList<Mesh> meshes = new ArrayList<>();
 
         GGConsole.log("Loading BMF Model " + f.getName() + " with " + capacities[0].length + " meshes and " + numSector + " sectors.");
         //Load VBO and IBO
@@ -117,10 +115,10 @@ public class BMFFile extends ModelProcess {
             IntBuffer dupeIBBuf = Allocator.allocInt(fsIBO.subBuffers[i].limit()/4);
             dupeIBBuf.put(fsIBO.subBuffers[i].rewind().asIntBuffer());
             dupeIBBuf.flip();
-            meshes.add(new GGMesh(dupeFBBuf,dupeIBBuf));
+            meshes.add(new Mesh(dupeFBBuf,dupeIBBuf));
         }
         boolean isAnim = false;
-        GGModel model = new GGModel(meshes);
+        Model model = new Model(meshes, name);
         model.isAnim = isAnim;
         //Load Optional Sectors
         for(int i=2;i<numSector;i++){
@@ -169,7 +167,7 @@ public class BMFFile extends ModelProcess {
 
 
     @Override
-    public void process(GGModel model) {
+    public void process(Model model) {
         try {
             writeModel(model,model.fileLocation);
         } catch (IOException e) {

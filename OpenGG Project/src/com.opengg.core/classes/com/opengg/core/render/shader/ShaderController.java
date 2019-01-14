@@ -17,7 +17,6 @@ import com.opengg.core.math.Vector3f;
 import com.opengg.core.model.Material;
 import com.opengg.core.render.GraphicsBuffer;
 import com.opengg.core.render.shader.ggsl.ShaderFile;
-import com.opengg.core.render.shader.ggsl.Token;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,7 +27,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.opengg.core.render.shader.ShaderProgram.ShaderType;
-import static com.opengg.core.render.shader.ggsl.Token.EOF;
 
 /**
  * Controller/manager for GLSL shaders
@@ -51,7 +49,7 @@ public class ShaderController {
     public static void testInitialize(){
         GGConsole.initialize();
         var t = System.nanoTime();
-        var ww = new ShaderFile("object", Resource.getShaderPath("anim.vert"));
+        var ww = new ShaderFile("object", Resource.getShaderPath("light.ggsl"));
         ww.compile();
         System.out.println(ww.getCompiledSource());
         //loadShaderFiles();
@@ -104,7 +102,7 @@ public class ShaderController {
         use("object.vert", "passthrough.frag");
         saveCurrentConfiguration("passthrough");
 
-        use("noprocess.vert", "point.geom", "passthrough.frag");
+        use("modeltransform.vert", "point.geom", "point.frag");
         saveCurrentConfiguration("pointshadow");
 
         use("object.vert", "cubemap.frag");
@@ -223,6 +221,19 @@ public class ShaderController {
 
         findUniform("shadowmap3");
         setTextureLocation("shadowmap3", 8);
+
+        findUniform("cube");
+        setTextureLocation("cube", 9);
+
+        findUniform("cube2");
+        setTextureLocation("cube2", 10);
+
+        findUniform("cube3");
+        setTextureLocation("cube3", 11);
+
+        findUniform("lightPos");
+        findUniform("farplane");
+
 
         setMatLinks();
     }
@@ -763,7 +774,7 @@ public class ShaderController {
         var allfiles = dir.list();
 
         shaderfiles.putAll(Arrays.stream(allfiles)
-                .parallel()
+                //.parallel()
                 .unordered()
                 .filter(file -> !file.equals("error.glsl"))
                 .map(file -> new ShaderFile(file, GGInfo.getApplicationPath() + "\\resources\\glsl\\" + file))

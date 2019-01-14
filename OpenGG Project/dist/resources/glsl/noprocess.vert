@@ -1,6 +1,4 @@
 @version 4.20
-@glsl define LIGHTNUM 100
-
 
 in vec2 texcoord;
 in vec3 normal;
@@ -17,10 +15,11 @@ out vertexData{
 	vec3 norm;
 };
 
+uniform mat4 model;
 
 void main() {
     textureCoord = texcoord;
     pos = position;
     norm = normal;
-	gl_Position = vec4(position, 1.0);
+	gl_Position = model * vec4(position, 1.0);
 }

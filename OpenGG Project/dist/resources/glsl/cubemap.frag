@@ -2,8 +2,6 @@
 @include stdfrag.ggsl
 
 
-uniform samplerCube cubemap;
-
 
 vec4 getCube(){
     return texture(cubemap, normalize(pos.xyz));

@@ -23,7 +23,7 @@ import java.util.List;
  *
  * @author Javier
  */
-public class ModelUtil {
+public class ModelUtil {/*
     public static void findAdjacencies(Mesh m){
         List<Edge> edges = new ArrayList<>();
         int i = 0;
@@ -525,5 +525,5 @@ public class ModelUtil {
             string = new StringBuilder();
         }
         return string.toString();
-    }
+    }*/
 }

@@ -27,6 +27,7 @@ public class ModelRenderComponent extends RenderComponent implements ResourceUse
     public ModelRenderComponent(Model model){
         super();
         setModel(model);
+        this.setFormat(model.isAnim? RenderEngine.tangentAnimVAOFormat: RenderEngine.tangentVAOFormat);
         this.setTransparency(true);
     }
     
@@ -36,14 +37,8 @@ public class ModelRenderComponent extends RenderComponent implements ResourceUse
     
     public void setModel(Model model){
         this.model = model;
-        if(model.isanimated){
-            this.setShader("animation");
-            this.setFormat(RenderEngine.getAnimationFormat());
-        }else{
-            this.setShader("material");
-            this.setFormat(RenderEngine.getDefaultFormat());
-        }
-        
+        this.setFormat(model.isAnim? RenderEngine.tangentAnimVAOFormat: RenderEngine.tangentVAOFormat);
+
         OpenGG.asyncExec(() -> {
             setDrawable(model.getDrawable());
         });

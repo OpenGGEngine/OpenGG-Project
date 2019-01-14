@@ -35,16 +35,6 @@ public class Parser {
         return tree;
     }
 
-    public Body parseBody(){
-        Body body = new Body();
-        while(!next(CLOSE_BRACE)){
-            body.expressions.add(parseStatement());
-        }
-
-        consume(CLOSE_BRACE);
-        return body;
-    }
-
     public Function parseFunction(){
         Function function = new Function();
         var identifierStack = new ArrayDeque<String>();
@@ -81,6 +71,16 @@ public class Parser {
         function.body = parseBody();
 
         return function;
+    }
+
+    public Body parseBody(){
+        Body body = new Body();
+        while(!next(CLOSE_BRACE)){
+            body.expressions.add(parseStatement());
+        }
+
+        consume(CLOSE_BRACE);
+        return body;
     }
 
     public Node parseStatement(){
@@ -155,10 +155,10 @@ public class Parser {
 
     public Expression parseSingleStatement(){
         var exp = new LambdaContainer<Expression>();
-        accept(IDENTIFIER).ifPresent(i -> {
-            if(findNext(ASSIGNMENT) < findNext(OPEN_PARENTHESIS, SEMICOLON, CLOSE_PARENTHESIS)){
+        accept(IDENTIFIER).ifPresentOrElse(i -> {
+            if(findNext(ASSIGNMENT, MULT_ASSIGNMENT, DIV_ASSIGNMENT, ADD_ASSIGNMENT, SUB_ASSIGNMENT) < findNext(OPEN_PARENTHESIS, SEMICOLON, CLOSE_PARENTHESIS)){
                 rewind(1);
-                if(distanceTo(ASSIGNMENT) > 1){
+                if(distanceTo(ASSIGNMENT, MULT_ASSIGNMENT, DIV_ASSIGNMENT, ADD_ASSIGNMENT, SUB_ASSIGNMENT) > 1){
                     exp.value = parseDeclaration();
                 } else{
                     exp.value = parseAssignment();
@@ -170,11 +170,10 @@ public class Parser {
                 }, () -> {
                     rewind(1);
                     exp.value = parseExpression();
-
                 });
 
             }
-        });
+        }, () -> accept(SEMICOLON).ifPresentOrElse(i -> {}, this::fail));
         return exp.value;
     }
 
@@ -309,7 +308,7 @@ public class Parser {
     }
 
     public Assignment parseAssignment(){
-        var identifiers = findNext(ASSIGNMENT, SEMICOLON, COMMA) - current;
+        var identifiers = findNext(ASSIGNMENT, MULT_ASSIGNMENT, DIV_ASSIGNMENT, ADD_ASSIGNMENT, SUB_ASSIGNMENT, SEMICOLON, COMMA) - current;
         if(identifiers > 1){
             return parseDeclaration();
         }
@@ -318,7 +317,7 @@ public class Parser {
 
         assignment.name = new Identifier(consume(IDENTIFIER).y);
 
-        var assigntype = consume(ASSIGNMENT);
+        var assigntype = consume(ASSIGNMENT, MULT_ASSIGNMENT, DIV_ASSIGNMENT, ADD_ASSIGNMENT, SUB_ASSIGNMENT);
         assignment.assigntype = assigntype.y;
         assignment.value = parseExpression();
 
@@ -626,6 +625,11 @@ public class Parser {
         public List<Node> getChildren() {
             return new ArrayList<>();
         }
+
+        @Override
+        public String toString(){
+            return Integer.toString(value);
+        }
     }
 
     public class AccessModifier extends Identifier{
@@ -840,7 +844,7 @@ public class Parser {
 
         @Override
         public String toString(){
-            return "Assigning to " + name;
+            return "Assigning " + assigntype + " to " + name;
         }
     }
 

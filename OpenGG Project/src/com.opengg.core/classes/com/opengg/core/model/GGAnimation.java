@@ -1,4 +1,4 @@
-package com.opengg.core.model.ggmodel;
+package com.opengg.core.model;
 
 public class GGAnimation {
     public String name;

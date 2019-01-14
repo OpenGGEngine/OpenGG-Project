@@ -9,6 +9,7 @@ import com.opengg.core.GGInfo;
 import com.opengg.core.audio.SoundData;
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.model.Model;
+import com.opengg.core.model.ModelManager;
 import com.opengg.core.render.text.Font;
 import com.opengg.core.render.text.TTF;
 import com.opengg.core.render.texture.Texture;
@@ -93,7 +94,10 @@ public interface Resource {
     public static String getModelPath(String name){
         String source = validate(name);
         if(source != null) return source;
-        return "resources" + File.separator + "models" + File.separator + name + File.separator + name + ".bmf";
+        if(name.contains("bmf"))
+            return "resources" + File.separator + "models" + File.separator + name;
+        else
+            return "resources" + File.separator + "models" + File.separator + name + File.separator + name + ".bmf";
     }
     
     /**
@@ -174,7 +178,7 @@ public interface Resource {
     
     /**
      * Returns the {@link com.opengg.core.model.Model} with the given name <br>
-     * It is acquired by calling {@link #getModelPath(java.lang.String) } and passing the result into {@link com.opengg.core.model.ModelManager#loadModel(java.lang.String) }
+     * It is acquired by calling {@link #getModelPath(java.lang.String) } and passing the result into {@link ModelManager#loadModel(java.lang.String) }
      * @param name Name of model file to be loaded
      * @return Model object loaded from file
      */

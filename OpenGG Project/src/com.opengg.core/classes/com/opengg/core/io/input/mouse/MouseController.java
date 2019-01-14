@@ -61,12 +61,14 @@ public class MouseController {
     }
 
     public static void update(){
-        if(oldSX != scrollHandler.getWheelX()||oldSY != scrollHandler.getWheelY()){
-            for(var scrolll:scrollListeners){
-                scrolll.onScroll(scrollHandler.getWheelX(),scrollHandler.getWheelY());
+        if(scrollHandler != null){
+            if(oldSX != scrollHandler.getWheelX()||oldSY != scrollHandler.getWheelY()){
+                for(var scrolll:scrollListeners){
+                    scrolll.onScroll(scrollHandler.getWheelX(),scrollHandler.getWheelY());
+                }
+                oldSX = scrollHandler.getWheelX();
+                oldSY = scrollHandler.getWheelY();
             }
-            oldSX = scrollHandler.getWheelX();
-            oldSY = scrollHandler.getWheelY();
         }
 
         if(!poshandler.getPos().equals(old)) {

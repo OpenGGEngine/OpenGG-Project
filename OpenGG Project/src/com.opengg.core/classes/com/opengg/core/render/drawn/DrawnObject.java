@@ -155,7 +155,6 @@ public class DrawnObject implements Drawable {
 
     @Override
     public void render(){
-
         if(!RenderEngine.validateInitialization()) return;
 
         ShaderController.setModel(model);
@@ -166,8 +165,8 @@ public class DrawnObject implements Drawable {
             throw new RenderException("Invalid VAO bound during render");
 
         RenderEngine.getCurrentVAO().applyFormat(vertexBufferObjects);
-
         glDrawElementsInstancedBaseVertexBaseInstance(drawtype, elementcount, GL_UNSIGNED_INT, 0, instancecount, basevertex, 0);
+
     }
 
     @Override

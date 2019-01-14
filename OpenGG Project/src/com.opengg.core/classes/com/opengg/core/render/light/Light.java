@@ -84,7 +84,7 @@ public class Light {
     private void createCubemap(int xres, int yres){
         this.perspective = Matrix4f.perspective(90f, (float)xres/(float)yres, 0.1f, distance);
         lightbuffer = Framebuffer.generateFramebuffer();
-        lightbuffer.attachRenderbuffer(xres, yres, GL_RGBA8, GL_COLOR_ATTACHMENT0);
+        lightbuffer.attachColorCubemap(xres, yres, 0);
         lightbuffer.attachDepthCubemap(xres, yres);
         shadow = true;
         type = POINT;
@@ -111,10 +111,10 @@ public class Light {
     }
 
     public void initializeRender(){
-        if(shadow) throw new IllegalStateException("No shadowmap has been created for this light");
+        if(!shadow) throw new IllegalStateException("No shadowmap has been created for this light");
 
-        ShaderController.setView(getView());
-        ShaderController.setProjection(getPerspective());
+        //ShaderController.setView(getView());
+        //ShaderController.setProjection(getPerspective());
         if(type == ORTHO){
             ShaderController.useConfiguration("passthrough");
         }else{
@@ -135,7 +135,8 @@ public class Light {
                     Matrix4f.lookAt(pos, pos.add(new Vector3f( 0, 0,-1)), new Vector3f(0,-1, 0)));
 
             ShaderController.setUniform("shadowMatrices", matrix4fs);
-
+            ShaderController.setUniform("lightPos", pos);
+            ShaderController.setUniform("farplane", distance);
         }
 
         lightbuffer.bind();
@@ -145,7 +146,7 @@ public class Light {
 
     public void finalizeRender(int pos){
         lightbuffer.disableRendering();
-        lightbuffer.useTexture(Framebuffer.DEPTH, 6 + pos);
+        lightbuffer.useTexture(Framebuffer.DEPTH, 10);
     }
     
     public Vector3f getPosition() {

@@ -51,6 +51,8 @@ public interface Framebuffer{
 
     void attachRenderbuffer(int width, int height, int storage, int attachment);
 
+    void attachColorCubemap(int width, int height, int attachment);
+
     void attachTexture(Texture.TextureType type, int width, int height, int format, int intformat, int input, int attachment);
 
     void blitTo(Framebuffer target);

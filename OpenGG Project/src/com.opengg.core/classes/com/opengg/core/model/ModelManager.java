@@ -7,6 +7,8 @@
 package com.opengg.core.model;
 
 import com.opengg.core.console.GGConsole;
+import com.opengg.core.model.io.BMFFile;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,14 +18,14 @@ import java.util.Map;
  * @author Javier
  */
 public class ModelManager{
-    private static Map<String,Model> modellist = new HashMap<>();
+    private static Map<String, Model> modellist = new HashMap<>();
     private static Model defaultm;
     
     public static void initialize(){
         
         try {
-            defaultm = ModelLoader.loadModel("Resource/models/default/default.bmf");
-        } catch (IOException ex) {
+            //defaultm = BMFFile.loadModel("Resource/models/default/default.bmf");
+        } catch (Exception ex) {
             GGConsole.error("Failed to load default model, nonexistent models may crash the program!");
         }
                
@@ -47,7 +49,7 @@ public class ModelManager{
         if(model != null)
             return model;
         try{
-            model = ModelLoader.loadModel(path);
+            model = BMFFile.loadModel(path);
             if(model != null ){
                 addModel(model);
                 return model;
@@ -60,7 +62,7 @@ public class ModelManager{
         return defaultm;
     }
     
-    public static Map<String,Model> getModelList(){
+    public static Map<String, Model> getModelList(){
         return modellist;
     }
     

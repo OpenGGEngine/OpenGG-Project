@@ -6,7 +6,6 @@
 package com.opengg.core.model;
 
 import com.opengg.core.math.Vector3f;
-import com.opengg.core.math.Vector4f;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
@@ -43,7 +42,7 @@ public class Material {
     public String dispFilename = "";
     public String bumpFilename = "";
     public String emmFilename ="";
-    public int reflType = BuilderInterface.MTL_REFL_TYPE_UNKNOWN;
+    public int reflType =0;
     public String reflFilename = "";
     public Texture Kd = null;
     public Texture Ka = null;

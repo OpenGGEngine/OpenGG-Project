@@ -9,29 +9,17 @@ import com.opengg.core.engine.GGApplication;
 import com.opengg.core.engine.OpenGG;
 import com.opengg.core.gui.GUI;
 import com.opengg.core.gui.GUIButton;
-import com.opengg.core.gui.GUIText;
 import com.opengg.core.io.input.mouse.MouseController;
 import com.opengg.core.math.Quaternionf;
-import com.opengg.core.model.ggmodel.GGModel;
-import com.opengg.core.model.ggmodel.GGRenderComponent;
-import com.opengg.core.model.ggmodel.io.AssimpModelLoader;
-import com.opengg.core.model.ggmodel.io.BMFFile;
-import com.opengg.core.model.modelloaderplus.AnimatedComponent;
-import com.opengg.core.network.NetworkEngine;
 import com.opengg.core.physics.collision.AABB;
 import com.opengg.core.physics.collision.ColliderGroup;
 import com.opengg.core.physics.collision.ConvexHull;
-import com.opengg.core.physics.collision.SphereCollider;
-import com.opengg.core.render.ProjectionData;
-import com.opengg.core.render.RenderEngine;
 import com.opengg.core.engine.Resource;
 import com.opengg.core.render.drawn.TexturedDrawnObject;
 import com.opengg.core.render.light.Light;
 import com.opengg.core.render.objects.ObjectCreator;
-import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.text.Text;
 import com.opengg.core.render.texture.TextureManager;
-import com.opengg.core.render.window.GLFWWindow;
 import com.opengg.core.render.window.WindowController;
 import com.opengg.core.world.Skybox;
 import com.opengg.core.world.WorldEngine;
@@ -50,7 +38,6 @@ import com.opengg.core.world.components.physics.PhysicsComponent;
 import com.opengg.core.world.components.viewmodel.ViewModelComponentRegistry;
 
 import java.awt.*;
-import java.io.IOException;
 import java.util.List;
 
 
@@ -101,28 +88,33 @@ public class OpenGGTest extends GGApplication{
                 + " While the congress of the Republic endlessly debates this alarming chain of events,"
                 + " the Supreme Chancellor has secretly dispatched two Jedi Knights,"
                 + " the guardians of peace and justice in the galaxy, to settle the conflict...")
-                    .size(0.5f)
+                    .size(0.32f)
                     .kerning(true)
                     .center(false)
                     .maxLineSize(0.25f);
 
         GUI mainview = new GUI();
-        mainview.getRoot().addItem("aids", new GUIText(text, font, new Vector2f(1,0)));
+        //mainview.getRoot().addItem("aids", new GUIText(text, font, new Vector2f(1,0)));
 
-        GUIButton button = new GUIButton(new Vector2f(0.2f,0.4f),new Vector2f(0,0),Texture.create(Texture.config(),TextureManager.getDefault()));
-        mainview.addItem("coke",button);
+        GUIButton button = new GUIButton(new Vector2f(0.2f,0.4f),new Vector2f(0,0), Texture.create(Texture.config(),TextureManager.getDefault()));
+        mainview.addItem("coke" ,button);
         button.setOnClick(() -> System.out.println("Lambdas are bad"));
         button.setOnRelease(() -> System.out.println("Lambdas are really bad"));
         MouseController.onButtonPress(button);
 
         GUIController.addAndUse(mainview, "mainview");
 
+        /*WorldEngine.getCurrent().attach(new ModelRenderComponent(Resource.getModel("goldleaf"))
+                .setScaleOffset(new Vector3f(0.01f,0.01f,0.01f))
+                .setRotationOffset(new Quaternionf(new Vector3f(90,0,0))));*/
+
   //      NetworkEngine.connect("localhost", 25565);
 
 
         WorldEngine.getCurrent().attach(new LightComponent(
-                Light.createDirectional(new Quaternionf(new Vector3f(80f,0f,50)),
-                        new Vector3f(1,1,1))));
+                Light.createPointShadow(new Vector3f(0,-10,0), new Vector3f(1), 1000, 512, 512 )));
+                //Light.createDirectional(new Quaternionf(new Vector3f(80f,0f,50)),
+                //        new Vector3f(1,1,1))));
 
 
         var cube = List.of(
@@ -136,7 +128,7 @@ public class OpenGGTest extends GGApplication{
                 new Vector3f(1,1,1)
         );
 
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < 3; i++) {
             var multiple = i  == 0 ? -1 : 1;
 
             PhysicsComponent object = new PhysicsComponent();

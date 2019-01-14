@@ -1,8 +1,8 @@
-package com.opengg.core.model.ggmodel.process;
+package com.opengg.core.model.process;
 
 import com.opengg.core.math.FastMath;
 import com.opengg.core.math.Vector3f;
-import com.opengg.core.model.ggmodel.GGVertex;
+import com.opengg.core.model.GGVertex;
 import com.opengg.core.physics.collision.ConvexHull;
 
 import java.util.ArrayList;

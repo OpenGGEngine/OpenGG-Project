@@ -7,7 +7,6 @@ package com.opengg.core.physics.collision;
 
 import com.opengg.core.math.geom.Triangle;
 import com.opengg.core.math.Vector3f;
-import com.opengg.core.model.Face;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,14 +28,6 @@ public class Mesh extends Collider{
     
     public Mesh(List<MeshTriangle> faces, boolean copy){
         this.faces = faces;
-    }
-    
-    public Mesh(com.opengg.core.model.Mesh model){
-        for(Face face : model.faces){
-            MeshTriangle m = new MeshTriangle(face.v1.v, face.v2.v, face.v3.v);
-            this.faces.add(m);
-            
-        }
     }
 
     public List<MeshTriangle> getFaces() {

@@ -33,10 +33,7 @@ import com.opengg.core.world.WorldEngine;
 import java.io.File;
 import java.io.IOException;
 import java.time.Instant;
-import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -113,7 +110,6 @@ public final class OpenGG{
         app = ggapp;
 
         GGInfo.setServer(!client);
-
         ThreadManager.initialize();
         Executor.initialize();
         GGConsole.initialize();
@@ -197,7 +193,7 @@ public final class OpenGG{
         float delta = time.getDeltaSec();
 
         Allocator.update();
-        GGFramerateRenderer.update();
+        GGDebugRenderer.update();
         Executor.getExecutor().update(delta);
         ExtensionManager.update(delta);
         WorldEngine.update(delta);

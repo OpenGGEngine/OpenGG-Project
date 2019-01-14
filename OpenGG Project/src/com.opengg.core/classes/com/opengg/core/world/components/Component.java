@@ -21,6 +21,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * <h1>Represents any object attachable to another Component that links with the WorldEngine for updating and serializing</h1>
@@ -491,6 +493,17 @@ public abstract class Component{
         return Collections.unmodifiableList(children);
     }
 
+    /**
+     * Returns all descendants of this component\n
+     * This returns all components that are included as either children of this component or descendants of this component's children
+     * @return List of descendants of this component
+     */
+    public List<Component> getAllDescendants(){
+        return Stream.concat(children.stream()
+                .flatMap(child -> child.getAllDescendants().stream()),
+                children.stream())
+                .collect(Collectors.toList());
+    }
 
     /**
      * Returns this component's parent, or null it has none

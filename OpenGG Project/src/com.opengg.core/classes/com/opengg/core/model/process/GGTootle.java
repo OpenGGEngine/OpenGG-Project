@@ -1,9 +1,8 @@
-package com.opengg.core.model.ggmodel.process;
+package com.opengg.core.model.process;
 
 import com.opengg.core.console.GGConsole;
-import com.opengg.core.engine.OpenGG;
-import com.opengg.core.model.ggmodel.GGMesh;
-import com.opengg.core.model.ggmodel.GGModel;
+import com.opengg.core.model.Mesh;
+import com.opengg.core.model.Model;
 import com.opengg.core.system.Allocator;
 import org.lwjgl.system.Platform;
 
@@ -22,13 +21,13 @@ public class GGTootle extends ModelProcess {
         init = true;
     }
     @Override
-    public void process(GGModel model){
+    public void process(Model model){
         this.totaltasks = model.meshes.size();
         this.numcompleted = 0;
         GGConsole.log("Started Tootle Processing");
         if(!init) init();
         int index=0;
-        for(GGMesh mesh: model.meshes) {
+        for(Mesh mesh: model.meshes) {
             IntBuffer revised = Allocator.allocInt(mesh.ibo.capacity());
             switch (TootleOptimize(mesh.vbo, mesh.ibo, 11 * Float.BYTES,
                     vcacheSize,

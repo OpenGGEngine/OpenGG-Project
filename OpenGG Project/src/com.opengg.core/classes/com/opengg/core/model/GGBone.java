@@ -1,4 +1,4 @@
-package com.opengg.core.model.ggmodel;
+package com.opengg.core.model;
 
 import com.opengg.core.math.Matrix4f;
 

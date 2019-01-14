@@ -139,6 +139,11 @@ public class WindowFramebuffer implements WindowResizeListener, Framebuffer{
     }
 
     @Override
+    public void attachColorCubemap(int width, int height, int attachment) {
+
+    }
+
+    @Override
     public void attachTexture(Texture.TextureType type, int width, int height, int format, int intformat, int input, int attachment){
         underlyingBuffer.attachTexture(type, width, height, format, intformat, input, attachment);
     }

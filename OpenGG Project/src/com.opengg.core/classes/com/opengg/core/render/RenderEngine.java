@@ -8,7 +8,7 @@ package com.opengg.core.render;
 
 import com.opengg.core.GGInfo;
 import com.opengg.core.console.GGConsole;
-import com.opengg.core.engine.GGFramerateRenderer;
+import com.opengg.core.engine.GGDebugRenderer;
 import com.opengg.core.engine.GGGameConsole;
 import com.opengg.core.exceptions.RenderException;
 import com.opengg.core.gui.GUIController;
@@ -22,12 +22,10 @@ import com.opengg.core.render.shader.VertexArrayFormat;
 import com.opengg.core.render.shader.VertexArrayObject;
 import com.opengg.core.render.texture.Framebuffer;
 import com.opengg.core.render.texture.TextureManager;
-import com.opengg.core.render.texture.WindowFramebuffer;
 import com.opengg.core.render.window.WindowController;
 import com.opengg.core.system.Allocator;
 import com.opengg.core.world.Camera;
 import com.opengg.core.world.Skybox;
-import com.opengg.core.world.WorldEngine;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,10 +33,8 @@ import java.util.List;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL14.GL_FUNC_ADD;
 import static org.lwjgl.opengl.GL14.glBlendEquation;
-import static org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW;
 import static org.lwjgl.opengl.GL30.GL_MAJOR_VERSION;
 import static org.lwjgl.opengl.GL30.GL_MINOR_VERSION;
-import static org.lwjgl.opengl.GL31.GL_UNIFORM_BUFFER;
 import static org.lwjgl.opengl.GL32.GL_TEXTURE_CUBE_MAP_SEAMLESS;
 
 /**
@@ -187,6 +183,57 @@ public class RenderEngine {
         ModelManager.initialize();
     }
 
+    private static void enableDefaultGroups(){
+        defaultList = new RenderGroup("defaultgroup");
+        defaultList.setPipeline("object");
+
+        groups.add(defaultList);
+
+        RenderOperation skybox = new RenderOperation("skyboxpath", () -> {
+            if(currentEnvironment.getSkybox() != null){
+                ShaderController.useConfiguration("sky");
+                currentEnvironment.getSkybox().getCubemap().use(2);
+                currentEnvironment.getSkybox().getDrawable().render();
+            }
+        });
+
+        RenderOperation path = new RenderOperation("mainpath", () -> {
+            for(RenderGroup d : getActiveRenderGroups()){
+                ShaderController.useConfiguration(d.getPipeline());
+                d.render();
+            }
+        });
+
+        RenderOperation light = new RenderOperation("shadowmap", () -> {
+            int used = 0;
+            var lights = getActiveLights();
+            glCullFace(GL_FRONT);
+            var fb = getCurrentFramebuffer();
+            for(int i = 0; i < lights.size() && used < 2; i++){
+                if(lights.get(i).hasShadow()){
+                    lights.get(i).initializeRender();
+                    for(RenderGroup d : getActiveRenderGroups()){
+                        d.render();
+                    }
+
+                    lights.get(i).finalizeRender(10 + used);
+
+                    used++;
+                }
+            }
+            glCullFace(GL_BACK);
+            fb.restartRendering();
+            fb.useEnabledAttachments();
+            useLights();
+            ShaderController.setView(camera.getMatrix());
+            projdata.use();
+        });
+
+        paths.add(skybox);
+        paths.add(light);
+        paths.add(path);
+    }
+
     public static void render(){
         for(RenderPass pass : passes){
             pass.runEnableOp();
@@ -226,66 +273,7 @@ public class RenderEngine {
 
         GUIController.render();
         GGGameConsole.render();
-        GGFramerateRenderer.render();
-    }
-
-    private static void enableDefaultGroups(){
-        defaultList = new RenderGroup("defaultgroup");
-        defaultList.setPipeline("object");
-
-        groups.add(defaultList);
-
-        RenderOperation skybox = new RenderOperation("skyboxpath", () -> {
-            if(currentEnvironment.getSkybox() != null){
-                ShaderController.useConfiguration("sky");
-                currentEnvironment.getSkybox().getCubemap().use(2);
-                currentEnvironment.getSkybox().getDrawable().render();
-            }
-        });
-        
-        RenderOperation path = new RenderOperation("mainpath", () -> {
-            for(RenderGroup d : getActiveRenderGroups()){
-                ShaderController.useConfiguration(d.getPipeline());
-                d.render(); 
-            }
-        });
-        
-        RenderOperation light = new RenderOperation("shadowmap", () -> {
-            int used = 0;
-            var lights = getActiveLights();
-            glCullFace(GL_FRONT);
-            var fb = getCurrentFramebuffer();
-            for(int i = 0; i < lights.size() && used < 2; i++){
-                if(lights.get(i).hasShadow()){
-                    lights.get(i).initializeRender();
-
-                    for(RenderGroup d : getActiveRenderGroups()){
-                        d.render();
-                    }
-
-                    lights.get(i).finalizeRender(6 + used);
-
-                    WorldEngine.getCurrent().getRenderEnvironment().setSkybox(
-                            new Skybox(lights.get(i).getLightbuffer().getTextures().get(0), 1000f));
-                    used++;
-                }
-            }
-            glCullFace(GL_BACK);
-            fb.restartRendering();
-            fb.useEnabledAttachments();
-            useLights();
-            ShaderController.setView(camera.getMatrix());
-            projdata.use();
-            
-            for(RenderGroup d : getActiveRenderGroups()){
-                ShaderController.useConfiguration(d.getPipeline());
-                d.render();
-            }
-            
-        });
-
-        paths.add(skybox);
-        paths.add(path);
+        GGDebugRenderer.render();
     }
 
     static List<Light> getActiveLights(){

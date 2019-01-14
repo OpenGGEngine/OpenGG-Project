@@ -6,7 +6,6 @@
 package com.opengg.core.world;
 
 import com.opengg.core.physics.PhysicsEngine;
-import com.opengg.core.model.Animator;
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.render.RenderGroup;
 import com.opengg.core.world.components.Component;
@@ -69,7 +68,6 @@ public class WorldEngine{
      */
     public static void update(float delta){
         removeMarked();
-        Animator.update(delta);
         if(enabled){
             TransitionEngine.update(delta);
             traverseUpdate(WorldEngine.getCurrent(), delta);

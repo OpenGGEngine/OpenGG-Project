@@ -1,19 +1,17 @@
-package com.opengg.core.model.ggmodel.io;
+package com.opengg.core.model.io;
 
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.math.Vector4f;
-import com.opengg.core.model.Material;
-import com.opengg.core.model.ggmodel.*;
+import com.opengg.core.model.*;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.assimp.*;
 import static org.lwjgl.assimp.Assimp.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,7 +22,9 @@ public class AssimpModelLoader {
 
     private static final int NUM_WEIGHTS = 4;
 
-    public static GGModel loadModel(String path) throws IOException {
+    public static Model loadModel(String path) throws IOException {
+        String name = path.substring(path.lastIndexOf(File.pathSeparator), path.indexOf("."));
+
         File f = new File(path);
         AIScene scene = Assimp.aiImportFile(f.toString(),Assimp.aiProcess_GenSmoothNormals|Assimp.aiProcess_Triangulate);
         GGConsole.log("Loading " + f.getName() + " with " +scene.mNumMeshes() + " meshes and " + scene.mNumAnimations() + " animations.");
@@ -53,7 +53,7 @@ public class AssimpModelLoader {
 
         PointerBuffer pMeshes = scene.mMeshes();
 
-        ArrayList<GGMesh> meshes = new ArrayList<>();
+        ArrayList<Mesh> meshes = new ArrayList<>();
 
         boolean animationsEnabled = false;
         boolean generateHulls = true;
@@ -139,7 +139,7 @@ public class AssimpModelLoader {
                 indices[i2*3+2] = face.mIndices().get(2);
             }
 
-            GGMesh gmesh  = new GGMesh(vertices,indices,animationsEnabled);
+            Mesh gmesh  = new Mesh(vertices,indices,animationsEnabled);
 
             if(scene.mNumMaterials() > 0){
                 gmesh.main = materials.get(mesh.mMaterialIndex());
@@ -152,12 +152,13 @@ public class AssimpModelLoader {
 
         }
         GGConsole.log("Loaded model: " + f.getName());
-        GGModel model = new GGModel(meshes);
+        Model model = new Model(meshes, name);
         model.isAnim = animationsEnabled;
         model.materials = materials;
         return model;
 
     }
+
     public static Material processMaterial(AIMaterial material){
         AIString s = AIString.malloc();
         aiGetMaterialString(material,AI_MATKEY_NAME,0,0,s);

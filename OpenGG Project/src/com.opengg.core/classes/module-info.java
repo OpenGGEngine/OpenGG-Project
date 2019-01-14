@@ -29,7 +29,6 @@ module com.opengg.core {
     requires org.lwjgl.tootle.natives;
 
     exports com.opengg.core.audio;
-    exports com.opengg.core.model.modelloaderplus;
     exports com.opengg.core.engine;
     exports com.opengg.core.exceptions;
     exports com.opengg.core.extension;
@@ -62,7 +61,6 @@ module com.opengg.core {
     exports com.opengg.core.world.components.triggers;
     exports com.opengg.core.world.components.viewmodel;
     exports com.opengg.core.world.generators;
-    exports com.opengg.core.model.ggmodel;
-    exports com.opengg.core.model.ggmodel.io;
-    exports com.opengg.core.model.ggmodel.process;
+    exports com.opengg.core.model.io;
+    exports com.opengg.core.model.process;
 }
