@@ -9,7 +9,7 @@ import com.opengg.core.render.text.Text;
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class GGFramerateRenderer {
+public class GGDebugRenderer {
     private static boolean render = true;
 
     private static double computedFramerate;
@@ -38,12 +38,16 @@ public class GGFramerateRenderer {
             RenderEngine.setDepthCheck(false);
 
             if(!displaytext.getText().contains(String.format("%.2f", computedFramerate))){
-                displaytext = Text.from("Frame time: " + String.format("%.2f", computedFramerate) + "\nFrame rate: " + String.format("%.2f", 1/(computedFramerate/1000)))
+                displaytext = Text.from(
+                                "Frame time: " + String.format("%.2f", computedFramerate) + "\n" +
+                                "Frame rate: " + String.format("%.2f", 1/(computedFramerate/1000)) + "\n\n" +
+                                "Camera position: (" + String.format("%.2f", RenderEngine.getCurrentView().getPosition().x) + ", " +  String.format("%.2f", RenderEngine.getCurrentView().getPosition().y) + ", " +  String.format("%.2f", RenderEngine.getCurrentView().getPosition().z) + ")")
                         .maxLineSize(1f)
                         .kerning(true)
                         .size(FONT_SCALE);
                 display = font.createFromText(displaytext);
-                display.setMatrix(Matrix4f.translate(0.86f,0.975f,0));
+                display.setMatrix(Matrix4f.translate(0.02f,0.975f,0));
+
 
             }
 

@@ -164,6 +164,9 @@ public class OpenGGCommandExtender implements ConsoleListener{
                 if(command.argCount == 2){
                     NetworkEngine.connect(command.args[0], Integer.parseInt(command.args[1]));
                 }
+                break;
+            default:
+                GGConsole.error("Command \"" + command.command + "\" does not exist.");
         }
     }
 }
