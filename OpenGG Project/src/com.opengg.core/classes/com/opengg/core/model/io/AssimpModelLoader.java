@@ -23,7 +23,7 @@ public class AssimpModelLoader {
     private static final int NUM_WEIGHTS = 4;
 
     public static Model loadModel(String path) throws IOException {
-        String name = path.substring(path.lastIndexOf(File.pathSeparator), path.indexOf("."));
+        String name = path.substring(Math.max(path.lastIndexOf("\\"), path.lastIndexOf("/")), path.lastIndexOf("."));
 
         File f = new File(path);
         AIScene scene = Assimp.aiImportFile(f.toString(),Assimp.aiProcess_GenSmoothNormals|Assimp.aiProcess_Triangulate);
@@ -153,6 +153,7 @@ public class AssimpModelLoader {
         }
         GGConsole.log("Loaded model: " + f.getName());
         Model model = new Model(meshes, name);
+        model.fileLocation = f.getParent();
         model.isAnim = animationsEnabled;
         model.materials = materials;
         return model;
