@@ -26,7 +26,7 @@ public class BMFFile extends ModelProcess {
     private static final String HEADER_START = "OPENGG-BMF";
 
     public void writeModel(Model model, String destination) throws IOException {
-        FileOutputStream fOut = new FileOutputStream(new File(destination));
+        FileOutputStream fOut = new FileOutputStream(new File(model.fileLocation + model.getName()+".bmf"));
         FileChannel fc = fOut.getChannel();
 
         ArrayList<FileSector> sectors = new ArrayList<>();
@@ -62,10 +62,11 @@ public class BMFFile extends ModelProcess {
         fc.write(compressed);
         memFree(compressed);
         fOut.close();
+        GGConsole.log("Exported Model: " + model.getName() + ".bmf at " + model.fileLocation);
     }
 
     public static Model loadModel(String file) throws FileNotFoundException,IOException{
-        String name = file.substring(Math.max(file.lastIndexOf("\\"), file.lastIndexOf("/")), file.indexOf("."));
+        String name = file.substring(Math.max(file.lastIndexOf("\\"), file.lastIndexOf("/")), file.lastIndexOf("."));
 
         File f = new File(file);
         FileInputStream fIn = new FileInputStream(f);
