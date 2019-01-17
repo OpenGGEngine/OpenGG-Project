@@ -53,10 +53,11 @@ public class Quaternionf implements Serializable{
         while (angle < 0) {
             angle += 360;
         }
+        float s = FastMath.sin((angle) / 2);
         w = FastMath.cosDeg((angle) / 2);
-        x = axis.x;
-        y = axis.y;
-        z = axis.z;
+        x = axis.x * s;
+        y = axis.y * s;
+        z = axis.z * s;
     }
     
     public Quaternionf(Vector3f euler){
@@ -184,7 +185,30 @@ public class Quaternionf implements Serializable{
         }
         return new Quaternionf(FastMath.cosDeg((res) / 2),x,y,z);
     }
-    
+
+   public static Quaternionf LookAt(Vector3f sourcePoint, Vector3f destPoint)
+    {
+        Vector3f up = new Vector3f(0,1,0);
+        Vector3f forward = new Vector3f(0,0,1);
+        Vector3f forwardVector = destPoint.subtract(sourcePoint).normalize();
+
+        float dot = forward.dot(forwardVector);//Vector3f.Dot(Vector3f.forward, forwardVector);
+
+        if (Math.abs(dot - (-1.0f)) < 0.000001f)
+        {
+            return new Quaternionf(3.1415926535897932f, up.x, up.y, up.z);
+        }
+        if (Math.abs(dot - (1.0f)) < 0.000001f)
+        {
+            return new Quaternionf();
+        }
+
+        float rotAngle = (float)Math.acos(dot);
+        Vector3f rotAxis = forward.cross(forwardVector);//Vector3.Cross(Vector3.forward, forwardVector);
+        rotAxis = rotAxis.normalize();
+        return new Quaternionf(rotAngle, rotAxis);
+    }
+
     public Quaternionf setAngle(float degrees) {
         while (degrees > 360) {
             degrees -= 360;

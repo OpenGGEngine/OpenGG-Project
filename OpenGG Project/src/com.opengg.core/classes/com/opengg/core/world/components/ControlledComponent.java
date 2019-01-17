@@ -13,14 +13,6 @@ import java.io.IOException;
 public class ControlledComponent extends Component{
     private int userid = 0;
 
-    public final void useComponent(){
-        if(isCurrentUser()) use();
-    }
-
-    public void use(){
-
-    }
-
     public Vector2f getMouse(){
         if(!GGInfo.isServer() && isCurrentUser()){
             return MouseController.get().multiply(Configuration.getFloat("sensitivity"));

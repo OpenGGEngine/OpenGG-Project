@@ -49,6 +49,12 @@ public class World extends Component{
 
     public World(){
         forceUpdate = GGInfo.isServer();
+        setName("default");
+    }
+
+    public World(String name){
+        this();
+        setName(name);
     }
 
     /**
@@ -208,17 +214,12 @@ public class World extends Component{
     public void use(){
         PhysicsEngine.setInstance(physics);
         RenderEngine.setCurrentEnvironment(environment);
+        this.localOnWorldEnable();
     }
 
-    private String traversePrint(Component c){
-        StringBuilder fin = new StringBuilder();
-
-        fin.append(c.getName()).append(" : ").append(c.getClass().getSimpleName());
-
-        for(Component comp : c.getChildren()){
-            fin.append(" ").append(traversePrint(comp)).append(" \n");
-        }
-        return fin.toString();
+    public void deactivate(){
+        WorldStateManager.keepWorld(this);
+        this.localOnWorldDisable();
     }
 
     public RenderEnvironment getRenderEnvironment(){
@@ -269,9 +270,9 @@ public class World extends Component{
     @Override
     public void serialize(GGOutputStream out) throws IOException{
         super.serialize(out);
-        for(TextureData data : environment.getSkybox().getCubemap().getData()){
+/*        for(TextureData data : environment.getSkybox().getCubemap().getData()){
             out.write(data.source);
-        }
+        }*/
 
         physics.serialize(out);
     }

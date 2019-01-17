@@ -200,7 +200,6 @@ public class TestPlayerComponent extends Component implements Actionable{
     
     public void use(){
         BindController.addController(controller);
-        camera.use();
     }
     
 }

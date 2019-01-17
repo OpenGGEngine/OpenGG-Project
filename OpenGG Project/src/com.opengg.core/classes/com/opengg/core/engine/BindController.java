@@ -16,6 +16,7 @@ import com.opengg.core.world.Action;
 import com.opengg.core.world.ActionTransmitter;
 import com.opengg.core.world.ActionType;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -29,6 +30,7 @@ public class BindController implements KeyboardListener, MouseButtonListener{
     private static BindController bc;
     static List<ActionTransmitter> controllers = new ArrayList<>();
     static List<Bind> binds = new ArrayList<>();
+    static HashSet<String> current = new HashSet<>();
 
     private static boolean enabled = true;
 
@@ -63,7 +65,30 @@ public class BindController implements KeyboardListener, MouseButtonListener{
      * @param controller ActionTransmitter to be added
      */
     public static void addController(ActionTransmitter controller) {
+        if(controllers.contains(controller)) return;
+        for(var key : current){
+            Action a = new Action();
+            a.name = key;
+            a.type = ActionType.PRESS;
+            controller.doAction(a);
+        }
         controllers.add(controller);
+
+    }
+
+    /**
+     * Removes a {@link ActionTransmitter} from the system
+     * @param controller ActionTransmitter to be removed
+     */
+    public static void removeController(ActionTransmitter controller) {
+        if(!controllers.contains(controller)) return;
+        for(var key : current){
+            Action a = new Action();
+            a.name = key;
+            a.type = ActionType.RELEASE;
+            controller.doAction(a);
+        }
+        controllers.remove(controller);
     }
     
     /**
@@ -101,6 +126,7 @@ public class BindController implements KeyboardListener, MouseButtonListener{
         if(!act()) return;
         for(Bind bind : binds){    
             if(bind.button == key && bind.type == ControlType.KEYBOARD){
+                current.add(bind.action);
                 for(ActionTransmitter c : controllers){
                     Action a = new Action();
                     a.name = bind.action;
@@ -116,6 +142,7 @@ public class BindController implements KeyboardListener, MouseButtonListener{
         if(!act()) return;
         for(Bind bind : binds){
             if(bind.button == key && bind.type == ControlType.KEYBOARD){
+                current.remove(bind.action);
                 for(ActionTransmitter c : controllers){
                     Action a = new Action();
                     a.name = bind.action;

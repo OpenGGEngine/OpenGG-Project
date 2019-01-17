@@ -24,10 +24,15 @@ import java.util.logging.Logger;
  * @author Javier
  */
 public class WorldLoader {
+    /**
+     * Loads a world from a file
+     * @param worldname World to be loaded
+     * @return
+     */
     public static World loadWorld(String worldname){
         GGConsole.log("Loading world " + worldname + "...");
         
-        try (GGInputStream in = new GGInputStream(new FileInputStream(Resource.getAbsoluteFromLocal(worldname)))){
+        try (GGInputStream in = new GGInputStream(new FileInputStream(Resource.getWorldPath(worldname)))){
             int worldver = in.readInt();
             String ggversion = in.readString();
             
@@ -37,6 +42,7 @@ public class WorldLoader {
                 worlddata[i] = in.readByte();
             }
             World w = Deserializer.deserialize(ByteBuffer.wrap(worlddata));
+            w.setName(worldname);
             GGConsole.log("World " + worldname + " has been successfully loaded");
             return w;
         } catch (FileNotFoundException ex) {
@@ -46,6 +52,22 @@ public class WorldLoader {
         }
         return null;
         
+    }
+
+    /**
+     *
+     * @param worldname
+     * @return
+     */
+    public static World getWorld(String worldname){
+        if(WorldStateManager.loadedVersionExists(worldname))
+            return WorldStateManager.getLoadedWorld(worldname);
+        else
+            return loadWorld(worldname);
+    }
+
+    public static void keepWorld(World world){
+        WorldStateManager.keepWorld(world);
     }
     
     public static void saveWorld(World world, String worldname){

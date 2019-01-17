@@ -22,8 +22,13 @@ import java.io.IOException;
 public class ActionTransmitterComponent extends ControlledComponent implements ActionTransmitter{
 
     @Override
-    public void use(){
+    public void onEnable(){
         BindController.addController(this);
+    }
+
+    @Override
+    public void onDisable(){
+        BindController.removeController(this);
     }
 
     @Override
@@ -41,6 +46,5 @@ public class ActionTransmitterComponent extends ControlledComponent implements A
     @Override
     public void deserialize(GGInputStream in) throws IOException {
         super.deserialize(in);
-        if(isCurrentUser()) use();
     }
 }

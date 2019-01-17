@@ -56,7 +56,7 @@ public class GLFWWindow implements Window {
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
         glfwWindowHint(GLFW_RESIZABLE, winfo.resizable ? GL_TRUE : GL_FALSE);
         glfwWindowHint(GLFW_SAMPLES, winfo.samples);
-        glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
+        //glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 
         // may return null if the debug mode is not available
 
@@ -108,7 +108,7 @@ public class GLFWWindow implements Window {
 
         glfwShowWindow(window);
         GL.createCapabilities();
-        Callback debugProc = GLUtil.setupDebugMessageCallback();
+        //Callback debugProc = GLUtil.setupDebugMessageCallback();
         if (glGetError() == GL_NO_ERROR) {
             success = true;
         } else {

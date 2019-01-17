@@ -382,13 +382,33 @@ public abstract class Component{
      */
     public void setEnabled(boolean enabled){
         this.enabled = enabled;
+        if(enabled)
+            onEnable();
+        else
+            onDisable();
+    }
+
+    /**
+     * Called when this component is enabled <br>
+     *     This includes if its world is changed or loaded, or if {@code setEnabled()} is set to true
+     */
+    public void onEnable(){
+
+    }
+
+    /**
+     * Called when this component is disabled <br>
+     *     This includes if its world is unloaded, or if {@code setEnabled()} is set to false
+     */
+    public void onDisable(){
+
     }
     
     /**
      *  If the component is marked for serialization, eg for world saving or networking
      * @return If should serialize
      */
-    public boolean shouldSerialize(){
+    public final boolean shouldSerialize(){
         return serialize;
     }
     
@@ -396,7 +416,7 @@ public abstract class Component{
      * Sets if serialization should occur, eg for world saving and loading
      * @param serialize Should serialize
      */
-    public void setSerializable(boolean serialize){
+    public final void setSerializable(boolean serialize){
         this.serialize = serialize;
     }
     
@@ -406,6 +426,7 @@ public abstract class Component{
     public void finalizeComponent(){
 
     }
+
     /**
      * Attaches a component to this component<br>
      * This contains checks to prevent a component to be attached to itself. Additionally, it goes
@@ -457,9 +478,37 @@ public abstract class Component{
     public final void localOnWorldChange(){
         for(Component c : children) c.localOnWorldChange();
         onWorldChange();
+        if(WorldEngine.getCurrent() == this.getWorld()) onWorldEnable();
         if(whenAttachedToWorld != null){
             whenAttachedToWorld.run();
         }
+    }
+
+    public final void localOnWorldEnable(){
+        for(Component c : children) c.localOnWorldEnable();
+        onWorldEnable();
+        if(isEnabled()) onEnable();
+    }
+
+    public final void localOnWorldDisable(){
+        for(Component c : children) c.localOnWorldDisable();
+        onWorldDisable();
+        if(isEnabled()) onDisable();
+    }
+
+    /**
+     * Called when the world of this component is enabled. <br>
+     *     This is also called if the component is initially attached to a world that is active
+     */
+    public void onWorldEnable(){
+
+    }
+
+    /**
+     * Called when the world of this component is disabled.
+     */
+    public void onWorldDisable(){
+
     }
 
     /**
@@ -468,7 +517,6 @@ public abstract class Component{
      * first time the parent is changed
      */
     public void onWorldChange(){
-
     }
 
     /**

@@ -30,12 +30,11 @@ public class FreeFlyComponent extends ControlledComponent implements Actionable,
     private CameraComponent view;
 
     private Vector3fm control = new Vector3fm();
-    private Vector2f controlrot = new Vector2f();
     private Vector3f currot = new Vector3f();
     private Vector3f vel = new Vector3f();
 
     private float rotspeed = 30;
-    private float speed = 30;
+    private float speed = 1;
     private final WorldObject head;
     
     public FreeFlyComponent(){
@@ -53,9 +52,10 @@ public class FreeFlyComponent extends ControlledComponent implements Actionable,
         if(isCurrentUser()){
             Vector2f mousepos = getMouse();
             currot = new Vector3f(mousepos.y, mousepos.x, 0);
+            currot = new Vector3f(0,0,0);
             this.setRotationOffset(new Quaternionf(currot));
 
-            vel = this.getRotation().transform(new Vector3f(control).multiply(delta * 15));
+            vel = this.getRotation().transform(new Vector3f(control).multiply(delta * speed));
             setPositionOffset(getPositionOffset().add(vel));
         }else{
             System.out.println("User " + this.getUserId() + ":  " + vel);
@@ -140,12 +140,6 @@ public class FreeFlyComponent extends ControlledComponent implements Actionable,
     }
 
     @Override
-    public void use(){
-        pcontrol.use();
-        view.use();
-    }
-
-    @Override
     public void serializeUpdate(GGOutputStream stream) throws IOException{
         super.serializeUpdate(stream);
         stream.write(vel);
@@ -169,7 +163,6 @@ public class FreeFlyComponent extends ControlledComponent implements Actionable,
         super.deserialize(stream);
         rotspeed = stream.readFloat();
         speed = stream.readFloat();
-        useComponent();
 
         this.onWorldChange();
     }
@@ -181,6 +174,6 @@ public class FreeFlyComponent extends ControlledComponent implements Actionable,
 
     @Override
     public void onMove(Vector2f pos){
-        this.controlrot = pos;
+        Vector2f controlrot = pos;
     }
 }

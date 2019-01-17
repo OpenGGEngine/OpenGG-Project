@@ -51,7 +51,7 @@ public class PostProcessController {
 
         PostProcessingPass bloom = new PostProcessingPass(PostProcessingPass.SET,
                 blurs);
-        passes.put("bloom", bloom);
+        //passes.put("bloom", bloom);
 
         Stage hdr = new Stage("hdr");
         PostProcessingPass hdrpass = new PostProcessingPass(PostProcessingPass.SET, hdr);
@@ -59,7 +59,7 @@ public class PostProcessController {
 
         Stage fxaa = new Stage("fxaa");
         PostProcessingPass fxaapass = new PostProcessingPass(PostProcessingPass.SET, fxaa);
-        passes.put("fxaa", fxaapass);
+        //passes.put("fxaa", fxaapass);
     }
 
     public static void addPass(String name, PostProcessingPass pass){

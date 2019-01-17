@@ -54,7 +54,7 @@ public class PhysicsEntity extends PhysicsObject{
     public float density = 1f;
     public float dynamicfriction = 0.4f;
     public float staticfriction = 0.1f;
-    public float restitution = 0.6f;
+    public float restitution = 0.0f;
     
     public List<CollisionManager.Response> responses = new ArrayList<>();
     
@@ -74,6 +74,7 @@ public class PhysicsEntity extends PhysicsObject{
     }
 
     public void update(float delta) {
+        grounded = false;
         computeLinearMotion(delta);
         computeAngularMotion(delta);
         
@@ -123,7 +124,7 @@ public class PhysicsEntity extends PhysicsObject{
     
     private Vector3f getAccel(Vector3f momemtum){
         Vector3f accel = momemtum.divide(mass);
-        if (gravEffect && !grounded) {
+        if (gravEffect) {
             accel = accel.add(system.getConstants().GRAVITY);
         }
         return accel;

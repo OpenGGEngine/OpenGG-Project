@@ -15,7 +15,5 @@ public class VRHMDComponent extends Component {
     public void update(float delta){
 
         var values = GGVR.getHMDPose();
-
-        camera.use();
     }
 }

@@ -51,15 +51,13 @@ public class LightComponent extends Component{
         super.serialize(stream);
         stream.write(light.getColor());
         stream.write(light.getDistance());
-        stream.write(getWorld().getRenderEnvironment().getLights().contains(light));
     }
     
     @Override
     public void deserialize(GGInputStream stream) throws IOException{
         super.deserialize(stream);
         light = Light.createPoint(new Vector3f(), stream.readVector3f(), stream.readFloat());
-        boolean use = stream.readBoolean();
-        
+
         OpenGG.asyncExec(this::use);
     }
 

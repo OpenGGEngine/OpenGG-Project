@@ -41,6 +41,7 @@ public class ShaderController {
     private static final List<ShaderFileHolder> completedfiles = new ArrayList<>();
     private static final List<String> searchedUniforms = new ArrayList<>();
     private static final List<String> searchedAttribs = new ArrayList<>();
+    private static final Map<String, Object> currentUniforms = new HashMap<>();
     private static String currentshader = "";
     private static Matrix4f view = new Matrix4f(), proj = new Matrix4f();
     private static String currentvert, currenttesc, currenttese, currentgeom, currentfrag;
@@ -409,8 +410,7 @@ public class ShaderController {
     public static void pointVertexAttribute(String loc, int size, int type, int tot, int start){
         programs.get(currentvert).pointVertexAttribute(loc, size, type, tot, start);
     }
-    
-    
+
     /**
      * Sets the amount of times the object should be rendered glDrawElementsInstanced before the attribute goes to the next value, 0 for per vertex
      * @param loc Attribute to be instanced
@@ -432,7 +432,13 @@ public class ShaderController {
         }
         searchedUniforms.add(loc);
     }
-    
+
+    public static boolean checkCurrentUniform(String name, Object val){
+        if(currentUniforms.get(name) != null && currentUniforms.get(name).equals(val)) return true;
+        currentUniforms.put(name, val);
+        return false;
+    }
+
     /**
      * Sets the value in the uniform named {@code name} to {@code val} in every shader<br><br>
      * Note, this will only work if the uniform named {@code name} has already been searched for using {@link #findUniform(String)},
@@ -441,6 +447,7 @@ public class ShaderController {
      * @param val New value of uniform
      */
     public static void setUniform(String name, Vector3f val){
+        if(checkCurrentUniform(name, val)) return;
         for(ShaderProgram p : programs.values()){
             int loc = p.getUniformLocation(name);
             if(loc >= 0)
@@ -456,6 +463,7 @@ public class ShaderController {
      * @param val New value of uniform
      */
     public static void setUniform(String name, Vector2f val){
+        if(checkCurrentUniform(name, val)) return;
         for(ShaderProgram p : programs.values()){
             int loc = p.getUniformLocation(name);
             if(loc >= 0)
@@ -471,6 +479,7 @@ public class ShaderController {
      * @param val New value of uniform
      */
     public static void setUniform(String name, Matrix4f val){
+        if(checkCurrentUniform(name, val)) return;
         for(ShaderProgram p : programs.values()){
             int loc = p.getUniformLocation(name);
             if(loc >= 0)
@@ -486,6 +495,7 @@ public class ShaderController {
      * @param val New value of uniform
      */
     public static void setUniform(String name, Matrix4f[] val){
+        if(checkCurrentUniform(name, val)) return;
         for(ShaderProgram p : programs.values()){
             int loc = p.getUniformLocation(name);
             if(loc >= 0)
@@ -501,6 +511,7 @@ public class ShaderController {
      * @param val New value of uniform
      */
     public static void setUniform(String name, int val){
+        if(checkCurrentUniform(name, val)) return;
         for(ShaderProgram p : programs.values()){
             int loc = p.getUniformLocation(name);
             if(loc >= 0)
@@ -516,6 +527,7 @@ public class ShaderController {
      * @param val New value of uniform
      */
     public static void setUniform(String name, float val){
+        if(checkCurrentUniform(name, val)) return;
         for(ShaderProgram p : programs.values()){
             int loc = p.getUniformLocation(name);
             if(loc >= 0)
@@ -531,13 +543,14 @@ public class ShaderController {
      * @param val New value of uniform
      */
     public static void setUniform(String name, boolean val){
+        if(checkCurrentUniform(name, val)) return;
         for(ShaderProgram p : programs.values()){
             int loc = p.getUniformLocation(name);
             if(loc >= 0)
                 p.setUniform(loc, val);
         }
     }
-       
+
     /**
      * Binds the sampler named {@code name} to texture location {@code loc} in every fragment shader
      * @param name Name of sampler in shader

@@ -19,8 +19,8 @@ import java.io.IOException;
  * @author ethachu19
  */
 public class Zone extends Trigger{
-    AABB box;
-    
+    private AABB box;
+
     public Zone(){
         box = new AABB(0,0,0);
     }
@@ -28,7 +28,11 @@ public class Zone extends Trigger{
     public Zone(AABB box){
         this.box = box;
     }
-    
+
+    public void setBox(AABB box) {
+        this.box = box;
+    }
+
     @Override
     public void update(float delta){
         checkForCollisions();
@@ -44,6 +48,7 @@ public class Zone extends Trigger{
                 ti.type = 0;
                 ti.info = "collide:" + c.getId();
                 trigger(ti);
+                onTrigger(ti);
             }
         }
     }

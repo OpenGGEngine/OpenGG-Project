@@ -78,4 +78,6 @@ public class WindowInfo {
     public void vsync(boolean vsync){
         this.vsync = vsync;
     }
+
+
 }

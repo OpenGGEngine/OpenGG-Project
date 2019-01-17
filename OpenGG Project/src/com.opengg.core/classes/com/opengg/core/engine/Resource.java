@@ -94,7 +94,7 @@ public interface Resource {
     public static String getModelPath(String name){
         String source = validate(name);
         if(source != null) return source;
-        if(name.contains("bmf"))
+        if(name.contains(".bmf"))
             return "resources" + File.separator + "models" + File.separator + name;
         else
             return "resources" + File.separator + "models" + File.separator + name + File.separator + name + ".bmf";

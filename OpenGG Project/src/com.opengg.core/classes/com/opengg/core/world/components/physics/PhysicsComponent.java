@@ -20,7 +20,7 @@ import java.io.IOException;
  * @author ethachu19
  */
 public class PhysicsComponent extends Component {
-    PhysicsEntity entity = new PhysicsEntity();
+    PhysicsEntity entity;
     
     public PhysicsComponent(){
         entity = new PhysicsEntity();
@@ -53,7 +53,7 @@ public class PhysicsComponent extends Component {
     
     @Override
     public void onPositionChange(Vector3f npos){
-        //entity.setPosition(npos);
+        entity.setPosition(npos);
     }
     
     @Override

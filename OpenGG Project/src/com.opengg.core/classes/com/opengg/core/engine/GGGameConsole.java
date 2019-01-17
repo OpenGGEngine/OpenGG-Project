@@ -75,8 +75,8 @@ public class GGGameConsole implements KeyboardListener, KeyboardCharacterListene
                 .map(m -> m + "\n")
                 .collect(Collectors.toList());
         maxMessageSize = messages.size()-LINE_AMOUNT;
-        if(!inScroll) topBound = messages.size() - LINE_AMOUNT;
-        messages = messages.subList(topBound,topBound + LINE_AMOUNT);
+        if(!inScroll) topBound = Math.max(messages.size() - LINE_AMOUNT, 0);
+        messages = messages.subList(topBound,Math.min(topBound + LINE_AMOUNT, messages.size()));
         consolevalue = messages.stream().collect(Collectors.joining());
 
 

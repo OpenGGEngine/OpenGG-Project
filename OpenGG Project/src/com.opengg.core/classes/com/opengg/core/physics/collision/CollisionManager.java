@@ -25,7 +25,8 @@ public class CollisionManager {
     private static List<Collision> collisions = new ArrayList<>();
     private static final List<ColliderGroup> test = new LinkedList<>();
     private static final ColliderGroup coll = new ColliderGroup();
-    public static boolean parallelProcessing = true;
+    public static boolean parallelProcessing = false;
+    public static boolean enableResponse = true;
 
     public static void clearCollisions(){
         collisions.clear();
@@ -124,7 +125,6 @@ public class CollisionManager {
 
         var point = Vector3f.averageOf(manifold.points);
 
-
         Vector3f R1 = point.subtract(e1.getPosition());
         Vector3f R2 = point.subtract(e2.getPosition());
 
@@ -177,21 +177,21 @@ public class CollisionManager {
             var jf = response.jf;//Vector3f.averageOf(response.manifolds.stream().map(m -> m.jf).collect(Collectors.toList()));
             var jr = response.jr;//Vector3f.averageOf(response.manifolds.stream().map(m -> m.jr).collect(Collectors.toList()));
 
-            //System.out.println();
-            //System.out.println(jf);
-            //System.out.println(jr);
-
             var normal = response.normal;//Vector3f.averageOf(response.manifolds.stream().map(s -> s.normal).collect(Collectors.toList()));
 
             var depth = response.depth;
 
             //e.angvelocity = e.angvelocity.subtract(e.inertialMatrix.inverse().multiply(R.cross(normal)).multiply(jr.length()));
-            e.velocity = e.velocity.add(jr.add(jf).divide(e.mass));
+            if(enableResponse)
+                e.velocity = e.velocity.add(jr.add(jf).divide(e.mass));
 
             AABB depthaabb = new AABB(depthchanges, new Vector3f());
             if(!depthaabb.isColliding(normal.multiply(depth))){
                 depthchanges = normal.multiply(depth);//depthchanges.add(normal.multiply(response.depth));
             }
+
+            if(e.velocity.y == 0) e.grounded = true;
+            else e.grounded = false;
 
         }
 

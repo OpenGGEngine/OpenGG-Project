@@ -275,7 +275,7 @@ public interface Texture {
     }
 
     public static Texture ofColor(Color color, float transparency){
-        return ofColor((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue(), (byte) (transparency/255));
+        return ofColor((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue(), (byte) 255);
     }
 
     public static Texture ofColor(byte r, byte g, byte b, byte a){

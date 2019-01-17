@@ -146,7 +146,6 @@ public class OpenGGTest extends GGApplication{
         }
 
         player = new FreeFlyComponent();
-        player.use();
         WorldEngine.getCurrent().attach(player);
 
 

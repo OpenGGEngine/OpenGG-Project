@@ -19,7 +19,7 @@ import java.util.ArrayList;
  */
 public class Trigger extends Component implements ITrigger{
     ArrayList<Triggerable> subscribers = new ArrayList<>();
-    
+
     @Override
     public void addSubscriber(Triggerable dest){
         subscribers.add(dest);
@@ -28,16 +28,21 @@ public class Trigger extends Component implements ITrigger{
     
     @Override
     public void trigger(TriggerInfo ti){
+        onTrigger(ti);
         for(Triggerable t : subscribers){
             t.onTrigger(this, ti);
         }
+    }
+
+    public void onTrigger(TriggerInfo data){
+
     }
 
     @Override
     public ArrayList<Triggerable> getSubscribers() {
         return subscribers;
     }
-    
+
     @Override
     public void serialize(GGOutputStream out) throws IOException{
         super.serialize(out);

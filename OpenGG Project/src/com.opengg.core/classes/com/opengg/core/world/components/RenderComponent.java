@@ -25,6 +25,7 @@ public class RenderComponent extends Component implements Renderable{
     private VertexArrayFormat format;
     private boolean transparent;
     private float renderDistance = 0f;
+    private Matrix4f override;
     
     public RenderComponent(){
         super();
@@ -39,7 +40,12 @@ public class RenderComponent extends Component implements Renderable{
 
     @Override
     public void render() {
-        var matrix = new Matrix4f().translate(getPosition()).rotate(getRotation()).scale(getScale());
+        Matrix4f matrix;
+        if(override == null)
+            matrix = new Matrix4f().translate(getPosition()).rotate(getRotation()).scale(getScale());
+        else
+            matrix = override;
+
         if((renderDistance > 0) && (getPosition().subtract(RenderEngine.getCurrentView().getPosition()).length() > renderDistance))
             return;
         if(drawable != null){
@@ -47,7 +53,11 @@ public class RenderComponent extends Component implements Renderable{
             drawable.render();
         }
     }
-    
+
+    public void setOverrideMatrix(Matrix4f mat){
+        this.override = mat;
+    }
+
     public String getShader() {
         return shader;
     }

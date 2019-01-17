@@ -75,39 +75,28 @@ public class WorldEngine{
     }
     
     private static void traverseUpdate(Component c, float delta){
-        if(!c.getWorld().isForcedUpdate() && (!c.isEnabled() || ((c.getUpdateDistance() > c.getPosition().subtract(RenderEngine.getCurrentView().getPosition()).length()) && c.getUpdateDistance() != 0)))
+        if(!c.getWorld().isForcedUpdate()
+                &&
+                    (!c.isEnabled()
+                    ||
+                    (c.getUpdateDistance()*c.getUpdateDistance() < c.getPosition().distanceToSquared(RenderEngine.getCurrentView().getPosition())
+                    &&
+                    c.getUpdateDistance() != 0))
+        )
             return;
         c.update(delta);
         for(Component c2 : c.getChildren()){
             traverseUpdate(c2, delta);
         }
     }
-    
-    /**
-     * Loads {@link com.opengg.core.world.World} from a file located in the Resource\worlds directory
-     * in the Binary World Format (with a .bwf extension)
-     * @param file Filename of world, not including the path up to Resource\worlds
-     * @return Loaded world
-     */
-    public static World loadWorld(String file){
-        return WorldLoader.loadWorld(file);
-    }
-    
-    /**
-     * Saves the given {@link com.opengg.core.world.World} to the given filename (Should not include the path)
-     * @param world World to save
-     * @param path Filename, should be formatted somename.bwf
-     */
-    public static void saveWorld(World world, String path){
-        WorldLoader.saveWorld(world, path);
-    }
-     
+
     /**
      * Runs all logic needed to switch the used {@link com.opengg.core.world.World}
      * from the current one to the given one
      * @param world World new World to use
      */
     public static void useWorld(World world){
+        curworld.deactivate();
         world.rescanRenderables();
         world.use();
         curworld = world;
