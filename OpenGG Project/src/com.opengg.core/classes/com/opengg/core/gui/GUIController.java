@@ -54,6 +54,10 @@ public class GUIController {
         return defaultgui;
     }
 
+    public static GUI getCurrent(){
+        return current;
+    }
+
     private GUIController() {
     }
 }

@@ -20,7 +20,7 @@ public class GGDebugRenderer {
     private static Text displaytext = Text.from("");
     private static Drawable display;
 
-    private static final float FONT_SCALE = 0.034f;
+    private static final float FONT_SCALE = 0.08f;
 
     public static void update(){
         var frametime = System.currentTimeMillis() - lastFrame;
@@ -41,7 +41,7 @@ public class GGDebugRenderer {
                 displaytext = Text.from(
                                 "Frame time: " + String.format("%.2f", computedFramerate) + "\n" +
                                 "Frame rate: " + String.format("%.2f", 1/(computedFramerate/1000)) + "\n\n" +
-                                "Camera position: (" + String.format("%.2f", RenderEngine.getCurrentView().getPosition().x) + ", " +  String.format("%.2f", RenderEngine.getCurrentView().getPosition().y) + ", " +  String.format("%.2f", RenderEngine.getCurrentView().getPosition().z) + ")")
+                                "Camera position: (" + String.format("%.2f", RenderEngine.getCurrentView().getPosition().x) + ", " +  String.format("%.2f",     RenderEngine.getCurrentView().getPosition().y) + ", " +  String.format("%.2f", RenderEngine.getCurrentView().getPosition().z) + ")")
                         .maxLineSize(1f)
                         .kerning(true)
                         .size(FONT_SCALE);

@@ -186,7 +186,6 @@ public class TTF implements Font{
     @Override
     public Drawable createFromText(Text wholetext) {
 
-
         String text = wholetext.getText();
 
         if(text.length() == 0){
@@ -194,24 +193,22 @@ public class TTF implements Font{
         }
 
         IntBuffer pCodePoint = Allocator.stackAllocInt(1);
-        float scale = stbtt_ScaleForPixelHeight(this.fontinfo,28f);
 
         FloatBuffer x = Allocator.stackAllocFloat(1);
         FloatBuffer y = Allocator.stackAllocFloat(1);
 
         STBTTAlignedQuad q = STBTTAlignedQuad.mallocStack();
 
-        int lineStart = 0;
-
         float x0 = 0, x1 = 0, y0 = 0, y1 = 0;
 
+        float scale = stbtt_ScaleForPixelHeight(this.fontinfo,12f);
         float factorX = wholetext.getSize()*scale;
         float factorY = wholetext.getSize()*scale;
 
         float lineY = 0.0f;
 
-        List<Vector2f> uvs = new ArrayList(text.length()*4);
-        List<Vector2f> poss = new ArrayList(text.length()*4);
+        List<Vector2f> uvs = new ArrayList<>(text.length()*4);
+        List<Vector2f> poss = new ArrayList<>(text.length()*4);
 
         for (int i = 0, to = text.length(); i < to; ) {
             i += getCP(text, to, i, pCodePoint);
@@ -219,35 +216,29 @@ public class TTF implements Font{
             int cp = pCodePoint.get(0);
             if (cp == '\n' || (x1 > wholetext.getMaxLineSize() && wholetext.getMaxLineSize() > 0f)) {
 
-
-                y.put(0, lineY = y.get(0) + ((ascent - descent + lineGap) * scale * factorY));
+                y.put(0, lineY = lineY + (ascent - descent + lineGap) * scale * 2);
                 x.put(0, 0.0f);
 
-                lineStart = i;
-                if(cp == '\n')
-                    continue;
+                continue;
             } else if (cp < 32 || 128 <= cp) {
                 continue;
             }
 
-            float cpX = x.get(0);
             if(!isOversampled) {
                 stbtt_GetBakedQuad(cdata, WIDTH, HEIGHT, cp, x, y, q, true);
             }else {
                 stbtt_GetPackedQuad(altCData, WIDTH, HEIGHT, cp, x, y, q, false);
             }
 
-            x.put(0, scale(cpX, x.get(0), factorX));
             if (wholetext.isKerningEnabled() && i < to) {
                 getCP(text, to, i, pCodePoint);
-                x.put(0, x.get(0) + stbtt_GetCodepointKernAdvance(fontinfo, cp, pCodePoint.get(0)) * scale * factorX);
+                x.put(0, x.get(0) + stbtt_GetCodepointKernAdvance(fontinfo, cp, pCodePoint.get(0)));
             }
 
-
-            x0 = scale(cpX, q.x0(), factorX);
-            x1 = scale(cpX, q.x1(), factorX);
-            y0 = scale(lineY, q.y0(), factorY);
-            y1 = scale(lineY, q.y1(), factorY);
+            x0 = q.x0() * factorX;
+            x1 = q.x1() * factorX;
+            y0 = q.y0() * factorY;
+            y1 = q.y1() * factorY;
 
             uvs.add(new Vector2f(q.s0(), q.t0()));
             uvs.add(new Vector2f(q.s1(), q.t0()));
@@ -275,6 +266,7 @@ public class TTF implements Font{
         for(int i = 0; i < poss.size(); i++){
             var uv = uvs.get(i);
             var pos = poss.get(i);
+
             data.put(pos.x).put(-pos.y).put(0).put(1).put(0).put(0).put(1).put(1f).put(0f).put(0f).put(uv.x).put(uv.y);
         }
 

@@ -13,6 +13,8 @@ import com.opengg.core.util.GGOutputStream;
 import com.opengg.core.world.components.triggers.Trigger;
 import com.opengg.core.world.components.triggers.TriggerInfo;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -20,6 +22,8 @@ import java.io.IOException;
  */
 public class Zone extends Trigger{
     private AABB box;
+    private boolean repeat = false;
+    List<Component> lastFrames = new ArrayList<>();
 
     public Zone(){
         box = new AABB(0,0,0);
@@ -41,7 +45,9 @@ public class Zone extends Trigger{
     public void checkForCollisions(){
         for(Component c : this.getWorld().getAll()){
             if(c == this) continue;
+            if(lastFrames.contains(c)) continue;
             if(box.isColliding(c.getPosition())){
+                lastFrames.add(c);
                 TriggerInfo ti = new TriggerInfo();
                 ti.source = this;
                 ti.data = c;
@@ -51,6 +57,13 @@ public class Zone extends Trigger{
                 onTrigger(ti);
             }
         }
+
+        var extra = new ArrayList<Component>();
+        for(var c : lastFrames){
+            if(!box.isColliding(c.getPosition())) extra.add(c);
+        }
+
+        lastFrames.removeAll(extra);
     }
 
     public AABB getBox() {

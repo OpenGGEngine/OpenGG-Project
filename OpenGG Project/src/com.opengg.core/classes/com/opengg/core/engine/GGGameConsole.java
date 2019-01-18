@@ -35,7 +35,7 @@ public class GGGameConsole implements KeyboardListener, KeyboardCharacterListene
     private static Font font;
     private static boolean enabled = false;
     private static boolean wasInMenu = false;
-    private static final float FONT_SCALE = 0.034f;
+    private static final float FONT_SCALE = 0.08f;
 
     public static final int LINE_AMOUNT = 27;
     public static int maxMessageSize;
