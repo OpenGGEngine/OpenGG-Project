@@ -1,10 +1,7 @@
 package com.opengg.core.model.io;
 
 import com.opengg.core.console.GGConsole;
-import com.opengg.core.math.Matrix4f;
-import com.opengg.core.math.Vector2f;
-import com.opengg.core.math.Vector3f;
-import com.opengg.core.math.Vector4f;
+import com.opengg.core.math.*;
 import com.opengg.core.model.*;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.assimp.*;
@@ -26,37 +23,27 @@ public class AssimpModelLoader {
         String name = path.substring(Math.max(path.lastIndexOf("\\"), path.lastIndexOf("/")), path.lastIndexOf("."));
 
         File f = new File(path);
-        AIScene scene = Assimp.aiImportFile(f.toString(),Assimp.aiProcess_GenSmoothNormals|Assimp.aiProcess_Triangulate);
+        AIScene scene = Assimp.aiImportFile(f.toString(),
+                Assimp.aiProcess_GenSmoothNormals|Assimp.aiProcess_Triangulate|Assimp.aiProcess_CalcTangentSpace);
         GGConsole.log("Loading " + f.getName() + " with " +scene.mNumMeshes() + " meshes and " + scene.mNumAnimations() + " animations.");
 
-        //Load animations
-        if(scene.mNumAnimations() > 0){
-            for(int i =0;i<scene.mNumAnimations();i++){
-                AIAnimation anim = AIAnimation.create(scene.mAnimations().get(i));
-                anim.mChannels().get();
-                GGAnimation animation = processAnimation(anim);
-                System.out.println(animation.name);
-            }
-            GGConsole.log("Loaded Animations");
-        }
+        GGNode rootNode = recurNode(scene.mRootNode());
 
         //Load Materials
-        ArrayList<Material> materials = new ArrayList<>();
+        ArrayList<Material> materials = new ArrayList<>(scene.mNumMaterials());
         if(scene.mNumMaterials() > 0){
             for(int i = 0;i<scene.mNumMaterials();i++){
-                AIMaterial mat = AIMaterial.create(scene.mMaterials().get(i));
-                Material mat2 = processMaterial(mat);
+                Material mat2 = processMaterial(AIMaterial.create(scene.mMaterials().get(i)));
                 mat2.texpath = f.getParent() + "\\tex\\";
                 materials.add(mat2);
             }
         }
 
         PointerBuffer pMeshes = scene.mMeshes();
-
-        ArrayList<Mesh> meshes = new ArrayList<>();
+        ArrayList<Mesh> meshes = new ArrayList<>(scene.mNumMeshes());
 
         boolean animationsEnabled = false;
-        boolean generateHulls = true;
+        boolean generateHulls = false;
 
         for(int i = 0;i<pMeshes.capacity();i++){
             AIMesh mesh = AIMesh.create(pMeshes.get());
@@ -66,31 +53,28 @@ public class AssimpModelLoader {
             Vector3f tangents;
             Vector2f uvs;
 
-            ArrayList<GGVertex> vertices = new ArrayList<>();
-
             int[] indices = new int[mesh.mNumFaces() * 3];
-
             GGBone[] bones = new GGBone[mesh.mNumBones()];
 
             boolean hasTangents = mesh.mTangents() == null;
             boolean hasNormal = mesh.mNormals() == null;
             boolean hasUVs = mesh.mTextureCoords(0) == null;
 
+            ArrayList<GGVertex> vertices = new ArrayList<>(mesh.mNumVertices());
             //Load Mesh VBO Data
             for(int i2 = 0;i2<mesh.mNumVertices();i2++){
 
                 positions = assimpToV3(mesh.mVertices().get(i2));
-
-                normals =  hasNormal ? new Vector3f(1,1,1) : assimpToV3(mesh.mNormals().get(i2));
-                tangents = hasTangents ? new Vector3f(1,1,1) : assimpToV3(mesh.mTangents().get(i2));
-
-                uvs = hasUVs ? new Vector2f(1,1) : assimpToV2(mesh.mTextureCoords(0).get(i2));
+                normals =  hasNormal ? new Vector3f(1) : assimpToV3(mesh.mNormals().get(i2));
+                tangents = hasTangents ? new Vector3f(1) : assimpToV3(mesh.mTangents().get(i2));
+                uvs = hasUVs ? new Vector2f(1) : assimpToV2(mesh.mTextureCoords(0).get(i2));
 
                 vertices.add(new GGVertex(positions,normals,tangents,uvs));
 
             }
+
             //Load animation mesh data
-            if(animationsEnabled) {
+            if(!animationsEnabled) {
                 Map<Integer, List<VertexWeight>> weightSet = new HashMap<>();
 
                 for (int i3 = 0; i3 < mesh.mNumBones(); i3++) {
@@ -145,7 +129,6 @@ public class AssimpModelLoader {
                 gmesh.main = materials.get(mesh.mMaterialIndex());
                 gmesh.matIndex = mesh.mMaterialIndex();
             }
-
             gmesh.bones = bones;
 
             meshes.add(gmesh);
@@ -153,9 +136,20 @@ public class AssimpModelLoader {
         }
         GGConsole.log("Loaded model: " + f.getName());
         Model model = new Model(meshes, name);
+
+        //Load animations
+        if(scene.mNumAnimations() > 0){
+            for(int i =0;i<scene.mNumAnimations();i++){
+                GGAnimation animation = processAnimation(AIAnimation.create(scene.mAnimations().get(i)));
+                model.animations.put(animation.name,animation);
+            }
+            GGConsole.log("Loaded Animations");
+        }
+
         model.fileLocation = f.getParent();
         model.isAnim = animationsEnabled;
         model.materials = materials;
+        model.root = rootNode;
         return model;
 
     }
@@ -183,25 +177,20 @@ public class AssimpModelLoader {
         if(Assimp.aiGetMaterialTextureCount(material,aiTextureType_EMISSIVE)>0) m.emmFilename = path.dataString();
 
         Vector3f ambient = Material.DEFAULT_COLOR;
-        int result = aiGetMaterialColor(material, AI_MATKEY_COLOR_AMBIENT, aiTextureType_NONE, 0, color);
-        if (result == 0) {
+        if (aiGetMaterialColor(material, AI_MATKEY_COLOR_AMBIENT, aiTextureType_NONE, 0, color) == 0) {
             ambient = new Vector3f(color.r(), color.g(), color.b());
         }
         Vector3f diffuse = Material.DEFAULT_COLOR;
-        result = aiGetMaterialColor(material, AI_MATKEY_COLOR_DIFFUSE, aiTextureType_NONE, 0, color);
-        if (result == 0) {
+        if (aiGetMaterialColor(material, AI_MATKEY_COLOR_DIFFUSE, aiTextureType_NONE, 0, color) == 0) {
             diffuse = new Vector3f(color.r(), color.g(), color.b());
         }
         Vector3f specular = Material.DEFAULT_COLOR;
-        result = aiGetMaterialColor(material, AI_MATKEY_COLOR_SPECULAR, aiTextureType_NONE, 0, color);
-        if (result == 0) {
+        if (aiGetMaterialColor(material, AI_MATKEY_COLOR_SPECULAR, aiTextureType_NONE, 0, color) == 0) {
             specular = new Vector3f(color.r(), color.g(), color.b());
         }
         float[] temp = new float[1];
 
-        result = aiGetMaterialFloatArray(material,AI_MATKEY_SHININESS,aiTextureType_NONE,0,temp,new int[]{1});
-
-        if(result == 0){
+        if(aiGetMaterialFloatArray(material,AI_MATKEY_SHININESS,aiTextureType_NONE,0,temp,new int[]{1}) == 0){
             m.nsExponent = temp[0];
         }
         return m;
@@ -209,11 +198,45 @@ public class AssimpModelLoader {
     }
 
     public static GGAnimation processAnimation(AIAnimation animation){
+        //For the awful people who have empty animation names.
+        String name = animation.mName().dataString().equals("")? animation.toString():animation.mName().dataString();
+        GGAnimation anim = new GGAnimation(name,animation.mDuration(),animation.mTicksPerSecond());
+        //Unused Mesh Animations
+        for(int i=0;i<animation.mNumMeshChannels();i++){};
         for(int i = 0;i<animation.mNumChannels();i++){
-            //animation.mChannels().get(i)
+            AINodeAnim animnode = AINodeAnim.create(animation.mChannels().get(i));
+            ArrayList<Tuple<Double,Vector3f>> positionKeys = new ArrayList<>();
+            for(int i2 = 0;i2 < animnode.mNumPositionKeys();i2++){
+                AIVectorKey v5 =animnode.mPositionKeys().get(i2);
+                positionKeys.add(new Tuple<>(v5.mTime(),assimpToV3(v5.mValue())));
+            }
+            ArrayList<Tuple<Double,Quaternionf>> rotationKeys = new ArrayList<>();
+            for(int i2 = 0;i2 < animnode.mNumRotationKeys();i2++){
+                AIQuatKey v5 =animnode.mRotationKeys().get(i2);
+                rotationKeys.add(new Tuple<>(v5.mTime(),
+                        new Quaternionf(v5.mValue().w(),v5.mValue().x(),v5.mValue().y(),v5.mValue().z())));
+            }
+            ArrayList<Tuple<Double,Vector3f>> scalingKeys = new ArrayList<>();
+            for(int i2 = 0;i2 < animnode.mNumScalingKeys();i2++){
+                AIVectorKey v5 =animnode.mScalingKeys().get(i2);
+                scalingKeys.add(new Tuple<>(v5.mTime(),assimpToV3(v5.mValue())));
+            }
+            GGAnimation.AnimNode node = new GGAnimation.AnimNode(positionKeys,rotationKeys,scalingKeys,animnode.mNodeName().dataString());
+            anim.animdata.put(node.name,node);
         }
-        //animation.mChannels()
-        return new GGAnimation(animation.mName().dataString(),animation.mDuration(),animation.mTicksPerSecond());
+        return anim;
+    }
+
+    public static GGNode recurNode(AINode node){
+        GGNode gnode = new GGNode(node.mName().dataString(),assimpToMat4(node.mTransformation()));
+        //String length, String char data (ASCII 1 byte), Matrix data, Num Children
+        gnode.byteSize =  4 + gnode.name.length() + (64) + 4;
+        for(int i=0;i<node.mNumChildren();i++){
+            GGNode cnode = recurNode(AINode.create(node.mChildren().get(i)));
+            gnode.byteSize += cnode.byteSize;
+            gnode.children.add(cnode);
+        }
+        return gnode;
     }
 
     public static Vector3f assimpToV3(AIVector3D a){

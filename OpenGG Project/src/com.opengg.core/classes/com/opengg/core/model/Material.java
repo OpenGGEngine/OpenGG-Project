@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import static com.opengg.core.model.MLoaderUtils.*;
 
 /**
  *
@@ -209,41 +210,18 @@ public class Material {
 
     }
 
-    public void writeString(String s, ByteBuffer b) {
-        ByteBuffer temp = ByteBuffer.wrap(s.getBytes(Charset.forName("UTF-8")));
-        b.putInt(temp.capacity());
-        b.put(temp);
-    }
-
-    public String readString(ByteBuffer b) {
-        int namelength = b.getInt();
-        if (namelength == 0) {
-            return "";
-        }
-        byte[] name = new byte[namelength];
-        b.get(name);
-        return new String(name, Charset.forName("UTF-8"));
-    }
 
     public ByteBuffer toBuffer() throws UnsupportedEncodingException {
         
         ByteBuffer b = ByteBuffer.allocate(4 +  4 + (name.length() ) + (3 * (4 * 3)) + 4 + (this.mapKdFilename.length() ) + 4 + (this.mapNsFilename.length() ) + 4 + (this.bumpFilename.length() ) +  4 +(this.emmFilename.length()));
-        b.putInt(name.length());
-        b.put(ByteBuffer.wrap(name.getBytes(Charset.forName("UTF-8"))));
-        b.put(ka.toByteArray());
-        b.put(kd.toByteArray());
-        b.put(ks.toByteArray());
-        b.putInt(mapKdFilename.length());
-        b.put(ByteBuffer.wrap(mapKdFilename.getBytes(Charset.forName("UTF-8"))));
-        b.putInt(mapNsFilename.length());
-        b.put(ByteBuffer.wrap(mapNsFilename.getBytes(Charset.forName("UTF-8"))));
-        b.putInt(bumpFilename.length());
-        b.put(ByteBuffer.wrap(bumpFilename.getBytes(Charset.forName("UTF-8"))));
-        b.putInt(emmFilename.length());
-        b.put(ByteBuffer.wrap(emmFilename.getBytes(Charset.forName("UTF-8"))));
+        writeString(name,b);
+        b.put(ka.toByteArray()).put(kd.toByteArray()).put(ks.toByteArray());
+        writeString(mapKdFilename,b);
+        writeString(mapNsFilename,b);
+        writeString(bumpFilename,b);
+        writeString(emmFilename,b);
         b.putFloat((float)nsExponent);
-        b.flip();
-        return b;
+        return b.flip();
     }
 
     public int getCap() {

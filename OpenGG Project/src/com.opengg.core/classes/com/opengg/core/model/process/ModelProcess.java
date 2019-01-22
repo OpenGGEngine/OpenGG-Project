@@ -10,7 +10,7 @@ public abstract class ModelProcess{
     public abstract void process(Model model);
 
     public void broadcast(){
-        run.run();
+        if(run != null){ run.run();}
     };
 
 }

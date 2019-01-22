@@ -52,9 +52,7 @@ public class Mesh {
             }
         }
         vbo.flip();
-        ibo = Allocator.allocInt(indices.length);
-        ibo.put(indices);
-        ibo.flip();
+        ibo = Allocator.allocInt(indices.length).put(indices).flip();
         this.genAnim = genAnim;
     }
 
