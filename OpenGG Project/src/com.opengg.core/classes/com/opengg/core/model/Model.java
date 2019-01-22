@@ -5,13 +5,16 @@ import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.render.drawn.DrawnObjectGroup;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Model implements Resource {
     public ArrayList<Mesh> meshes = new ArrayList<>();
     public ArrayList<Material> materials = new ArrayList<Material>();
+    public HashMap<String,GGAnimation> animations = new HashMap<>();
     public boolean isAnim = false;
     public String fileLocation;
     private String name;
+    public GGNode root;
 
     public Model(ArrayList<Mesh> meshes, String name){
         this.meshes = meshes;
@@ -19,11 +22,9 @@ public class Model implements Resource {
     }
 
     public Drawable getDrawable(){
-        ArrayList<Drawable> objects = new ArrayList<>();
+        ArrayList<Drawable> objects = new ArrayList<>(meshes.size());
 
-        for(Mesh mesh: meshes){
-            objects.add(mesh.getDrawable());
-        }
+        for(Mesh mesh: meshes) objects.add(mesh.getDrawable());
 
         DrawnObjectGroup group = new DrawnObjectGroup(objects);
         return group;
