@@ -208,7 +208,15 @@ public class Vector2f implements Serializable{
         ByteBuffer b = Allocator.alloc(8);
         return b.putFloat(x).putFloat(y).array();
     }
-    
+
+    public static Vector2f parseVector2f(String value){
+        String fixed = value.replace('(', ' ');
+        fixed = fixed.replace(')', ' ');
+        fixed = fixed.trim();
+        var split = fixed.split(",");
+        return new Vector2f(Float.parseFloat(split[0].trim()), Float.parseFloat(split[1].trim()));
+    }
+
     @Override
     public boolean equals(Object ot){
         if(ot instanceof Vector2f){

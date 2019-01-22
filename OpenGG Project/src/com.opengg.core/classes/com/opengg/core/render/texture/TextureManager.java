@@ -19,6 +19,7 @@ import java.util.Map;
 public class TextureManager {
     private static final Map<String, TextureData> texturelist = new HashMap<>();
     private static TextureData defaultdata;
+    private static boolean cache = true;
     
     public static void initialize(){
         try {
@@ -29,6 +30,7 @@ public class TextureManager {
     }
     
     public static void addTexture(TextureData data){
+        if(!cache) return;
         texturelist.put(data.source, data);
     }
 

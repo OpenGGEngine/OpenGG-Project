@@ -131,7 +131,8 @@ public class BindController implements KeyboardListener, MouseButtonListener{
                     Action a = new Action();
                     a.name = bind.action;
                     a.type = ActionType.PRESS;
-                    c.doAction(a);
+                    OpenGG.asyncExec(() -> c.doAction(a));
+                    //c.doAction(a);
                 }
             }
         }

@@ -1,5 +1,6 @@
 package com.opengg.core.world.components;
 
+import com.opengg.core.engine.Executor;
 import com.opengg.core.physics.collision.AABB;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
@@ -32,8 +33,10 @@ public class WorldChangeZone extends Zone {
         if(shouldExit.apply(data)){
             World newWorld = WorldLoader.getWorld(world);
             if(newWorld != null){
-                WorldEngine.useWorld(newWorld);
-                onExit.accept(data);
+                Executor.async(() -> {
+                    WorldEngine.useWorld(newWorld);
+                    onExit.accept(data);
+                });
             }
         }
     }

@@ -16,7 +16,7 @@ import java.util.Map;
  * @author Javier
  */
 public class GUIController {
-    static GUI current;
+    static String current;
     static GUI defaultgui;
     static Map<String, GUI> guis = new HashMap<>();
     
@@ -26,8 +26,9 @@ public class GUIController {
     }
     
     public static void useGUI(String name){
-        current = guis.get(name);
-        if(current.isMenu()) GGInfo.setMenu(true);
+        current = name;
+        var currentGUI = guis.get(name);
+        if(currentGUI.isMenu()) GGInfo.setMenu(true);
         else GGInfo.setMenu(false);
     }
     
@@ -43,7 +44,7 @@ public class GUIController {
     public static void render(){
         ShaderController.useConfiguration("gui");
         
-        current.render();
+        guis.get(current).render();
     }
     
     public static GUI get(String name){
@@ -55,8 +56,13 @@ public class GUIController {
     }
 
     public static GUI getCurrent(){
+        return guis.get(current);
+    }
+
+    public static String getCurrentName(){
         return current;
     }
+
 
     private GUIController() {
     }
