@@ -82,6 +82,10 @@ public class GGInfo {
         return basepath;
     }
 
+    public static void setApplicationPath(String basepath) {
+        GGInfo.basepath = basepath;
+    }
+
     public static int getUserId(){
         return userId;
     }

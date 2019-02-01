@@ -15,6 +15,6 @@ public class TriggerInfo {
     public Object data;
     public String info;
     public int type;
-    public Object source;
+    public Object triggerSource;
     
 }

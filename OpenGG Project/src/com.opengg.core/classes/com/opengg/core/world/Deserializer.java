@@ -61,10 +61,6 @@ public class Deserializer {
         
         if(world == null)
             return null;
-        
-        int maxid = components.stream()
-                .mapToInt(holder -> holder.comp.getId())
-                .max().getAsInt();
 
         for(var holder : components){
             components

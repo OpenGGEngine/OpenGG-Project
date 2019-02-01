@@ -123,7 +123,7 @@ public final class NativeSound {
     }
     
     /**
-     * Sets source direction 
+     * Sets source direction
      * @param dir Direction
      */
     public void setDirection(Vector3f dir){

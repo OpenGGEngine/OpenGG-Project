@@ -78,9 +78,6 @@ public class ColliderGroup extends PhysicsObject{
         return aabb;
     }
 
-    public boolean isForceTest() {
-        return forceTest;
-    }
 
     public void setForceTest(boolean forceTest) {
         this.forceTest = forceTest;
@@ -90,7 +87,7 @@ public class ColliderGroup extends PhysicsObject{
         this.aabb.recalculate();
         other.aabb.recalculate();
         if (!aabb.isColliding(other.aabb) && !(this.forceTest || other.forceTest))
-            return Optional.ofNullable((Collision) null);
+            return Optional.ofNullable(null);
         this.getColliders().forEach(Collider::updatePositions);
         other.getColliders().forEach(Collider::updatePositions);
 
@@ -110,8 +107,9 @@ public class ColliderGroup extends PhysicsObject{
         out.write(id);
         out.write(aabb.lwh);
 
-        out.write(this.children.size());
+        out.write(this.children.size()-1);
         for(var collider : children){
+            if(collider instanceof AABB) continue;
             out.write(collider.getClass().getName());
             collider.serialize(out);
         }
@@ -133,6 +131,7 @@ public class ColliderGroup extends PhysicsObject{
                 addCollider(collider);
             } catch (ClassInstantiationException e) {
                 GGConsole.error("Failed to insantiate collider with classname " + classname + ": " + e.getMessage());
+                throw new RuntimeException(e);
             }
         }
     }

@@ -29,7 +29,7 @@ public class ALCDevice {
     ALCCapabilities caps;
     
     /**
-     * Creates an ALC device using the given source (or uses default device if the source is null), 
+     * Creates an ALC device using the given source (or uses default device if the source is null),
      * and creates {@link org.lwjgl.openal.ALCCapabilities capabilities} available in the device
      * @param source Hardware device to use in creation of the ALC device, use null for system default
      */

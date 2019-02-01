@@ -230,6 +230,6 @@ public interface Resource {
      * @param path Location of base directory for use
      */
     public static void setDefaultPath(String path){
-        //GGInfo.getApplicationPath() = path;
+        GGInfo.setApplicationPath(path);
     }
 }

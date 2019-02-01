@@ -158,7 +158,10 @@ public class OpenGLTexture implements Texture {
         long blength = 0;
         for(int i = 0; i < datums.length; i++) blength += datums[i].buffer.limit();
         ByteBuffer full = Allocator.alloc((int) blength);
-        for(TextureData data : datums) full.put((ByteBuffer)data.buffer);
+        for(TextureData data : datums){
+            full.put((ByteBuffer)data.buffer);
+            data.buffer.rewind();
+        }
         full.flip();
         tdata.addAll(Arrays.asList(datums));
         tex.setSubImageData(type, 0, xoffset, yoffset, zoffset, datums[0].width, datums[0].height, datums.length, GL_RGBA, datatype, full);

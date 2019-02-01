@@ -32,7 +32,7 @@ public class KeyTrigger extends Trigger implements KeyboardListener {
             if(key == wkey){
                 TriggerInfo t = new TriggerInfo();
                 t.info = Integer.toString(key);
-                t.source = this;
+                t.triggerSource = this;
                 t.type = TOGGLE;
                 trigger(t);
             }

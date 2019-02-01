@@ -49,7 +49,7 @@ public class Zone extends Trigger{
             if(box.isColliding(c.getPosition())){
                 lastFrames.add(c);
                 TriggerInfo ti = new TriggerInfo();
-                ti.source = this;
+                ti.triggerSource = this;
                 ti.data = c;
                 ti.type = 0;
                 ti.info = "collide:" + c.getId();

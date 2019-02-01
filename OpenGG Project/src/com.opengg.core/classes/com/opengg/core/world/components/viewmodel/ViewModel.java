@@ -101,6 +101,10 @@ public abstract class ViewModel {
     public List<Element> getElements(){
         return elements;
     }
+
+    public void addElement(Element element){
+        getElements().add(element);
+    }
     
     public final void fireEvent(Element element){
         onChangeLocal(element);

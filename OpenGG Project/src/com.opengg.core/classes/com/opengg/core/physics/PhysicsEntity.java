@@ -125,6 +125,7 @@ public class PhysicsEntity extends PhysicsObject{
     private Vector3f getAccel(Vector3f momemtum){
         Vector3f accel = momemtum.divide(mass);
         if (gravEffect) {
+
             accel = accel.add(system.getConstants().GRAVITY);
         }
         return accel;

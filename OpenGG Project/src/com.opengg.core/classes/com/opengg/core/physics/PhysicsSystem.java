@@ -77,7 +77,7 @@ public class PhysicsSystem {
     public void serialize(GGOutputStream out) throws IOException {
         out.write(constants.BASE);
         out.write(constants.GRAVITY);
-        out.write((int)entities.size());
+        out.write(entities.size());
 
         for(var entity : entities){
             entity.serialize(out);
@@ -95,7 +95,7 @@ public class PhysicsSystem {
 
             PhysicsEntity entity = new PhysicsEntity();
             entity.deserialize(in);
-            entities.add(entity);
+            addEntity(entity);
         }
 
         PhysicsEntity.idcount = entities.stream()

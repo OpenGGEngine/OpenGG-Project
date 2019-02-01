@@ -49,7 +49,7 @@ public class ClassUtil {
             Object nclazz = clazz.getConstructor().newInstance();
             return nclazz;
         } catch (Exception e) {
-            throw new ClassInstantiationException(e.getMessage());
+            throw new ClassInstantiationException(e);
         }
     }
 

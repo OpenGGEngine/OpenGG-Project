@@ -48,8 +48,8 @@ public class PhysicsComponentViewModel extends ViewModel{
         Element dfriction = new Element();
         dfriction.type = Element.Type.FLOAT;
         dfriction.autoupdate = true;
-        dfriction.name = "Static friction";
-        dfriction.internalname = "sfriction";
+        dfriction.name = "Dynamic friction";
+        dfriction.internalname = "dfriction";
         dfriction.value = 0.6f;
         
         elements.add(mass);

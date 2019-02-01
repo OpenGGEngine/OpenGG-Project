@@ -6,17 +6,17 @@
 package com.opengg.core.gui;
 
 import com.opengg.core.GGInfo;
-import com.opengg.core.engine.BindController;
 import com.opengg.core.render.shader.ShaderController;
-import java.util.HashMap;
-import java.util.Map;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  *
  * @author Javier
  */
 public class GUIController {
-    static String current;
+    static Set<String> current = new HashSet<>();
     static GUI defaultgui;
     static Map<String, GUI> guis = new HashMap<>();
     
@@ -25,11 +25,15 @@ public class GUIController {
         addAndUse(defaultgui, "default");
     }
     
-    public static void useGUI(String name){
-        current = name;
+    public static void activateGUI(String name){
+        current.add(name);
         var currentGUI = guis.get(name);
         if(currentGUI.isMenu()) GGInfo.setMenu(true);
         else GGInfo.setMenu(false);
+    }
+
+    public static void deactivateGUI(String name){
+        current.remove(name);
     }
     
     public static void add(GUI gui, String name){
@@ -38,13 +42,13 @@ public class GUIController {
 
     public static void addAndUse(GUI gui, String name){
         guis.put(name, gui);
-        useGUI(name);
+        activateGUI(name);
     }
 
     public static void render(){
         ShaderController.useConfiguration("gui");
         
-        guis.get(current).render();
+        current.stream().map(guis::get).forEach(GUI::render);
     }
     
     public static GUI get(String name){
@@ -55,11 +59,11 @@ public class GUIController {
         return defaultgui;
     }
 
-    public static GUI getCurrent(){
-        return guis.get(current);
+    public static Set<GUI> getCurrent(){
+        return current.stream().map(guis::get).collect(Collectors.toSet());
     }
 
-    public static String getCurrentName(){
+    public static Set<String> getCurrentName(){
         return current;
     }
 

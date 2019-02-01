@@ -97,7 +97,14 @@ public class BindController implements KeyboardListener, MouseButtonListener{
     public static void clearControllers(){
         controllers.clear();
     }
-    
+
+    /**
+     * Clears all binds from the system;
+     */
+    public static void clearBinds(){
+        binds.clear();
+    }
+
     /**
      * Gets all {@link ActionTransmitter ActionTransmit}
      * @return 

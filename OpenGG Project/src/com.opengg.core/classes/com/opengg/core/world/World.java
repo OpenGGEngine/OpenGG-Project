@@ -270,9 +270,12 @@ public class World extends Component{
     @Override
     public void serialize(GGOutputStream out) throws IOException{
         super.serialize(out);
-/*        for(TextureData data : environment.getSkybox().getCubemap().getData()){
-            out.write(data.source);
-        }*/
+        out.write(environment.getSkybox() != null);
+        if(environment.getSkybox() != null){
+            for(TextureData data : environment.getSkybox().getCubemap().getData()){
+                out.write(data.source);
+            }
+        }
 
         physics.serialize(out);
     }
@@ -281,10 +284,14 @@ public class World extends Component{
     public void deserialize(GGInputStream in) throws IOException{
         super.deserialize(in);
         var datums = new TextureData[6];
-        for (int i = 0; i < 6; i++) {
-            var instring = in.readString();
-            datums[i] = TextureManager.loadTexture(instring, false);
+        boolean skybox = in.readBoolean();
+        if(skybox){
+            for (int i = 0; i < 6; i++) {
+                var instring = in.readString();
+                datums[i] = TextureManager.loadTexture(instring, false);
+            }
         }
+
 
         OpenGG.asyncExec(() -> environment.setSkybox(new Skybox(Texture.create(Texture.cubemapConfig(), datums), 1000)));
 

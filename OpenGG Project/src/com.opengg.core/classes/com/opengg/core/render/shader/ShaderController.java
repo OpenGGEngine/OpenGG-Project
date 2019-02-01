@@ -64,7 +64,24 @@ public class ShaderController {
      * Initializes the controller and loads all default shaders
      */
     public static void initialize() {
+        GGConsole.log("Shader Controller initializing...");
+
+        /* Set shader variables */
+
+        loadShaders();
+
+        setDefaultPipelines();
+
+        setUniforms();
+
+        checkError();
+        
+        GGConsole.log("Shader Controller initialized, loaded " + programs.size() + " shader programs");
+    }
+
+    private static void loadShaders(){
         long time = System.currentTimeMillis();
+
         GGConsole.log("Loading shaders...");
         loadShaderFiles();
         linkShaders();
@@ -72,6 +89,9 @@ public class ShaderController {
         long finaltime = System.currentTimeMillis() - time;
 
         GGConsole.log("Loaded shaders in " + finaltime + " milliseconds");
+    }
+
+    private static void setDefaultPipelines(){
 
         use("object.vert", "object.frag");
         saveCurrentConfiguration("object");
@@ -86,11 +106,11 @@ public class ShaderController {
         saveCurrentConfiguration("terrain");
 
         use("object.vert", "ambient.frag");
-        saveCurrentConfiguration("ambient");     
-        
+        saveCurrentConfiguration("ambient");
+
         use("object.vert", "water.frag");
-        saveCurrentConfiguration("water"); 
-        
+        saveCurrentConfiguration("water");
+
         use("object.vert", "ssao.frag");
         saveCurrentConfiguration("ssao");
 
@@ -111,19 +131,19 @@ public class ShaderController {
 
         use("object.vert", "fxaa.frag");
         saveCurrentConfiguration("fxaa");
-        
+
         use("object.vert", "passthrough.frag");
         saveCurrentConfiguration("volume");
-        
+
         use("object.vert", "texture.frag");
         saveCurrentConfiguration("texture");
-        
+
         use("object.vert", "gui.frag");
         saveCurrentConfiguration("gui");
-        
+
         use("object.vert", "bar.frag");
         saveCurrentConfiguration("bar");
-        
+
         use("object.vert", "add.frag");
         saveCurrentConfiguration("add");
 
@@ -132,17 +152,10 @@ public class ShaderController {
 
         use("object.vert", "gaussv.frag");
         saveCurrentConfiguration("blurv");
-        
+
         use("particle.vert", "texture.frag");
         saveCurrentConfiguration("particle");
 
-        /* Set shader variables */
-
-        setUniforms();
-
-        checkError();   
-        
-        GGConsole.log("Shader Controller initialized, loaded " + programs.size() + " shader programs");
     }
 
     private static void setUniforms(){
@@ -858,6 +871,19 @@ public class ShaderController {
                 GGConsole.exception(ne);
             }
         }
+    }
+
+    private static void regenerateShaderController(){
+
+        GGConsole.log("Reloading shaders...");
+
+        loadShaders();
+
+        setDefaultPipelines();
+
+        setUniforms();
+
+        checkError();
     }
 
     private static void ShaderController() {

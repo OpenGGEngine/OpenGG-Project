@@ -7,7 +7,12 @@ package com.opengg.core.physics.collision;
 
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.physics.PhysicsObject;
+import com.opengg.core.util.GGInputStream;
+import com.opengg.core.util.GGOutputStream;
+
 import static java.lang.Math.abs;
+
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -19,7 +24,11 @@ public class AABB extends PhysicsObject{
     
     Vector3f min = new Vector3f(1,1,1);
     Vector3f max = new Vector3f(-1,-1,-1);
-    
+
+    public AABB(){
+
+    }
+
     public AABB(List<Vector3f> points){
         for(Vector3f p : points){
             if(abs(p.x) > lwh.x) lwh = lwh.setX(abs(p.x));
@@ -82,4 +91,16 @@ public class AABB extends PhysicsObject{
         return "[" + min.toString() + " , " + max.toString() + "]";
     }
 
+    @Override
+    public void serialize(GGOutputStream out) throws IOException {
+        super.serialize(out);
+        out.write(lwh);
+    }
+
+    @Override
+    public void deserialize(GGInputStream in) throws IOException{
+        super.deserialize(in);
+        lwh = in.readVector3f();
+        recalculate();
+    }
 }

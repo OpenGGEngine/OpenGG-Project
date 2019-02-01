@@ -28,7 +28,7 @@ public class JarClassUtil {
             jarFile = new JarFile(path);
         } catch (IOException ex) {
             GGConsole.error("Failed to find jarfile!");
-            return null;
+            throw new RuntimeException(ex);
         }
         Enumeration<JarEntry> e = jarFile.entries();
 
@@ -37,7 +37,7 @@ public class JarClassUtil {
             urls = new URL[]{new URL("jar:file:" + path + "!/")};
         } catch (MalformedURLException ex) {
             GGConsole.error("Failed to access jarfile!");
-            return null;
+            throw new RuntimeException(ex);
         }
         URLClassLoader cl = URLClassLoader.newInstance(urls);
         Deserializer.loaders.add(cl);
@@ -50,12 +50,63 @@ public class JarClassUtil {
             String className = je.getName().substring(0, je.getName().length() - String.valueOf(".class").length());
             className = className.replace('/', '.');
             if(className.contains("module-info")) continue;
+            if(className.contains("com.opengg.core")) continue;
+            if(className.contains("com.opengg.math")) continue;
+            if(className.contains("com.opengg.base")) continue;
+            if(className.contains("com.opengg.system")) continue;
+            if(className.contains("com.opengg.console")) continue;
+
             try {
                 Class clazz = cl.loadClass(className);
                 classes.add(clazz);
             } catch (ClassNotFoundException ex) {
                 GGConsole.error("Failed to load classes!");
-                return null;
+                throw new RuntimeException(ex);
+            }
+
+        }
+        return classes;
+    }
+
+    public static List<Class> getAllClassesFromJar(String path) {
+        JarFile jarFile;
+        try {
+            jarFile = new JarFile(path);
+        } catch (IOException ex) {
+            GGConsole.error("Failed to find jarfile!");
+            throw new RuntimeException(ex);
+        }
+        Enumeration<JarEntry> e = jarFile.entries();
+
+        URL[] urls;
+        try {
+            urls = new URL[]{new URL("jar:file:" + path + "!/")};
+        } catch (MalformedURLException ex) {
+            GGConsole.error("Failed to access jarfile!");
+            throw new RuntimeException(ex);
+        }
+        URLClassLoader cl = URLClassLoader.newInstance(urls);
+        List<Class> classes = new ArrayList<>();
+        while (e.hasMoreElements()) {
+            JarEntry je = e.nextElement();
+            if (je.isDirectory() || !je.getName().endsWith(".class")) {
+                continue;
+            }
+            String className = je.getName().substring(0, je.getName().length() - String.valueOf(".class").length());
+            className = className.replace('/', '.');
+            if(className.contains("module-info")) continue;
+            if(className.contains("com.opengg.core")) continue;
+            if(className.contains("com.opengg.math")) continue;
+            if(className.contains("com.opengg.base")) continue;
+            if(className.contains("com.opengg.system")) continue;
+            if(className.contains("com.opengg.console")) continue;
+
+            try {
+                Class clazz = cl.loadClass(className);
+                classes.add(clazz);
+            } catch (ClassNotFoundException ex) {
+                GGConsole.error("Failed to load classes!");
+                throw new RuntimeException(ex);
             }
 
         }

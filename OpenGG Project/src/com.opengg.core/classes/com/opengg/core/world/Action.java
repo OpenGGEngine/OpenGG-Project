@@ -20,7 +20,7 @@ public class Action {
         return "Action{" +
                 "name='" + name + '\'' +
                 ", type=" + type +
-                ", source=" + source +
+                ", triggerSource=" + source +
                 '}';
     }
 }

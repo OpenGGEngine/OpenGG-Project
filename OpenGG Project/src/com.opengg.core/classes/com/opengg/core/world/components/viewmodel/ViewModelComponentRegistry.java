@@ -61,7 +61,7 @@ public class ViewModelComponentRegistry {
     
     public static void register(List<Class> components){
         for(Class clazz : components){
-            register(clazz);
+            register(clazz, false);
         }
     }
     
