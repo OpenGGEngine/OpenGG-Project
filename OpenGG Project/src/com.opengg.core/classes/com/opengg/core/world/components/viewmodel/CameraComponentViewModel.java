@@ -13,7 +13,7 @@ import com.opengg.core.world.components.Component;
  * @author Javier
  */
 @ForComponent(CameraComponent.class)
-public class CameraComponentViewModel extends ViewModel{
+public class CameraComponentViewModel extends ViewModel<CameraComponent>{
 
     @Override
     public void createMainViewModel() {}
@@ -24,7 +24,7 @@ public class CameraComponentViewModel extends ViewModel{
     }
 
     @Override
-    public Component getFromInitializer(Initializer init) {
+    public CameraComponent getFromInitializer(Initializer init) {
         return new CameraComponent();
     }
 
@@ -32,6 +32,6 @@ public class CameraComponentViewModel extends ViewModel{
     public void onChange(Element element) {}
 
     @Override
-    public void updateViews() {}
+    public void updateView(Element element) {}
     
 }

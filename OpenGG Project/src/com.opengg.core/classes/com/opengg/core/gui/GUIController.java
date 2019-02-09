@@ -19,6 +19,8 @@ public class GUIController {
     static Set<String> current = new HashSet<>();
     static GUI defaultgui;
     static Map<String, GUI> guis = new HashMap<>();
+
+    static boolean enabled = true;
     
     public static void initialize(){
         defaultgui = new GUI();
@@ -47,7 +49,8 @@ public class GUIController {
 
     public static void render(){
         ShaderController.useConfiguration("gui");
-        
+
+        if(!enabled) return;
         current.stream().map(guis::get).forEach(GUI::render);
     }
     
@@ -67,7 +70,14 @@ public class GUIController {
         return current;
     }
 
+    public static void setEnabled(boolean enabled) {
+        GUIController.enabled = enabled;
+    }
 
     private GUIController() {
+    }
+
+    public static boolean isEnabled() {
+        return enabled;
     }
 }

@@ -16,8 +16,8 @@ import java.util.List;
  * @author Javier
  */
 @ForComponent(Component.class)
-public abstract class ViewModel {
-    public Component component;
+public abstract class ViewModel<T extends Component> {
+    public T component;
     List<Element> elements = new ArrayList<>();
     
     public ViewModel(){
@@ -88,13 +88,13 @@ public abstract class ViewModel {
     
     public abstract Initializer getInitializer(Initializer init);
     
-    public abstract Component getFromInitializer(Initializer init);
+    public abstract T getFromInitializer(Initializer init);
     
-    public void setComponent(Component c){
+    public void setComponent(T c){
         this.component = c;
     }
     
-    public Component getComponent(){
+    public T getComponent(){
         return component;
     }
     
@@ -141,9 +141,13 @@ public abstract class ViewModel {
     }
     
     public abstract void onChange(Element element);
-    
-    public final void updateLocal(){
-        for(Element element : elements){
+
+    public final void updateAll(){
+        for(Element element : elements)
+            updateLocal(element);
+    }
+
+    public final void updateLocal(Element element){
             switch (element.internalname) {
                 case "pos":
                     element.value = component.getPositionOffset();
@@ -167,12 +171,12 @@ public abstract class ViewModel {
                     element.value = component.getName();
                     break;
             }        
-        }
+
         
-        updateViews();
+        updateView(element);
     }
     
-    public abstract void updateViews();
+    public abstract void updateView(Element element);
     
     public final Element getByName(String name){
         for(Element e : elements){

@@ -26,7 +26,7 @@ public final class Configuration{
     public static void load(File configfile) throws IOException{
         var properties = new Properties();
 
-        properties.load(new FileInputStream(configfile.getAbsolutePath()));
+        properties.load(new FileInputStream(configfile));
 
         var propertyset = properties.entrySet();
         var datamap = new HashMap<String, String>();

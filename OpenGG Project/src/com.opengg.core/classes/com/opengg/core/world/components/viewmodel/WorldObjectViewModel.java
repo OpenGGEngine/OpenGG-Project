@@ -13,7 +13,7 @@ import com.opengg.core.world.components.WorldObject;
  * @author Javier
  */
 @ForComponent(WorldObject.class)
-public class WorldObjectViewModel extends ViewModel{
+public class WorldObjectViewModel extends ViewModel<WorldObject>{
 
     @Override
     public void createMainViewModel() {
@@ -26,7 +26,7 @@ public class WorldObjectViewModel extends ViewModel{
     }
 
     @Override
-    public Component getFromInitializer(Initializer init) {
+    public WorldObject getFromInitializer(Initializer init) {
         return new WorldObject();
     }
 
@@ -36,7 +36,7 @@ public class WorldObjectViewModel extends ViewModel{
     }
 
     @Override
-    public void updateViews() {
+    public void updateView(Element element) {
        
     }
     

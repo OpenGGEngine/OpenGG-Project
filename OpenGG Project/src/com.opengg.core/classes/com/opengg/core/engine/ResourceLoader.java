@@ -39,15 +39,15 @@ public final class ResourceLoader {
     }
 
     private static Resource processRequest(ResourceRequest request){
-        if(request.type == ResourceRequest.TEXTURE){
+        if(request.type == ResourceRequest.Type.TEXTURE){
             return TextureManager.loadTexture(request.location);
         }
 
-        if(request.type == ResourceRequest.SOUND){
+        if(request.type == ResourceRequest.Type.SOUND){
              return SoundManager.loadSound(request.location);
         }
 
-        if(request.type == ResourceRequest.MODEL){
+        if(request.type == ResourceRequest.Type.MODEL){
             Model model = ModelManager.loadModel(request.location);
             for(Mesh mesh : model.getMeshes()){
                 Material material = mesh.getMaterial();
@@ -99,7 +99,7 @@ public final class ResourceLoader {
     public static Future<Resource> prefetch(ResourceRequest request){
         request.future = new CompletableFuture<>();
         
-        if(request.type == ResourceRequest.TEXTURE){
+        if(request.type == ResourceRequest.Type.TEXTURE){
             Resource r = TextureManager.getTextureData(request.location);
             if(r != TextureManager.getDefault()){
                 request.future.complete(r);
@@ -107,10 +107,10 @@ public final class ResourceLoader {
             }
         }
 
-        if(request.type == ResourceRequest.SOUND){
+        if(request.type == ResourceRequest.Type.SOUND){
             Resource r = SoundManager.getSoundData(request.location);
         }
-        if(request.type == ResourceRequest.MODEL){
+        if(request.type == ResourceRequest.Type.MODEL){
            Resource r = ModelManager.getModel(request.location);
            if(r != ModelManager.getDefaultModel()){
                request.future.complete(r);

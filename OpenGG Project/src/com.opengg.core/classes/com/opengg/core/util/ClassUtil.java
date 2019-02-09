@@ -15,22 +15,6 @@ import java.lang.reflect.InvocationTargetException;
  * @author Javier
  */
 public class ClassUtil {
-    public static boolean childOf(Class child, Class parent){
-        boolean valid = false;
-        Class clazz = child;
-        while(true){
-            clazz = clazz.getSuperclass();
-            if(clazz == null)
-                break;
-            
-            if(clazz.getCanonicalName().equalsIgnoreCase(parent.getCanonicalName())){
-                valid = true;
-                break;
-            }
-        }
-        return valid;
-    }
-
     public static Object createByName(String name) throws ClassInstantiationException {
         Class clazz = null;
         try{

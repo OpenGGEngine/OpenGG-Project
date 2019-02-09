@@ -1,6 +1,7 @@
 package com.opengg.core.model.io;
 
 import com.opengg.core.console.GGConsole;
+import com.opengg.core.engine.Resource;
 import com.opengg.core.model.*;
 import com.opengg.core.model.process.ModelProcess;
 import com.opengg.core.system.Allocator;
@@ -65,12 +66,12 @@ public class BMFFile extends ModelProcess {
         GGConsole.log("Exported Model: " + model.getName() + ".bmf at " + model.fileLocation);
     }
 
-    public static Model loadModel(String file) throws FileNotFoundException,IOException{
-        String name = file.substring(Math.max(file.lastIndexOf("\\"), file.lastIndexOf("/")), file.lastIndexOf("."));
-
-        File f = new File(file);
+    public static Model loadModel(String file) throws IOException{
+        String name = file;
+        File f = new File(Resource.getAbsoluteFromLocal(name));
         FileInputStream fIn = new FileInputStream(f);
         //Get original file size from first 4 bytes.
+
         int originalsize = fIn.read()<< 24|(fIn.read()&0xFF)<<16|(fIn.read()&0xFF)<< 8|(fIn.read() & 0xFF);
         ByteBuffer original = memAlloc(originalsize).order(ByteOrder.BIG_ENDIAN);
         ByteBuffer compressed  = Allocator.alloc((int)f.length()-4);

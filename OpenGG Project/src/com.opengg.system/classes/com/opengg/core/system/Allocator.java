@@ -58,7 +58,7 @@ public class Allocator {
                 break;
             case LWJGL_STACK:
                 MemoryStack stack = MemoryStack.stackPush();
-                buffer = stack.mallocFloat(size);
+                buffer = stack.callocFloat(size);
                 
                 break;
         }
@@ -85,7 +85,7 @@ public class Allocator {
                 break;
             case LWJGL_STACK:
                 MemoryStack stack = MemoryStack.stackPush();
-                buffer = stack.mallocInt(size);
+                buffer = stack.callocInt(size);
                 
                 break;
         }
@@ -112,7 +112,7 @@ public class Allocator {
                 break;
             case LWJGL_STACK:
                 MemoryStack stack = MemoryStack.stackPush();
-                buffer = stack.malloc(size);
+                buffer = stack.calloc(size);
                 
                 break;
         }

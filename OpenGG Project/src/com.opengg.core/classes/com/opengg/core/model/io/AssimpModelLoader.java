@@ -20,7 +20,7 @@ public class AssimpModelLoader {
     private static final int NUM_WEIGHTS = 4;
 
     public static Model loadModel(String path) throws IOException {
-        String name = path.substring(Math.max(path.lastIndexOf("\\"), path.lastIndexOf("/")), path.lastIndexOf("."));
+        String name = path.substring(Math.max(path.lastIndexOf("\\"), path.lastIndexOf("/"))+1, path.lastIndexOf("."));
 
         File f = new File(path);
         AIScene scene = Assimp.aiImportFile(f.toString(),

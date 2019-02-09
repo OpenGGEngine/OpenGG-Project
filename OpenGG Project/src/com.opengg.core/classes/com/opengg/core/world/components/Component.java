@@ -66,8 +66,9 @@ public abstract class Component{
      * Sets the component's readable name
      * @param name The new name, should preferably be unique but is not required
      */
-    public void setName(String name){
+    public Component setName(String name){
         this.name = name;
+        return this;
     }
     
     /**

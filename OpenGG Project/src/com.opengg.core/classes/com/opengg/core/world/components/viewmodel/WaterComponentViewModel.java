@@ -84,7 +84,7 @@ public class WaterComponentViewModel extends ViewModel{
     }
 
     @Override
-    public void updateViews() {
+    public void updateView(Element element) {
         getByName("size").value = ((WaterComponent)component).getTscale();
         getByName("speed").value = ((WaterComponent)component).getMovespeed();
     }

@@ -7,6 +7,7 @@
 package com.opengg.core.model;
 
 import com.opengg.core.console.GGConsole;
+import com.opengg.core.engine.Resource;
 import com.opengg.core.model.io.BMFFile;
 
 import java.io.IOException;
@@ -24,7 +25,7 @@ public class ModelManager{
     public static void initialize(){
         
         try {
-            //defaultm = BMFFile.loadModel("Resource/models/default/default.bmf");
+            // defaultm = BMFFile.loadModel("resources/models/defaults/sphere.bmf");
         } catch (Exception ex) {
             GGConsole.error("Failed to load default model, nonexistent models may crash the program!");
         }
@@ -46,8 +47,9 @@ public class ModelManager{
     
     public static Model loadModel(String path){
         Model model = modellist.get(path);
-        if(model != null)
+        if(model != null) {
             return model;
+        }else
         try{
             model = BMFFile.loadModel(path);
             if(model != null ){

@@ -77,7 +77,7 @@ public class SunComponentViewModel extends ViewModel{
     }
 
     @Override
-    public void updateViews() {
+    public void updateView(Element element) {
         getByName("speed").value = ((SunComponent)component).getRotationSpeed();
         getByName("currot").value = ((SunComponent)component).getCurrentRotation();
     }

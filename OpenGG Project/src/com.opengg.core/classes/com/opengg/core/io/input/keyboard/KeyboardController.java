@@ -27,7 +27,12 @@ public class KeyboardController {
     public static char keycodeToChar(int key){
         return (char)key;
     }
-    
+
+    public static void clearKeyboardListeners(){
+        k.clear();
+        kc.clear();
+    }
+
     public static void addKeyboardListener(KeyboardListener ks){
         k.add(ks);
     }

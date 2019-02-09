@@ -79,7 +79,7 @@ public class ExplosionParticleEmitterViewModel extends ViewModel{
     }
 
     @Override
-    public void updateViews() {
+    public void updateView(Element element) {
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

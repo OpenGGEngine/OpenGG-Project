@@ -28,7 +28,10 @@ public abstract class GUIItem {
     }  
 
     public boolean isEnabled() {
-        return enabled;
+        if(parent == null)
+            return enabled && GUIController.isEnabled();
+        else
+            return enabled && parent.isEnabled() && GUIController.isEnabled();
     }
 
     public void setEnabled(boolean enabled) {
@@ -44,8 +47,9 @@ public abstract class GUIItem {
     }
 
     public Vector2f getPosition() {
-        if(parent == null)
+        if(parent == null) {
             return position;
+        }
         return position.add(parent.getPosition());
     }
 

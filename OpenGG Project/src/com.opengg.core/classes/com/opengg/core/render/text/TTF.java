@@ -1,7 +1,6 @@
 package com.opengg.core.render.text;
 
 import com.opengg.core.console.GGConsole;
-import com.opengg.core.math.Tuple;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.render.drawn.DrawnObject;
@@ -9,15 +8,13 @@ import com.opengg.core.render.drawn.TexturedDrawnObject;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.texture.TextureData;
 import com.opengg.core.system.Allocator;
-
-import org.lwjgl.BufferUtils;
 import org.lwjgl.stb.*;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static com.opengg.core.util.FileUtil.ioResourceToByteBuffer;
@@ -25,6 +22,7 @@ import static org.lwjgl.stb.STBTruetype.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class TTF implements Font{
+    static HashMap<String, TTF> cache = new HashMap<>();
 
     private final ByteBuffer ttf;
     private final STBTTFontinfo fontinfo;
@@ -46,11 +44,18 @@ public class TTF implements Font{
     private boolean isOversampled = false;
 
     public static TTF getTruetypeFont(String path){ return getTruetypeFont(path,false); }
-    public static TTF getTruetypeFont(String path,boolean oversample){
-        return new TTF(path,oversample);
+    public static TTF getTruetypeFont(String path, boolean oversample){
+        if(cache.containsKey(path)){
+            return cache.get(path);
+        }else{
+            var ttf = new TTF(path,oversample);
+            cache.put(path, ttf);
+            return ttf;
+        }
+
     }
 
-    private TTF(String path,boolean isOversampled){
+    private TTF(String path, boolean isOversampled){
         this.isOversampled = isOversampled;
         try {
             ttf = ioResourceToByteBuffer(path, 512 * 1024);
@@ -187,7 +192,6 @@ public class TTF implements Font{
     public Drawable createFromText(Text wholetext) {
 
         String text = wholetext.getText();
-
         if(text.length() == 0){
             return new DrawnObject(Allocator.allocFloat(0));
         }
@@ -269,7 +273,6 @@ public class TTF implements Font{
 
             data.put(pos.x).put(-pos.y).put(0).put(1).put(0).put(0).put(1).put(1f).put(0f).put(0f).put(uv.x).put(uv.y);
         }
-
         data.flip();
 
         return new TexturedDrawnObject(new DrawnObject(data), this.texture);

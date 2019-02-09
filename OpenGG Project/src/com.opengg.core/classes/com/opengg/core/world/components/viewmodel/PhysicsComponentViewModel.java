@@ -13,7 +13,7 @@ import com.opengg.core.world.components.physics.PhysicsComponent;
  * @author Javier
  */
 @ForComponent(PhysicsComponent.class)
-public class PhysicsComponentViewModel extends ViewModel{
+public class PhysicsComponentViewModel extends ViewModel<PhysicsComponent>{
 
     @Override
     public void createMainViewModel() {
@@ -65,7 +65,7 @@ public class PhysicsComponentViewModel extends ViewModel{
     }
 
     @Override
-    public Component getFromInitializer(Initializer init) {
+    public PhysicsComponent getFromInitializer(Initializer init) {
         return new PhysicsComponent();
     }
 
@@ -73,22 +73,22 @@ public class PhysicsComponentViewModel extends ViewModel{
     public void onChange(Element element) {
         switch (element.internalname) {
             case "name":
-                ((PhysicsComponent)component).getEntity().name = (String)element.value;
+                component.getEntity().name = (String)element.value;
                 break;
             case "mass":
-                ((PhysicsComponent)component).getEntity().mass = (Float)element.value;
+                component.getEntity().mass = (Float)element.value;
                 break;
             case "density":
-                ((PhysicsComponent)component).getEntity().density = (Float)element.value;
+                component.getEntity().density = (Float)element.value;
                 break;
             case "restitution":
-                ((PhysicsComponent)component).getEntity().restitution = (Float)element.value;
+                component.getEntity().restitution = (Float)element.value;
                 break;
             case "sfriction":
-                ((PhysicsComponent)component).getEntity().staticfriction = (Float)element.value;
+                component.getEntity().staticfriction = (Float)element.value;
                 break;
             case "dfriction":
-                ((PhysicsComponent)component).getEntity().dynamicfriction = (Float)element.value;
+                component.getEntity().dynamicfriction = (Float)element.value;
                 break;
             default:
                 break;
@@ -96,7 +96,7 @@ public class PhysicsComponentViewModel extends ViewModel{
     }
 
     @Override
-    public void updateViews() {
+    public void updateView(Element element) {
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

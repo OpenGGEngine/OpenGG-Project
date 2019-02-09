@@ -26,6 +26,13 @@ public class MouseController {
     private static MouseButtonHandler buttonhandler;
     private static MouseScrollHandler scrollHandler;
 
+    public static void clearMouseListeners() {
+        buttonlisteners.clear();
+        poslisteners.clear();
+        scrollListeners.clear();
+    }
+
+
     public static void addScrollListener(MouseScrollListener handle){
         scrollListeners.add(handle);
     }

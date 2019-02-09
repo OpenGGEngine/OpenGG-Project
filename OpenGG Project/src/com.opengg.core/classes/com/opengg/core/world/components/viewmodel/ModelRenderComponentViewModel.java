@@ -15,7 +15,7 @@ import com.opengg.core.world.components.ModelRenderComponent;
  * @author Javier
  */
 @ForComponent(ModelRenderComponent.class)
-public class ModelRenderComponentViewModel extends ViewModel{
+public class ModelRenderComponentViewModel extends ViewModel<ModelRenderComponent>{
     
     @Override
     public Initializer getInitializer(Initializer init) {
@@ -32,14 +32,14 @@ public class ModelRenderComponentViewModel extends ViewModel{
     }
 
     @Override
-    public Component getFromInitializer(Initializer init) {
+    public ModelRenderComponent getFromInitializer(Initializer init) {
         return new ModelRenderComponent((Model)init.get("model").value);
     }
 
     @Override
     public void onChange(Element element) {
         if(element.internalname.equals("model")){
-            ((ModelRenderComponent)component).setModel((Model)element.value);
+            component.setModel((Model)element.value);
         }
     }
 
@@ -56,7 +56,7 @@ public class ModelRenderComponentViewModel extends ViewModel{
     }
 
     @Override
-    public void updateViews() {
+    public void updateView(Element element) {
        
     }
 }

@@ -11,13 +11,12 @@ import com.opengg.core.engine.Resource;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
 
-import java.io.DataOutputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.ByteBuffer;
+import java.nio.file.Files;
 import java.util.logging.Logger;
+
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 /**
  *
@@ -35,7 +34,7 @@ public class WorldLoader {
         try (GGInputStream in = new GGInputStream(new FileInputStream(Resource.getWorldPath(worldname)))){
             int worldver = in.readInt();
             String ggversion = in.readString();
-            
+
             int worldsize = in.readInt();
             byte[] worlddata = new byte[worldsize];
             for(int i = 0; i < worlddata.length; i++){
@@ -72,7 +71,8 @@ public class WorldLoader {
     
     public static void saveWorld(World world, String worldname){
         GGConsole.log("Saving world " + worldname + "...");
-        try(GGOutputStream out = new GGOutputStream(new DataOutputStream(new FileOutputStream(Resource.getAbsoluteFromLocal(worldname))))) {
+        String tempPath = worldname.substring(0, worldname.lastIndexOf(new File(worldname).getName())) + "temp_" + new File(worldname).getName();
+        try(GGOutputStream out = new GGOutputStream(new DataOutputStream(new FileOutputStream(Resource.getAbsoluteFromLocal(tempPath))))) {
             out.write(1);
             out.write(GGInfo.getVersion());
             
@@ -80,10 +80,15 @@ public class WorldLoader {
             out.write(bworld.length);
             out.write(bworld);
             out.flush();
+
+            out.close();
+
+            new File(Resource.getAbsoluteFromLocal(worldname)).delete();
+            new File(Resource.getAbsoluteFromLocal(tempPath)).renameTo(new File(Resource.getAbsoluteFromLocal(worldname)));
         } catch (FileNotFoundException ex) {
             GGConsole.error("Failed to create file named " + worldname);
         } catch (IOException ex) {
-            Logger.getLogger("Failed to write to file named " + worldname);
+            GGConsole.error("Failed to write to file named " + worldname);
         }
         GGConsole.log("World " + worldname + " has been saved");
     }

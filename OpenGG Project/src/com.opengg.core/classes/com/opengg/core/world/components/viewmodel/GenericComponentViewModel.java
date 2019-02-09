@@ -31,7 +31,7 @@ public class GenericComponentViewModel extends ViewModel{
     public void onChange(Element element) {}
 
     @Override
-    public void updateViews() {
+    public void updateView(Element element) {
         
     }
     

@@ -15,7 +15,7 @@ import com.opengg.core.world.components.LightComponent;
  * @author Javier
  */
 @ForComponent(LightComponent.class)
-public class LightComponentViewModel extends ViewModel{
+public class LightComponentViewModel extends ViewModel<LightComponent>{
 
     @Override
     public void createMainViewModel() {
@@ -41,23 +41,23 @@ public class LightComponentViewModel extends ViewModel{
     }
 
     @Override
-    public Component getFromInitializer(Initializer init) {
+    public LightComponent getFromInitializer(Initializer init) {
         return new LightComponent();
     }
 
     @Override
     public void onChange(Element element) {
         if(element.internalname.equals("color"))
-            ((LightComponent)component).getLight().setColor((Vector3f)element.value);
+            component.getLight().setColor((Vector3f)element.value);
         
         if(element.internalname.equals("distance"))
-            ((LightComponent)component).getLight().setDistance((Float)element.value);
+            component.getLight().setDistance((Float)element.value);
         component.update(0);
     }
 
     @Override
-    public void updateViews() {
-        getByName("color").value = ((LightComponent)component).getLight().getColor();
-        getByName("distance").value = ((LightComponent)component).getLight().getDistance();
+    public void updateView(Element element) {
+        getByName("color").value = component.getLight().getColor();
+        getByName("distance").value = component.getLight().getDistance();
     } 
 }

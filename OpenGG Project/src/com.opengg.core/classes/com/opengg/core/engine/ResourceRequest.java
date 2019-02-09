@@ -13,19 +13,18 @@ import java.util.concurrent.Future;
  * @author Javier
  */
 public class ResourceRequest implements Comparable{
-    public static final int TEXTURE=0, MODEL=1, WORLD=2, SOUND=3;
-    
+
     public String location;
-    public int type;
+    public Type type;
     public int priority = 5;
     public CompletableFuture<Resource> future;
     
-    public ResourceRequest(String location, int type){
+    public ResourceRequest(String location, Type type){
         this.location = location;
         this.type = type;
     }
     
-    public ResourceRequest(String location, int type, int priority){
+    public ResourceRequest(String location, Type type, int priority){
         this.location = location;
         this.type = type;
         this.priority = priority;
@@ -38,5 +37,9 @@ public class ResourceRequest implements Comparable{
         if(priority > r.priority) return 1;
         if(priority == r.priority) return 0;
         return -1;
+    }
+
+    public enum Type{
+        TEXTURE, MODEL, WORLD, SOUND
     }
 }

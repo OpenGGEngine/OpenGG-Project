@@ -18,17 +18,21 @@ public class GUIGroup extends GUIItem {
     Map<String, GUIItem> items = new HashMap<>();
 
     public GUIGroup(Vector2f pos) {
-        this.setPositionOffset(position);
+        this.setPositionOffset(pos);
     }
 
     public void addItem(String name, GUIItem item) {
         item.setParent(this);
+        item.setName(name);
         items.put(name, item);
     }
 
     public GUIItem getItem(String name) {
         return items.get(name);
     }
+
+    public void clear(){items.clear();}
+
 
     @Override
     public void render() {

@@ -29,7 +29,7 @@ public class GUIRenderable extends GUIItem{
     
     public void render(){
         if(enabled){
-            d.setMatrix(Matrix4f.translate(getPosition().x + parent.getPosition().x, getPosition().y + + parent.getPosition().y, layer));
+            d.setMatrix(Matrix4f.translate(getPosition().x, getPosition().y, layer));
             d.render();
         }
         

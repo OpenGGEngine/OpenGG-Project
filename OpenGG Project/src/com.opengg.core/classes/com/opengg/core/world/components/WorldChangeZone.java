@@ -14,7 +14,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class WorldChangeZone extends Zone {
-    String world;
+    private String world;
 
     Function<TriggerInfo, Boolean> shouldExit = (data) -> data.data instanceof ControlledComponent;
     Consumer<TriggerInfo> onExit = (data) -> {};
@@ -47,6 +47,15 @@ public class WorldChangeZone extends Zone {
 
     public void setOnExit(Consumer<TriggerInfo> exit){
         onExit = exit;
+    }
+
+    public String getTargetWorld(){
+        return world;
+    }
+
+    public void setWorld(String world) {
+        System.out.println(world);
+        this.world = world;
     }
 
     @Override

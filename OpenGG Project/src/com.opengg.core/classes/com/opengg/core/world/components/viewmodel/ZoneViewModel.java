@@ -18,7 +18,7 @@ import com.opengg.core.world.components.triggers.Triggerable;
  * @author Javier
  */
 @ForComponent(Zone.class)
-public class ZoneViewModel extends ViewModel{
+public class ZoneViewModel extends ViewModel<Zone>{
 
     @Override
     public void createMainViewModel() {
@@ -55,15 +55,15 @@ public class ZoneViewModel extends ViewModel{
     }
 
     @Override
-    public Component getFromInitializer(Initializer init) {
+    public Zone getFromInitializer(Initializer init) {
         return new Zone(new AABB((Vector3f) init.get("lwh").value));
     }
 
     @Override
     public void onChange(Element element) {
         if(element.internalname.equalsIgnoreCase("lwh")){
-            ((Zone)component).getBox().setLWH((Vector3f) element.value);
-            ((Zone)component).getBox().recalculate();
+            component.getBox().setLWH((Vector3f) element.value);
+            component.getBox().recalculate();
         }
         if(element.internalname.equalsIgnoreCase("children")){
             String lists = (String) element.value;
@@ -78,7 +78,7 @@ public class ZoneViewModel extends ViewModel{
     }
 
     @Override
-    public void updateViews() {
+    public void updateView(Element element) {
         
     }
     

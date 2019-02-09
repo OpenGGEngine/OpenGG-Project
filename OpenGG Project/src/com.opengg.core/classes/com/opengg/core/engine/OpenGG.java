@@ -230,7 +230,7 @@ public final class OpenGG{
     }
 
     private static void loadConfigs(){
-        var configdir = new File("config/");
+        var configdir = new File(Resource.getAbsoluteFromLocal("config/"));
         var allconfigs = recursiveLoadConfigs(configdir);
         for(var config : allconfigs){
             try{

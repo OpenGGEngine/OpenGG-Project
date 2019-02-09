@@ -66,8 +66,8 @@ public class ViewModelComponentRegistry {
     }
     
     public static void register(Class component, boolean error){
-        boolean iscomponent = ClassUtil.childOf(component, Component.class);
-        boolean isviewmodel = ClassUtil.childOf(component, ViewModel.class);     
+        boolean iscomponent = Component.class.isAssignableFrom(component);
+        boolean isviewmodel = ViewModel.class.isAssignableFrom(component);
         
         if(iscomponent){
             if(!components.contains(component))
