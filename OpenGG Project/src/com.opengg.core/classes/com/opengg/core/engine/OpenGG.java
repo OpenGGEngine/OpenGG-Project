@@ -9,6 +9,7 @@ package com.opengg.core.engine;
 
 import com.opengg.core.Configuration;
 import com.opengg.core.GGInfo;
+import com.opengg.core.animation.AnimationManager;
 import com.opengg.core.audio.AudioController;
 import com.opengg.core.audio.SoundtrackHandler;
 import com.opengg.core.console.GGConsole;
@@ -197,6 +198,7 @@ public final class OpenGG{
         Executor.getExecutor().update(delta);
         ExtensionManager.update(delta);
         WorldEngine.update(delta);
+        AnimationManager.update(delta);
         PhysicsEngine.updatePhysics(delta);
         getApp().update(delta);
         SoundtrackHandler.update();

@@ -5,6 +5,7 @@
  */
 package com.opengg.core.world.components;
 
+import com.opengg.core.animation.ComponentVarAccessor;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Tuple;
 import com.opengg.core.math.Vector3f;
@@ -19,7 +20,9 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -53,7 +56,14 @@ public abstract class Component{
     private Vector3f scale = new Vector3f(1,1,1);
     private boolean serialize = true;
     private Runnable whenAttachedToWorld = null;
-    
+
+    static{
+        ComponentVarAccessor.register(Component.class,Vector3f.class,"position",(BiConsumer<Component,Vector3f>)Component::setPositionOffset,(Function<Component,Vector3f>)Component::getPositionOffset);
+        ComponentVarAccessor.register(Component.class,Quaternionf.class,"rotation",(BiConsumer<Component,Quaternionf>)Component::setRotationOffset,(Function<Component,Quaternionf>)Component::getRotationOffset);
+        ComponentVarAccessor.register(Component.class,Vector3f.class,"scale",(BiConsumer<Component,Vector3f>)Component::setScaleOffset,(Function<Component,Vector3f>)Component::getScale);
+
+    }
+
     /**
      * Creates a component with a new ID
      */
