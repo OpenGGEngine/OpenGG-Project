@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class Animation {
@@ -28,6 +29,8 @@ public class Animation {
         //Chooses whether the start is the start of the sequence or the start of the animation
         public boolean useLocalTimeReference = true;
         private BiConsumer override;
+        private Consumer staticOverride;
+        private int overrideState = 0;
 
         public AnimationStage(double start, double end, String field, Function<Double, ? extends Object> curveFunction) {
             this.start = start;
@@ -44,10 +47,23 @@ public class Animation {
          * @param overide Overwritten setter function for this event.
          */
         public AnimationStage(double start, double end, Function<Double, ? extends Object> curveFunction, BiConsumer overide) {
-            this.start = start;
-            this.end = end;
-            this.curveFunction = curveFunction;
+            this(start,end,"overridewow",(Function<Double, ? extends Object>)curveFunction);
             this.override = overide;
+            this.overrideState = 1;
+        }
+
+        /**
+         *
+         *
+         * @param start
+         * @param end
+         * @param curveFunction
+         * @param overide
+         */
+        public AnimationStage(double start, double end, Function<Double, ? extends Object> curveFunction, Consumer<? extends Object> overide) {
+            this(start,end,"overridewow",(Function<Double, ? extends Object>)curveFunction);
+            this.staticOverride = overide;
+            this.overrideState = 2;
         }
     }
 
@@ -100,11 +116,20 @@ public class Animation {
                 for (AnimationStage event : entry.getValue()) {
                     if (event.start <= current && event.end >= current) {
                         double actualTime = event.useLocalTimeReference ? current - event.start : current;
-
-                        if(event.override == null)
-                            ComponentVarAccessor.setVar(event.field, target, event.curveFunction.apply(actualTime));
-                        else
-                            event.override.accept(target, event.curveFunction.apply(actualTime));
+                        switch(event.overrideState){
+                            //No Override
+                            case 0:
+                                ComponentVarAccessor.setVar(event.field, target, event.curveFunction.apply(actualTime));
+                                break;
+                                //Instance Override
+                                case 1:
+                                event.override.accept(target, event.curveFunction.apply(actualTime));
+                                break;
+                                //Static Overrides
+                            case 2:
+                                event.staticOverride.accept(event.curveFunction.apply(actualTime));
+                                break;
+                        }
                     }
                 }
             }else{
