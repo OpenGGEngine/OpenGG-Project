@@ -63,4 +63,5 @@ module com.opengg.core {
     exports com.opengg.core.world.generators;
     exports com.opengg.core.model.io;
     exports com.opengg.core.model.process;
+    exports com.opengg.core.animation;
 }

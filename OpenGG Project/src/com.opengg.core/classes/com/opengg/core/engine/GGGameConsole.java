@@ -39,8 +39,8 @@ public class GGGameConsole implements KeyboardListener, KeyboardCharacterListene
 
     public static final int LINE_AMOUNT = 27;
     public static int maxMessageSize;
-    public static int topBound;
-    public static boolean inScroll;
+    private static int topBound;
+    private static boolean inScroll;
 
     public static void initialize(){
         GGGameConsole console = new GGGameConsole();
