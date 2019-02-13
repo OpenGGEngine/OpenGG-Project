@@ -54,7 +54,7 @@ public class ComponentVarAccessor {
     public static void setVar(String s, Object instance, Object value) {
         //Adds Common Lookups for speed purposes.
         Class c = instance.getClass();
-        if (instance instanceof Component && processSetComponent(s, instance, value)) return;
+        if (instance instanceof Component && processSetComponent(s, (Component) instance, value)) return;
         System.out.println("sdsd");
         do {
             if (c == Object.class) {
@@ -73,16 +73,16 @@ public class ComponentVarAccessor {
 
     }
 
-    private static boolean processSetComponent(String s, Object instance, Object value) {
+    private static boolean processSetComponent(String s, Component instance, Object value) {
         switch (s) {
             case "position":
-                ((Component) instance).setPositionOffset((Vector3f) value);
+                instance.setPositionOffset((Vector3f) value);
                 break;
             case "rotation":
-                ((Component) instance).setRotationOffset((Quaternionf) value);
+                instance.setRotationOffset((Quaternionf) value);
                 break;
             case "scale":
-                ((Component) instance).setScaleOffset((Vector3f) value);
+                instance.setScaleOffset((Vector3f) value);
                 break;
                 default:
                     return false;

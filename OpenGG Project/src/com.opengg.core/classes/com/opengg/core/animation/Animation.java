@@ -2,36 +2,34 @@ package com.opengg.core.animation;
 
 import com.opengg.core.console.GGConsole;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 public class Animation {
     private double duration;
     private double current;
-    public boolean loops;
+    private boolean loops;
     private boolean running=false;
     private boolean reverse = false;
-    public double loopbackpoint = 0;
-    public double timeScale = 4;
+    private double loopbackpoint = 0;
+    private double timeScale = 1;
 
-    private HashMap<String,ArrayList<GEvent>> objectEvents = new HashMap<>();
-    private HashMap<String,Object> objects = new HashMap<>();
+    private HashMap<String, ArrayList<AnimationStage>> stages = new HashMap<>();
+    private HashMap<String, Object> targets = new HashMap<>();
 
     //Changes one field of a specific object over a specific interval
-    public static class GEvent{
+    public static class AnimationStage {
         public double start, end;
         public String field;
-        public Function<Double,? extends Object> curveFunction;
+        public Function<Double, ? extends Object> curveFunction;
         //Chooses whether the start is the start of the sequence or the start of the animation
         public boolean useLocalTimeReference = true;
         private BiConsumer override;
 
-        public GEvent(double start, double end, String field, Function<Double, ? extends Object> curveFunction) {
+        public AnimationStage(double start, double end, String field, Function<Double, ? extends Object> curveFunction) {
             this.start = start;
             this.end = end;
             this.field = field;
@@ -42,14 +40,12 @@ public class Animation {
          *
          * @param start
          * @param end
-         * @param field
          * @param curveFunction
          * @param overide Overwritten setter function for this event.
          */
-        public GEvent(double start, double end, String field, Function<Double, ? extends Object> curveFunction,BiConsumer overide) {
+        public AnimationStage(double start, double end, Function<Double, ? extends Object> curveFunction, BiConsumer overide) {
             this.start = start;
             this.end = end;
-            this.field = field;
             this.curveFunction = curveFunction;
             this.override = overide;
         }
@@ -59,8 +55,9 @@ public class Animation {
         this.duration = duration;
         this.loops = loops;
     }
+
     public void step(double amount){
-        current+=(reverse?-1:1) * amount * timeScale;
+        current+=(reverse ? -1 : 1) * amount * timeScale;
         if(current >= duration){
             if(!loops){
                 current = duration;
@@ -79,14 +76,17 @@ public class Animation {
             }
         }
     }
+
     public void start(){
         running = true;
         current = 0;
         reverse = false;
     }
+
     public void togglePause(){
         running = !running;
     }
+
     public void startEndReversed(){
         running = true;
         current = duration;
@@ -94,16 +94,17 @@ public class Animation {
     }
 
     public void updateStates(){
-        for(Map.Entry<String,ArrayList<GEvent>> entry: objectEvents.entrySet()){
-            Object target = objects.get(entry.getKey());
+        for(var entry : stages.entrySet()){
+            Object target = targets.get(entry.getKey());
             if(target != null) {
-                for (GEvent event : entry.getValue()) {
+                for (AnimationStage event : entry.getValue()) {
                     if (event.start <= current && event.end >= current) {
                         double actualTime = event.useLocalTimeReference ? current - event.start : current;
+
                         if(event.override == null)
-                        ComponentVarAccessor.setVar(event.field, target, event.curveFunction.apply(actualTime));
+                            ComponentVarAccessor.setVar(event.field, target, event.curveFunction.apply(actualTime));
                         else
-                            event.override.accept(target,event.curveFunction.apply(actualTime));
+                            event.override.accept(target, event.curveFunction.apply(actualTime));
                     }
                 }
             }else{
@@ -119,8 +120,8 @@ public class Animation {
      * @param o The object instance
      */
     public void bindObject(String name, Object o){
-        if(objectEvents.containsKey(name)){
-            objects.put(name,o);
+        if(stages.containsKey(name)){
+            targets.put(name,o);
         }else{
             GGConsole.error("Invalid Bind. Object " + name + " is not a part of animation.");
         }
@@ -132,11 +133,11 @@ public class Animation {
      * @param e The event to happen to the provided object.
      */
 
-    public void addEvent(String name, GEvent ... e){
-        if(objectEvents.containsKey(name)){
-            objectEvents.get(name).addAll(Arrays.asList(e));
+    public void addEvent(String name, AnimationStage... e){
+        if(stages.containsKey(name)){
+            stages.get(name).addAll(Arrays.asList(e));
         }else{
-            objectEvents.put(name,new ArrayList<GEvent>(Arrays.asList(e)));
+            stages.put(name, new ArrayList<>(Arrays.asList(e)));
         }
     }
 
