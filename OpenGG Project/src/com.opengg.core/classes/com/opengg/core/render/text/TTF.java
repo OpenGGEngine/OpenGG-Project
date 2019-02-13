@@ -236,7 +236,7 @@ public class TTF implements Font{
 
             if (wholetext.isKerningEnabled() && i < to) {
                 getCP(text, to, i, pCodePoint);
-                x.put(0, x.get(0) + stbtt_GetCodepointKernAdvance(fontinfo, cp, pCodePoint.get(0)));
+                x.put(0, x.get(0) + stbtt_GetCodepointKernAdvance(fontinfo, cp, pCodePoint.get(0)) * scale);
             }
 
             x0 = q.x0() * factorX;

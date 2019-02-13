@@ -23,8 +23,9 @@ public abstract class GUIItem {
         return layer;
     }
 
-    public void setLayer(float layer) {
+    public GUIItem setLayer(float layer) {
         this.layer = layer;
+        return this;
     }  
 
     public boolean isEnabled() {

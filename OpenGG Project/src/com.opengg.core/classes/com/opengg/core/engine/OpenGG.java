@@ -175,7 +175,6 @@ public final class OpenGG{
 
     private static void run(){
         while (!getWindow().shouldClose() && !GGInfo.isEnded()) {
-
             runUpdate();
             runInput();
             runRender();
@@ -210,7 +209,7 @@ public final class OpenGG{
     private static void runRender() {
         WindowController.update();
         startFrame();
-        app.render();
+        getApp().render();
         ExtensionManager.render();
         RenderEngine.render();
         RenderEngine.checkForGLErrors();

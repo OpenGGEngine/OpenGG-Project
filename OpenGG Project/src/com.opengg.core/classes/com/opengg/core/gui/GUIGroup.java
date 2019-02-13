@@ -17,6 +17,10 @@ public class GUIGroup extends GUIItem {
 
     Map<String, GUIItem> items = new HashMap<>();
 
+    public GUIGroup(){
+        this(new Vector2f(0,0));
+    }
+
     public GUIGroup(Vector2f pos) {
         this.setPositionOffset(pos);
     }

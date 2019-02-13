@@ -29,7 +29,7 @@ public class Allocator {
     public static void update(){
         
         if(getStackFrameIndex() != 0){
-            GGConsole.warn("Stack frame index is at " + getStackFrameIndex() + ", possible leak");
+            GGConsole.warn("Stack frame index is at " + getStackFrameIndex() + " after an OpenGG frame");
         }
         
         if(GGInfo.shouldAgressivelyManageMemory()){

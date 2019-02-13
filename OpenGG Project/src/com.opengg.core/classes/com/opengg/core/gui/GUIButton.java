@@ -10,10 +10,12 @@ import com.opengg.core.render.drawn.TexturedDrawnObject;
 import com.opengg.core.render.objects.ObjectCreator;
 import com.opengg.core.render.texture.Texture;
 
+import java.awt.*;
 import java.awt.event.MouseListener;
 import java.util.Vector;
 
 public class GUIButton extends GUIRenderable implements MouseButtonListener{
+    final static Texture CLEAR = Texture.ofColor(Color.BLACK, 0f);
 
     Texture buttonTex;
     Runnable onClick = () -> {};
@@ -31,6 +33,14 @@ public class GUIButton extends GUIRenderable implements MouseButtonListener{
         this.setPositionOffset(pos);
 
         MouseController.onButtonPress(this);
+    }
+
+    public GUIButton(Vector2f pos, Vector2f size, Runnable onClick){
+        this(pos, size, CLEAR, onClick);
+    }
+
+    public GUIButton(Vector2f size, Runnable onClick){
+        this(new Vector2f(0,0), size, CLEAR, onClick);
     }
 
     public GUIButton(Vector2f pos, Vector2f size , Texture texture, Runnable onClick){
@@ -65,7 +75,7 @@ public class GUIButton extends GUIRenderable implements MouseButtonListener{
     public void onButtonPress(int button) {
         if(!this.isEnabled()) return;
         if(button == MouseButton.LEFT && checkIn(MouseController.get())){
-            onClick.run();
+            OpenGG.asyncExec(() -> onClick.run());
         }
     }
 
@@ -73,7 +83,7 @@ public class GUIButton extends GUIRenderable implements MouseButtonListener{
     public void onButtonRelease(int button) {
         if(!this.isEnabled()) return;
         if(button == MouseButton.LEFT && checkIn(MouseController.get())){
-            onRelease.run();
+            OpenGG.asyncExec(() -> onRelease.run());
         }
     }
 }
