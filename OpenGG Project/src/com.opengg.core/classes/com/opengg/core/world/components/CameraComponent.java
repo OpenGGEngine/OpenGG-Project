@@ -7,10 +7,7 @@
 package com.opengg.core.world.components;
 
 import com.opengg.core.render.RenderEngine;
-import com.opengg.core.util.GGInputStream;
-import com.opengg.core.util.GGOutputStream;
 import com.opengg.core.world.Camera;
-import java.io.IOException;
 
 /**
  *
@@ -26,7 +23,6 @@ public class CameraComponent extends Component{
     @Override
     public void onEnable(){
         RenderEngine.useView(camera);
-
     }
 
     @Override

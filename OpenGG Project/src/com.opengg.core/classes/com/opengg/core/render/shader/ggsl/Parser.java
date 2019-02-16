@@ -396,10 +396,9 @@ public class Parser {
         String layout = "layout(";
         consume(OPEN_PARENTHESIS);
 
-        while (true){
+        do {
             layout = layout + consume().y;
-            if (next(CLOSE_PARENTHESIS)) break;
-        }
+        } while (!next(CLOSE_PARENTHESIS));
 
         layout = layout + ")";
         consume(CLOSE_PARENTHESIS);

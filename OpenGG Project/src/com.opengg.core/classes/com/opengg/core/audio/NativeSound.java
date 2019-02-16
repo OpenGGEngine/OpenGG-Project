@@ -9,8 +9,6 @@ import com.opengg.core.console.GGConsole;
 import com.opengg.core.math.Vector3f;
 import org.lwjgl.openal.AL10;
 
-import java.lang.annotation.Native;
-
 import static org.lwjgl.openal.AL10.*;
 
 

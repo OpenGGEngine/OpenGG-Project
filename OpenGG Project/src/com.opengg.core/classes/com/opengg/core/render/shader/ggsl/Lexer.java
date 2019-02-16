@@ -3,7 +3,6 @@ package com.opengg.core.render.shader.ggsl;
 import com.opengg.core.math.Tuple;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Lexer {
     private String contents;
@@ -27,17 +26,16 @@ public class Lexer {
         for (Token token : Token.values()){
             var matcher = token.getPattern().matcher(contents);
             while (matcher.find()){
-                if(allmatches.stream().filter(s -> s.y.y == matcher.start()).findAny().isPresent()) continue;
+                if(allmatches.stream().anyMatch(s -> s.y.y == matcher.start())) continue;
                 allmatches.add(new Tuple<>(token, Tuple.of(matcher.group().trim(), matcher.start())));
             }
         }
 
-        while (true){
-            if(allmatches.isEmpty()) break;
+        while (!allmatches.isEmpty()) {
             Tuple<Token, Tuple<String, Integer>> last = allmatches.get(0);
 
-            for(var match : allmatches){
-                if(match.y.y < last.y.y) last = match;
+            for (var match : allmatches) {
+                if (match.y.y < last.y.y) last = match;
             }
 
             tokens.add(new Tuple<>(last.x, last.y.x));

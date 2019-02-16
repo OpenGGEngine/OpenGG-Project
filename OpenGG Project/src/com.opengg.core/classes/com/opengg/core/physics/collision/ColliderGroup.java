@@ -8,7 +8,6 @@ package com.opengg.core.physics.collision;
 
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.exceptions.ClassInstantiationException;
-import com.opengg.core.math.Tuple;
 import com.opengg.core.math.UnorderedTuple;
 import com.opengg.core.physics.PhysicsObject;
 import com.opengg.core.util.ClassUtil;

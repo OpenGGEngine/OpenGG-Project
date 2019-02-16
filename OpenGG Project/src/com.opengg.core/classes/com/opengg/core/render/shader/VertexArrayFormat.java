@@ -7,7 +7,6 @@
 package com.opengg.core.render.shader;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -61,9 +60,6 @@ public class VertexArrayFormat {
 
         VertexArrayFormat form = (VertexArrayFormat)o;
 
-        if(form.attribs.size() != this.attribs.size())
-            return false;
-
-        return true;
+        return form.attribs.size() == this.attribs.size();
     }
 }

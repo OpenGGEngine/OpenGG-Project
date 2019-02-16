@@ -12,7 +12,6 @@ import com.opengg.core.console.GGConsole;
 import com.opengg.core.engine.OpenGG;
 import com.opengg.core.io.input.mouse.MouseController;
 import com.opengg.core.network.Packet;
-import com.opengg.core.network.PacketReceiver;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
 import com.opengg.core.world.Deserializer;
@@ -25,7 +24,6 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.time.Instant;
-import java.util.Arrays;
 
 /**
  *

@@ -6,7 +6,6 @@
 
 package com.opengg.core.physics.collision;
 
-import com.opengg.core.math.Tuple;
 import com.opengg.core.math.UnorderedTuple;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.physics.PhysicsEntity;
@@ -190,8 +189,7 @@ public class CollisionManager {
                 depthchanges = normal.multiply(depth);//depthchanges.add(normal.multiply(response.depth));
             }
 
-            if(e.velocity.y == 0) e.grounded = true;
-            else e.grounded = false;
+            e.grounded = e.velocity.y == 0;
 
         }
 

@@ -13,5 +13,5 @@ import com.opengg.core.math.Vector2i;
  * @author Javier
  */
 public interface WindowResizeListener {
-    public void onResize(Vector2i size);
+    void onResize(Vector2i size);
 }

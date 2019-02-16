@@ -42,9 +42,7 @@ public class ComponentTransitionFrame {
             if(list.isEmpty())
                 lists.remove();
         }
-        if(types.isEmpty())
-            return true;
-        return false;
+        return types.isEmpty();
     }
     
     public void clearTransitions(){

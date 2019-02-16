@@ -12,8 +12,8 @@ import java.io.*;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.FloatBuffer;
+import java.nio.charset.StandardCharsets;
 
-import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;
 
 
@@ -211,7 +211,7 @@ public class ObjLoader {
     }
 
     public static OldModel loadTexturedModel(URL paths) throws IOException {
-        String path = URLDecoder.decode(paths.getFile(), "UTF-8");
+        String path = URLDecoder.decode(paths.getFile(), StandardCharsets.UTF_8);
         File f = new File(path);
         BufferedReader reader = new BufferedReader(new FileReader(f));
         OldModel m = new OldModel();

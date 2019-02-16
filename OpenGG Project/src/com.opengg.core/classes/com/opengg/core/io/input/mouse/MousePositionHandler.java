@@ -13,7 +13,7 @@ import com.opengg.core.math.Vector2f;
  * @author Javier
  */
 public interface MousePositionHandler{
-    public double getX();
-    public double getY();
-    public Vector2f getPos();
+    double getX();
+    double getY();
+    Vector2f getPos();
 }

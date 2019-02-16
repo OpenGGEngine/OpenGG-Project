@@ -3,7 +3,6 @@ package com.opengg.core.model;
 import com.opengg.core.math.Matrix4f;
 
 import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
 
 public class GGBone {
     public String name;

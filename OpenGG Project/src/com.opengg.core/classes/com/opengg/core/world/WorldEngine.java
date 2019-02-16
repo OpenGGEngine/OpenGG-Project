@@ -5,9 +5,7 @@
  */
 package com.opengg.core.world;
 
-import com.opengg.core.physics.PhysicsEngine;
 import com.opengg.core.render.RenderEngine;
-import com.opengg.core.render.RenderGroup;
 import com.opengg.core.world.components.Component;
 import com.opengg.core.world.components.RenderComponent;
 import java.util.LinkedList;
@@ -23,7 +21,7 @@ public class WorldEngine{
     private static boolean enabled = true;
     
     public static void initialize(){
-        curworld = new World();
+        WorldEngine.useWorld(new World());
     }
     
     public static void markForRemoval(Component c){
@@ -46,7 +44,6 @@ public class WorldEngine{
     }
     
     public static void removeMarked(){
-
         var tempremove = List.copyOf(removal);
         for(Component c : tempremove){
             remove(c);
@@ -96,7 +93,9 @@ public class WorldEngine{
      * @param world World new World to use
      */
     public static void useWorld(World world){
-        curworld.deactivate();
+        if(curworld != null)
+            curworld.deactivate();
+
         world.rescanRenderables();
         world.use();
         curworld = world;

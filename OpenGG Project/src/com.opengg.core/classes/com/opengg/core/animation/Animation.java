@@ -19,53 +19,9 @@ public class Animation {
     private double timeScale = 1;
 
     private HashMap<String, ArrayList<AnimationStage>> stages = new HashMap<>();
-    private HashMap<String, Object> targets = new HashMap<>();
+    private HashMap<String, Object> boundObjects = new HashMap<>();
 
-    //Changes one field of a specific object over a specific interval
-    public static class AnimationStage {
-        public double start, end;
-        public String field;
-        public Function<Double, ? extends Object> curveFunction;
-        //Chooses whether the start is the start of the sequence or the start of the animation
-        public boolean useLocalTimeReference = true;
-        private BiConsumer override;
-        private Consumer staticOverride;
-        private int overrideState = 0;
-
-        public AnimationStage(double start, double end, String field, Function<Double, ? extends Object> curveFunction) {
-            this.start = start;
-            this.end = end;
-            this.field = field;
-            this.curveFunction = curveFunction;
-        }
-
-        /**
-         *
-         * @param start
-         * @param end
-         * @param curveFunction
-         * @param overide Overwritten setter function for this event.
-         */
-        public AnimationStage(double start, double end, Function<Double, ? extends Object> curveFunction, BiConsumer overide) {
-            this(start,end,"overridewow",(Function<Double, ? extends Object>)curveFunction);
-            this.override = overide;
-            this.overrideState = 1;
-        }
-
-        /**
-         *
-         *
-         * @param start
-         * @param end
-         * @param curveFunction
-         * @param overide
-         */
-        public AnimationStage(double start, double end, Function<Double, ? extends Object> curveFunction, Consumer<? extends Object> overide) {
-            this(start,end,"overridewow",(Function<Double, ? extends Object>)curveFunction);
-            this.staticOverride = overide;
-            this.overrideState = 2;
-        }
-    }
+    private Runnable onComplete = () -> {};
 
     public Animation(double duration, boolean loops){
         this.duration = duration;
@@ -79,14 +35,16 @@ public class Animation {
                 current = duration;
                 updateStates();
                 running = false;
+                onComplete.run();
             }else{
                 current = duration - current+ loopbackpoint;
             }
-        }else if(current<0){
+        }else if(current < 0){
             if(!loops){
                 current = 0;
                 updateStates();
                 running = false;
+                onComplete.run();
             }else{
                 current = duration + current;
             }
@@ -109,34 +67,74 @@ public class Animation {
         reverse = true;
     }
 
+    public void setOnCompleteAction(Runnable r){
+        this.onComplete = r;
+    }
+
     public void updateStates(){
         for(var entry : stages.entrySet()){
-            Object target = targets.get(entry.getKey());
+            if(entry.getKey().equals("none")){
+                for (AnimationStage event : entry.getValue()) {
+                    processStage(null, event);
+                }
+
+                return;
+            }
+
+            Object target = boundObjects.get(entry.getKey());
             if(target != null) {
                 for (AnimationStage event : entry.getValue()) {
-                    if (event.start <= current && event.end >= current) {
-                        double actualTime = event.useLocalTimeReference ? current - event.start : current;
-                        switch(event.overrideState){
-                            //No Override
-                            case 0:
-                                ComponentVarAccessor.setVar(event.field, target, event.curveFunction.apply(actualTime));
-                                break;
-                                //Instance Override
-                                case 1:
-                                event.override.accept(target, event.curveFunction.apply(actualTime));
-                                break;
-                                //Static Overrides
-                            case 2:
-                                event.staticOverride.accept(event.curveFunction.apply(actualTime));
-                                break;
-                        }
-                    }
+                    processStage(target, event);
                 }
             }else{
                 GGConsole.error("Attempt to animate non-bound object " + entry.getKey() + ". Did you forget to bind it?");
             }
         }
     }
+
+    private void processStage(Object target, AnimationStage event) {
+        if (event.start <= current && event.end >= current) {
+            double actualTime = event.useLocalTimeReference ? current - event.start : current;
+            switch(event.accessType){
+                    //No Override
+                case FIELD:
+                    ComponentVarAccessor.setVar(event.field, target, event.curveFunction.apply(actualTime));
+                    break;
+                    //Instance Override
+                case INSTANCE:
+                    event.acceptor.accept(target, event.curveFunction.apply(actualTime));
+                    break;
+                    //Static Overrides
+                case STATIC:
+                    event.acceptor.accept(null, event.curveFunction.apply(actualTime));
+                    break;
+            }
+        }
+    }
+
+
+    /**
+     *
+     * @param name The name of the object the event applies to.
+     * @param e The event to happen to the provided object.
+     */
+
+
+    public void addEvent(String name, AnimationStage... e){
+        if(stages.containsKey(name)){
+            stages.get(name).addAll(Arrays.asList(e));
+        }else{
+            stages.put(name, new ArrayList<>(Arrays.asList(e)));
+        }
+    }
+
+    public void addStaticEvent(AnimationStage... e){
+        if(Arrays.stream(e).anyMatch(s -> s.accessType != AccessType.STATIC)) throw new RuntimeException("Attempting to bind a non-static stage with no object!");
+
+        addEvent("none", e);
+    }
+
+
 
     /**
      *
@@ -146,23 +144,9 @@ public class Animation {
      */
     public void bindObject(String name, Object o){
         if(stages.containsKey(name)){
-            targets.put(name,o);
+            boundObjects.put(name,o);
         }else{
             GGConsole.error("Invalid Bind. Object " + name + " is not a part of animation.");
-        }
-    }
-
-    /**
-     *
-     * @param name The name of the object the event applies to.
-     * @param e The event to happen to the provided object.
-     */
-
-    public void addEvent(String name, AnimationStage... e){
-        if(stages.containsKey(name)){
-            stages.get(name).addAll(Arrays.asList(e));
-        }else{
-            stages.put(name, new ArrayList<>(Arrays.asList(e)));
         }
     }
 
@@ -176,5 +160,46 @@ public class Animation {
 
     public boolean isRunning(){
         return running;
+    }
+
+    //Changes one field of a specific object over a specific interval
+    public static class AnimationStage<T> {
+        public double start, end;
+        //Chooses whether the start is the start of the sequence or the start of the animation
+        public boolean useLocalTimeReference = true;
+
+        public String field;
+
+        public Function<Double, T> curveFunction;
+        private BiConsumer<Object, T> acceptor;
+
+        private AccessType accessType;
+
+        private AnimationStage(double start, double end, String field, AccessType accessType, Function<Double, T> curveFunction, BiConsumer<Object, T> acceptor) {
+            this.start = start;
+            this.end = end;
+            this.field = field;
+            this.curveFunction = curveFunction;
+            this.accessType = accessType;
+            this.acceptor = acceptor;
+        }
+
+        public static <T>  AnimationStage<T> createFieldStage(double start, double end, String field, Function<Double, T> curve){
+            return new AnimationStage<>(start, end, field, AccessType.FIELD, curve, (__, ___) -> {});
+        }
+
+        public static <T>  AnimationStage<T> createInstanceStage(double start, double end, Function<Double, T> curve, BiConsumer<Object, T> accessor){
+            return new AnimationStage<>(start, end, "", AccessType.INSTANCE, curve, accessor);
+        }
+
+        public static <T>  AnimationStage<T> createStaticStage(double start, double end, Function<Double, T> curve, Consumer<T> accessor){
+            return new AnimationStage<>(start, end, "", AccessType.STATIC, curve, (__, t) -> accessor.accept(t));
+        }
+    }
+
+    public enum AccessType{
+        FIELD,
+        INSTANCE,
+        STATIC
     }
 }

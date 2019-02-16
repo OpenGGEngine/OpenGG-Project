@@ -54,19 +54,19 @@ public enum Token {
     INT_LITERAL ("\\s(?<![.a-zA-Z])\\d+(?![.a-zA-Z])\\s", false),
     EOF ("a^", false);
 
-    private Token(String pattern, boolean space){
+    Token(String pattern, boolean space){
         this(Pattern.compile(pattern, Pattern.MULTILINE), space, "");
     }
 
-    private Token(String pattern, boolean space, String match){
+    Token(String pattern, boolean space, String match){
         this(Pattern.compile(pattern, Pattern.MULTILINE), space, match);
     }
 
-    private Token(Pattern pattern, boolean space){
+    Token(Pattern pattern, boolean space){
         this(pattern, space, "");
     }
 
-    private Token(Pattern pattern, boolean space, String match){
+    Token(Pattern pattern, boolean space, String match){
         this.pattern = pattern;
         this.spaced = space;
         this.match = match;

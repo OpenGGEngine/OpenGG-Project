@@ -1,5 +1,8 @@
 package com.opengg.core.engine;
 
+import com.opengg.core.io.input.keyboard.Key;
+import com.opengg.core.io.input.keyboard.KeyboardController;
+import com.opengg.core.io.input.keyboard.KeyboardListener;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.render.drawn.Drawable;
@@ -9,23 +12,25 @@ import com.opengg.core.render.text.Text;
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class GGDebugRenderer {
-    private static boolean render = true;
+public class GGDebugRenderer implements KeyboardListener {
+    private static boolean render = false;
 
     private static double computedFramerate;
     private static Queue<Integer> lastFrames = new LinkedList<>();
-    private static long lastFrame = 0;
 
-    private static Font font = Resource.getTruetypeFont("consolas.ttf");;
+    private static Font font = Resource.getTruetypeFont("consolas.ttf");
     private static Text displaytext = Text.from("");
     private static Drawable display;
 
-    private static final float FONT_SCALE = 0.08f;
+    private static final float FONT_SCALE = 0.1f;
 
-    public static void update(){
-        var frametime = System.currentTimeMillis() - lastFrame;
-        lastFrame = System.currentTimeMillis();
-        lastFrames.add((int) frametime);
+    public static void initialize(){
+        KeyboardController.addKeyboardListener(new GGDebugRenderer());
+    }
+
+    public static void update(float delta){
+
+        lastFrames.add((int) delta*1000);
 
         if (lastFrames.size() > 15){
             computedFramerate = lastFrames.stream().mapToInt(i -> i).average().getAsDouble();
@@ -53,5 +58,15 @@ public class GGDebugRenderer {
             RenderEngine.setDepthCheck(true);
 
         }
+    }
+
+    @Override
+    public void keyPressed(int key) {
+        if(key == Key.KEY_F3) render = !render;
+    }
+
+    @Override
+    public void keyReleased(int key) {
+
     }
 }

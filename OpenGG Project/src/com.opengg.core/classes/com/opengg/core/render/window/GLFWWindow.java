@@ -16,7 +16,6 @@ import static org.lwjgl.glfw.GLFW.*;
 import org.lwjgl.opengl.*;
 import static org.lwjgl.opengl.GL11.*;
 import org.lwjgl.stb.STBImage;
-import org.lwjgl.system.Callback;
 
 import static org.lwjgl.system.MemoryUtil.*;
 
@@ -162,7 +161,7 @@ public class GLFWWindow implements Window {
 
     @Override
     public float getRatio() {
-        return (WIDTH / HEIGHT);
+        return ((float)WIDTH / (float)HEIGHT);
     }
 
     public void setSamples(int samples) {

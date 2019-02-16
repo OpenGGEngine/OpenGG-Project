@@ -11,5 +11,5 @@ package com.opengg.core.world;
  * @author Javier
  */
 public interface Actionable {
-    public void onAction(Action action);
+    void onAction(Action action);
 }

@@ -7,7 +7,10 @@ public class AnimationManager {
 
     public static void update(float delta){
        for(Animation a:animations){
-           if(a.isRunning()){ a.step(delta); a.updateStates();}
+           if(a.isRunning()){
+               a.step(delta);
+               a.updateStates();
+           }
        }
     }
     public static void register(Animation a){

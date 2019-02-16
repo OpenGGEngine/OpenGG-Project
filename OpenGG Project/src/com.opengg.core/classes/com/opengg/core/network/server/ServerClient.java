@@ -10,7 +10,6 @@ import com.opengg.core.math.Vector2f;
 import com.opengg.core.network.Packet;
 import com.opengg.core.network.client.ActionQueuer;
 import com.opengg.core.util.GGInputStream;
-import com.opengg.core.world.Action;
 import com.opengg.core.world.components.ActionTransmitterComponent;
 
 import java.io.IOException;

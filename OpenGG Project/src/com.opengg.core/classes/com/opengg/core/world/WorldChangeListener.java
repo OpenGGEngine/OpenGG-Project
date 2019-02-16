@@ -11,5 +11,5 @@ package com.opengg.core.world;
  * @author Javier
  */
 public interface WorldChangeListener {
-    public void onWorldChange(World w);
+    void onWorldChange(World w);
 }

@@ -24,7 +24,7 @@ import java.io.IOException;
  * @author Javier
  */
 public interface Resource {
-    public enum Type{
+    enum Type{
         MODEL, TEXTURE, SOUND
     }
 
@@ -32,15 +32,15 @@ public interface Resource {
      * Returns the type of resource that this Resource represents
      * @return
      */
-    public Resource.Type getType();
+    Resource.Type getType();
 
     /**
      * Returns the source of this resource
      * @return
      */
-    public String getSource();
+    String getSource();
     
-    public static void initialize(){
+    static void initialize(){
         ResourceLoader.initialize();
     }
     
@@ -51,7 +51,7 @@ public interface Resource {
      * @param name Relative path to be converted
      * @return Absolute version of the path
      */
-    public static String getAbsoluteFromLocal(String name){
+    static String getAbsoluteFromLocal(String name){
         try {
             if(new File(name).isAbsolute()) return name;
             return new File(GGInfo.getApplicationPath(), name).getCanonicalPath();
@@ -66,7 +66,7 @@ public interface Resource {
      * @param name Filename
      * @return
      */
-    public static boolean isAbsolute(String name){
+    static boolean isAbsolute(String name){
         return new File(name).isAbsolute();
     }
 
@@ -75,7 +75,7 @@ public interface Resource {
      * @param name Filename
      * @return
      */
-    public static boolean exists(String name){
+    static boolean exists(String name){
         return new File(name).exists();
     }
 
@@ -91,7 +91,7 @@ public interface Resource {
      * @param name Name of model, not including the .bmf extension
      * @return Relative path to the model
      */
-    public static String getModelPath(String name){
+    static String getModelPath(String name){
         String source = validate(name);
         if(source != null) return source;
         if(name.contains(".bmf"))
@@ -105,7 +105,7 @@ public interface Resource {
      * @param name Name of configuration file, not including the .cfg extension
      * @return Relative path to the file
      */
-    public static String getConfigPath(String name){
+    static String getConfigPath(String name){
         String source = validate(name);
         if(source != null) return source;
         return "cfg" + File.separator + name + ".cfg";
@@ -116,7 +116,7 @@ public interface Resource {
      * @param name Name of shader file, including the respective file ending
      * @return Relative path to the shader file
      */
-    public static String getShaderPath(String name){
+    static String getShaderPath(String name){
         String source = validate(name);
         if(source != null) return source;
         return "resources" + File.separator + "glsl" + File.separator +  name;
@@ -127,7 +127,7 @@ public interface Resource {
      * @param name Name of texture, including the respective file ending
      * @return Relative path to the texture
      */
-    public static String getTexturePath(String name){
+    static String getTexturePath(String name){
         String source = validate(name);
         if(source != null) return source;
         return "resources" + File.separator + "tex" + File.separator +  name;
@@ -138,7 +138,7 @@ public interface Resource {
      * @param name Name of font file, not including the .fnt extension
      * @return Relative path to the font file
      */
-    public static String getFontPath(String name){
+    static String getFontPath(String name){
         String source = validate(name);
         if(source != null) return source;
         return "resources" + File.separator + "font" + File.separator +  name;
@@ -149,7 +149,7 @@ public interface Resource {
      * @param name Name of sound, including the respective file ending
      * @return Relative path to the sound
      */
-    public static String getSoundPath(String name){
+    static String getSoundPath(String name){
         String source = validate(name);
         if(source != null) return source;
         return "resources" + File.separator + "audio" + File.separator +  name;
@@ -160,7 +160,7 @@ public interface Resource {
      * @param name Name of world, not including the .bwf extension
      * @return Relative path to the world file
      */
-    public static String getWorldPath(String name){
+    static String getWorldPath(String name){
         String source = validate(name);
         if(source != null) return source;
         return "resources" + File.separator + "worlds" + File.separator +  name + ".bwf";
@@ -172,7 +172,7 @@ public interface Resource {
      * @param name Name of sound file to be loaded
      * @return SoundData object loaded from file
      */
-    public static SoundData getSoundData(String name){
+    static SoundData getSoundData(String name){
         return (SoundData) ResourceLoader.get(new ResourceRequest(getSoundPath(name), ResourceRequest.Type.SOUND, 1));
     }
     
@@ -182,7 +182,7 @@ public interface Resource {
      * @param name Name of model file to be loaded
      * @return Model object loaded from file
      */
-    public static Model getModel(String name){
+    static Model getModel(String name){
         return (Model) ResourceLoader.get(new ResourceRequest(getModelPath(name), ResourceRequest.Type.MODEL, 1));
     }
     
@@ -192,7 +192,7 @@ public interface Resource {
      * @param name Name of texture file to be loaded
      * @return Texture object loaded from file
      */
-    public static Texture getTexture(String name){
+    static Texture getTexture(String name){
         return Texture.get2DTexture((TextureData) ResourceLoader.get(new ResourceRequest(getTexturePath(name), ResourceRequest.Type.TEXTURE, 1)));
     }
     
@@ -202,7 +202,7 @@ public interface Resource {
      * @param name Name of texture file to be loaded
      * @return Texture object loaded from file
      */
-    public static Texture getSRGBTexture(String name){
+    static Texture getSRGBTexture(String name){
         return Texture.get2DSRGBTexture((TextureData) ResourceLoader.get(new ResourceRequest(getTexturePath(name), ResourceRequest.Type.TEXTURE, 1)));
     }
     
@@ -211,17 +211,17 @@ public interface Resource {
      * @param name Name of texture file to be loaded
      * @return Texture data object loaded from file
      */
-    public static TextureData getTextureData(String name){
+    static TextureData getTextureData(String name){
         return (TextureData) ResourceLoader.get(new ResourceRequest(getTexturePath(name), ResourceRequest.Type.TEXTURE, 1));
     }
     
-    public static GGFont getFont(String fname, String ftexname){
+    static GGFont getFont(String fname, String ftexname){
         String fpath = getFontPath(fname);
         String tpath = getTexturePath(ftexname);
         return new GGFont(tpath,fpath);
     }
 
-    public static Font getTruetypeFont(String path){
+    static Font getTruetypeFont(String path){
         return TTF.getTruetypeFont(getFontPath(path), true);
     }
     
@@ -229,7 +229,7 @@ public interface Resource {
      * Sets the path used for all method calls to convert from relative to absolute paths
      * @param path Location of base directory for use
      */
-    public static void setDefaultPath(String path){
+    static void setDefaultPath(String path){
         GGInfo.setApplicationPath(path);
     }
 }

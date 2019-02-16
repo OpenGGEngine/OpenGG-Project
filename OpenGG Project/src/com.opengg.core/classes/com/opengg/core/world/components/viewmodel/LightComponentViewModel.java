@@ -6,8 +6,6 @@
 package com.opengg.core.world.components.viewmodel;
 
 import com.opengg.core.math.Vector3f;
-import com.opengg.core.render.light.Light;
-import com.opengg.core.world.components.Component;
 import com.opengg.core.world.components.LightComponent;
 
 /**

@@ -11,6 +11,6 @@ package com.opengg.core.world.components.triggers;
  * @author Javier
  */
 public interface Triggerable{
-    public void onTrigger(Trigger source, TriggerInfo info);
-    public default void onSubscribe(Trigger trigger){}
+    void onTrigger(Trigger source, TriggerInfo info);
+    default void onSubscribe(Trigger trigger){}
 }

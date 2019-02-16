@@ -119,7 +119,7 @@ public class RenderEngine {
 
         View c = new Camera();
         useView(c);
-        setProjectionData(ProjectionData.getPerspective(100, 0.2f, 3000f));
+        setProjectionData(ProjectionData.getPerspective(90, 0.2f, 3000f));
 
         GLOptions.set(GL_BLEND, true);
         glBlendEquation(GL_FUNC_ADD);

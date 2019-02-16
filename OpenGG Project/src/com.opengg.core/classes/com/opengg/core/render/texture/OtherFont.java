@@ -13,8 +13,6 @@ import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.lwjgl.opengl.GL11.*;
-
 public class OtherFont {
 
     //Lets define them characters shall we

@@ -7,13 +7,11 @@
 package com.opengg.core.world.components;
 
 import com.opengg.core.engine.OpenGG;
-import com.opengg.core.render.RenderEngine;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.light.Light;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
 import java.io.IOException;
-import java.util.Map;
 
 /**
  *

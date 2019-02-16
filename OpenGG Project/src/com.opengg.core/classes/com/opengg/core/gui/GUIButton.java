@@ -5,17 +5,14 @@ import com.opengg.core.io.input.mouse.MouseButton;
 import com.opengg.core.io.input.mouse.MouseButtonListener;
 import com.opengg.core.io.input.mouse.MouseController;
 import com.opengg.core.math.Vector2f;
-import com.opengg.core.render.drawn.DrawnObject;
 import com.opengg.core.render.drawn.TexturedDrawnObject;
 import com.opengg.core.render.objects.ObjectCreator;
 import com.opengg.core.render.texture.Texture;
 
 import java.awt.*;
-import java.awt.event.MouseListener;
-import java.util.Vector;
 
 public class GUIButton extends GUIRenderable implements MouseButtonListener{
-    final static Texture CLEAR = Texture.ofColor(Color.BLACK, 0f);
+    final static Texture CLEAR = Texture.ofColor(Color.RED, 0.5f);
 
     Texture buttonTex;
     Runnable onClick = () -> {};

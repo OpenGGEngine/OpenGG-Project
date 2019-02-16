@@ -11,5 +11,5 @@ package com.opengg.core.io.input.mouse;
  * @author Javier
  */
 public interface MouseButtonHandler{
-    public boolean isButtonDown(int button);
+    boolean isButtonDown(int button);
 }

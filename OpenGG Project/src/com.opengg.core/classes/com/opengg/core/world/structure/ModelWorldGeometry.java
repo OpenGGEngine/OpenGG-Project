@@ -5,7 +5,6 @@ import com.opengg.core.engine.Resource;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.model.Model;
-import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
 

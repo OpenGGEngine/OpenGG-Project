@@ -3,7 +3,6 @@ package com.opengg.core.world;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.world.components.Component;
 
-import java.util.HashMap;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 

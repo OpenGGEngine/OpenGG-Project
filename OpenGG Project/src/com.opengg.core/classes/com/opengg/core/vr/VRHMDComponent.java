@@ -1,6 +1,5 @@
 package com.opengg.core.vr;
 
-import com.opengg.core.world.Camera;
 import com.opengg.core.world.components.CameraComponent;
 import com.opengg.core.world.components.Component;
 

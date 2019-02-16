@@ -90,6 +90,7 @@ public final class OpenGG{
 
         RenderEngine.initialize();
         GGGameConsole.initialize();
+        GGDebugRenderer.initialize();
         AudioController.initialize();
 
         BindController.initialize();
@@ -145,7 +146,7 @@ public final class OpenGG{
 
         GGConsole.log("Engine initialization complete, application setup beginning");
         app.setup();
-        WorldEngine.useWorld(WorldEngine.getCurrent());
+
         GGConsole.log("Application setup complete");
         GGConsole.log("OpenGG initialized in " + time.getDeltaMs() + " milliseconds");
 
@@ -193,7 +194,7 @@ public final class OpenGG{
         float delta = time.getDeltaSec();
 
         Allocator.update();
-        GGDebugRenderer.update();
+        GGDebugRenderer.update(delta);
         Executor.getExecutor().update(delta);
         ExtensionManager.update(delta);
         WorldEngine.update(delta);
@@ -273,9 +274,9 @@ public final class OpenGG{
      */
     public static void forceEnd(){
         GGConsole.warning("Application is force quitting");
-        System.exit(0);
         force = true;
         GGInfo.setEnded(true);
+        System.exit(0);
     }
 
     /**

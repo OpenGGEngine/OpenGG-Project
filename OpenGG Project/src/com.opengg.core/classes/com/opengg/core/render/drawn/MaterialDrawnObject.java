@@ -41,7 +41,7 @@ public class MaterialDrawnObject implements Drawable {
     }
     
     public MaterialDrawnObject(List<FloatBuffer> buffers, VertexArrayFormat format){
-        d = new DrawnObject(format, buffers.toArray(new FloatBuffer[buffers.size()]));
+        d = new DrawnObject(format, buffers.toArray(new FloatBuffer[0]));
     }
     
     public MaterialDrawnObject(FloatBuffer b, IntBuffer index, Material m){

@@ -47,7 +47,7 @@ public class JarClassUtil {
             if (je.isDirectory() || !je.getName().endsWith(".class")) {
                 continue;
             }
-            String className = je.getName().substring(0, je.getName().length() - String.valueOf(".class").length());
+            String className = je.getName().substring(0, je.getName().length() - ".class".length());
             className = className.replace('/', '.');
             if(className.contains("module-info")) continue;
             if(className.contains("com.opengg.core")) continue;
@@ -92,7 +92,7 @@ public class JarClassUtil {
             if (je.isDirectory() || !je.getName().endsWith(".class")) {
                 continue;
             }
-            String className = je.getName().substring(0, je.getName().length() - String.valueOf(".class").length());
+            String className = je.getName().substring(0, je.getName().length() - ".class".length());
             className = className.replace('/', '.');
             if(className.contains("module-info")) continue;
             if(className.contains("com.opengg.core")) continue;

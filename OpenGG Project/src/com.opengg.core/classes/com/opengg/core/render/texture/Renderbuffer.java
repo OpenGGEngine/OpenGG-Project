@@ -14,7 +14,7 @@ import com.opengg.core.render.internal.opengl.texture.OpenGLRenderbuffer;
  * @author Javier
  */
 public interface Renderbuffer{
-    public static Renderbuffer create(int x, int y, int storage){
+    static Renderbuffer create(int x, int y, int storage){
         return new OpenGLRenderbuffer(x, y, storage);
     }
 

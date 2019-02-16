@@ -13,10 +13,6 @@ import com.opengg.core.util.GGOutputStream;
 
 import java.io.*;
 import java.nio.ByteBuffer;
-import java.nio.file.Files;
-import java.util.logging.Logger;
-
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 /**
  *

@@ -9,7 +9,6 @@ package com.opengg.core.world.components;
 import com.opengg.core.engine.BindController;
 import com.opengg.core.exceptions.InvalidParentException;
 import com.opengg.core.util.GGInputStream;
-import com.opengg.core.util.GGOutputStream;
 import com.opengg.core.world.Action;
 import com.opengg.core.world.ActionTransmitter;
 import com.opengg.core.world.Actionable;

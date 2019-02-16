@@ -5,7 +5,6 @@ import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Tuple;
 import com.opengg.core.math.Vector3f;
 import org.lwjgl.openvr.TrackedDevicePose;
-import org.lwjgl.openvr.VR;
 import org.lwjgl.openvr.VRSystem;
 
 import static org.lwjgl.openvr.VR.ETrackedControllerRole_TrackedControllerRole_LeftHand;

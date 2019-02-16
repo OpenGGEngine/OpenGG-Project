@@ -11,10 +11,6 @@ import com.opengg.core.render.GraphicsBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
-import static org.lwjgl.opengl.GL15.*;
-import static org.lwjgl.opengl.GL21.GL_PIXEL_PACK_BUFFER;
-import static org.lwjgl.opengl.GL21.GL_PIXEL_UNPACK_BUFFER;
-import static org.lwjgl.opengl.GL30.GL_TRANSFORM_FEEDBACK_BUFFER;
 import static org.lwjgl.opengl.GL31.*;
 import static org.lwjgl.opengl.GL40.GL_DRAW_INDIRECT_BUFFER;
 import static org.lwjgl.opengl.GL42.GL_ATOMIC_COUNTER_BUFFER;

@@ -13,15 +13,15 @@ import java.io.IOException;
  * @author Warren
  */
 public interface State {
-    public String getName();
+    String getName();
 	
-    public void init(GLFWWindow window) throws IOException;
+    void init(GLFWWindow window) throws IOException;
 	
-    public void render(GLFWWindow window, int delta);
+    void render(GLFWWindow window, int delta);
 	
-    public void update(GLFWWindow window, int delta);
+    void update(GLFWWindow window, int delta);
 	
-    public void enter(GLFWWindow window);
+    void enter(GLFWWindow window);
 
-    public void leave(GLFWWindow window);
+    void leave(GLFWWindow window);
 }

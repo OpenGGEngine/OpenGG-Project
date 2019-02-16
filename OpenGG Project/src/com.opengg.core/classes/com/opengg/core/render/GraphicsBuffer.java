@@ -17,7 +17,7 @@ public interface GraphicsBuffer{
      * @param access Memory usage (can be GL_STATIC_DRAW, GL_DYNAMIC_DRAW, or GL_STREAM_DRAW)
      * @return
      */
-    public static GraphicsBuffer allocate(BufferType type, UsageType access){
+    static GraphicsBuffer allocate(BufferType type, UsageType access){
         return new OpenGLBuffer(type, access);
     }
 
@@ -28,7 +28,7 @@ public interface GraphicsBuffer{
      * @param access Memory usage (can be GL_STATIC_DRAW, GL_DYNAMIC_DRAW, or GL_STREAM_DRAW)
      * @return
      */
-    public static GraphicsBuffer allocate(BufferType type, int size, UsageType access){
+    static GraphicsBuffer allocate(BufferType type, int size, UsageType access){
         return new OpenGLBuffer(type, size, access);
     }
 
@@ -39,7 +39,7 @@ public interface GraphicsBuffer{
      * @param access Memory usage (can be GL_STATIC_DRAW, GL_DYNAMIC_DRAW, or GL_STREAM_DRAW)
      * @return
      */
-    public static GraphicsBuffer allocate(BufferType type, FloatBuffer buffer, UsageType access){
+    static GraphicsBuffer allocate(BufferType type, FloatBuffer buffer, UsageType access){
         return new OpenGLBuffer(type, buffer, access);
     }
 
@@ -50,7 +50,7 @@ public interface GraphicsBuffer{
      * @param access Memory usage (can be GL_STATIC_DRAW, GL_DYNAMIC_DRAW, or GL_STREAM_DRAW)
      * @return
      */
-    public static GraphicsBuffer allocate(BufferType type, IntBuffer buffer, UsageType access){
+    static GraphicsBuffer allocate(BufferType type, IntBuffer buffer, UsageType access){
         return new OpenGLBuffer(type, buffer, access);
     }
 
@@ -163,7 +163,7 @@ public interface GraphicsBuffer{
      *     </ul>
      *     The above 3 parts are simply unenforced recommendations, and are used to optimize the underlying render system
      */
-    public static enum UsageType{
+    enum UsageType{
         STATIC_DRAW,
         DYNAMIC_DRAW,
         STREAM_DRAW,
@@ -172,7 +172,7 @@ public interface GraphicsBuffer{
         STREAM_READ,
         STATIC_COPY,
         DYNAMIC_COPY,
-        STREAM_COPY;
+        STREAM_COPY
     }
 
     /**
@@ -180,7 +180,7 @@ public interface GraphicsBuffer{
      * <br/>
      * Using a certain buffer type during an operation that requires a different buffer type will result in an error.
      */
-    public static enum BufferType{
+    enum BufferType{
         /**
          * Buffer used to contain the vertex values for a draw command
          */
@@ -200,6 +200,6 @@ public interface GraphicsBuffer{
         DRAW_INDIRECT_BUFFER,
         ATOMIC_COUNTER_BUFFER,
         DISPATCH_INDIRECT_BUFFER,
-        SHADER_STORAGE_BUFFER;
+        SHADER_STORAGE_BUFFER
     }
 }

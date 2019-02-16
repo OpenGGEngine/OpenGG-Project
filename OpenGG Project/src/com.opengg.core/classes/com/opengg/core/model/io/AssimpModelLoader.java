@@ -202,7 +202,7 @@ public class AssimpModelLoader {
         String name = animation.mName().dataString().equals("")? animation.toString():animation.mName().dataString();
         GGAnimation anim = new GGAnimation(name,animation.mDuration(),animation.mTicksPerSecond());
         //Unused Mesh Animations
-        for(int i=0;i<animation.mNumMeshChannels();i++){};
+        for(int i=0;i<animation.mNumMeshChannels();i++){}
         for(int i = 0;i<animation.mNumChannels();i++){
             AINodeAnim animnode = AINodeAnim.create(animation.mChannels().get(i));
             ArrayList<Tuple<Double,Vector3f>> positionKeys = new ArrayList<>();

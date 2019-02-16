@@ -6,7 +6,6 @@
 package com.opengg.core.world.components.viewmodel;
 
 import com.opengg.core.world.components.CameraComponent;
-import com.opengg.core.world.components.Component;
 
 /**
  *

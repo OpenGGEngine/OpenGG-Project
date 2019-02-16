@@ -1,6 +1,5 @@
 package com.opengg.core.model;
 
-import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Tuple;
 import com.opengg.core.math.Vector3f;
@@ -8,10 +7,8 @@ import com.opengg.core.system.Allocator;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.stream.Stream;
 
 public class GGAnimation {
     public String name;

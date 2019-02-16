@@ -6,9 +6,6 @@
 
 package com.opengg.core.world.components;
 
-import com.opengg.core.Configuration;
-import com.opengg.core.engine.BindController;
-import com.opengg.core.io.input.mouse.MouseController;
 import com.opengg.core.io.input.mouse.MouseMoveListener;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector2f;

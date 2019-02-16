@@ -2,7 +2,6 @@ package com.opengg.core.engine;
 
 import com.opengg.core.GGInfo;
 import com.opengg.core.console.GGConsole;
-import com.opengg.core.console.GGMessage;
 import com.opengg.core.io.input.keyboard.Key;
 import com.opengg.core.io.input.keyboard.KeyboardCharacterListener;
 import com.opengg.core.io.input.keyboard.KeyboardController;
@@ -10,7 +9,6 @@ import com.opengg.core.io.input.keyboard.KeyboardListener;
 import com.opengg.core.io.input.mouse.*;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Vector2f;
-import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.render.drawn.TexturedDrawnObject;
@@ -21,7 +19,6 @@ import com.opengg.core.render.text.Text;
 import com.opengg.core.render.texture.Texture;
 
 import java.awt.*;
-import java.awt.event.MouseListener;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;

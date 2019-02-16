@@ -92,8 +92,8 @@ public class TTF implements Font{
     }
 
     private STBTTPackedchar.Buffer overSampleInit(int BITMAP_W, int BITMAP_H) {
-        STBTTPackedchar.Buffer altCData = STBTTPackedchar.malloc(96 * 3 * scale.length + 128);
-        STBTTPackContext pc = STBTTPackContext.malloc();
+        STBTTPackedchar.Buffer altCData = STBTTPackedchar.calloc(96 * 3 * scale.length + 128);
+        STBTTPackContext pc = STBTTPackContext.calloc();
 
         ByteBuffer bitmap = Allocator.alloc(BITMAP_W * BITMAP_H);
 
@@ -136,7 +136,7 @@ public class TTF implements Font{
     }
 
     private STBTTBakedChar.Buffer init(int BITMAP_W, int BITMAP_H) {
-        STBTTBakedChar.Buffer cdata = STBTTBakedChar.malloc(96);
+        STBTTBakedChar.Buffer cdata = STBTTBakedChar.calloc(96);
         ByteBuffer bitmap = Allocator.alloc(BITMAP_W * BITMAP_H);
         stbtt_BakeFontBitmap(ttf, fontheight, bitmap, BITMAP_W, BITMAP_H, 32, cdata);
 
@@ -201,7 +201,7 @@ public class TTF implements Font{
         FloatBuffer x = Allocator.stackAllocFloat(1);
         FloatBuffer y = Allocator.stackAllocFloat(1);
 
-        STBTTAlignedQuad q = STBTTAlignedQuad.mallocStack();
+        STBTTAlignedQuad q = STBTTAlignedQuad.callocStack();
 
         float x0 = 0, x1 = 0, y0 = 0, y1 = 0;
 

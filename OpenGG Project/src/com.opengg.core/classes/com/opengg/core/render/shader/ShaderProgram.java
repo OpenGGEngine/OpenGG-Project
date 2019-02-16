@@ -22,7 +22,7 @@ public interface ShaderProgram{
         VERTEX, TESS_CONTROL, TESS_EVAL, GEOMETRY, FRAGMENT, UTIL
     }
 
-    public static ShaderProgram create(ShaderType type, CharSequence source, String name){
+    static ShaderProgram create(ShaderType type, CharSequence source, String name){
         return new OpenGLShaderProgram(type, source, name);
     }
 

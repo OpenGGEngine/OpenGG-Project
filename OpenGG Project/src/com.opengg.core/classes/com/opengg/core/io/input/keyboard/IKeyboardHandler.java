@@ -11,5 +11,5 @@ package com.opengg.core.io.input.keyboard;
  * @author Javier
  */
 public interface IKeyboardHandler {
-    public boolean isKeyDown(int key);
+    boolean isKeyDown(int key);
 }

@@ -7,7 +7,6 @@ package com.opengg.core.physics;
 
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.render.RenderOperation;
-import com.opengg.core.engine.Resource;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;

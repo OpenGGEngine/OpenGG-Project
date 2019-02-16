@@ -12,18 +12,18 @@ package com.opengg.core.render.window;
  * @author Javier
  */
 public interface Window {
-    public void setup(WindowInfo info);
-    public void endFrame();
-    public float getRatio();
-    public boolean shouldClose();
-    public void destroy();
-    public long getID();
-    public int getWidth();
-    public int getHeight();
-    public boolean getSuccessfulConstruction();
-    public String getType();
-    public void setIcon(String path) throws Exception;
-    public void setVSync(boolean vsync);
+    void setup(WindowInfo info);
+    void endFrame();
+    float getRatio();
+    boolean shouldClose();
+    void destroy();
+    long getID();
+    int getWidth();
+    int getHeight();
+    boolean getSuccessfulConstruction();
+    String getType();
+    void setIcon(String path) throws Exception;
+    void setVSync(boolean vsync);
     void setCurrentContext();
     default void setCursorLock(boolean lock){}
 

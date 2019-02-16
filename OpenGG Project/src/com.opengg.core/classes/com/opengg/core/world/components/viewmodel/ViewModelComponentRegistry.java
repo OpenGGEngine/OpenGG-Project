@@ -6,7 +6,6 @@
 package com.opengg.core.world.components.viewmodel;
 
 import com.opengg.core.console.GGConsole;
-import com.opengg.core.util.ClassUtil;
 import com.opengg.core.util.JarClassUtil;
 import com.opengg.core.world.components.*;
 import com.opengg.core.world.components.particle.*;

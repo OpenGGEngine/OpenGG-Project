@@ -5,7 +5,6 @@
  */
 package com.opengg.core.world.components.viewmodel;
 
-import com.opengg.core.world.components.Component;
 import com.opengg.core.world.components.WorldObject;
 
 /**

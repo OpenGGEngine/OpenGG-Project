@@ -6,6 +6,7 @@
 
 package com.opengg.core.render.shader;
 
+import com.opengg.core.Configuration;
 import com.opengg.core.GGInfo;
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.engine.Resource;
@@ -23,6 +24,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -587,7 +591,7 @@ public class ShaderController {
     
     /**
      * Binds the given uniform buffer object to the given GLSL identifier
-     * @param ubo UBO to be bound, as a {@link OpenGLBuffer}
+     * @param ubo UBO to be bound, as a {@link GraphicsBuffer}
      * @param name Name of buffer in GLSL to bind UBO to
      */
     public static void setUniformBlockLocation(GraphicsBuffer ubo, String name){
@@ -773,7 +777,7 @@ public class ShaderController {
 
     public static ShaderProgram loadShader(String name, String loc, ShaderType type){
         try {
-            String sec = FileStringLoader.loadStringSequence(URLDecoder.decode(loc, "UTF-8"));
+            String sec = FileStringLoader.loadStringSequence(URLDecoder.decode(loc, StandardCharsets.UTF_8));
             return createShader(name, type, sec);
         } catch (UnsupportedEncodingException ex) {
             GGConsole.error("Failed to load shader: " + name);
@@ -817,9 +821,21 @@ public class ShaderController {
                 .filter(entry -> !entry.getValue().getType().equals(ShaderFile.ShaderFileType.UTIL))
                 .map(entry -> new ShaderFileHolder(entry.getKey(), entry.getValue()))
                 .peek(ShaderFileHolder::link)
+                .peek(ShaderController::dumpShader)
                 .collect(Collectors.toList());
 
         completedfiles.addAll(processing);
+    }
+
+    private static void dumpShader(ShaderFileHolder holder){
+        if(Boolean.parseBoolean(Configuration.get("dumpShaders"))){
+            var file = new File(Resource.getShaderPath("debug_" + holder.name));
+            try {
+                Files.write(file.toPath(), Collections.singleton(holder.fulldata), StandardOpenOption.CREATE_NEW);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private static void createGLShaderFromFile(){
@@ -886,7 +902,7 @@ public class ShaderController {
         checkError();
     }
 
-    private static void ShaderController() {
+    private void ShaderController() {
     }
 
     private static class ShaderFileHolder{

@@ -6,9 +6,6 @@
 
 package com.opengg.core.physics.collision;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  *
  * @author Javier

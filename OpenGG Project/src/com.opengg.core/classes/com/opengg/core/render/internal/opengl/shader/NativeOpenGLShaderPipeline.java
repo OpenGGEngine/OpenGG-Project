@@ -10,9 +10,6 @@ import com.opengg.core.exceptions.ShaderException;
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.render.shader.ShaderProgram;
 
-import static org.lwjgl.opengl.GL11.GL_TRUE;
-import static org.lwjgl.opengl.GL20.GL_VALIDATE_STATUS;
-import static org.lwjgl.opengl.GL20.glUseProgram;
 import static org.lwjgl.opengl.GL41.*;
 
 /**

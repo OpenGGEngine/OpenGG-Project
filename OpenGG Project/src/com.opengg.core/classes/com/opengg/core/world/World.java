@@ -9,7 +9,6 @@ package com.opengg.core.world;
 import com.opengg.core.GGInfo;
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.engine.OpenGG;
-import com.opengg.core.engine.Resource;
 import com.opengg.core.physics.PhysicsEngine;
 import com.opengg.core.physics.PhysicsSystem;
 import com.opengg.core.render.RenderEngine;

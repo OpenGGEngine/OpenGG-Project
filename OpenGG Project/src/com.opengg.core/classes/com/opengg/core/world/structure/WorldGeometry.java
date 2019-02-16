@@ -5,18 +5,13 @@
  */
 package com.opengg.core.world.structure;
 
-import com.opengg.core.engine.OpenGG;
-import com.opengg.core.engine.Resource;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
-import com.opengg.core.model.Model;
 import com.opengg.core.physics.collision.ColliderGroup;
-import com.opengg.core.render.RenderEngine;
 import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
-import com.opengg.core.util.LambdaContainer;
 
 import java.io.IOException;
 

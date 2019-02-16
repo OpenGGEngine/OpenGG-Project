@@ -1,7 +1,8 @@
 package com.opengg.core.util;
 
 public class LambdaContainer<E>{
-    public LambdaContainer(){};
+    public LambdaContainer(){}
+
     public LambdaContainer(E e){
         this.value = e;
     }

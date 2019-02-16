@@ -6,19 +6,6 @@
 
 package com.opengg.core.model;
 
-import com.opengg.core.console.GGConsole;
-import com.opengg.core.math.Vector2f;
-import com.opengg.core.math.Vector3f;
-import com.opengg.core.math.Vector4f;
-import com.opengg.core.system.Allocator;
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 /**
  *
  * @author Javier

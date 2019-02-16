@@ -8,12 +8,10 @@ package com.opengg.core.world;
 
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.exceptions.ClassInstantiationException;
-import com.opengg.core.physics.PhysicsSystem;
 import com.opengg.core.util.ClassUtil;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.world.components.Component;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,7 +25,7 @@ import java.util.List;
 public class Deserializer {
     private GGInputStream in;
     private List<SerialHolder> components;
-    public static List<ClassLoader> loaders = new ArrayList<>();;
+    public static List<ClassLoader> loaders = new ArrayList<>();
     private HashMap<Integer, String> classnames;
     private World world;
     

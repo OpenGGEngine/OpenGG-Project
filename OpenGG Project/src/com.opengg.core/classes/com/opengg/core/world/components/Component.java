@@ -7,7 +7,6 @@ package com.opengg.core.world.components;
 
 import com.opengg.core.animation.ComponentVarAccessor;
 import com.opengg.core.math.Quaternionf;
-import com.opengg.core.math.Tuple;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
@@ -21,9 +20,7 @@ import java.util.BitSet;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -369,7 +366,7 @@ public abstract class Component{
         var getscale = set.get(2);
         enabled = set.get(3);
 
-        if(getpos) setPositionOffset(in.readVector3f());;
+        if(getpos) setPositionOffset(in.readVector3f());
         if(getrot) setRotationOffset(in.readQuaternionf());
         if(getscale) setScaleOffset(in.readVector3f());
     }
@@ -403,12 +400,12 @@ public abstract class Component{
         this.enabled = enabled;
     }
 
-    private final void localOnEnable(){
+    private void localOnEnable(){
         onEnable();
         for(Component c : children) c.localOnEnable();
     }
 
-    private final void localOnDisable(){
+    private void localOnDisable(){
          onDisable();
         for(Component c : children) c.localOnDisable();
     }
@@ -455,7 +452,7 @@ public abstract class Component{
     /**
      * Attaches a component to this component<br>
      * This contains checks to prevent a component to be attached to itself. Additionally, it goes
-     * through the cleanup of removing a component from its existing parent, and calls {@link #setParentInfo(com.opengg.core.world.components.Component) }
+     * through the cleanup of removing a component from its existing parent, and calls {@link #changeParent(com.opengg.core.world.components.Component) }
      * @param c Component to be attached
      * @return This component
      */
@@ -467,12 +464,13 @@ public abstract class Component{
         if(c.getParent() != null)
             c.getParent().remove(c);
 
-        c.setParentInfo(this);
+        c.changeParent(this);
         children.add(c);
+
         return this;
     }
 
-    private void setParentInfo(Component parent){
+    private void changeParent(Component parent){
         if(parent == null){
             WorldEngine.markForRemoval(this);
             return;
@@ -503,7 +501,7 @@ public abstract class Component{
     public final void localOnWorldChange(){
         for(Component c : children) c.localOnWorldChange();
         onWorldChange();
-        if(WorldEngine.getCurrent() == this.getWorld()) onWorldEnable();
+        if(WorldEngine.getCurrent() == this.getWorld()) localOnWorldEnable();
         if(whenAttachedToWorld != null){
             whenAttachedToWorld.run();
         }
@@ -609,7 +607,7 @@ public abstract class Component{
      */
     public void remove(Component child){
         children.remove(child);
-        child.setParentInfo(null);
+        child.changeParent(null);
     }
 
 }

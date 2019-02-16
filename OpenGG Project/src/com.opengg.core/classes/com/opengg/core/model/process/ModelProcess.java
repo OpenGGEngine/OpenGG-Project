@@ -11,6 +11,6 @@ public abstract class ModelProcess{
 
     public void broadcast(){
         if(run != null){ run.run();}
-    };
+    }
 
 }

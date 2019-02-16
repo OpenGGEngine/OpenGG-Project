@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -467,6 +466,6 @@ public class ShaderFile{
     }
 
     public enum ShaderFileType{
-        VERT, FRAG, GEOM, TESSEVAL, TESSCONTROL, UTIL;
+        VERT, FRAG, GEOM, TESSEVAL, TESSCONTROL, UTIL
     }
 }

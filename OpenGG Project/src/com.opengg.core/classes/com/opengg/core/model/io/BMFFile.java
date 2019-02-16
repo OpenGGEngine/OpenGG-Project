@@ -12,7 +12,6 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.channels.FileChannel;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
@@ -172,7 +171,7 @@ public class BMFFile extends ModelProcess {
         //Header Contains: Version and OpenGG message, Number of sectors, SubSector sizes
         int headerSize = (HEADER_START.length())+ (Integer.BYTES*3) + (sectors.size()*Integer.BYTES *2) + (sectors.stream().mapToInt(s -> s.subBuffers.length).sum() * Integer.BYTES);
         ByteBuffer header = Allocator.alloc(headerSize).order(ByteOrder.BIG_ENDIAN);
-        header.put(HEADER_START.getBytes(StandardCharsets.UTF_8)).putInt(VERSION).putInt(sectors.size());;
+        header.put(HEADER_START.getBytes(StandardCharsets.UTF_8)).putInt(VERSION).putInt(sectors.size());
 
         for(FileSector sector: sectors){
             header.putInt(sector.subBuffers.length).putInt(sector.type.ordinal());

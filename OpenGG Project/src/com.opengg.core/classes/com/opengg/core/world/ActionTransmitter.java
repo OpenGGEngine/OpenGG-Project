@@ -11,5 +11,5 @@ package com.opengg.core.world;
  * @author Javier
  */
 public interface ActionTransmitter {
-    public void doAction(Action action);
+    void doAction(Action action);
 }

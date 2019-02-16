@@ -12,14 +12,13 @@ import com.opengg.core.render.internal.opengl.texture.OpenGLFramebuffer;
 import java.util.List;
 
 import static org.lwjgl.opengl.GL30.GL_DEPTH_ATTACHMENT;
-import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER;
 
 /**
  *
  * @author Javier
  */
 public interface Framebuffer{
-    public static final int DEPTH = GL_DEPTH_ATTACHMENT;
+    int DEPTH = GL_DEPTH_ATTACHMENT;
 
     static Framebuffer generateFramebuffer(){
         return new OpenGLFramebuffer();

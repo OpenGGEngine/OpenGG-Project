@@ -10,7 +10,6 @@ package com.opengg.core.render.texture;
 import com.opengg.core.engine.Resource;
 import com.opengg.core.render.internal.opengl.texture.OpenGLTexture;
 import com.opengg.core.system.Allocator;
-import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.security.InvalidParameterException;
@@ -151,27 +150,27 @@ public interface Texture {
      */
     void delete();
 
-    public static Texture get2DTexture(String path){
+    static Texture get2DTexture(String path){
         return get2DTexture(TextureManager.loadTexture(path));
     }
 
-    public static Texture get2DTexture(TextureData data){
+    static Texture get2DTexture(TextureData data){
         return get2DTexture(data, GL_RGBA, GL_RGBA8, GL_UNSIGNED_BYTE);
     }
 
-    public static Texture get2DSRGBTexture(String path){
+    static Texture get2DSRGBTexture(String path){
         return Resource.getSRGBTexture(path);
     }
 
-    public static Texture get2DSRGBTexture(TextureData data){
+    static Texture get2DSRGBTexture(TextureData data){
         return get2DTexture(data, GL_RGBA, GL_SRGB_ALPHA, GL_UNSIGNED_BYTE);
     }
 
-    public static Texture get2DTexture(TextureData data, int format, int intformat, int storage){
+    static Texture get2DTexture(TextureData data, int format, int intformat, int storage){
         return create(Texture.config().format(format).internalFormat(intformat).inputType(storage), data);
     }
 
-    public static Texture get2DFramebufferTexture(int x, int y, int format, int intformat, int input){
+    static Texture get2DFramebufferTexture(int x, int y, int format, int intformat, int input){
         TextureData data = new TextureData(x, y, 4, null, "framebuffer");
 
         Texture texture = new OpenGLTexture(GL_TEXTURE_2D, format, intformat, input);
@@ -183,7 +182,7 @@ public interface Texture {
         return texture;
     }
 
-    public static Texture getCubemapFramebufferTexture(int x, int y, int format, int intformat, int input){
+    static Texture getCubemapFramebufferTexture(int x, int y, int format, int intformat, int input){
         TextureData data = new TextureData(x, y, 4, null, "framebuffer");
 
         Texture texture = new OpenGLTexture(GL_TEXTURE_CUBE_MAP, format, intformat, input);
@@ -195,7 +194,7 @@ public interface Texture {
         return texture;
     }
 
-    public static Texture getCubemap(String path1, String path2, String path3, String path4, String path5, String path6){
+    static Texture getCubemap(String path1, String path2, String path3, String path4, String path5, String path6){
         TextureData data1 = TextureManager.loadTexture(path1, false);
         TextureData data2 = TextureManager.loadTexture(path2, false);
         TextureData data3 = TextureManager.loadTexture(path3, false);
@@ -205,11 +204,11 @@ public interface Texture {
         return getCubemap(data1,data2,data3,data4,data5,data6);
     }
 
-    public static Texture getCubemap(TextureData data1, TextureData data2, TextureData data3, TextureData data4, TextureData data5, TextureData data6){
+    static Texture getCubemap(TextureData data1, TextureData data2, TextureData data3, TextureData data4, TextureData data5, TextureData data6){
         return getCubemap(data1, data2, data3, data4, data5, data6, GL_RGBA, GL_RGBA8, GL_UNSIGNED_BYTE);
     }
 
-    public static Texture getSRGBCubemap(String path1, String path2, String path3, String path4, String path5, String path6){
+    static Texture getSRGBCubemap(String path1, String path2, String path3, String path4, String path5, String path6){
         TextureData data1 = TextureManager.loadTexture(path1, false);
         TextureData data2 = TextureManager.loadTexture(path2, false);
         TextureData data3 = TextureManager.loadTexture(path3, false);
@@ -219,11 +218,11 @@ public interface Texture {
         return getSRGBCubemap(data1,data2,data3,data4,data5,data6);
     }
 
-    public static Texture getSRGBCubemap(TextureData data1, TextureData data2, TextureData data3, TextureData data4, TextureData data5, TextureData data6){
+    static Texture getSRGBCubemap(TextureData data1, TextureData data2, TextureData data3, TextureData data4, TextureData data5, TextureData data6){
         return getCubemap(data1, data2, data3, data4, data5, data6, GL_RGBA, GL_SRGB_ALPHA, GL_UNSIGNED_BYTE);
     }
 
-    public static Texture getCubemap(TextureData data1, TextureData data2, TextureData data3, TextureData data4, TextureData data5, TextureData data6, int format, int intformat, int storage){
+    static Texture getCubemap(TextureData data1, TextureData data2, TextureData data3, TextureData data4, TextureData data5, TextureData data6, int format, int intformat, int storage){
         Texture texture = new OpenGLTexture(GL_TEXTURE_CUBE_MAP, format, intformat, storage);
         texture.setActiveTexture(0);
         texture.bind();
@@ -236,27 +235,27 @@ public interface Texture {
         return texture;
     }
 
-    public static Texture getArrayTexture(String... paths){
+    static Texture getArrayTexture(String... paths){
         TextureData[] datums = new TextureData[paths.length];
         for(int i = 0; i < paths.length; i++) datums[i] = TextureManager.loadTexture(paths[i]);
         return  getArrayTexture(datums);
     }
 
-    public static Texture getArrayTexture(TextureData... datums){
+    static Texture getArrayTexture(TextureData... datums){
         return getArrayTexture(GL_RGBA, GL_RGBA8, GL_UNSIGNED_BYTE, datums);
     }
 
-    public static Texture getSRGBArrayTexture(String... paths){
+    static Texture getSRGBArrayTexture(String... paths){
         TextureData[] datums = new TextureData[paths.length];
         for(int i = 0; i < paths.length; i++) datums[i] = TextureManager.loadTexture(paths[i]);
         return  getSRGBArrayTexture(datums);
     }
 
-    public static Texture getSRGBArrayTexture(TextureData... datums){
+    static Texture getSRGBArrayTexture(TextureData... datums){
         return getArrayTexture(GL_RGBA, GL_SRGB_ALPHA, GL_UNSIGNED_BYTE, datums);
     }
 
-    public static Texture getArrayTexture(int format, int intformat, int storage, TextureData... datums){
+    static Texture getArrayTexture(int format, int intformat, int storage, TextureData... datums){
         Texture texture = new OpenGLTexture(GL_TEXTURE_2D_ARRAY, format, intformat, storage);
         texture.setActiveTexture(0);
         texture.bind();
@@ -270,15 +269,15 @@ public interface Texture {
         return texture;
     }
 
-    public static Texture ofColor(Color color){
+    static Texture ofColor(Color color){
         return ofColor(color, color.getTransparency());
     }
 
-    public static Texture ofColor(Color color, float transparency){
+    static Texture ofColor(Color color, float transparency){
         return ofColor((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue(), (byte) (transparency*255f));
     }
 
-    public static Texture ofColor(byte r, byte g, byte b, byte a){
+    static Texture ofColor(byte r, byte g, byte b, byte a){
         TextureData data = new TextureData(1,1,4, Allocator.alloc(4)
                 .put((byte) r)
                 .put((byte) g)
@@ -290,7 +289,7 @@ public interface Texture {
         return create(Texture.config(), data);
     }
 
-    public static Texture create(TextureConfig config, String... data){
+    static Texture create(TextureConfig config, String... data){
         TextureData[] textures = new TextureData[data.length];
         for(int i = 0; i < data.length; i++){
             textures[i] = Resource.getTextureData(data[i]);
@@ -298,7 +297,7 @@ public interface Texture {
         return create(config, textures);
     }
 
-    public static Texture create(TextureConfig config, TextureData... data){
+    static Texture create(TextureConfig config, TextureData... data){
         Texture texture = new OpenGLTexture(config.internaltype, config.format, config.intformat, config.input);
         texture.setActiveTexture(0);
         texture.bind();
@@ -322,31 +321,31 @@ public interface Texture {
         return texture;
     }
 
-    public static TextureConfig config(){
+    static TextureConfig config(){
         return TextureConfig.defaultconfig;
     }
 
-    public static TextureConfig SRGBConfig(){
+    static TextureConfig SRGBConfig(){
         return TextureConfig.defaultconfig.internalFormat(GL_SRGB_ALPHA);
     }
 
-    public static TextureConfig arrayConfig(){
+    static TextureConfig arrayConfig(){
         return TextureConfig.defaultconfig.type(TextureType.TEXTURE_ARRAY);
     }
 
-    public static TextureConfig arraySRGBConfig(){
+    static TextureConfig arraySRGBConfig(){
         return TextureConfig.defaultconfig.internalFormat(GL_SRGB_ALPHA).type(TextureType.TEXTURE_ARRAY);
     }
 
-    public static TextureConfig cubemapConfig(){
+    static TextureConfig cubemapConfig(){
         return TextureConfig.defaultconfig.type(TextureType.TEXTURE_CUBEMAP);
     }
 
-    public static TextureConfig cubemapSRGBConfig(){
+    static TextureConfig cubemapSRGBConfig(){
         return TextureConfig.defaultconfig.internalFormat(GL_SRGB_ALPHA).type(TextureType.TEXTURE_CUBEMAP);
     }
 
-    public static class TextureConfig{
+    class TextureConfig{
         static final TextureConfig defaultconfig = new TextureConfig();
 
         final TextureType type;
@@ -419,7 +418,7 @@ public interface Texture {
         }
     }
 
-    public enum TextureType{
+    enum TextureType{
         TEXTURE_ARRAY, TEXTURE_2D, TEXTURE_3D, TEXTURE_CUBEMAP
     }
 }
