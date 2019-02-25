@@ -15,6 +15,7 @@ import com.opengg.core.io.FileStringLoader;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
+import com.opengg.core.math.Vector4f;
 import com.opengg.core.model.Material;
 import com.opengg.core.render.GraphicsBuffer;
 import com.opengg.core.render.shader.ggsl.ShaderFile;
@@ -229,6 +230,12 @@ public class ShaderController {
         findUniform("gamma");
         setUniform("gamma", 2.2f);
 
+        findUniform("fill");
+        setUniform("fill", new Vector3f());
+
+        findUniform("back");
+        setUniform("back", new Vector3f());
+
         findUniform("shadowMatrices");
 
         findUniform("shadowmap");
@@ -392,9 +399,7 @@ public class ShaderController {
             if(s.equals(loc))
                 return;
 
-        programs.values().stream().filter((p) -> (p.getType() == ShaderProgram.ShaderType.VERTEX)).forEach((p) -> {
-            p.findAttributeLocation(loc);
-        });
+        programs.values().stream().filter((p) -> (p.getType() == ShaderProgram.ShaderType.VERTEX)).forEach((p) -> p.findAttributeLocation(loc));
         
         searchedAttribs.add(loc);
     }
@@ -574,9 +579,7 @@ public class ShaderController {
      * @param loc New location of sampler
      */
     public static void setTextureLocation(String name, int loc){
-        programs.values().stream().filter((p) -> (p.getType() == ShaderProgram.ShaderType.FRAGMENT)).forEach((p) -> {
-            p.setUniform(p.getUniformLocation(name), loc);
-        });
+        programs.values().stream().filter((p) -> (p.getType() == ShaderProgram.ShaderType.FRAGMENT)).forEach((p) -> p.setUniform(p.getUniformLocation(name), loc));
     }
     
     /**
@@ -810,7 +813,7 @@ public class ShaderController {
                 .map(file -> new ShaderFile(file, GGInfo.getApplicationPath() + "\\resources\\glsl\\" + file))
                 .filter(ShaderFile::isParsed)
                 .peek(ShaderFile::compile)
-                .collect(Collectors.toMap(shader -> shader.getName(), shader -> shader)));
+                .collect(Collectors.toMap(ShaderFile::getName, shader -> shader)));
 
     }
 
@@ -919,7 +922,7 @@ public class ShaderController {
             this.name = name;
             this.source = source;
             source.getIncludes().stream()
-                    .map(s -> shaderfiles.get(s))
+                    .map(shaderfiles::get)
                     .forEach(this::addDependency);
         }
 
@@ -937,7 +940,7 @@ public class ShaderController {
                 dependencies.add(file);
                 try {
                     file.getIncludes().stream()
-                            .map(s -> shaderfiles.get(s))
+                            .map(shaderfiles::get)
                             .forEach(this::addDependency);
                 }catch (NullPointerException e){
                     GGConsole.exception(new ShaderException("Failed to load dependency for " + this.name, e));

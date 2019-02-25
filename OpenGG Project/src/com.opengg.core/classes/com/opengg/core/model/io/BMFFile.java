@@ -125,12 +125,12 @@ public class BMFFile extends ModelProcess {
             FileSector fs = new FileSector(types[i],capacities[i],original);
             switch(fs.type){
                 case MATERIAL:
-                    ArrayList<Material> material = new ArrayList<Material>(fs.subBuffers.length-1);
+                    ArrayList<Material> material = new ArrayList<>(fs.subBuffers.length - 1);
                     for(int i2=0;i2<fs.subBuffers.length-1;i2++) material.add(new Material(fs.subBuffers[i2]));
-                    for(int i2=0;i2<meshes.size();i2++){
-                        meshes.get(i2).matIndex = fs.subBuffers[fs.subBuffers.length-1].getInt();
-                        meshes.get(i2).main = material.get(meshes.get(i2).matIndex);
-                        meshes.get(i2).main.texpath = f.getParent()+"\\tex\\";
+                    for (Mesh mesh : meshes) {
+                        mesh.matIndex = fs.subBuffers[fs.subBuffers.length - 1].getInt();
+                        mesh.main = material.get(mesh.matIndex);
+                        mesh.main.texpath = f.getParent() + "\\tex\\";
                     }
                     model.materials = material;
                     break;

@@ -24,6 +24,6 @@ public class GUITexture extends GUIRenderable {
     }
 
     public void setTexture(Texture t){
-        ((TexturedDrawnObject)this.d).tex = t;
+        ((TexturedDrawnObject)this.drawable).tex = t;
     }
 }

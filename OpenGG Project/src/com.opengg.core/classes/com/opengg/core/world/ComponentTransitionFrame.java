@@ -33,12 +33,7 @@ public class ComponentTransitionFrame {
     public boolean update(float delta){
         for(Iterator<List<Transition>> lists = types.values().iterator(); lists.hasNext();){
             List<Transition> list = lists.next();
-            for(Iterator<Transition> iterator = list.iterator(); iterator.hasNext();){
-                Transition t = iterator.next();
-                if(t.updateInitial(delta)){
-                    iterator.remove();
-                }
-            }
+            list.removeIf(t -> t.updateInitial(delta));
             if(list.isEmpty())
                 lists.remove();
         }

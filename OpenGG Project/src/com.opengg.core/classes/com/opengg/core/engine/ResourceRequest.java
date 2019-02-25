@@ -33,9 +33,7 @@ public class ResourceRequest implements Comparable{
     public int compareTo(Object o) {
         if(o == this) return 0;
         ResourceRequest r = (ResourceRequest) o;
-        if(priority > r.priority) return 1;
-        if(priority == r.priority) return 0;
-        return -1;
+        return Integer.compare(priority, r.priority);
     }
 
     public enum Type{

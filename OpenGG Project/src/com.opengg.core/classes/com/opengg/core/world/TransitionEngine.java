@@ -33,12 +33,7 @@ public class TransitionEngine {
     }
     
     public static void update(float delta){
-        for(Iterator<ComponentTransitionFrame> iterator = frames.iterator(); iterator.hasNext();){
-            ComponentTransitionFrame frame = iterator.next();
-            if(frame.update(delta)){
-                iterator.remove();
-            } 
-        }
+        frames.removeIf(frame -> frame.update(delta));
     }
     
     public static void remove(Component c){

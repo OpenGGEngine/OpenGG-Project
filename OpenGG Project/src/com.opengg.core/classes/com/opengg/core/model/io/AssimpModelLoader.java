@@ -88,11 +88,7 @@ public class AssimpModelLoader {
                         AIVertexWeight aiWeight = aiWeights.get(j);
                         VertexWeight vw = new VertexWeight(i3, aiWeight.mVertexId(),
                                 aiWeight.mWeight());
-                        List<VertexWeight> vertexWeightList = weightSet.get(vw.getVertexId());
-                        if (vertexWeightList == null) {
-                            vertexWeightList = new ArrayList<>();
-                            weightSet.put(vw.getVertexId(), vertexWeightList);
-                        }
+                        List<VertexWeight> vertexWeightList = weightSet.computeIfAbsent(vw.getVertexId(), k -> new ArrayList<>());
                         vertexWeightList.add(vw);
                     }
                 }

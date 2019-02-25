@@ -18,6 +18,7 @@ import com.opengg.core.extension.ExtensionManager;
 import static com.opengg.core.render.window.RenderUtil.endFrame;
 import static com.opengg.core.render.window.RenderUtil.startFrame;
 
+import com.opengg.core.gui.GUIController;
 import com.opengg.core.io.input.mouse.MouseController;
 import com.opengg.core.network.NetworkEngine;
 import com.opengg.core.physics.PhysicsEngine;
@@ -196,6 +197,7 @@ public final class OpenGG{
         Allocator.update();
         GGDebugRenderer.update(delta);
         Executor.getExecutor().update(delta);
+        GUIController.update(delta);
         ExtensionManager.update(delta);
         WorldEngine.update(delta);
         AnimationManager.update(delta);

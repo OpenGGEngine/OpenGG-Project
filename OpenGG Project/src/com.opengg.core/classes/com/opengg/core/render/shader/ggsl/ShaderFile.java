@@ -95,7 +95,7 @@ public class ShaderFile{
     }
 
     private String runPreprocessor(String data){
-        if(data.indexOf("@") == -1 && data.indexOf("#version") != -1){
+        if(!data.contains("@") && data.contains("#version")){
             throw new ShaderException("Attempted to load GLSL file as GGSL");
         }
 
@@ -107,8 +107,8 @@ public class ShaderFile{
 
         for(var line : lines){
             if(line.indexOf("@") == 0){
-                String varname = line.substring(0, line.indexOf(" ") == -1 ? line.length() : line.indexOf(" ")).trim();
-                String varval = line.substring(line.indexOf(" ") == -1 ? line.length() : line.indexOf(" ")).trim();
+                String varname = line.substring(0, !line.contains(" ") ? line.length() : line.indexOf(" ")).trim();
+                String varval = line.substring(!line.contains(" ") ? line.length() : line.indexOf(" ")).trim();
 
                 preprocessor.merge(varname, varval, (s1,s2) -> s1 + ":" + s2);
             }
@@ -167,7 +167,7 @@ public class ShaderFile{
             var func = (Parser.Function) node;
 
             for(var modifier : func.modifiers.modifiers){
-                builder.append(modifier.value + " ");
+                builder.append(modifier.value).append(" ");
             }
 
             builder.append(func.type).append(" ");
@@ -195,7 +195,7 @@ public class ShaderFile{
             var struct = (Parser.Struct) node;
 
             for(var modifier : struct.modifiers.modifiers){
-                builder.append(modifier.value + " ");
+                builder.append(modifier.value).append(" ");
             }
 
 
@@ -209,7 +209,7 @@ public class ShaderFile{
             var interfacee = (Parser.Interface) node;
 
             for(var modifier : interfacee.modifiers.modifiers){
-                builder.append(modifier.value + " ");
+                builder.append(modifier.value).append(" ");
             }
 
             builder.append(interfacee.accessor.value).append(" ");

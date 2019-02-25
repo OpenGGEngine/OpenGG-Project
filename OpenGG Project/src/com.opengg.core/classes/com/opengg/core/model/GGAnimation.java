@@ -34,7 +34,7 @@ public class GGAnimation {
 
     public int getSize(){
         return Integer.BYTES + name.length() + (2*Double.BYTES) + (Integer.BYTES) +
-                animdata.values().stream().mapToInt(e->e.getSize()).sum();
+                animdata.values().stream().mapToInt(AnimNode::getSize).sum();
     }
 
     public ByteBuffer toBuffer(){

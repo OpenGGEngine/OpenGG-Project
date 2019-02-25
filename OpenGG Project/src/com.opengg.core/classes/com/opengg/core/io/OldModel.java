@@ -16,11 +16,11 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class OldModel {
 
-    private final List<Vector3f> vertices = new ArrayList<Vector3f>();
-    private final List<Vector2f> textureCoordinates = new ArrayList<Vector2f>();
-    private final List<Vector3f> normals = new ArrayList<Vector3f>();
-    private final List<Face> faces = new ArrayList<Face>();
-    private final HashMap<String, Material> materials = new HashMap<String, Material>();
+    private final List<Vector3f> vertices = new ArrayList<>();
+    private final List<Vector2f> textureCoordinates = new ArrayList<>();
+    private final List<Vector3f> normals = new ArrayList<>();
+    private final List<Face> faces = new ArrayList<>();
+    private final HashMap<String, Material> materials = new HashMap<>();
     private boolean enableSmoothShading = true;
 
     public void enableStates() {

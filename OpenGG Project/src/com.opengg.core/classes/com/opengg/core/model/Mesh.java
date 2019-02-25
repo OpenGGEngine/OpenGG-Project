@@ -32,21 +32,20 @@ public class Mesh {
 
         vbo = Allocator.allocFloat(vertices.size() * (  (genAnim?VBO_ANIM:VBO_NOANIM) + (genTangents?3:4) ) );
 
-        for(int i = 0;i < vertices.size();i++){
-            GGVertex vertex = vertices.get(i);
+        for (GGVertex vertex : vertices) {
             Vector3f position = vertex.position;
             vbo.put(position.x).put(position.y).put(position.z);
             Vector3f normal = vertex.normal;
             vbo.put(normal.x).put(normal.y).put(normal.z);
-            if(genTangents) {
+            if (genTangents) {
                 Vector3f tangent = vertex.tangent;
                 vbo.put(tangent.x).put(tangent.y).put(tangent.z);
-            }else{
+            } else {
                 vbo.put(0f).put(0f).put(0f).put(0f);
             }
             Vector2f uv = vertex.uvs;
             vbo.put(uv.x).put(uv.y);
-            if(genAnim){
+            if (genAnim) {
                 vbo.put(vertex.jointIndices.x).put(vertex.jointIndices.y).put(vertex.jointIndices.z).put(vertex.jointIndices.w);
                 vbo.put(vertex.weights.x).put(vertex.weights.y).put(vertex.weights.z).put(vertex.weights.w);
             }

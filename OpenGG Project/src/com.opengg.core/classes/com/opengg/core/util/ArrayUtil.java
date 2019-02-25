@@ -6,6 +6,10 @@
 
 package com.opengg.core.util;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Random;
+
 /**
  *
  * @author Javier
@@ -47,6 +51,22 @@ public class ArrayUtil {
                 | ((long) (array[offset + 6] & 0xff) << 8)
                 | ((long) (array[offset + 7] & 0xff));
     }
+
+    public static <T> T getRandom(Collection<T> list){
+        if(list.size() == 0) return null;
+
+        var random = new Random().nextInt(list.size());
+        T target = null;
+        int i = 0;
+        var iterator = list.iterator();
+        while (iterator.hasNext()){
+            target = iterator.next();
+            if(i == random) return target;
+        }
+
+        return target;
+    }
+
 
     private ArrayUtil() {
     }

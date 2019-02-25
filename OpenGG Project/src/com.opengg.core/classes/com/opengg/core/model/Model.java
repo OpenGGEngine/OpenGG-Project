@@ -9,7 +9,7 @@ import java.util.HashMap;
 
 public class Model implements Resource {
     public ArrayList<Mesh> meshes = new ArrayList<>();
-    public ArrayList<Material> materials = new ArrayList<Material>();
+    public ArrayList<Material> materials = new ArrayList<>();
     public HashMap<String,GGAnimation> animations = new HashMap<>();
     public boolean isAnim = false;
     public String fileLocation;

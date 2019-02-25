@@ -14,23 +14,23 @@ import com.opengg.core.render.drawn.Drawable;
  * @author Warren
  */
 public class GUIRenderable extends GUIItem{ 
-    Drawable d;
+    Drawable drawable;
     
-    public GUIRenderable(Drawable d,Vector2f screenpos){
-        this.d = d;
+    public GUIRenderable(Drawable drawable, Vector2f screenpos){
+        this.drawable = drawable;
         this.setPositionOffset(screenpos);
     }
   
     public GUIRenderable(){}
     
     public void setDrawable(Drawable d){
-        this.d = d;
+        this.drawable = d;
     }
     
     public void render(){
         if(enabled){
-            d.setMatrix(Matrix4f.translate(getPosition().x, getPosition().y, layer));
-            d.render();
+            drawable.setMatrix(Matrix4f.translate(getPosition().x, getPosition().y, layer));
+            drawable.render();
         }
         
     }

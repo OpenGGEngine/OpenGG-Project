@@ -16,7 +16,7 @@ import java.util.Map;
 public class OtherFont {
 
     //Lets define them characters shall we
-    private final Map<Integer, String> CHARS = new HashMap<Integer, String>() {{
+    private final Map<Integer, String> CHARS = new HashMap<>() {{
 
 
     }};
