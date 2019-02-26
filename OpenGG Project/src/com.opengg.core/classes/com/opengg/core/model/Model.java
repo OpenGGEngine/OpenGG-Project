@@ -11,6 +11,7 @@ public class Model implements Resource {
     public ArrayList<Mesh> meshes = new ArrayList<>();
     public ArrayList<Material> materials = new ArrayList<Material>();
     public HashMap<String,GGAnimation> animations = new HashMap<>();
+    GGAnimation currentAnimation;
     public boolean isAnim = false;
     public String fileLocation;
     private String name;
@@ -40,6 +41,14 @@ public class Model implements Resource {
 
     public ArrayList<Material> getMaterials() {
         return materials;
+    }
+
+    public void setAnimation(String name){
+        currentAnimation = animations.get(name);
+    }
+
+    public void setAnimationProgress(double value){
+        currentAnimation.current = value;
     }
 
     @Override
