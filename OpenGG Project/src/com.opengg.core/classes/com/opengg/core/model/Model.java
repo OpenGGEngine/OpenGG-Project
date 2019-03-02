@@ -9,13 +9,14 @@ import java.util.HashMap;
 
 public class Model implements Resource {
     public ArrayList<Mesh> meshes = new ArrayList<>();
-    public ArrayList<Material> materials = new ArrayList<Material>();
+    public ArrayList<Material> materials = new ArrayList<>();
     public HashMap<String,GGAnimation> animations = new HashMap<>();
     GGAnimation currentAnimation;
     public boolean isAnim = false;
     public String fileLocation;
     private String name;
     public GGNode root;
+    public long exportConfig;
 
     public Model(ArrayList<Mesh> meshes, String name){
         this.meshes = meshes;
