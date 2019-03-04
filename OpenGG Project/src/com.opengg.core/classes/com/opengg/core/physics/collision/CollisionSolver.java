@@ -177,9 +177,9 @@ public class CollisionSolver {
         Matrix4f h1matrix = new Matrix4f().translate(h1.getPosition()).rotate(h1.getRotation()).scale(h1.getScale());
 
         var points = h1.vertices.stream()
-                .map(Vector4f::new)
+                .map(v -> new Vector4f(v))
                 .map(v -> v.multiply(h1matrix))
-                .map(Vector4f::truncate)
+                .map(v -> v.truncate())
                 .filter(v -> v.y < PhysicsEngine.getInstance().getConstants().BASE)
                 .collect(Collectors.toList());
 

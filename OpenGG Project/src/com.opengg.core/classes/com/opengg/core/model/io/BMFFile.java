@@ -4,7 +4,9 @@ import com.opengg.core.console.GGConsole;
 import com.opengg.core.engine.Resource;
 import com.opengg.core.model.*;
 import com.opengg.core.model.process.ModelProcess;
+import com.opengg.core.physics.collision.ConvexHull;
 import com.opengg.core.system.Allocator;
+import com.opengg.core.util.GGInputStream;
 
 import java.io.*;
 import java.nio.ByteBuffer;
@@ -21,20 +23,22 @@ import static org.lwjgl.util.lz4.LZ4.*;
 import static org.lwjgl.util.lz4.LZ4Frame.LZ4F_isError;
 
 public class BMFFile extends ModelProcess {
+    public static long MATERIAL = 1,NODE = 2,BONES = 4,ANIMATIONS=8,CONVEXHULL=16;
     private static final int VERSION = 1;
     private static final String HEADER_START = "OPENGG-BMF";
 
-    public void writeModel(Model model, String destination) throws IOException {
-        FileOutputStream fOut = new FileOutputStream(new File(model.fileLocation + model.getName()+".bmf"));
+    public void writeModel(Model model, String destination,long config) throws IOException {
+        FileOutputStream fOut = new FileOutputStream(new File(model.fileLocation+"\\" + model.getName()+".bmf"));
         FileChannel fc = fOut.getChannel();
 
         ArrayList<FileSector> sectors = new ArrayList<>();
         sectors.add(new FileSector(model,FileSector.SectorType.VBO));
         sectors.add(new FileSector(model,FileSector.SectorType.IBO));
-        sectors.add(new FileSector(model,FileSector.SectorType.MATERIAL));
-        sectors.add(new FileSector(model,FileSector.SectorType.NODES));
-        sectors.add(new FileSector(model,FileSector.SectorType.BONES));
-        sectors.add(new FileSector(model,FileSector.SectorType.ANIMATIONS));
+        if((config & MATERIAL) == MATERIAL)sectors.add(new FileSector(model,FileSector.SectorType.MATERIAL));
+        if((config & NODE) == NODE)sectors.add(new FileSector(model,FileSector.SectorType.NODES));
+        if((config & BONES) == BONES)sectors.add(new FileSector(model,FileSector.SectorType.BONES));
+        if((config & ANIMATIONS) == ANIMATIONS)sectors.add(new FileSector(model,FileSector.SectorType.ANIMATIONS));
+        if((config & CONVEXHULL) == CONVEXHULL)sectors.add(new FileSector(model,FileSector.SectorType.CONVEXHULL));
 
         ByteBuffer header = generateHeader(sectors);
 
@@ -72,6 +76,10 @@ public class BMFFile extends ModelProcess {
         //Get original file size from first 4 bytes.
 
         int originalsize = fIn.read()<< 24|(fIn.read()&0xFF)<<16|(fIn.read()&0xFF)<< 8|(fIn.read() & 0xFF);
+        if(originalsize>f.getTotalSpace()){
+            GGConsole.error("Corrupt File");
+            return null;
+        }
         ByteBuffer original = memAlloc(originalsize).order(ByteOrder.BIG_ENDIAN);
         ByteBuffer compressed  = Allocator.alloc((int)f.length()-4);
         while(fIn.getChannel().read(compressed) > 0){}
@@ -156,6 +164,13 @@ public class BMFFile extends ModelProcess {
                         model.animations.put(anim.name,anim);
                     }
                     break;
+                case CONVEXHULL:
+                    for(int i2 =0;i2<fs.subBuffers.length;i2++){
+                        ConvexHull hull = new ConvexHull();
+                        hull.deserialize(new GGInputStream(fs.subBuffers[i2]));
+                        model.getMeshes().get(i2).convexHull = hull;
+                    }
+                    break;
                     default:
                         GGConsole.warning("Unknown Sector: " + fs.type);
                         break;
@@ -184,7 +199,7 @@ public class BMFFile extends ModelProcess {
     @Override
     public void process(Model model) {
         try {
-            writeModel(model,model.fileLocation);
+            writeModel(model,model.fileLocation,model.exportConfig);
         } catch (IOException e) {
             e.printStackTrace();
         }

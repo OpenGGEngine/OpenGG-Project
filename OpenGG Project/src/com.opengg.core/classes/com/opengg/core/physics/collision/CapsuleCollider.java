@@ -51,7 +51,7 @@ public class CapsuleCollider extends Collider{
     @Override
     public List<ContactManifold> collide(Collider c) {
         if(c instanceof SphereCollider){
-            List<ContactManifold> cm = CollisionSolver.SphereCapsule((SphereCollider)c, this).stream().map(ContactManifold::reverse).collect(Collectors.toList());
+            List<ContactManifold> cm = CollisionSolver.SphereCapsule((SphereCollider)c, this).stream().map(s -> s.reverse()).collect(Collectors.toList());
 
         }else if(c instanceof CapsuleCollider)
             return CollisionSolver.CapsuleCapsule(this, (CapsuleCollider)c);

@@ -48,7 +48,7 @@ public class Serializer {
 
         var allserializablenames = allcomps
                 .stream()
-                .filter(Component::shouldSerialize)
+                .filter(comp -> comp.shouldSerialize())
                 .map(comp -> comp.getClass().getName())
                 .distinct()
                 .collect(Collectors.toList());

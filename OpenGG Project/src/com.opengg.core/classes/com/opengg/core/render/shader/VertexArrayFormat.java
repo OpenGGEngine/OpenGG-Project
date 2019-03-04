@@ -26,7 +26,11 @@ public class VertexArrayFormat {
     
     private void sort(){
         attribs.sort((c,c2)->{
-            return Integer.compare(c.arrayindex, c2.arrayindex);
+            if(c.arrayindex < c2.arrayindex)
+                return -1;
+            if(c.arrayindex == c2.arrayindex)
+                return 0;
+            return 1;
         });
     }
     

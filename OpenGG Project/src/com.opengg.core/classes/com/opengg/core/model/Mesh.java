@@ -22,7 +22,7 @@ public class Mesh {
 
     private static final int VBO_NOANIM = 8,VBO_ANIM = 16;
 
-    ArrayList<GGVertex> vertices = new ArrayList<>();
+    private ArrayList<GGVertex> vertices = new ArrayList<>();
 
     public GGBone[] bones;
 
@@ -53,6 +53,7 @@ public class Mesh {
         vbo.flip();
         ibo = Allocator.allocInt(indices.length).put(indices).flip();
         this.genAnim = genAnim;
+        this.vertices = vertices;
     }
 
     public Mesh(FloatBuffer vbo, IntBuffer ibo){
@@ -71,6 +72,10 @@ public class Mesh {
     public Drawable getDrawable(){
         DrawnObject temp =new DrawnObject(genAnim?RenderEngine.tangentAnimVAOFormat:RenderEngine.tangentVAOFormat,this.ibo,this.vbo);
         return new MaterialDrawnObject(temp,this.main);
+    }
+
+    public ArrayList<GGVertex> getVertices(){
+        return vertices;
     }
 
 }

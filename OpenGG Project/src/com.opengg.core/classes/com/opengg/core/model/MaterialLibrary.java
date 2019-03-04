@@ -80,8 +80,8 @@ public class MaterialLibrary {
         }
         header.flip();
         main[0] = header;
-        for (ByteBuffer byteBuffer : main) {
-            gather.write(byteBuffer);
+        for(int i =0;i<main.length;i++){
+            gather.write(main[i]);
         }
         //gather.write(main);
     }

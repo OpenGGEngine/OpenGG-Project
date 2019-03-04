@@ -5,7 +5,7 @@ import com.opengg.core.engine.OpenGG;
 import java.util.function.Consumer;
 
 public class GGFuture<T> {
-    private final Object monitor = new Object();
+    private Object monitor = new Object();
     private boolean done;
     private T val;
     private Consumer<T> func = v -> {};

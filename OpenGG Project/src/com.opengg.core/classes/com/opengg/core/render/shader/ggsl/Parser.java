@@ -51,7 +51,7 @@ public class Parser {
         while(!(next(CLOSE_PARENTHESIS))){
             Declaration declaration = new Declaration();
 
-            identifierStack = new ArrayDeque<>();
+            identifierStack = new ArrayDeque<String>();
             while(!(next(COMMA) || next(CLOSE_PARENTHESIS))){
                 identifierStack.push(consume(IDENTIFIER, UNIFORM).y);
             }
@@ -90,17 +90,23 @@ public class Parser {
             exp.value = iff;
             consume(OPEN_PARENTHESIS);
             iff.conditional = parseExpression();
-            accept(OPEN_BRACE).ifPresentOrElse(o -> iff.then = parseBody(), () -> {
+            accept(OPEN_BRACE).ifPresentOrElse(o -> {
+                iff.then = parseBody();
+            }, () -> {
                 Body body2 = new Body();
                 body2.expressions.add(parseStatement());
                 iff.then = body2;
             });
 
-            accept(ELSE).ifPresent(e -> accept(OPEN_BRACE).ifPresentOrElse(o -> iff.els = parseBody(), () -> {
-                Body body2 = new Body();
-                body2.expressions.add(parseStatement());
-                iff.els = body2;
-            }));
+            accept(ELSE).ifPresent(e -> {
+                accept(OPEN_BRACE).ifPresentOrElse(o -> {
+                    iff.els = parseBody();
+                }, () -> {
+                    Body body2 = new Body();
+                    body2.expressions.add(parseStatement());
+                    iff.els = body2;
+                });
+            });
         });
         if(exp.value != null) return exp.value;
         accept(FOR).ifPresent(i -> {
@@ -138,7 +144,9 @@ public class Parser {
         accept(RETURN).ifPresent(i -> {
             Return returnn = new Return();
             accept(SEMICOLON).ifPresentOrElse(ii -> {},
-                    () -> returnn.returnValue = parseExpression());
+                    () -> {
+                        returnn.returnValue = parseExpression();
+                    });
             exp.value = returnn;
         });
         if(exp.value != null) return exp.value;
@@ -182,16 +190,19 @@ public class Parser {
                         BinaryOp op = new BinaryOp();
                         op.op = i.y;
                         subexpressions.add(op);
-                    }, () -> accept(TERNARY_IF).ifPresentOrElse(ii -> {
-                        TernaryOp op = new TernaryOp();
-                        op.conditional = process(subexpressions);
-                        subexpressions.clear();
-                        op.then = parseExpression();
-                        op.els = parseExpression();
-                        rewind(1);
-                        subexpressions.add(op);
                     }, () -> {
-                    }));
+                        accept(TERNARY_IF).ifPresentOrElse(ii -> {
+                            TernaryOp op = new TernaryOp();
+                            op.conditional = process(subexpressions);
+                            subexpressions.clear();
+                            op.then = parseExpression();
+                            op.els = parseExpression();
+                            rewind(1);
+                            subexpressions.add(op);
+                        }, () -> {
+                        });
+
+                    });
         }
 
         consume(CLOSE_PARENTHESIS, SEMICOLON, COMMA, TERNARY_OR);
@@ -254,17 +265,23 @@ public class Parser {
     public Expression parseIndividualValue(){
         LambdaContainer<Expression> container = LambdaContainer.create();
 
-        accept(OPEN_PARENTHESIS).ifPresent(i -> container.value = parseExpression());
+        accept(OPEN_PARENTHESIS).ifPresent(i -> {
+            container.value = parseExpression();
+        });
 
-        accept(IDENTIFIER).ifPresent(i -> accept(OPEN_PARENTHESIS).ifPresentOrElse(p -> {
-            FunctionCall fcall = new FunctionCall();
-            fcall.name = new Identifier(i.y);
-            while(!previous(CLOSE_PARENTHESIS)){
-                fcall.args.expressions.add(parseExpression());
-            }
+        accept(IDENTIFIER).ifPresent(i -> {
+            accept(OPEN_PARENTHESIS).ifPresentOrElse(p -> {
+                FunctionCall fcall = new FunctionCall();
+                fcall.name = new Identifier(i.y);
+                while(!previous(CLOSE_PARENTHESIS)){
+                    fcall.args.expressions.add(parseExpression());
+                }
 
-            container.value = fcall;
-        }, () -> container.value = new Identifier(i.y)));
+                container.value = fcall;
+            }, () -> {
+                container.value = new Identifier(i.y);
+            });
+        });
 
         accept(FLOAT_LITERAL).ifPresent(i -> container.value = new FloatLiteral(Float.parseFloat(i.y)));
 

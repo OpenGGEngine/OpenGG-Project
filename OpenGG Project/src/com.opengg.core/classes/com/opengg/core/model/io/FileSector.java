@@ -3,6 +3,7 @@ package com.opengg.core.model.io;
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.model.*;
 import com.opengg.core.system.Allocator;
+import com.opengg.core.util.GGOutputStream;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -18,7 +19,7 @@ public class FileSector {
     public long length = 0;
 
     //Initialize Sector from Model
-    public FileSector(Model model, SectorType type){
+    public FileSector(Model model, SectorType type) throws IOException {
         switch(type){
             case VBO:
                 genVBOSector(model);
@@ -42,6 +43,8 @@ public class FileSector {
             case ANIMATIONS:
                 genAnimSector(model);
                 break;
+            case CONVEXHULL:
+                genConvexHullSector(model);
         }
         this.type = type;
     }
@@ -130,6 +133,25 @@ public class FileSector {
             index++;
         }
 
+    }
+    private void genConvexHullSector(Model model) throws IOException {
+        this.subBuffers = new ByteBuffer[model.getMeshes().size()];
+        int index =0; length = 0;
+        for(Mesh mesh: model.getMeshes()){
+            ByteBuffer output;
+            if(mesh.convexHull != null){
+                GGOutputStream stream = new GGOutputStream();
+                mesh.convexHull.serialize(stream);
+                byte[] b = stream.asByteArray();
+                output = Allocator.alloc(b.length).put(b);
+            }else{
+                output = Allocator.alloc(4).putInt(0);
+            }
+            output.flip();
+            length+= output.limit();
+            subBuffers[index] = output;
+            index++;
+        }
     }
 
     public enum SectorType{

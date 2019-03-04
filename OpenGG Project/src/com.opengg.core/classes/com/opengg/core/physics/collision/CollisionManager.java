@@ -10,8 +10,10 @@ import com.opengg.core.math.UnorderedTuple;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.physics.PhysicsEntity;
 import com.opengg.core.physics.PhysicsSystem;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -40,7 +42,7 @@ public class CollisionManager {
 
     public static void testForCollisions(PhysicsSystem system){
         collisions = test.stream()
-                .filter(Objects::nonNull)
+                .filter(c -> c != null)
                 .flatMap(c -> system.getColliders().stream()
                         .map(c2 ->new UnorderedTuple<>(c,c2)))
                 .filter(t -> t.x != t.y)
@@ -51,7 +53,7 @@ public class CollisionManager {
     }
 
     public static void processCollisions(){
-        if(parallelProcessing) collisions.parallelStream().forEach(CollisionManager::processCollision);
+        if(parallelProcessing) collisions.parallelStream().forEach((c) -> { processCollision(c); });
         else for(Collision c : collisions) processCollision(c);
 
         for(ColliderGroup next : test){

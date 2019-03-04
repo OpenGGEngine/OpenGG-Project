@@ -31,8 +31,8 @@ public final class ResourceLoader {
     public static void initialize(){
         GGConsole.log("Initializing parallel resource loader with " + THREAD_AMOUNT + " worker thread(s)");
         
-        processor = new ParallelWorkerPool<>(THREAD_AMOUNT,
-                ResourceLoader::processRequest,
+        processor = new ParallelWorkerPool<>(THREAD_AMOUNT, 
+                request -> processRequest(request),
                 (request, value) -> request.future.complete(value));
         
         processor.run();
@@ -83,7 +83,9 @@ public final class ResourceLoader {
     public static Resource get(ResourceRequest request){
         try {
             return prefetch(request).get();
-        } catch (InterruptedException | ExecutionException e) {
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
             e.printStackTrace();
         }
         return null;

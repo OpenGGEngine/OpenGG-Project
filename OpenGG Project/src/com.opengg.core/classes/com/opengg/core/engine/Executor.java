@@ -5,7 +5,6 @@ import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAmount;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,12 +29,14 @@ public class Executor {
     }
 
     public void update(float time) {
-        containers.stream()
-            .peek(c -> c.time -= time)
-            .filter(ExecutorContainer::isComplete)
-            .forEach(ExecutorContainer::execute);
+        var tlist = containers.stream()
+                .peek(c -> c.time -= time)
+                .filter(ExecutorContainer::isComplete)
+                .collect(Collectors.toList());
 
-        containers.removeIf(ExecutorContainer::isComplete);
+        containers.removeAll(tlist);
+
+        tlist.forEach(ExecutorContainer::execute);
     }
 
     /**

@@ -64,4 +64,12 @@ public class ConvexHull extends Collider{
             vertices.add(in.readVector3f());
         }
     }
+    @Override
+    public String toString(){
+        String s = "{";
+        for(Vector3f v: vertices){
+            s+=v.toString();
+        }
+        return s+"}";
+    }
 }

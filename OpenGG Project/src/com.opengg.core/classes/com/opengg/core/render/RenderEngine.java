@@ -283,7 +283,13 @@ public class RenderEngine {
     
     public static void sortOrders(){
         groups.sort((RenderGroup o1, RenderGroup o2) -> {
-            return Integer.compare(o1.getOrder(), o2.getOrder());
+            if(o1.getOrder() > o2.getOrder()){
+                return 1;
+            }else if(o1.getOrder() < o2.getOrder()){
+                return -1;
+            }else{
+                return 0;
+            }
         });
     }
 

@@ -145,7 +145,7 @@ public class OpenGLTexture implements Texture {
     @Override
     public void set3DData(TextureData[] datums){
         long blength = 0;
-        for (TextureData datum : datums) blength += datum.buffer.limit();
+        for(int i = 0; i < datums.length; i++) blength += datums[i].buffer.limit();
         ByteBuffer full = Allocator.alloc((int) blength);
         for(TextureData data : datums) full.put((ByteBuffer)data.buffer);
         
@@ -156,7 +156,7 @@ public class OpenGLTexture implements Texture {
     @Override
     public void set3DSubData(int xoffset, int yoffset, int zoffset, TextureData[] datums){
         long blength = 0;
-        for (TextureData datum : datums) blength += datum.buffer.limit();
+        for(int i = 0; i < datums.length; i++) blength += datums[i].buffer.limit();
         ByteBuffer full = Allocator.alloc((int) blength);
         for(TextureData data : datums){
             full.put((ByteBuffer)data.buffer);

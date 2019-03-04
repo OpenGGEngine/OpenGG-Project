@@ -61,7 +61,7 @@ public class Mesh extends Collider{
         if(c instanceof Mesh)
             return CollisionSolver.MeshMesh(this, (Mesh)c);
         else if(c instanceof ConvexHull){
-            return CollisionSolver.HullMesh((ConvexHull)c, this).stream().map(ContactManifold::reverse).collect(Collectors.toList());
+            return CollisionSolver.HullMesh((ConvexHull)c, this).stream().map(s -> s.reverse()).collect(Collectors.toList());
         }
         else if(c == null)
             return CollisionSolver.MeshGround(this);

@@ -132,6 +132,7 @@ public class AssimpModelLoader {
         }
         GGConsole.log("Loaded model: " + f.getName());
         Model model = new Model(meshes, name);
+        if(scene.mNumMaterials() > 0) model.exportConfig |= BMFFile.MATERIAL;
 
         //Load animations
         if(scene.mNumAnimations() > 0){

@@ -1,5 +1,6 @@
 package com.opengg.core.model;
 
+import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Tuple;
 import com.opengg.core.math.Vector3f;
@@ -12,7 +13,7 @@ import java.util.HashMap;
 
 public class GGAnimation {
     public String name;
-    public double duration,ticksPerSec;
+    public double duration,ticksPerSec,current;
 
     public HashMap<String, AnimNode> animdata = new HashMap<>();
 
@@ -97,5 +98,19 @@ public class GGAnimation {
                     +scalingKeys.size()*(Double.BYTES + 3*Float.BYTES);
         }
     }
+
+    public void setUniforms(GGNode node){
+        recursive(node, node.transformation);
+    }
+    private void recursive(GGNode node, Matrix4f transformation){
+        Matrix4f globalTransform = transformation.multiply(node.transformation);
+        if(animdata.containsKey(node.name)){
+        }
+        for(GGNode child:node.children){
+            recursive(child,globalTransform);
+        }
+    }
+
+
 
 }

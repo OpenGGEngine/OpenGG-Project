@@ -3,44 +3,40 @@ package com.opengg.core.model.process;
 import com.opengg.core.math.FastMath;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.model.GGVertex;
+import com.opengg.core.model.Mesh;
+import com.opengg.core.model.Model;
+import com.opengg.core.model.process.quickhull3d.Point3d;
+import com.opengg.core.model.process.quickhull3d.QuickHull3D;
 import com.opengg.core.physics.collision.ConvexHull;
 
 import java.util.ArrayList;
 
-public class ConvexHullUtil {
+public class ConvexHullUtil extends ModelProcess{
 
-    //Badly implements QuickHull
-
-    private Vector3f[] genInitial(ArrayList<GGVertex> vertices){
-        //Find furthest apart point pair
-        Vector3f point1 = new Vector3f(0), point2= new Vector3f(0);
-        float distance = -10; int p1=0,p2=0;
-        for(int i=0;i<vertices.size();i++){
-            for(int i2=1;i2<vertices.size();i2++){
-                float calDis = Vector3f.distance(vertices.get(i).position,vertices.get(i2).position);
-                if(calDis>distance){
-                    distance = calDis;
-                    point1 = vertices.get(i).position;
-                    point2 = vertices.get(i2).position;
-                    p1 = i;
-                    p2 = i2;
-                }
-            }
-        }
-        //Find farthest point from line
-        distance = -10;
-        Vector3f point3 = new Vector3f();
-        for(int i=0;i<vertices.size();i++){
-            if(i == p1 || i== p2) continue;
-            float calDis = vertices.get(i).position.distanceTo(FastMath.closestPointTo(point1, point2, vertices.get(i).position, false));
-            if(calDis > distance){
-                distance = calDis;
-                point3 = vertices.get(i).position;
-            }
-        }
-        return null;
-    }
     public static ConvexHull generateCH(ArrayList<GGVertex> vertices){
-        return null;
+        Point3d[] points = new Point3d[vertices.size()];
+        for(int i=0;i<vertices.size();i++){
+            Vector3f point = vertices.get(i).position;
+            points[i] = new Point3d(point.x,point.y,point.z);
+        }
+        QuickHull3D hull = new QuickHull3D();
+        hull.build(points);
+        ArrayList<Vector3f> hullpoints = new ArrayList<>();
+        for(int i=0;i< hull.getVertices().length; i++){
+            Point3d point = hull.getVertices()[i];
+            hullpoints.add(new Vector3f((float)point.x,(float)point.y,(float)point.z));
+        }
+        return new ConvexHull(hullpoints);
+    }
+
+    @Override
+    public void process(Model model) {
+        totaltasks = model.getMeshes().size();
+        for(Mesh mesh : model.getMeshes()){
+            numcompleted++;
+            mesh.convexHull = generateCH(mesh.getVertices());
+            if(this.run != null) broadcast();
+        }
+
     }
 }

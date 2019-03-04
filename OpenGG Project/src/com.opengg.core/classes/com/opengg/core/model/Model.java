@@ -11,10 +11,12 @@ public class Model implements Resource {
     public ArrayList<Mesh> meshes = new ArrayList<>();
     public ArrayList<Material> materials = new ArrayList<>();
     public HashMap<String,GGAnimation> animations = new HashMap<>();
+    GGAnimation currentAnimation;
     public boolean isAnim = false;
     public String fileLocation;
     private String name;
     public GGNode root;
+    public long exportConfig;
 
     public Model(ArrayList<Mesh> meshes, String name){
         this.meshes = meshes;
@@ -40,6 +42,14 @@ public class Model implements Resource {
 
     public ArrayList<Material> getMaterials() {
         return materials;
+    }
+
+    public void setAnimation(String name){
+        currentAnimation = animations.get(name);
+    }
+
+    public void setAnimationProgress(double value){
+        currentAnimation.current = value;
     }
 
     @Override

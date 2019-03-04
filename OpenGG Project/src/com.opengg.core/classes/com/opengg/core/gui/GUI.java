@@ -18,10 +18,6 @@ public class GUI{
     
     public GUI() {}
 
-    public void update(float delta){
-        root.update(delta);
-    }
-
     public void render(){
         root.render();
     }

@@ -47,10 +47,6 @@ public class GUIController {
         activateGUI(name);
     }
 
-    public static void update(float delta){
-        current.forEach(g -> guis.get(g).update(delta));
-    }
-
     public static void render(){
         ShaderController.useConfiguration("gui");
 
