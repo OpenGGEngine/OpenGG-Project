@@ -5,7 +5,6 @@
  */
 package com.opengg.core.world.generators;
 
-import com.opengg.core.world.HeightsGenerator;
 import java.util.Random;
 
 /**

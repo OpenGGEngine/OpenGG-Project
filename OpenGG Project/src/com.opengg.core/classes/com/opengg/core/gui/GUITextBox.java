@@ -23,6 +23,7 @@ public class GUITextBox extends GUIGroup{
     private int textLength;
 
     private boolean complete;
+    private boolean running;
 
     public GUITextBox(Vector2f pos, Vector2f size){
         super(pos);
@@ -98,9 +99,15 @@ public class GUITextBox extends GUIGroup{
         textLength = 0;
     }
 
+    public GUITextBox setRunning(boolean running) {
+        this.running = running;
+        return this;
+    }
+
     public void update(float delta) {
         super.update(delta);
         if (!enabled) return;
+        if(!running) return;
 
         counter += delta;
         if (counter > speed) {

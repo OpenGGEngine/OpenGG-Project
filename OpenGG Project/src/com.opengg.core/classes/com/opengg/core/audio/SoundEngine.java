@@ -27,13 +27,14 @@ import org.lwjgl.openal.ALC;
  * Primary controller and manager for the OpenAL audio engine
  * @author Javier
  */
-public class AudioController {
+public class SoundEngine {
     private static ALCContext context;
     private static ALCDevice device;
     private static boolean initialized;
     private static float gain = 1;
     
     private static final ArrayList<Sound> sounds = new ArrayList<>();
+
     public static void initialize() {
         device = new ALCDevice(null);
 
@@ -132,6 +133,6 @@ public class AudioController {
         ALC.destroy();
     }
 
-    private AudioController() {
+    private SoundEngine() {
     }
 }

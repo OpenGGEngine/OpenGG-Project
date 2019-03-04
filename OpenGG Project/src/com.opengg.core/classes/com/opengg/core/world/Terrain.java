@@ -15,6 +15,8 @@ import com.opengg.core.render.drawn.DrawnObject;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.texture.TextureData;
 import com.opengg.core.system.Allocator;
+import com.opengg.core.world.generators.HeightsGenerator;
+
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -34,16 +36,16 @@ public class Terrain {
 
     private static final int MAX_COLOR = 255 * 255 * 255;
 
-    Drawable d;
-    List<Triangle> mesh;
+    private Drawable drawable;
+    private List<Triangle> mesh;
     
-    float[][] map;
-    int sizex, sizez;
-    float xsquarewidth, zsquarewidth;
+    private float[][] map;
+    private int sizex, sizez;
+    private float xsquarewidth, zsquarewidth;
 
-    float maxHeight = 10;
+    private float maxHeight = 10;
 
-    String source;
+    private String source;
 
     private Terrain(int gridx, int gridz) {
         sizex = gridx;
@@ -233,7 +235,7 @@ public class Terrain {
     }
     
     public Drawable getDrawable(){
-        if(d != null) return d;
+        if(drawable != null) return drawable;
         
         FloatBuffer bf = Allocator.allocFloat(12 * map.length * map[0].length);
         IntBuffer indices = Allocator.allocInt(6 * map.length * map[0].length);
@@ -280,8 +282,8 @@ public class Terrain {
         }
         bf.flip();
         indices.flip();
-        this.d = new DrawnObject(indices,bf);
-        return this.d;
+        this.drawable = new DrawnObject(indices,bf);
+        return this.drawable;
     }
     
     public Vector3f getNormalAt(float x, float z){

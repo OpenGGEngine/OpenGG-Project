@@ -10,7 +10,7 @@ package com.opengg.core.engine;
 import com.opengg.core.Configuration;
 import com.opengg.core.GGInfo;
 import com.opengg.core.animation.AnimationManager;
-import com.opengg.core.audio.AudioController;
+import com.opengg.core.audio.SoundEngine;
 import com.opengg.core.audio.SoundtrackHandler;
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.extension.Extension;
@@ -92,7 +92,7 @@ public final class OpenGG{
         RenderEngine.initialize();
         GGGameConsole.initialize();
         GGDebugRenderer.initialize();
-        AudioController.initialize();
+        SoundEngine.initialize();
 
         BindController.initialize();
         GGConsole.log("Bind Controller initialized");
@@ -316,7 +316,7 @@ public final class OpenGG{
 
     private static void closeEngine(){
         RenderEngine.destroy();
-        AudioController.destroy();
+        SoundEngine.destroy();
         GGConsole.log("Audio controller has been finalized");
         WindowController.destroy();
         ThreadManager.destroy();

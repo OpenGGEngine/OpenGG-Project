@@ -7,7 +7,7 @@
 package com.opengg.core.engine;
 
 import com.opengg.core.Configuration;
-import com.opengg.core.audio.AudioController;
+import com.opengg.core.audio.SoundEngine;
 import com.opengg.core.audio.SoundtrackHandler;
 import com.opengg.core.console.ConsoleListener;
 import com.opengg.core.console.GGConsole;
@@ -46,7 +46,7 @@ public class OpenGGCommandExtender implements ConsoleListener{
                 if(command.argCount == 1){
                     try{
                         float vol = Float.parseFloat(command.args[0]);
-                        AudioController.setGlobalGain(vol);
+                        SoundEngine.setGlobalGain(vol);
                         GGConsole.log("Set volume to " + vol);
                     }catch(Exception e){
                         GGConsole.error(command.args[0] + " is not a valid volume!");
@@ -65,7 +65,7 @@ public class OpenGGCommandExtender implements ConsoleListener{
             case "snd":
                 if(command.argCount == 1){
                     if(command.args[0].equalsIgnoreCase("restart")){
-                        AudioController.restart();
+                        SoundEngine.restart();
                     }else if(command.args[0].equalsIgnoreCase("next-track")){
                         SoundtrackHandler.getCurrent().next();
                         GGConsole.log("Playing next track");

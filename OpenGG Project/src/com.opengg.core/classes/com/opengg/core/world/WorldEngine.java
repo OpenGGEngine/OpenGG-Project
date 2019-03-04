@@ -55,7 +55,6 @@ public class WorldEngine{
         c.finalizeComponent();
         if(c instanceof RenderComponent)
             c.getWorld().removeRenderable((RenderComponent)c);
-        TransitionEngine.remove(c);
         c.getParent().remove(c);
     }
     
@@ -66,7 +65,6 @@ public class WorldEngine{
     public static void update(float delta){
         removeMarked();
         if(enabled){
-            TransitionEngine.update(delta);
             traverseUpdate(WorldEngine.getCurrent(), delta);
         }
     }

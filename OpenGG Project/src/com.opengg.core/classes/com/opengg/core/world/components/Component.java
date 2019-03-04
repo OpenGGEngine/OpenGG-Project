@@ -10,7 +10,6 @@ import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
-import com.opengg.core.world.AnimationAccessorSet;
 import com.opengg.core.world.World;
 import com.opengg.core.world.WorldEngine;
 
@@ -550,12 +549,6 @@ public abstract class Component{
         this.whenAttachedToWorld = onChange;
     }
 
-    public void getAnimationAccessors(AnimationAccessorSet values){
-        values.addVector3f("position", this::getPositionOffset, this::setPositionOffset);
-        values.addVector3f("scale", this::getScale, this::setScaleOffset);
-        values.addQuaternionf("rotation", this::getRotationOffset, this::setRotationOffset);
-    }
-
     /**
      * Returns a list containing this component's direct children
      * @return
@@ -572,7 +565,7 @@ public abstract class Component{
     public List<Component> getAllDescendants(){
         return Stream.concat(children.stream()
                 .flatMap(child -> child.getAllDescendants().stream()),
-                children.stream())
+                    children.stream())
                 .collect(Collectors.toList());
     }
 
