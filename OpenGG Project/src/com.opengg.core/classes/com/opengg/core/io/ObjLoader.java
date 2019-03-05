@@ -132,19 +132,28 @@ public class ObjLoader {
             String line;
             while ((line = reader.readLine()) != null) {
                 String prefix = line.split(" ")[0];
-                if (prefix.equals("#")) {
-                } else if (prefix.equals("v")) {
-                    m.getVertices().add(parseVertex(line));
-                } else if (prefix.equals("vn")) {
-                    m.getNormals().add(parseNormal(line));
-                } else if (prefix.equals("f")) {
-                    m.getFaces().add(parseFace(m.hasNormals(), line));
-                } else if(prefix.equals("usemtl")) {
-                } else if(prefix.equals("s")) {
-                } else if(prefix.equals("o")) {
-                } else if(prefix.equals("mtllib")) {
-                }else{
-                    throw new RuntimeException("OBJ file contains line which cannot be parsed correctly: " + line);
+                switch (prefix) {
+                    case "#":
+                        break;
+                    case "v":
+                        m.getVertices().add(parseVertex(line));
+                        break;
+                    case "vn":
+                        m.getNormals().add(parseNormal(line));
+                        break;
+                    case "f":
+                        m.getFaces().add(parseFace(m.hasNormals(), line));
+                        break;
+                    case "usemtl":
+                        break;
+                    case "s":
+                        break;
+                    case "o":
+                        break;
+                    case "mtllib":
+                        break;
+                    default:
+                        throw new RuntimeException("OBJ file contains line which cannot be parsed correctly: " + line);
                 }
             }
             reader.close();

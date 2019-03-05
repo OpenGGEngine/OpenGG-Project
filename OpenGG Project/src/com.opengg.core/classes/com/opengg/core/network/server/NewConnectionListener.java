@@ -32,7 +32,7 @@ public class NewConnectionListener implements Runnable{
     
     @Override
     public void run() {
-        while(!close && !OpenGG.getEnded()){
+        while(!close && OpenGG.getEnded()){
             try (Socket s = server.getTCPSocket().accept()) {
                 var ip = s.getInetAddress().getHostAddress();
                 var time = Instant.now();

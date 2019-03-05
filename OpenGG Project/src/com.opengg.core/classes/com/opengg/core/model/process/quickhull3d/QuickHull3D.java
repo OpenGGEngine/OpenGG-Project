@@ -37,6 +37,7 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.io.StreamTokenizer;
 import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -319,8 +320,8 @@ public class QuickHull3D {
 
     private HalfEdge findHalfEdge(Vertex tail, Vertex head) {
         // brute force ... OK, since setHull is not used much
-        for (Iterator it = faces.iterator(); it.hasNext();) {
-            HalfEdge he = ((Face) it.next()).findEdge(tail, head);
+        for (Object face : faces) {
+            HalfEdge he = ((Face) face).findEdge(tail, head);
             if (he != null) {
                 return he;
             }
@@ -349,7 +350,7 @@ public class QuickHull3D {
     private void printQhullErrors(Process proc) throws IOException {
         boolean wrote = false;
         InputStream es = proc.getErrorStream();
-        StringBuffer error = new StringBuffer();
+        StringBuilder error = new StringBuilder();
         while (es.available() > 0) {
             error.append((char) es.read());
             wrote = true;
@@ -398,12 +399,12 @@ public class QuickHull3D {
                     if (stok.ttype != StreamTokenizer.TT_NUMBER) {
                         throw new IllegalArgumentException("Expecting face index");
                     }
-                    indexList.add(0, Integer.valueOf((int) stok.nval));
+                    indexList.add(0, (int) stok.nval);
                 }
                 faceIndices[i] = new int[indexList.size()];
                 int k = 0;
-                for (Iterator it = indexList.iterator(); it.hasNext();) {
-                    faceIndices[i][k++] = ((Integer) it.next()).intValue();
+                for (Object o : indexList) {
+                    faceIndices[i][k++] = (Integer) o;
                 }
             }
             setHull(coords, nump, faceIndices, numf);
@@ -514,8 +515,8 @@ public class QuickHull3D {
     public void triangulate() {
         double minArea = 1000 * charLength * DOUBLE_PREC;
         newFaces.clear();
-        for (Iterator it = faces.iterator(); it.hasNext();) {
-            Face face = (Face) it.next();
+        for (Object face1 : faces) {
+            Face face = (Face) face1;
             if (face.mark == Face.VISIBLE) {
                 face.triangulate(newFaces, minArea);
                 // splitFace (face);
@@ -540,9 +541,7 @@ public class QuickHull3D {
         if (pointBuffer.length < nump) {
             Vertex[] newBuffer = new Vertex[nump];
             vertexPointIndices = new int[nump];
-            for (int i = 0; i < pointBuffer.length; i++) {
-                newBuffer[i] = pointBuffer[i];
-            }
+            System.arraycopy(pointBuffer, 0, newBuffer, 0, pointBuffer.length);
             for (int i = pointBuffer.length; i < nump; i++) {
                 newBuffer[i] = new Vertex();
             }
@@ -715,9 +714,7 @@ public class QuickHull3D {
             }
         }
 
-        for (int i = 0; i < 4; i++) {
-            faces.add(tris[i]);
-        }
+        faces.addAll(Arrays.asList(tris).subList(0, 4));
 
         for (int i = 0; i < numPoints; i++) {
             Vertex v = pointBuffer[i];
@@ -794,9 +791,7 @@ public class QuickHull3D {
      */
     public int[] getVertexPointIndices() {
         int[] indices = new int[numVertices];
-        for (int i = 0; i < numVertices; i++) {
-            indices[i] = vertexPointIndices[i];
-        }
+        System.arraycopy(vertexPointIndices, 0, indices, 0, numVertices);
         return indices;
     }
 
@@ -845,8 +840,8 @@ public class QuickHull3D {
     public int[][] getFaces(int indexFlags) {
         int[][] allFaces = new int[faces.size()][];
         int k = 0;
-        for (Iterator it = faces.iterator(); it.hasNext();) {
-            Face face = (Face) it.next();
+        for (Object face1 : faces) {
+            Face face = (Face) face1;
             allFaces[k] = new int[face.numVertices()];
             getFaceIndices(allFaces[k], face, indexFlags);
             k++;
@@ -907,14 +902,14 @@ public class QuickHull3D {
             Point3d pnt = pointBuffer[vertexPointIndices[i]].pnt;
             ps.println("v " + pnt.x + " " + pnt.y + " " + pnt.z);
         }
-        for (Iterator fi = faces.iterator(); fi.hasNext();) {
-            Face face = (Face) fi.next();
+        for (Object face1 : faces) {
+            Face face = (Face) face1;
             int[] indices = new int[face.numVertices()];
             getFaceIndices(indices, face, indexFlags);
 
             ps.print("f");
-            for (int k = 0; k < indices.length; k++) {
-                ps.print(" " + indices[k]);
+            for (int index : indices) {
+                ps.print(" " + index);
             }
             ps.println("");
         }
@@ -1098,8 +1093,8 @@ public class QuickHull3D {
         HalfEdge hedgeSidePrev = null;
         HalfEdge hedgeSideBegin = null;
 
-        for (Iterator it = horizon.iterator(); it.hasNext();) {
-            HalfEdge horizonHe = (HalfEdge) it.next();
+        for (Object o : horizon) {
+            HalfEdge horizonHe = (HalfEdge) o;
             HalfEdge hedgeSide = addAdjoiningFace(eyeVtx, horizonHe);
             if (isDebugEnabled) {
                 GGConsole.log("new face: " + hedgeSide.face.getVertexString());
@@ -1251,8 +1246,8 @@ public class QuickHull3D {
     protected boolean checkFaces(double tol, PrintStream ps) {
         // check edge convexity
         boolean convex = true;
-        for (Iterator it = faces.iterator(); it.hasNext();) {
-            Face face = (Face) it.next();
+        for (Object face1 : faces) {
+            Face face = (Face) face1;
             if (face.mark == Face.VISIBLE && !checkFaceConvexity(face, tol, ps)) {
                 convex = false;
             }
@@ -1313,8 +1308,8 @@ public class QuickHull3D {
 
         for (int i = 0; i < numPoints; i++) {
             Point3d pnt = pointBuffer[i].pnt;
-            for (Iterator it = faces.iterator(); it.hasNext();) {
-                Face face = (Face) it.next();
+            for (Object face1 : faces) {
+                Face face = (Face) face1;
                 if (face.mark == Face.VISIBLE) {
                     dist = face.distanceToPlane(pnt);
                     if (dist > pointTol) {

@@ -81,13 +81,7 @@ public abstract class ParticleEmitter extends RenderComponent{
     
     @Override
     public void update(float delta) {
-        Iterator<Particle> screwconcurrent = particles.iterator();
-        while(screwconcurrent.hasNext()){
-            Particle p2 = screwconcurrent.next();
-            if(p2.update(delta)){
-                screwconcurrent.remove();             
-            }
-        }
+        particles.removeIf(p2 -> p2.update(delta));
     }
     
     @Override

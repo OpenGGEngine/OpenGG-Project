@@ -15,10 +15,7 @@ import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.opengg.core.physics.collision.ContactManifold.averageContactManifolds;
@@ -95,7 +92,7 @@ public class ColliderGroup extends PhysicsObject{
                             .map(s2 -> new UnorderedTuple<>(s,s2)))
                 .distinct()
                 .flatMap(t -> t.x.collide(t.y).stream())
-                .filter(t -> t != null)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
         return Optional.ofNullable(!collisions.isEmpty() ? new Collision(this, other, averageContactManifolds(collisions)) : null);

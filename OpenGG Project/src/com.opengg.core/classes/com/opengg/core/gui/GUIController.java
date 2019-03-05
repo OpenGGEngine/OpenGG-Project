@@ -53,6 +53,11 @@ public class GUIController {
         if(!enabled) return;
         current.stream().map(guis::get).forEach(GUI::render);
     }
+
+    public static void update(float delta){
+        current.stream().map(guis::get).forEach(gui -> gui.update(delta));
+
+    }
     
     public static GUI get(String name){
         return guis.get(name);

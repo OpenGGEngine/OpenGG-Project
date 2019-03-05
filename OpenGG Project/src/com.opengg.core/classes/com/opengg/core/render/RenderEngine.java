@@ -283,13 +283,7 @@ public class RenderEngine {
     
     public static void sortOrders(){
         groups.sort((RenderGroup o1, RenderGroup o2) -> {
-            if(o1.getOrder() > o2.getOrder()){
-                return 1;
-            }else if(o1.getOrder() < o2.getOrder()){
-                return -1;
-            }else{
-                return 0;
-            }
+            return Integer.compare(o1.getOrder(), o2.getOrder());
         });
     }
 
@@ -500,7 +494,7 @@ public class RenderEngine {
 
     public static boolean validateInitialization() {
         if(!GGInfo.isServer() && !initialized) throw new RenderException("OpenGL is not initialized!");
-        return initialized;
+        return !initialized;
     }
     
     public static void destroy(){

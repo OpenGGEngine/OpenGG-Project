@@ -21,6 +21,10 @@ public class GUI{
     public void render(){
         root.render();
     }
+
+    public void update(float delta){
+        root.update(delta);
+    }
     
     public void addItem(String name, GUIItem item){
         root.addItem(name, item);

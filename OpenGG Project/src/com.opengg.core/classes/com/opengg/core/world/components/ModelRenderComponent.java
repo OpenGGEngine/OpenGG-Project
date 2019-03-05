@@ -39,9 +39,7 @@ public class ModelRenderComponent extends RenderComponent implements ResourceUse
         this.model = model;
         this.setFormat(model.isAnim? RenderEngine.tangentAnimVAOFormat: RenderEngine.tangentVAOFormat);
 
-        OpenGG.asyncExec(() -> {
-            setDrawable(model.getDrawable());
-        });
+        OpenGG.asyncExec(() -> setDrawable(model.getDrawable()));
     }
     
     @Override
@@ -55,9 +53,7 @@ public class ModelRenderComponent extends RenderComponent implements ResourceUse
         super.deserialize(in);
         String path = in.readString();
         model = Resource.getModel(path);
-        OpenGG.asyncExec(() -> {
-            setDrawable(model.getDrawable());
-        });
+        OpenGG.asyncExec(() -> setDrawable(model.getDrawable()));
     }
 
     @Override

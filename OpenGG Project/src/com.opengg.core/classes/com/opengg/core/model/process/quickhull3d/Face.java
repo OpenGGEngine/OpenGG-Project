@@ -74,8 +74,8 @@ class Face {
     public static Face create(Vertex[] vtxArray, int[] indices) {
         Face face = new Face();
         HalfEdge hePrev = null;
-        for (int i = 0; i < indices.length; i++) {
-            HalfEdge he = new HalfEdge(vtxArray[indices[i]], face);
+        for (int index : indices) {
+            HalfEdge he = new HalfEdge(vtxArray[index], face);
             if (hePrev != null) {
                 he.setPrev(hePrev);
                 hePrev.setNext(he);

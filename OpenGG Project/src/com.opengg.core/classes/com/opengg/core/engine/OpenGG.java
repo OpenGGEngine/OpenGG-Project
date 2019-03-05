@@ -18,6 +18,7 @@ import com.opengg.core.extension.ExtensionManager;
 import static com.opengg.core.render.window.RenderUtil.endFrame;
 import static com.opengg.core.render.window.RenderUtil.startFrame;
 
+import com.opengg.core.gui.GUIController;
 import com.opengg.core.io.input.mouse.MouseController;
 import com.opengg.core.network.NetworkEngine;
 import com.opengg.core.physics.PhysicsEngine;
@@ -198,6 +199,7 @@ public final class OpenGG{
         Executor.getExecutor().update(delta);
         ExtensionManager.update(delta);
         WorldEngine.update(delta);
+        GUIController.update(delta);
         AnimationManager.update(delta);
         PhysicsEngine.updatePhysics(delta);
         getApp().update(delta);
@@ -301,7 +303,7 @@ public final class OpenGG{
      * @return If marked or actually has ended
      */
     public static boolean getEnded(){
-        return GGInfo.isEnded();
+        return !GGInfo.isEnded();
     }
 
     /**

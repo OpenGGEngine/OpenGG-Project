@@ -9,6 +9,7 @@ import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -16,11 +17,11 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class OldModel {
 
-    private final List<Vector3f> vertices = new ArrayList<Vector3f>();
-    private final List<Vector2f> textureCoordinates = new ArrayList<Vector2f>();
-    private final List<Vector3f> normals = new ArrayList<Vector3f>();
-    private final List<Face> faces = new ArrayList<Face>();
-    private final HashMap<String, Material> materials = new HashMap<String, Material>();
+    private final List<Vector3f> vertices = new ArrayList<>();
+    private final List<Vector2f> textureCoordinates = new ArrayList<>();
+    private final List<Vector3f> normals = new ArrayList<>();
+    private final List<Face> faces = new ArrayList<>();
+    private final HashMap<String, Material> materials = new HashMap<>();
     private boolean enableSmoothShading = true;
 
     public void enableStates() {
@@ -76,9 +77,9 @@ public class OldModel {
         public String toString() {
             return "Material{" +
                     "specularCoefficient=" + specularCoefficient +
-                    ", ambientColour=" + ambientColour +
-                    ", diffuseColour=" + diffuseColour +
-                    ", specularColour=" + specularColour +
+                    ", ambientColour=" + Arrays.toString(ambientColour) +
+                    ", diffuseColour=" + Arrays.toString(diffuseColour) +
+                    ", specularColour=" + Arrays.toString(specularColour) +
                     '}';
         }
 

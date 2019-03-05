@@ -25,7 +25,7 @@ public class NativeOpenGLPureVertexArrayObject implements PureVertexArrayObject{
      * Creates a Vertex Array Object (VAO).
      */
     public NativeOpenGLPureVertexArrayObject() {
-        if(!RenderEngine.validateInitialization()) id = -1;
+        if(RenderEngine.validateInitialization()) id = -1;
         else id = glGenVertexArrays();
     }
 
@@ -34,7 +34,7 @@ public class NativeOpenGLPureVertexArrayObject implements PureVertexArrayObject{
      */
     @Override
     public void bind() {
-        if(!RenderEngine.validateInitialization()) return;
+        if(RenderEngine.validateInitialization()) return;
         glBindVertexArray(id);
     }
 
@@ -43,7 +43,7 @@ public class NativeOpenGLPureVertexArrayObject implements PureVertexArrayObject{
      */
     @Override
     public void delete(){
-        if(!RenderEngine.validateInitialization()) return;
+        if(RenderEngine.validateInitialization()) return;
         glDeleteVertexArrays(id);
     }
 
@@ -61,7 +61,7 @@ public class NativeOpenGLPureVertexArrayObject implements PureVertexArrayObject{
      */
     @Override
     public void unbind(){
-        if(!RenderEngine.validateInitialization()) return;
+        if(RenderEngine.validateInitialization()) return;
         glBindVertexArray(0);
     }
 }

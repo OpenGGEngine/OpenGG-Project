@@ -279,10 +279,10 @@ public interface Texture {
 
     static Texture ofColor(byte r, byte g, byte b, byte a){
         TextureData data = new TextureData(1,1,4, Allocator.alloc(4)
-                .put((byte) r)
-                .put((byte) g)
-                .put((byte) b)
-                .put((byte) a)
+                .put(r)
+                .put(g)
+                .put(b)
+                .put(a)
                 .flip(),
                 "internal");
 
