@@ -5,6 +5,7 @@
  */
 package com.opengg.core.world.components;
 
+import com.opengg.core.console.GGConsole;
 import com.opengg.core.engine.OpenGG;
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.engine.Resource;
@@ -35,9 +36,17 @@ public class ModelRenderComponent extends RenderComponent implements ResourceUse
         return model;
     }
     
-    public void setModel(Model model){
+    public void setModel(Model model) {
         this.model = model;
-        this.setFormat(model.isAnim? RenderEngine.tangentAnimVAOFormat: RenderEngine.tangentVAOFormat);
+        boolean hastan = model.vaoFormat.contains("tangent");
+        boolean hasanim = model.vaoFormat.contains("anim");
+        if(hastan&&hasanim){
+        }else if(hastan){
+            this.setFormat(RenderEngine.tangentVAOFormat);
+        }else if(hasanim){
+
+        }else{
+        }
 
         OpenGG.asyncExec(() -> setDrawable(model.getDrawable()));
     }

@@ -44,6 +44,7 @@ public class AssimpModelLoader {
 
         boolean animationsEnabled = false;
         boolean generateHulls = false;
+        boolean generatedTangent = false;
 
         for(int i = 0;i<pMeshes.capacity();i++){
             AIMesh mesh = AIMesh.create(pMeshes.get());
@@ -57,6 +58,7 @@ public class AssimpModelLoader {
             GGBone[] bones = new GGBone[mesh.mNumBones()];
 
             boolean hasTangents = mesh.mTangents() == null;
+            generatedTangent = !hasTangents;
             boolean hasNormal = mesh.mNormals() == null;
             boolean hasUVs = mesh.mTextureCoords(0) == null;
 
@@ -132,6 +134,15 @@ public class AssimpModelLoader {
         }
         GGConsole.log("Loaded model: " + f.getName());
         Model model = new Model(meshes, name);
+        String formatConfig ="{";
+        if(animationsEnabled){
+            formatConfig+="anim_";
+        }
+        if(generatedTangent){
+            formatConfig+="tangent_";
+        }
+        model.vaoFormat = formatConfig;
+        System.out.println(model.vaoFormat);
         if(scene.mNumMaterials() > 0) model.exportConfig |= BMFFile.MATERIAL;
 
         //Load animations
