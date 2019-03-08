@@ -43,6 +43,7 @@ public class Material {
     public String dispFilename = "";
     public String bumpFilename = "";
     public String emmFilename ="";
+    public String aoFilename = "";
     public int reflType =0;
     public String reflFilename = "";
     public Texture Kd = null;
@@ -75,12 +76,14 @@ public class Material {
         this.ks = new Vector3f(b.getFloat(), b.getFloat(), b.getFloat());
         this.mapKdFilename = readString(b);
         this.hascolmap = !this.mapKdFilename.equals("");
+        this.mapKsFilename = readString(b);
         this.mapNsFilename = readString(b);
         this.hasspecmap = !this.mapNsFilename.equals("");
         this.bumpFilename = readString(b);
         this.hasnormmap = !this.bumpFilename.equals("");
         this.emmFilename = readString(b);
         this.hasemm = !this.emmFilename.equals("");
+        this.aoFilename = readString(b);
         this.nsExponent = b.getFloat();
     }
 
@@ -213,19 +216,23 @@ public class Material {
 
     public ByteBuffer toBuffer() throws UnsupportedEncodingException {
         
-        ByteBuffer b = ByteBuffer.allocate(4 +  4 + (name.length() ) + (3 * (4 * 3)) + 4 + (this.mapKdFilename.length() ) + 4 + (this.mapNsFilename.length() ) + 4 + (this.bumpFilename.length() ) +  4 +(this.emmFilename.length()));
+        ByteBuffer b = ByteBuffer.allocate(4 +  4 + (name.length() ) + (3 * (4 * 3)) + 4 + (this.mapKdFilename.length() ) + 4 + (this.mapNsFilename.length() ) + 4 + (this.bumpFilename.length() )
+                +  4 +(this.emmFilename.length())+  4 +(this.mapKsFilename.length())+  4 +(this.aoFilename.length()));
         writeString(name,b);
         b.put(ka.toByteArray()).put(kd.toByteArray()).put(ks.toByteArray());
         writeString(mapKdFilename,b);
+        writeString(mapKsFilename,b);
         writeString(mapNsFilename,b);
         writeString(bumpFilename,b);
         writeString(emmFilename,b);
+        writeString(aoFilename,b);
         b.putFloat((float)nsExponent);
         return b.flip();
     }
 
     public int getCap() {
-        return 4 + 4+(name.length()) + (3 * (4 * 3)) + 4 + (this.mapKdFilename.length()) + 4 + (this.mapKsFilename.length()) + 4 + (bumpFilename.length());
+        return 4 +  4 + (name.length() ) + (3 * (4 * 3)) + 4 + (this.mapKdFilename.length() ) + 4 + (this.mapNsFilename.length() ) + 4 + (this.bumpFilename.length() )
+                +  4 +(this.emmFilename.length())+  4 +(this.mapKsFilename.length())+  4 +(this.aoFilename.length());
     }
 
 }
