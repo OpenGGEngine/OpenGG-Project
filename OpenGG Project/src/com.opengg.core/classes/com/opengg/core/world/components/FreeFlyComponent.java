@@ -31,7 +31,7 @@ public class FreeFlyComponent extends ControlledComponent implements Actionable,
     private Vector3f vel = new Vector3f();
 
     private float rotspeed = 30;
-    private float speed = 1;
+    private float speed = 5;
     private final WorldObject head;
     
     public FreeFlyComponent(){
@@ -49,7 +49,6 @@ public class FreeFlyComponent extends ControlledComponent implements Actionable,
         if(isCurrentUser()){
             Vector2f mousepos = getMouse();
             currot = new Vector3f(mousepos.y, mousepos.x, 0);
-            currot = new Vector3f(0,0,0);
             this.setRotationOffset(new Quaternionf(currot));
 
             vel = this.getRotation().transform(new Vector3f(control).multiply(delta * speed));

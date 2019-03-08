@@ -15,8 +15,8 @@ import java.util.Queue;
 public class GGDebugRenderer implements KeyboardListener {
     private static boolean render = false;
 
-    private static double computedFramerate;
-    private static Queue<Integer> lastFrames = new LinkedList<>();
+    private static double computedFramerate = 0.1f;
+    private static Queue<Float> lastFrames = new LinkedList<>();
 
     private static Font font = Resource.getTruetypeFont("consolas.ttf");
     private static Text displaytext = Text.from("");
@@ -24,17 +24,18 @@ public class GGDebugRenderer implements KeyboardListener {
 
     private static final float FONT_SCALE = 0.1f;
 
+    private static boolean update = false;
+
     public static void initialize(){
         KeyboardController.addKeyboardListener(new GGDebugRenderer());
     }
 
     public static void update(float delta){
-
-        lastFrames.add((int) delta*1000);
-
+        lastFrames.add(delta);
         if (lastFrames.size() > 15){
-            computedFramerate = lastFrames.stream().mapToInt(i -> i).average().getAsDouble();
+            computedFramerate = lastFrames.stream().mapToDouble(i -> i).average().getAsDouble();
             lastFrames.clear();
+            update = true;
         }
     }
 
@@ -42,10 +43,11 @@ public class GGDebugRenderer implements KeyboardListener {
         if(render){
             RenderEngine.setDepthCheck(false);
 
-            if(!displaytext.getText().contains(String.format("%.2f", computedFramerate))){
+            if(update){
+                update = false;
                 displaytext = Text.from(
                                 "Frame time: " + String.format("%.2f", computedFramerate) + "\n" +
-                                "Frame rate: " + String.format("%.2f", 1/(computedFramerate/1000)) + "\n\n" +
+                                "Frame rate: " + String.format("%.2f", 1/(computedFramerate)) + "\n\n" +
                                 "Camera position: (" + String.format("%.2f", RenderEngine.getCurrentView().getPosition().x) + ", " +  String.format("%.2f",     RenderEngine.getCurrentView().getPosition().y) + ", " +  String.format("%.2f", RenderEngine.getCurrentView().getPosition().z) + ")")
                         .maxLineSize(1f)
                         .kerning(true)
@@ -58,6 +60,14 @@ public class GGDebugRenderer implements KeyboardListener {
             RenderEngine.setDepthCheck(true);
 
         }
+    }
+
+    public static float getLastFrameTime(){
+        return (float) computedFramerate;
+    }
+
+    public static void setEnabled(boolean enabled){
+        render = enabled;
     }
 
     @Override

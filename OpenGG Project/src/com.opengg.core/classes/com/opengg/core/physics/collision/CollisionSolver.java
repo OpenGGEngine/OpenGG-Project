@@ -119,11 +119,12 @@ public class CollisionSolver {
                 .translate(h2.getPosition())
                 .rotate(h2.getRotation())
                 .scale(h2.getScale());
+
         List<MinkowskiSet> msum = FastMath.minkowskiDifference(h1.vertices, h2.vertices, h1matrix, h2matrix);        
         Simplex s = FastMath.runGJK(msum);
         
         if(s == null) return new ArrayList<>();
-        //System.out.println(s);
+
         ContactManifold cm = new ContactManifold();
         MinkowskiTriangle contact = FastMath.runEPA(s, msum);
         
@@ -167,9 +168,7 @@ public class CollisionSolver {
                 c.add(mf);
             }
         }
-        
-        
-        
+
         return c;
     }
     
@@ -188,7 +187,7 @@ public class CollisionSolver {
                 .mapToDouble(v -> PhysicsEngine.getInstance().getConstants().BASE - v.y).min().getAsDouble()));
     }
     
-    public static Vector3f barycentric(Vector3f p,Vector3f a, Vector3f b, Vector3f c) {
+    public static Vector3f barycentric(Vector3f p, Vector3f a, Vector3f b, Vector3f c) {
         Vector3f v0 = b.subtract(a), v1 = c.subtract(a), v2 = p.subtract(a);
         float d00 = v0.dot(v0);
         float d01 = v0.dot(v1);
@@ -270,7 +269,6 @@ public class CollisionSolver {
         ContactManifold cm = new ContactManifold();
         return new ContactManifold(cm);*/return null;
     }
-
 
     public static List<ContactManifold> MeshGround(Mesh m){
         ConvexHull h2 = new ConvexHull(m.getPoints());

@@ -44,7 +44,7 @@ public class Serializer {
     }
 
     private void serialize() throws IOException {
-        var allcomps = world.getAll();
+        var allcomps = world.getAllDescendants();
 
         var allserializablenames = allcomps
                 .stream()

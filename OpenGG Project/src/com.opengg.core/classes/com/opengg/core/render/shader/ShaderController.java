@@ -830,14 +830,7 @@ public class ShaderController {
     }
 
     private static void dumpShader(ShaderFileHolder holder){
-        if(Boolean.parseBoolean(Configuration.get("dumpShaders"))){
-            var file = new File(Resource.getShaderPath("debug_" + holder.name));
-            try {
-                Files.write(file.toPath(), Collections.singleton(holder.fulldata), StandardOpenOption.CREATE_NEW);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+
     }
 
     private static void createGLShaderFromFile(){

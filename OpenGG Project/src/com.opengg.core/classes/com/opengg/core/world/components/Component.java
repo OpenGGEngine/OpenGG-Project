@@ -8,6 +8,7 @@ package com.opengg.core.world.components;
 import com.opengg.core.animation.ComponentVarAccessor;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
+import com.opengg.core.render.RenderEngine;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
 import com.opengg.core.world.World;
@@ -299,7 +300,24 @@ public abstract class Component{
     public void setUpdateDistance(float updatedistance) {
         this.updatedistance = updatedistance;
     }
-    
+
+    public final void localUpdate(float delta){
+        if(getWorld() != WorldEngine.getCurrent()) return;
+        if(!getWorld().isForcedUpdate()
+                &&
+                (!isEnabled()
+                        ||
+                        (getUpdateDistance()*getUpdateDistance() < getPosition().distanceToSquared(RenderEngine.getCurrentView().getPosition())
+                                &&
+                                getUpdateDistance() != 0))
+        )
+            return;
+        update(delta);
+        for(Component c2 : getChildren()){
+            c2.localUpdate(delta);
+        }
+    }
+
     /**
      * Called once per update cycle, override for functionality
      * @param delta Delta time since last update cycle in seconds
@@ -343,6 +361,10 @@ public abstract class Component{
         enabled = in.readBoolean(); enabled = true;
         absoluteOffset = in.readBoolean();
         updatedistance = in.readInt();
+    }
+
+    public void onWorldLoad(){
+
     }
 
     public void serializeUpdate(GGOutputStream out) throws IOException{
@@ -500,7 +522,7 @@ public abstract class Component{
     public final void localOnWorldChange(){
         for(Component c : children) c.localOnWorldChange();
         onWorldChange();
-        if(WorldEngine.getCurrent() == this.getWorld()) localOnWorldEnable();
+        if(WorldEngine.getCurrent() == this.getWorld() && this.getWorld().isEnabled()) localOnWorldEnable();
         if(whenAttachedToWorld != null){
             whenAttachedToWorld.run();
         }
