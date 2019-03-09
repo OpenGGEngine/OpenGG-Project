@@ -23,12 +23,15 @@ public class Model implements Resource {
     private String name;
     public GGNode root;
     public long exportConfig;
+    public String vaoFormat;
+
 
     private AABB colliderBox;
 
     public Model(ArrayList<Mesh> meshes, String name){
         this.meshes = meshes;
         this.name = name;
+
     }
 
     public Drawable getDrawable(){

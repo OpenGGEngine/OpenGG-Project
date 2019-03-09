@@ -63,7 +63,7 @@ public class OpenGLFramebuffer implements Framebuffer{
     
     @Override
     public void useEnabledAttachments(){
-        if(!RenderEngine.validateInitialization()) return;
+        if(RenderEngine.validateInitialization()) return;
         fb.bind(GL_FRAMEBUFFER);
        
         int[] attachments = new int[usedAttachments.size()-1];

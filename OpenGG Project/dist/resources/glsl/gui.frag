@@ -30,6 +30,6 @@ vec4 getTex(sampler2D tname){
 void main() {
     fcolor = getTex(Kd);
     //fcolor = vec4(fcolor.a);
-	//if(fcolor.a < 0.1f)
-	//	discard;
+	if(fcolor.a < 0.1f)
+		discard;
 }

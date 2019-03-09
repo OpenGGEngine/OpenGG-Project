@@ -130,7 +130,7 @@ public class BindController implements KeyboardListener, MouseButtonListener{
 
     @Override
     public void keyPressed(int key) {
-        if(!act()) return;
+        if(act()) return;
         for(Bind bind : binds){    
             if(bind.button == key && bind.type == ControlType.KEYBOARD){
                 current.add(bind.action);
@@ -147,7 +147,7 @@ public class BindController implements KeyboardListener, MouseButtonListener{
 
     @Override
     public void keyReleased(int key) {
-        if(!act()) return;
+        if(act()) return;
         for(Bind bind : binds){
             if(bind.button == key && bind.type == ControlType.KEYBOARD){
                 current.remove(bind.action);
@@ -163,7 +163,7 @@ public class BindController implements KeyboardListener, MouseButtonListener{
 
     @Override
     public void onButtonPress(int button){
-        if(!act()) return;
+        if(act()) return;
         for(Bind bind : binds){
             if(bind.button == button && bind.type == ControlType.MOUSEBUTTON){
                 for(ActionTransmitter c : controllers){
@@ -178,7 +178,7 @@ public class BindController implements KeyboardListener, MouseButtonListener{
 
     @Override
     public void onButtonRelease(int button){
-        if(!act()) return;
+        if(act()) return;
         for(Bind bind : binds){
             if(bind.button == button && bind.type == ControlType.MOUSEBUTTON){
                 for(ActionTransmitter c : controllers){
@@ -192,6 +192,6 @@ public class BindController implements KeyboardListener, MouseButtonListener{
     }
 
     private boolean act(){
-        return enabled && !GGInfo.isMenu();
+        return !enabled || GGInfo.isMenu();
     }
 }

@@ -67,4 +67,8 @@ public abstract class GUIItem {
     }
 
     public abstract void render();
+
+    public void update(float delta){
+
+    }
 }

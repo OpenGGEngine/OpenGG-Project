@@ -12,7 +12,7 @@ import com.opengg.core.render.texture.Texture;
 import java.awt.*;
 
 public class GUIButton extends GUIRenderable implements MouseButtonListener{
-    final static Texture CLEAR = Texture.ofColor(Color.RED, 0.5f);
+    final static Texture CLEAR = Texture.ofColor(Color.RED, 0f);
 
     Texture buttonTex;
     Runnable onClick = () -> {};

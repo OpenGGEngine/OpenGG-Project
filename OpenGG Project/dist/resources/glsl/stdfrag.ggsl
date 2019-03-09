@@ -16,7 +16,6 @@ uniform mat4 perspective;
 
 uniform samplerCube cubemap;
 
-
 vec4 getTex(sampler2D tname){
     return texture(tname, textureCoord);
 }

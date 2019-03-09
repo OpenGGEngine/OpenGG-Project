@@ -54,8 +54,7 @@ vec3 calculatenormal( vec3 N, vec3 V, vec3 map, vec2 texcoord){
     return normalize( TBN * map );
 }
 
-void useMaterial(Material mat){
-	color = texture(Kd, textureCoord);
+void useMaterial(Material mat, vec4 color){
 	diffuse = color.rgb;
 
 	emmisive = texture(em, textureCoord).xyz * mat.hasem;
@@ -76,4 +75,8 @@ void useMaterial(Material mat){
 
 	//reflectedcolor = texture(cubemap, normalize(reflect(eyedir,n))).xyz;
 
+}
+
+void useMaterial(Material mat){
+    useMaterial(mat, texture(Kd, textureCoord));
 }

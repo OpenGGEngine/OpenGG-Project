@@ -104,7 +104,7 @@ public class ViewModelComponentRegistry {
                 .collect(Collectors.toMap(v -> v.component, v -> v));
 
         var containers = components.stream()
-                .filter(c -> vmmap.containsKey(c))
+                .filter(vmmap::containsKey)
                 .map(c -> new ViewModelComponentRegisterInfoContainer(c, vmmap.get(c)))
                 .filter(vc -> !regmap.containsKey(vc.component))
                 .peek(vc -> regmap.put(vc.component, vc))

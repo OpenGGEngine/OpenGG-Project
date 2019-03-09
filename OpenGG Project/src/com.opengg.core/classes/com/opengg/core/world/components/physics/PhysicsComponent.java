@@ -75,9 +75,7 @@ public class PhysicsComponent extends Component {
     public void deserialize(GGInputStream in) throws IOException{
         super.deserialize(in);
         int id = in.readInt();
-        this.onWorldChange(() -> {
-            this.entity = this.getWorld().getSystem().getById(id);
-        });
+        this.onWorldChange(() -> this.entity = this.getWorld().getSystem().getById(id));
     }
     
     @Override

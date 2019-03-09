@@ -21,17 +21,17 @@ public class NativeOpenGLRenderbuffer{
     private final int id;
     
     public NativeOpenGLRenderbuffer(){
-        if(!RenderEngine.validateInitialization()) id = -1;
+        if(RenderEngine.validateInitialization()) id = -1;
         else id = glGenRenderbuffers();
     }
     
     public void bind(){
-        if(!RenderEngine.validateInitialization()) return;
+        if(RenderEngine.validateInitialization()) return;
         glBindRenderbuffer(GL_RENDERBUFFER, id);
     }
     
     public void createStorage(int internalformat, int width, int height){
-        if(!RenderEngine.validateInitialization()) return;
+        if(RenderEngine.validateInitialization()) return;
         glRenderbufferStorage(GL_RENDERBUFFER, internalformat, width, height);
     }
 
@@ -40,7 +40,7 @@ public class NativeOpenGLRenderbuffer{
     }
 
     public void delete(){
-        if(!RenderEngine.validateInitialization()) return;
+        if(RenderEngine.validateInitialization()) return;
         glDeleteRenderbuffers(id);
     }
 }

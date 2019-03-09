@@ -37,7 +37,7 @@ public class PacketReceiver implements Runnable{
 
     @Override
     public void run(){
-        while(NetworkEngine.running() && !OpenGG.getEnded()){
+        while(NetworkEngine.running() && OpenGG.getEnded()){
             Packet packet = Packet.receive(socket, packetsize);
             byte[] bytes = packet.getData();
             byte type = packet.getData()[0];

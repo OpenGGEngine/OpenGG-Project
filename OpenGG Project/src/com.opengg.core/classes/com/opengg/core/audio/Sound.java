@@ -56,7 +56,7 @@ public class Sound{
         so = new NativeSound();
         setSound(data);
         setGain(1);
-        AudioController.addAudioSource(this);
+        SoundEngine.addAudioSource(this);
     }
     
     /**
@@ -106,7 +106,7 @@ public class Sound{
      */
     public void setGain(float gain){
         this.gain = gain;
-        so.setGain(gain * AudioController.getGlobalGain());
+        so.setGain(gain * SoundEngine.getGlobalGain());
     }
     
     /**
@@ -147,6 +147,10 @@ public class Sound{
      */
     public NativeSound getSoundSource(){
         return so;
+    }
+
+    public SoundData getData(){
+        return data;
     }
     
     /**

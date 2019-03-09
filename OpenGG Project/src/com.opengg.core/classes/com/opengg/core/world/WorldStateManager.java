@@ -1,7 +1,5 @@
 package com.opengg.core.world;
 
-import com.opengg.core.world.World;
-
 import java.util.HashMap;
 import java.util.Map;
 

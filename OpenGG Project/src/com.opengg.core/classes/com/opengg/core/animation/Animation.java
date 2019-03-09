@@ -112,7 +112,6 @@ public class Animation {
         }
     }
 
-
     /**
      *
      * @param name The name of the object the event applies to.
@@ -175,6 +174,8 @@ public class Animation {
 
         private AccessType accessType;
 
+        private Runnable onComplete = () -> {};
+
         private AnimationStage(double start, double end, String field, AccessType accessType, Function<Double, T> curveFunction, BiConsumer<Object, T> acceptor) {
             this.start = start;
             this.end = end;
@@ -182,6 +183,41 @@ public class Animation {
             this.curveFunction = curveFunction;
             this.accessType = accessType;
             this.acceptor = acceptor;
+        }
+
+        public AnimationStage<T> setStart(double start) {
+            this.start = start;
+            return this;
+        }
+
+        public AnimationStage<T> setEnd(double end) {
+            this.end = end;
+            return this;
+        }
+
+        public AnimationStage<T> setUseLocalTimeReference(boolean useLocalTimeReference) {
+            this.useLocalTimeReference = useLocalTimeReference;
+            return this;
+        }
+
+        public AnimationStage<T> setField(String field) {
+            this.field = field;
+            return this;
+        }
+
+        public AnimationStage<T> setCurveFunction(Function<Double, T> curveFunction) {
+            this.curveFunction = curveFunction;
+            return this;
+        }
+
+        public AnimationStage<T> setAcceptor(BiConsumer<Object, T> acceptor) {
+            this.acceptor = acceptor;
+            return this;
+        }
+
+        public AnimationStage<T> setOnComplete(Runnable onComplete) {
+            this.onComplete = onComplete;
+            return this;
         }
 
         public static <T>  AnimationStage<T> createFieldStage(double start, double end, String field, Function<Double, T> curve){

@@ -3,7 +3,7 @@ package com.opengg.test;
 import com.opengg.core.audio.AudioListener;
 import com.opengg.core.audio.Soundtrack;
 import com.opengg.core.audio.SoundtrackHandler;
-import com.opengg.core.audio.AudioController;
+import com.opengg.core.audio.SoundEngine;
 import com.opengg.core.engine.BindController;
 import com.opengg.core.engine.GGApplication;
 import com.opengg.core.engine.OpenGG;
@@ -78,7 +78,7 @@ public class OpenGGTest extends GGApplication{
         //track.addSong(Resource.getSoundData("stardust.ogg"));
         track.shuffle();
         track.play();   
-        AudioController.setGlobalGain(0f);
+        SoundEngine.setGlobalGain(0f);
         SoundtrackHandler.setSoundtrack(track);
         
         font = Resource.getFont("test.fnt", "test.png");
@@ -104,17 +104,15 @@ public class OpenGGTest extends GGApplication{
 
         GUIController.addAndUse(mainview, "mainview");
 
-        /*WorldEngine.getCurrent().attach(new ModelRenderComponent(Resource.getModel("goldleaf"))
-                .setScaleOffset(new Vector3f(0.01f,0.01f,0.01f))
-                .setRotationOffset(new Quaternionf(new Vector3f(90,0,0))));*/
-
+        WorldEngine.getCurrent().attach(new ModelRenderComponent(Resource.getModel("3DSMusicPark")));
+                //.setScaleOffset(new Vector3f(0.01f,0,0.01f)));
   //      NetworkEngine.connect("localhost", 25565);
 
 
         WorldEngine.getCurrent().attach(new LightComponent(
-                Light.createPointShadow(new Vector3f(0,-10,0), new Vector3f(1), 1000, 512, 512 )));
-                //Light.createDirectional(new Quaternionf(new Vector3f(80f,0f,50)),
-                //        new Vector3f(1,1,1))));
+                //Light.createPointShadow(new Vector3f(0,-10,0), new Vector3f(1), 1000, 512, 512 )));
+                Light.createDirectional(new Quaternionf(new Vector3f(80f,0f,50)),
+                        new Vector3f(1,1,1))));
 
 
         var cube = List.of(
@@ -128,27 +126,8 @@ public class OpenGGTest extends GGApplication{
                 new Vector3f(1,1,1)
         );
 
-        for (int i = 0; i < 3; i++) {
-            var multiple = i  == 0 ? -1 : 1;
-
-            PhysicsComponent object = new PhysicsComponent();
-            object.getEntity().velocity = new Vector3f(10 * -multiple, 5, 0);
-            if(i == 1) object.getEntity().mass = 2;
-            //object.getEntity().setRotation(new Quaternionf(new Vector3f((float)Math.random()*360, 0, 0)));
-            object.getEntity().setPosition(new Vector3f(20f * multiple, (float) (Math.random() * 2f + 30f), -20));
-            object.addCollider(new ColliderGroup(new AABB( 3, 3, 3),  new ConvexHull(cube)));
-
-            WorldEngine.getCurrent().attach(
-                    new RenderComponent(
-                            new TexturedDrawnObject(ObjectCreator.createCube(1),
-                                    i == 0 ? Texture.ofColor(Color.RED) : Texture.ofColor(Color.BLUE))).attach(object));
-
-        }
-
         player = new FreeFlyComponent();
         WorldEngine.getCurrent().attach(player);
-
-
 
         WorldEngine.getCurrent().getRenderEnvironment().setSkybox(new Skybox(Texture.getSRGBCubemap(Resource.getTexturePath("skybox\\majestic_ft.png"),
                 Resource.getTexturePath("skybox\\majestic_bk.png"),

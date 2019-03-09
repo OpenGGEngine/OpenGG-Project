@@ -28,7 +28,7 @@ public class WorldLoader {
         GGConsole.log("Loading world " + worldname + "...");
         
         try (GGInputStream in = new GGInputStream(new FileInputStream(Resource.getWorldPath(worldname)))){
-            int worldver = in.readInt();
+            int worldversion = in.readInt();
             String ggversion = in.readString();
 
             int worldsize = in.readInt();
@@ -36,10 +36,10 @@ public class WorldLoader {
             for(int i = 0; i < worlddata.length; i++){
                 worlddata[i] = in.readByte();
             }
-            World w = Deserializer.deserialize(ByteBuffer.wrap(worlddata));
-            w.setName(worldname);
+            World world = Deserializer.deserialize(ByteBuffer.wrap(worlddata));
+            world.setName(worldname);
             GGConsole.log("World " + worldname + " has been successfully loaded");
-            return w;
+            return world;
         } catch (FileNotFoundException ex) {
             GGConsole.error("Failed to find world named " + worldname);
         } catch (IOException ex) {

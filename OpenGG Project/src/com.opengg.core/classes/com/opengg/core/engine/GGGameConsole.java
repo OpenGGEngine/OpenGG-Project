@@ -2,6 +2,7 @@ package com.opengg.core.engine;
 
 import com.opengg.core.GGInfo;
 import com.opengg.core.console.GGConsole;
+import com.opengg.core.console.GGMessage;
 import com.opengg.core.io.input.keyboard.Key;
 import com.opengg.core.io.input.keyboard.KeyboardCharacterListener;
 import com.opengg.core.io.input.keyboard.KeyboardController;
@@ -67,7 +68,7 @@ public class GGGameConsole implements KeyboardListener, KeyboardCharacterListene
         consolevalue = "";
 
         List<String> messages = GGConsole.getAllMessages().stream()
-                .map(m -> m.toString())
+                .map(GGMessage::toString)
                 .flatMap(m -> Arrays.stream(m.split("\n")))
                 .map(m -> m + "\n")
                 .collect(Collectors.toList());

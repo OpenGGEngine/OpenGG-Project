@@ -30,57 +30,57 @@ public class NativeOpenGLBuffer{
      * Creates a Vertex Buffer Object (VBO).
      */
     public NativeOpenGLBuffer() {
-        if(!RenderEngine.validateInitialization()) id = -1;
+        if(RenderEngine.validateInitialization()) id = -1;
         else id = glGenBuffers();
     }
     
     public void bind(int target) {
-        if(!RenderEngine.validateInitialization()) return;
+        if(RenderEngine.validateInitialization()) return;
         glBindBuffer(target, id);
     }
     
     public void unbind(int target) {
-        if(!RenderEngine.validateInitialization()) return;
+        if(RenderEngine.validateInitialization()) return;
         glBindBuffer(target, 0);
     }
     
     public void uploadData(int target, FloatBuffer data, int usage) {
-        if(!RenderEngine.validateInitialization()) return;
+        if(RenderEngine.validateInitialization()) return;
         glBufferData(target, data, usage);
     }
 
     public void uploadData(int target, long size, int usage) {
-        if(!RenderEngine.validateInitialization()) return;
+        if(RenderEngine.validateInitialization()) return;
         glBufferData(target, size, usage);
     }
 
     public void uploadSubData(int target, long offset, FloatBuffer data) {
-        if(!RenderEngine.validateInitialization()) return;
+        if(RenderEngine.validateInitialization()) return;
         glBufferSubData(target, offset, data);
     }
     
     public void uploadSubData(int target, long offset, IntBuffer data) {
-        if(!RenderEngine.validateInitialization()) return;
+        if(RenderEngine.validateInitialization()) return;
         glBufferSubData(target, offset, data);
     }
 
     public void uploadData(int target, IntBuffer data, int usage) {
-        if(!RenderEngine.validateInitialization()) return;
+        if(RenderEngine.validateInitialization()) return;
         glBufferData(target, data, usage);
     }
     
     public void bindBase(int target, int base){
-        if(!RenderEngine.validateInitialization()) return;
+        if(RenderEngine.validateInitialization()) return;
         glBindBufferBase(target, base, id);
     }
 
     public void delete() {
-        if(!RenderEngine.validateInitialization()) return;
+        if(RenderEngine.validateInitialization()) return;
         glDeleteBuffers(id);
     }
 
     public int getSize(int target){
-        if(!RenderEngine.validateInitialization()) return -1;
+        if(RenderEngine.validateInitialization()) return -1;
         return glGetBufferParameteri(target, GL_BUFFER_SIZE);
     }
     

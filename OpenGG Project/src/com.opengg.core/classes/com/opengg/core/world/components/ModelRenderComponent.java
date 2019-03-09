@@ -5,6 +5,7 @@
  */
 package com.opengg.core.world.components;
 
+import com.opengg.core.console.GGConsole;
 import com.opengg.core.engine.OpenGG;
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.engine.Resource;
@@ -35,13 +36,19 @@ public class ModelRenderComponent extends RenderComponent implements ResourceUse
         return model;
     }
     
-    public void setModel(Model model){
+    public void setModel(Model model) {
         this.model = model;
-        this.setFormat(model.isAnim? RenderEngine.tangentAnimVAOFormat: RenderEngine.tangentVAOFormat);
+        boolean hastan = model.vaoFormat.contains("tangent");
+        boolean hasanim = model.vaoFormat.contains("anim");
+        if(hastan&&hasanim){
+        }else if(hastan){
+            this.setFormat(RenderEngine.tangentVAOFormat);
+        }else if(hasanim){
 
-        OpenGG.asyncExec(() -> {
-            setDrawable(model.getDrawable());
-        });
+        }else{
+        }
+
+        OpenGG.asyncExec(() -> setDrawable(model.getDrawable()));
     }
     
     @Override
@@ -55,9 +62,7 @@ public class ModelRenderComponent extends RenderComponent implements ResourceUse
         super.deserialize(in);
         String path = in.readString();
         model = Resource.getModel(path);
-        OpenGG.asyncExec(() -> {
-            setDrawable(model.getDrawable());
-        });
+        OpenGG.asyncExec(() -> setDrawable(model.getDrawable()));
     }
 
     @Override

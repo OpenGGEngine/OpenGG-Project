@@ -44,11 +44,11 @@ public class Serializer {
     }
 
     private void serialize() throws IOException {
-        var allcomps = world.getAll();
+        var allcomps = world.getAllDescendants();
 
         var allserializablenames = allcomps
                 .stream()
-                .filter(comp -> comp.shouldSerialize())
+                .filter(Component::shouldSerialize)
                 .map(comp -> comp.getClass().getName())
                 .distinct()
                 .collect(Collectors.toList());

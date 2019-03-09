@@ -43,7 +43,7 @@ public class Zone extends Trigger{
     }
     
     public void checkForCollisions(){
-        for(Component c : this.getWorld().getAll()){
+        for(Component c : this.getWorld().getAllDescendants()){
             if(c == this) continue;
             if(lastFrames.contains(c)) continue;
             if(box.isColliding(c.getPosition())){

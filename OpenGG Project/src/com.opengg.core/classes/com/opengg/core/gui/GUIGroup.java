@@ -37,6 +37,14 @@ public class GUIGroup extends GUIItem {
 
     public void clear(){items.clear();}
 
+    @Override
+    public void update(float delta) {
+        if (enabled) {
+            for (GUIItem item : items.values()) {
+                item.update(delta);
+            }
+        }
+    }
 
     @Override
     public void render() {

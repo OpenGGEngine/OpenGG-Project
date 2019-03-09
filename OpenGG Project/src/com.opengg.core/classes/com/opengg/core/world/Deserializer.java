@@ -69,6 +69,8 @@ public class Deserializer {
                     .ifPresentOrElse(comp -> comp.attach(holder.comp), () -> world.attach(holder.comp));
         }
 
+        components.forEach(c -> c.comp.onWorldLoad());
+
         return world;
     }
     

@@ -88,7 +88,7 @@ public class RenderEngine {
         tangentVAOFormat = new VertexArrayFormat();
         tangentVAOFormat.addAttribute(new VertexArrayAttribute("position", 3, 11, GL_FLOAT, 0, 0, false));
         tangentVAOFormat.addAttribute(new VertexArrayAttribute("normal", 3, 11, GL_FLOAT, 3, 0, false));
-        //tangentVAOFormat.addAttribute(new VertexArrayAttribute("tangents", 3, 11, GL_FLOAT, 6, 0, false));
+        tangentVAOFormat.addAttribute(new VertexArrayAttribute("tangents", 3, 11, GL_FLOAT, 6, 0, false));
         tangentVAOFormat.addAttribute(new VertexArrayAttribute("texcoord", 2, 11, GL_FLOAT, 9, 0, false));
 
         tangentAnimVAOFormat = new VertexArrayFormat();
@@ -283,13 +283,7 @@ public class RenderEngine {
     
     public static void sortOrders(){
         groups.sort((RenderGroup o1, RenderGroup o2) -> {
-            if(o1.getOrder() > o2.getOrder()){
-                return 1;
-            }else if(o1.getOrder() < o2.getOrder()){
-                return -1;
-            }else{
-                return 0;
-            }
+            return Integer.compare(o1.getOrder(), o2.getOrder());
         });
     }
 
@@ -500,7 +494,7 @@ public class RenderEngine {
 
     public static boolean validateInitialization() {
         if(!GGInfo.isServer() && !initialized) throw new RenderException("OpenGL is not initialized!");
-        return initialized;
+        return !initialized;
     }
     
     public static void destroy(){
