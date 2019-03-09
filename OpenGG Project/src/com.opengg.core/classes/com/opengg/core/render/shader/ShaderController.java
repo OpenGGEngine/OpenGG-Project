@@ -106,6 +106,9 @@ public class ShaderController {
         use("anim2.vert", "object.frag");
         saveCurrentConfiguration("animation2");
 
+        use("tangent.vert", "tangent.frag");
+        saveCurrentConfiguration("tangent");
+
         use("object.vert", "terrainmulti.frag");
         saveCurrentConfiguration("terrain");
 
@@ -307,7 +310,6 @@ public class ShaderController {
         
         findUniform("material.hasambmap");
         setUniform("material.hasambmap", false);
-
         
         findUniform("material.hascolormap");
         setUniform("material.hascolormap", false);

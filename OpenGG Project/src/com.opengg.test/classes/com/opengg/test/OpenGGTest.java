@@ -11,6 +11,7 @@ import com.opengg.core.gui.GUI;
 import com.opengg.core.gui.GUIButton;
 import com.opengg.core.io.input.mouse.MouseController;
 import com.opengg.core.math.Quaternionf;
+import com.opengg.core.model.io.AssimpModelLoader;
 import com.opengg.core.physics.collision.AABB;
 import com.opengg.core.physics.collision.ColliderGroup;
 import com.opengg.core.physics.collision.ConvexHull;
@@ -38,6 +39,7 @@ import com.opengg.core.world.components.physics.PhysicsComponent;
 import com.opengg.core.world.components.viewmodel.ViewModelComponentRegistry;
 
 import java.awt.*;
+import java.io.IOException;
 import java.util.List;
 
 
@@ -96,22 +98,16 @@ public class OpenGGTest extends GGApplication{
         GUI mainview = new GUI();
         //mainview.getRoot().addItem("aids", new GUIText(text, font, new Vector2f(1,0)));
 
-        GUIButton button = new GUIButton(new Vector2f(0.2f,0.4f),new Vector2f(0,0), Texture.create(Texture.config(),TextureManager.getDefault()));
-        mainview.addItem("coke" ,button);
-        button.setOnClick(() -> System.out.println("Lambdas are bad"));
-        button.setOnRelease(() -> System.out.println("Lambdas are really bad"));
-        MouseController.onButtonPress(button);
-
         GUIController.addAndUse(mainview, "mainview");
 
-        WorldEngine.getCurrent().attach(new ModelRenderComponent(Resource.getModel("3DSMusicPark")));
+        WorldEngine.getCurrent().attach(new ModelRenderComponent(Resource.getModel("pear")));
                 //.setScaleOffset(new Vector3f(0.01f,0,0.01f)));
   //      NetworkEngine.connect("localhost", 25565);
 
 
         WorldEngine.getCurrent().attach(new LightComponent(
                 //Light.createPointShadow(new Vector3f(0,-10,0), new Vector3f(1), 1000, 512, 512 )));
-                Light.createDirectional(new Quaternionf(new Vector3f(80f,0f,50)),
+                Light.createDirectional(new Quaternionf(new Vector3f(0,0f,-50)),
                         new Vector3f(1,1,1))));
 
 
@@ -153,7 +149,7 @@ public class OpenGGTest extends GGApplication{
         
         //RenderEngine.setProjectionData(ProjectionData.getPerspective(100, 0.2f, 3000f));
 
-        WindowController.getWindow().setCursorLock(false);
+        WindowController.getWindow().setCursorLock(true);
     }
 
     @Override

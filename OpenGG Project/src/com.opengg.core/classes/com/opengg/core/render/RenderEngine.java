@@ -88,7 +88,7 @@ public class RenderEngine {
         tangentVAOFormat = new VertexArrayFormat();
         tangentVAOFormat.addAttribute(new VertexArrayAttribute("position", 3, 11, GL_FLOAT, 0, 0, false));
         tangentVAOFormat.addAttribute(new VertexArrayAttribute("normal", 3, 11, GL_FLOAT, 3, 0, false));
-        tangentVAOFormat.addAttribute(new VertexArrayAttribute("tangents", 3, 11, GL_FLOAT, 6, 0, false));
+        tangentVAOFormat.addAttribute(new VertexArrayAttribute("tangent", 3, 11, GL_FLOAT, 6, 0, false));
         tangentVAOFormat.addAttribute(new VertexArrayAttribute("texcoord", 2, 11, GL_FLOAT, 9, 0, false));
 
         tangentAnimVAOFormat = new VertexArrayFormat();

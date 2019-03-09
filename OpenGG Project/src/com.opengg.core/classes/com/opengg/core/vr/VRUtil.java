@@ -18,7 +18,7 @@ public class VRUtil {
                 0,                  0,                  0,              1);
     }
 
-    public static Matrix4f fromVRMatrix44(HmdMatr2ix44 mat){
+    public static Matrix4f fromVRMatrix44(HmdMatrix44 mat){
         return new Matrix4f(
                   mat.m(4*0 + 0), mat.m(4*0 + 1), mat.m(4*0 + 2), mat.m(4*0 + 3)
                 , mat.m(4*1 + 0), mat.m(4*1 + 1), mat.m(4*1 + 2), mat.m(4*1 + 3)

@@ -27,7 +27,7 @@ void main() {
     mat4 modelView = view * model;
 
     textureCoord = texcoord;
-    norm = normal;
+    norm = normalize(vec3(model * vec4(normal,0.0)));
 	
     pos = (model * vec4(position, 1.0f) ).xyz;
     vec4 P = view * vec4(pos, 1.0f);

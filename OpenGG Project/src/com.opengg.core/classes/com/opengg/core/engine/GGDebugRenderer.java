@@ -14,6 +14,8 @@ import java.util.Queue;
 
 public class GGDebugRenderer implements KeyboardListener {
     private static boolean render = false;
+    private static boolean update = true;
+
 
     private static double computedFramerate = 0.1f;
     private static Queue<Float> lastFrames = new LinkedList<>();
@@ -23,8 +25,6 @@ public class GGDebugRenderer implements KeyboardListener {
     private static Drawable display;
 
     private static final float FONT_SCALE = 0.1f;
-
-    private static boolean update = false;
 
     public static void initialize(){
         KeyboardController.addKeyboardListener(new GGDebugRenderer());
