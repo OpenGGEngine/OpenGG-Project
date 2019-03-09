@@ -28,8 +28,8 @@ public class GGTootle extends ModelProcess {
         if(!init) init();
         int index=0;
         for(Mesh mesh: model.meshes) {
-            IntBuffer revised = Allocator.allocInt(mesh.ibo.capacity());
-            switch (TootleOptimize(mesh.vbo, mesh.ibo, 11 * Float.BYTES,
+            IntBuffer revised = Allocator.allocInt(mesh.getIndexBuffer().capacity());
+            switch (TootleOptimize(mesh.getVbo(), mesh.getIndexBuffer(), 11 * Float.BYTES,
                     vcacheSize,
                     null,
                     TOOTLE_CCW,
@@ -38,7 +38,7 @@ public class GGTootle extends ModelProcess {
                     TOOTLE_VCACHE_AUTO,
                     TOOTLE_OVERDRAW_AUTO)) {
                 case TOOTLE_OK:
-                    mesh.ibo = revised;
+                    mesh.setIndexBuffer(revised);
                     break;
                 case TOOTLE_OUT_OF_MEMORY:
                     GGConsole.error("Tootle Out of Memory: Mesh "+index);

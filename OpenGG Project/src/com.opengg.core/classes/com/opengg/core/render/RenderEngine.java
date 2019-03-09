@@ -213,7 +213,7 @@ public class RenderEngine {
         });
 
         paths.add(skybox);
-        paths.add(light);
+        //paths.add(light);
         paths.add(path);
     }
 

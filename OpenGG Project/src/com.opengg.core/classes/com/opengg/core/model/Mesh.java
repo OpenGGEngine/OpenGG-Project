@@ -2,7 +2,6 @@ package com.opengg.core.model;
 
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
-import com.opengg.core.physics.collision.ConvexHull;
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.render.drawn.DrawnObject;
@@ -12,25 +11,26 @@ import com.opengg.core.system.Allocator;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Mesh {
-    public FloatBuffer vbo;
-    public IntBuffer ibo;
-    public Material main = Material.defaultmaterial; public int matIndex = -1;
+    private FloatBuffer vbo;
+    private IntBuffer indexBuffer;
+    private Material material = Material.defaultmaterial; public int matIndex = -1;
     public boolean genAnim = false;
-    public boolean genTangents = true;
+    private boolean genTangents = true;
 
     private static final int VBO_NOANIM = 8,VBO_ANIM = 16;
 
     private ArrayList<GGVertex> vertices = new ArrayList<>();
 
-    public GGBone[] bones;
+    private GGBone[] bones;
 
-    public ConvexHull convexHull;
+    private List<Vector3f> convexHull;
 
     public Mesh(ArrayList<GGVertex> vertices, int[] indices, boolean genAnim){
 
-        vbo = Allocator.allocFloat(vertices.size() * (  (genAnim?VBO_ANIM:VBO_NOANIM) + (genTangents?3:4) ) );
+        vbo = Allocator.allocFloat(vertices.size() * (  (genAnim?VBO_ANIM:VBO_NOANIM) + (genTangents ? 3 : 4) ) );
 
         for (GGVertex vertex : vertices) {
             Vector3f position = vertex.position;
@@ -51,31 +51,67 @@ public class Mesh {
             }
         }
         vbo.flip();
-        ibo = Allocator.allocInt(indices.length).put(indices).flip();
+        setIndexBuffer(Allocator.allocInt(indices.length).put(indices).flip());
         this.genAnim = genAnim;
         this.vertices = vertices;
     }
 
     public Mesh(FloatBuffer vbo, IntBuffer ibo){
-        this.vbo = vbo;
-        this.ibo = ibo;
+        this.setVbo(vbo);
+        this.setIndexBuffer(ibo);
     }
 
-    public ConvexHull getConvexHull() {
+    public boolean hasConvexHull() {
+        return convexHull != null;
+    }
+
+    public List<Vector3f> getConvexHull() {
         return convexHull;
     }
 
-    public Material getMaterial() {
-        return main;
-    }
-
     public Drawable getDrawable(){
-        DrawnObject temp =new DrawnObject(genAnim?RenderEngine.tangentAnimVAOFormat:RenderEngine.tangentVAOFormat,this.ibo,this.vbo);
-        return new MaterialDrawnObject(temp,this.main);
+        DrawnObject temp =new DrawnObject(genAnim?RenderEngine.tangentAnimVAOFormat:RenderEngine.tangentVAOFormat, this.getIndexBuffer(), this.getVbo());
+        return new MaterialDrawnObject(temp, this.getMaterial());
     }
 
     public ArrayList<GGVertex> getVertices(){
         return vertices;
     }
 
+
+    public FloatBuffer getVbo() {
+        return vbo;
+    }
+
+    public void setVbo(FloatBuffer vbo) {
+        this.vbo = vbo;
+    }
+
+    public IntBuffer getIndexBuffer() {
+        return indexBuffer;
+    }
+
+    public void setIndexBuffer(IntBuffer indexBuffer) {
+        this.indexBuffer = indexBuffer;
+    }
+
+    public GGBone[] getBones() {
+        return bones;
+    }
+
+    public void setBones(GGBone[] bones) {
+        this.bones = bones;
+    }
+
+    public void setConvexHull(List<Vector3f> convexHull) {
+        this.convexHull = convexHull;
+    }
+
+    public Material getMaterial() {
+        return material;
+    }
+
+    public void setMaterial(Material material) {
+        this.material = material;
+    }
 }

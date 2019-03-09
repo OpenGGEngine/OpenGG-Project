@@ -65,9 +65,10 @@ public class PhysicsObject {
     }
 
     public Vector3f getScale() {
-        if(parent != null)
+        if(parent != null) {
             return scale.multiply(parent.getScale());
-        
+        }else{
+        }
         return scale;
     }
 

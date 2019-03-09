@@ -17,6 +17,7 @@ import com.opengg.core.render.window.Window;
 import com.opengg.core.render.window.WindowInfo;
 import com.opengg.core.system.Allocator;
 import com.opengg.core.world.Camera;
+import com.opengg.core.world.WorldEngine;
 import org.lwjgl.openvr.*;
 
 import java.nio.FloatBuffer;
@@ -71,8 +72,6 @@ public class VRWindow implements Window {
             if(VRSystem.VRSystem_IsTrackedDeviceConnected(i)){
                 int deviceClass = VRSystem.VRSystem_GetTrackedDeviceClass(i);
 
-                System.out.println(i + "   " + deviceClass);
-
                 if(deviceClass == 4) stationCount++;
                 if(deviceClass == 2){
                     controllerCount++;
@@ -92,8 +91,8 @@ public class VRWindow implements Window {
 
         VRSystem.VRSystem_GetRecommendedRenderTargetSize(w, h);
 
-        recx = (int) (w.get(0) * 1.5);
-        recy = (int) (h.get(0) * 1.5);
+        recx = (int) (w.get(0) * 1);
+        recy = (int) (h.get(0) * 1);
 
         GGConsole.log("Rendering at " + recx + " x " + recy);
 
@@ -224,18 +223,22 @@ public class VRWindow implements Window {
 
         hmdRenderBuffers.free();
 
-       /* var controllerstate = VRControllerState.calloc();
-        var controllerpose = TrackedDevicePose.calloc();
-        VRSystem.VRSystem_GetControllerStateWithPose(ETrackingUniverseOrigin_TrackingUniverseStanding,3, controllerstate, 1, controllerpose);
-        m43 = hmdRenderBuffers.get(0).mDeviceToAbsoluteTracking();
-        matrix = VRUtil.fromVRMatrix43(m43);
+        for(int i = 0; i < 2; i++){
+            var controllerstate = VRControllerState.calloc();
+            var controllerpose = TrackedDevicePose.calloc();
+            VRSystem.VRSystem_GetControllerStateWithPose(ETrackingUniverseOrigin_TrackingUniverseStanding,3+i, controllerstate, 1, controllerpose);
+            m43 = controllerpose.mDeviceToAbsoluteTracking();
+            matrix = VRUtil.fromVRMatrix43(m43);
 
-        if(controllerpose.bPoseIsValid() && controllerpose.bDeviceIsConnected() && controllerpose.eTrackingResult() == ETrackingResult_TrackingResult_Running_OK){
+            Vector3f pos = new Vector3f(matrix.m03, matrix.m13, matrix.m23);
 
+            if(controllerpose.bPoseIsValid() && controllerpose.bDeviceIsConnected() && controllerpose.eTrackingResult() == ETrackingResult_TrackingResult_Running_OK && !pos.equals(new Vector3f(0,0,0))){
+                var comp = WorldEngine.getCurrent().find(i == 0 ? "box" : "box2");
+                comp.setPositionOffset(pos);
+                comp.setRotationOffset(VRUtil.getQuaternionFrom43(m43).invert());
+            }
+        }
 
-            //WorldEngine.getCurrent().find("ballmodel").setPositionOffset(new Vector3f(matrix.m03, matrix.m13, matrix.m23));
-            //WorldEngine.getCurrent().find("ballmodel").setRotationOffset(VRUtil.getQuaternionFrom43(m43));
-        }*/
 
         window.startFrame();
     }

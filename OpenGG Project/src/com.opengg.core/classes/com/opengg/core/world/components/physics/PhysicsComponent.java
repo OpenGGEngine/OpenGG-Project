@@ -24,9 +24,7 @@ public class PhysicsComponent extends Component {
     
     public PhysicsComponent(){
         entity = new PhysicsEntity();
-        this.onWorldChange(() -> {
-            this.getWorld().getSystem().addEntity(entity);
-        });
+        this.onWorldChange(() -> this.getWorld().getSystem().addEntity(entity));
     }
     
     public PhysicsComponent(ColliderGroup collider){
@@ -63,7 +61,7 @@ public class PhysicsComponent extends Component {
 
     @Override
     public void update(float delta) {
-        this.getParent().setPositionOffset(entity.getPosition());
+        this.getParent().setPositionOffset(entity.getPosition().subtract(this.getPositionOffset()));
         this.getParent().setRotationOffset(entity.getRotation());
     }
     

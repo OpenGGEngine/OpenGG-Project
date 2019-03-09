@@ -122,10 +122,10 @@ public class AssimpModelLoader {
             Mesh gmesh  = new Mesh(vertices,indices,animationsEnabled);
 
             if(scene.mNumMaterials() > 0){
-                gmesh.main = materials.get(mesh.mMaterialIndex());
+                gmesh.setMaterial(materials.get(mesh.mMaterialIndex()));
                 gmesh.matIndex = mesh.mMaterialIndex();
             }
-            gmesh.bones = bones;
+            gmesh.setBones(bones);
 
             meshes.add(gmesh);
 

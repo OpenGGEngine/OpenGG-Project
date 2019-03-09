@@ -119,14 +119,12 @@ public class CollisionSolver {
                 .translate(h2.getPosition())
                 .rotate(h2.getRotation())
                 .scale(h2.getScale());
+
         List<MinkowskiSet> msum = FastMath.minkowskiDifference(h1.vertices, h2.vertices, h1matrix, h2matrix);        
         Simplex s = FastMath.runGJK(msum);
-        
         if(s == null) return new ArrayList<>();
-        //System.out.println(s);
         ContactManifold cm = new ContactManifold();
         MinkowskiTriangle contact = FastMath.runEPA(s, msum);
-        
         if(contact == null) return new ArrayList<>();
 
         float distanceFromOrigin = contact.n.dot(contact.a.v);

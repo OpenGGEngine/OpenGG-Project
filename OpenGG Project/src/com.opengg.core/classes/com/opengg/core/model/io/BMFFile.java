@@ -137,8 +137,8 @@ public class BMFFile extends ModelProcess {
                     for(int i2=0;i2<fs.subBuffers.length-1;i2++) material.add(new Material(fs.subBuffers[i2]));
                     for (Mesh mesh : meshes) {
                         mesh.matIndex = fs.subBuffers[fs.subBuffers.length - 1].getInt();
-                        mesh.main = material.get(mesh.matIndex);
-                        mesh.main.texpath = f.getParent() + "\\tex\\";
+                        mesh.setMaterial(material.get(mesh.matIndex));
+                        mesh.getMaterial().texpath = f.getParent() + "\\tex\\";
                     }
                     model.materials = material;
                     break;
@@ -151,7 +151,7 @@ public class BMFFile extends ModelProcess {
                         for(int i3 = 0;i3<numbones;i3++){
                             bones[i3] = new GGBone(fs.subBuffers[i2]);
                         }
-                        model.meshes.get(i2).bones = bones;
+                        model.meshes.get(i2).setBones(bones);
                     }
                     break;
                 case NODES:
@@ -168,7 +168,8 @@ public class BMFFile extends ModelProcess {
                     for(int i2 =0;i2<fs.subBuffers.length;i2++){
                         ConvexHull hull = new ConvexHull();
                         hull.deserialize(new GGInputStream(fs.subBuffers[i2]));
-                        model.getMeshes().get(i2).convexHull = hull;
+                        if(!hull.vertices.isEmpty())
+                            model.getMeshes().get(i2).setConvexHull(hull.vertices);
                     }
                     break;
                     default:

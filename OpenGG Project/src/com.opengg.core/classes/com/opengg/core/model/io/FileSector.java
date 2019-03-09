@@ -2,6 +2,7 @@ package com.opengg.core.model.io;
 
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.model.*;
+import com.opengg.core.physics.collision.ConvexHull;
 import com.opengg.core.system.Allocator;
 import com.opengg.core.util.GGOutputStream;
 
@@ -63,9 +64,9 @@ public class FileSector {
     private void genVBOSector(Model model){
         this.subBuffers = new ByteBuffer[model.meshes.size()];
         for(int i=0;i<model.meshes.size();i++){
-            ByteBuffer sub = Allocator.alloc(model.meshes.get(i).vbo.capacity()*Float.BYTES).order(ByteOrder.BIG_ENDIAN);
-            model.meshes.get(i).vbo.rewind();
-            while(model.meshes.get(i).vbo.hasRemaining())sub.putFloat(model.meshes.get(i).vbo.get());
+            ByteBuffer sub = Allocator.alloc(model.meshes.get(i).getVbo().capacity()*Float.BYTES).order(ByteOrder.BIG_ENDIAN);
+            model.meshes.get(i).getVbo().rewind();
+            while(model.meshes.get(i).getVbo().hasRemaining())sub.putFloat(model.meshes.get(i).getVbo().get());
             this.subBuffers[i] = sub.flip();
             length += sub.limit();
         }
@@ -73,9 +74,9 @@ public class FileSector {
     private void genIBOSector(Model model){
         this.subBuffers = new ByteBuffer[model.meshes.size()];
         for(int i=0;i<model.meshes.size();i++){
-            ByteBuffer sub = Allocator.alloc(model.meshes.get(i).ibo.capacity()*Integer.BYTES).order(ByteOrder.BIG_ENDIAN);
-            model.meshes.get(i).ibo.rewind();
-            while(model.meshes.get(i).ibo.hasRemaining()) sub.putInt(model.meshes.get(i).ibo.get());
+            ByteBuffer sub = Allocator.alloc(model.meshes.get(i).getIndexBuffer().capacity()*Integer.BYTES).order(ByteOrder.BIG_ENDIAN);
+            model.meshes.get(i).getIndexBuffer().rewind();
+            while(model.meshes.get(i).getIndexBuffer().hasRemaining()) sub.putInt(model.meshes.get(i).getIndexBuffer().get());
             this.subBuffers[i]= sub.flip();
             length += sub.limit();
         }
@@ -85,15 +86,15 @@ public class FileSector {
         length = 0;
         for(int i=0;i<model.meshes.size();i++){
             Mesh curmesh = model.meshes.get(i);
-            if(curmesh.bones == null || !curmesh.genAnim){
+            if(curmesh.getBones() == null || !curmesh.genAnim){
                 this.subBuffers[i] = ByteBuffer.allocate(0);
             }else{
-                int boneNameSize = Stream.of(curmesh.bones).mapToInt(o->(4 +o.name.length())).sum();
-                int bufferCap = Integer.BYTES + boneNameSize + (16 * Float.BYTES)*curmesh.bones.length;
+                int boneNameSize = Stream.of(curmesh.getBones()).mapToInt(o->(4 +o.name.length())).sum();
+                int bufferCap = Integer.BYTES + boneNameSize + (16 * Float.BYTES)* curmesh.getBones().length;
                 length+=bufferCap;
                 ByteBuffer boneBuffer = ByteBuffer.allocate(bufferCap);
-                boneBuffer.putInt(curmesh.bones.length);
-                for(GGBone bone:curmesh.bones){
+                boneBuffer.putInt(curmesh.getBones().length);
+                for(GGBone bone: curmesh.getBones()){
                     boneBuffer.putInt(bone.name.length());
                     boneBuffer.put(bone.name.getBytes(StandardCharsets.UTF_8));
                     MLoaderUtils.storeMat4(bone.offset,boneBuffer);
@@ -139,9 +140,9 @@ public class FileSector {
         int index =0; length = 0;
         for(Mesh mesh: model.getMeshes()){
             ByteBuffer output;
-            if(mesh.convexHull != null){
+            if(mesh.getConvexHull() != null){
                 GGOutputStream stream = new GGOutputStream();
-                mesh.convexHull.serialize(stream);
+                new ConvexHull(mesh.getConvexHull()).serialize(stream);
                 byte[] b = stream.asByteArray();
                 output = Allocator.alloc(b.length).put(b);
             }else{
