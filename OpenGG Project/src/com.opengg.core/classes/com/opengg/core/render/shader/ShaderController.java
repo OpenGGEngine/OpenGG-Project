@@ -270,7 +270,7 @@ public class ShaderController {
         setTextureLocation("Kd", 0);
 
         findUniform("terrain");
-        setTextureLocation("terrain", 0);
+        setTextureLocation("terrain", 11);
         
         findUniform("Ka");
         setTextureLocation("Ka", 1);

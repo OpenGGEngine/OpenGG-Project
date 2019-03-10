@@ -32,6 +32,8 @@ public class TextureLoader {
 
         String fpath = Resource.getAbsoluteFromLocal(path);
 
+        fpath = fpath.replace(".tif", ".png");
+
         ByteBuffer image = stbi_load(fpath, w, h, comp, 4);
         if (image == null) {
             Allocator.popStack();

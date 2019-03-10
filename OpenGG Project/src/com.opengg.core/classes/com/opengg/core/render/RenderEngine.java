@@ -28,6 +28,7 @@ import com.opengg.core.world.Camera;
 import com.opengg.core.world.Skybox;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -104,6 +105,7 @@ public class RenderEngine {
         particleVAOFormat.addAttribute(new VertexArrayAttribute("offset", 3, 3, GL_FLOAT, 0, 1, true));
         particleVAOFormat.addAttribute(new VertexArrayAttribute("normal", 3, 12, GL_FLOAT, 7, 0, false));
         particleVAOFormat.addAttribute(new VertexArrayAttribute("texcoord", 2, 12, GL_FLOAT, 10, 0, false));
+        RenderEngine.checkForGLErrors();
 
         defaultvao = new VertexArrayObject(defaultVAOFormat);
 
@@ -282,9 +284,7 @@ public class RenderEngine {
     }
     
     public static void sortOrders(){
-        groups.sort((RenderGroup o1, RenderGroup o2) -> {
-            return Integer.compare(o1.getOrder(), o2.getOrder());
-        });
+        groups.sort(Comparator.comparingInt(RenderGroup::getOrder));
     }
 
     public static void resetConfig(){

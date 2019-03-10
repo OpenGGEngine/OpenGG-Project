@@ -6,12 +6,17 @@
 
 package com.opengg.core.world.components.physics;
 
+import com.opengg.core.engine.OpenGG;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.physics.collision.AABB;
 import com.opengg.core.physics.collision.Collider;
 import com.opengg.core.physics.collision.ColliderGroup;
+import com.opengg.core.util.GGInputStream;
+import com.opengg.core.util.GGOutputStream;
 import com.opengg.core.world.components.Component;
+
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -76,7 +81,26 @@ public class CollisionComponent extends Component{
     public void update(float delta){
         
     }
-    
+
+    @Override
+    public void serialize(GGOutputStream out) throws IOException {
+        super.serialize(out);
+        out.write(collidergroup.id);
+    }
+
+    @Override
+    public void deserialize(GGInputStream in) throws IOException{
+        super.deserialize(in);
+        int id = in.readInt();
+
+        /*OpenGG.asyncExec(() -> {
+           this.collidergroup = this.getWorld().getSystem().getColliderById(id);
+            collidergroup.setPosition(getPosition());
+            collidergroup.setRotation(getRotation());
+            collidergroup.setScale(getScale());
+        });*/
+    }
+
     @Override
     public void finalizeComponent(){
         this.getWorld().getSystem().removeCollider(collidergroup);

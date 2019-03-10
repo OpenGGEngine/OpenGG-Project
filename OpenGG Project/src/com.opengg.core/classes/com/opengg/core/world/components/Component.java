@@ -268,6 +268,10 @@ public abstract class Component{
     public Vector3f getScale(){
         return scale;
     }
+
+    public Vector3f getScaleOffset(){
+        return scaleoffset;
+    }
     
     /**
      * Set whether the position offset should be absolute or take the rotation of the parent into account
@@ -336,7 +340,7 @@ public abstract class Component{
     public void serialize(GGOutputStream out) throws IOException{
         out.write(posoffset);
         out.write(rotoffset);
-        out.write(scale);
+        out.write(scaleoffset);
         out.write(name);
         out.write(enabled);
         out.write(absoluteOffset);
@@ -612,8 +616,10 @@ public abstract class Component{
      */
     public void removeAll(){
         for(var child : children){
-            remove(child);
+            child.changeParent(null);
         }
+
+        children.clear();
     }
     
     /**

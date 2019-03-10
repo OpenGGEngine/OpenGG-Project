@@ -183,8 +183,8 @@ public class CollisionManager {
                 e.velocity = e.velocity.add(jr.add(jf).divide(e.mass));
 
             AABB depthaabb = new AABB(depthchanges, new Vector3f());
-            if(!depthaabb.isColliding(normal.multiply(depth*response.ratio))){
-                depthchanges = normal.multiply(depth*response.ratio);//depthchanges.add(normal.multiply(response.depth));
+            if(!depthaabb.isColliding(normal.multiply(depth))){
+                depthchanges = normal.multiply(depth);//depthchanges.add(normal.multiply(response.depth));
             }
 
             e.grounded = e.velocity.y == 0;

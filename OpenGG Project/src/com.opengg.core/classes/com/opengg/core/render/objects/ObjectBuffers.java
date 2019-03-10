@@ -23,10 +23,10 @@ public class ObjectBuffers {
         FloatBuffer sq = Allocator.allocFloat(4*12);
 
         
-        sq.put(v1.x).put(v1.y).put(z1).put(1).put(0).put(0).put(transparency).put(1f).put(0f).put(0f).put(0).put(0);
-        sq.put(v1.x).put(v2.y).put(z1).put(0).put(1).put(0).put(transparency).put(1f).put(0f).put(0f).put(0).put(1);
-        sq.put(v2.x).put(v2.y).put(z1).put(0).put(0).put(1).put(transparency).put(1f).put(0f).put(0f).put(1).put(1);   
-        sq.put(v2.x).put(v1.y).put(z1).put(0).put(0).put(1).put(transparency).put(1f).put(0f).put(0f).put(1).put(0);           
+        sq.put(v1.x).put(v1.y).put(z1).put(1).put(0).put(0).put(transparency).put(1f).put(1f).put(1f).put(0).put(0);
+        sq.put(v1.x).put(v2.y).put(z1).put(0).put(1).put(0).put(transparency).put(1f).put(1f).put(1f).put(0).put(1);
+        sq.put(v2.x).put(v2.y).put(z1).put(0).put(0).put(1).put(transparency).put(1f).put(1f).put(1f).put(1).put(1);
+        sq.put(v2.x).put(v1.y).put(z1).put(0).put(0).put(1).put(transparency).put(1f).put(1f).put(1f).put(1).put(0);
         sq.flip();
         
         IntBuffer indices = Allocator.allocInt(6);
@@ -119,20 +119,20 @@ public class ObjectBuffers {
     }
     static Buffer[] genQuadPrism(Vector3f c1, Vector3f c2){
         FloatBuffer d = Allocator.allocFloat(8*12);
-        d.put(c1.x).put(c1.y).put(c1.z).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);
-        d.put(c1.x).put(c1.y).put(c2.z).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0).put(1);
-        d.put(c1.x).put(c2.y).put(c2.z).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);
-        d.put(c1.x).put(c2.y).put(c1.z).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0);
-        
+        d.put(c1.x).put(c1.y).put(c1.z).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0).put(1);
+        d.put(c1.x).put(c1.y).put(c2.z).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0).put(0);
+        d.put(c2.x).put(c1.y).put(c2.z).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0);
         d.put(c2.x).put(c1.y).put(c1.z).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);
-        d.put(c2.x).put(c1.y).put(c2.z).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0).put(1);
+
+        d.put(c1.x).put(c2.y).put(c1.z).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0).put(1);
+        d.put(c1.x).put(c2.y).put(c2.z).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0).put(0);
         d.put(c2.x).put(c2.y).put(c2.z).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0);
-        d.put(c2.x).put(c2.y).put(c1.z).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(0).put(0);
+        d.put(c2.x).put(c2.y).put(c1.z).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1).put(1);
         d.flip();
         
         IntBuffer d2 = Allocator.allocInt(6*4);
         d2.put(new int[]{0,1,3,1,2,3});
-        d2.put(new int[]{4,6,7,5,6,7});
+        d2.put(new int[]{4,5,7,5,6,7});
         
         d2.put(0).put(1).put(4).put(1).put(5).put(4);
         d2.put(2).put(3).put(6).put(3).put(7).put(6);

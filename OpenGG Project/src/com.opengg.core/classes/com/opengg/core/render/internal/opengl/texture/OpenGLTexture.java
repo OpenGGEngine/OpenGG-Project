@@ -144,17 +144,23 @@ public class OpenGLTexture implements Texture {
     
     @Override
     public void set3DData(TextureData[] datums){
-        long blength = 0;
-        for (TextureData datum : datums) blength += datum.buffer.limit();
-        ByteBuffer full = Allocator.alloc((int) blength);
-        for(TextureData data : datums) full.put((ByteBuffer)data.buffer);
-        
+        ByteBuffer full = get3DData(datums);
+        full.flip();
+
         tex.setImageData(type, 0, internalformat, datums[0].width, datums[0].height, datums.length, 0, colorformat, datatype, full);
         tdata.addAll(Arrays.asList(datums));
     }
     
     @Override
     public void set3DSubData(int xoffset, int yoffset, int zoffset, TextureData[] datums){
+        get3DData(datums);
+        ByteBuffer full = get3DData(datums);
+        full.flip();
+        tdata.addAll(Arrays.asList(datums));
+        tex.setSubImageData(type, 0, xoffset, yoffset, zoffset, datums[0].width, datums[0].height, datums.length, GL_RGBA, datatype, full);
+    }
+
+    private ByteBuffer get3DData(TextureData[] datums) {
         long blength = 0;
         for (TextureData datum : datums) blength += datum.buffer.limit();
         ByteBuffer full = Allocator.alloc((int) blength);
@@ -162,11 +168,11 @@ public class OpenGLTexture implements Texture {
             full.put((ByteBuffer)data.buffer);
             data.buffer.rewind();
         }
-        full.flip();
-        tdata.addAll(Arrays.asList(datums));
-        tex.setSubImageData(type, 0, xoffset, yoffset, zoffset, datums[0].width, datums[0].height, datums.length, GL_RGBA, datatype, full);
+
+        return full;
     }
-    
+
+
     @Override
     public void generateMipmaps(){
         tex.generateMipmap(type);

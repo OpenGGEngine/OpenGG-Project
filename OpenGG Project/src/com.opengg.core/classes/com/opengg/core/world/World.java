@@ -231,7 +231,11 @@ public class World extends Component{
             }
         }
 
-        physics.serialize(out);
+        GGOutputStream out2 = new GGOutputStream();
+        physics.serialize(out2);
+
+        out.write(out2.asByteArray().length);
+        out.write(out2.asByteArray());
     }
 
     @Override
@@ -246,10 +250,12 @@ public class World extends Component{
             }
         }
 
-
         OpenGG.asyncExec(() -> environment.setSkybox(new Skybox(Texture.create(Texture.cubemapConfig(), datums), 1000)));
 
-        physics.deserialize(in);
+        var size = in.readInt();
+        var data = in.readByteArray(size);
+
+        //physics.deserialize(new GGInputStream(data));
     }
 
     /**
