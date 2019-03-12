@@ -217,6 +217,9 @@ public class ShaderController {
         findUniform("rot");
         setUniform("rot", new Vector3f(0,0,0));
 
+        findUniform("scale");
+        setUniform("scale", new Vector3f(1,1,1));
+
         findUniform("camera");
         setUniform("camera", new Vector3f(0,0,0));
 

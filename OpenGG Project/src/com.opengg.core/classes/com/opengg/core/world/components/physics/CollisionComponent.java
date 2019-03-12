@@ -93,12 +93,12 @@ public class CollisionComponent extends Component{
         super.deserialize(in);
         int id = in.readInt();
 
-        /*OpenGG.asyncExec(() -> {
+        OpenGG.asyncExec(() -> {
            this.collidergroup = this.getWorld().getSystem().getColliderById(id);
             collidergroup.setPosition(getPosition());
             collidergroup.setRotation(getRotation());
             collidergroup.setScale(getScale());
-        });*/
+        });
     }
 
     @Override
