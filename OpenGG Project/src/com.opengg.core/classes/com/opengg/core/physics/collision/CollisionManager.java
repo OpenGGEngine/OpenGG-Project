@@ -112,7 +112,7 @@ public class CollisionManager {
         responseManifold.R1 = R;
         responseManifold.normal = manifold.normal;
         responseManifold.depth = manifold.depth;
-
+        responseManifold.ratio = 1;
 
         return responseManifold;
     }
@@ -159,7 +159,7 @@ public class CollisionManager {
         responseManifold.R2 = R2;
         responseManifold.normal = manifold.normal;
         responseManifold.depth = manifold.depth;
-
+        responseManifold.ratio = e1.velocity.length()/e2.velocity.length();
 
         return responseManifold;
     }
@@ -205,6 +205,7 @@ public class CollisionManager {
         Vector3f R2;
         Vector3f normal;
         float depth;
+        float ratio;
 
         public Response invert(){
             var inverted = new Response();
@@ -213,6 +214,7 @@ public class CollisionManager {
             inverted.normal = normal.inverse();
             inverted.R1 = R2;
             inverted.R2 = R1;
+            inverted.ratio = 1-ratio;
 
             return inverted;
         }

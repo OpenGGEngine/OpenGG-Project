@@ -59,7 +59,7 @@ public class Server {
     }
 
     public void update(){
-        var alltransmitters = WorldEngine.getCurrent().getAll().stream()
+        var alltransmitters = WorldEngine.getCurrent().getAllDescendants().stream()
                 .filter(c -> c instanceof ActionTransmitterComponent)
                 .map(c -> (ActionTransmitterComponent)c)
                 .collect(Collectors.toList());
@@ -92,7 +92,7 @@ public class Server {
 
     public void sendState(){
         try {
-            var allcomps = WorldEngine.getCurrent().getAll();//.stream().filter(s -> new Random().nextInt(5) == 2).collect(Collectors.toList());
+            var allcomps = WorldEngine.getCurrent().getAllDescendants();//.stream().filter(s -> new Random().nextInt(5) == 2).collect(Collectors.toList());
             GGOutputStream out = new GGOutputStream();
 
             out.write(Instant.now().toEpochMilli());

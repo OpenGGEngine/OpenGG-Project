@@ -32,15 +32,15 @@ vec3 getPhongFrom(Light light){
     vec3 fdif = diffuse * cosTheta;
 	
     float cosAlpha = max(dot(n, halfwayDir), 0.0);
-	vec3 fspec = specular * specpowvec * pow(cosAlpha, specpow);
+	vec3 fspec = specular * pow(cosAlpha, specpow);
 
 	/*float shadowcover = 1;
     if(shadow != 0){
         shadowcover = getShadowCoverage(light);
     }*/
-    float shadowcover = getShadowCoverage(light);
+    float shadowcover = 1;//getShadowCoverage(light);
 
-    vec3 fragColor = ((fdif + fspec) * attenuation * shadowcover * light.color.rgb) + ambient;
+    vec3 fragColor = (fdif + fspec) * attenuation * shadowcover * light.color.rgb;
 
     return fragColor;
 }

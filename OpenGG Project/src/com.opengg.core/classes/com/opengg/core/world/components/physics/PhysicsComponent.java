@@ -61,7 +61,7 @@ public class PhysicsComponent extends Component {
 
     @Override
     public void update(float delta) {
-        this.getParent().setPositionOffset(entity.getPosition());
+        this.getParent().setPositionOffset(entity.getPosition().subtract(this.getPositionOffset()));
         this.getParent().setRotationOffset(entity.getRotation());
     }
     
@@ -75,7 +75,7 @@ public class PhysicsComponent extends Component {
     public void deserialize(GGInputStream in) throws IOException{
         super.deserialize(in);
         int id = in.readInt();
-        this.onWorldChange(() -> this.entity = this.getWorld().getSystem().getById(id));
+        this.onWorldChange(() -> this.entity = this.getWorld().getSystem().getEntityById(id));
     }
     
     @Override

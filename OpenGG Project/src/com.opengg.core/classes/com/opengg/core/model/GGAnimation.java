@@ -11,6 +11,10 @@ import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * Manages skeletal animation interpolation and sets uniforms.
+ */
+
 public class GGAnimation {
     public String name;
     public double duration,ticksPerSec,current;
@@ -97,17 +101,95 @@ public class GGAnimation {
                     + rotationKeys.size()*(Double.BYTES + 4*Float.BYTES)
                     +scalingKeys.size()*(Double.BYTES + 3*Float.BYTES);
         }
+        public int getCurrPositionIndex(double time){
+            if(positionKeys.size() > 0){
+                for (int i = 0 ; i < positionKeys.size()-1 ; i++) {
+                    if (time < (positionKeys.get(i + 1).x) ){
+                        return i;
+                    }
+                }
+            }
+            return 0;
+        }
+        public int getCurrRotationIndex(double time){
+            if(rotationKeys.size() > 0){
+                for (int i = 0 ; i < rotationKeys.size()-1 ; i++) {
+                    if (time < (rotationKeys.get(i + 1).x) ){
+                        return i;
+                    }
+                }
+            }
+            return 0;
+        }
+        public int getCurrScalingIndex(double time){
+            if(scalingKeys.size() > 0){
+                for (int i = 0 ; i < scalingKeys.size()-1 ; i++) {
+                    if (time < (scalingKeys.get(i + 1).x) ){
+                        return i;
+                    }
+                }
+            }
+            return 0;
+        }
     }
+    public Vector3f calcInterpolatedPosition(AnimNode node){
+        if(node.positionKeys.size() == 1){
+            return node.positionKeys.get(0).y;
+        }
+        int index = node.getCurrPositionIndex(current);
+        int nextInd = index++;
 
-    public void setUniforms(GGNode node){
-        recursive(node, node.transformation);
+        double delta = node.positionKeys.get(nextInd).x - node.positionKeys.get(index).x;
+        double interpFactor = (current - node.positionKeys.get(index).x)/delta;
+        Vector3f startPos = node.positionKeys.get(index).y;
+        Vector3f endPos = node.positionKeys.get(nextInd).y;
+        return Vector3f.lerp(startPos,endPos,(float)interpFactor);
     }
-    private void recursive(GGNode node, Matrix4f transformation){
+    public Quaternionf calcInterpolatedRotation(AnimNode node){
+        if(node.rotationKeys.size() == 1){
+            return node.rotationKeys.get(0).y;
+        }
+        int index = node.getCurrRotationIndex(current);
+        int nextInd = index++;
+
+        double delta = node.rotationKeys.get(nextInd).x - node.rotationKeys.get(index).x;
+        double interpFactor = (current - node.rotationKeys.get(index).x)/delta;
+        Quaternionf startRot = node.rotationKeys.get(index).y;
+        Quaternionf endRot = node.rotationKeys.get(nextInd).y;
+        return Quaternionf.slerp(startRot,endRot,(float)interpFactor);
+    }
+    public Vector3f calcInterpolatedScaling(AnimNode node){
+        if(node.scalingKeys.size() == 1){
+            return node.scalingKeys.get(0).y;
+        }
+        int index = node.getCurrScalingIndex(current);
+        int nextInd = index++;
+
+        double delta = node.scalingKeys.get(nextInd).x - node.scalingKeys.get(index).x;
+        double interpFactor = (current - node.scalingKeys.get(index).x)/delta;
+        Vector3f startS = node.scalingKeys.get(index).y;
+        Vector3f endS = node.scalingKeys.get(nextInd).y;
+        return Vector3f.lerp(startS,endS,(float)interpFactor);
+    }
+    public void animateUniforms(GGNode node,GGBone[] bones){
+        recursive(node, node.transformation,bones);
+    }
+    private void recursive(GGNode node, Matrix4f transformation,GGBone[] bones){
         Matrix4f globalTransform = transformation.multiply(node.transformation);
         if(animdata.containsKey(node.name)){
+            AnimNode n = animdata.get(name);
+            Vector3f position = calcInterpolatedPosition(n);
+            Quaternionf rot = calcInterpolatedRotation(n);
+            Vector3f scaling = calcInterpolatedScaling(n);
+            Matrix4f real = new Matrix4f().scale(scaling).rotate(rot).translate(position).multiply(globalTransform);
+            for(GGBone bone:bones){
+               if(bone.name == node.name){
+                   bone.finalTransform = real.multiply(bone.offset);
+               }
+            }
         }
         for(GGNode child:node.children){
-            recursive(child,globalTransform);
+            recursive(child,globalTransform,bones);
         }
     }
 

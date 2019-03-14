@@ -678,7 +678,6 @@ public final class FastMath {
     
     public static List<MinkowskiSet> minkowskiDifference(List<Vector3f> v1, List<Vector3f> v2, Matrix4f m1, Matrix4f m2){    
         List<MinkowskiSet> diff = new ArrayList<>(v1.size()*v2.size());
-        
         for(Vector3f vi : v1){
             for(Vector3f vj : v2){
                 Vector3f t1 = m1.transform(new Vector4f(vi)).truncate();

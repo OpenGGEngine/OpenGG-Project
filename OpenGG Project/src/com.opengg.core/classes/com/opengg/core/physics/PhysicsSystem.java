@@ -11,10 +11,12 @@ import com.opengg.core.physics.collision.CollisionManager;
 import com.opengg.core.physics.collision.Floor;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
+import com.opengg.core.util.StreamUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  *
@@ -42,6 +44,7 @@ public class PhysicsSystem {
     }
     
     public void addCollider(ColliderGroup collider){
+        if(colliders.contains(collider)) return;
         colliders.add(collider);
         collider.system = this;
         collider.onSystemChange();
@@ -77,10 +80,15 @@ public class PhysicsSystem {
     public void serialize(GGOutputStream out) throws IOException {
         out.write(constants.BASE);
         out.write(constants.GRAVITY);
-        out.write(entities.size());
 
+        out.write(entities.size());
         for(var entity : entities){
             entity.serialize(out);
+        }
+
+        out.write(colliders.size());
+        for(var collider : colliders){
+            collider.serialize(out);
         }
     }
 
@@ -89,23 +97,37 @@ public class PhysicsSystem {
         constants.GRAVITY = in.readVector3f();
 
         entities.clear();
+
         int count = in.readInt();
-
         for(int i = 0; i < count; i++){
-
             PhysicsEntity entity = new PhysicsEntity();
             entity.deserialize(in);
             addEntity(entity);
         }
 
-        PhysicsEntity.idcount = entities.stream()
-                .mapToInt(entity -> entity.id)
+        count = in.readInt();
+        for(int i = 0; i < count; i++){
+            ColliderGroup collider = new ColliderGroup();
+            collider.deserialize(in);
+
+            addCollider(collider);
+        }
+
+        PhysicsEntity.idcount = Stream.concat(entities.stream(), colliders.stream())
+                .mapToInt(PhysicsObject::getId)
                 .max().orElse(0);
     }
 
-    public PhysicsEntity getById(int id){
+    public PhysicsEntity getEntityById(int id){
         for (var entity : entities) {
             if(entity.id == id) return entity;
+        }
+        return null;
+    }
+
+    public ColliderGroup getColliderById(int id){
+        for (var collider : colliders) {
+            if(collider.id == id) return collider;
         }
         return null;
     }

@@ -25,6 +25,5 @@ void main() {
 		col += getPhongFrom(lights[i]);
 	}
 
-
-	fcolor = vec4(col, 1);
+	fcolor = vec4(col, trans);
 }

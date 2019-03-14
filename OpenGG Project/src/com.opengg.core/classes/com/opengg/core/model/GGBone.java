@@ -7,6 +7,11 @@ import java.nio.ByteBuffer;
 public class GGBone {
     public String name;
     public Matrix4f offset;
+    /**
+     * This is what is passed to the animation shader.
+     */
+    public Matrix4f finalTransform;
+    public int boneIndex;
 
     public GGBone(String name,Matrix4f offset){
         this.name = name;

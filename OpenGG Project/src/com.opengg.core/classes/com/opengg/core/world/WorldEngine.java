@@ -65,23 +65,7 @@ public class WorldEngine{
     public static void update(float delta){
         removeMarked();
         if(enabled){
-            traverseUpdate(WorldEngine.getCurrent(), delta);
-        }
-    }
-    
-    private static void traverseUpdate(Component c, float delta){
-        if(!c.getWorld().isForcedUpdate()
-                &&
-                    (!c.isEnabled()
-                    ||
-                    (c.getUpdateDistance()*c.getUpdateDistance() < c.getPosition().distanceToSquared(RenderEngine.getCurrentView().getPosition())
-                    &&
-                    c.getUpdateDistance() != 0))
-        )
-            return;
-        c.update(delta);
-        for(Component c2 : c.getChildren()){
-            traverseUpdate(c2, delta);
+            WorldEngine.getCurrent().localUpdate(delta);
         }
     }
 
@@ -103,6 +87,7 @@ public class WorldEngine{
      * Returns the current world
      * @return Current world
      */
+
     public static World getCurrent(){
         return curworld;
     }

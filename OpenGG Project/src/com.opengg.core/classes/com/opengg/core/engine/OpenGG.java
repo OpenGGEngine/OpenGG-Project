@@ -335,6 +335,10 @@ public final class OpenGG{
         String error = SystemInfo.getInfo();
     }
 
+    public static float getLastTickLength(){
+        return GGDebugRenderer.getLastFrameTime();
+    }
+
     /**
      * Returns the starting time for this OpenGG instance, starting from the initial call to OpenGG.initialize()
      * @return Start time

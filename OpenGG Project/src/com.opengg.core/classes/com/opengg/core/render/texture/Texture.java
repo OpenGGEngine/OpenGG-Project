@@ -10,13 +10,20 @@ package com.opengg.core.render.texture;
 import com.opengg.core.engine.Resource;
 import com.opengg.core.render.internal.opengl.texture.OpenGLTexture;
 import com.opengg.core.system.Allocator;
+import com.opengg.core.util.GGInputStream;
+import com.opengg.core.util.GGOutputStream;
 
 import java.awt.*;
+import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.security.InvalidParameterException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP;
+import static org.lwjgl.opengl.GL21.GL_SRGB8_ALPHA8;
 import static org.lwjgl.opengl.GL21.GL_SRGB_ALPHA;
 import static org.lwjgl.opengl.GL30.GL_TEXTURE_2D_ARRAY;
 
@@ -242,31 +249,7 @@ public interface Texture {
     }
 
     static Texture getArrayTexture(TextureData... datums){
-        return getArrayTexture(GL_RGBA, GL_RGBA8, GL_UNSIGNED_BYTE, datums);
-    }
-
-    static Texture getSRGBArrayTexture(String... paths){
-        TextureData[] datums = new TextureData[paths.length];
-        for(int i = 0; i < paths.length; i++) datums[i] = TextureManager.loadTexture(paths[i]);
-        return  getSRGBArrayTexture(datums);
-    }
-
-    static Texture getSRGBArrayTexture(TextureData... datums){
-        return getArrayTexture(GL_RGBA, GL_SRGB_ALPHA, GL_UNSIGNED_BYTE, datums);
-    }
-
-    static Texture getArrayTexture(int format, int intformat, int storage, TextureData... datums){
-        Texture texture = new OpenGLTexture(GL_TEXTURE_2D_ARRAY, format, intformat, storage);
-        texture.setActiveTexture(0);
-        texture.bind();
-        texture.set3DStorage(datums[0].width, datums[0].height, datums.length);
-        texture.set3DSubData(0, 0, 0, datums);
-        texture.setTextureWrapType(GL_REPEAT);
-        texture.setMinimumFilterType(GL_LINEAR);
-        texture.setMaximumFilterType(GL_LINEAR);
-        texture.generateMipmaps();
-        texture.unbind();
-        return texture;
+        return Texture.create(Texture.arrayConfig(), datums);
     }
 
     static Texture ofColor(Color color){
@@ -294,10 +277,13 @@ public interface Texture {
         for(int i = 0; i < data.length; i++){
             textures[i] = Resource.getTextureData(data[i]);
         }
+
         return create(config, textures);
     }
 
     static Texture create(TextureConfig config, TextureData... data){
+        if(data.length == 0) return Texture.create(Texture.config(), TextureManager.getDefault());
+
         Texture texture = new OpenGLTexture(config.internaltype, config.format, config.intformat, config.input);
         texture.setActiveTexture(0);
         texture.bind();
@@ -305,6 +291,15 @@ public interface Texture {
             texture.set2DData(data[0]);
 
         }else if(config.type == TextureType.TEXTURE_ARRAY){
+            var x = Arrays.stream(data).mapToInt(d ->  d.width).max().getAsInt();
+            var y = Arrays.stream(data).mapToInt(d ->  d.height).max().getAsInt();
+
+            try {
+                data = setSize(data,x,y);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
             texture.set3DStorage(data[0].width, data[0].height, data.length);
             texture.set3DSubData(0, 0, 0, data);
 
@@ -312,13 +307,44 @@ public interface Texture {
             if(data.length < 6) throw new InvalidParameterException("Incorrect amount of textures passed to cubemap generation  (expected 6, got " + data.length + ")");
             texture.setCubemapData(data[0], data[1], data[2], data[3], data[4], data[5]);
         }
-        if(data != null) texture.generateMipmaps();
 
         //texture.setTextureWrapType(config.wraptype);
         texture.setMinimumFilterType(config.minfilter);
         texture.setMaximumFilterType(config.maxfilter);
         texture.unbind();
         return texture;
+    }
+
+    private static TextureData[] setSize(TextureData[] input, int x, int y) throws IOException {
+        ArrayList<TextureData> outList = new ArrayList<>();
+        for(var data : input){
+            var xMultiple = x/data.width;
+            var yMultiple = y/data.height;
+
+            var buffer = (ByteBuffer) data.buffer;
+
+            GGOutputStream out = new GGOutputStream();
+            for(int i = 0; i < data.height; i++){
+                for(int i2 = 0; i2 < yMultiple; i2++){
+                    for(int j = 0; j < data.width; j++){
+                        for(int j2 = 0; j2 < xMultiple; j2++){
+                            out.write(buffer.get((i * data.height + j) * 4 + 0));
+                            out.write(buffer.get((i * data.height + j) * 4 + 1));
+                            out.write(buffer.get((i * data.height + j) * 4 + 2));
+                            out.write(buffer.get((i * data.height + j) * 4 + 3));
+                        }
+                    }
+                }
+            }
+
+            var newBuffer = Allocator.alloc(out.asByteArray().length).put(out.asByteArray());
+            newBuffer.flip();
+
+            var newData = new TextureData(x,y,4,newBuffer,data.source);
+            outList.add(newData);
+        }
+
+        return outList.toArray(new TextureData[0]);
     }
 
     static TextureConfig config(){
@@ -359,7 +385,7 @@ public interface Texture {
         final boolean anisotropic;
 
         public TextureConfig(){
-            this(TextureType.TEXTURE_2D, GL_TEXTURE_2D, GL_LINEAR, GL_LINEAR, GL_REPEAT, GL_RGBA, GL_SRGB_ALPHA, GL_UNSIGNED_BYTE, false);
+            this(TextureType.TEXTURE_2D, GL_TEXTURE_2D, GL_LINEAR, GL_LINEAR, GL_REPEAT, GL_RGBA, GL_SRGB8_ALPHA8, GL_UNSIGNED_BYTE, false);
         }
 
         public TextureConfig(TextureType type, int internaltype, int minfilter, int maxfilter, int wraptype, int format, int intformat, int input, boolean anisotropic) {

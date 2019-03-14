@@ -53,7 +53,7 @@ public final class Configuration{
                 .flatMap(s -> s.getAllSettings().entrySet().stream())
                 .filter(set -> set.getKey().equals(key))
                 .findFirst()
-                .get();
+                .orElse(Map.entry(key, ""));
     }
 
     public static boolean set(String key, String val){

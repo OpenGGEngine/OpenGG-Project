@@ -106,6 +106,9 @@ public class ShaderController {
         use("anim2.vert", "object.frag");
         saveCurrentConfiguration("animation2");
 
+        use("tangent.vert", "tangent.frag");
+        saveCurrentConfiguration("tangent");
+
         use("object.vert", "terrainmulti.frag");
         saveCurrentConfiguration("terrain");
 
@@ -214,6 +217,9 @@ public class ShaderController {
         findUniform("rot");
         setUniform("rot", new Vector3f(0,0,0));
 
+        findUniform("scale");
+        setUniform("scale", new Vector3f(1,1,1));
+
         findUniform("camera");
         setUniform("camera", new Vector3f(0,0,0));
 
@@ -267,7 +273,7 @@ public class ShaderController {
         setTextureLocation("Kd", 0);
 
         findUniform("terrain");
-        setTextureLocation("terrain", 0);
+        setTextureLocation("terrain", 11);
         
         findUniform("Ka");
         setTextureLocation("Ka", 1);
@@ -307,7 +313,6 @@ public class ShaderController {
         
         findUniform("material.hasambmap");
         setUniform("material.hasambmap", false);
-
         
         findUniform("material.hascolormap");
         setUniform("material.hascolormap", false);
@@ -830,14 +835,7 @@ public class ShaderController {
     }
 
     private static void dumpShader(ShaderFileHolder holder){
-        if(Boolean.parseBoolean(Configuration.get("dumpShaders"))){
-            var file = new File(Resource.getShaderPath("debug_" + holder.name));
-            try {
-                Files.write(file.toPath(), Collections.singleton(holder.fulldata), StandardOpenOption.CREATE_NEW);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+
     }
 
     private static void createGLShaderFromFile(){

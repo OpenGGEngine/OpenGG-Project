@@ -46,8 +46,9 @@ public class RenderComponent extends Component implements Renderable{
         else
             matrix = override;
 
-        if((renderDistance > 0) && (getPosition().subtract(RenderEngine.getCurrentView().getPosition()).length() > renderDistance))
+        if((renderDistance > 0) && (getPosition().subtract(RenderEngine.getCurrentView().getPosition()).length() > renderDistance)) {
             return;
+        }
         if(drawable != null){
             drawable.setMatrix(matrix);
             drawable.render();

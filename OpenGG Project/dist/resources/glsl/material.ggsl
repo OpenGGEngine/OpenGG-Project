@@ -54,26 +54,25 @@ vec3 calculatenormal( vec3 N, vec3 V, vec3 map, vec2 texcoord){
     return normalize( TBN * map );
 }
 
-void useMaterial(Material mat){
-	color = texture(Kd, textureCoord);
+void useMaterial(Material mat, vec4 color){
 	diffuse = color.rgb;
 
 	emmisive = texture(em, textureCoord).xyz * mat.hasem;
 
     trans = color.a;
 
-    ambient = 0.07f * diffuse;
+    ambient = 0.05f * diffuse;
 
     specular = getTex(Ks).xyz * mat.hasspec + mat.ks * (1-mat.hasspec);
 
-    specpow = mat.ns;
+    specpow = (getTex(Ns).r * mat.hasspecpow * 128) + mat.ns * (1-mat.hasspecpow);
 
-    specpowvec = (getTex(Ns).xyz * mat.hasspec) + vec3(mat.ns * (1-int(mat.hasspec)));
-
-	n = calculatenormal(normalize((model * vec4(norm,0.0f)).xyz),
-         		 pos.xyz-camera, texture(bump, textureCoord).xyz, textureCoord) * mat.hasnormmap
-         		 + normalize((model * vec4(norm,0.0f)).xyz) * (1-mat.hasnormmap);
+	n = normalize(norm) * (1-mat.hasnormmap);
 
 	//reflectedcolor = texture(cubemap, normalize(reflect(eyedir,n))).xyz;
 
+}
+
+void useMaterial(Material mat){
+    useMaterial(mat, texture(Kd, textureCoord));
 }

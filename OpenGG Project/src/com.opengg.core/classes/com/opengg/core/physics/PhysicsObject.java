@@ -20,6 +20,10 @@ import java.util.List;
  * @author Javier
  */
 public class PhysicsObject {
+    public static int idcount = 0;
+
+    public int id;
+
     public PhysicsSystem system;
     public PhysicsObject parent;
     protected List<PhysicsObject> children = new ArrayList<>();
@@ -65,9 +69,10 @@ public class PhysicsObject {
     }
 
     public Vector3f getScale() {
-        if(parent != null)
+        if(parent != null) {
             return scale.multiply(parent.getScale());
-        
+        }else{
+        }
         return scale;
     }
 
@@ -85,6 +90,10 @@ public class PhysicsObject {
 
     public PhysicsSystem getSystem(){
         return system;
+    }
+
+    public int getId(){
+        return id;
     }
 
     public void serialize(GGOutputStream out) throws IOException{}

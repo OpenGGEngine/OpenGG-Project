@@ -79,7 +79,8 @@ public class WorldLoader {
 
             out.close();
 
-            new File(Resource.getAbsoluteFromLocal(worldname)).delete();
+            new File(Resource.getAbsoluteFromLocal(worldname  + ".backup")).delete();
+            new File(Resource.getAbsoluteFromLocal(worldname)).renameTo(new File(Resource.getAbsoluteFromLocal(worldname  + ".backup")));
             new File(Resource.getAbsoluteFromLocal(tempPath)).renameTo(new File(Resource.getAbsoluteFromLocal(worldname)));
         } catch (FileNotFoundException ex) {
             GGConsole.error("Failed to create file named " + worldname);

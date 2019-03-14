@@ -124,10 +124,10 @@ public class AssimpModelLoader {
             Mesh gmesh  = new Mesh(vertices,indices,animationsEnabled);
 
             if(scene.mNumMaterials() > 0){
-                gmesh.main = materials.get(mesh.mMaterialIndex());
+                gmesh.setMaterial(materials.get(mesh.mMaterialIndex()));
                 gmesh.matIndex = mesh.mMaterialIndex();
             }
-            gmesh.bones = bones;
+            gmesh.setBones(bones);
 
             meshes.add(gmesh);
 
@@ -177,12 +177,38 @@ public class AssimpModelLoader {
         path = AIString.calloc();
         Assimp.aiGetMaterialTexture(material, aiTextureType_SHININESS, 0, path, (IntBuffer
                 ) null, null, null, null, null, null);
-        if(Assimp.aiGetMaterialTextureCount(material,aiTextureType_SHININESS)>0) m.mapNsFilename = path.dataString();
+        if(Assimp.aiGetMaterialTextureCount(material,aiTextureType_SHININESS)>0)
+            m.mapNsFilename = path.dataString();
+
+        path = AIString.calloc();
+        Assimp.aiGetMaterialTexture(material, aiTextureType_SPECULAR, 0, path, (IntBuffer
+                ) null, null, null, null, null, null);
+        if(Assimp.aiGetMaterialTextureCount(material,aiTextureType_SPECULAR)>0)
+            m.mapKsFilename = path.dataString();
+
+        path = AIString.calloc();
+        Assimp.aiGetMaterialTexture(material, aiTextureType_HEIGHT, 0, path, (IntBuffer
+                ) null, null, null, null, null, null);
+        if(Assimp.aiGetMaterialTextureCount(material,aiTextureType_HEIGHT)>0)
+            m.bumpFilename = path.dataString();
+
+        path = AIString.calloc();
+        Assimp.aiGetMaterialTexture(material, aiTextureType_NORMALS, 0, path, (IntBuffer
+                ) null, null, null, null, null, null);
+        if(Assimp.aiGetMaterialTextureCount(material,aiTextureType_NORMALS)>0)
+            m.bumpFilename = path.dataString();
+
+        path = AIString.calloc();
+        Assimp.aiGetMaterialTexture(material, aiTextureType_LIGHTMAP, 0, path, (IntBuffer
+                ) null, null, null, null, null, null);
+        if(Assimp.aiGetMaterialTextureCount(material,aiTextureType_LIGHTMAP)>0)
+            m.aoFilename = path.dataString();
 
         path = AIString.calloc();
         Assimp.aiGetMaterialTexture(material, aiTextureType_EMISSIVE, 0, path, (IntBuffer
                 ) null, null, null, null, null, null);
-        if(Assimp.aiGetMaterialTextureCount(material,aiTextureType_EMISSIVE)>0) m.emmFilename = path.dataString();
+        if(Assimp.aiGetMaterialTextureCount(material,aiTextureType_EMISSIVE)>0)
+            m.emmFilename = path.dataString();
 
         path = AIString.calloc();
         Assimp.aiGetMaterialTexture(material, aiTextureType_LIGHTMAP, 0, path, (IntBuffer
@@ -203,7 +229,7 @@ public class AssimpModelLoader {
         }
         float[] temp = new float[1];
 
-        if(aiGetMaterialFloatArray(material,AI_MATKEY_SHININESS,aiTextureType_NONE,0,temp,new int[]{1}) == 0){
+        if(aiGetMaterialFloatArray(material,AI_MATKEY_SHININESS,aiTextureType_NONE,0, temp, new int[]{1}) == 0){
             m.nsExponent = temp[0];
         }
         return m;

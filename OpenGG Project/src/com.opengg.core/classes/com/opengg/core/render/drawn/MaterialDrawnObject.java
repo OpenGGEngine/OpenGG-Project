@@ -62,9 +62,9 @@ public class MaterialDrawnObject implements Drawable {
     public void render() {
         if(mat.Kd != null)
             mat.Kd.use(0);
-        if(mat.norm != null) 
+        if(mat.norm != null)
             mat.norm.use(3);
-        if(mat.Ks != null) 
+        if(mat.Ks != null)
             mat.Ks.use(4); 
         if(mat.Ns != null)
             mat.Ns.use(5);

@@ -25,8 +25,6 @@ import static com.opengg.core.physics.collision.ContactManifold.averageContactMa
  * @author Javier
  */
 public class ColliderGroup extends PhysicsObject{
-    public static int idcount;
-    public int id;
 
     private List<Collider> colliders = new ArrayList<>();
 
@@ -41,7 +39,7 @@ public class ColliderGroup extends PhysicsObject{
         this(main, Arrays.asList(all));
     }
 
-    public ColliderGroup(AABB main, List<Collider> all) {
+    public ColliderGroup(AABB main, List<? extends Collider> all) {
         id = idcount;
         idcount++;
         setBoundingBox(main);
@@ -54,7 +52,7 @@ public class ColliderGroup extends PhysicsObject{
         collider.setParent(this);
     }
     
-    public void addColliders(List<Collider> bb) {
+    public void addColliders(List<? extends Collider> bb) {
         for(Collider c : bb){
             addCollider(c);
         }
@@ -122,7 +120,8 @@ public class ColliderGroup extends PhysicsObject{
         for(int i = 0; i < colsize; i++){
             var classname = in.readString();
             try {
-                var collider = (Collider)ClassUtil.createByName(classname);
+                System.out.println(classname);
+                var collider = (Collider) ClassUtil.createByName(classname);
                 collider.deserialize(in);
                 addCollider(collider);
             } catch (ClassInstantiationException e) {

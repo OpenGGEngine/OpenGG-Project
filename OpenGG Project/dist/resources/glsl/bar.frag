@@ -1,31 +1,13 @@
 @version 4.2
-
-layout(location = 0) out vec4 fcolor;
-
-in vertexData{
-    
-    vec2 textureCoord;
-    vec3 pos;
-    vec3 norm;
-};
-
-uniform sampler2D Kd;
-uniform sampler2D Ka;
+@include stdfrag.ggsl
+uniform vec3 fill;
+uniform vec3 back;
 uniform float percent;
 
-vec4 getTex(sampler2D tname){
-    
-	
-    return texture(tname, textureCoord);
-}
-void main() {   
-    vec4 color1 = getTex(Ka);
-	vec4 color2 = getTex(Kd);
+void main() {
 	if(textureCoord.x < percent){
-		fcolor = color1;
+		fcolor = vec4(fill,1);
 	}else{
-		fcolor = color2;
+		fcolor = vec4(back,1);
 	}
-	if(fcolor.a < 0.1f)
-		discard;
 }

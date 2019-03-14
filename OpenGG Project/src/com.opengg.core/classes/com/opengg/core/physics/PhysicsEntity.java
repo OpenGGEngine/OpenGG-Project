@@ -24,9 +24,6 @@ import java.util.stream.Collectors;
  * @author Javier
  */
 public class PhysicsEntity extends PhysicsObject{
-    static int idcount = 0;
-
-    public int id = 0;
 
     public String name = "default";
     public Vector3f centerOfMass = new Vector3f();
@@ -53,7 +50,7 @@ public class PhysicsEntity extends PhysicsObject{
     public float mass = 1f;
     public float density = 1f;
     public float dynamicfriction = 0.4f;
-    public float staticfriction = 0.1f;
+    public float staticfriction = 0.3f;
     public float restitution = 0.0f;
     
     public List<CollisionManager.Response> responses = new ArrayList<>();

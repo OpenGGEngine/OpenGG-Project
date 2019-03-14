@@ -57,37 +57,15 @@ public class World extends Component{
     }
 
     /**
-     * Returns all components attached to this world
-     * @return All components in this world
-     */
-    public List<Component> getAll(){
-        List<Component> components = new LinkedList<>();
-        for(Component c : this.getChildren()){
-            traverseGet(c, components);
-        }
-        return components;
-    }
-
-    private void traverseGet(Component c, List<Component> list){
-        list.add(c);
-        for(Component comp : c.getChildren()){
-            traverseGet(comp, list);
-        }
-    }
-
-    /**
      * Finds the unique {@link com.opengg.core.world.components.Component} with a certain ID, returns {@code null}  if none are found
      * @param id ID being searched for
      * @return Component with given ID or {@code null}  if nonexistent
      */
     public Component find(int id){
-        for(Component cc : this.getChildren()){
-            Component ccc = traverseFind(cc, id);
-            if(ccc != null){
-                return ccc;
-            }
-        }
-        return null;
+        return getAllDescendants()
+                .stream()
+                .filter(c -> c.getId() == id)
+                .findFirst().get();
     }
 
     /**
@@ -96,38 +74,10 @@ public class World extends Component{
      * @return Component with given name or {@code null}  if nonexistent
      */
     public Component find(String name){
-        for(Component cc : this.getChildren()){
-            Component ccc = traverseFind(cc, name);
-            if(ccc != null){
-                return ccc;
-            }
-        }
-        return null;
-    }
-
-    private Component traverseFind(Component c, int i){
-        if(c.getId() == i)
-            return c;
-        for(Component comp : c.getChildren()){
-            Component fc = traverseFind(comp, i);
-            if(fc != null)
-                return fc;
-        }
-
-        return null;
-    }
-
-    private Component traverseFind(Component c, String s){
-        if(c.getName().equals(s))
-            return c;
-
-        for(Component comp : c.getChildren()){
-            Component fc = traverseFind(comp, s);
-            if(fc != null)
-                return fc;
-        }
-
-        return null;
+        return getAllDescendants()
+                .stream()
+                .filter(c -> c.getName().equals(name))
+                .findFirst().get();
     }
 
     /**
@@ -135,7 +85,7 @@ public class World extends Component{
      * should only be used if adding many renderables. Otherwise, use {@link #addRenderable(com.opengg.core.world.components.RenderComponent) }
      */
     public void rescanRenderables(){
-        for(Component c : getAll()){
+        for(Component c : getAllDescendants()){
             if(c instanceof RenderComponent){
                 addRenderable((RenderComponent)c);
             }
@@ -267,6 +217,11 @@ public class World extends Component{
     }
 
     @Override
+    public void update(float delta){
+
+    }
+
+    @Override
     public void serialize(GGOutputStream out) throws IOException{
         super.serialize(out);
         out.write(environment.getSkybox() != null);
@@ -276,7 +231,11 @@ public class World extends Component{
             }
         }
 
-        physics.serialize(out);
+        GGOutputStream out2 = new GGOutputStream();
+        physics.serialize(out2);
+
+        out.write(out2.asByteArray().length);
+        out.write(out2.asByteArray());
     }
 
     @Override
@@ -291,10 +250,12 @@ public class World extends Component{
             }
         }
 
-
         OpenGG.asyncExec(() -> environment.setSkybox(new Skybox(Texture.create(Texture.cubemapConfig(), datums), 1000)));
 
-        physics.deserialize(in);
+        var size = in.readInt();
+        var data = in.readByteArray(size);
+
+        //physics.deserialize(new GGInputStream(data));
     }
 
     /**

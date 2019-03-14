@@ -3,7 +3,7 @@ package com.opengg.test;
 import com.opengg.core.audio.AudioListener;
 import com.opengg.core.audio.Soundtrack;
 import com.opengg.core.audio.SoundtrackHandler;
-import com.opengg.core.audio.AudioController;
+import com.opengg.core.audio.SoundEngine;
 import com.opengg.core.engine.BindController;
 import com.opengg.core.engine.GGApplication;
 import com.opengg.core.engine.OpenGG;
@@ -11,6 +11,7 @@ import com.opengg.core.gui.GUI;
 import com.opengg.core.gui.GUIButton;
 import com.opengg.core.io.input.mouse.MouseController;
 import com.opengg.core.math.Quaternionf;
+import com.opengg.core.model.io.AssimpModelLoader;
 import com.opengg.core.physics.collision.AABB;
 import com.opengg.core.physics.collision.ColliderGroup;
 import com.opengg.core.physics.collision.ConvexHull;
@@ -38,6 +39,7 @@ import com.opengg.core.world.components.physics.PhysicsComponent;
 import com.opengg.core.world.components.viewmodel.ViewModelComponentRegistry;
 
 import java.awt.*;
+import java.io.IOException;
 import java.util.List;
 
 
@@ -78,7 +80,7 @@ public class OpenGGTest extends GGApplication{
         //track.addSong(Resource.getSoundData("stardust.ogg"));
         track.shuffle();
         track.play();   
-        AudioController.setGlobalGain(0f);
+        SoundEngine.setGlobalGain(0f);
         SoundtrackHandler.setSoundtrack(track);
         
         font = Resource.getFont("test.fnt", "test.png");
@@ -96,25 +98,17 @@ public class OpenGGTest extends GGApplication{
         GUI mainview = new GUI();
         //mainview.getRoot().addItem("aids", new GUIText(text, font, new Vector2f(1,0)));
 
-        GUIButton button = new GUIButton(new Vector2f(0.2f,0.4f),new Vector2f(0,0), Texture.create(Texture.config(),TextureManager.getDefault()));
-        mainview.addItem("coke" ,button);
-        button.setOnClick(() -> System.out.println("Lambdas are bad"));
-        button.setOnRelease(() -> System.out.println("Lambdas are really bad"));
-        MouseController.onButtonPress(button);
-
         GUIController.addAndUse(mainview, "mainview");
 
-        /*WorldEngine.getCurrent().attach(new ModelRenderComponent(Resource.getModel("goldleaf"))
-                .setScaleOffset(new Vector3f(0.01f,0.01f,0.01f))
-                .setRotationOffset(new Quaternionf(new Vector3f(90,0,0))));*/
-
+        WorldEngine.getCurrent().attach(new ModelRenderComponent(Resource.getModel("pear")));
+                //.setScaleOffset(new Vector3f(0.01f,0,0.01f)));
   //      NetworkEngine.connect("localhost", 25565);
 
 
         WorldEngine.getCurrent().attach(new LightComponent(
-                Light.createPointShadow(new Vector3f(0,-10,0), new Vector3f(1), 1000, 512, 512 )));
-                //Light.createDirectional(new Quaternionf(new Vector3f(80f,0f,50)),
-                //        new Vector3f(1,1,1))));
+                //Light.createPointShadow(new Vector3f(0,-10,0), new Vector3f(1), 1000, 512, 512 )));
+                Light.createDirectional(new Quaternionf(new Vector3f(0,0f,-50)),
+                        new Vector3f(1,1,1))));
 
 
         var cube = List.of(
@@ -128,27 +122,8 @@ public class OpenGGTest extends GGApplication{
                 new Vector3f(1,1,1)
         );
 
-        for (int i = 0; i < 3; i++) {
-            var multiple = i  == 0 ? -1 : 1;
-
-            PhysicsComponent object = new PhysicsComponent();
-            object.getEntity().velocity = new Vector3f(10 * -multiple, 5, 0);
-            if(i == 1) object.getEntity().mass = 2;
-            //object.getEntity().setRotation(new Quaternionf(new Vector3f((float)Math.random()*360, 0, 0)));
-            object.getEntity().setPosition(new Vector3f(20f * multiple, (float) (Math.random() * 2f + 30f), -20));
-            object.addCollider(new ColliderGroup(new AABB( 3, 3, 3),  new ConvexHull(cube)));
-
-            WorldEngine.getCurrent().attach(
-                    new RenderComponent(
-                            new TexturedDrawnObject(ObjectCreator.createCube(1),
-                                    i == 0 ? Texture.ofColor(Color.RED) : Texture.ofColor(Color.BLUE))).attach(object));
-
-        }
-
         player = new FreeFlyComponent();
         WorldEngine.getCurrent().attach(player);
-
-
 
         WorldEngine.getCurrent().getRenderEnvironment().setSkybox(new Skybox(Texture.getSRGBCubemap(Resource.getTexturePath("skybox\\majestic_ft.png"),
                 Resource.getTexturePath("skybox\\majestic_bk.png"),
@@ -174,7 +149,7 @@ public class OpenGGTest extends GGApplication{
         
         //RenderEngine.setProjectionData(ProjectionData.getPerspective(100, 0.2f, 3000f));
 
-        WindowController.getWindow().setCursorLock(false);
+        WindowController.getWindow().setCursorLock(true);
     }
 
     @Override
