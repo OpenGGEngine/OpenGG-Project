@@ -30,7 +30,7 @@ public class ViewModelComponentRegistry {
     }
     
     public static void createDefaultRegisters(){
-        register(ModelRenderComponent.class);
+        register(com.opengg.core.world.components.ModelComponent.class);
         register(WaterComponent.class);
         register(WorldObject.class);
         register(PhysicsComponent.class);
@@ -41,7 +41,7 @@ public class ViewModelComponentRegistry {
         register(ExplosionParticleEmitter.class);
         register(Zone.class);
         
-        register(ModelRenderComponentViewModel.class);
+        register(ModelComponentViewModel.class);
         register(WaterComponentViewModel.class);
         register(WorldObjectViewModel.class);
         register(PhysicsComponentViewModel.class);

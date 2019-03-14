@@ -255,7 +255,7 @@ public class World extends Component{
         var size = in.readInt();
         var data = in.readByteArray(size);
 
-        //physics.deserialize(new GGInputStream(data));
+        physics.deserialize(new GGInputStream(data));
     }
 
     /**

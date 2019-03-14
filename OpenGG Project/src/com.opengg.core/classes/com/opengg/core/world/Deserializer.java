@@ -71,6 +71,13 @@ public class Deserializer {
 
         components.forEach(c -> c.comp.onWorldLoad());
 
+        var highest = world.getAllDescendants()
+                .stream()
+                .mapToInt(Component::getId)
+                .max().orElse(0);
+
+        if(Component.getCurrentIdCounter() < highest) Component.setCurrentIdCounter(highest + 1);
+
         return world;
     }
     

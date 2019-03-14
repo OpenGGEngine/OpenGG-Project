@@ -59,7 +59,7 @@ public class PostProcessController {
 
         Stage fxaa = new Stage("fxaa");
         PostProcessingPass fxaapass = new PostProcessingPass(PostProcessingPass.SET, fxaa);
-        //passes.put("fxaa", fxaapass);
+        passes.put("fxaa", fxaapass);
     }
 
     public static void addPass(String name, PostProcessingPass pass){

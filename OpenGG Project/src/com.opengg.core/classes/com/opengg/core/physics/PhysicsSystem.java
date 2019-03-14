@@ -97,8 +97,8 @@ public class PhysicsSystem {
         constants.GRAVITY = in.readVector3f();
 
         entities.clear();
-
         int count = in.readInt();
+
         for(int i = 0; i < count; i++){
             PhysicsEntity entity = new PhysicsEntity();
             entity.deserialize(in);
@@ -106,6 +106,8 @@ public class PhysicsSystem {
         }
 
         count = in.readInt();
+        System.out.println(count);
+
         for(int i = 0; i < count; i++){
             ColliderGroup collider = new ColliderGroup();
             collider.deserialize(in);

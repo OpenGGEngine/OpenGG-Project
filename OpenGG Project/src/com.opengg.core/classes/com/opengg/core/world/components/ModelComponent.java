@@ -7,11 +7,14 @@ package com.opengg.core.world.components;
 
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.engine.OpenGG;
+import com.opengg.core.physics.collision.ColliderGroup;
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.engine.Resource;
 import com.opengg.core.model.Model;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
+import com.opengg.core.world.components.physics.CollisionComponent;
+
 import java.io.IOException;
 
 /**
@@ -20,16 +23,24 @@ import java.io.IOException;
  * 
  * This Component Renders a Drawable
  */
-public class ModelRenderComponent extends RenderComponent implements ResourceUser{
+public class ModelComponent extends RenderComponent implements ResourceUser{
     Model model;
     
-    public ModelRenderComponent(){}
+    public ModelComponent(){}
 
-    public ModelRenderComponent(Model model){
+    public ModelComponent(Model model){
+        this(model,false);
+    }
+
+    public ModelComponent(Model model, boolean collider){
         super();
         setModel(model);
         this.setFormat(model.isAnim? RenderEngine.tangentAnimVAOFormat: RenderEngine.tangentVAOFormat);
         this.setTransparency(true);
+
+        if(collider){
+            this.attach(new CollisionComponent(model.getCollider()));
+        }
     }
     
     public Model getModel(){

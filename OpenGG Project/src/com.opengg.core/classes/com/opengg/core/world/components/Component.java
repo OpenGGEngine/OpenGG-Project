@@ -631,4 +631,11 @@ public abstract class Component{
         child.changeParent(null);
     }
 
+    public static int getCurrentIdCounter(){
+        return curid;
+    }
+
+    public static void setCurrentIdCounter(int id){
+        curid = id;
+    }
 }

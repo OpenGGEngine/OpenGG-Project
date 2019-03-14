@@ -153,7 +153,7 @@ public abstract class ViewModel<T extends Component> {
                     element.value = component.getPositionOffset();
                     break;
                 case "rot":
-                    //element.value = component.getRotationOffset().toEuler();
+                    element.value = component.getRotationOffset().toEuler();
                     break;
                 case "scale":
                     element.value = component.getScale();

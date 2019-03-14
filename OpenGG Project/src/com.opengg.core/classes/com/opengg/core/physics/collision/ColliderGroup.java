@@ -13,6 +13,7 @@ import com.opengg.core.physics.PhysicsObject;
 import com.opengg.core.util.ClassUtil;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
+import com.opengg.core.world.components.physics.PhysicsComponent;
 
 import java.io.IOException;
 import java.util.*;
@@ -99,11 +100,8 @@ public class ColliderGroup extends PhysicsObject{
     @Override
     public void serialize(GGOutputStream out) throws IOException{
         out.write(id);
-        out.write(aabb.lwh);
-
-        out.write(this.children.size()-1);
+        out.write(this.children.size());
         for(var collider : children){
-            if(collider instanceof AABB) continue;
             out.write(collider.getClass().getName());
             collider.serialize(out);
         }
@@ -112,26 +110,21 @@ public class ColliderGroup extends PhysicsObject{
     @Override
     public void deserialize(GGInputStream in) throws IOException{
         id = in.readInt();
-        var lwh = in.readVector3f();
-
-        this.setBoundingBox(new AABB(lwh));
 
         var colsize = in.readInt();
         for(int i = 0; i < colsize; i++){
             var classname = in.readString();
             try {
-                System.out.println(classname);
-                var collider = (Collider) ClassUtil.createByName(classname);
-                collider.deserialize(in);
-                addCollider(collider);
+                var object = (PhysicsObject) ClassUtil.createByName(classname);
+                object.deserialize(in);
+                if(object instanceof AABB)
+                    setBoundingBox((AABB) object);
+                else
+                    addCollider((Collider) object);
             } catch (ClassInstantiationException e) {
                 GGConsole.error("Failed to insantiate collider with classname " + classname + ": " + e.getMessage());
                 throw new RuntimeException(e);
             }
         }
-    }
-
-    private class CollisionManifoldStorage{
-
     }
 }

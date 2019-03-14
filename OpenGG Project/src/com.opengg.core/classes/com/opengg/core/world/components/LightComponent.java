@@ -7,6 +7,7 @@
 package com.opengg.core.world.components;
 
 import com.opengg.core.engine.OpenGG;
+import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.light.Light;
 import com.opengg.core.util.GGInputStream;
@@ -28,10 +29,10 @@ public class LightComponent extends Component{
         super();
         this.light = light;
         this.setPositionOffset(light.getPosition());
-        onWorldChange(this::use);
     }
 
-    public void use(){
+    @Override
+    public void onWorldEnable(){
         getWorld().getRenderEnvironment().addLight(getLight());
     }
     
@@ -55,8 +56,7 @@ public class LightComponent extends Component{
     public void deserialize(GGInputStream stream) throws IOException{
         super.deserialize(stream);
         light = Light.createPoint(new Vector3f(), stream.readVector3f(), stream.readFloat());
-
-        OpenGG.asyncExec(this::use);
+        light = Light.createDirectional(new Quaternionf(new Vector3f(0,20,-80)), new Vector3f(1,1,200f/255f));
     }
 
 }

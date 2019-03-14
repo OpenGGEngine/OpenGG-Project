@@ -811,13 +811,14 @@ public class ShaderController {
         var allfiles = dir.list();
 
         shaderfiles.putAll(Arrays.stream(allfiles)
-                //.parallel()
+                .parallel()
                 .unordered()
                 .filter(file -> !file.equals("error.glsl"))
                 .map(file -> new ShaderFile(file, GGInfo.getApplicationPath() + "\\resources\\glsl\\" + file))
                 .filter(ShaderFile::isParsed)
                 .peek(ShaderFile::compile)
                 .collect(Collectors.toMap(ShaderFile::getName, shader -> shader)));
+
 
     }
 
