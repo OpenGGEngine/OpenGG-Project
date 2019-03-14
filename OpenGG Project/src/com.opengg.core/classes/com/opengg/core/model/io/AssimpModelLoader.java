@@ -210,6 +210,11 @@ public class AssimpModelLoader {
         if(Assimp.aiGetMaterialTextureCount(material,aiTextureType_EMISSIVE)>0)
             m.emmFilename = path.dataString();
 
+        path = AIString.calloc();
+        Assimp.aiGetMaterialTexture(material, aiTextureType_LIGHTMAP, 0, path, (IntBuffer
+                ) null, null, null, null, null, null);
+        if(Assimp.aiGetMaterialTextureCount(material,aiTextureType_LIGHTMAP)>0) m.aoFilename = path.dataString();
+
         Vector3f ambient = Material.DEFAULT_COLOR;
         if (aiGetMaterialColor(material, AI_MATKEY_COLOR_AMBIENT, aiTextureType_NONE, 0, color) == 0) {
             ambient = new Vector3f(color.r(), color.g(), color.b());
