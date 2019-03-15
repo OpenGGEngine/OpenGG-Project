@@ -76,7 +76,7 @@ public class Deserializer {
                 .mapToInt(Component::getId)
                 .max().orElse(0);
 
-        if(Component.getCurrentIdCounter() < highest) Component.setCurrentIdCounter(highest + 1);
+        if(Component.getCurrentIdCounter() <= highest) Component.setCurrentIdCounter(highest + 1);
 
         return world;
     }

@@ -57,7 +57,7 @@ public class LightComponent extends Component{
     public void deserialize(GGInputStream stream) throws IOException{
         super.deserialize(stream);
        // light = Light.createPoint(new Vector3f(), stream.readVector3f(), stream.readFloat());
-        light = Light.createDirectionalShadow(new Vector3f(0,0,0), new Quaternionf(new Vector3f(0,0,0)), new Vector3f(1,1,200f/255f), 1000f, Matrix4f.orthographic(-100,100,-100,100,-50,50), 1024, 1024);
+        light = Light.createDirectional(new Quaternionf(new Vector3f(0,0,-80)), new Vector3f(1,1,200f/255f));
         this.setPositionOffset(light.getPosition());
     }
 

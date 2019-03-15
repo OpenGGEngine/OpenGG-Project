@@ -94,6 +94,7 @@ public class PhysicsSystem {
 
     public void deserialize(GGInputStream in) throws IOException {
         constants.BASE = in.readFloat();
+        constants.BASE = 1f;
         constants.GRAVITY = in.readVector3f();
 
         entities.clear();

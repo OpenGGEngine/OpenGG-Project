@@ -219,8 +219,8 @@ public class RenderEngine {
         });
 
         paths.add(skybox);
-        paths.add(light);
-        //paths.add(path);
+        //paths.add(light);
+        paths.add(path);
     }
 
     public static void render(){
@@ -248,12 +248,12 @@ public class RenderEngine {
             defaultvao.bind();
 
             enableDefaultVP();
-/*
+
             if(pass.isPostProcessEnabled())
                 PostProcessController.process(pass.getSceneBuffer());
 
             if(pass.shouldBlitToBack())
-                pass.getSceneBuffer().blitToBack();*/
+                pass.getSceneBuffer().blitToBack();
 
             RenderEngine.setCulling(true);
 

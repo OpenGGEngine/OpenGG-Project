@@ -21,9 +21,11 @@ import java.io.IOException;
  */
 public class PhysicsComponent extends Component {
     PhysicsEntity entity;
-    
+    private int id;
+
     public PhysicsComponent(){
         entity = new PhysicsEntity();
+        id = entity.id;
         this.onWorldChange(() -> this.getWorld().getSystem().addEntity(entity));
     }
     
@@ -60,6 +62,10 @@ public class PhysicsComponent extends Component {
     }
 
     @Override
+    public void onWorldChange(){
+    }
+
+    @Override
     public void update(float delta) {
         this.getParent().setPositionOffset(entity.getPosition().subtract(this.getPositionOffset()));
         this.getParent().setRotationOffset(entity.getRotation());
@@ -74,8 +80,9 @@ public class PhysicsComponent extends Component {
     @Override
     public void deserialize(GGInputStream in) throws IOException{
         super.deserialize(in);
-        int id = in.readInt();
+        id = in.readInt();
         this.onWorldChange(() -> this.entity = this.getWorld().getSystem().getEntityById(id));
+
     }
     
     @Override
