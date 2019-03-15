@@ -91,7 +91,7 @@ public class RenderEngine {
         tangentVAOFormat = new VertexArrayFormat();
         tangentVAOFormat.addAttribute(new VertexArrayAttribute("position", 3, 11, GL_FLOAT, 0, 0, false));
         tangentVAOFormat.addAttribute(new VertexArrayAttribute("normal", 3, 11, GL_FLOAT, 3, 0, false));
-        tangentVAOFormat.addAttribute(new VertexArrayAttribute("tangent", 3, 11, GL_FLOAT, 6, 0, false));
+        //tangentVAOFormat.addAttribute(new VertexArrayAttribute("tangent", 3, 11, GL_FLOAT, 6, 0, false));
         tangentVAOFormat.addAttribute(new VertexArrayAttribute("texcoord", 2, 11, GL_FLOAT, 9, 0, false));
 
         tangentAnimVAOFormat = new VertexArrayFormat();
@@ -199,11 +199,13 @@ public class RenderEngine {
             for(int i = 0; i < lights.size() && used < 2; i++){
                 if(lights.get(i).hasShadow()){
                     lights.get(i).initializeRender();
+
                     for(RenderGroup d : getActiveRenderGroups()){
                         d.render();
                     }
 
                     lights.get(i).finalizeRender(10 + used);
+                    lights.get(i).getLightbuffer().blitToBack();
 
                     used++;
                 }
@@ -217,8 +219,8 @@ public class RenderEngine {
         });
 
         paths.add(skybox);
-        //paths.add(light);
-        paths.add(path);
+        paths.add(light);
+        //paths.add(path);
     }
 
     public static void render(){
@@ -246,12 +248,12 @@ public class RenderEngine {
             defaultvao.bind();
 
             enableDefaultVP();
-
+/*
             if(pass.isPostProcessEnabled())
                 PostProcessController.process(pass.getSceneBuffer());
 
             if(pass.shouldBlitToBack())
-                pass.getSceneBuffer().blitToBack();
+                pass.getSceneBuffer().blitToBack();*/
 
             RenderEngine.setCulling(true);
 

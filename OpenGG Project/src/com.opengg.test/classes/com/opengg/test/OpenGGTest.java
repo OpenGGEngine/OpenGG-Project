@@ -43,7 +43,7 @@ import java.io.IOException;
 import java.util.List;
 
 
-public class OpenGGTest extends GGApplication{
+public class  OpenGGTest extends GGApplication{
     private GGFont font;
     private Text text;
     private TerrainComponent world;
@@ -100,7 +100,7 @@ public class OpenGGTest extends GGApplication{
 
         GUIController.addAndUse(mainview, "mainview");
 
-        WorldEngine.getCurrent().attach(new ModelRenderComponent(Resource.getModel("pear")));
+        WorldEngine.getCurrent().attach(new ModelComponent(Resource.getModel("pear")));
                 //.setScaleOffset(new Vector3f(0.01f,0,0.01f)));
   //      NetworkEngine.connect("localhost", 25565);
 

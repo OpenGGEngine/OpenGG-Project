@@ -54,7 +54,7 @@ public class ModelComponent extends RenderComponent implements ResourceUser{
         if(hastan&&hasanim){
         }else if(hastan){
             this.setFormat(RenderEngine.tangentVAOFormat);
-            this.setShader("tangent");
+            this.setShader("object");
         }else if(hasanim){
 
         }else{

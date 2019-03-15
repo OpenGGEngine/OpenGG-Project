@@ -385,7 +385,7 @@ public interface Texture {
         final boolean anisotropic;
 
         public TextureConfig(){
-            this(TextureType.TEXTURE_2D, GL_TEXTURE_2D, GL_LINEAR, GL_LINEAR, GL_REPEAT, GL_RGBA, GL_SRGB8_ALPHA8, GL_UNSIGNED_BYTE, false);
+            this(TextureType.TEXTURE_2D, GL_TEXTURE_2D, GL_NEAREST, GL_NEAREST, GL_REPEAT, GL_RGBA, GL_SRGB8_ALPHA8, GL_UNSIGNED_BYTE, false);
         }
 
         public TextureConfig(TextureType type, int internaltype, int minfilter, int maxfilter, int wraptype, int format, int intformat, int input, boolean anisotropic) {

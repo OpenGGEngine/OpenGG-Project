@@ -15,7 +15,7 @@ import com.opengg.core.physics.collision.AABB;
 import com.opengg.core.physics.collision.CapsuleCollider;
 import com.opengg.core.world.components.Component;
 import com.opengg.core.world.components.LightComponent;
-import com.opengg.core.world.components.ModelRenderComponent;
+import com.opengg.core.world.components.ModelComponent;
 import com.opengg.core.world.components.physics.CollisionComponent;
 import com.opengg.core.world.components.physics.PhysicsComponent;
 
@@ -26,7 +26,7 @@ import com.opengg.core.world.components.physics.PhysicsComponent;
 public class BulletComponent extends Component{
     float timeSinceFire;
     private GunComponent source;
-    private ModelRenderComponent bullet;
+    private ModelComponent bullet;
     private PhysicsComponent physics;
     private LightComponent lc;
     
@@ -36,7 +36,7 @@ public class BulletComponent extends Component{
         this.setRotationOffset(source.getRotation());
         
         this.attach(new PhysicsComponent());
-        bullet = new ModelRenderComponent(Resource.getModel("45acp"));
+        bullet = new ModelComponent(Resource.getModel("45acp"));
         bullet.setRotationOffset(new Quaternionf(new Vector3f(0,0,-90)));
         bullet.setScaleOffset(new Vector3f(0.3f,0.3f,0.3f));
         attach(bullet);

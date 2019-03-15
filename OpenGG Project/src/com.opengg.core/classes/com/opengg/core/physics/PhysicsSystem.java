@@ -106,7 +106,6 @@ public class PhysicsSystem {
         }
 
         count = in.readInt();
-        System.out.println(count);
 
         for(int i = 0; i < count; i++){
             ColliderGroup collider = new ColliderGroup();

@@ -112,8 +112,8 @@ public class Light {
     public void initializeRender(){
         if(!shadow) throw new IllegalStateException("No shadowmap has been created for this light");
 
-        //ShaderController.setView(getView());
-        //ShaderController.setProjection(getPerspective());
+        ShaderController.setView(getView());
+        ShaderController.setProjection(getPerspective());
         if(type == ORTHO){
             ShaderController.useConfiguration("passthrough");
         }else{

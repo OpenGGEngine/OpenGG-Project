@@ -10,7 +10,7 @@ import com.opengg.core.engine.Resource;
 import com.opengg.core.world.WorldEngine;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.world.components.Component;
-import com.opengg.core.world.components.ModelRenderComponent;
+import com.opengg.core.world.components.ModelComponent;
 import com.opengg.core.world.components.particle.DirectionalExplosionParticleEmitter;
 import com.opengg.core.world.components.particle.ExplosionParticleEmitter;
 import com.opengg.core.world.components.triggers.Trigger;
@@ -29,7 +29,7 @@ public class GunComponent extends Component{
         ExplosionParticleEmitter epm = new DirectionalExplosionParticleEmitter(5, 0.1f, new Vector3f(1,0,0), 45, Resource.getTexture("smoke.png"));
         epm.setPositionOffset(new Vector3f(1,0.5f,0));
         epm.setParticleAmountOnTrigger(30);
-        ModelRenderComponent beretta = new ModelRenderComponent(Resource.getModel("C:\\res\\smithwesson\\smithwesson.bmf"));
+        var beretta = new ModelComponent(Resource.getModel("C:\\res\\smithwesson\\smithwesson.bmf"));
         trigger.addSubscriber(epm);
         attach(epm);
         attach(trigger);

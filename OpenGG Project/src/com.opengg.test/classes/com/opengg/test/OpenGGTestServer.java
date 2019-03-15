@@ -55,10 +55,10 @@ public class OpenGGTestServer extends GGApplication{
             PhysicsComponent sphere = new PhysicsComponent();
             sphere.getEntity().setPosition(new Vector3f(120f * (float)Math.random(), (float)Math.random() * 40f + 20, (float)Math.random() * 120f));
             sphere.addCollider(new ColliderGroup(new AABB( 3, 3, 3),  new SphereCollider(1)));
-            WorldEngine.getCurrent().attach(new ModelRenderComponent(Resource.getModel("sphere")).attach(sphere));
+            WorldEngine.getCurrent().attach(new ModelComponent(Resource.getModel("sphere")).attach(sphere));
         }
 
-        WorldEngine.getCurrent().attach(new ModelRenderComponent(Resource.getModel("goldleaf")).setScaleOffset(new Vector3f(0.01f,0.01f,0.01f)));
+        WorldEngine.getCurrent().attach(new ModelComponent(Resource.getModel("goldleaf")).setScaleOffset(new Vector3f(0.01f,0.01f,0.01f)));
 
         WorldEngine.getCurrent().getRenderEnvironment().setSkybox(new Skybox(Texture.getSRGBCubemap(Resource.getTexturePath("skybox\\majestic_ft.png"),
                 Resource.getTexturePath("skybox\\majestic_bk.png"),
@@ -73,7 +73,7 @@ public class OpenGGTestServer extends GGApplication{
             var ffc = new FreeFlyComponent();
             ffc.setUserId(i);
 
-            var mod = new ModelRenderComponent(Resource.getModel("45acp"));
+            var mod = new ModelComponent(Resource.getModel("45acp"));
             mod.setPositionOffset(new Vector3f(0, 0,0));
             ffc.attach(mod);
 

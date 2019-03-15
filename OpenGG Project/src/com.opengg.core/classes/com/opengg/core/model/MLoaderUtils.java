@@ -26,7 +26,6 @@ public class MLoaderUtils {
 
     public static String readString(ByteBuffer b) {
         int namelength = b.getInt();
-        System.out.println(namelength);
         if (namelength == 0) {
             return "";
         }
