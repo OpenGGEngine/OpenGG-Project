@@ -33,7 +33,7 @@ public class LightComponent extends Component{
     }
 
     @Override
-    public void onWorldEnable(){
+    public void onWorldLoad(){
         getWorld().getRenderEnvironment().addLight(getLight());
     }
     

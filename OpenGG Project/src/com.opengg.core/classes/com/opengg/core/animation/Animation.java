@@ -93,7 +93,8 @@ public class Animation {
     }
 
     private void processStage(Object target, AnimationStage event) {
-        if (event.start <= current && event.end >= current) {
+        if (event.start < current && event.end >= current) {
+            event.complete = false;
             double actualTime = event.useLocalTimeReference ? current - event.start : current;
             switch(event.accessType){
                     //No Override
@@ -109,6 +110,9 @@ public class Animation {
                     event.acceptor.accept(null, event.curveFunction.apply(actualTime));
                     break;
             }
+        }else if (!event.complete){
+            event.onComplete.run();
+            event.complete = true;
         }
     }
 
@@ -164,6 +168,7 @@ public class Animation {
     //Changes one field of a specific object over a specific interval
     public static class AnimationStage<T> {
         public double start, end;
+        public boolean complete = true;
         //Chooses whether the start is the start of the sequence or the start of the animation
         public boolean useLocalTimeReference = true;
 

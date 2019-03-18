@@ -9,6 +9,7 @@ package com.opengg.core.world;
 import com.opengg.core.GGInfo;
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.engine.OpenGG;
+import com.opengg.core.engine.Resource;
 import com.opengg.core.physics.PhysicsEngine;
 import com.opengg.core.physics.PhysicsSystem;
 import com.opengg.core.render.RenderEngine;
@@ -41,7 +42,7 @@ import java.util.List;
  * commands like {@link Component#attach(Component)}  }work as intended
  * @author Javier
  */
-public class World extends Component{
+public class World extends Component implements Resource {
     private PhysicsSystem physics = new PhysicsSystem();
     private RenderEnvironment environment = new RenderEnvironment();
     private boolean forceUpdate = false;
@@ -77,7 +78,7 @@ public class World extends Component{
         return getAllDescendants()
                 .stream()
                 .filter(c -> c.getName().equals(name))
-                .findFirst().get();
+                .findFirst().orElse(null);
     }
 
     /**
@@ -265,5 +266,15 @@ public class World extends Component{
     @Override
     public World getWorld(){
         return this;
+    }
+
+    @Override
+    public Type getType() {
+        return Type.WORLD;
+    }
+
+    @Override
+    public String getSource() {
+        return "";
     }
 }

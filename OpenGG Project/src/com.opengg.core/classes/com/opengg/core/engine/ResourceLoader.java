@@ -13,6 +13,10 @@ import com.opengg.core.model.Model;
 import com.opengg.core.model.ModelManager;
 import com.opengg.core.render.texture.TextureManager;
 import com.opengg.core.thread.ParallelWorkerPool;
+import com.opengg.core.util.LambdaContainer;
+import com.opengg.core.world.World;
+import com.opengg.core.world.WorldLoader;
+import com.opengg.core.world.WorldStateManager;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -39,15 +43,15 @@ public final class ResourceLoader {
     }
 
     private static Resource processRequest(ResourceRequest request){
-        if(request.type == ResourceRequest.Type.TEXTURE){
+        if(request.type == Resource.Type.TEXTURE){
             return TextureManager.loadTexture(request.location);
         }
 
-        if(request.type == ResourceRequest.Type.SOUND){
+        if(request.type == Resource.Type.SOUND){
              return SoundManager.loadSound(request.location);
         }
 
-        if(request.type == ResourceRequest.Type.MODEL){
+        if(request.type == Resource.Type.MODEL){
             Model model = ModelManager.loadModel(request.location);
             for(Mesh mesh : model.getMeshes()){
                 Material material = mesh.getMaterial();
@@ -72,6 +76,12 @@ public final class ResourceLoader {
             }
             return model;
         }
+
+        if(request.type == Resource.Type.WORLD){
+            LambdaContainer<World> worldLambdaContainer = new LambdaContainer<>();
+            OpenGG.asyncExec(() -> {worldLambdaContainer.value = WorldLoader.loadWorld(request.location);}).waitUntilComplete();
+            return worldLambdaContainer.value;
+        }
         return null;
     }
 
@@ -94,10 +104,10 @@ public final class ResourceLoader {
      * @param request ResourceRequest that is to be processed
      * @return A {@link Future} of the {@link Resource} described by the request
      */
-    public static Future<Resource> prefetch(ResourceRequest request){
+    public static CompletableFuture<Resource> prefetch(ResourceRequest request){
         request.future = new CompletableFuture<>();
         
-        if(request.type == ResourceRequest.Type.TEXTURE){
+        if(request.type == Resource.Type.TEXTURE){
             Resource r = TextureManager.getTextureData(request.location);
             if(r != TextureManager.getDefault()){
                 request.future.complete(r);
@@ -105,10 +115,19 @@ public final class ResourceLoader {
             }
         }
 
-        if(request.type == ResourceRequest.Type.SOUND){
+        if(request.type == Resource.Type.SOUND){
             Resource r = SoundManager.getSoundData(request.location);
         }
-        if(request.type == ResourceRequest.Type.MODEL){
+
+        if(request.type == Resource.Type.WORLD){
+            Resource r = WorldStateManager.getLoadedWorld(request.location);
+            if(r != null){
+                request.future.complete(r);
+                return request.future;
+            }
+        }
+
+        if(request.type == Resource.Type.MODEL){
            Resource r = ModelManager.getModel(request.location);
            if(r != ModelManager.getDefaultModel()){
                request.future.complete(r);

@@ -6,6 +6,8 @@
 
 package com.opengg.core.audio;
 
+import com.opengg.core.engine.Resource;
+
 /**
  * High level abstraction of a sound<br>
  * 
@@ -45,7 +47,7 @@ public class Sound{
      * @param path Path to sound
      */
     public Sound(String path){
-        this(SoundManager.loadSound(path));
+        this(Resource.getSoundData(path));
     }
     
     /**
@@ -122,7 +124,7 @@ public class Sound{
      * @param path Sound path
      */
     public void setSound(String path){
-        setSound(SoundManager.loadSound(path));
+        setSound(Resource.getSoundData(path));
     }
     
     /**
@@ -130,6 +132,7 @@ public class Sound{
      * @param data New sound data
      */
     public void setSound(SoundData data){
+        this.data = data;
         so.setBuffer(new ALBuffer(data));
     }
     

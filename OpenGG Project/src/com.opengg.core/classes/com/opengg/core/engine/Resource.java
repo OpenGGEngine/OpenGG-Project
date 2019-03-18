@@ -25,7 +25,7 @@ import java.io.IOException;
  */
 public interface Resource {
     enum Type{
-        MODEL, TEXTURE, SOUND
+        MODEL, TEXTURE, SOUND, WORLD
     }
 
     /**
@@ -173,7 +173,7 @@ public interface Resource {
      * @return SoundData object loaded from file
      */
     static SoundData getSoundData(String name){
-        return (SoundData) ResourceLoader.get(new ResourceRequest(getSoundPath(name), ResourceRequest.Type.SOUND, 1));
+        return (SoundData) ResourceLoader.get(new ResourceRequest(getSoundPath(name), Resource.Type.SOUND, 1));
     }
     
     /**
@@ -183,7 +183,7 @@ public interface Resource {
      * @return Model object loaded from file
      */
     static Model getModel(String name){
-        return (Model) ResourceLoader.get(new ResourceRequest(getModelPath(name), ResourceRequest.Type.MODEL, 1));
+        return (Model) ResourceLoader.get(new ResourceRequest(getModelPath(name), Resource.Type.MODEL, 1));
     }
     
     /**
@@ -193,7 +193,7 @@ public interface Resource {
      * @return Texture object loaded from file
      */
     static Texture getTexture(String name){
-        return Texture.get2DTexture((TextureData) ResourceLoader.get(new ResourceRequest(getTexturePath(name), ResourceRequest.Type.TEXTURE, 1)));
+        return Texture.get2DTexture((TextureData) ResourceLoader.get(new ResourceRequest(getTexturePath(name), Resource.Type.TEXTURE, 1)));
     }
     
     /**
@@ -203,7 +203,7 @@ public interface Resource {
      * @return Texture object loaded from file
      */
     static Texture getSRGBTexture(String name){
-        return Texture.get2DSRGBTexture((TextureData) ResourceLoader.get(new ResourceRequest(getTexturePath(name), ResourceRequest.Type.TEXTURE, 1)));
+        return Texture.get2DSRGBTexture((TextureData) ResourceLoader.get(new ResourceRequest(getTexturePath(name), Resource.Type.TEXTURE, 1)));
     }
     
     /**
@@ -212,7 +212,7 @@ public interface Resource {
      * @return Texture data object loaded from file
      */
     static TextureData getTextureData(String name){
-        return (TextureData) ResourceLoader.get(new ResourceRequest(getTexturePath(name), ResourceRequest.Type.TEXTURE, 1));
+        return (TextureData) ResourceLoader.get(new ResourceRequest(getTexturePath(name), Resource.Type.TEXTURE, 1));
     }
     
     static GGFont getFont(String fname, String ftexname){

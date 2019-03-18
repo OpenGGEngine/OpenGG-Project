@@ -275,6 +275,8 @@ public class TTF implements Font{
         }
         data.flip();
 
+
+
         return new TexturedDrawnObject(new DrawnObject(data), this.texture);
     }
 }

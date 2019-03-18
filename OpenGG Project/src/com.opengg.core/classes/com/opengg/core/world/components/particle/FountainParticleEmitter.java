@@ -23,10 +23,9 @@ public class FountainParticleEmitter extends ParticleEmitter{
     boolean paused;
     
     public FountainParticleEmitter(float pps, float speed, float lifeLength, float deviation, Vector3f angle, Texture t) {
-        super(t, lifeLength);
+        super(t);
         this.pps = pps;
         this.speed = speed;
-        this.lifeLength = lifeLength;
         this.deviation = deviation;
         this.angle = angle.normalize();
     }
@@ -42,7 +41,7 @@ public class FountainParticleEmitter extends ParticleEmitter{
         finalv = getRotation().transform(finalv);
         finalv = finalv.multiply(speed);
         
-        addParticle(new Particle(getPosition(), finalv, new Vector3f(0,gravityComplient,0), lifeLength,1f));
+        addParticle(new Particle(getPosition(), finalv, new Vector3f(0,9.81f,0), 5f,1f));
     }
     
     @Override

@@ -9,6 +9,9 @@ import com.opengg.core.math.Vector2f;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.text.Font;
 import com.opengg.core.render.text.Text;
+import com.opengg.core.render.texture.Texture;
+
+import java.awt.*;
 
 /**
  *
@@ -51,8 +54,7 @@ public class GUIText extends GUIRenderable {
 
     @Override
     public void render() {
-        ShaderController.setDistanceField(1);
         super.render();
-        ShaderController.setDistanceField(0);
+        Texture.ofColor(Color.BLACK,0).use(0);
     }
 }

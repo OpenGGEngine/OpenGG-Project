@@ -67,7 +67,7 @@ public class ExplosionParticleEmitterViewModel extends ViewModel{
                 ((ParticleEmitter)component).setTexture((Texture) element.value);
                 break;
             case "life":
-                ((ParticleEmitter)component).setLifeLength((Float) element.value);
+                //((ParticleEmitter)component).setLifeLength((Float) element.value);
                 break;
             case "amount":
                 ((ExplosionParticleEmitter)component).setAmount((Integer) element.value);

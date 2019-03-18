@@ -6,6 +6,7 @@
 
 package com.opengg.core.audio;
 
+import com.opengg.core.engine.Resource;
 import com.opengg.core.system.Allocator;
 import java.io.File;
 import java.io.IOException;
@@ -29,12 +30,15 @@ public class AudioLoader {
     public static SoundData loadVorbis(String path) throws IOException{
         IntBuffer samplerate= Allocator.stackAllocInt(1);
         IntBuffer channels = Allocator.stackAllocInt(1);
-        if(!(new File(path).exists())){
+
+        var absolutePath = Resource.getAbsoluteFromLocal(path);
+
+        if(!(new File(absolutePath).exists())){
             Allocator.popStack();
             Allocator.popStack();
             throw new IOException("Failed to find file at " + new File(path).getAbsolutePath());
         }
-        ShortBuffer buffer = stb_vorbis_decode_filename(path, channels, samplerate);
+        ShortBuffer buffer = stb_vorbis_decode_filename(absolutePath, channels, samplerate);
         Allocator.register(buffer, Allocator.LWJGL_DEFAULT);
         
         SoundData data = new SoundData();

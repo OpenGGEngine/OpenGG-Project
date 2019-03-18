@@ -417,12 +417,13 @@ public abstract class Component{
      * Sets if the component should be currently enabled for rendering and updating
      * @param enabled if the component should be currently enabled 
      */
-    public void setEnabled(boolean enabled){
+    public Component setEnabled(boolean enabled){
         if(enabled)
             localOnEnable();
         else
             localOnDisable();
         this.enabled = enabled;
+        return this;
     }
 
     private void localOnEnable(){

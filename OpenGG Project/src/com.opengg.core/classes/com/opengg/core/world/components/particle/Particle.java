@@ -20,15 +20,7 @@ public class Particle {
     private float lifelength = 0;
     private float lifespan;
     private float scale;
-    
-    public Vector3f getPosition() {
-        return position;
-    }
-    
-    public float getScale(){
-        return scale;
-    }
-    
+
     public Particle(Vector3f position, Vector3f velocity, float lifeLength, float scale) {
         this(position, velocity, -9.81f, lifeLength, scale);
     }
@@ -50,6 +42,30 @@ public class Particle {
         position = position.add(velocity.multiply(delta));
 
         lifelength += delta;
-        return lifelength > lifespan;
-    } 
+        return lifespan > 0 && lifelength > lifespan;
+    }
+
+    public Vector3f getPosition() {
+        return position;
+    }
+
+    public void setPosition(Vector3f position) {
+        this.position = position;
+    }
+
+    public Vector3f getVelocity() {
+        return velocity;
+    }
+
+    public void setVelocity(Vector3f velocity) {
+        this.velocity = velocity;
+    }
+
+    public float getScale() {
+        return scale;
+    }
+
+    public void setScale(float scale) {
+        this.scale = scale;
+    }
 }

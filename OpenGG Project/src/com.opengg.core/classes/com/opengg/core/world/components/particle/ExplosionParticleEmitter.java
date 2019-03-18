@@ -20,7 +20,7 @@ public class ExplosionParticleEmitter extends ParticleEmitter implements Trigger
     int trigamount = 10;
     
     public ExplosionParticleEmitter(float velocity, float life, Texture t) {
-        super(t, life);
+        super(t);
         this.velocity = velocity;
     }
     
@@ -35,7 +35,7 @@ public class ExplosionParticleEmitter extends ParticleEmitter implements Trigger
             float zd = (float) (Math.random() - 0.5f) * 2f;
             Vector3f finalv = new Vector3f(xd,yd,zd).normalize();
             finalv = finalv.multiply(velocity);
-            addParticle(new Particle(getPosition(), finalv, lifeLength, 1f));
+            addParticle(new Particle(getPosition(), finalv, 1f, 1f));
         }
     }
 

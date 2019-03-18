@@ -31,7 +31,7 @@ public class DrawnObject implements Drawable {
     private VertexArrayFormat format;
     private int elementcount;
     private int drawtype = GL_TRIANGLES;
-    private int instancecount = 1;
+    private int instanceCount = 1;
     private int basevertex = 0;
     
     Matrix4f model = Matrix4f.translate(0, 0, 0);
@@ -150,6 +150,10 @@ public class DrawnObject implements Drawable {
         this.drawtype = type;
     }
 
+    public void setInstanceCount(int instanceCount) {
+        this.instanceCount = instanceCount;
+    }
+
     @Override
     public void render(){
         if(RenderEngine.validateInitialization()) return;
@@ -162,7 +166,7 @@ public class DrawnObject implements Drawable {
             throw new RenderException("Invalid VAO bound during render");
 
         RenderEngine.getCurrentVAO().applyFormat(vertexBufferObjects);
-        glDrawElementsInstancedBaseVertexBaseInstance(drawtype, elementcount, GL_UNSIGNED_INT, 0, instancecount, basevertex, 0);
+        glDrawElementsInstancedBaseVertexBaseInstance(drawtype, elementcount, GL_UNSIGNED_INT, 0, instanceCount, basevertex, 0);
 
     }
 

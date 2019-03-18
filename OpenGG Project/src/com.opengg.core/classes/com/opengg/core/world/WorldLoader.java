@@ -8,6 +8,8 @@ package com.opengg.core.world;
 import com.opengg.core.GGInfo;
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.engine.Resource;
+import com.opengg.core.engine.ResourceLoader;
+import com.opengg.core.engine.ResourceRequest;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
 
@@ -49,6 +51,11 @@ public class WorldLoader {
         
     }
 
+    public static void preloadWorld(String worldname){
+        ResourceLoader.prefetch(new ResourceRequest(Resource.getWorldPath(worldname), Resource.Type.WORLD))
+                .whenComplete((w, e) -> WorldLoader.keepWorld((World) w));
+    }
+
     /**
      *
      * @param worldname
@@ -62,6 +69,7 @@ public class WorldLoader {
     }
 
     public static void keepWorld(World world){
+        GGConsole.log("Saving state for " + world.getName());
         WorldStateManager.keepWorld(world);
     }
     

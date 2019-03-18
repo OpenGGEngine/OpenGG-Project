@@ -11,8 +11,11 @@ import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.drawn.DrawnObject;
 import com.opengg.core.render.objects.ObjectCreator;
 import com.opengg.core.render.texture.Texture;
+import com.opengg.core.render.texture.TextureManager;
 import com.opengg.core.system.Allocator;
 import com.opengg.core.world.components.RenderComponent;
+
+import java.awt.*;
 import java.nio.Buffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -29,22 +32,23 @@ import java.util.List;
 public abstract class ParticleEmitter extends RenderComponent{
     List<Particle> particles = new LinkedList<>();
     Texture t;
-    float gravityComplient;
-    float lifeLength;
-    
-    public ParticleEmitter(Texture t, float lifelength){
+
+    public ParticleEmitter() {
+        this(Texture.create(Texture.config(),TextureManager.getDefault()));
+    }
+
+    public ParticleEmitter(Texture t){
         createDrawable();
         this.setFormat(RenderEngine.getParticleFormat());
         this.setShader("particle");
         this.t = t;
-        this.lifeLength = lifelength;
     }
     
     private void createDrawable(){
-        Buffer[] buffers = ObjectCreator.createSquareBuffers(new Vector2f(-0.5f,-0.5f), new Vector2f(0.5f,0.5f), 0);
+        Buffer[] buffers = ObjectCreator.createSquareBuffers(new Vector2f(-0.05f,-0.05f), new Vector2f(0.05f,0.05f), 0);
         FloatBuffer fb = (FloatBuffer) buffers[0];
         IntBuffer ib = (IntBuffer) buffers[1];
-        this.setDrawable(new DrawnObject(ib, fb, Allocator.allocFloat(3)));
+        this.setDrawable(new DrawnObject(RenderEngine.getParticleFormat(), ib, fb, Allocator.allocFloat(3)));
     }
     
     private FloatBuffer createParticleVBO(){
@@ -69,16 +73,10 @@ public abstract class ParticleEmitter extends RenderComponent{
         this.t = t;
     }
 
-    public float getLifeLength() {
-        return lifeLength;
+    public List<Particle> getParticles(){
+        return particles;
     }
 
-    public void setLifeLength(float lifeLength) {
-        this.lifeLength = lifeLength;
-    }
-    
-    
-    
     @Override
     public void update(float delta) {
         particles.removeIf(p2 -> p2.update(delta));
@@ -87,7 +85,8 @@ public abstract class ParticleEmitter extends RenderComponent{
     @Override
     public void render(){
         ((DrawnObject)getDrawable()).updateBuffer(1, createParticleVBO());
-        t.use(0);
+        ((DrawnObject)getDrawable()).setInstanceCount(particles.size());
+        //t.use(0);
         super.render();
     }
 }

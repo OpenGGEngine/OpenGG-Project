@@ -11,7 +11,7 @@ import com.opengg.core.render.texture.Texture;
 import java.awt.*;
 
 public class GUITextBox extends GUIGroup{
-    private String value;
+    private String value = "";
     private GUIText text;
     private GUITexture background;
     private float textSize;

@@ -4,16 +4,19 @@ import java.util.ArrayList;
 
 public class AnimationManager {
    private static ArrayList<Animation> animations = new ArrayList<>();
+   private static ArrayList<Animation> newAnims = new ArrayList<>();
 
     public static void update(float delta){
-       for(Animation a:animations){
+        animations.addAll(newAnims);
+        newAnims.clear();
+        for(Animation a : animations){
            if(a.isRunning()){
                a.step(delta);
                a.updateStates();
            }
-       }
+        }
     }
     public static void register(Animation a){
-        animations.add(a);
+        newAnims.add(a);
     }
 }

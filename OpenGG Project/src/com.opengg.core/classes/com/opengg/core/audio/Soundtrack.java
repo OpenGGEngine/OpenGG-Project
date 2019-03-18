@@ -6,6 +6,8 @@
 
 package com.opengg.core.audio;
 
+import com.opengg.core.engine.Resource;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -36,7 +38,7 @@ public class Soundtrack {
      * @param path Path to song
      */
     public void addSong(String path){
-        soundtrack.add(new Sound(path));
+        soundtrack.add(new Sound(Resource.getSoundData(path)));
         if(current == null)
             current = soundtrack.get(0);
     }
@@ -116,5 +118,9 @@ public class Soundtrack {
         current.rewind();
         Collections.shuffle(soundtrack);
         current = soundtrack.get(0);
+    }
+
+    public List<Sound> getSongs() {
+        return soundtrack;
     }
 }
