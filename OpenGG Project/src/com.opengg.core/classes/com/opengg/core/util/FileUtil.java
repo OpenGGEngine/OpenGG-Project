@@ -6,6 +6,8 @@
 
 package com.opengg.core.util;
 
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -15,6 +17,8 @@ import java.nio.channels.SeekableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
+import com.opengg.core.engine.Resource;
 import org.lwjgl.BufferUtils;
 
 /**
@@ -57,8 +61,8 @@ public class FileUtil {
             }
         } else {
             try (
-                InputStream source = Thread.currentThread().getContextClassLoader().getResourceAsStream(resource);
-                ReadableByteChannel rbc = Channels.newChannel(source)
+                    InputStream source = new BufferedInputStream(new FileInputStream(Resource.getAbsoluteFromLocal(resource)));
+                    ReadableByteChannel rbc = Channels.newChannel(source)
             ) {
                 buffer = BufferUtils.createByteBuffer(bufferSize);
 

@@ -13,6 +13,7 @@
       </element>
       <element id="directory" name="lib">
         <element id="library" level="application" name="lwjgl" />
+        <element id="artifact" artifact-name="Standard JAR deployment" />
       </element>
       <element id="directory" name="config">
         <element id="dir-copy" path="$PROJECT_DIR$/dist/config" />
