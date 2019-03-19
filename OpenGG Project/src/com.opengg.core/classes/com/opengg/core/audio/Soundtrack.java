@@ -98,6 +98,7 @@ public class Soundtrack {
      * Rewinds and plays the current song
      */
     public void play(){
+        if(soundtrack.isEmpty()) return;
         current.rewind();
         current.play();
     }
@@ -106,6 +107,7 @@ public class Soundtrack {
      * Polls if the song ended, should rarely be called
      */
     public void update(){
+        if(current == null) return;
         if(current.getSoundSource().getState() == AL_STOPPED)
             next();
     }

@@ -40,6 +40,7 @@ public class ViewModelComponentRegistry {
         register(CameraComponent.class);
         register(ExplosionParticleEmitter.class);
         register(Zone.class);
+        register(SoundtrackComponent.class);
         
         register(ModelComponentViewModel.class);
         register(WaterComponentViewModel.class);
@@ -51,6 +52,7 @@ public class ViewModelComponentRegistry {
         register(CameraComponentViewModel.class);
         register(ExplosionParticleEmitterViewModel.class);
         register(ZoneViewModel.class);
+        register(SoundtrackComponentViewModel.class);
         
     }
     

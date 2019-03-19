@@ -10,6 +10,8 @@ import java.util.stream.Collectors;
 
 public class Executor {
     private List<ExecutorContainer> containers;
+    private List<ExecutorContainer> tempcontainers;
+
     private Thread current;
     private static Executor executor;
 
@@ -25,10 +27,15 @@ public class Executor {
 
     private Executor() {
         containers = new ArrayList<>();
+        tempcontainers = new ArrayList<>();
+
         current = Thread.currentThread();
     }
 
     public void update(float time) {
+        containers.addAll(tempcontainers);
+        tempcontainers.clear();
+
         var tlist = containers.stream()
                 .peek(c -> c.time -= time)
                 .filter(ExecutorContainer::isComplete)
@@ -113,7 +120,7 @@ public class Executor {
         }
 
         var container = new ExecutorContainer(exec, secs);
-        containers.add(container);
+        tempcontainers.add(container);
         return container.sleeper;
     }
 

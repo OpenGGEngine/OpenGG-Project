@@ -628,6 +628,7 @@ public abstract class Component{
      * @param child Component to be removed
      */
     public void remove(Component child){
+        if(child == null) return;
         children.remove(child);
         child.changeParent(null);
     }

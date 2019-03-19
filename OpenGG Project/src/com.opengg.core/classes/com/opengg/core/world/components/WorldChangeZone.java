@@ -2,6 +2,7 @@ package com.opengg.core.world.components;
 
 import com.opengg.core.animation.Animation;
 import com.opengg.core.animation.AnimationManager;
+import com.opengg.core.console.GGConsole;
 import com.opengg.core.engine.Executor;
 import com.opengg.core.gui.GUIController;
 import com.opengg.core.gui.GUITexture;
@@ -36,32 +37,26 @@ public class WorldChangeZone extends Zone {
 
     @Override
     public void onTrigger(TriggerInfo data){
-        if(shouldExit.apply(data)){
-            Animation fadeout = new Animation(1f, false);
-            fadeout.addStaticEvent(Animation.AnimationStage.createStaticStage(0,1f,
+        if (shouldExit.apply(data)) {
+            Animation sceneSwitch = new Animation(2.4f, false);
+            sceneSwitch.addStaticEvent(Animation.AnimationStage.createStaticStage(0, 1f,
                     (d) -> Texture.ofColor(Color.BLACK, d.floatValue()),
-                    (t) -> ((GUITexture) GUIController.get("black").getRoot().getItem("tex")).setTexture(t)));
+                    (t) -> ((GUITexture) GUIController.get("black").getRoot().getItem("tex")).setTexture(t))
+                        .setOnComplete(() -> {
+                            World newWorld = WorldLoader.getWorld(world);
+                            Executor.async(() -> {
+                                WorldEngine.useWorld(newWorld);
+                                onExit.accept(data);
+                            });
+                        }));
 
-            fadeout.setOnCompleteAction(() -> {
-                World newWorld = WorldLoader.getWorld(world);
-                if(newWorld != null){
-                    Executor.async(() -> {
-                        WorldEngine.useWorld(newWorld);
-                        onExit.accept(data);
-                    });
-                }
+            sceneSwitch.addStaticEvent(Animation.AnimationStage.createStaticStage(1.4, 2.4f,
+                    (d) -> Texture.ofColor(Color.BLACK, 1 - d.floatValue()),
+                    (t) -> ((GUITexture) GUIController.get("black").getRoot().getItem("tex")).setTexture(t))
+                    .setUseLocalTimeReference(true));
 
-                Animation fadein = new Animation(1.4f, false);
-                fadein.addStaticEvent(Animation.AnimationStage.createStaticStage(0.4,1.4f,
-                        (d) -> Texture.ofColor(Color.BLACK, 1 - d.floatValue()),
-                        (t) -> ((GUITexture) GUIController.get("black").getRoot().getItem("tex")).setTexture(t))
-                        .setUseLocalTimeReference(true));
-                fadein.setOnCompleteAction(() -> newWorld.setEnabled(true));
-                fadein.start();
-                AnimationManager.register(fadein);
-            });
-            fadeout.start();
-            AnimationManager.register(fadeout);
+            sceneSwitch.start();
+            AnimationManager.register(sceneSwitch);
 
         }
     }
@@ -79,7 +74,6 @@ public class WorldChangeZone extends Zone {
     }
 
     public void setWorld(String world) {
-        System.out.println(world);
         this.world = world;
     }
 

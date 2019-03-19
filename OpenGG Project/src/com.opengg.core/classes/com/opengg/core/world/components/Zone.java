@@ -54,7 +54,6 @@ public class Zone extends Trigger{
                 ti.type = 0;
                 ti.info = "collide:" + c.getId();
                 trigger(ti);
-                onTrigger(ti);
             }
         }
 

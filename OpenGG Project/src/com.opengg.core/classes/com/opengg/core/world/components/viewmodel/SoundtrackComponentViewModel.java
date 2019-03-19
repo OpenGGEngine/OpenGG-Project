@@ -1,6 +1,10 @@
 package com.opengg.core.world.components.viewmodel;
 
+import com.opengg.core.audio.Sound;
 import com.opengg.core.world.components.SoundtrackComponent;
+
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 @ForComponent(SoundtrackComponent.class)
 public class SoundtrackComponentViewModel extends ViewModel<SoundtrackComponent>{
@@ -27,6 +31,13 @@ public class SoundtrackComponentViewModel extends ViewModel<SoundtrackComponent>
 
     @Override
     public void onChange(Element element) {
+        if(element.internalname.equals("tracks")) {
+            var songs = Arrays.stream(((String) element.value).split(";"))
+                    .map(Sound::new)
+                    .collect(Collectors.toList());
+            if(!songs.isEmpty())
+                songs.forEach(s -> component.getSoundtrack().addSong(s));
+        }
 
     }
 
