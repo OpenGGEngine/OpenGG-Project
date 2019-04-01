@@ -1,7 +1,4 @@
 @version 4.20
-@glsl define LIGHTNUM 100
-
-
 in vec2 texcoord;
 in vec3 normal;
 in vec4 color;
@@ -21,15 +18,13 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 
-
 void main() {
-
-    mat4 modelView = view * model;
-
     textureCoord = texcoord;
     norm = normalize(vec3(model * vec4(normal,0.0)));
 	
-    pos = (model * vec4(position, 1.0f) ).xyz;
-    vec4 P = view * vec4(pos, 1.0f);
-    gl_Position = projection * P;
+    pos = (model * vec4(position, 1.0f)).xyz;
+
+    vec4 P = vec4(pos, 1.0f);
+    vec4 V = view * P;
+    gl_Position = projection * V;
 }

@@ -27,57 +27,69 @@ public class WindowInfo {
     public boolean resizable = false,
             vsync = false;
 
-    public void width(int width){
+
+    public WindowInfo setWidth(int width) {
         this.width = width;
+        return this;
     }
 
-    public void height(int height){
+    public WindowInfo setHeight(int height) {
         this.height = height;
+        return this;
     }
 
-    public void displayMode(int displaymode){
+    public WindowInfo setDisplayMode(int displaymode) {
         this.displaymode = displaymode;
+        return this;
     }
 
-    public void redBit(int rbit){
+    public WindowInfo setRedBitDepth(int rbit) {
         this.rbit = rbit;
+        return this;
     }
 
-    public void greenBit(int gbit){
+    public WindowInfo setGreenBitDepth(int gbit) {
         this.gbit = gbit;
+        return this;
     }
 
-    public void blueBit(int bbit){
+    public WindowInfo setBlueBitDepth(int bbit) {
         this.bbit = bbit;
+        return this;
     }
 
-    public void samples(int samples){
+    public WindowInfo setSamples(int samples) {
         this.samples = samples;
+        return this;
     }
 
-    public void majorVersion(int glmajor){
+    public WindowInfo setMajorVersion(int glmajor) {
         this.glmajor = glmajor;
+        return this;
     }
 
-    public void minorVersion(int glminor){
+    public WindowInfo setMinorVersion(int glminor) {
         this.glminor = glminor;
+        return this;
     }
 
-    public void name(String name){
+    public WindowInfo setName(String name) {
         this.name = name;
+        return this;
     }
 
-    public void type(String type){
+    public WindowInfo setType(String type) {
         this.type = type;
+        return this;
     }
 
-    public void resizable(boolean resizable){
+    public WindowInfo setResizable(boolean resizable) {
         this.resizable = resizable;
+        return this;
     }
 
-    public void vsync(boolean vsync){
+    public WindowInfo setVsync(boolean vsync) {
         this.vsync = vsync;
+        return this;
     }
-
-
 }

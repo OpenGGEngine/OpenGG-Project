@@ -10,6 +10,7 @@ import com.opengg.core.console.GGConsole;
 import com.opengg.core.network.Packet;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
+import com.opengg.core.util.LambdaContainer;
 import com.opengg.core.world.WorldEngine;
 import com.opengg.core.world.components.ActionTransmitterComponent;
 
@@ -92,20 +93,32 @@ public class Server {
 
     public void sendState(){
         try {
-            var allcomps = WorldEngine.getCurrent().getAllDescendants();//.stream().filter(s -> new Random().nextInt(5) == 2).collect(Collectors.toList());
+            var componentsToSerialize = WorldEngine.getCurrent().getAllDescendants();//.stream().filter(s -> new Random().nextInt(5) == 2).collect(Collectors.toList());
             GGOutputStream out = new GGOutputStream();
+            List<byte[]> processedComponents = new ArrayList<>();
+            for(var comp : componentsToSerialize){
+                GGOutputStream compOut = new GGOutputStream();
+                compOut.write((short) comp.getId());
+                comp.serializeUpdate(compOut);
+            }
 
-            out.write(Instant.now().toEpochMilli());
-            out.write((short)allcomps.size());
+            var remainingPacketSize = LambdaContainer.encapsulate(getPacketSize() - 1 - Short.BYTES - Long.BYTES); //extra spot for type, amount of comps, and timestamp
+            var componentsToSend = processedComponents
+                    .stream()
+                    .takeWhile(bytes -> remainingPacketSize.value - bytes.length > 0)
+                    .peek(bytes -> remainingPacketSize.value -= bytes.length)
+                    .collect(Collectors.toList());
 
-            for(var comp : allcomps){
-                out.write((short) comp.getId());
-                comp.serializeUpdate(out);
+            out.write((short)componentsToSend.size());
+            for(var compArray : componentsToSend) {
+                out.write(compArray);
             }
 
             var bytes = ((ByteArrayOutputStream)out.getStream()).toByteArray();
             for(ServerClient sc : clients){
-                sc.send(udpsocket, bytes); }
+                Packet.send(sc);
+                sc.send(udpsocket, bytes);
+            }
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -185,8 +198,9 @@ public class Server {
 
         if(!source.isInitialized()){
             source.setPort(packet.getPort());
+
             for(int i = 0; i < 10; i++){
-                Packet.send(getUDPSocket(), new byte[1024], source.getIp(), source.getPort());
+                Packet.send(getUDPSocket(),  new byte[getPacketSize()]);
             }
 
             source.initialize(true);

@@ -109,6 +109,8 @@ public class RenderEngine {
         particleVAOFormat.addAttribute(new VertexArrayAttribute("texcoord", 2, 12, GL_FLOAT, 10, 0, false));
         RenderEngine.checkForGLErrors();
 
+        GGConsole.log("Created default vertex array formats");
+
         defaultvao = new VertexArrayObject(defaultVAOFormat);
 
         passes.add(new RenderPass(true, true, () -> {}, f -> {}));

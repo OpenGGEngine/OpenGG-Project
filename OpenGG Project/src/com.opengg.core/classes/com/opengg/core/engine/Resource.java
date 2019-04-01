@@ -41,6 +41,7 @@ public interface Resource {
     String getSource();
     
     static void initialize(){
+        GGConsole.log("Initializing resource system in " + GGInfo.getApplicationPath());
         ResourceLoader.initialize();
     }
     

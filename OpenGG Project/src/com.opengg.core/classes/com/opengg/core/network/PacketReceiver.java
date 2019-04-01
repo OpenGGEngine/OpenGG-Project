@@ -5,22 +5,26 @@ import com.opengg.core.math.Tuple;
 import com.opengg.core.thread.ThreadManager;
 
 import java.net.DatagramSocket;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class PacketReceiver implements Runnable{
-    private final List<Tuple<Byte, PacketAcceptor>> processors; //since im definitely going to forget why the tuple contains a byte its a packet identifier
+    private final Map<Byte, List<Consumer<Packet>>> processors; //since im definitely going to forget why the tuple contains a byte its a packet identifier
     private final DatagramSocket socket;
     private int packetsize;
 
     public PacketReceiver(DatagramSocket socket, int packetsize){
-        processors = new ArrayList<>();
+        processors = new HashMap<>();
         this.socket = socket;
         this.packetsize = packetsize;
     }
 
-    public void addProcessor(byte type, PacketAcceptor processor){
-        processors.add(new Tuple<>(type, processor));
+    public void addProcessor(byte type, Consumer<Packet> processor){
+        processors.merge(type,
+                List.of(processor),
+                (l1,l2) -> Stream.concat(l1.stream(),l2.stream()).collect(Collectors.toList()));
     }
 
     public int getPacketSize(){
@@ -38,13 +42,8 @@ public class PacketReceiver implements Runnable{
     @Override
     public void run(){
         while(NetworkEngine.running() && OpenGG.getEnded()){
-            Packet packet = Packet.receive(socket, packetsize);
-            byte[] bytes = packet.getData();
-            byte type = packet.getData()[0];
-            for(var processortuple : processors){
-                if(processortuple.x == type || processortuple.x == 0)
-                    processortuple.y.accept(packet);
-            }
+            Packet packet = Packet.receive(socket);
+            processors.get(packet.getType()).forEach(p -> p.accept(packet));
         }
     }
 

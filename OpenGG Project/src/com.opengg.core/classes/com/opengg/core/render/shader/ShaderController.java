@@ -163,6 +163,7 @@ public class ShaderController {
         use("particle.vert", "texture.frag");
         saveCurrentConfiguration("particle");
 
+        GGConsole.log("Created " + pipelines + " default shader pipelines");
     }
 
     private static void setUniforms(){

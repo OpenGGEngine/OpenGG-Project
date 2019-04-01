@@ -19,19 +19,15 @@ out vertexData{
 };
 
 uniform mat4 model;
-uniform int billboard;
 uniform mat4 view;
 uniform mat4 projection;
 uniform vec3 rot;
-uniform int mode;
-uniform float divAmount;
-uniform vec3 camera;
 
 
 
 void main() {
     textureCoord = texcoord;
-	norm = normal;
+    norm = normalize(vec3(model * vec4(normal,0.0)));
 
     vec3 right = vec3(view[0][0], view[1][0], view[2][0]);
 	vec3 up = vec3(view[0][1], view[1][1], view[2][1]);

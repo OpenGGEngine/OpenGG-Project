@@ -104,7 +104,6 @@ public class NetworkEngine {
 
     public static void createReceiver(DatagramSocket socket, int packetsize){
         receiver = new PacketReceiver(socket, packetsize);
-        receiver.addProcessor((byte) 0, new PacketGuaranteeReceiver());
         receiver.start();
     }
 

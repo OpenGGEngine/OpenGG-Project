@@ -27,7 +27,7 @@ import java.util.concurrent.Future;
  * @author Javier
  */
 public final class ResourceLoader {
-    public static final int THREAD_AMOUNT = 4;
+    public static final int THREAD_AMOUNT = 8;
     private static ParallelWorkerPool<ResourceRequest, Resource> processor;
     
     private ResourceLoader(){}

@@ -5,6 +5,7 @@
  */
 package com.opengg.core.render.postprocess;
 
+import com.opengg.core.console.GGConsole;
 import com.opengg.core.math.Tuple;
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.math.Vector2f;
@@ -60,6 +61,8 @@ public class PostProcessController {
         Stage fxaa = new Stage("fxaa");
         PostProcessingPass fxaapass = new PostProcessingPass(PostProcessingPass.SET, fxaa);
         passes.put("fxaa", fxaapass);
+
+        GGConsole.log("Initialized post processing controller with " + passes.size() + " passes");
     }
 
     public static void addPass(String name, PostProcessingPass pass){

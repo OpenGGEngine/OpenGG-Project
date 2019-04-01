@@ -12,12 +12,15 @@ void main() {
     material.hasspecpow = 0.0f;
 	material.hascolormap = 1.0f;
    	material.hasem = 0.0f;
-    material.ks = vec3(1,1,1);
+    material.ks = vec3(0,0,0);
     material.ka = vec3(0,0,0);
     material.kd = vec3(0,0,0);
     material.ns = 128;
 
 	useMaterial(material);
+
+	if(trans == 0.0f) discard;
+
 	vec3 col = ambient;
 	col += emmisive;
 

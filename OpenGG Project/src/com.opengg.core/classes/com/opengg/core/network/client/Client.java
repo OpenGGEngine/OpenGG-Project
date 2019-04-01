@@ -12,6 +12,7 @@ import com.opengg.core.console.GGConsole;
 import com.opengg.core.engine.OpenGG;
 import com.opengg.core.io.input.mouse.MouseController;
 import com.opengg.core.network.Packet;
+import com.opengg.core.network.PacketType;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
 import com.opengg.core.world.Deserializer;
@@ -94,7 +95,7 @@ public class Client {
     public void udpHandshake(){
         for(int i = 0; i < 5; i++){
             var bb = ByteBuffer.wrap(new byte[packetsize]).putInt(GGInfo.getUserId());
-            Packet.send(udpsocket, bb.array(), address, port);
+            Packet.send(udpsocket, bb.array());
             try{
                 Thread.sleep(10);
             }catch(InterruptedException e){
@@ -130,7 +131,7 @@ public class Client {
             queuer.writeData(out);
 
             var data = ((ByteArrayOutputStream)out.getStream()).toByteArray();
-            Packet.send(udpsocket, data, address, port);
+            Packet.send(udpsocket, PacketType.CLIENT_ACTION_UPDATE, data);
         } catch (IOException e) {
             e.printStackTrace();
         }

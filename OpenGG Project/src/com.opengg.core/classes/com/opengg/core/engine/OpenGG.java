@@ -51,6 +51,8 @@ public final class OpenGG{
     private static boolean test = false;
     private static Time time;
     private static Thread mainthread;
+    private static float targetUpdate = 0f;
+    private static float overrideUpdate = -1f;
 
     private OpenGG(){}
 
@@ -193,6 +195,16 @@ public final class OpenGG{
 
     private static void runUpdate() {
         float delta = time.getDeltaSec();
+
+        if(delta < targetUpdate) {
+            try {
+                Thread.sleep((long) ((targetUpdate-delta)*1000));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        delta = overrideUpdate > 0f ? overrideUpdate : delta;
 
         Allocator.update();
         GGDebugRenderer.update(delta);
@@ -381,5 +393,13 @@ public final class OpenGG{
      */
     public static void syncExec(Runnable e){
        Executor.sync(e);
+    }
+
+    public static void setTargetUpdateTime(float time) {
+        OpenGG.targetUpdate = time;
+    }
+
+    public static void setOverrideWorldUpdateTime(float time) {
+        OpenGG.overrideUpdate = time;
     }
 }

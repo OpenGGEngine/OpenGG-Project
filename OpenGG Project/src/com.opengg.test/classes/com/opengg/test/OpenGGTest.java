@@ -16,6 +16,8 @@ import com.opengg.core.physics.collision.AABB;
 import com.opengg.core.physics.collision.ColliderGroup;
 import com.opengg.core.physics.collision.ConvexHull;
 import com.opengg.core.engine.Resource;
+import com.opengg.core.render.ProjectionData;
+import com.opengg.core.render.RenderEngine;
 import com.opengg.core.render.drawn.TexturedDrawnObject;
 import com.opengg.core.render.light.Light;
 import com.opengg.core.render.objects.ObjectCreator;
@@ -38,7 +40,6 @@ import com.opengg.core.world.components.*;
 import com.opengg.core.world.components.physics.PhysicsComponent;
 import com.opengg.core.world.components.viewmodel.ViewModelComponentRegistry;
 
-import java.awt.*;
 import java.io.IOException;
 import java.util.List;
 
@@ -147,7 +148,7 @@ public class  OpenGGTest extends GGApplication{
         ViewModelComponentRegistry.initialize();
         ViewModelComponentRegistry.createRegisters();
         
-        //RenderEngine.setProjectionData(ProjectionData.getPerspective(100, 0.2f, 3000f));
+        RenderEngine.setProjectionData(ProjectionData.getPerspective(100, 0.2f, 3000f));
 
         WindowController.getWindow().setCursorLock(true);
     }
