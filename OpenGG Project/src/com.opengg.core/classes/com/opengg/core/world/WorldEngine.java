@@ -8,8 +8,11 @@ package com.opengg.core.world;
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.world.components.Component;
 import com.opengg.core.world.components.RenderComponent;
+
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  *
@@ -19,6 +22,8 @@ public class WorldEngine{
     private static World curworld;
     private static final List<Component> removal = new LinkedList<>();
     private static boolean enabled = true;
+
+    private static List<Consumer<World>> worldChangeListeners = new ArrayList<>();
     
     public static void initialize(){
         WorldEngine.useWorld(new World());
@@ -42,7 +47,11 @@ public class WorldEngine{
     public static void shouldUpdate(boolean update){
         enabled = update;
     }
-    
+
+    public static void addWorldChangeListener(Consumer<World> consumer){
+        worldChangeListeners.add(consumer);
+    }
+
     public static void removeMarked(){
         var tempremove = List.copyOf(removal);
         for(Component c : tempremove){
@@ -81,6 +90,8 @@ public class WorldEngine{
         world.rescanRenderables();
         world.use();
         curworld = world;
+
+        worldChangeListeners.forEach(c -> c.accept(world));
     }
 
     /**

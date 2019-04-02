@@ -47,11 +47,16 @@ public class Packet implements Serializable{
         try {
             var out = new GGOutputStream();
 
-            var bitset = new BitSet();
+            /*var set = new BitSet(8);
 
-            bitset.set(0, guarantee);
+            set.set(0, guarantee);
+            set.set(1, false);
+            set.set(2, false);
+            set.set(3, false);
 
-            out.write(bitset.toByteArray()[0]);
+            System.out.println(set);*/
+
+            //out.write(set.toByteArray()[0]);
             out.write(type);
             out.write(timestamp);
             out.write(userBytes.length);
@@ -77,18 +82,26 @@ public class Packet implements Serializable{
     }
 
     public static void sendGuaranteed(DatagramSocket ds, byte type, byte[] bytes, InetAddress address, int port){
-        Packet p = new Packet(ds, type, true, bytes);
+        Packet p = new Packet(ds, type, true, bytes, address, port);
         p.send(ds);
     }
 
     public static void send(DatagramSocket ds, byte type, byte[] bytes, InetAddress address, int port){
-        Packet p = new Packet(ds, type, false, bytes);
+        Packet p = new Packet(ds, type, false, bytes, address, port);
         p.send(ds);
     }
 
     public static void sendAcknowledgement(DatagramSocket ds, Packet packet, InetAddress address, int port){
-        Packet p = new Packet(ds, (byte) 127,false, new byte[16]);
-        p.send(ds);
+        try {
+            var stream = new GGOutputStream();
+            stream.write(packet.getTimestamp());
+            var data = stream.asByteArray();
+
+            Packet p = new Packet(ds, PacketType.ACK,false, data, address, port);
+            p.send(ds);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void receivePacket(DatagramSocket ds){
@@ -101,8 +114,8 @@ public class Packet implements Serializable{
 
             var in = new GGInputStream(data);
 
-            var flags = BitSet.valueOf(in.readByteArray(1));
-            requestAck = flags.get(0);
+           // var flags = BitSet.valueOf(in.readByteArray(1));
+            //requestAck = flags.get(0);
             type = in.readByte();
             timestamp = in.readLong();
             int userLength = in.readInt();

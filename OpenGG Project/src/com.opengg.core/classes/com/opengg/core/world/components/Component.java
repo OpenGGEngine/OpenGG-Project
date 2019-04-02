@@ -527,6 +527,7 @@ public abstract class Component{
     public final void localOnWorldChange(){
         for(Component c : children) c.localOnWorldChange();
         onWorldChange();
+        parent.getWorld().triggerNewChild(this);
         if(WorldEngine.getCurrent() == this.getWorld() && this.getWorld().isEnabled()) localOnWorldEnable();
         if(whenAttachedToWorld != null){
             whenAttachedToWorld.run();

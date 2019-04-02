@@ -47,11 +47,7 @@ public class ServerClient {
         idcounter++;
     }
 
-    public void send(DatagramSocket client, byte[] bytes){
-        Packet.send(client, bytes, ip, port);
-    }
-
-    public InetAddress getIp(){
+    public InetAddress getAddress(){
         return ip;
     }
 
@@ -75,7 +71,7 @@ public class ServerClient {
         return id;
     }
 
-    public boolean isInitialized(){
+    public boolean receivedFirstMessage(){
         return success;
     }
 

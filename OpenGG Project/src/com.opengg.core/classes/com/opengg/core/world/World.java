@@ -27,8 +27,10 @@ import com.opengg.core.world.components.Component;
 import com.opengg.core.world.components.RenderComponent;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * <h1>Represents a world, the highest level object in the component/world system</h1>
@@ -46,6 +48,8 @@ public class World extends Component implements Resource {
     private PhysicsSystem physics = new PhysicsSystem();
     private RenderEnvironment environment = new RenderEnvironment();
     private boolean forceUpdate = false;
+
+    private List<Consumer<Component>> addSubs = new ArrayList<>();
 
     public World(){
         forceUpdate = GGInfo.isServer();
@@ -66,7 +70,7 @@ public class World extends Component implements Resource {
         return getAllDescendants()
                 .stream()
                 .filter(c -> c.getId() == id)
-                .findFirst().get();
+                .findFirst().orElse(null);
     }
 
     /**
@@ -116,7 +120,9 @@ public class World extends Component implements Resource {
 
         if(!found){
             RenderGroup group = new RenderGroup("world " + getId() + " " + renderable.getShader() + " "
-                    + renderable.getFormat().toString() + " group: " + (environment.getGroups().size() + 1), renderable.getFormat());
+                    + renderable.getFormat().toString() +
+                    " group: " + (environment.getGroups().size() + 1),
+                    renderable.getFormat());
             group.add(renderable);
             group.setTransparent(renderable.isTransparent());
             group.setPipeline(renderable.getShader());
@@ -180,6 +186,14 @@ public class World extends Component implements Resource {
         return forceUpdate;
     }
 
+    public void addNewChildListener(Consumer<Component> sub){
+        this.addSubs.add(sub);
+    }
+
+
+    public void triggerNewChild(Component newChild){
+        addSubs.forEach(c -> c.accept(newChild));
+    }
     /**
      * Overrides {@link com.opengg.core.world.components.Component#getPosition()}, always returns 0,0,0
      * @return returns Vector3f containing 0,0,0

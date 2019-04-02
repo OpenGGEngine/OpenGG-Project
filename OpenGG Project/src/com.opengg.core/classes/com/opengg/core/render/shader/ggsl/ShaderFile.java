@@ -29,8 +29,6 @@ public class ShaderFile{
     private boolean parsed;
 
     private static final Pattern multilineReplacer = Pattern.compile("/\\*.*?\\*/", Pattern.DOTALL);
-    private static final Pattern structFinderPattern = Pattern.compile("struct\\s.*?}\\s*?;", Pattern.DOTALL | Pattern.MULTILINE);
-    private static final Pattern functionFinderPattern = Pattern.compile("\\)\\s*\\{", Pattern.DOTALL | Pattern.MULTILINE);
 
     private static Pattern[] modPatterns;
 
@@ -363,106 +361,6 @@ public class ShaderFile{
 
     public String getCompiledSource(){
         return compiledsource;
-    }
-
-    public static class ShaderFunction{
-        private String name = "";
-        private String returntype = "";
-        private String args = "";
-        private String data = "";
-        private ShaderProgram.ShaderType usetype;
-
-        public String getName(){
-            return name;
-        }
-
-        public String getReturntype(){
-            return returntype;
-        }
-
-        public String getArgs(){
-            return args;
-        }
-
-        public String getData(){
-            return data;
-        }
-
-        @Override
-        public String toString(){
-            return "ShaderFunction{" +
-                    "name='" + name + '\'' +
-                    ", returntype='" + returntype + '\'' +
-                    ", args='" + args + '\'' +
-                    ", data='" + data + '\'' +
-                    '}';
-        }
-    }
-
-    public static class ShaderStruct{
-        private String name;
-        private String data;
-
-        public String getName() {
-            return name;
-        }
-
-        public String getData() {
-            return data;
-        }
-
-        @Override
-        public String toString() {
-            return "ShaderStruct{" +
-                    "name='" + name + '\'' +
-                    ", data='" + data + '\'' +
-                    '}';
-        }
-    }
-
-    public static class ShaderField{
-        private String name = "";
-        private String type = "";
-        private List<String> modifiers = new ArrayList<>();
-        private String initialvalue = "";
-        private String layoutdata = "";
-        private int loc = -1;
-        private ShaderProgram.ShaderType usetype;
-
-        public String getName(){
-            return name;
-        }
-
-        public String getType(){
-            return type;
-        }
-
-        public List<String> getModifiers(){
-            return modifiers;
-        }
-
-        public String getInitialValue(){
-            return initialvalue;
-        }
-
-        public String getLayoutData(){
-            return layoutdata;
-        }
-
-        public int getLocation(){
-            return loc;
-        }
-
-        @Override
-        public String toString(){
-            return "ShaderField{" +
-                    "name='" + name + '\'' +
-                    ", assigntype='" + type + '\'' +
-                    ", modifiers='" + modifiers + '\'' +
-                    ", initialvalue='" + initialvalue + '\'' +
-                    ", loc='" + loc + '\'' +
-                    '}';
-        }
     }
 
     public enum ShaderFileType{

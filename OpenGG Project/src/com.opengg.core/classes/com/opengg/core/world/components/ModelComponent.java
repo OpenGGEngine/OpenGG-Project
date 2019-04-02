@@ -52,6 +52,7 @@ public class ModelComponent extends RenderComponent implements ResourceUser{
         boolean hastan = model.vaoFormat.contains("tangent");
         boolean hasanim = model.vaoFormat.contains("anim");
         if(hastan&&hasanim){
+
         }else if(hastan){
             this.setFormat(RenderEngine.tangentVAOFormat);
             this.setShader("object");

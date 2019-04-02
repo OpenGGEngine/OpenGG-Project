@@ -51,14 +51,13 @@ public class NetworkEngine {
 
             var server = new Server(name, port, tcpsocket, udpsocket);
 
-
             GGConsole.log("Server initialized on port " + port);
 
             server.start();
             NetworkEngine.server = server;
 
             createReceiver(udpsocket, server.getPacketSize());
-            receiver.addProcessor((byte) 0, server::accept);
+            receiver.addProcessor(PacketType.CLIENT_ACTION_UPDATE, server::accept);
 
             return server;
         } catch (IOException ex) {
@@ -87,7 +86,8 @@ public class NetworkEngine {
 
             createReceiver(udpsocket, client.getPacketSize());
 
-            receiver.addProcessor((byte) 0, client::accept);
+            receiver.addProcessor(PacketType.SERVER_UPDATE, client::accept);
+            receiver.addProcessor(PacketType.SERVER_COMPONENT_CREATE, client::acceptNewComponents);
 
             client.udpHandshake();
 

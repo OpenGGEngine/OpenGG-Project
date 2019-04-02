@@ -102,7 +102,6 @@ public class Deserializer {
                 var holder = new SerialHolder();
                 holder.comp = comp;
                 holder.parent = pid;
-                holder.type = comp.getClass();
                 components.add(holder);
 
                 doList();
@@ -112,13 +111,40 @@ public class Deserializer {
         }
     }
 
+    public static SerialHolder deserializeSingleComponent(GGInputStream in) throws IOException {
+        String classname = in.readString();
+        try {
+            int id = in.readInt();
+            int pid = in.readInt();
+            Object nclazz = ClassUtil.createByName(classname);
+
+            Component comp = (Component)nclazz;
+            comp.removeAll();
+
+            int len = in.readInt();
+
+            byte[] data = in.readByteArray(len);
+            comp.deserialize(new GGInputStream(data));
+            comp.setId(id);
+
+            var holder = new SerialHolder();
+            holder.comp = comp;
+            holder.parent = pid;
+
+            return holder;
+        }  catch (ClassInstantiationException ex) {
+            GGConsole.error("Failed to instantiate class " + classname + ": " + ex.getMessage());
+        }
+
+        return null;
+    }
+
     /**
      *
      * @author Javier
      */
     public static class SerialHolder {
-        Component comp;
-        int parent;
-        Class type;
+        public Component comp;
+        public int parent;
     }
 }

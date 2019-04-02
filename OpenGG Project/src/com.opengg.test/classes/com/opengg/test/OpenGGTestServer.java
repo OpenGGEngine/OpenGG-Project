@@ -3,6 +3,7 @@ package com.opengg.test;
 import com.opengg.core.audio.AudioListener;
 import com.opengg.core.engine.GGApplication;
 import com.opengg.core.engine.OpenGG;
+import com.opengg.core.math.FastMath;
 import com.opengg.core.network.NetworkEngine;
 import com.opengg.core.network.server.ConnectionListener;
 import com.opengg.core.network.server.Server;
@@ -29,43 +30,21 @@ import java.util.Queue;
 
 
 public class OpenGGTestServer extends GGApplication{
-    private GGFont font;
-    private Text text;
-    private TerrainComponent world;
-    private Texture worldterrain;
-    private AudioListener listener;
-    float i = 0;
-    private FreeFlyComponent player;
-    Queue<Component> components = new ArrayDeque<>();
 
     public static void main(String[] args){
         OpenGG.initializeHeadless(new OpenGGTestServer());
     }
-
+int i = 0;
     @Override
     public  void setup(){
+        OpenGG.setTargetUpdateTime(1/30f);
+
         WorldEngine.getCurrent().attach(new LightComponent(
                 Light.createDirectional(new Quaternionf(new Vector3f(80f,0f,50)),
                         new Vector3f(1,1,1))));
 
-        var terrain = new TerrainComponent(Terrain.generate("heightmap.jpg"));
-        terrain.enableRenderable("blend1.png", "flower.png", "flower2.png", "grass.png", "road.png");
+        WorldEngine.getCurrent().attach(new ModelComponent(Resource.getModel("pear")));
 
-        for (int i = 0; i < 0; i++) {
-            PhysicsComponent sphere = new PhysicsComponent();
-            sphere.getEntity().setPosition(new Vector3f(120f * (float)Math.random(), (float)Math.random() * 40f + 20, (float)Math.random() * 120f));
-            sphere.addCollider(new ColliderGroup(new AABB( 3, 3, 3),  new SphereCollider(1)));
-            WorldEngine.getCurrent().attach(new ModelComponent(Resource.getModel("sphere")).attach(sphere));
-        }
-
-        WorldEngine.getCurrent().attach(new ModelComponent(Resource.getModel("goldleaf")).setScaleOffset(new Vector3f(0.01f,0.01f,0.01f)));
-
-        WorldEngine.getCurrent().getRenderEnvironment().setSkybox(new Skybox(Texture.getSRGBCubemap(Resource.getTexturePath("skybox\\majestic_ft.png"),
-                Resource.getTexturePath("skybox\\majestic_bk.png"),
-                Resource.getTexturePath("skybox\\majestic_up.png"),
-                Resource.getTexturePath("skybox\\majestic_dn.png"),
-                Resource.getTexturePath("skybox\\majestic_rt.png"),
-                Resource.getTexturePath("skybox\\majestic_lf.png")), 1500f));
 
         Server server = NetworkEngine.initializeServer("sonicville", 25565);
 
@@ -73,8 +52,9 @@ public class OpenGGTestServer extends GGApplication{
             var ffc = new FreeFlyComponent();
             ffc.setUserId(i);
 
-            var mod = new ModelComponent(Resource.getModel("45acp"));
-            mod.setPositionOffset(new Vector3f(0, 0,0));
+            var mod = new ModelComponent(Resource.getModel("pear"));
+            mod.setScaleOffset(0.2f);
+            mod.setPositionOffset(new Vector3f(0, -1,-1));
             ffc.attach(mod);
 
             WorldEngine.getCurrent().attach(ffc);
@@ -91,6 +71,13 @@ public class OpenGGTestServer extends GGApplication{
 
             }
         });
+
+        WorldEngine.getCurrent().getRenderEnvironment().setSkybox(new Skybox(Texture.getSRGBCubemap(Resource.getTexturePath("skybox\\majestic_ft.png"),
+                Resource.getTexturePath("skybox\\majestic_bk.png"),
+                Resource.getTexturePath("skybox\\majestic_up.png"),
+                Resource.getTexturePath("skybox\\majestic_dn.png"),
+                Resource.getTexturePath("skybox\\majestic_rt.png"),
+                Resource.getTexturePath("skybox\\majestic_lf.png")), 1500f));
     }
 
     @Override
@@ -98,7 +85,11 @@ public class OpenGGTestServer extends GGApplication{
 
     @Override
     public void update(float delta) {
+        i++;
 
-
+        if(i == 400){
+            i = 0;
+            WorldEngine.getCurrent().attach(new ModelComponent(Resource.getModel("pear")).setPositionOffset(new Vector3f(FastMath.random()*30f,FastMath.random()*30f, FastMath.random()*30)));
+        }
     }
 }

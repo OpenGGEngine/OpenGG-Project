@@ -81,32 +81,8 @@ public class RenderEngine {
         initialized = true;
 
         ShaderController.initialize();
+        initializeForHeadless();
 
-        defaultVAOFormat = new VertexArrayFormat();
-        defaultVAOFormat.addAttribute(new VertexArrayAttribute("position", 3, 12, GL_FLOAT, 0, 0, false));
-        //defaultVAOFormat.addAttribute(new VertexArrayAttribute("color", 4, 12, GL_FLOAT, 3, 0, false));
-        defaultVAOFormat.addAttribute(new VertexArrayAttribute("normal", 3, 12, GL_FLOAT, 7, 0, false));
-        defaultVAOFormat.addAttribute(new VertexArrayAttribute("texcoord", 2, 12, GL_FLOAT, 10, 0, false));
-
-        tangentVAOFormat = new VertexArrayFormat();
-        tangentVAOFormat.addAttribute(new VertexArrayAttribute("position", 3, 11, GL_FLOAT, 0, 0, false));
-        tangentVAOFormat.addAttribute(new VertexArrayAttribute("normal", 3, 11, GL_FLOAT, 3, 0, false));
-        //tangentVAOFormat.addAttribute(new VertexArrayAttribute("tangent", 3, 11, GL_FLOAT, 6, 0, false));
-        tangentVAOFormat.addAttribute(new VertexArrayAttribute("texcoord", 2, 11, GL_FLOAT, 9, 0, false));
-
-        tangentAnimVAOFormat = new VertexArrayFormat();
-        tangentAnimVAOFormat.addAttribute(new VertexArrayAttribute("position", 3, 19, GL_FLOAT, 0, 0, false));
-        tangentAnimVAOFormat.addAttribute(new VertexArrayAttribute("normal", 3, 19, GL_FLOAT, 3, 0, false));
-        tangentAnimVAOFormat.addAttribute(new VertexArrayAttribute("tangents", 3, 19, GL_FLOAT, 6, 0, false));
-        tangentAnimVAOFormat.addAttribute(new VertexArrayAttribute("texcoord", 2, 19, GL_FLOAT, 9, 0, false));
-        tangentAnimVAOFormat.addAttribute(new VertexArrayAttribute("jointindex", 4, 19, GL_FLOAT, 11, 0, false));
-        tangentAnimVAOFormat.addAttribute(new VertexArrayAttribute("weights", 4, 19, GL_FLOAT, 15, 0, false));
-
-        particleVAOFormat = new VertexArrayFormat();
-        particleVAOFormat.addAttribute(new VertexArrayAttribute("position", 3, 12, GL_FLOAT, 0, 0, false));
-        particleVAOFormat.addAttribute(new VertexArrayAttribute("offset", 3, 3, GL_FLOAT, 0, 1, true));
-        particleVAOFormat.addAttribute(new VertexArrayAttribute("normal", 3, 12, GL_FLOAT, 7, 0, false));
-        particleVAOFormat.addAttribute(new VertexArrayAttribute("texcoord", 2, 12, GL_FLOAT, 10, 0, false));
         RenderEngine.checkForGLErrors();
 
         GGConsole.log("Created default vertex array formats");
@@ -138,8 +114,6 @@ public class RenderEngine {
 
         GGConsole.log("Enabling rendering submanagers");
 
-        TextureManager.initialize();
-        ModelManager.initialize();
         GUIController.initialize();
         PostProcessController.initialize();
         PhysicsRenderer.initialize();
@@ -154,19 +128,25 @@ public class RenderEngine {
         defaultVAOFormat.addAttribute(new VertexArrayAttribute("normal", 3, 12, GL_FLOAT, 7, 0, false));
         defaultVAOFormat.addAttribute(new VertexArrayAttribute("texcoord", 2, 12, GL_FLOAT, 10, 0, false));
 
+        tangentVAOFormat = new VertexArrayFormat();
+        tangentVAOFormat.addAttribute(new VertexArrayAttribute("position", 3, 11, GL_FLOAT, 0, 0, false));
+        tangentVAOFormat.addAttribute(new VertexArrayAttribute("normal", 3, 11, GL_FLOAT, 3, 0, false));
+        //tangentVAOFormat.addAttribute(new VertexArrayAttribute("tangent", 3, 11, GL_FLOAT, 6, 0, false));
+        tangentVAOFormat.addAttribute(new VertexArrayAttribute("texcoord", 2, 11, GL_FLOAT, 9, 0, false));
+
+        tangentAnimVAOFormat = new VertexArrayFormat();
+        tangentAnimVAOFormat.addAttribute(new VertexArrayAttribute("position", 3, 19, GL_FLOAT, 0, 0, false));
+        tangentAnimVAOFormat.addAttribute(new VertexArrayAttribute("normal", 3, 19, GL_FLOAT, 3, 0, false));
+        tangentAnimVAOFormat.addAttribute(new VertexArrayAttribute("tangents", 3, 19, GL_FLOAT, 6, 0, false));
+        tangentAnimVAOFormat.addAttribute(new VertexArrayAttribute("texcoord", 2, 19, GL_FLOAT, 9, 0, false));
+        tangentAnimVAOFormat.addAttribute(new VertexArrayAttribute("jointindex", 4, 19, GL_FLOAT, 11, 0, false));
+        tangentAnimVAOFormat.addAttribute(new VertexArrayAttribute("weights", 4, 19, GL_FLOAT, 15, 0, false));
+
         particleVAOFormat = new VertexArrayFormat();
         particleVAOFormat.addAttribute(new VertexArrayAttribute("position", 3, 12, GL_FLOAT, 0, 0, false));
         particleVAOFormat.addAttribute(new VertexArrayAttribute("offset", 3, 3, GL_FLOAT, 0, 1, true));
         particleVAOFormat.addAttribute(new VertexArrayAttribute("normal", 3, 12, GL_FLOAT, 7, 0, false));
         particleVAOFormat.addAttribute(new VertexArrayAttribute("texcoord", 2, 12, GL_FLOAT, 10, 0, false));
-
-        animationVAOFormat = new VertexArrayFormat();
-        animationVAOFormat.addAttribute(new VertexArrayAttribute("position", 3, 20, GL_FLOAT, 0, 0, false));
-        //animationVAOFormat.addAttribute(new VertexArrayAttribute("color", 4, 20, GL_FLOAT, 3, 0, false));
-        animationVAOFormat.addAttribute(new VertexArrayAttribute("normal", 3, 20, GL_FLOAT, 7, 0, false));
-        animationVAOFormat.addAttribute(new VertexArrayAttribute("texcoord", 2, 20, GL_FLOAT, 10, 0, false));
-        animationVAOFormat.addAttribute(new VertexArrayAttribute("jointindex", 4, 20, GL_FLOAT, 12, 0, false));
-        animationVAOFormat.addAttribute(new VertexArrayAttribute("weights", 4, 20, GL_FLOAT, 16, 0, false));
 
         TextureManager.initialize();
         ModelManager.initialize();

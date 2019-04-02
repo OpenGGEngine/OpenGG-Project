@@ -23,8 +23,8 @@ import java.io.IOException;
  * @author Javier
  */
 public class FreeFlyComponent extends ControlledComponent implements Actionable, MouseMoveListener{
-    private ActionTransmitterComponent pcontrol;
-    private CameraComponent view;
+    private ActionTransmitterComponent actionTransmitter;
+    private CameraComponent camera;
 
     private Vector3fm control = new Vector3fm();
     private Vector3f currot = new Vector3f();
@@ -35,13 +35,13 @@ public class FreeFlyComponent extends ControlledComponent implements Actionable,
     private final WorldObject head;
     
     public FreeFlyComponent(){
-        pcontrol = new ActionTransmitterComponent();
-        view = new CameraComponent();
+        actionTransmitter = new ActionTransmitterComponent();
+        camera = new CameraComponent();
         head = new WorldObject();
 
-        attach(pcontrol);
+        attach(actionTransmitter);
         attach(head);
-        head.attach(view);
+        head.attach(camera);
     }
     
     @Override
@@ -164,7 +164,8 @@ public class FreeFlyComponent extends ControlledComponent implements Actionable,
 
     @Override
     public void onUserChange(){
-        pcontrol.setUserId(getUserId());
+        actionTransmitter.setUserId(getUserId());
+        camera.setUserId(getUserId());
     }
 
     @Override

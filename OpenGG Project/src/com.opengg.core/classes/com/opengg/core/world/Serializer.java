@@ -85,7 +85,22 @@ public class Serializer {
             }
         }
     }
-    
+
+    public static byte[] serializeSingleComponent(Component component) throws IOException {
+        var stream = new GGOutputStream();
+        stream.write(component.getClass().getName());
+        stream.write(component.getId());
+        stream.write(component.getParent().getId());
+
+        var substream = new GGOutputStream();
+        component.serialize(substream);
+
+        stream.write(substream.asByteArray().length);
+        stream.write(substream.asByteArray());
+
+        return stream.asByteArray();
+    }
+
     private static int getAllSerializable(List<Component> components){
         int i = 0;
         for(Component c : components)

@@ -6,6 +6,7 @@
 
 package com.opengg.core.world.components;
 
+import com.opengg.core.GGInfo;
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.world.Camera;
 
@@ -13,7 +14,7 @@ import com.opengg.core.world.Camera;
  *
  * @author Javier
  */
-public class CameraComponent extends Component{
+public class CameraComponent extends ControlledComponent{
     public Camera camera;
 
     public CameraComponent(){
@@ -22,7 +23,8 @@ public class CameraComponent extends Component{
 
     @Override
     public void onEnable(){
-        RenderEngine.useView(camera);
+        if(isCurrentUser())
+            RenderEngine.useView(camera);
     }
 
     @Override

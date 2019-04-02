@@ -18,6 +18,7 @@ import com.opengg.core.util.GGOutputStream;
 import com.opengg.core.world.Deserializer;
 import com.opengg.core.world.World;
 import com.opengg.core.world.WorldEngine;
+import com.opengg.core.world.components.Component;
 
 import java.io.*;
 import java.net.DatagramSocket;
@@ -25,6 +26,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.time.Instant;
+import java.util.ArrayList;
 
 /**
  *
@@ -35,8 +37,8 @@ public class Client {
     private String servName;
     
     private Instant timeConnected;
-    private Socket tcpsocket;
-    private DatagramSocket udpsocket;
+    private Socket tcpSocket;
+    private DatagramSocket udpSocket;
     private int port;
     private long latency;
     private long timedifference;
@@ -46,8 +48,8 @@ public class Client {
     private ActionQueuer queuer;
     
     public Client(Socket tcp, DatagramSocket udp, InetAddress ip, int port){
-        this.tcpsocket = tcp;
-        this.udpsocket = udp;
+        this.tcpSocket = tcp;
+        this.udpSocket = udp;
         this.address = ip;
         this.port = port;
         this.timeConnected = Instant.now();
@@ -59,14 +61,14 @@ public class Client {
     }
 
     public void doHandshake() throws IOException{
-        var in = new BufferedReader(new InputStreamReader(tcpsocket.getInputStream()));
-        var out = new PrintWriter(new OutputStreamWriter(tcpsocket.getOutputStream()), true);
+        var in = new BufferedReader(new InputStreamReader(tcpSocket.getInputStream()));
+        var out = new PrintWriter(new OutputStreamWriter(tcpSocket.getOutputStream()), true);
 
         out.println("hey server");
         var handshake = in.readLine();
 
         if (!handshake.equals("hey client")) {
-            GGConsole.warning("Failed to connect to " + tcpsocket.getInetAddress().getHostAddress() + ", invalid handshake");
+            GGConsole.warning("Failed to connect to " + tcpSocket.getInetAddress().getHostAddress() + ", invalid handshake");
         }
 
         out.println("oh shit we out here");
@@ -95,7 +97,7 @@ public class Client {
     public void udpHandshake(){
         for(int i = 0; i < 5; i++){
             var bb = ByteBuffer.wrap(new byte[packetsize]).putInt(GGInfo.getUserId());
-            Packet.send(udpsocket, bb.array());
+            Packet.send(udpSocket, PacketType.HANDSHAKE_MESSAGE, bb.array(), address, port);
             try{
                 Thread.sleep(10);
             }catch(InterruptedException e){
@@ -105,15 +107,15 @@ public class Client {
     }
 
     public void getData() throws IOException {
-        var in = new BufferedReader(new InputStreamReader(tcpsocket.getInputStream()));
+        var in = new BufferedReader(new InputStreamReader(tcpSocket.getInputStream()));
 
         int worldsize = Integer.decode(in.readLine());
-        tcpsocket.getOutputStream().write(1);
+        tcpSocket.getOutputStream().write(1);
 
         GGConsole.log("Downloading world (" + worldsize + " bytes)");
 
         byte[] bytes = new byte[worldsize];
-        tcpsocket.getInputStream().read(bytes);
+        tcpSocket.getInputStream().read(bytes);
 
         var buffer = ByteBuffer.wrap(bytes);
 
@@ -121,6 +123,7 @@ public class Client {
         WorldEngine.useWorld(w);
 
         GGConsole.log("World downloaded");
+        GGConsole.log("Connected to " + tcpSocket.getInetAddress());
     }
 
     public void update(){
@@ -131,7 +134,7 @@ public class Client {
             queuer.writeData(out);
 
             var data = ((ByteArrayOutputStream)out.getStream()).toByteArray();
-            Packet.send(udpsocket, PacketType.CLIENT_ACTION_UPDATE, data);
+            Packet.send(udpSocket, PacketType.CLIENT_ACTION_UPDATE, data, address, port);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -141,10 +144,8 @@ public class Client {
         byte[] bytes = packet.getData();
         var in = new GGInputStream(bytes);
         try {
-
-            long time = in.readLong() + timedifference;
             short amount = in.readShort();
-            var delta = (Instant.now().toEpochMilli() - time)/1000f;
+            var delta = (Instant.now().toEpochMilli() - packet.getTimestamp())/1000f;
             for (int i = 0; i < amount; i++) {
                 short id = in.readShort();
                 var component = WorldEngine.getCurrent().find(id);
@@ -153,6 +154,24 @@ public class Client {
                     component.deserializeUpdate(in);
                     component.update(delta);
                 }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void acceptNewComponents(Packet packet) {
+        try {
+            var in = new GGInputStream(packet.getData());
+            var compAmount = in.readInt();
+            var loadedCompList = new ArrayList<Deserializer.SerialHolder>();
+            for(int i = 0; i < compAmount; i++){
+                loadedCompList.add(Deserializer.deserializeSingleComponent(in));
+            }
+
+            for(var comp : loadedCompList){
+                if(comp.parent == 0) WorldEngine.getCurrent().attach(comp.comp);
+                if(WorldEngine.getCurrent().find(comp.parent) != null) WorldEngine.getCurrent().find(comp.parent).attach(comp.comp);
             }
         } catch (IOException e) {
             e.printStackTrace();

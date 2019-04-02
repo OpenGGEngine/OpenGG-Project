@@ -8,11 +8,14 @@ package com.opengg.core.network.server;
 
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.network.Packet;
+import com.opengg.core.network.PacketType;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
 import com.opengg.core.util.LambdaContainer;
+import com.opengg.core.world.Serializer;
 import com.opengg.core.world.WorldEngine;
 import com.opengg.core.world.components.ActionTransmitterComponent;
+import com.opengg.core.world.components.Component;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -42,16 +45,19 @@ public class Server {
     private final int packetsize = 2048;
 
     private List<ConnectionListener> listeners;
-    
+    private List<Component> newComponents;
+
     public Server(String name, int port, ServerSocket ssocket, DatagramSocket dsocket){
         this.name = name;
         this.port = port;
         this.clients = new ArrayList<>();
         this.newclients = new ArrayList<>();
         this.listeners = new ArrayList<>();
+        this.newComponents = new ArrayList<>();
         this.tcpsocket = ssocket;
         this.udpsocket = dsocket;
         this.clistener = new NewConnectionListener(this);
+        WorldEngine.getCurrent().addNewChildListener(this::saveNewComponent);
     }
 
     public void start(){
@@ -78,7 +84,7 @@ public class Server {
         for(var client : this.clients){
             if(client.getLastMessage() != null && Instant.now().toEpochMilli() - client.getLastMessage().toEpochMilli() > 5000){
                 removal.add(client);
-                GGConsole.log(client.getIp().getHostAddress() + " has timed out");
+                GGConsole.log(client.getAddress().getHostAddress() + " has timed out");
 
                 //todo
             }
@@ -88,26 +94,31 @@ public class Server {
 
         clients.addAll(newclients);
         newclients.clear();
+
+        sendNewComponents();
         sendState();
     }
 
     public void sendState(){
         try {
             var componentsToSerialize = WorldEngine.getCurrent().getAllDescendants();//.stream().filter(s -> new Random().nextInt(5) == 2).collect(Collectors.toList());
-            GGOutputStream out = new GGOutputStream();
             List<byte[]> processedComponents = new ArrayList<>();
             for(var comp : componentsToSerialize){
                 GGOutputStream compOut = new GGOutputStream();
                 compOut.write((short) comp.getId());
                 comp.serializeUpdate(compOut);
+                processedComponents.add(compOut.asByteArray());
             }
 
-            var remainingPacketSize = LambdaContainer.encapsulate(getPacketSize() - 1 - Short.BYTES - Long.BYTES); //extra spot for type, amount of comps, and timestamp
+            var remainingPacketSize = LambdaContainer.encapsulate(getPacketSize()); //extra spot for type, amount of comps, and timestamp
+
             var componentsToSend = processedComponents
                     .stream()
                     .takeWhile(bytes -> remainingPacketSize.value - bytes.length > 0)
                     .peek(bytes -> remainingPacketSize.value -= bytes.length)
                     .collect(Collectors.toList());
+
+            GGOutputStream out = new GGOutputStream();
 
             out.write((short)componentsToSend.size());
             for(var compArray : componentsToSend) {
@@ -115,9 +126,8 @@ public class Server {
             }
 
             var bytes = ((ByteArrayOutputStream)out.getStream()).toByteArray();
-            for(ServerClient sc : clients){
-                Packet.send(sc);
-                sc.send(udpsocket, bytes);
+            for(var client : clients){
+                Packet.send(this.getUDPSocket(), PacketType.SERVER_UPDATE, bytes, client.getAddress(), client.getPort());
             }
 
         } catch (IOException e) {
@@ -125,10 +135,34 @@ public class Server {
         }
     }
 
+    public void sendNewComponents(){
+        if(newComponents.isEmpty()) return;
+        try {
+            var out = new GGOutputStream();
+            out.write(newComponents.size());
+            for(var comp : newComponents){
+                out.write(Serializer.serializeSingleComponent(comp));
+            }
+
+            newComponents.clear();
+
+            var bytes = ((ByteArrayOutputStream)out.getStream()).toByteArray();
+            for(var client : clients){
+                Packet.send(this.getUDPSocket(), PacketType.SERVER_COMPONENT_CREATE, bytes, client.getAddress(), client.getPort());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void saveNewComponent(Component component){
+        newComponents.add(component);
+    }
+
     public ServerClient getClient(InetAddress ip, int port){
         var tempclients =  List.copyOf(clients);
         return tempclients.stream()
-                .filter(client -> client.getIp().equals(ip))
+                .filter(client -> client.getAddress().equals(ip))
                 .filter(client -> client.getPort() == port)
                 .findFirst().orElse(null);
     }
@@ -136,7 +170,7 @@ public class Server {
     public List<ServerClient> getClients(InetAddress ip){
         var tempclients =  List.copyOf(clients);
         return tempclients.stream()
-                .filter(client -> client.getIp().equals(ip))
+                .filter(client -> client.getAddress().equals(ip))
                 .collect(Collectors.toList());
     }
 
@@ -184,36 +218,31 @@ public class Server {
     }
 
     public void accept(Packet packet){
-        var source = getClient(packet.getAddress(), packet.getPort());
+        var packetSource = getClient(packet.getAddress(), packet.getPort());
 
-        if(source == null){
+        if(packetSource == null){
             for(var client : getClients(packet.getAddress())){
-                if(client.getPort() == 0) source = client;
+                if(client.getPort() == 0) packetSource = client;
             }
         }
 
-        if(source == null) return;
+        if(packetSource == null) return;
 
-        source.setLastMessage(Instant.now());
+        packetSource.setLastMessage(Instant.now());
 
-        if(!source.isInitialized()){
-            source.setPort(packet.getPort());
-
-            for(int i = 0; i < 10; i++){
-                Packet.send(getUDPSocket(),  new byte[getPacketSize()]);
-            }
-
-            source.initialize(true);
-            GGConsole.log("User at " + source.getIp() +":" + source.getPort() + " connected");
+        if(!packetSource.receivedFirstMessage()){
+            packetSource.setPort(packet.getPort());
+            packetSource.initialize(true);
+            GGConsole.log("User at " + packetSource.getAddress() +":" + packetSource.getPort() + " connected");
 
             return;
         }
 
         if(Arrays.equals(
                 packet.getData(),
-                ByteBuffer.wrap(new byte[getPacketSize()]).putInt(source.getId()).array()))
+                ByteBuffer.wrap(new byte[getPacketSize()]).putInt(packetSource.getId()).array()))
             return;
 
-        source.processData(new GGInputStream(packet.getData()));
+        packetSource.processData(new GGInputStream(packet.getData()));
     }
 }

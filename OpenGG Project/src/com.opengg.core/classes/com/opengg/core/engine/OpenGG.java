@@ -162,12 +162,6 @@ public final class OpenGG{
     private static void runHeadless(){
         while(!GGInfo.isEnded()){
             runUpdate();
-            try {
-                Thread.sleep(1000/120);
-            } catch (InterruptedException ex) {
-                GGConsole.error("OpenGG thread has been interrupted!");
-                break;
-            }
         }
 
         GGConsole.log("OpenGG closing...");
@@ -195,7 +189,6 @@ public final class OpenGG{
 
     private static void runUpdate() {
         float delta = time.getDeltaSec();
-
         if(delta < targetUpdate) {
             try {
                 Thread.sleep((long) ((targetUpdate-delta)*1000));
