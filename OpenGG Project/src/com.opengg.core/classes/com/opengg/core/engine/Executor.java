@@ -73,7 +73,7 @@ public class Executor {
 
     /**
      * Runs the given Runnable after {@code secs} seconds on the main thread
-     * @param secs Time to wait before running the function
+     * @param secs Time to wait before isRunning the function
      * @param exec Runnable to run after the tgiven time
      * @return {@link Sleeper} to wait on the runnable
      */
@@ -83,7 +83,7 @@ public class Executor {
 
     /**
      * Runs the given Runnable after {@code period} time on the main thread
-     * @param period Time to wait before running the function
+     * @param period Time to wait before isRunning the function
      * @param exec Runnable to run after the tgiven time
      * @return {@link Sleeper} to wait on the runnable
      */

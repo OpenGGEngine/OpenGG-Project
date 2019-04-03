@@ -7,6 +7,7 @@
 package com.opengg.core.network.server;
 
 import com.opengg.core.math.Vector2f;
+import com.opengg.core.network.ConnectionData;
 import com.opengg.core.network.Packet;
 import com.opengg.core.network.client.ActionQueuer;
 import com.opengg.core.util.GGInputStream;
@@ -26,12 +27,11 @@ import java.util.List;
 public class ServerClient {
     private static int idcounter = 0;
 
-    private InetAddress ip;
+    private ConnectionData connectionData;
     private String name;
     private Instant timeConnected;
     private Instant lastMessage;
     private int latency;
-    private int port;
     private int id;
     private boolean success;
     private Vector2f mousepos = new Vector2f();
@@ -40,15 +40,11 @@ public class ServerClient {
 
     public ServerClient(String name, InetAddress ip, Instant timeConnected){
         this.name = name;
-        this.ip = ip;
+        this.connectionData = ConnectionData.get(ip, 0);
         this.timeConnected = timeConnected;
         this.id = idcounter;
         this.transmitters = new ArrayList<>();
         idcounter++;
-    }
-
-    public InetAddress getAddress(){
-        return ip;
     }
 
     public String getName(){
@@ -59,12 +55,12 @@ public class ServerClient {
         return timeConnected;
     }
 
-    public int getPort(){
-        return port;
+    public ConnectionData getConnection(){
+        return connectionData;
     }
 
     public void setPort(int port){
-        this.port = port;
+        this.connectionData = ConnectionData.get(connectionData.address, port);
     }
 
     public int getId(){

@@ -7,6 +7,7 @@
 package com.opengg.core.network.server;
 
 import com.opengg.core.console.GGConsole;
+import com.opengg.core.network.ConnectionData;
 import com.opengg.core.network.Packet;
 import com.opengg.core.network.PacketType;
 import com.opengg.core.util.GGInputStream;
@@ -84,7 +85,7 @@ public class Server {
         for(var client : this.clients){
             if(client.getLastMessage() != null && Instant.now().toEpochMilli() - client.getLastMessage().toEpochMilli() > 5000){
                 removal.add(client);
-                GGConsole.log(client.getAddress().getHostAddress() + " has timed out");
+                GGConsole.log(client.getConnection().getAddress().getHostAddress() + " has timed out");
 
                 //todo
             }
@@ -127,7 +128,7 @@ public class Server {
 
             var bytes = ((ByteArrayOutputStream)out.getStream()).toByteArray();
             for(var client : clients){
-                Packet.send(this.getUDPSocket(), PacketType.SERVER_UPDATE, bytes, client.getAddress(), client.getPort());
+                Packet.send(this.getUDPSocket(), PacketType.SERVER_UPDATE, bytes, client.getConnection());
             }
 
         } catch (IOException e) {
@@ -148,7 +149,7 @@ public class Server {
 
             var bytes = ((ByteArrayOutputStream)out.getStream()).toByteArray();
             for(var client : clients){
-                Packet.send(this.getUDPSocket(), PacketType.SERVER_COMPONENT_CREATE, bytes, client.getAddress(), client.getPort());
+                Packet.send(this.getUDPSocket(), PacketType.SERVER_COMPONENT_CREATE, bytes, client.getConnection());
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -159,18 +160,17 @@ public class Server {
         newComponents.add(component);
     }
 
-    public ServerClient getClient(InetAddress ip, int port){
+    public ServerClient getClient(ConnectionData data){
         var tempclients =  List.copyOf(clients);
         return tempclients.stream()
-                .filter(client -> client.getAddress().equals(ip))
-                .filter(client -> client.getPort() == port)
+                .filter(client -> client.getConnection().equals(data))
                 .findFirst().orElse(null);
     }
 
     public List<ServerClient> getClients(InetAddress ip){
         var tempclients =  List.copyOf(clients);
         return tempclients.stream()
-                .filter(client -> client.getAddress().equals(ip))
+                .filter(client -> client.getConnection().getAddress().equals(ip))
                 .collect(Collectors.toList());
     }
 
@@ -218,11 +218,11 @@ public class Server {
     }
 
     public void accept(Packet packet){
-        var packetSource = getClient(packet.getAddress(), packet.getPort());
+        var packetSource = getClient(packet.getConnection());
 
         if(packetSource == null){
-            for(var client : getClients(packet.getAddress())){
-                if(client.getPort() == 0) packetSource = client;
+            for(var client : getClients(packet.getConnection().address)){
+                if(client.getConnection().port == 0) packetSource = client;
             }
         }
 
@@ -231,9 +231,9 @@ public class Server {
         packetSource.setLastMessage(Instant.now());
 
         if(!packetSource.receivedFirstMessage()){
-            packetSource.setPort(packet.getPort());
+            packetSource.setPort(packet.getConnection().getPort());
             packetSource.initialize(true);
-            GGConsole.log("User at " + packetSource.getAddress() +":" + packetSource.getPort() + " connected");
+            GGConsole.log("User at " + packetSource.getConnection().getAddress() +":" + packetSource.getConnection() + " connected");
 
             return;
         }

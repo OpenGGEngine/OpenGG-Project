@@ -7,18 +7,17 @@
 package com.opengg.core.network;
 
 import com.opengg.core.console.GGConsole;
+import com.opengg.core.engine.PerformanceManager;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.lang.reflect.Array;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.time.Instant;
 import java.util.Arrays;
-import java.util.BitSet;
 
 /**
  *
@@ -28,17 +27,15 @@ public class Packet implements Serializable{
     private final int RECEIVER_PACKET_SIZE = 1024*1024;
 
     private byte[] data;
-    private int port;
     private int length;
     private boolean requestAck;
     private byte type;
     private long timestamp;
-    private DatagramPacket dp;
-    private InetAddress address;
+    private ConnectionData connectionData;
+    private DatagramPacket internalPacket;
 
-    private Packet(DatagramSocket socket, byte type, boolean guarantee, byte[] userBytes, InetAddress address, int port){
-        this.address = address;
-        this.port = port;
+    private Packet(DatagramSocket socket, byte type, boolean guarantee, byte[] userBytes, ConnectionData connectionData){
+        this.connectionData = connectionData;
         this.type = type;
         this.length = userBytes.length;
         this.timestamp = Instant.now().toEpochMilli();
@@ -64,7 +61,7 @@ public class Packet implements Serializable{
 
             var finalBytes = out.asByteArray();
 
-            dp = new DatagramPacket(finalBytes, finalBytes.length, address, port);
+            internalPacket = new DatagramPacket(finalBytes, finalBytes.length, connectionData.address, connectionData.port);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -72,7 +69,7 @@ public class Packet implements Serializable{
 
     private Packet(){
         data = new byte[RECEIVER_PACKET_SIZE];
-        dp = new DatagramPacket(data, RECEIVER_PACKET_SIZE);
+        internalPacket = new DatagramPacket(data, RECEIVER_PACKET_SIZE);
     }
 
     public static Packet receive(DatagramSocket ds){
@@ -81,23 +78,23 @@ public class Packet implements Serializable{
         return packet;
     }
 
-    public static void sendGuaranteed(DatagramSocket ds, byte type, byte[] bytes, InetAddress address, int port){
-        Packet p = new Packet(ds, type, true, bytes, address, port);
+    public static void sendGuaranteed(DatagramSocket ds, byte type, byte[] bytes, ConnectionData connectionData){
+        Packet p = new Packet(ds, type, true, bytes, connectionData);
         p.send(ds);
     }
 
-    public static void send(DatagramSocket ds, byte type, byte[] bytes, InetAddress address, int port){
-        Packet p = new Packet(ds, type, false, bytes, address, port);
+    public static void send(DatagramSocket ds, byte type, byte[] bytes, ConnectionData connectionData){
+        Packet p = new Packet(ds, type, false, bytes, connectionData);
         p.send(ds);
     }
 
-    public static void sendAcknowledgement(DatagramSocket ds, Packet packet, InetAddress address, int port){
+    public static void sendAcknowledgement(DatagramSocket ds, Packet packet, ConnectionData connectionData){
         try {
             var stream = new GGOutputStream();
             stream.write(packet.getTimestamp());
             var data = stream.asByteArray();
 
-            Packet p = new Packet(ds, PacketType.ACK,false, data, address, port);
+            Packet p = new Packet(ds, PacketType.ACK,false, data, connectionData);
             p.send(ds);
         } catch (IOException e) {
             e.printStackTrace();
@@ -106,10 +103,11 @@ public class Packet implements Serializable{
 
     private void receivePacket(DatagramSocket ds){
         try {
-            ds.receive(dp);
-            address = dp.getAddress();
-            port = dp.getPort();
-            length = dp.getLength();
+            ds.receive(internalPacket);
+            var address = internalPacket.getAddress();
+            var port = internalPacket.getPort();
+            connectionData = ConnectionData.get(address,port);
+            length = internalPacket.getLength();
             data = Arrays.copyOf(data, length);
 
             var in = new GGInputStream(data);
@@ -121,6 +119,8 @@ public class Packet implements Serializable{
             int userLength = in.readInt();
             data = in.readByteArray(userLength);
 
+            PerformanceManager.registerPacketIn(this.length);
+
         } catch (IOException ex) {
             GGConsole.warning("Failed to receive messages!");
         }
@@ -128,18 +128,15 @@ public class Packet implements Serializable{
 
     private void send(DatagramSocket ds){
         try {
-            ds.send(dp);
+            ds.send(internalPacket);
+            PerformanceManager.registerPacketOut(this.length);
         } catch (IOException ex) {
-            GGConsole.warning("Failed to communicate with " + address.getHostAddress());
+            GGConsole.warning("Failed to communicate with " + connectionData.address.getHostAddress());
         }
     }
 
     public byte[] getData(){
         return data;
-    }
-    
-    public int getPort(){
-        return port;
     }
 
     public int getLength() {
@@ -154,7 +151,7 @@ public class Packet implements Serializable{
         return timestamp;
     }
 
-    public InetAddress getAddress(){
-        return address;
+    public ConnectionData getConnection(){
+        return connectionData;
     }
 }

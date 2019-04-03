@@ -126,8 +126,8 @@ public class WaterComponent extends RenderComponent{
     }
 
     @Override
-    public void deserializeUpdate(GGInputStream in) throws IOException{
-        super.deserializeUpdate(in);
+    public void deserializeUpdate(GGInputStream in, float delta) throws IOException{
+        super.deserializeUpdate(in, delta);
         current = in.readFloat();
     }
 }

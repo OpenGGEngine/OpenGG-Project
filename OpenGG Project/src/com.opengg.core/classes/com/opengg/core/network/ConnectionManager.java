@@ -1,7 +1,6 @@
 package com.opengg.core.network;
 
 import com.opengg.core.engine.OpenGG;
-import com.opengg.core.math.Tuple;
 import com.opengg.core.thread.ThreadManager;
 
 import java.net.DatagramSocket;
@@ -10,12 +9,13 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class PacketReceiver implements Runnable{
+public class ConnectionManager implements Runnable{
     private final Map<Byte, List<Consumer<Packet>>> processors; //since im definitely going to forget why the tuple contains a byte its a packet identifier
+    private final List<Packet> packetsWaiting = new ArrayList<>();
     private final DatagramSocket socket;
     private int packetsize;
 
-    public PacketReceiver(DatagramSocket socket, int packetsize){
+    public ConnectionManager(DatagramSocket socket, int packetsize){
         processors = new HashMap<>();
         this.socket = socket;
         this.packetsize = packetsize;
@@ -36,12 +36,20 @@ public class PacketReceiver implements Runnable{
     }
 
     public void start(){
-        ThreadManager.runDaemon(this, "PacketReceiver");
+        ThreadManager.runDaemon(this, "ConnectionManager");
+    }
+
+    public void sendWithAcknowledgement(Packet packet){
+
+    }
+
+    public void receiveAcknowledgement(Packet packet){
+
     }
 
     @Override
     public void run(){
-        while(NetworkEngine.running() && OpenGG.getEnded()){
+        while(NetworkEngine.isRunning() && OpenGG.getEnded()){
             Packet packet = Packet.receive(socket);
             processors.get(packet.getType()).forEach(p -> p.accept(packet));
         }

@@ -119,7 +119,7 @@ public final class OpenGG{
         Executor.initialize();
         GGConsole.initialize();
         GGConsole.addListener(new OpenGGCommandExtender());
-        GGConsole.log("OpenGG initializing, running on " + System.getProperty("os.name") + ", " + System.getProperty("os.arch"));
+        GGConsole.log("OpenGG initializing, isRunning on " + System.getProperty("os.name") + ", " + System.getProperty("os.arch"));
 
         Resource.initialize();
         GGConsole.log("Resource system initialized");
@@ -200,7 +200,7 @@ public final class OpenGG{
         delta = overrideUpdate > 0f ? overrideUpdate : delta;
 
         Allocator.update();
-        GGDebugRenderer.update(delta);
+        PerformanceManager.update(delta);
         Executor.getExecutor().update(delta);
         ExtensionManager.update(delta);
         WorldEngine.update(delta);
@@ -338,10 +338,6 @@ public final class OpenGG{
     private static void writeErrorLog(){
         if(test) return;
         String error = SystemInfo.getInfo();
-    }
-
-    public static float getLastTickLength(){
-        return GGDebugRenderer.getLastFrameTime();
     }
 
     /**

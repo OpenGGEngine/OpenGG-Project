@@ -384,7 +384,7 @@ public abstract class Component{
         //out.write(scaleoffset);
     }
 
-    public void deserializeUpdate(GGInputStream in) throws IOException{
+    public void deserializeUpdate(GGInputStream in, float delta) throws IOException{
         var set = BitSet.valueOf(new byte[]{in.readByte()});
         var getpos = set.get(0);
         var getrot = set.get(1);

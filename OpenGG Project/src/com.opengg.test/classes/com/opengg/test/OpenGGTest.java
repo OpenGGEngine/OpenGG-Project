@@ -12,6 +12,7 @@ import com.opengg.core.gui.GUIButton;
 import com.opengg.core.io.input.mouse.MouseController;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.model.io.AssimpModelLoader;
+import com.opengg.core.network.NetworkEngine;
 import com.opengg.core.physics.collision.AABB;
 import com.opengg.core.physics.collision.ColliderGroup;
 import com.opengg.core.physics.collision.ConvexHull;
@@ -101,10 +102,10 @@ public class  OpenGGTest extends GGApplication{
 
         GUIController.addAndUse(mainview, "mainview");
 
-        WorldEngine.getCurrent().attach(new ModelComponent(Resource.getModel("pear")));
+       // WorldEngine.getCurrent().attach(new ModelComponent(Resource.getModel("pear")));
                 //.setScaleOffset(new Vector3f(0.01f,0,0.01f)));
-  //      NetworkEngine.connect("localhost", 25565);
-
+        NetworkEngine.connect("localhost", 25565);
+/*
 
         WorldEngine.getCurrent().attach(new LightComponent(
                 //Light.createPointShadow(new Vector3f(0,-10,0), new Vector3f(1), 1000, 512, 512 )));
@@ -131,7 +132,7 @@ public class  OpenGGTest extends GGApplication{
                 Resource.getTexturePath("skybox\\majestic_up.png"),
                 Resource.getTexturePath("skybox\\majestic_dn.png"),
                 Resource.getTexturePath("skybox\\majestic_rt.png"),
-                Resource.getTexturePath("skybox\\majestic_lf.png")), 500f));
+                Resource.getTexturePath("skybox\\majestic_lf.png")), 500f));*/
 
         BindController.addBind(ControlType.KEYBOARD, "forward", KEY_W);
         BindController.addBind(ControlType.KEYBOARD, "backward", KEY_S);
@@ -145,9 +146,6 @@ public class  OpenGGTest extends GGApplication{
         BindController.addBind(ControlType.KEYBOARD, "lookdown", KEY_DOWN);
         BindController.addBind(ControlType.KEYBOARD, "aim", KEY_K);
 
-        ViewModelComponentRegistry.initialize();
-        ViewModelComponentRegistry.createRegisters();
-        
         RenderEngine.setProjectionData(ProjectionData.getPerspective(100, 0.2f, 3000f));
 
         WindowController.getWindow().setCursorLock(true);

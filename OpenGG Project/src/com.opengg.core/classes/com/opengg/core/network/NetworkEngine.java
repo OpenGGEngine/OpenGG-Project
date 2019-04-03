@@ -23,14 +23,14 @@ public class NetworkEngine {
     private static Server server;
     private static Client client;
 
-    private static PacketReceiver receiver;
+    private static ConnectionManager receiver;
 
     public static void update(){
         if(server != null) server.update();
         if(client != null) client.update();
     }
 
-    public static boolean running(){
+    public static boolean isRunning(){
         if(server != null) return server.isRunning();
         if(client != null) return client.isRunning();
         return false;
@@ -72,7 +72,7 @@ public class NetworkEngine {
             var tcp = new Socket(ip, port);
             var udpsocket = new DatagramSocket();
 
-            client = new Client(tcp, udpsocket, tcp.getInetAddress(), port);
+            client = new Client(tcp, udpsocket, ConnectionData.get(tcp.getInetAddress(), port));
 
             client.start();
 
@@ -103,7 +103,7 @@ public class NetworkEngine {
     }
 
     public static void createReceiver(DatagramSocket socket, int packetsize){
-        receiver = new PacketReceiver(socket, packetsize);
+        receiver = new ConnectionManager(socket, packetsize);
         receiver.start();
     }
 

@@ -9,6 +9,7 @@ package com.opengg.core.render;
 import com.opengg.core.render.shader.VertexArrayFormat;
 import com.opengg.core.render.shader.VertexArrayObject;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -82,7 +83,7 @@ public class RenderGroup {
     }
     
     public List<Renderable> getList(){
-        return items;
+        return Collections.unmodifiableList(items);
     }
     
     public void render(){

@@ -11,6 +11,7 @@ import com.opengg.core.GGInfo;
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.engine.OpenGG;
 import com.opengg.core.io.input.mouse.MouseController;
+import com.opengg.core.network.ConnectionData;
 import com.opengg.core.network.Packet;
 import com.opengg.core.network.PacketType;
 import com.opengg.core.util.GGInputStream;
@@ -33,13 +34,12 @@ import java.util.ArrayList;
  * @author Javier
  */
 public class Client {
-    private InetAddress address;
     private String servName;
-    
+
+    private ConnectionData connectionData;
     private Instant timeConnected;
     private Socket tcpSocket;
     private DatagramSocket udpSocket;
-    private int port;
     private long latency;
     private long timedifference;
     private int packetsize;
@@ -47,11 +47,10 @@ public class Client {
 
     private ActionQueuer queuer;
     
-    public Client(Socket tcp, DatagramSocket udp, InetAddress ip, int port){
+    public Client(Socket tcp, DatagramSocket udp, ConnectionData connectionData){
         this.tcpSocket = tcp;
         this.udpSocket = udp;
-        this.address = ip;
-        this.port = port;
+        this.connectionData = connectionData;
         this.timeConnected = Instant.now();
         this.queuer = ActionQueuer.get();
     }
@@ -97,7 +96,7 @@ public class Client {
     public void udpHandshake(){
         for(int i = 0; i < 5; i++){
             var bb = ByteBuffer.wrap(new byte[packetsize]).putInt(GGInfo.getUserId());
-            Packet.send(udpSocket, PacketType.HANDSHAKE_MESSAGE, bb.array(), address, port);
+            Packet.send(udpSocket, PacketType.HANDSHAKE_MESSAGE, bb.array(), connectionData);
             try{
                 Thread.sleep(10);
             }catch(InterruptedException e){
@@ -134,7 +133,7 @@ public class Client {
             queuer.writeData(out);
 
             var data = ((ByteArrayOutputStream)out.getStream()).toByteArray();
-            Packet.send(udpSocket, PacketType.CLIENT_ACTION_UPDATE, data, address, port);
+            Packet.send(udpSocket, PacketType.CLIENT_ACTION_UPDATE, data, connectionData);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -143,21 +142,24 @@ public class Client {
     public void accept(Packet packet){
         byte[] bytes = packet.getData();
         var in = new GGInputStream(bytes);
-        try {
-            short amount = in.readShort();
-            var delta = (Instant.now().toEpochMilli() - packet.getTimestamp())/1000f;
-            for (int i = 0; i < amount; i++) {
-                short id = in.readShort();
-                var component = WorldEngine.getCurrent().find(id);
 
-                if(component != null){
-                    component.deserializeUpdate(in);
-                    component.update(delta);
+        OpenGG.asyncExec(() -> {
+            try {
+                short amount = in.readShort();
+                var delta = (Instant.now().toEpochMilli() - (packet.getTimestamp() + timedifference)) / 1000f;
+                for (int i = 0; i < amount; i++) {
+                    short id = in.readShort();
+
+                    var component = WorldEngine.getCurrent().find(id);
+
+                    if (component != null) {
+                        component.deserializeUpdate(in, delta);
+                    }
                 }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        });
     }
 
     public void acceptNewComponents(Packet packet) {
@@ -165,21 +167,28 @@ public class Client {
             var in = new GGInputStream(packet.getData());
             var compAmount = in.readInt();
             var loadedCompList = new ArrayList<Deserializer.SerialHolder>();
-            for(int i = 0; i < compAmount; i++){
-                loadedCompList.add(Deserializer.deserializeSingleComponent(in));
-            }
+            OpenGG.asyncExec(() -> {
+                try {
+                    for (int i = 0; i < compAmount; i++) {
+                        loadedCompList.add(Deserializer.deserializeSingleComponent(in));
+                    }
 
-            for(var comp : loadedCompList){
-                if(comp.parent == 0) WorldEngine.getCurrent().attach(comp.comp);
-                if(WorldEngine.getCurrent().find(comp.parent) != null) WorldEngine.getCurrent().find(comp.parent).attach(comp.comp);
-            }
+                    for (var comp : loadedCompList) {
+                        if (comp.parent == 0) WorldEngine.getCurrent().attach(comp.comp);
+                        if (WorldEngine.getCurrent().find(comp.parent) != null)
+                            WorldEngine.getCurrent().find(comp.parent).attach(comp.comp);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public InetAddress getServerIP() {
-        return address;
+    public ConnectionData getConnection() {
+        return connectionData;
     }
 
     public String getServerName() {
@@ -190,9 +199,6 @@ public class Client {
         return timeConnected;
     }
 
-    public int getPort() {
-        return port;
-    }
 
     public long getLatency(){
         return latency;

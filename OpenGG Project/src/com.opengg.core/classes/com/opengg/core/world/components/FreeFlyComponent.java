@@ -141,9 +141,10 @@ public class FreeFlyComponent extends ControlledComponent implements Actionable,
     }
 
     @Override
-    public void deserializeUpdate(GGInputStream stream) throws IOException{
-        super.deserializeUpdate(stream);
+    public void deserializeUpdate(GGInputStream stream, float delta) throws IOException{
+        super.deserializeUpdate(stream, delta);
         vel = stream.readVector3f();
+        setPositionOffset(getPosition().add(vel.multiply(delta)));
     }
 
     @Override
