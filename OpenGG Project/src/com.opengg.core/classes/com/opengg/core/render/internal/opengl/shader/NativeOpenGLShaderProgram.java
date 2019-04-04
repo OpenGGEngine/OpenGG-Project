@@ -11,6 +11,8 @@ import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.system.Allocator;
+import com.opengg.core.system.SystemInfo;
+
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -141,7 +143,14 @@ public class NativeOpenGLShaderProgram{
 
     public void setUniform(int location, Matrix4f value) {
         if(RenderEngine.validateInitialization()) return;
-        glProgramUniformMatrix4fv(id, location, false, value.getStackBuffer());
+        if(SystemInfo.getSysInfo().get("Graphics Vendor").equals("Intel")){
+            bind();
+            glUniformMatrix4fv(location, false, value.getStackBuffer());
+            unbind();
+        }else{
+            glProgramUniformMatrix4fv(id, location, false, value.getStackBuffer());
+        }
+
         Allocator.popStack();
     }
     
@@ -168,10 +177,18 @@ public class NativeOpenGLShaderProgram{
     public void setUniformBlockIndex(int bind, String name){
         if(RenderEngine.validateInitialization()) return;
         int index = glGetUniformBlockIndex(id, name);
+        if(index == -1) return;
         glUniformBlockBinding(id, index, bind);
-        glGetError(); //CATCH 1281 FROM MISSING INDEX
     }
-    
+
+    public void bind(){
+        glUseProgram(id);
+    }
+
+    public void unbind(){
+        glUseProgram(0);
+    }
+
     public ByteBuffer getProgramBinary(){
         if(RenderEngine.validateInitialization()) return null;
         IntBuffer length = Allocator.stackAllocInt(1);

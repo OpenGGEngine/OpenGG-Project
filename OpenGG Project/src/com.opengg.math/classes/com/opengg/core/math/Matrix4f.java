@@ -127,36 +127,6 @@ public class Matrix4f {
         this.m33 = arr[3][3];
     }
 
-    public FloatBuffer getStackBuffer() {
-        FloatBuffer buffer = Allocator.stackAllocFloat(16);
-        buffer.put(m00).put(m01).put(m02).put(m03);
-        buffer.put(m10).put(m11).put(m12).put(m13);
-        buffer.put(m20).put(m21).put(m22).put(m23);
-        buffer.put(m30).put(m31).put(m32).put(m33);
-        buffer.flip();
-        return buffer;
-    }
-
-    public FloatBuffer getBuffer() {
-        FloatBuffer buffer = Allocator.allocFloat(16);
-        buffer.put(m00).put(m01).put(m02).put(m03);
-        buffer.put(m10).put(m11).put(m12).put(m13);
-        buffer.put(m20).put(m21).put(m22).put(m23);
-        buffer.put(m30).put(m31).put(m32).put(m33);
-        buffer.flip();
-        return buffer;
-    }
-
-    public FloatBuffer getTransposedBuffer() {
-        FloatBuffer buffer = Allocator.allocFloat(16);
-        buffer.put(m00).put(m10).put(m20).put(m30);
-        buffer.put(m01).put(m11).put(m21).put(m31);
-        buffer.put(m02).put(m12).put(m22).put(m32);
-        buffer.put(m03).put(m13).put(m23).put(m33);
-        buffer.flip();
-        return buffer;
-    }
-
     public Vector4f transform(Vector4f init){
         return init.multiply(this);
     }
@@ -423,12 +393,52 @@ public class Matrix4f {
 */
         return news;
     }
+
+
+    public FloatBuffer getStackBuffer() {
+        FloatBuffer buffer = Allocator.stackAllocFloat(16);
+        buffer.put(m00).put(m01).put(m02).put(m03);
+        buffer.put(m10).put(m11).put(m12).put(m13);
+        buffer.put(m20).put(m21).put(m22).put(m23);
+        buffer.put(m30).put(m31).put(m32).put(m33);
+        buffer.flip();
+        return buffer;
+    }
+
+    public FloatBuffer getBuffer() {
+        FloatBuffer buffer = Allocator.allocFloat(16);
+        buffer.put(m00).put(m01).put(m02).put(m03);
+        buffer.put(m10).put(m11).put(m12).put(m13);
+        buffer.put(m20).put(m21).put(m22).put(m23);
+        buffer.put(m30).put(m31).put(m32).put(m33);
+        buffer.flip();
+        return buffer;
+    }
+
+    public FloatBuffer getTransposedBuffer() {
+        FloatBuffer buffer = Allocator.allocFloat(16);
+        buffer.put(m00).put(m10).put(m20).put(m30);
+        buffer.put(m01).put(m11).put(m21).put(m31);
+        buffer.put(m02).put(m12).put(m22).put(m32);
+        buffer.put(m03).put(m13).put(m23).put(m33);
+        buffer.flip();
+        return buffer;
+    }
+
     public float[][] getArray() {
         float[][] arr = {{m00, m01, m02, m03},
         {m10, m11, m12, m13},
         {m20, m21, m22, m23},
         {m30, m31, m32, m33}};
 
+        return arr;
+    }
+
+    public float[] getLinearArray(){
+        float[] arr = {m00,m01,m02,m03,
+        m10,m11,m12,m13,
+        m20,m21,m22,m23,
+        m30,m31,m32,m33};
         return arr;
     }
     
@@ -446,7 +456,7 @@ public class Matrix4f {
     public String toString(){
         return  m00 + ", " + m01 + ", " + m02 + ", " + m03 + ", " + "\n" +
                 m10 + ", " + m11 + ", " + m12 + ", " + m13 + ", " + "\n" +
-                m20 + ", " + m22 + ", " + m22 + ", " + m23 + ", " + "\n" +
+                m20 + ", " + m21 + ", " + m22 + ", " + m23 + ", " + "\n" +
                 m30 + ", " + m31 + ", " + m32 + ", " + m33;
     }
 }

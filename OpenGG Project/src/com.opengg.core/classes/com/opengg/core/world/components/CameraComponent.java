@@ -30,6 +30,6 @@ public class CameraComponent extends ControlledComponent{
     @Override
     public void update(float delta){
         camera.setPosition(getPosition());
-        camera.setRotation(getRotation().invert());
+        camera.setRotation(getRotation());
     }
 }

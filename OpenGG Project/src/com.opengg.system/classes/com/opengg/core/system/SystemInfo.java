@@ -11,6 +11,8 @@ import com.opengg.core.GGInfo;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 
+import static org.lwjgl.opengl.GL11.*;
+
 /**
  *
  * @author Javier
@@ -67,7 +69,7 @@ public class SystemInfo {
                 GGConsole.warning("Failed to open generated DxDiag file, Java information may be inaccurate");
             }
         }
-         */       
+         */
         
     }
     
@@ -75,12 +77,31 @@ public class SystemInfo {
         String glVersion = GGInfo.getGlVersion();
         glinfo.put("GL Version", glVersion);
         glinfo.put("GL Initialization", !(glVersion == null || glVersion.isEmpty()) ? "Initialized successfully" : "Initialization failed");
+
+        sysinfo.put("Graphics Renderer", glGetString(GL_RENDERER));
+        sysinfo.put("Graphics Vendor", glGetString(GL_VENDOR));
     }
     
     public static void queryEngineInfo(){
         
     }
-    
+
+    public static LinkedHashMap<String, String> getGlInfo() {
+        return glinfo;
+    }
+
+    public static LinkedHashMap<String, String> getJavaInfo() {
+        return javainfo;
+    }
+
+    public static LinkedHashMap<String, String> getSysInfo() {
+        return sysinfo;
+    }
+
+    public static LinkedHashMap<String, String> getEngineInfo() {
+        return engineinfo;
+    }
+
     public static String getInfo(){
         String data = "OpenGG Engine Version: " + GGInfo.getVersion();
         

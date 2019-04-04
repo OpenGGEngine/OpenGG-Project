@@ -35,6 +35,7 @@ public class OpenGLShaderProgram implements ShaderProgram{
     
     private final HashMap<String, Integer> ulocs = new HashMap<>();
     private final HashMap<String, Integer> alocs = new HashMap<>();
+    private final HashMap<Integer, Object> uniformVals = new HashMap<>();
     
     public OpenGLShaderProgram(ShaderType type, CharSequence source, String name){
         this.name = name;
@@ -65,7 +66,16 @@ public class OpenGLShaderProgram implements ShaderProgram{
     @Override
     public void findUniformLocation(String pos){
         int nid = program.findUniformLocation(pos);
+
         ulocs.put(pos, nid);
+
+        if(nid == -1) return;
+
+        if(pos.equals("view") || pos.equals("model") || pos.equals("projection")) System.out.println(this.name);
+
+        if(pos.equals("view")) System.out.println(pos + " " + nid);
+        if(pos.equals("model")) System.out.println(pos + " " + nid);
+
     }
     
     @Override
@@ -142,6 +152,7 @@ public class OpenGLShaderProgram implements ShaderProgram{
      */
     @Override
     public void setUniform(int location, int value) {
+        uniformVals.put(location, value);
         program.setUniform(location, value);
     }
     
@@ -153,6 +164,7 @@ public class OpenGLShaderProgram implements ShaderProgram{
      */
     @Override
     public void setUniform(int location, boolean value) {
+        uniformVals.put(location, value);
         program.setUniform(location, value);
     }
 
@@ -164,6 +176,8 @@ public class OpenGLShaderProgram implements ShaderProgram{
      */
     @Override
     public void setUniform(int location, float value) {
+
+        uniformVals.put(location, value);
         program.setUniform(location, value);
     }
     
@@ -175,6 +189,7 @@ public class OpenGLShaderProgram implements ShaderProgram{
      */
     @Override
     public void setUniform(int location, Vector2f value) {
+        uniformVals.put(location, value);
         program.setUniform(location, value);
     }
 
@@ -186,19 +201,21 @@ public class OpenGLShaderProgram implements ShaderProgram{
      */
     @Override
     public void setUniform(int location, Vector3f value) {
+        uniformVals.put(location, value);
         program.setUniform(location, value);
     }
 
     @Override
     public void setUniform(int location, Matrix4f value) {
+        uniformVals.put(location, value);
         program.setUniform(location, value);
     }
     
     @Override
     public void setUniform(int location, Matrix4f[] matrices) {
+        uniformVals.put(location, matrices);
         program.setUniform(location, matrices);
     }
-
     @Override
     public void setUniformBlockIndex(int bind, String name){
         program.setUniformBlockIndex(bind, name);
@@ -208,7 +225,7 @@ public class OpenGLShaderProgram implements ShaderProgram{
     public ByteBuffer getProgramBinary(){
         return program.getProgramBinary();
     }
-    
+
     @Override
     public void checkStatus() {
         int i;

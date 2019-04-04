@@ -163,7 +163,7 @@ public class ShaderController {
         use("particle.vert", "texture.frag");
         saveCurrentConfiguration("particle");
 
-        GGConsole.log("Created " + pipelines + " default shader pipelines");
+        GGConsole.log("Created " + pipelines.size() + " default shader pipelines");
     }
 
     private static void setUniforms(){
@@ -175,6 +175,9 @@ public class ShaderController {
 
         findUniform("model");
         setUniform("model", new Matrix4f());
+
+        findUniform("view");
+        setUniform("view", new Matrix4f());
 
         findUniform("jointsMatrix");
         setUniform("jointsMatrix", new Matrix4f[200]);
@@ -223,9 +226,6 @@ public class ShaderController {
 
         findUniform("camera");
         setUniform("camera", new Vector3f(0,0,0));
-
-        findUniform("view");
-        setUniform("view", new Matrix4f());
 
         findUniform("numLights");
         setUniform("numLights", 1);
@@ -837,7 +837,7 @@ public class ShaderController {
     }
 
     private static void dumpShader(ShaderFileHolder holder){
-
+        if(holder.name.contains("object.vert")) System.out.println(holder.fulldata);
     }
 
     private static void createGLShaderFromFile(){

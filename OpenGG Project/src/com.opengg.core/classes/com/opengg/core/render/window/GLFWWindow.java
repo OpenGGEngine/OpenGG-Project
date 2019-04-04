@@ -16,6 +16,7 @@ import static org.lwjgl.glfw.GLFW.*;
 import org.lwjgl.opengl.*;
 import static org.lwjgl.opengl.GL11.*;
 import org.lwjgl.stb.STBImage;
+import org.lwjgl.system.Callback;
 
 import static org.lwjgl.system.MemoryUtil.*;
 
@@ -107,7 +108,7 @@ public class GLFWWindow implements Window {
 
         glfwShowWindow(window);
         GL.createCapabilities();
-        //Callback debugProc = GLUtil.setupDebugMessageCallback();
+       // Callback debugProc = GLUtil.setupDebugMessageCallback();
         if (glGetError() == GL_NO_ERROR) {
             success = true;
         } else {

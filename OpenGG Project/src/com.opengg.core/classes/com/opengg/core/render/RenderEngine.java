@@ -12,6 +12,7 @@ import com.opengg.core.engine.GGDebugRenderer;
 import com.opengg.core.engine.GGGameConsole;
 import com.opengg.core.exceptions.RenderException;
 import com.opengg.core.gui.GUIController;
+import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.model.ModelManager;
@@ -26,6 +27,7 @@ import com.opengg.core.render.texture.Framebuffer;
 import com.opengg.core.render.texture.TextureManager;
 import com.opengg.core.render.window.WindowController;
 import com.opengg.core.system.Allocator;
+import com.opengg.core.system.SystemInfo;
 import com.opengg.core.world.Camera;
 import com.opengg.core.world.Skybox;
 
@@ -36,6 +38,8 @@ import java.util.List;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL14.GL_FUNC_ADD;
 import static org.lwjgl.opengl.GL14.glBlendEquation;
+import static org.lwjgl.opengl.GL20.GL_MAX_VERTEX_ATTRIBS;
+import static org.lwjgl.opengl.GL20.GL_MAX_VERTEX_UNIFORM_COMPONENTS;
 import static org.lwjgl.opengl.GL30.GL_MAJOR_VERSION;
 import static org.lwjgl.opengl.GL30.GL_MINOR_VERSION;
 import static org.lwjgl.opengl.GL32.GL_TEXTURE_CUBE_MAP_SEAMLESS;
@@ -208,7 +212,6 @@ public class RenderEngine {
     public static void render(){
         for(RenderPass pass : passes){
             pass.runEnableOp();
-
             ShaderController.setView(camera.getMatrix());
             ShaderController.setUniform("camera", camera.getPosition());
             projdata.ratio = WindowController.getWindow().getRatio();

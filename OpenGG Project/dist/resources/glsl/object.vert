@@ -21,7 +21,6 @@ uniform mat4 projection;
 void main() {
     textureCoord = texcoord;
     norm = normalize(vec3(model * vec4(normal,0.0)));
-	
     pos = (model * vec4(position, 1.0f)).xyz;
 
     vec4 P = vec4(pos, 1.0f);

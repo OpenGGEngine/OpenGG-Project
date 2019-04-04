@@ -6,6 +6,7 @@
 
 package com.opengg.core.render.internal.opengl.shader;
 
+import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.shader.ShaderProgram;
 
 import static org.lwjgl.opengl.GL41.*;
@@ -16,7 +17,7 @@ import static org.lwjgl.opengl.GL41.*;
  */
 public class OpenGLShaderPipeline implements com.opengg.core.render.shader.ShaderPipeline{
     final private NativeOpenGLShaderPipeline nativepipeline;
-    final private String  vert, frag, tesc, tese, geom;
+    final private String vert, frag, tesc, tese, geom;
     
     public OpenGLShaderPipeline(ShaderProgram vert, ShaderProgram tesc, ShaderProgram tese, ShaderProgram geom, ShaderProgram frag){
         this.vert = vert.getName();
