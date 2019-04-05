@@ -6,7 +6,12 @@
 
 package com.opengg.core.io.input.mouse;
 
+import com.opengg.core.engine.OpenGG;
 import com.opengg.core.math.Vector2f;
+import com.opengg.core.math.Vector3f;
+import com.opengg.core.math.Vector4f;
+import com.opengg.core.render.RenderEngine;
+import com.opengg.core.world.Camera;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,6 +70,20 @@ public class MouseController {
         for (var listener : buttonlisteners){
             listener.onButtonRelease(key);
         }
+    }
+
+    public static Vector3f getRay(){
+        Vector2f mouse = getRaw();
+        //For Cursor Lock
+        //mouse = new Vector2f(OpenGG.getWindow().getWidth()/2,OpenGG.getWindow().getHeight()/2);
+        float z = 1.0f;
+        Vector3f ray_nds = new Vector3f((2*mouse.x)/OpenGG.getWindow().getWidth()-1.0f, 1-(mouse.y*2)/OpenGG.getWindow().getHeight(), z);
+        Vector4f ray_clip = new Vector4f(ray_nds.x,ray_nds.y, -1.0f, 1.0f);
+        Vector4f ray_eye = ray_clip.multiply(RenderEngine.getData().getMatrix().invert());
+        ray_eye = new Vector4f(ray_eye.x,ray_eye.y, -1.0f, 0.0f);
+        Vector3f ray_wor = ray_eye.multiply(RenderEngine.getCurrentView().getMatrix().invert()).truncate();
+        ray_wor = ray_wor.normalize();
+        return ray_wor;
     }
 
     public static void update(){
