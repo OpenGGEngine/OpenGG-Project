@@ -63,4 +63,9 @@ public class ProjectionData {
         else if(type == CUSTOM)
             ShaderController.setProjection(custom);
     }
+
+    public Matrix4f getMatrix(){
+        return Matrix4f.perspective(fov, ratio, minz, maxz);
+    }
+
 }
