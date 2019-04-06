@@ -61,6 +61,7 @@ public class MouseController {
     }
     
     public static void buttonPressed(int key){
+        System.out.println(get().x/OpenGG.getWindow().getWidth()+","+ (1-get().y/OpenGG.getWindow().getHeight()));
         for (var listener : buttonlisteners){
             listener.onButtonPress(key);
         }
