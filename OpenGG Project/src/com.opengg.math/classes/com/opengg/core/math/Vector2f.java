@@ -218,14 +218,24 @@ public class Vector2f implements Serializable{
     }
 
     @Override
-    public boolean equals(Object ot){
-        if(ot instanceof Vector2f){
-            Vector2f v = (Vector2f)ot;
-            return FastMath.isEqual(v.x, x) && FastMath.isEqual(v.y, y);
-        }   
-        return false;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Vector2f vector2f = (Vector2f) o;
+
+        if (Float.compare(vector2f.x, x) != 0) return false;
+        return Float.compare(vector2f.y, y) == 0;
+
     }
-    
+
+    @Override
+    public int hashCode() {
+        int result = (x != +0.0f ? Float.floatToIntBits(x) : 0);
+        result = 31 * result + (y != +0.0f ? Float.floatToIntBits(y) : 0);
+        return result;
+    }
+
     @Override
     public String toString(){
         return x + ", " + y;

@@ -6,6 +6,7 @@
 package com.opengg.core.physics.collision;
 
 import com.opengg.core.math.Vector3f;
+import com.opengg.core.math.geom.Ray;
 import com.opengg.core.physics.PhysicsObject;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
@@ -84,6 +85,44 @@ public class AABB extends PhysicsObject{
                   min.x > pos.x || 
                   min.y > pos.y ||
                   min.z > pos.z);
+    }
+
+    public boolean isColliding(Ray ray) {
+        Vector3f invDir = ray.getDir().reciprocal();
+        boolean signDirX = invDir.x < 0;
+        boolean signDirY = invDir.y < 0;
+        boolean signDirZ = invDir.z < 0;
+        Vector3f bbox = signDirX ? max : min;
+        float tmin = (bbox.x - ray.getPos().x) * invDir.x;
+        bbox = signDirX ? min : max;
+        float tmax = (bbox.x - ray.getPos().x) * invDir.x;
+        bbox = signDirY ? max : min;
+        float tymin = (bbox.y - ray.getPos().y) * invDir.y;
+        bbox = signDirY ? min : max;
+        float tymax = (bbox.y - ray.getPos().y) * invDir.y;
+        if ((tmin > tymax) || (tymin > tmax)) {
+            return false;
+        }
+        if (tymin > tmin) {
+            tmin = tymin;
+        }
+        if (tymax < tmax) {
+            tmax = tymax;
+        }
+        bbox = signDirZ ? max : min;
+        float tzmin = (bbox.z - ray.getPos().z) * invDir.z;
+        bbox = signDirZ ? min : max;
+        float tzmax = (bbox.z - ray.getPos().z) * invDir.z;
+        if ((tmin > tzmax) || (tzmin > tmax)) {
+            return false;
+        }
+        if (tzmin > tmin) {
+            tmin = tzmin;
+        }
+        if (tzmax < tmax) {
+            tmax = tzmax;
+        }
+        return true;
     }
 
     @Override

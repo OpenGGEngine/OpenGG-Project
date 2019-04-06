@@ -34,9 +34,10 @@ public class ControlledComponent extends Component{
         return userid;
     }
 
-    public void setUserId(int userid) {
+    public Component setUserId(int userid) {
         this.userid = userid;
         onUserChange();
+        return this;
     }
 
     public void onUserChange(){

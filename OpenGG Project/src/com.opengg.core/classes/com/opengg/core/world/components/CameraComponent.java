@@ -28,6 +28,12 @@ public class CameraComponent extends ControlledComponent{
     }
 
     @Override
+    public void onUserChange(){
+        if(isCurrentUser())
+            RenderEngine.useView(camera);
+    }
+
+    @Override
     public void update(float delta){
         camera.setPosition(getPosition());
         camera.setRotation(getRotation());

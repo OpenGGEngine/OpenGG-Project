@@ -104,7 +104,6 @@ public class TerrainComponent extends RenderComponent{
         out.write(array.getData().get(1).source);
         out.write(array.getData().get(2).source);
         out.write(array.getData().get(3).source);
-        out.write(collideable);
     }
     
     @Override
@@ -119,9 +118,7 @@ public class TerrainComponent extends RenderComponent{
 
 
         setBlotmap(Resource.getTexture(blot));
-        setGroundArray(Texture.create(Texture.arraySRGBConfig(), Resource.getTextureData(s1), Resource.getTextureData(s2), Resource.getTextureData(s3), Resource.getTextureData(s4)));
-        if(in.readBoolean()){
-            enableCollider();
-        }
+        setGroundArray(Texture.create(Texture.arrayConfig(), Resource.getTextureData(s1), Resource.getTextureData(s2), Resource.getTextureData(s3), Resource.getTextureData(s4)));
+
     }
 }
