@@ -17,7 +17,7 @@ import com.opengg.core.render.texture.Texture;
  */
 public class GUITexture extends GUIRenderable {
     public GUITexture(Texture tex, Vector2f screenpos, Vector2f size) {
-        Drawable drawn = ObjectCreator.createSquare(new Vector2f(0,0), size, 0.2f);
+        Drawable drawn = ObjectCreator.createSquare(new Vector2f(0,0), size, 0f);
         
         this.setDrawable(new TexturedDrawnObject(drawn, tex));
         this.setPositionOffset(screenpos);
