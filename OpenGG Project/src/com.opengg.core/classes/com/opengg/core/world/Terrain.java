@@ -263,8 +263,8 @@ public class Terrain {
                 float y = map[i][i2];
                 float z = (i2 * zsquarewidth);
                                 
-                float u = i / (float) map.length;
-                float v = i2 / (float) map[0].length;
+                float u = (float)i / (float) map.length;
+                float v = (float)i2 / (float) map[0].length;
                 
                 float nx = 1;
                 float ny = 1;

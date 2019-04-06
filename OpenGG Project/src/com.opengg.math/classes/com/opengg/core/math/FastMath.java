@@ -13,6 +13,7 @@ package com.opengg.core.math;
  */
 import com.opengg.core.math.geom.MinkowskiSet;
 import com.opengg.core.math.geom.MinkowskiTriangle;
+import com.opengg.core.math.geom.Ray;
 import com.opengg.core.math.geom.Triangle;
 
 import java.util.ArrayList;
@@ -633,6 +634,16 @@ public final class FastMath {
         end[0] = o1.add(d1.multiply(t1));
         end[1] = o2.add(d2.multiply(t2));
         return end;
+    }
+
+    public static Vector3f getRayPlaneIntersection(Ray ray, Vector3f planeNormal, Vector3f planePoint) {
+        var rayPos = ray.getPos();
+        var rayDir =  ray.getDir();
+        Vector3f diff = rayPos.subtract(planePoint);
+        float prod1 = diff.dot(planeNormal);
+        float prod2 = rayDir.dot(planeNormal);
+        float prod3 = prod1 / prod2;
+        return rayPos.subtract(rayDir.multiply(prod3));
     }
 
     public static boolean isPointInPolygon(Vector2f point, List<Vector2f> points) {

@@ -10,8 +10,8 @@ import com.opengg.core.engine.OpenGG;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.math.Vector4f;
+import com.opengg.core.physics.collision.PhysicsRay;
 import com.opengg.core.render.RenderEngine;
-import com.opengg.core.world.Camera;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,7 +73,7 @@ public class MouseController {
         }
     }
 
-    public static Vector3f getRay(){
+    public static PhysicsRay getRay(){
         Vector2f mouse = getRaw();
         //For Cursor Lock
         //mouse = new Vector2f(OpenGG.getWindow().getWidth()/2,OpenGG.getWindow().getHeight()/2);
@@ -84,7 +84,9 @@ public class MouseController {
         ray_eye = new Vector4f(ray_eye.x,ray_eye.y, -1.0f, 0.0f);
         Vector3f ray_wor = ray_eye.multiply(RenderEngine.getCurrentView().getMatrix().invert()).truncate();
         ray_wor = ray_wor.normalize();
-        return ray_wor;
+
+        PhysicsRay ray = new PhysicsRay(ray_wor, RenderEngine.getCurrentView().getPosition(), 1000f);
+        return ray;
     }
 
     public static void update(){

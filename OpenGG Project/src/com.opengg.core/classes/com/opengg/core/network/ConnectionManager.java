@@ -75,7 +75,6 @@ public class ConnectionManager implements Runnable{
 
     public boolean validatePacket(Packet packet){
         if(packet.requestsAcknowledgement()){
-            System.out.println("Received validatable packet from " + packet.getConnection());
             Packet.sendAcknowledgement(NetworkEngine.getSocket(), packet, packet.getConnection());
             synchronized (RECEIVED_BLOCK) {
                 if (!receivedPacketsWithAck.stream()

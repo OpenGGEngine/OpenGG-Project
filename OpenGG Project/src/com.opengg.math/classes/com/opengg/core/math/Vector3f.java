@@ -105,6 +105,11 @@ public class Vector3f implements Serializable{
     public float z(){
         return z;
     }
+
+    public Vector2f xz() {
+        return new Vector2f(x,z);
+    }
+
     
     /**
      * Returns the value requested<br>

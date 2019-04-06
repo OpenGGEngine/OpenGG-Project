@@ -6,6 +6,7 @@ import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAmount;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class Executor {
@@ -37,6 +38,7 @@ public class Executor {
         tempcontainers.clear();
 
         var tlist = containers.stream()
+                .filter(Objects::nonNull)
                 .peek(c -> c.time -= time)
                 .filter(ExecutorContainer::isComplete)
                 .collect(Collectors.toList());
