@@ -6,17 +6,18 @@
 package com.opengg.core.physics.collision;
 
 import com.opengg.core.math.Vector3f;
+import com.opengg.core.math.geom.Ray;
 
 /**
  *
  * @author ethachu19
  */
-public class Ray {
+public class PhysicsRay {
     Vector3f dir;
     Vector3f pos;
     float length;
     
-    public Ray(Vector3f dir, Vector3f pos, float length) {
+    public PhysicsRay(Vector3f dir, Vector3f pos, float length) {
         this.dir = dir.normalize();
         this.pos = pos;
         this.length = length;
@@ -42,5 +43,17 @@ public class Ray {
 //        if (box.collide(shortestPoint))
 //            return true;
         return false;
+    }
+
+    public Vector3f getDir() {
+        return dir;
+    }
+
+    public Vector3f getPos() {
+        return pos;
+    }
+
+    public Ray getRay(){
+        return new Ray(pos, dir);
     }
 }
