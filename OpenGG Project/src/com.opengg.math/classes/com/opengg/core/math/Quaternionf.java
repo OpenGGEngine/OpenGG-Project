@@ -5,9 +5,9 @@
  */
 package com.opengg.core.math;
 
-import static com.opengg.core.math.FastMath.cosFromSin;
-import static com.opengg.core.math.FastMath.sin;
 import java.io.Serializable;
+
+import static com.opengg.core.math.FastMath.*;
 
 /**
  *
@@ -67,11 +67,11 @@ public class Quaternionf implements Serializable{
         angleZ = (float)Math.toRadians(angleZ);
         
         float sx = sin(angleX * 0.5f);
-        float cx = (float) cosFromSin(sx, angleX * 0.5f);
+        float cx = cos(angleX * 0.5f);
         float sy = sin(angleY * 0.5f);
-        float cy = (float) cosFromSin(sy, angleY * 0.5f);
+        float cy = cos(angleY * 0.5f);
         float sz = sin(angleZ * 0.5f);
-        float cz = (float) cosFromSin(sz, angleZ * 0.5f);
+        float cz = cos(angleZ * 0.5f);
 
         float cycz = cy * cz;
         float sysz = sy * sz;

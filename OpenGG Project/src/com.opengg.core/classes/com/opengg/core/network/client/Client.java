@@ -133,7 +133,7 @@ public class Client {
             queuer.writeData(out);
 
             var data = ((ByteArrayOutputStream)out.getStream()).toByteArray();
-            Packet.send(udpSocket, PacketType.CLIENT_ACTION_UPDATE, data, connectionData);
+            Packet.sendGuaranteed(udpSocket, PacketType.CLIENT_ACTION_UPDATE, data, connectionData);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -177,6 +177,10 @@ public class Client {
                         if (comp.parent == 0) WorldEngine.getCurrent().attach(comp.comp);
                         if (WorldEngine.getCurrent().find(comp.parent) != null)
                             WorldEngine.getCurrent().find(comp.parent).attach(comp.comp);
+                        loadedCompList.stream()
+                                .filter(c -> c.comp.getId() == comp.parent)
+                                .findFirst()
+                                .ifPresent(c -> c.comp.attach(comp.comp));
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -186,6 +190,20 @@ public class Client {
             e.printStackTrace();
         }
     }
+
+    public void acceptRemovedComponent(Packet packet) {
+        try {
+            var in = new GGInputStream(packet.getData());
+            var amount = in.readInt();
+            for(int i = 0; i < amount; i++){
+                var comp = in.readInt();
+                WorldEngine.markForRemoval(WorldEngine.getCurrent().find(comp));
+            }
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
 
     public ConnectionData getConnection() {
         return connectionData;
@@ -199,6 +217,13 @@ public class Client {
         return timeConnected;
     }
 
+    public Socket getTcpSocket() {
+        return tcpSocket;
+    }
+
+    public DatagramSocket getUdpSocket() {
+        return udpSocket;
+    }
 
     public long getLatency(){
         return latency;

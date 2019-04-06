@@ -10,6 +10,7 @@ import com.opengg.core.engine.OpenGG;
 import com.opengg.core.gui.GUI;
 import com.opengg.core.gui.GUIButton;
 import com.opengg.core.io.input.mouse.MouseController;
+import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.model.io.AssimpModelLoader;
 import com.opengg.core.network.NetworkEngine;
@@ -22,6 +23,7 @@ import com.opengg.core.render.RenderEngine;
 import com.opengg.core.render.drawn.TexturedDrawnObject;
 import com.opengg.core.render.light.Light;
 import com.opengg.core.render.objects.ObjectCreator;
+import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.text.Text;
 import com.opengg.core.render.texture.TextureManager;
 import com.opengg.core.render.window.WindowController;
@@ -48,9 +50,7 @@ import java.util.List;
 public class  OpenGGTest extends GGApplication{
     private GGFont font;
     private Text text;
-    private TerrainComponent world;
     private Texture worldterrain;
-    private AudioListener listener;
     float i = 0;
     Light l;
     private FreeFlyComponent player;
@@ -66,7 +66,6 @@ public class  OpenGGTest extends GGApplication{
         w.glmajor = 4;
         w.glminor = 3;
         OpenGG.initialize(new OpenGGTest(), w);
-//        ShaderController.testInitialize();
     }
 
     @Override
@@ -102,10 +101,12 @@ public class  OpenGGTest extends GGApplication{
 
         GUIController.addAndUse(mainview, "mainview");
 
-       // WorldEngine.getCurrent().attach(new ModelComponent(Resource.getModel("pear")));
-                //.setScaleOffset(new Vector3f(0.01f,0,0.01f)));
         NetworkEngine.connect("localhost", 25565);
 /*
+
+        WorldEngine.getCurrent().attach(new ModelComponent(Resource.getModel("pear")).setPositionOffset(new Vector3f(1,0,-3)));
+                //.setScaleOffset(new Vector3f(0.01f,0,0.01f)));
+
 
         WorldEngine.getCurrent().attach(new LightComponent(
                 //Light.createPointShadow(new Vector3f(0,-10,0), new Vector3f(1), 1000, 512, 512 )));
@@ -125,14 +126,14 @@ public class  OpenGGTest extends GGApplication{
         );
 
         player = new FreeFlyComponent();
-        WorldEngine.getCurrent().attach(player);
+        WorldEngine.getCurrent().attach(player);*/
 
         WorldEngine.getCurrent().getRenderEnvironment().setSkybox(new Skybox(Texture.getSRGBCubemap(Resource.getTexturePath("skybox\\majestic_ft.png"),
                 Resource.getTexturePath("skybox\\majestic_bk.png"),
                 Resource.getTexturePath("skybox\\majestic_up.png"),
                 Resource.getTexturePath("skybox\\majestic_dn.png"),
                 Resource.getTexturePath("skybox\\majestic_rt.png"),
-                Resource.getTexturePath("skybox\\majestic_lf.png")), 500f));*/
+                Resource.getTexturePath("skybox\\majestic_lf.png")), 500f));
 
         BindController.addBind(ControlType.KEYBOARD, "forward", KEY_W);
         BindController.addBind(ControlType.KEYBOARD, "backward", KEY_S);
@@ -148,7 +149,7 @@ public class  OpenGGTest extends GGApplication{
 
         RenderEngine.setProjectionData(ProjectionData.getPerspective(100, 0.2f, 3000f));
 
-        WindowController.getWindow().setCursorLock(true);
+        WindowController.getWindow().setCursorLock(false);
     }
 
     @Override
@@ -157,6 +158,8 @@ public class  OpenGGTest extends GGApplication{
     @Override
     public void update(float delta){
         i++;
-//        l.setView();
+        if(i > 20){
+            i = -20;
+        }
     }
 }

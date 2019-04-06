@@ -47,6 +47,7 @@ public class Server {
 
     private List<ConnectionListener> listeners;
     private List<Component> newComponents;
+    private List<Component> removedComponents;
 
     public Server(String name, int port, ServerSocket ssocket, DatagramSocket dsocket){
         this.name = name;
@@ -55,10 +56,12 @@ public class Server {
         this.newclients = new ArrayList<>();
         this.listeners = new ArrayList<>();
         this.newComponents = new ArrayList<>();
+        this.removedComponents = new ArrayList<>();
         this.tcpsocket = ssocket;
         this.udpsocket = dsocket;
         this.clistener = new NewConnectionListener(this);
         WorldEngine.getCurrent().addNewChildListener(this::saveNewComponent);
+        WorldEngine.addComponentRemovalListener(c -> removedComponents.add(c));
     }
 
     public void start(){
@@ -97,6 +100,7 @@ public class Server {
         newclients.clear();
 
         sendNewComponents();
+        sendDeletedComponent();
         sendState();
     }
 
@@ -147,13 +151,31 @@ public class Server {
 
             newComponents.clear();
 
-            var bytes = ((ByteArrayOutputStream)out.getStream()).toByteArray();
+            var bytes = out.asByteArray();
             for(var client : clients){
-                Packet.send(this.getUDPSocket(), PacketType.SERVER_COMPONENT_CREATE, bytes, client.getConnection());
+                Packet.sendGuaranteed(this.getUDPSocket(), PacketType.SERVER_COMPONENT_CREATE, bytes, client.getConnection());
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void sendDeletedComponent() {
+        if(!removedComponents.isEmpty()){
+            try {
+                var out = new GGOutputStream();
+                out.write(removedComponents.size());
+                for(var comp : removedComponents){
+                    out.write(comp.getId());
+                }
+                for(var client : clients){
+                    Packet.sendGuaranteed(getUDPSocket(), PacketType.SERVER_COMPONENT_REMOVE, out.asByteArray(), client.getConnection());
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        removedComponents.clear();
     }
 
     public void saveNewComponent(Component component){

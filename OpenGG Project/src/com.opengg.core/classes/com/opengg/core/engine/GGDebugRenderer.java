@@ -11,6 +11,8 @@ import com.opengg.core.render.text.Font;
 import com.opengg.core.render.text.Text;
 import com.opengg.core.world.WorldEngine;
 
+import java.text.NumberFormat;
+
 public class GGDebugRenderer implements KeyboardListener {
     private static boolean render = false;
 
@@ -45,8 +47,11 @@ public class GGDebugRenderer implements KeyboardListener {
                 if(NetworkEngine.isRunning()){
                     debugString += "\n\n" + "Packets received / sec: " + PerformanceManager.getPacketsInSec() + "\n" +
                             "Packets sent / sec: " + PerformanceManager.getPacketsOutSec() + "\n" +
+                            "Guaranteed packets sent / sec: " + PerformanceManager.getAckPacketsOutSec() + "\n" +
+                            "Packets dropped / sec: " + PerformanceManager.getPacketsDroppedSec() + "\n" +
+                            "Packets dropped %: " + NumberFormat.getPercentInstance().format((double)PerformanceManager.getPacketsDroppedSec()/PerformanceManager.getAckPacketsOutSec()) + "\n" +
                             "Bytes received / sec: " + PerformanceManager.getNetworkBytesInSec() + "\n" +
-                            "Bytes sent / sec: " + PerformanceManager.getNetworkBytesOutSec();
+                            "Bytes sent / sec: " + PerformanceManager.getNetworkBytesOutSec() ;
                 }
 
                 displaytext = Text.from(debugString)

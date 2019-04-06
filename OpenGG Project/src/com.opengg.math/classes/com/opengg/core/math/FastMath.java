@@ -23,6 +23,8 @@ import java.util.Random;
 
 public final class FastMath {
 
+    public static boolean accuracyMode = true;
+
     /**
      * Multiply nanoseconds by this to get seconds
      */
@@ -53,7 +55,7 @@ public final class FastMath {
      */
     public static final float E = 2.7182818f;
 
-    static private final int SIN_BITS = 14; // 16KB. Adjust for accuracy.
+    static private final int SIN_BITS = 16; // 16KB. Adjust for accuracy.
     static private final int SIN_MASK = ~(-1 << SIN_BITS);
     static private final int SIN_COUNT = SIN_MASK + 1;
 
@@ -103,7 +105,10 @@ public final class FastMath {
      * Returns the sine function for the given radians, indexed from a lookup table 
      */
     public static float sin(float radians) {
-        return Sin.table[(int) (radians * radToIndex) & SIN_MASK];
+        if(accuracyMode)
+            return (float) Math.sin(radians);
+        else
+            return Sin.table[(int) (radians * radToIndex) & SIN_MASK];
     }
 
     /**
@@ -131,21 +136,30 @@ public final class FastMath {
      * Returns the cosine function for the given radians, indexed from a lookup table 
      */
     public static float cos(float radians) {
-        return Sin.table[(int) ((radians + PI / 2) * radToIndex) & SIN_MASK];
+        if(accuracyMode)
+            return (float) Math.cos(radians);
+        else
+            return Sin.table[(int) ((radians + PI / 2) * radToIndex) & SIN_MASK];
     }
 
     /**
      * RReturns the sine function for the given degrees, indexed from a lookup table 
      */
     public static float sinDeg(float degrees) {
-        return Sin.table[(int) (degrees * degToIndex) & SIN_MASK];
+        if(accuracyMode)
+            return (float) Math.sin(degrees * FastMath.degreesToRadians);
+        else
+            return Sin.table[(int) (degrees * degToIndex) & SIN_MASK];
     }
 
     /**
      * Returns the cosine function for the given degrees, indexed from a lookup table 
      */
     public static float cosDeg(float degrees) {
-        return Sin.table[(int) ((degrees + 90) * degToIndex) & SIN_MASK];
+        if(accuracyMode)
+            return (float) Math.cos(degrees * FastMath.degreesToRadians);
+        else
+            return Sin.table[(int) ((degrees + 90) * degToIndex) & SIN_MASK];
     }
 
     // ---

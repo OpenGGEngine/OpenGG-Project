@@ -18,6 +18,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.time.Instant;
 import java.util.Arrays;
+import java.util.BitSet;
 
 /**
  *
@@ -25,7 +26,7 @@ import java.util.Arrays;
  */
 public class Packet implements Serializable{
     private final int RECEIVER_PACKET_SIZE = 1024*1024;
-
+    private DatagramSocket socket;
     private byte[] data;
     private int length;
     private boolean requestAck;
@@ -35,6 +36,7 @@ public class Packet implements Serializable{
     private DatagramPacket internalPacket;
 
     private Packet(DatagramSocket socket, byte type, boolean guarantee, byte[] userBytes, ConnectionData connectionData){
+        this.socket = socket;
         this.connectionData = connectionData;
         this.type = type;
         this.length = userBytes.length;
@@ -44,16 +46,12 @@ public class Packet implements Serializable{
         try {
             var out = new GGOutputStream();
 
-            /*var set = new BitSet(8);
+            byte flags = 0b00000000;
+            flags = (byte) (guarantee
+                                ? flags | (1 << 0)
+                                : flags & ~(1 << 0));
 
-            set.set(0, guarantee);
-            set.set(1, false);
-            set.set(2, false);
-            set.set(3, false);
-
-            System.out.println(set);*/
-
-            //out.write(set.toByteArray()[0]);
+            out.write(flags);
             out.write(type);
             out.write(timestamp);
             out.write(userBytes.length);
@@ -80,12 +78,12 @@ public class Packet implements Serializable{
 
     public static void sendGuaranteed(DatagramSocket ds, byte type, byte[] bytes, ConnectionData connectionData){
         Packet p = new Packet(ds, type, true, bytes, connectionData);
-        p.send(ds);
+        NetworkEngine.getReceiver().sendWithAcknowledgement(p);
     }
 
     public static void send(DatagramSocket ds, byte type, byte[] bytes, ConnectionData connectionData){
         Packet p = new Packet(ds, type, false, bytes, connectionData);
-        p.send(ds);
+        p.send();
     }
 
     public static void sendAcknowledgement(DatagramSocket ds, Packet packet, ConnectionData connectionData){
@@ -95,7 +93,7 @@ public class Packet implements Serializable{
             var data = stream.asByteArray();
 
             Packet p = new Packet(ds, PacketType.ACK,false, data, connectionData);
-            p.send(ds);
+            p.send();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -112,8 +110,9 @@ public class Packet implements Serializable{
 
             var in = new GGInputStream(data);
 
-           // var flags = BitSet.valueOf(in.readByteArray(1));
-            //requestAck = flags.get(0);
+            var flags = BitSet.valueOf(in.readByteArray(1));
+            requestAck = flags.get(0);
+
             type = in.readByte();
             timestamp = in.readLong();
             int userLength = in.readInt();
@@ -126,10 +125,12 @@ public class Packet implements Serializable{
         }
     }
 
-    private void send(DatagramSocket ds){
+    public void send(){
         try {
-            ds.send(internalPacket);
+            socket.send(internalPacket);
             PerformanceManager.registerPacketOut(this.length);
+            if(this.requestsAcknowledgement())
+                PerformanceManager.registerGuaranteedPacketSent();
         } catch (IOException ex) {
             GGConsole.warning("Failed to communicate with " + connectionData.address.getHostAddress());
         }
@@ -149,6 +150,10 @@ public class Packet implements Serializable{
 
     public long getTimestamp() {
         return timestamp;
+    }
+
+    public boolean requestsAcknowledgement() {
+        return requestAck;
     }
 
     public ConnectionData getConnection(){

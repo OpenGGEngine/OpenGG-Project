@@ -24,7 +24,9 @@ public class WorldEngine{
     private static boolean enabled = true;
 
     private static List<Consumer<World>> worldChangeListeners = new ArrayList<>();
-    
+    private static List<Consumer<Component>> componentRemovalListenersS = new ArrayList<>();
+
+
     public static void initialize(){
         WorldEngine.useWorld(new World());
     }
@@ -52,10 +54,15 @@ public class WorldEngine{
         worldChangeListeners.add(consumer);
     }
 
+    public static void addComponentRemovalListener(Consumer<Component> consumer){
+        componentRemovalListenersS.add(consumer);
+    }
+
     public static void removeMarked(){
         var tempremove = List.copyOf(removal);
         for(Component c : tempremove){
             remove(c);
+            componentRemovalListenersS.forEach(cc -> cc.accept(c));
         }
         removal.clear();
     }

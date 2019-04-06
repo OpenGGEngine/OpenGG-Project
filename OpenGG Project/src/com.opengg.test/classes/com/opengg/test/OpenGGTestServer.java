@@ -25,8 +25,7 @@ import com.opengg.core.world.Skybox;
 import com.opengg.core.world.components.*;
 import com.opengg.core.world.components.physics.PhysicsComponent;
 
-import java.util.ArrayDeque;
-import java.util.Queue;
+import java.util.*;
 
 
 public class OpenGGTestServer extends GGApplication{
@@ -34,10 +33,13 @@ public class OpenGGTestServer extends GGApplication{
     public static void main(String[] args){
         OpenGG.initializeHeadless(new OpenGGTestServer());
     }
-int i = 0;
+    int i = 0;
+
+    List<ModelComponent> comps = new ArrayList<>();
+
     @Override
     public  void setup(){
-        OpenGG.setTargetUpdateTime(1/30f);
+        OpenGG.setTargetUpdateTime(1/20f);
 
         WorldEngine.getCurrent().attach(new LightComponent(
                 Light.createDirectional(new Quaternionf(new Vector3f(80f,0f,50)),
@@ -58,6 +60,10 @@ int i = 0;
             ffc.attach(mod);
 
             WorldEngine.getCurrent().attach(ffc);
+
+            var newcomp = new ModelComponent(Resource.getModel("pear"));
+            comps.add(newcomp);
+            WorldEngine.getCurrent().attach(newcomp.setPositionOffset(new Vector3f(FastMath.random()*30f,FastMath.random()*30f, FastMath.random()*30)));
         }
 
         server.subscribe(new ConnectionListener() {
@@ -78,6 +84,8 @@ int i = 0;
                 Resource.getTexturePath("skybox\\majestic_dn.png"),
                 Resource.getTexturePath("skybox\\majestic_rt.png"),
                 Resource.getTexturePath("skybox\\majestic_lf.png")), 1500f));
+
+
     }
 
     @Override
@@ -89,7 +97,14 @@ int i = 0;
 
         if(i == 400){
             i = 0;
-            WorldEngine.getCurrent().attach(new ModelComponent(Resource.getModel("pear")).setPositionOffset(new Vector3f(FastMath.random()*30f,FastMath.random()*30f, FastMath.random()*30)));
+
+            var removecomp = comps.get(new Random().nextInt(comps.size()));
+            WorldEngine.markForRemoval(removecomp);
+            comps.remove(removecomp);
+
+            var newcomp = new ModelComponent(Resource.getModel("pear"));
+            comps.add(newcomp);
+            WorldEngine.getCurrent().attach(newcomp.setPositionOffset(new Vector3f(FastMath.random()*30f,FastMath.random()*30f, FastMath.random()*30)));
         }
     }
 }

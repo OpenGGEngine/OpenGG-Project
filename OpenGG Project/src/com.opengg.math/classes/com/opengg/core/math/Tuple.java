@@ -5,6 +5,8 @@
  */
 package com.opengg.core.math;
 
+import java.util.Objects;
+
 /**
  *
  * @author ethachu19
@@ -79,5 +81,10 @@ public class Tuple<X, Y> {
         var tuple = (Tuple) obj;
 
         return this.x.equals(tuple.x) && this.y.equals(tuple.y);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y);
     }
 }

@@ -25,9 +25,10 @@ public class NetworkEngine {
 
     private static ConnectionManager receiver;
 
-    public static void update(){
+    public static void update(float delta){
         if(server != null) server.update();
         if(client != null) client.update();
+        if(receiver != null) receiver.update(delta);
     }
 
     public static boolean isRunning(){
@@ -42,6 +43,12 @@ public class NetworkEngine {
 
      public static Client getClient() {
          return client;
+     }
+
+     public static DatagramSocket getSocket(){
+         if(server != null) return server.getUDPSocket();
+         if(client != null) return client.getUdpSocket();
+         return null;
      }
 
      public static Server initializeServer(String name, int port){
@@ -88,6 +95,7 @@ public class NetworkEngine {
 
             receiver.addProcessor(PacketType.SERVER_UPDATE, client::accept);
             receiver.addProcessor(PacketType.SERVER_COMPONENT_CREATE, client::acceptNewComponents);
+            receiver.addProcessor(PacketType.SERVER_COMPONENT_REMOVE, client::acceptRemovedComponent);
 
             client.udpHandshake();
 
@@ -100,6 +108,10 @@ public class NetworkEngine {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public static ConnectionManager getReceiver(){
+        return receiver;
     }
 
     public static void createReceiver(DatagramSocket socket, int packetsize){

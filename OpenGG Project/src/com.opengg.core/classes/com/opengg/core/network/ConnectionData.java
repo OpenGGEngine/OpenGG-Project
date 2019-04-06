@@ -39,6 +39,11 @@ public class ConnectionData {
         return result;
     }
 
+    @Override
+    public String toString() {
+        return address.toString() + "/" + port;
+    }
+
     public static ConnectionData get(InetAddress address, int port){
         return new ConnectionData(address,port);
     }

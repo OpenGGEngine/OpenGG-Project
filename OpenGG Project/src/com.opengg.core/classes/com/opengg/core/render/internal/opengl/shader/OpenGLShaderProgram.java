@@ -71,10 +71,6 @@ public class OpenGLShaderProgram implements ShaderProgram{
 
         if(nid == -1) return;
 
-        if(pos.equals("view") || pos.equals("model") || pos.equals("projection")) System.out.println(this.name);
-
-        if(pos.equals("view")) System.out.println(pos + " " + nid);
-        if(pos.equals("model")) System.out.println(pos + " " + nid);
 
     }
     

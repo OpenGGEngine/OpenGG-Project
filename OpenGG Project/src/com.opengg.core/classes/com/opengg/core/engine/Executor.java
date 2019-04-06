@@ -124,7 +124,7 @@ public class Executor {
         return container.sleeper;
     }
 
-    private class ExecutorContainer {
+    private static class ExecutorContainer {
         private Runnable runnable;
         private Sleeper sleeper;
         private float time;
@@ -145,7 +145,7 @@ public class Executor {
         }
     }
 
-    public class Sleeper {
+    public static class Sleeper {
         private final Object lock = new Object();
 
         private Sleeper() {

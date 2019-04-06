@@ -209,7 +209,7 @@ public final class OpenGG{
         PhysicsEngine.updatePhysics(delta);
         getApp().update(delta);
         SoundtrackHandler.update();
-        NetworkEngine.update();
+        NetworkEngine.update(delta);
     }
 
     private static void runInput() {

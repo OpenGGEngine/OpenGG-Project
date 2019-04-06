@@ -837,7 +837,6 @@ public class ShaderController {
     }
 
     private static void dumpShader(ShaderFileHolder holder){
-        if(holder.name.contains("object.vert")) System.out.println(holder.fulldata);
     }
 
     private static void createGLShaderFromFile(){

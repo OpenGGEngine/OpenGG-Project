@@ -23,8 +23,8 @@ module com.opengg.core {
     requires com.opengg.base;
     requires com.opengg.system;
     requires com.opengg.console;
-    requires org.lwjgl.openvr;
     requires org.lwjgl.lz4;
+    requires org.lwjgl.openvr;
     requires org.lwjgl.tootle;
     requires org.lwjgl.tootle.natives;
 
