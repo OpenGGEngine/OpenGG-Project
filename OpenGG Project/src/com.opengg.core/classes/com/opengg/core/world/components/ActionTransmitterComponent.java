@@ -6,6 +6,7 @@
 
 package com.opengg.core.world.components;
 
+import com.opengg.core.GGInfo;
 import com.opengg.core.engine.BindController;
 import com.opengg.core.exceptions.InvalidParentException;
 import com.opengg.core.util.GGInputStream;
@@ -32,18 +33,15 @@ public class ActionTransmitterComponent extends ControlledComponent implements A
 
     @Override
     public void doAction(Action action){
+        System.out.println(this.getUserId());
+        System.out.println(GGInfo.getUserId());
         if(isCurrentUser()) ((Actionable)getParent()).onAction(action);
     }
-    
+
     @Override
     public void onParentChange(Component parent){
         if(!(parent instanceof Actionable)){
             throw new InvalidParentException("Controllers must have actionables as parents!");
         }
-    }
-
-    @Override
-    public void deserialize(GGInputStream in) throws IOException {
-        super.deserialize(in);
     }
 }

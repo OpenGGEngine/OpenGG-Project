@@ -16,14 +16,20 @@ import com.opengg.core.render.texture.Texture;
  * @author Warren
  */
 public class GUITexture extends GUIRenderable {
+    Texture tex;
     public GUITexture(Texture tex, Vector2f screenpos, Vector2f size) {
         Drawable drawn = ObjectCreator.createSquare(new Vector2f(0,0), size, 0f);
-        
+        this.tex = tex;
         this.setDrawable(new TexturedDrawnObject(drawn, tex));
         this.setPositionOffset(screenpos);
     }
 
     public void setTexture(Texture t){
         ((TexturedDrawnObject)this.d).tex = t;
+    }
+
+    public void setSize(Vector2f size){
+        Drawable drawn = ObjectCreator.createSquare(new Vector2f(0,0), size, 0f);
+        this.setDrawable(new TexturedDrawnObject(drawn, tex));
     }
 }

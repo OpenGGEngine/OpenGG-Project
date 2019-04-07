@@ -647,24 +647,16 @@ public final class FastMath {
     }
 
     public static boolean isPointInPolygon(Vector2f point, List<Vector2f> points) {
-        int j = points.size() - 1 ;
-        boolean oddNodes = false;
-
-        for (int i = 0; i < points.size(); i++) {
-            if ((points.get(i).y < point.y && points.get(j).y >= point.y
-                    ||   points.get(j).y < point.y && points.get(i).y >= point.y)
-                    &&  (points.get(i).x <= point.x || points.get(j).x <= point.x)) {
-
-                oddNodes ^= (points.get(i).x
-                          + (point.y - points.get(i).y)
-                          / (points.get(j).y - points.get(i).y)
-                          * (points.get(j).x - points.get(i).x) < point.x);
-
+        int i;
+        int j;
+        boolean result = false;
+        for (i = 0, j = points.size() - 1; i < points.size(); j = i++) {
+            if ((points.get(i).y > point.y) != (points.get(j).y > point.y) &&
+                    (point.x < (points.get(j).x - points.get(i).x) * (point.y - points.get(i).y) / (points.get(j).y-points.get(i).y) + points.get(i).x)) {
+                result = !result;
             }
-            j = i;
         }
-
-        return oddNodes;
+        return result;
     }
 
     public static List<MinkowskiSet> minkowskiSum(List<Vector3f> v1, List<Vector3f> v2){
