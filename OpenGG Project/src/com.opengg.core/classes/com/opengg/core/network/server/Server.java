@@ -183,6 +183,8 @@ public class Server {
     }
 
     public void saveNewComponent(Component component){
+
+        if(component == null) return;
         newComponents.add(component);
     }
 

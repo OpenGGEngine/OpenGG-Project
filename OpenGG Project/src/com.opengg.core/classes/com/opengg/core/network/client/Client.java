@@ -160,7 +160,6 @@ public class Client {
                 try {
                     var in = new GGInputStream(packet.getData());
                     var compAmount = in.readInt();
-                    System.out.println(compAmount);
                     var loadedCompList = new ArrayList<Deserializer.SerialHolder>();
                     for (int i = 0; i < compAmount; i++) {
                         loadedCompList.add(Deserializer.deserializeSingleComponent(in));
