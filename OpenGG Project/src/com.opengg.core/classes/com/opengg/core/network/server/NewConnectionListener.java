@@ -68,6 +68,11 @@ public class NewConnectionListener implements Runnable{
                 byte[] bytes = Serializer.serialize(WorldEngine.getCurrent());
                 new DataOutputStream(s.getOutputStream()).writeInt(bytes.length);
 
+                if(new DataInputStream(s.getInputStream()).readInt() != bytes.length)
+                    GGConsole.error("How");
+
+                GGConsole.log("Game state sent");
+
                 new DataOutputStream(s.getOutputStream()).write(bytes);
 
                 GGConsole.log(ip + " connected to server.");

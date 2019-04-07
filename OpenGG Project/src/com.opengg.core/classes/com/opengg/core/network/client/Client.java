@@ -110,6 +110,8 @@ public class Client {
 
         int worldsize = in.readInt();
 
+        new DataOutputStream(tcpSocket.getOutputStream()).writeInt(worldsize);
+
         GGConsole.log("Downloading world (" + worldsize + " bytes)");
 
         byte[] bytes = new byte[worldsize];
