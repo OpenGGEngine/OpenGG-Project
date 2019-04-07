@@ -39,11 +39,13 @@ public class GUIText extends GUIRenderable {
 
     public void setText(String ntext) {
         this.text.setText(ntext);
+        this.getDrawable().destroy();
         this.setDrawable(font.createFromText(text));
     }
 
     public void setText(Text text) {
         this.text = text;
+        this.getDrawable().destroy();
         this.setDrawable(font.createFromText(text));
     }
 
@@ -55,6 +57,5 @@ public class GUIText extends GUIRenderable {
     @Override
     public void render() {
         super.render();
-        Texture.ofColor(Color.BLACK,0).use(0);
     }
 }

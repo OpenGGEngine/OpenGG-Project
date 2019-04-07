@@ -26,6 +26,10 @@ public class GUIRenderable extends GUIItem{
     public void setDrawable(Drawable d){
         this.d = d;
     }
+
+    public Drawable getDrawable(){
+        return d;
+    }
     
     public void render(){
         if(enabled){
