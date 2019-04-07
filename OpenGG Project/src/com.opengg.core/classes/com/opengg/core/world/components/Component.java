@@ -52,6 +52,7 @@ public abstract class Component{
     private Quaternionf rot = new Quaternionf();
     private Vector3f scale = new Vector3f(1,1,1);
     private boolean serialize = true;
+    private boolean updateSerialize = true;
     private Runnable whenAttachedToWorld = null;
 
     static{
@@ -467,7 +468,15 @@ public abstract class Component{
     public final void setSerializable(boolean serialize){
         this.serialize = serialize;
     }
-    
+
+    public boolean shouldSerializeUpdate() {
+        return updateSerialize;
+    }
+
+    public void setSerializableUpdate(boolean updateSerialize) {
+        this.updateSerialize = updateSerialize;
+    }
+
     /**
      * Called when a component is removed, override if needed. It should not be called directly
      */

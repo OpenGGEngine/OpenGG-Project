@@ -15,6 +15,7 @@ import com.opengg.core.math.Vector2f;
 public class GUI{
     private GUIGroup root = new GUIGroup(new Vector2f(0,0));
     private boolean menu = false;
+    private String name = "";
     
     public GUI() {}
 
@@ -40,5 +41,13 @@ public class GUI{
 
     public void setMenu(boolean menu) {
         this.menu = menu;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

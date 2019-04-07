@@ -40,10 +40,12 @@ public class GUIController {
     
     public static void add(GUI gui, String name){
         guis.put(name, gui);
+        gui.setName(name);
     }
 
     public static void addAndUse(GUI gui, String name){
         guis.put(name, gui);
+        gui.setName(name);
         activateGUI(name);
     }
 
