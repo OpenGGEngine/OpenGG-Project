@@ -108,9 +108,13 @@ public class Client {
     public void getData() throws IOException {
         var in = new DataInputStream(tcpSocket.getInputStream());
 
-        int worldsize = in.readInt();
+        byte[] data = new byte[4];
+        data[0] = in.readByte();
+        data[1] = in.readByte();
+        data[2] = in.readByte();
+        data[3] = in.readByte();
 
-        new DataOutputStream(tcpSocket.getOutputStream()).writeInt(worldsize);
+        var worldsize = ByteBuffer.wrap(data).getInt();
 
         GGConsole.log("Downloading world (" + worldsize + " bytes)");
 
