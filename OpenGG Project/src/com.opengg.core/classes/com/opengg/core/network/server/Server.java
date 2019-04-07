@@ -193,6 +193,10 @@ public class Server {
                 .findFirst().orElse(null);
     }
 
+    public List<ServerClient> getClients() {
+        return clients;
+    }
+
     public List<ServerClient> getClients(InetAddress ip){
         var tempclients =  List.copyOf(clients);
         return tempclients.stream()
