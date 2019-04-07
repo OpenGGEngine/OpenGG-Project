@@ -33,8 +33,6 @@ public class ActionTransmitterComponent extends ControlledComponent implements A
 
     @Override
     public void doAction(Action action){
-        System.out.println(this.getUserId());
-        System.out.println(GGInfo.getUserId());
         if(isCurrentUser()) ((Actionable)getParent()).onAction(action);
     }
 
