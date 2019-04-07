@@ -16,7 +16,7 @@ import java.util.stream.Stream;
 public class ConnectionManager implements Runnable{
     private final Map<Byte, List<Consumer<Packet>>> processors; //since im definitely going to forget why the tuple contains a byte its a packet identifier
     private final List<Tuple<Packet, Float>> packetsWaiting = new ArrayList<>();
-    private final List<Tuple<Tuple<Long, ConnectionData>, Float>> receivedPacketsWithAck = new ArrayList<>();
+    private final List<Tuple<Tuple<Tuple<Long, Byte>, ConnectionData>, Float>> receivedPacketsWithAck = new ArrayList<>();
     private final DatagramSocket socket;
     private int packetsize;
     private final float RESEND_DELAY = 0.1f;
@@ -78,9 +78,9 @@ public class ConnectionManager implements Runnable{
             Packet.sendAcknowledgement(NetworkEngine.getSocket(), packet, packet.getConnection());
             synchronized (RECEIVED_BLOCK) {
                 if (!receivedPacketsWithAck.stream()
-                        .anyMatch(c -> c.x.equals(Tuple.of(packet.getTimestamp(), packet.getConnection())))) {
+                        .anyMatch(c -> c.x.equals(Tuple.of(Tuple.of(packet.getTimestamp(), packet.getType()), packet.getConnection())))) {
 
-                    receivedPacketsWithAck.add(Tuple.of(Tuple.of(packet.getTimestamp(), packet.getConnection()), 0f));
+                    receivedPacketsWithAck.add(Tuple.of(Tuple.of(Tuple.of(packet.getTimestamp(), packet.getType()), packet.getConnection()), 0f));
 
                     return true;
                 } else {
@@ -113,7 +113,7 @@ public class ConnectionManager implements Runnable{
         while(NetworkEngine.isRunning() && OpenGG.getEnded()){
             Packet packet = Packet.receive(socket);
             if(validatePacket(packet))
-                processors.get(packet.getType()).forEach(p -> p.accept(packet));
+                processors.getOrDefault(packet.getType(), List.of()).forEach(p -> p.accept(packet));
         }
     }
 

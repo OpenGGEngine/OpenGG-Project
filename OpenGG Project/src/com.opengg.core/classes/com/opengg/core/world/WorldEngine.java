@@ -32,7 +32,8 @@ public class WorldEngine{
     }
     
     public static void markForRemoval(Component c){
-        iterateMark(c);
+        if(c != null)
+            iterateMark(c);
     }
     
     private static void iterateMark(Component c){

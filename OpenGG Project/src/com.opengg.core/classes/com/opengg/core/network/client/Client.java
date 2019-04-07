@@ -163,17 +163,20 @@ public class Client {
     }
 
     public void acceptNewComponents(Packet packet) {
-        try {
-            var in = new GGInputStream(packet.getData());
-            var compAmount = in.readInt();
-            var loadedCompList = new ArrayList<Deserializer.SerialHolder>();
+
             OpenGG.asyncExec(() -> {
                 try {
+                    var in = new GGInputStream(packet.getData());
+                    var compAmount = in.readInt();
+                    System.out.println(compAmount);
+                    var loadedCompList = new ArrayList<Deserializer.SerialHolder>();
                     for (int i = 0; i < compAmount; i++) {
                         loadedCompList.add(Deserializer.deserializeSingleComponent(in));
                     }
 
                     for (var comp : loadedCompList) {
+                        System.out.println(comp.comp.getClass().getName());
+                        System.out.println(comp.parent);
                         if (comp.parent == 0) WorldEngine.getCurrent().attach(comp.comp);
                         if (WorldEngine.getCurrent().find(comp.parent) != null)
                             WorldEngine.getCurrent().find(comp.parent).attach(comp.comp);
@@ -186,9 +189,7 @@ public class Client {
                     e.printStackTrace();
                 }
             });
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
     }
 
     public void acceptRemovedComponent(Packet packet) {
