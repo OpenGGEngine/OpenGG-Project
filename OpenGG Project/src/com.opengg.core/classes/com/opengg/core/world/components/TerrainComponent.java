@@ -109,8 +109,11 @@ public class TerrainComponent extends RenderComponent{
     @Override
     public void deserialize(GGInputStream in) throws IOException{
         super.deserialize(in);
+        this.setShader("terrain");
         String tp = in.readString();
         terrain = Terrain.generate(tp);
+        this.setDrawable(terrain.getDrawable());
+
 
         String blot = in.readString();
 

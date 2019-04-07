@@ -64,6 +64,7 @@ public class WaterComponent extends RenderComponent{
         ShaderController.setUVMultX(tscale);
         ShaderController.setUniform("uvoffsetx", FastMath.sin(current)/4);
         ShaderController.setUniform("uvoffsety", FastMath.sin(current)/4);
+        if(RenderEngine.getSkybox() == null) return;
         RenderEngine.getSkybox().getCubemap().use(2);
         super.render();
         ShaderController.setUniform("uvoffsetx", 0f);

@@ -49,6 +49,8 @@ public class Server {
     private List<Component> newComponents;
     private List<Component> removedComponents;
 
+    private Map<Integer, byte[]> lastUpdate = new HashMap<>();
+
     public Server(String name, int port, ServerSocket ssocket, DatagramSocket dsocket){
         this.name = name;
         this.port = port;
@@ -106,22 +108,24 @@ public class Server {
 
     public void sendState(){
         try {
-            var componentsToSerialize = WorldEngine.getCurrent().getAllDescendants();//.stream().filter(s -> new Random().nextInt(5) == 2).collect(Collectors.toList());
+            var componentsToSerialize = WorldEngine.getCurrent().getAllDescendants().stream()
+                    .filter(Component::shouldSerializeUpdate)
+                   // .filter(s -> new Random().nextInt(2) == 1)
+                    .collect(Collectors.toList());
             List<byte[]> processedComponents = new ArrayList<>();
             for(var comp : componentsToSerialize){
                 GGOutputStream compOut = new GGOutputStream();
                 compOut.write((short) comp.getId());
                 comp.serializeUpdate(compOut);
-                processedComponents.add(compOut.asByteArray());
+                if(!Arrays.equals(lastUpdate.get(comp.getId()), compOut.asByteArray()) || new Random().nextInt(15) == 0){
+                    lastUpdate.put(comp.getId(), compOut.asByteArray());
+                    processedComponents.add(compOut.asByteArray());
+                }
             }
 
             var remainingPacketSize = LambdaContainer.encapsulate(getPacketSize()); //extra spot for type, amount of comps, and timestamp
 
-            var componentsToSend = processedComponents
-                    .stream()
-                    .takeWhile(bytes -> remainingPacketSize.value - bytes.length > 0)
-                    .peek(bytes -> remainingPacketSize.value -= bytes.length)
-                    .collect(Collectors.toList());
+            var componentsToSend = new ArrayList<>(processedComponents);
 
             GGOutputStream out = new GGOutputStream();
 
