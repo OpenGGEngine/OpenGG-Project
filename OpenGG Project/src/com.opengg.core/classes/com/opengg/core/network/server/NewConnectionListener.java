@@ -10,11 +10,8 @@ import com.opengg.core.console.GGConsole;
 import com.opengg.core.engine.OpenGG;
 import com.opengg.core.world.WorldEngine;
 import com.opengg.core.world.Serializer;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+
+import java.io.*;
 import java.net.Socket;
 import java.time.Instant;
 
@@ -69,10 +66,9 @@ public class NewConnectionListener implements Runnable{
                 GGConsole.log(ip + " connected to server, sending game state");
 
                 byte[] bytes = Serializer.serialize(WorldEngine.getCurrent());
-                out.println(bytes.length);
-                in.read();
+                new DataOutputStream(s.getOutputStream()).writeInt(bytes.length);
 
-                s.getOutputStream().write(bytes);
+                new DataOutputStream(s.getOutputStream()).write(bytes);
 
                 GGConsole.log(ip + " connected to server.");
 

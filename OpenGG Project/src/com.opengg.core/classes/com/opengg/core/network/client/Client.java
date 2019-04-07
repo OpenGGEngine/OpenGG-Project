@@ -106,15 +106,14 @@ public class Client {
     }
 
     public void getData() throws IOException {
-        var in = new BufferedReader(new InputStreamReader(tcpSocket.getInputStream()));
+        var in = new DataInputStream(tcpSocket.getInputStream());
 
-        int worldsize = Integer.decode(in.readLine());
-        tcpSocket.getOutputStream().write(1);
+        int worldsize = in.readInt();
 
         GGConsole.log("Downloading world (" + worldsize + " bytes)");
 
         byte[] bytes = new byte[worldsize];
-        tcpSocket.getInputStream().read(bytes);
+        new DataInputStream(tcpSocket.getInputStream()).readFully(bytes);
 
         var buffer = ByteBuffer.wrap(bytes);
 
@@ -175,8 +174,6 @@ public class Client {
                     }
 
                     for (var comp : loadedCompList) {
-                        System.out.println(comp.comp.getClass().getName());
-                        System.out.println(comp.parent);
                         if (comp.parent == 0) WorldEngine.getCurrent().attach(comp.comp);
                         if (WorldEngine.getCurrent().find(comp.parent) != null)
                             WorldEngine.getCurrent().find(comp.parent).attach(comp.comp);
