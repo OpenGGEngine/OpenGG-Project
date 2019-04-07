@@ -14,6 +14,7 @@ import com.opengg.core.world.Serializer;
 import java.io.*;
 import java.net.Socket;
 import java.time.Instant;
+import java.util.Base64;
 
  /**
  *
@@ -67,12 +68,7 @@ public class NewConnectionListener implements Runnable{
 
                 byte[] bytes = Serializer.serialize(WorldEngine.getCurrent());
 
-                var dataOut = new DataOutputStream(s.getOutputStream());
-                dataOut.writeInt(bytes.length);
-
-                GGConsole.log("Game state sent");
-
-                dataOut.write(bytes);
+                out.println(Base64.getEncoder().encodeToString(bytes));
 
                 GGConsole.log(ip + " connected to server.");
 

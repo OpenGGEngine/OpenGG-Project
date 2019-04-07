@@ -28,6 +28,7 @@ import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Base64;
 
 /**
  *
@@ -91,6 +92,17 @@ public class Client {
         timedifference = end.toEpochMilli() - longtime;
 
         GGInfo.setUserId(id);
+
+        byte[] decodedBytes = Base64.getDecoder().decode(in.readLine());
+        GGConsole.log("Downloading world (" + decodedBytes.length + " bytes)");
+
+        var buffer = ByteBuffer.wrap(decodedBytes);
+
+        World w = Deserializer.deserialize(buffer);
+        WorldEngine.useWorld(w);
+
+        GGConsole.log("World downloaded");
+        GGConsole.log("Connected to " + tcpSocket.getInetAddress());
     }
 
     public void udpHandshake(){
@@ -103,31 +115,6 @@ public class Client {
                 e.printStackTrace();
             }
         }
-    }
-
-    public void getData() throws IOException {
-        var in = new DataInputStream(tcpSocket.getInputStream());
-
-        byte[] data = new byte[4];
-        data[0] = in.readByte();
-        data[1] = in.readByte();
-        data[2] = in.readByte();
-        data[3] = in.readByte();
-
-        var worldsize = ByteBuffer.wrap(data).getInt();
-
-        GGConsole.log("Downloading world (" + worldsize + " bytes)");
-
-        byte[] bytes = new byte[worldsize];
-        new DataInputStream(tcpSocket.getInputStream()).readFully(bytes);
-
-        var buffer = ByteBuffer.wrap(bytes);
-
-        World w = Deserializer.deserialize(buffer);
-        WorldEngine.useWorld(w);
-
-        GGConsole.log("World downloaded");
-        GGConsole.log("Connected to " + tcpSocket.getInetAddress());
     }
 
     public void update(){

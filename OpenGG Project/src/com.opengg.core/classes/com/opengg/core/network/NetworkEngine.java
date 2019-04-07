@@ -84,9 +84,7 @@ public class NetworkEngine {
             client.start();
 
             client.doHandshake();
-            GGConsole.log("Connected to " + ip + ", receiving world...");
 
-            client.getData();
             GGConsole.log("Downloaded world, joining...");
 
             Thread.sleep(1000);
