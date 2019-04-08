@@ -125,7 +125,7 @@ public class OpenGLBuffer implements GraphicsBuffer{
     }
     
     @Override
-    public void delete(){
+    public void destroy(){
         buffer.delete();
     }
 

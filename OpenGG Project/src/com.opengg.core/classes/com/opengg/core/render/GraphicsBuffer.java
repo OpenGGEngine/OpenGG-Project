@@ -1,6 +1,7 @@
 package com.opengg.core.render;
 
 import com.opengg.core.render.internal.opengl.OpenGLBuffer;
+import com.opengg.core.system.NativeResource;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -9,7 +10,7 @@ import java.nio.IntBuffer;
  * Represents a GPU VRAM mapped buffer for the current graphics context
  * @author Javier
  */
-public interface GraphicsBuffer{
+public interface GraphicsBuffer extends NativeResource {
 
     /**
      * Allocates empty memory of the given type and access type
@@ -125,11 +126,6 @@ public interface GraphicsBuffer{
      * @return
      */
     UsageType getUsage();
-
-    /**
-     * Deletes and frees all VRAM used by this buffer
-     */
-    void delete();
 
     /**
      * Denotes the usage types for the underlying rendering system

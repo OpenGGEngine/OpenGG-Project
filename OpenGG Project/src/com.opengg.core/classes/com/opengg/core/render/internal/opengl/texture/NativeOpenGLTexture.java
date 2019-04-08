@@ -6,6 +6,7 @@
 package com.opengg.core.render.internal.opengl.texture;
 
 import com.opengg.core.render.RenderEngine;
+import com.opengg.core.system.NativeResource;
 
 import java.nio.ByteBuffer;
 import static org.lwjgl.opengl.GL11.glBindTexture;
@@ -93,8 +94,8 @@ public class NativeOpenGLTexture{
     public int getID(){
         return id;
     }
-    
-    public void delete(){
+
+    public void destroy(){
         if(RenderEngine.validateInitialization()) return;
         glDeleteTextures(id);
     }

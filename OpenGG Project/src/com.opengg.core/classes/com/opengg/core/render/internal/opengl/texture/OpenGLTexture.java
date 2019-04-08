@@ -231,8 +231,8 @@ public class OpenGLTexture implements Texture {
     }
     
     @Override
-    public void delete(){
-        tex.delete();
+    public void destroy(){
+        tex.destroy();
     }
 
 }

@@ -10,6 +10,7 @@ package com.opengg.core.render.texture;
 import com.opengg.core.engine.Resource;
 import com.opengg.core.render.internal.opengl.texture.OpenGLTexture;
 import com.opengg.core.system.Allocator;
+import com.opengg.core.system.NativeResource;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
 
@@ -32,7 +33,7 @@ import static org.lwjgl.opengl.GL30.GL_TEXTURE_2D_ARRAY;
  * @author Javier
  * @throws com.opengg.core.exceptions.RenderException Thrown if there is no instance of a graphics API in the current thread
  */
-public interface Texture {
+public interface Texture extends NativeResource {
     /**
      * Binds the texture to the current texture unit
      */
@@ -151,11 +152,6 @@ public interface Texture {
      * @return
      */
     int getID();
-
-    /**
-     * Deletes this texture and frees VRAM
-     */
-    void delete();
 
     static Texture get2DTexture(String path){
         return get2DTexture(TextureManager.loadTexture(path));
