@@ -6,11 +6,13 @@
 
 package com.opengg.core.render.objects;
 
+import com.opengg.core.math.Tuple;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.render.drawn.DrawnObject;
 import com.opengg.core.system.Allocator;
+import org.lwjgl.system.MemoryStack;
 
 import java.nio.Buffer;
 import java.nio.FloatBuffer;
@@ -36,12 +38,20 @@ public class ObjectCreator {
     }
     
     public static Drawable createSquare(Vector2f c1, Vector2f c2, float z){
-        Buffer[] b = createSquareBuffers(c1, c2, z);
-        return new DrawnObject((IntBuffer)b[1], (FloatBuffer)b[0]);
+        var b = createSquareBuffers(c1, c2, z, Allocator.AllocType.MEM_STACK);
+        var obj =  new DrawnObject(b.y, b.x);
+        Allocator.popStack();
+        Allocator.popStack();
+        return obj;
     }
     
-    public static Buffer[] createSquareBuffers(Vector2f c1, Vector2f c2, float z){
-        return ObjectBuffers.getSquare(c1, c2, z, 1, false);
+    public static Tuple<FloatBuffer, IntBuffer> createSquareBuffers(Vector2f c1, Vector2f c2, float z){
+        return createSquareBuffers(c1,c2,z, Allocator.AllocType.MEMORYUTIL);
+    }
+
+    public static Tuple<FloatBuffer, IntBuffer> createSquareBuffers(Vector2f c1, Vector2f c2, float z, Allocator.AllocType type){
+        return ObjectBuffers.getSquare(c1, c2, z, 1, false, type);
+
     }
     
     public static Drawable createCube(float size){

@@ -45,9 +45,9 @@ public abstract class ParticleEmitter extends RenderComponent{
     }
     
     private void createDrawable(){
-        Buffer[] buffers = ObjectCreator.createSquareBuffers(new Vector2f(-0.05f,-0.05f), new Vector2f(0.05f,0.05f), 0);
-        FloatBuffer fb = (FloatBuffer) buffers[0];
-        IntBuffer ib = (IntBuffer) buffers[1];
+        var buffers = ObjectCreator.createSquareBuffers(new Vector2f(-0.05f,-0.05f), new Vector2f(0.05f,0.05f), 0);
+        FloatBuffer fb = buffers.x;
+        IntBuffer ib = buffers.y;
         this.setDrawable(new DrawnObject(RenderEngine.getParticleFormat(), ib, fb, Allocator.allocFloat(3)));
     }
     

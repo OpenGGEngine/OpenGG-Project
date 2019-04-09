@@ -6,6 +6,7 @@
 
 package com.opengg.core.audio;
 
+import com.opengg.core.system.NativeResource;
 import org.lwjgl.openal.AL10;
 import static org.lwjgl.openal.AL10.AL_BITS;
 import static org.lwjgl.openal.AL10.AL_CHANNELS;
@@ -19,7 +20,7 @@ import static org.lwjgl.openal.AL10.alGetBufferi;
  * Direct, low abstraction object version of an OpenAL buffer
  * @author Javier
  */
-public class ALBuffer {
+public class ALBuffer implements NativeResource {
     SoundData data;
     int id;
 
@@ -78,5 +79,11 @@ public class ALBuffer {
      */
     public void remove(){
         alDeleteBuffers(id);
+    }
+
+    @Override
+    public Runnable onDestroy() {
+        int nid = id;
+        return () -> alDeleteBuffers(nid);
     }
 }

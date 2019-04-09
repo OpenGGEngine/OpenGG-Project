@@ -5,6 +5,7 @@
  */
 package com.opengg.core.render.drawn;
 
+import com.opengg.core.math.Tuple;
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.exceptions.RenderException;
 import com.opengg.core.math.Matrix4f;
@@ -117,24 +118,26 @@ public class DrawnObject implements Drawable {
 
         elementBuffer = GraphicsBuffer.allocate(GraphicsBuffer.BufferType.ELEMENT_ARRAY_BUFFER, GraphicsBuffer.UsageType.STATIC_DRAW);
         elementBuffer.bind();
-        elementBuffer.uploadData(indexbuffer);
+        elementBuffer.uploadData(indexbuffer.x);
+        if(indexbuffer.y) Allocator.popStack();
     }
 
-    private IntBuffer validateIndexBuffer(VertexArrayFormat format, IntBuffer index, FloatBuffer[] vertices){
+    private Tuple<IntBuffer, Boolean> validateIndexBuffer(VertexArrayFormat format, IntBuffer index, FloatBuffer[] vertices){
         var finalindex = index;
 
         if(index == null){
             int size = format.getVertexLength();
             elementcount = vertices[0].limit()/size;
-            finalindex = Allocator.allocInt(elementcount);
+            finalindex = Allocator.stackAllocInt(elementcount);
             for(int i = 0; i < elementcount; i++){
                 finalindex.put(i);
             }
             finalindex.flip();
+            return Tuple.of(finalindex, true);
         }else{
             elementcount = index.limit();
+            return Tuple.of(index, false);
         }
-        return finalindex;
     }
 
     @Override

@@ -12,6 +12,9 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
+import java.util.stream.Collectors;
+
+import org.lwjgl.BufferUtils;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 
@@ -22,9 +25,8 @@ import org.lwjgl.system.MemoryUtil;
 public class Allocator {
     //private static Map<Buffer, BufferData> buffers = Collections.synchronizedMap(new WeakHashMap<>());
     
-    public static final int DEFAULT = 1, LWJGL_STACK = 2, LWJGL_DEFAULT = 3;
     public static final int FLOAT = 0, INT = 1, SHORT = 2, BYTE = 3, LONG = 4;
-    public static int currentAllocator = LWJGL_DEFAULT;
+    public static AllocType currentAllocator = AllocType.MEMORYUTIL;
     
     public static void update(){
         
@@ -44,19 +46,22 @@ public class Allocator {
     }
     
     public static FloatBuffer stackAllocFloat(int size){
-        return allocFloat(size, LWJGL_STACK);
+        return allocFloat(size, AllocType.MEM_STACK);
     }
     
-    public static FloatBuffer allocFloat(int size, int allocator){
+    public static FloatBuffer allocFloat(int size, AllocType allocator){
         FloatBuffer buffer = null;
         switch(allocator){
-            case DEFAULT:
+            case JAVA:
                 buffer = FloatBuffer.allocate(size);
                 break;
-            case LWJGL_DEFAULT:
+            case DIRECT:
+                buffer = BufferUtils.createFloatBuffer(size);
+                break;
+            case MEMORYUTIL:
                 buffer = MemoryUtil.memAllocFloat(size);
                 break;
-            case LWJGL_STACK:
+            case MEM_STACK:
                 MemoryStack stack = MemoryStack.stackPush();
                 buffer = stack.callocFloat(size);
                 
@@ -71,19 +76,22 @@ public class Allocator {
     }
     
     public static IntBuffer stackAllocInt(int size){
-        return allocInt(size, LWJGL_STACK);
+        return allocInt(size, AllocType.MEM_STACK);
     }
     
-    public static IntBuffer allocInt(int size, int allocator){
+    public static IntBuffer allocInt(int size, AllocType allocator){
         IntBuffer buffer = null;
         switch(allocator){
-            case DEFAULT:
-                buffer = IntBuffer.allocate(DEFAULT);
+            case JAVA:
+                buffer = IntBuffer.allocate(size);
                 break;
-            case LWJGL_DEFAULT:
+            case DIRECT:
+                buffer = BufferUtils.createIntBuffer(size);
+                break;
+            case MEMORYUTIL:
                 buffer = MemoryUtil.memAllocInt(size);
                 break;
-            case LWJGL_STACK:
+            case MEM_STACK:
                 MemoryStack stack = MemoryStack.stackPush();
                 buffer = stack.callocInt(size);
                 
@@ -98,19 +106,22 @@ public class Allocator {
     }
     
     public static ByteBuffer stackAlloc(int size){
-        return alloc(size, LWJGL_STACK);
+        return alloc(size, AllocType.MEM_STACK);
     }
     
-    public static ByteBuffer alloc(int size, int allocator){
+    public static ByteBuffer alloc(int size, AllocType allocator){
         ByteBuffer buffer = null;
         switch(allocator){
-            case DEFAULT:
-                buffer = ByteBuffer.allocate(DEFAULT);
+            case JAVA:
+                buffer = ByteBuffer.allocate(size);
                 break;
-            case LWJGL_DEFAULT:
+            case DIRECT:
+                buffer = BufferUtils.createByteBuffer(size);
+                break;
+            case MEMORYUTIL:
                 buffer = MemoryUtil.memAlloc(size);
                 break;
-            case LWJGL_STACK:
+            case MEM_STACK:
                 MemoryStack stack = MemoryStack.stackPush();
                 buffer = stack.calloc(size);
                 
@@ -125,19 +136,22 @@ public class Allocator {
     }
     
     public static ShortBuffer stackAllocShort(int size){
-        return allocShort(size, LWJGL_STACK);
+        return allocShort(size, AllocType.MEM_STACK);
     }
     
-    public static ShortBuffer allocShort(int size, int allocator){
+    public static ShortBuffer allocShort(int size, AllocType allocator){
         ShortBuffer buffer = null;
         switch(allocator){
-            case DEFAULT:
-                buffer = ShortBuffer.allocate(DEFAULT);
+            case JAVA:
+                buffer = ShortBuffer.allocate(size);
                 break;
-            case LWJGL_DEFAULT:
+            case DIRECT:
+                buffer = BufferUtils.createShortBuffer(size);
+                break;
+            case MEMORYUTIL:
                 buffer = MemoryUtil.memAllocShort(size);
                 break;
-            case LWJGL_STACK:
+            case MEM_STACK:
                 MemoryStack stack = MemoryStack.stackPush();
                 buffer = stack.mallocShort(size);
                 
@@ -151,19 +165,27 @@ public class Allocator {
         MemoryStack.stackPop();
     }
     
-    public static void register(Buffer buffer, int allocator){
+    public static void register(Buffer buffer, AllocType allocator){
         int type = -1;
         if(buffer instanceof FloatBuffer) type = FLOAT;
         if(buffer instanceof ByteBuffer) type = BYTE;
         if(buffer instanceof IntBuffer) type = INT;
         if(buffer instanceof ShortBuffer) type = SHORT;
-        
-        int size = buffer.capacity();
-        
-        BufferData data = new BufferData();
-        data.allocator = allocator;
-        data.size = size; 
-        data.type = type;
+
+        if(allocator == AllocType.MEMORYUTIL){
+            var list = StackWalker.getInstance().walk(s ->
+                    s
+                            .skip(2)
+                            .limit(5)
+                            .filter(s3 -> s3.getClassName().contains("opengg"))
+                            .map(s2 -> s2.getClassName() + ":" + s2.getMethodName())
+                            .collect(Collectors.toList()));
+            System.out.println(list);
+            long address = MemoryUtil.memAddress(buffer);
+            NativeResourceManager.register(buffer, () -> {
+                MemoryUtil.nmemFree(address);
+            });
+        }
         
         //buffers.put(buffer, data);
     }
@@ -190,12 +212,16 @@ public class Allocator {
 
     private Allocator() {
     }
+
+    public enum AllocType {
+        MEMORYUTIL, MEM_STACK, DIRECT, JAVA;
+    }
 }
 
 class BufferData{
         int type;
         int size;
-        int allocator;
+        Allocator.AllocType allocator;
 
         public int getSize(){
             return type;
@@ -205,7 +231,7 @@ class BufferData{
             return type;
         }
         
-        public int getAllocator(){
+        public Allocator.AllocType getAllocator(){
             return allocator;
         }
     }

@@ -42,7 +42,7 @@ public class TextureLoader {
             throw new IOException("Failed to load texture!");
         }
 
-        Allocator.register(image, Allocator.LWJGL_DEFAULT);
+        Allocator.register(image, Allocator.AllocType.MEMORYUTIL);
 
         TextureData data = new TextureData(w.get(), h.get(), 4, image, path);
         Allocator.popStack();

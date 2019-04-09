@@ -258,7 +258,7 @@ public interface Texture{
     }
 
     static Texture ofColor(byte r, byte g, byte b, byte a){
-        TextureData data = new TextureData(1,1,4, Allocator.alloc(4)
+        TextureData data = new TextureData(1,1,4, Allocator.stackAlloc(4)
                 .put(r)
                 .put(g)
                 .put(b)
@@ -266,7 +266,9 @@ public interface Texture{
                 .flip(),
                 "internal");
 
-        return create(Texture.config(), data);
+        var tex = create(Texture.config(), data);
+        Allocator.popStack();
+        return tex;
     }
 
     static Texture create(TextureConfig config, String... data){

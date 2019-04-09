@@ -17,8 +17,6 @@ import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
-import static org.lwjgl.system.MemoryUtil.memAlloc;
-import static org.lwjgl.system.MemoryUtil.memFree;
 import static org.lwjgl.util.lz4.LZ4.*;
 import static org.lwjgl.util.lz4.LZ4Frame.LZ4F_isError;
 
@@ -59,14 +57,13 @@ public class BMFFile extends ModelProcess {
             uncompressed.flip();
 
             //Compress the file
-            ByteBuffer compressed = memAlloc(LZ4_compressBound(uncompressed.remaining()));
+            ByteBuffer compressed = Allocator.alloc(LZ4_compressBound(uncompressed.remaining()));
             long compressedSize = LZ4_compress_default(uncompressed, compressed);
             compressed.limit((int) compressedSize);
             compressed = compressed.slice();
             ByteBuffer sizeBuf = Allocator.alloc(4).order(ByteOrder.BIG_ENDIAN).putInt(uncompressed.capacity()).flip();
             fc.write(sizeBuf);
             fc.write(compressed);
-            memFree(compressed);
             GGConsole.log("Exported Model: " + model.getName() + ".bmf at " + model.fileLocation);
         }catch(IOException e){
             GGConsole.error("Error in exporting.");
@@ -83,7 +80,7 @@ public class BMFFile extends ModelProcess {
                 GGConsole.error("Corrupt File");
                 return null;
             }
-            ByteBuffer original = memAlloc(originalsize).order(ByteOrder.BIG_ENDIAN);
+            ByteBuffer original = Allocator.alloc(originalsize).order(ByteOrder.BIG_ENDIAN);
             ByteBuffer compressed = Allocator.alloc((int) f.length() - Integer.BYTES);
             while (fIn.getChannel().read(compressed) > 0) {
             }
@@ -91,7 +88,6 @@ public class BMFFile extends ModelProcess {
             long errorcode = LZ4_decompress_safe(compressed, original);
             if (LZ4F_isError(errorcode)) {
                 GGConsole.error("Decompression Failed: " + errorcode);
-                memFree(original);
                 return null;
             }
             //Weak Check for Header Validity

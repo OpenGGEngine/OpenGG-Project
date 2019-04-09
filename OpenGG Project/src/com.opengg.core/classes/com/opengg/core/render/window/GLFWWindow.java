@@ -247,18 +247,24 @@ public class GLFWWindow implements Window {
 
     @Override
     public int getWidth() {
-        IntBuffer w = Allocator.allocInt(1);
-        IntBuffer h = Allocator.allocInt(1);
+        IntBuffer w = Allocator.stackAllocInt(1);
+        IntBuffer h = Allocator.stackAllocInt(1);
         glfwGetFramebufferSize(window, w, h);
-        return w.get();
+        var realw = w.get();
+        Allocator.popStack();
+        Allocator.popStack();
+        return realw;
     }
 
     @Override
     public int getHeight() {
-        IntBuffer w = Allocator.allocInt(1);
-        IntBuffer h = Allocator.allocInt(1);
+        IntBuffer w = Allocator.stackAllocInt(1);
+        IntBuffer h = Allocator.stackAllocInt(1);
         glfwGetFramebufferSize(window, w, h);
-        return h.get();
+        var realh = h.get();
+        Allocator.popStack();
+        Allocator.popStack();
+        return realh;
     }
 
     @Override

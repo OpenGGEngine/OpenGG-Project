@@ -11,16 +11,11 @@ public class NativeResourceManager {
 
     public static void registerNativeResource(NativeResource resource){
         var runnable = resource.onDestroy();
-        register(resource, () -> {
-            if(runnable != null)
-                cleanEvents.add(runnable);
-            else
-                System.out.println("FOUNDNULL");
-        });
+        register(resource, runnable);
     }
 
     public static void register(Object object, Runnable onClean){
-        var cleanable = cleaner.register(object, onClean);
+        var cleanable = cleaner.register(object, () -> cleanEvents.add(onClean));
     }
 
     public static void runQueuedFinalization() {

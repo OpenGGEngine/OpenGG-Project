@@ -5,6 +5,7 @@
  */
 package com.opengg.core.render.objects;
 
+import com.opengg.core.math.Tuple;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.math.geom.Triangle;
@@ -19,8 +20,8 @@ import java.util.List;
  * @author Javier
  */
 public class ObjectBuffers {
-    public static Buffer[] getSquare(Vector2f v1, Vector2f v2, float z1 ,float transparency, boolean flippedTex){
-        FloatBuffer sq = Allocator.allocFloat(4*12);
+    public static Tuple<FloatBuffer, IntBuffer> getSquare(Vector2f v1, Vector2f v2, float z1 , float transparency, boolean flippedTex, Allocator.AllocType type){
+        FloatBuffer sq = Allocator.allocFloat(4*12, type);
 
         
         sq.put(v1.x).put(v1.y).put(z1).put(1).put(0).put(0).put(transparency).put(1f).put(1f).put(1f).put(0).put(0);
@@ -29,11 +30,11 @@ public class ObjectBuffers {
         sq.put(v2.x).put(v1.y).put(z1).put(0).put(0).put(1).put(transparency).put(1f).put(1f).put(1f).put(1).put(0);
         sq.flip();
         
-        IntBuffer indices = Allocator.allocInt(6);
+        IntBuffer indices = Allocator.allocInt(6, type);
         indices.put(new int[]{0,1,2,
             2,3,0});
         indices.flip();
-        return new Buffer[]{sq, indices};
+        return Tuple.of(sq, indices);
     }
 
     static FloatBuffer getSquare(float x1, float z1, float x2, float z2, float y1,float y2, float y3, float y4,  float transparency,boolean flippedTex){

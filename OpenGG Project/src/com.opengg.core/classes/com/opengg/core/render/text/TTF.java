@@ -2,6 +2,7 @@ package com.opengg.core.render.text;
 
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.math.Vector2f;
+import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.render.drawn.DrawnObject;
 import com.opengg.core.render.drawn.TexturedDrawnObject;
@@ -121,17 +122,8 @@ public class TTF implements Font{
         altCData.clear();
         stbtt_PackEnd(pc);
 
+        texture = getTextureFrom(bitmap, BITMAP_W, BITMAP_H, new Vector3f(1,1,1));
 
-        ByteBuffer realmap = Allocator.alloc(BITMAP_W * BITMAP_H * 4);
-        for (int i = 0; i < BITMAP_H * BITMAP_W; i++) {
-            realmap.put((byte) 0xFF).put((byte) 0xFF).put((byte) 0xFF).put(bitmap.get());
-        }
-
-        realmap.flip();
-
-        TextureData data = new TextureData(BITMAP_W, BITMAP_H, 4, realmap, "internal");
-
-        texture = Texture.create(Texture.config(), data);
         return altCData;
     }
 
@@ -140,18 +132,24 @@ public class TTF implements Font{
         ByteBuffer bitmap = Allocator.alloc(BITMAP_W * BITMAP_H);
         stbtt_BakeFontBitmap(ttf, fontheight, bitmap, BITMAP_W, BITMAP_H, 32, cdata);
 
+        texture = getTextureFrom(bitmap, BITMAP_W, BITMAP_H, new Vector3f(1,1,1));
 
+        return cdata;
+    }
+
+    private static Texture getTextureFrom(ByteBuffer bitmap, int BITMAP_W, int BITMAP_H, Vector3f color){
         ByteBuffer realmap = Allocator.alloc(BITMAP_W * BITMAP_H * 4);
         for (int i = 0; i < BITMAP_H * BITMAP_W; i++) {
-            realmap.put((byte) 0xFF).put((byte) 0xFF).put((byte) 0xFF).put(bitmap.get());
+            realmap.put((byte) (color.x * 255)).put((byte) (color.y * 255)).put((byte) (color.z * 255)).put(bitmap.get());
         }
 
         realmap.flip();
 
         TextureData data = new TextureData(BITMAP_W, BITMAP_H, 4, realmap, "internal");
 
-        texture = Texture.create(Texture.config(), data);
-        return cdata;
+        var texture = Texture.create(Texture.config(), data);
+
+        return texture;
     }
 
     private static int getCP(String text, int to, int i, IntBuffer cpOut) {
@@ -265,7 +263,7 @@ public class TTF implements Font{
         Allocator.popStack();
         Allocator.popStack();
 
-        FloatBuffer data = Allocator.allocFloat(poss.size()*12);
+        FloatBuffer data = Allocator.stackAllocFloat(poss.size()*12);
 
         for(int i = 0; i < poss.size(); i++){
             var uv = uvs.get(i);
@@ -275,6 +273,8 @@ public class TTF implements Font{
         }
         data.flip();
 
-        return new TexturedDrawnObject(new DrawnObject(data), this.texture);
+        var object = new TexturedDrawnObject(new DrawnObject(data), this.texture);
+        Allocator.popStack();
+        return object;
     }
 }
