@@ -106,10 +106,6 @@ public class DrawnObject implements Drawable {
     }
 
     private void defBuffers(FloatBuffer[] buffers, IntBuffer ind ){
-        for(GraphicsBuffer graphicsBuffer : vertexBufferObjects){
-            graphicsBuffer.delete();
-        }
-
         vertexBufferObjects.clear();
 
         for(var buffer : buffers){
@@ -168,13 +164,5 @@ public class DrawnObject implements Drawable {
         RenderEngine.getCurrentVAO().applyFormat(vertexBufferObjects);
         glDrawElementsInstancedBaseVertexBaseInstance(drawtype, elementcount, GL_UNSIGNED_INT, 0, instanceCount, basevertex, 0);
 
-    }
-
-    @Override
-    public void destroy() {
-        for(GraphicsBuffer vbo : vertexBufferObjects){
-            vbo.delete();
-        }
-        elementBuffer.delete();
     }
 }

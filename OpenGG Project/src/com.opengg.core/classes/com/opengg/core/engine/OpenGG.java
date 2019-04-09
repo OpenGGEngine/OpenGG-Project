@@ -27,6 +27,7 @@ import com.opengg.core.render.window.WindowController;
 import com.opengg.core.render.window.Window;
 import com.opengg.core.render.window.WindowInfo;
 import com.opengg.core.system.Allocator;
+import com.opengg.core.system.NativeResourceManager;
 import com.opengg.core.system.SystemInfo;
 import com.opengg.core.thread.ThreadManager;
 import com.opengg.core.util.Time;
@@ -224,6 +225,7 @@ public final class OpenGG{
         RenderEngine.render();
         RenderEngine.checkForGLErrors();
         endFrame();
+        NativeResourceManager.runQueuedFinalization();
     }
 
     private static void getVMOptions(){

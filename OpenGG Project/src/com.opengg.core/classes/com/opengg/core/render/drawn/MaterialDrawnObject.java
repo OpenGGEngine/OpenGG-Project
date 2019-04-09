@@ -81,8 +81,4 @@ public class MaterialDrawnObject implements Drawable {
         d.setMatrix(m);
     }
 
-    @Override
-    public void destroy() {
-        d.destroy();
-    }
 }

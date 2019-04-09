@@ -5,8 +5,10 @@
  */
 package com.opengg.core.render.internal.opengl.texture;
 
+import com.opengg.core.engine.OpenGG;
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.system.NativeResource;
+import com.opengg.core.system.NativeResourceManager;
 
 import java.nio.ByteBuffer;
 import static org.lwjgl.opengl.GL11.glBindTexture;
@@ -28,12 +30,13 @@ import static org.lwjgl.opengl.GL42.glTexStorage3D;
  *
  * @author Javier
  */
-public class NativeOpenGLTexture{
+public class NativeOpenGLTexture implements NativeResource{
     private final int id;
     
     public NativeOpenGLTexture(){
         if(RenderEngine.validateInitialization()) id = -1;
         else id = glGenTextures();
+        NativeResourceManager.registerNativeResource(this);
     }
     
     public void bind(int type){
@@ -98,5 +101,11 @@ public class NativeOpenGLTexture{
     public void destroy(){
         if(RenderEngine.validateInitialization()) return;
         glDeleteTextures(id);
+    }
+
+    @Override
+    public Runnable onDestroy(){
+        int id2 = id;
+        return () -> glDeleteTextures(id2);
     }
 }

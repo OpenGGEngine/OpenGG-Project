@@ -6,6 +6,8 @@
 package com.opengg.core.render.internal.opengl.texture;
 
 import com.opengg.core.render.RenderEngine;
+import com.opengg.core.system.NativeResource;
+import com.opengg.core.system.NativeResourceManager;
 
 import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER;
 import static org.lwjgl.opengl.GL30.GL_RENDERBUFFER;
@@ -23,12 +25,13 @@ import static org.lwjgl.opengl.GL32.glFramebufferTexture;
  *
  * @author Javier
  */
-public class NativeOpenGLFramebuffer{
+public class NativeOpenGLFramebuffer implements NativeResource {
     private final int id;
     
     public NativeOpenGLFramebuffer(){
         if(RenderEngine.validateInitialization()) id = -1;
         else id = glGenFramebuffers();
+        NativeResourceManager.registerNativeResource(this);
     }
     
     public void bind(int target){
@@ -83,5 +86,11 @@ public class NativeOpenGLFramebuffer{
     public void delete(){
         if(RenderEngine.validateInitialization()) return;
         glDeleteFramebuffers(id);
+    }
+
+    @Override
+    public Runnable onDestroy() {
+        int nid = id;
+        return () -> glDeleteFramebuffers(nid);
     }
 }

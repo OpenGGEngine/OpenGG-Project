@@ -229,10 +229,5 @@ public class OpenGLTexture implements Texture {
     public int getID(){
         return tex.getID();
     }
-    
-    @Override
-    public void destroy(){
-        tex.destroy();
-    }
 
 }

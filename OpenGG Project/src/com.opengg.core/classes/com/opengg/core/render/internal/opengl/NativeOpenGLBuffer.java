@@ -6,7 +6,10 @@
 
 package com.opengg.core.render.internal.opengl;
 
+import com.opengg.core.engine.OpenGG;
 import com.opengg.core.render.RenderEngine;
+import com.opengg.core.system.NativeResource;
+import com.opengg.core.system.NativeResourceManager;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -23,7 +26,7 @@ import static org.lwjgl.opengl.GL30.glBindBufferBase;
  *
  * @author Javier
  */
-public class NativeOpenGLBuffer{
+public class NativeOpenGLBuffer implements NativeResource {
     private final int id;
     
     /**
@@ -32,6 +35,7 @@ public class NativeOpenGLBuffer{
     public NativeOpenGLBuffer() {
         if(RenderEngine.validateInitialization()) id = -1;
         else id = glGenBuffers();
+        NativeResourceManager.registerNativeResource(this);
     }
     
     public void bind(int target) {
@@ -86,5 +90,11 @@ public class NativeOpenGLBuffer{
     
     public int getID() {
         return id;
+    }
+
+    @Override
+    public Runnable onDestroy() {
+        int id2 = id;
+        return () -> glDeleteBuffers(id2);
     }
 }

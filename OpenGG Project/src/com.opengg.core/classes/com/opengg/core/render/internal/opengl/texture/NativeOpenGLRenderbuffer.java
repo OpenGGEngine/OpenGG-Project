@@ -6,6 +6,8 @@
 package com.opengg.core.render.internal.opengl.texture;
 
 import com.opengg.core.render.RenderEngine;
+import com.opengg.core.system.NativeResource;
+import com.opengg.core.system.NativeResourceManager;
 
 import static org.lwjgl.opengl.GL30.GL_RENDERBUFFER;
 import static org.lwjgl.opengl.GL30.glBindRenderbuffer;
@@ -17,12 +19,13 @@ import static org.lwjgl.opengl.GL30.glRenderbufferStorage;
  *
  * @author Javier
  */
-public class NativeOpenGLRenderbuffer{
+public class NativeOpenGLRenderbuffer implements NativeResource {
     private final int id;
     
     public NativeOpenGLRenderbuffer(){
         if(RenderEngine.validateInitialization()) id = -1;
         else id = glGenRenderbuffers();
+        NativeResourceManager.registerNativeResource(this);
     }
     
     public void bind(){
@@ -42,5 +45,11 @@ public class NativeOpenGLRenderbuffer{
     public void delete(){
         if(RenderEngine.validateInitialization()) return;
         glDeleteRenderbuffers(id);
+    }
+
+    @Override
+    public Runnable onDestroy() {
+        int nid = id;
+        return () -> glDeleteRenderbuffers((nid));
     }
 }

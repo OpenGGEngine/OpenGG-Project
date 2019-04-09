@@ -31,11 +31,6 @@ public class TexturedDrawnObject implements Drawable{
     public void setMatrix(Matrix4f m) {
         object.setMatrix(m);
     }
-    
-    @Override
-    public void destroy() {
-        object.destroy();
-    }
 
     public void setTexture(Texture tex) {
         this.tex = tex;

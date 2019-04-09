@@ -45,11 +45,4 @@ public class DrawnObjectGroup implements Drawable {
             d.setMatrix(model);
         }
     }
-
-    @Override
-    public void destroy() {
-        for(Drawable d : objs){
-            d.destroy();
-        }
-    }
 }

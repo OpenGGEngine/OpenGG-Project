@@ -123,11 +123,6 @@ public class OpenGLBuffer implements GraphicsBuffer{
     public UsageType getUsage(){
         return usage;
     }
-    
-    @Override
-    public void destroy(){
-        buffer.delete();
-    }
 
     public static int fromUsageType(UsageType type){
         switch(type){

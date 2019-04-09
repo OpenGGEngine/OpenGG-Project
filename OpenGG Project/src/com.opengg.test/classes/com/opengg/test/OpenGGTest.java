@@ -32,6 +32,7 @@ import com.opengg.core.world.WorldEngine;
 import com.opengg.core.gui.GUIController;
 import com.opengg.core.io.ControlType;
 import static com.opengg.core.io.input.keyboard.Key.*;
+import static java.awt.Color.RED;
 
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
@@ -101,9 +102,6 @@ public class  OpenGGTest extends GGApplication{
 
         GUIController.addAndUse(mainview, "mainview");
 
-        NetworkEngine.connect("localhost", 25565);
-/*
-
         WorldEngine.getCurrent().attach(new ModelComponent(Resource.getModel("pear")).setPositionOffset(new Vector3f(1,0,-3)));
                 //.setScaleOffset(new Vector3f(0.01f,0,0.01f)));
 
@@ -126,7 +124,7 @@ public class  OpenGGTest extends GGApplication{
         );
 
         player = new FreeFlyComponent();
-        WorldEngine.getCurrent().attach(player);*/
+        WorldEngine.getCurrent().attach(player);
 
         WorldEngine.getCurrent().getRenderEnvironment().setSkybox(new Skybox(Texture.getSRGBCubemap(Resource.getTexturePath("skybox\\majestic_ft.png"),
                 Resource.getTexturePath("skybox\\majestic_bk.png"),
@@ -157,9 +155,6 @@ public class  OpenGGTest extends GGApplication{
 
     @Override
     public void update(float delta){
-        i++;
-        if(i > 20){
-            i = -20;
-        }
+
     }
 }

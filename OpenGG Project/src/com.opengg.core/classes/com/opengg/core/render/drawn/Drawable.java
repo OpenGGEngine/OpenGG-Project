@@ -15,5 +15,4 @@ import com.opengg.core.render.Renderable;
  */
 public interface Drawable extends Renderable{
     void setMatrix(Matrix4f m);
-    void destroy();
 }

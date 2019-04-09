@@ -10,7 +10,7 @@ import java.nio.IntBuffer;
  * Represents a GPU VRAM mapped buffer for the current graphics context
  * @author Javier
  */
-public interface GraphicsBuffer extends NativeResource {
+public interface GraphicsBuffer{
 
     /**
      * Allocates empty memory of the given type and access type
