@@ -2,6 +2,7 @@ package com.opengg.core.model.io;
 
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.engine.Resource;
+import com.opengg.core.math.Vector3f;
 import com.opengg.core.model.*;
 import com.opengg.core.model.process.ModelProcess;
 import com.opengg.core.physics.collision.ConvexHull;
@@ -69,6 +70,7 @@ public class BMFFile extends ModelProcess {
             GGConsole.error("Error in exporting.");
         }
     }
+
 
     public static Model loadModel(String file) throws IOException{
         String name = file;
@@ -171,9 +173,14 @@ public class BMFFile extends ModelProcess {
                         break;
                     case CONVEXHULL:
                         for (int i2 = 0; i2 < fs.subBuffers.length; i2++) {
-                            ConvexHull hull = new ConvexHull();
-                            hull.deserialize(new GGInputStream(fs.subBuffers[i2]));
-                            model.getMeshes().get(i2).setConvexHull(hull.vertices);
+                            fs.subBuffers[i2].get(new byte[4*7]);
+                            fs.subBuffers[i2].order(ByteOrder.BIG_ENDIAN);
+                            int numVert = fs.subBuffers[i2].getInt();
+                            ArrayList<Vector3f> vertices = new ArrayList<>(numVert);
+                            while(fs.subBuffers[i2].hasRemaining()){
+                                vertices.add(new Vector3f(fs.subBuffers[i2].getFloat(),fs.subBuffers[i2].getFloat(),fs.subBuffers[i2].getFloat())) ;
+                            }
+                            model.getMeshes().get(i2).setConvexHull(vertices);
                         }
                         break;
                     default:
