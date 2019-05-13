@@ -6,18 +6,19 @@
 package com.opengg.core.render.internal.opengl.texture;
 
 import com.opengg.core.console.GGConsole;
+import com.opengg.core.math.Tuple;
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.texture.TextureData;
 import com.opengg.core.system.Allocator;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+
 import org.lwjgl.opengl.EXTTextureFilterAnisotropic;
 import org.lwjgl.opengl.GL;
 
+import static java.util.Map.entry;
+import static org.lwjgl.opengl.EXTTextureCompressionS3TC.*;
 import static org.lwjgl.opengl.GL11.GL_RGBA;
 import static org.lwjgl.opengl.GL11.GL_RGBA8;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
@@ -31,14 +32,9 @@ import static org.lwjgl.opengl.GL11.glGetFloat;
 import static org.lwjgl.opengl.GL12.GL_TEXTURE_MAX_LOD;
 import static org.lwjgl.opengl.GL12.GL_TEXTURE_MIN_LOD;
 import static org.lwjgl.opengl.GL12.GL_TEXTURE_WRAP_R;
-import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
-import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP_NEGATIVE_X;
-import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP_NEGATIVE_Y;
-import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z;
-import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_X;
-import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_Y;
-import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_Z;
+import static org.lwjgl.opengl.GL13.*;
 import static org.lwjgl.opengl.GL14.GL_TEXTURE_LOD_BIAS;
+import static org.lwjgl.opengl.KHRTextureCompressionASTCLDR.*;
 
 
 /**
@@ -115,7 +111,29 @@ public class OpenGLTexture implements Texture {
     public void set2DData(TextureData data){
         x = data.width;
         y = data.height;
-        tex.setImageData(type, 0, internalformat, data.width, data.height, 0, colorformat, datatype, (ByteBuffer)data.buffer);
+        switch(data.getTextureType()) {
+            case NORMAL:
+            tex.setImageData(type, 0, internalformat, data.width, data.height, 0, colorformat, datatype, (ByteBuffer) data.buffer);
+            break;
+            case ATSC:
+                tex.setImageDataCompressed(type,0,selectASTCFormat(data.getXBlock(),data.getYBlock(),true)   ,data.width,data.height,0,(ByteBuffer) data.buffer);
+            break;
+            case DXT1,DXT3,DXT5:
+                int blockSize = (data.getTextureType() == TextureData.TType.DXT1)?8:16;
+                int width = data.width; int height = data.height;
+                int internalFormat = switch(data.getTextureType()){case DXT1 -> GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
+                    case DXT3 -> GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;case DXT5 -> GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+                default -> GL_COMPRESSED_RGBA_S3TC_DXT1_EXT ;};
+                for(int level = 0;level < data.getMipMapCount(); level++){
+                    int size = ((data.width+3)/4)*((data.height+3)/4)*blockSize;
+                    byte[] sub = new byte[size];
+                    ((ByteBuffer)data.buffer).get(sub);
+                    ByteBuffer subBuffer = Allocator.alloc(size).put(sub).flip();
+                    tex.setImageDataCompressed(type,level,internalFormat,width,height,0,subBuffer);
+                    width /= 2; height /= 2;
+                }
+                break;
+        }
         tdata.add(data);
     }
     
@@ -228,6 +246,26 @@ public class OpenGLTexture implements Texture {
     @Override
     public int getID(){
         return tex.getID();
+    }
+
+    private Map<Tuple<Short,Short>,Integer> ASTCLookup =Map.ofEntries(entry(Tuple.of((short)10,(short)10),GL_COMPRESSED_RGBA_ASTC_10x10_KHR)
+            ,entry(Tuple.of((short)10,(short)5),GL_COMPRESSED_RGBA_ASTC_10x5_KHR),entry(Tuple.of((short)10,(short)6),GL_COMPRESSED_RGBA_ASTC_10x6_KHR),
+            entry(Tuple.of((short)10,(short)8),GL_COMPRESSED_RGBA_ASTC_10x8_KHR),entry(Tuple.of((short)12,(short)10),GL_COMPRESSED_RGBA_ASTC_12x10_KHR),
+            entry(Tuple.of((short)12,(short)12),GL_COMPRESSED_RGBA_ASTC_12x12_KHR),entry(Tuple.of((short)4,(short)4),GL_COMPRESSED_RGBA_ASTC_4x4_KHR),
+                    entry(Tuple.of((short)5,(short)4),GL_COMPRESSED_RGBA_ASTC_5x4_KHR),entry(Tuple.of((short)5,(short)5),GL_COMPRESSED_RGBA_ASTC_5x5_KHR),
+                            entry(Tuple.of((short)6,(short)5),GL_COMPRESSED_RGBA_ASTC_6x5_KHR),entry(Tuple.of((short)6,(short)6),GL_COMPRESSED_RGBA_ASTC_6x6_KHR),
+                                    entry(Tuple.of((short)8,(short)5),GL_COMPRESSED_RGBA_ASTC_8x5_KHR),entry(Tuple.of((short)8,(short)6),GL_COMPRESSED_RGBA_ASTC_8x6_KHR),
+                                            entry(Tuple.of((short)8,(short)8),GL_COMPRESSED_RGBA_ASTC_8x8_KHR));
+    private Map<Tuple<Short,Short>,Integer> SRGBASTCLookup =Map.ofEntries(entry(Tuple.of((short)10,(short)10),GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x10_KHR)
+            ,entry(Tuple.of((short)10,(short)5),GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x5_KHR),entry(Tuple.of((short)10,(short)6),GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x6_KHR),
+            entry(Tuple.of((short)10,(short)8),GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x8_KHR),entry(Tuple.of((short)12,(short)10),GL_COMPRESSED_SRGB8_ALPHA8_ASTC_12x10_KHR),
+            entry(Tuple.of((short)12,(short)12),GL_COMPRESSED_SRGB8_ALPHA8_ASTC_12x12_KHR),entry(Tuple.of((short)4,(short)4),GL_COMPRESSED_SRGB8_ALPHA8_ASTC_4x4_KHR),
+            entry(Tuple.of((short)5,(short)4),GL_COMPRESSED_SRGB8_ALPHA8_ASTC_5x4_KHR),entry(Tuple.of((short)5,(short)5),GL_COMPRESSED_SRGB8_ALPHA8_ASTC_5x5_KHR),
+            entry(Tuple.of((short)6,(short)5),GL_COMPRESSED_SRGB8_ALPHA8_ASTC_6x5_KHR),entry(Tuple.of((short)6,(short)6),GL_COMPRESSED_SRGB8_ALPHA8_ASTC_6x6_KHR),
+            entry(Tuple.of((short)8,(short)5),GL_COMPRESSED_SRGB8_ALPHA8_ASTC_8x5_KHR),entry(Tuple.of((short)8,(short)6),GL_COMPRESSED_SRGB8_ALPHA8_ASTC_8x6_KHR),
+            entry(Tuple.of((short)8,(short)8),GL_COMPRESSED_SRGB8_ALPHA8_ASTC_8x8_KHR));
+    private int selectASTCFormat(short blockX,short blockY,boolean srgb){
+        return srgb? SRGBASTCLookup.get(Tuple.of(blockX,blockY)):ASTCLookup.get(Tuple.of(blockX,blockY));
     }
 
 }

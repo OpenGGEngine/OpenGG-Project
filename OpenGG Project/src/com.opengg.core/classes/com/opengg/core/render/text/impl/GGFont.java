@@ -9,10 +9,12 @@ import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.render.text.Font;
 import com.opengg.core.render.text.Text;
 import com.opengg.core.render.texture.Texture;
+
 import java.io.File;
 
+import static org.lwjgl.opengl.GL11.GL_LINEAR;
+
 /**
- *
  * @author Warren
  */
 public class GGFont implements Font {
@@ -20,15 +22,19 @@ public class GGFont implements Font {
     //The textvbogenerator is what the name says it is. Every font has its own generator with specific parameters
     public Texture texture;
     public TextVBOGenerator badname;
-    
+
     public GGFont(String texture, String fontFile) {
-	this.texture = Texture.get2DTexture(texture);
-	this.badname = new TextVBOGenerator(new File(fontFile));
+        //Use of Texture.create is necessary because setMinFilter does not appear to work.
+        //Both min and max filters must be on GL_LINEAR for distance fields to work.
+        this.texture = Texture.create(Texture.config().minimumFilter(GL_LINEAR).maxFilter(GL_LINEAR),texture);
+        this.badname = new TextVBOGenerator(new File(fontFile));
     }
-    
+
     public GGFont(Texture texture, String fontFile) {
-	this.texture = texture;
-	this.badname = new TextVBOGenerator(new File(fontFile));
+        this.texture = texture;
+        this.texture.setMinimumFilterType(GL_LINEAR);
+        this.texture.setMaximumFilterType(GL_LINEAR);
+        this.badname = new TextVBOGenerator(new File(fontFile));
     }
 
     @Override

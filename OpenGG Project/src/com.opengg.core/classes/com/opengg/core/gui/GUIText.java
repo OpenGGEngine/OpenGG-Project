@@ -6,6 +6,7 @@
 package com.opengg.core.gui;
 
 import com.opengg.core.math.Vector2f;
+import com.opengg.core.render.RenderEngine;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.text.Font;
 import com.opengg.core.render.text.Text;
@@ -54,6 +55,7 @@ public class GUIText extends GUIRenderable {
 
     @Override
     public void render() {
+        ShaderController.useConfiguration("text");
         super.render();
     }
 }

@@ -29,12 +29,12 @@ public class TTF implements Font{
     private final STBTTFontinfo fontinfo;
     //For Oversampled Option
     private static final float[] scale = {
-            28f
+            32f
     };
     private final int ascent;
     private final int descent;
     private final int lineGap;
-    private final int fontheight = 14;
+    private final int fontheight = 12;
     public Texture texture;
 
     private final int WIDTH = 1024;
@@ -211,16 +211,17 @@ public class TTF implements Font{
 
         List<Vector2f> uvs = new ArrayList<>(text.length()*4);
         List<Vector2f> poss = new ArrayList<>(text.length()*4);
-
         for (int i = 0, to = text.length(); i < to; ) {
             i += getCP(text, to, i, pCodePoint);
 
             int cp = pCodePoint.get(0);
+            System.out.print((char)cp);
             if (cp == '\n' || (x1 > wholetext.getMaxLineSize() && wholetext.getMaxLineSize() > 0f)) {
-
-                y.put(0, lineY = lineY + (ascent - descent + lineGap) * scale * 2);
+                lineY = lineY + (ascent - descent + lineGap) * scale * 2;
+                y.put(0, lineY);
                 x.put(0, 0.0f);
-
+                x1 = 0;
+                System.out.println("newlined");
                 continue;
             } else if (cp < 32 || 128 <= cp) {
                 continue;
@@ -263,18 +264,18 @@ public class TTF implements Font{
         Allocator.popStack();
         Allocator.popStack();
 
-        FloatBuffer data = Allocator.stackAllocFloat(poss.size()*12);
+        FloatBuffer data = Allocator.allocFloat(poss.size()*12);
 
         for(int i = 0; i < poss.size(); i++){
             var uv = uvs.get(i);
             var pos = poss.get(i);
 
-            data.put(pos.x).put(-pos.y).put(0).put(1).put(0).put(0).put(1).put(1f).put(0f).put(0f).put(uv.x).put(uv.y);
+            data.put(pos.x).put(-pos.y-wholetext.getSize()*0.2f).put(0).put(1).put(0).put(0).put(1).put(1f).put(0f).put(0f).put(uv.x).put(uv.y);
         }
         data.flip();
 
         var object = new TexturedDrawnObject(new DrawnObject(data), this.texture);
-        Allocator.popStack();
+        //Allocator.popStack();
         return object;
     }
 }

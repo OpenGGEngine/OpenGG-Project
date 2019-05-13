@@ -6,6 +6,7 @@
 package com.opengg.core.render.text.impl;
 
 import com.opengg.core.console.GGConsole;
+import com.opengg.core.math.Tuple;
 import com.opengg.core.render.window.WindowController;
 import java.io.BufferedReader;
 import java.io.File;
@@ -29,6 +30,7 @@ public class GGFontFile {
 
     private static final String SPLITTER = " ";
     private static final String NUMBER_SEPARATOR = ",";
+    private double fontSize;
 
     private double aspectRatio;
 
@@ -40,6 +42,7 @@ public class GGFontFile {
     private int paddingHeight;
 
     private Map<Integer, GGCharacter> metaData = new HashMap<>();
+    public Map<Tuple<Integer,Integer>,Double> kernings = new HashMap<>();
 
     private BufferedReader reader;
     private Map<String, String> values = new HashMap<>();
@@ -88,11 +91,10 @@ public class GGFontFile {
                 if(valuePairs[1] != null){
                     values.put(valuePairs[0], valuePairs[1]);
                 }
+            }else{
+                values.put(part,"");
             }
         }
-//        for (String key : values.keySet()) {
-//           System.out.println(key + " " + values.get(key));
-//      }
 
         return true;
     }
@@ -127,6 +129,7 @@ public class GGFontFile {
     }
     private void loadPaddingData() {
         processNextLine();
+        this.fontSize = getValueOfVariable("size");
         this.padding = getValuesOfVariable("padding");
         this.paddingWidth = padding[PAD_LEFT] + padding[PAD_RIGHT];
         this.paddingHeight = padding[PAD_TOP] + padding[PAD_BOTTOM];
@@ -142,12 +145,21 @@ public class GGFontFile {
         processNextLine();
         processNextLine();
         while (processNextLine()) {
-            GGCharacter c = loadCharacter(imageWidth);
-            if (c != null) {
-                
-                metaData.put(c.textureid, c);
+            if(values.containsKey("char")) {
+                GGCharacter c = loadCharacter(imageWidth);
+                if (c != null) {
+                    metaData.put(c.textureid, c);
+                }
+            }else if(values.containsKey("kerning")){
+                loadKerning();
             }
         }
+    }
+    private void loadKerning(){
+        int first = getValueOfVariable("first");
+        int second = getValueOfVariable("second");
+        double amount = (getValueOfVariable("amount")) * horizontalPerPixelSize;
+        kernings.put(new Tuple<Integer, Integer>(first,second),amount);
     }
     private GGCharacter loadCharacter(int imageSize) {
         int id = getValueOfVariable("id");

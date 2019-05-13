@@ -29,8 +29,7 @@ public class Word {
         public void addCharacter(GGCharacter character) {
             try{
                 characters.add(character);
-                width += 
-                        character.xAdvance 
+                width += character.xAdvance
                         * fontSize;
             }catch(NullPointerException e){
                 GGConsole.warning("Null Pointer, " + character.sizeX);

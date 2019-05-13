@@ -5,6 +5,7 @@
  */
 package com.opengg.core.render.text.impl;
 
+import com.opengg.core.math.Tuple;
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.model.Material;
 import com.opengg.core.render.drawn.MaterialDrawnObject;
@@ -22,6 +23,7 @@ import java.util.List;
 public class TextVBOGenerator {
     protected static final double LINE_HEIGHT = 0.03f;
     protected static final int SPACE_ASCII = 32;
+    public static boolean kerning=true;
     private GGFontFile metaData;
 
     public TextVBOGenerator(File metaFile) {
@@ -43,7 +45,7 @@ public class TextVBOGenerator {
         TextLine currentLine = new TextLine(metaData.getSpaceWidth(), text.getSize(), text.getMaxLineSize());
         Word currentWord = new Word(text.getSize());
         for (char c : chars) {
-            if (c == '\n') {
+            if (c == '\n'){
                 lines.add(currentLine);
                 currentLine = new TextLine(metaData.getSpaceWidth(), text.getSize(), text.getMaxLineSize());
                 continue;
@@ -61,7 +63,7 @@ public class TextVBOGenerator {
                 continue;
             }
             GGCharacter character = metaData.getCharacter(ascii);
-            currentWord.addCharacter(character);
+            currentWord.addCharacter((character == null? metaData.getCharacter('a'):character));
         }
         completeStructure(lines, currentLine, currentWord, text);
         return lines;
@@ -71,7 +73,7 @@ public class TextVBOGenerator {
         boolean added = currentLine.addWord(currentWord);
         if (!added) {
             lines.add(currentLine);
-            currentLine = new TextLine(metaData.getSpaceWidth(), text.getSize(), text.getMaxLineSize());
+            currentLine = new TextLine(metaData.getSpaceWidth(), text.getSize(), text.getMaxLineSize()*text.getSize());
             currentLine.addWord(currentWord);
         }
         lines.add(currentLine);
@@ -87,11 +89,19 @@ public class TextVBOGenerator {
                 curserX = (line.maxLength - line.currentLineLength) / 2;
             }
             for (Word word : line.getWords()) {
+                int previous = Integer.MAX_VALUE;
                 for (GGCharacter letter : word.getCharacters()) {
-                    addVerticesForCharacter(curserX, curserY, letter, text.getSize(), vertices);
+                    double kerningAmount;
+                    if(!metaData.kernings.containsKey(new Tuple<>(previous,letter.textureid))){
+                        kerningAmount = 0;
+                    }else{
+                        kerningAmount = metaData.kernings.get(new Tuple<>(previous,letter.textureid));
+                    }
+                    addVerticesForCharacter((kerning?kerningAmount:0)+curserX, curserY, letter, text.getSize(), vertices);
                     addTexCoords(textureCoords, letter.xTextureCoord, letter.yTextureCoord,
                             letter.xMaxTextureCoord, letter.yMaxTextureCoord);
-                    curserX += letter.xAdvance * text.getSize();
+                    curserX += (letter.xAdvance + (kerning?kerningAmount:0))* text.getSize();
+                    previous = letter.textureid;
                 }
                 curserX += metaData.getSpaceWidth() * text.getSize();
             }
@@ -132,10 +142,10 @@ public class TextVBOGenerator {
         double y = curserY + (character.yOffset * fontSize);
         double maxX = x + (character.sizeX * fontSize);
         double maxY = y + (character.sizeY * fontSize);
-        double properX = (2 * x) - 1;
-        double properY = (-2 * y) + 1;
-        double properMaxX = (2 * maxX) - 1;
-        double properMaxY = (-2 * maxY) + 1;
+        double properX = (1 * x);
+        double properY = (-1 * y) ;
+        double properMaxX = (1 * maxX);
+        double properMaxY = (-1 * maxY) ;
         addVertices(vertices, properX, properY, properMaxX, properMaxY);
     }
 

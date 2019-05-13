@@ -145,6 +145,9 @@ public class ShaderController {
         use("object.vert", "passthrough.frag");
         saveCurrentConfiguration("volume");
 
+        use("object.vert", "text.frag");
+        saveCurrentConfiguration("text");
+
         use("object.vert", "texture.frag");
         saveCurrentConfiguration("texture");
 

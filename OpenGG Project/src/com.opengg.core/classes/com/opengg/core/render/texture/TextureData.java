@@ -14,6 +14,12 @@ import java.nio.Buffer;
  * @author Javier
  */
 public class TextureData implements Resource{
+    public enum TType{NORMAL,DXT1,DXT3,DXT5,ATSC}
+
+    //Only Used For ASTC compression
+    private short xBlockSize,yBlockSize;
+
+    private final TType type;
     /**
      * Width of texture
      */
@@ -39,13 +45,24 @@ public class TextureData implements Resource{
      */
     public final String source;
     public boolean complete = false;
+
+    public int mipMapCount;
     
+    public TextureData(int width, int height, int channels, Buffer buffer, String source,TType type) {
+        this.width = width;
+        this.height = height;
+        this.channels = channels;
+        this.buffer = buffer;
+        this.source = source;
+        this.type = type;
+    }
     public TextureData(int width, int height, int channels, Buffer buffer, String source) {
         this.width = width;
         this.height = height;
         this.channels = channels;
         this.buffer = buffer;
         this.source = source;
+        this.type = TType.NORMAL;
     }
     
     public void setComplete(){
@@ -57,8 +74,30 @@ public class TextureData implements Resource{
         return Type.TEXTURE;
     }
 
+    public TType getTextureType(){return type;}
+
     @Override
     public String getSource() {
         return source;
+    }
+
+    //Only Used For ASTC textures
+    public void setBlockSize(int x,int y){
+        xBlockSize = (short)x;
+        yBlockSize = (short)y;
+    }
+    public short getXBlock(){
+        return xBlockSize;
+    }
+    public short getYBlock(){
+        return yBlockSize;
+    }
+
+    public int getMipMapCount() {
+        return mipMapCount;
+    }
+
+    public void setMipMapCount(int mipMapCount) {
+        this.mipMapCount = mipMapCount;
     }
 }
