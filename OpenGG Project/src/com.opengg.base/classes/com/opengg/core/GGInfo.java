@@ -21,7 +21,7 @@ public class GGInfo {
     private static boolean verbose = false;
     private static boolean agressiveMemory = false;
     private static boolean server = false;
-    private static String glversion = "4.2";
+    private static String glversion;
     private static int userId = -1;
     private static boolean menu = false;
     private static boolean ended = false;
@@ -38,8 +38,16 @@ public class GGInfo {
         return appname;
     }
 
+    public static void setApplicationName(String appname) {
+        GGInfo.appname = appname;
+    }
+
     public static String getMemoryAllocator() {
         return memallocator;
+    }
+
+    public static void setMemoryAllocator(String memallocator) {
+        GGInfo.memallocator = memallocator;
     }
 
     public static boolean isInitialized() {
@@ -65,7 +73,11 @@ public class GGInfo {
     public static String getGlVersion(){
         return glversion;
     }
-    
+
+    public static void setGlVersion(String glversion) {
+        GGInfo.glversion = glversion;
+    }
+
     public static void setVerbose(boolean verb){
         verbose = verb;
     }

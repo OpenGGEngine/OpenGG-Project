@@ -13,27 +13,34 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Represents a 3D model capable of being rendered <br>
+ *     In the majority of cases, this will represent a model loaded from a file in the Binary Model Format (.bmf).
+ *     All BMF models contain some form of renderable object stored in a list of individual meshes, with each mesh
+ *     containing a separate material. <br>
+ *     Additionally, each model can contain a set of animations and a set of skeletal transformation nodes.
+ */
 public class Model implements Resource {
-    public ArrayList<Mesh> meshes = new ArrayList<>();
-    public ArrayList<Material> materials = new ArrayList<>();
-    public HashMap<String,GGAnimation> animations = new HashMap<>();
-    GGAnimation currentAnimation;
-    public boolean isAnim = false;
-    public String fileLocation;
+    private ArrayList<Mesh> meshes;
+    private ArrayList<Material> materials = new ArrayList<>();
+    private HashMap<String,GGAnimation> animations = new HashMap<>();
+    private boolean isAnim = false;
+    private String fileLocation;
     private String name;
-    public GGNode root;
-    public long exportConfig;
-    public String vaoFormat;
-
-
+    private GGNode rootAnimationNode;
+    private long exportConfig;
+    private String vaoFormat;
     private AABB colliderBox;
 
     public Model(ArrayList<Mesh> meshes, String name){
         this.meshes = meshes;
         this.name = name;
-
     }
 
+    /**
+     * Generates a drawable usable to render this model
+     * @return
+     */
     public Drawable getDrawable(){
         ArrayList<Drawable> objects = new ArrayList<>(meshes.size());
 
@@ -55,6 +62,10 @@ public class Model implements Resource {
         return materials;
     }
 
+    public void setMaterials(ArrayList<Material> materials) {
+        this.materials = materials;
+    }
+
     public ColliderGroup getCollider(){
         var hulls = meshes.stream()
                 .filter(Mesh::hasConvexHull)
@@ -73,12 +84,53 @@ public class Model implements Resource {
         return new ColliderGroup(new AABB(points), realHulls);
     }
 
-    public void setAnimation(String name){
-        currentAnimation = animations.get(name);
+    public boolean isAnimated() {
+        return isAnim;
     }
 
-    public void setAnimationProgress(double value){
-        currentAnimation.current = value;
+    public void setAnimated(boolean anim) {
+        isAnim = anim;
+    }
+
+    public String getVaoFormat() {
+        return vaoFormat;
+    }
+
+    public void setVaoFormat(String vaoFormat) {
+        this.vaoFormat = vaoFormat;
+    }
+
+    public AABB getColliderBox() {
+        return colliderBox;
+    }
+
+    public String getFileLocation() {
+        return fileLocation;
+    }
+
+    public void setFileLocation(String fileLocation) {
+        this.fileLocation = fileLocation;
+    }
+
+    public HashMap<String, GGAnimation> getAnimations() {
+        return animations;
+    }
+
+    public GGNode getRootAnimationNode() {
+        return rootAnimationNode;
+    }
+
+    public void setRootAnimationNode(GGNode rootAnimationNode) {
+        this.rootAnimationNode = rootAnimationNode;
+    }
+
+
+    public long getExportConfig() {
+        return exportConfig;
+    }
+
+    public void setExportConfig(long exportConfig) {
+        this.exportConfig = exportConfig;
     }
 
     @Override

@@ -9,6 +9,7 @@ package com.opengg.core.model;
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.model.io.BMFFile;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,6 +18,8 @@ import java.util.Map;
  * @author Javier
  */
 public class ModelManager{
+    private static boolean CACHE = false;
+
     private static Map<String, Model> modellist = new HashMap<>();
     private static Model defaultm;
     
@@ -44,6 +47,15 @@ public class ModelManager{
     }
     
     public static Model loadModel(String path){
+        if(!CACHE){
+            try {
+                var model = BMFFile.loadModel(path);
+                return model;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
         Model model = modellist.get(path);
         if(model != null) {
             return model;

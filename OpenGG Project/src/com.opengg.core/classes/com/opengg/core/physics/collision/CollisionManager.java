@@ -6,6 +6,8 @@
 
 package com.opengg.core.physics.collision;
 
+import com.opengg.core.math.Matrix3f;
+import com.opengg.core.math.Tuple;
 import com.opengg.core.math.UnorderedTuple;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.physics.PhysicsEntity;
@@ -19,14 +21,12 @@ import java.util.stream.Collectors;
  * @author Javier
  */
 public class CollisionManager {
-    private static List<Collision> collisions = new ArrayList<>();
+    private static Map<UnorderedTuple<ColliderGroup>, Collision> contactCache = new HashMap<>();
     private static final List<ColliderGroup> test = new LinkedList<>();
-    private static final ColliderGroup coll = new ColliderGroup();
     public static boolean parallelProcessing = false;
     public static boolean enableResponse = true;
 
     public static void clearCollisions(){
-        collisions.clear();
         test.clear();
     }
 
@@ -38,19 +38,43 @@ public class CollisionManager {
         test.addAll(c);
     }
 
-    public static void testForCollisions(PhysicsSystem system){
-        collisions = test.stream()
+    public static void runCollisionStep(PhysicsSystem system){
+        var newCollisions = test.stream()
                 .filter(Objects::nonNull)
                 .flatMap(c -> system.getColliders().stream()
                         .map(c2 ->new UnorderedTuple<>(c,c2)))
                 .filter(t -> t.x != t.y)
                 .distinct()
-                .map(t -> t.x.testForCollision(t.y))
+                .map(t -> t.x.checkForCollision(t.y))
                 .flatMap(Optional::stream)
                 .collect(Collectors.toList());
-    }
 
-    public static void processCollisions(){
+        var previousCaches = newCollisions.stream()
+                .filter(c -> contactCache.containsKey(UnorderedTuple.ofUnordered(c.thiscollider,c.other)))
+                .map(c -> Tuple.of(c, contactCache.get(UnorderedTuple.ofUnordered(c.thiscollider,c.other))))
+                .collect(Collectors.toList());
+
+        var uncachedCollisions = newCollisions.stream()
+                .filter(c -> !contactCache.containsKey(UnorderedTuple.ofUnordered(c.thiscollider,c.other)))
+                .collect(Collectors.toList());
+
+        for(var cachedCollision : previousCaches){
+            if(cachedCollision.x.thiscollider == cachedCollision.y.other){
+                cachedCollision.y = Collision.reverse(cachedCollision.y);
+            }
+
+            ContactManifold.combineManifolds(cachedCollision.x.manifold, cachedCollision.y.manifold);
+        }
+
+        contactCache.clear();
+        contactCache.putAll(previousCaches.stream()
+                            .collect(Collectors.toMap(c -> UnorderedTuple.ofUnordered(c.x.thiscollider,c.y.other), c -> c.x)));
+
+        contactCache.putAll(uncachedCollisions.stream()
+                .collect(Collectors.toMap(c -> UnorderedTuple.ofUnordered(c.thiscollider,c.other), c -> c)));
+
+        var collisions = contactCache.values();
+
         if(parallelProcessing) collisions.parallelStream().forEach(CollisionManager::processCollision);
         else for(Collision c : collisions) processCollision(c);
 
@@ -60,37 +84,31 @@ public class CollisionManager {
     }
 
     public static void processCollision(Collision col){
-        ArrayList<Vector3f> frictions = new ArrayList<>();
-        ArrayList<Vector3f> jrs = new ArrayList<>();
-        ArrayList<Vector3f> r1s = new ArrayList<>();
-        ArrayList<Vector3f> r2s = new ArrayList<>();
-        ArrayList<Vector3f> norms = new ArrayList<>();
-        ArrayList<Float> depths = new ArrayList<>();
-
         PhysicsEntity e1 = (PhysicsEntity) col.thiscollider.parent;
         PhysicsEntity e2 = (PhysicsEntity) col.other.parent;
         if(e1 != null && e2 != null){
-            var contact = processContact(e1, e2, col.manifold);
-            e1.responses.add(contact);
-            e2.responses.add(contact.invert());
+            var contacts = col.manifold.points.stream().map(c -> processContact(e1, c)).collect(Collectors.toList());
+            e1.responses.addAll(contacts);
+            e2.responses.addAll(contacts.stream().map(c -> c.invert()).collect(Collectors.toList()));
         }else if(e1 == null ^ e2 == null){
-            e1.responses.add(processContact(e1, col.manifold));
+            e1.responses.addAll(col.manifold.points.stream().map(c -> processContact(e1, c)).collect(Collectors.toList()));
         }
     }
 
-    private static Response processContact(PhysicsEntity e1, ContactManifold manifold) {
+    private static Response processContact(PhysicsEntity e1, Contact manifold) {
         var responseManifold = new Response();
 
-        var point = Vector3f.averageOf(manifold.points);
+        var point = manifold.position;
 
         Vector3f R = point.subtract(e1.getPosition());
-        Vector3f v = e1.velocity;//e1.velocity.add(R.cross(e1.angvelocity));
+        Vector3f v = e1.velocity.add(R.cross(e1.angvelocity));
 
         float jnum = v.dot(manifold.normal) * -(1 + e1.restitution);//v.multiply(-(1 + e1.restitution)).dot(manifold.normal);
-        float jdenom = 1/ e1.mass + (e1.inertialMatrix.inverse().multiply(
-                R.cross(manifold.normal)).cross(R)).dot(manifold.normal);
+        float jdenom = 1/ e1.mass +
+                (e1.inertialMatrix.scale(e1.mass).multiply(new Matrix3f().rotation(e1.getRotation())).inverse()
+                        .multiply(R.cross(manifold.normal))
+                        .cross(R)).dot(manifold.normal);
         float jr = jnum/jdenom;
-
 
         float jd = e1.dynamicfriction * v.dot(manifold.normal) * -1;
         float js = e1.staticfriction * v.dot(manifold.normal) * -1;
@@ -106,7 +124,6 @@ public class CollisionManager {
         }
 
         Vector3f jrv = manifold.normal.multiply(jr);
-
         responseManifold.jr = jrv;
         responseManifold.jf = jf;
         responseManifold.R1 = R;
@@ -117,10 +134,10 @@ public class CollisionManager {
         return responseManifold;
     }
 
-    private static Response processContact(PhysicsEntity e1, PhysicsEntity e2, ContactManifold manifold) {
+    private static Response processContact(PhysicsEntity e1, PhysicsEntity e2, Contact manifold) {
         var responseManifold = new Response();
 
-        var point = Vector3f.averageOf(manifold.points);
+        var point = manifold.position;
 
         Vector3f R1 = point.subtract(e1.getPosition());
         Vector3f R2 = point.subtract(e2.getPosition());
@@ -132,9 +149,20 @@ public class CollisionManager {
 
         float jnum = v.dot(manifold.normal) * -(1 + (e1.restitution + e2.restitution) / 2f);
         float jdenom = 1 / e1.mass + 1 / e2.mass +
-                (e1.inertialMatrix.inverse().multiply(R1.cross(manifold.normal)).cross(R1).add(
-                        e2.inertialMatrix.multiply(R2.cross(manifold.normal)).cross(R2)))
-                        .dot(manifold.normal);
+                (e1.inertialMatrix
+                        .scale(e1.mass)
+                        .multiply(new Matrix3f().rotation(e1.getRotation()))
+                        .inverse()
+                        .multiply(R1.cross(manifold.normal))
+                        .cross(R1)
+                    .add(
+                            e2.inertialMatrix
+                                    .scale(e2.mass)
+                                    .multiply(new Matrix3f().rotation(e2.getRotation()))
+                                    .inverse()
+                                    .multiply(R2.cross(manifold.normal))
+                                    .cross(R2)))
+                    .dot(manifold.normal);
 
         float jr = jnum / jdenom; //reaction force size
 
@@ -178,17 +206,21 @@ public class CollisionManager {
 
             var depth = response.depth;
 
-            //e.angvelocity = e.angvelocity.subtract(e.inertialMatrix.inverse().multiply(R.cross(normal)).multiply(jr.length()));
-            if(enableResponse)
-                e.velocity = e.velocity.add(jr.add(jf).divide(e.mass));
-
-            AABB depthaabb = new AABB(depthchanges, new Vector3f());
-            if(!depthaabb.isColliding(normal.multiply(depth))){
-                depthchanges = normal.multiply(depth);//depthchanges.add(normal.multiply(response.depth));
+            if(enableResponse) {
+                var velChange = jr.add(jf).divide(e.mass);
+                var rotChange = e.inertialMatrix
+                        .scale(e.mass)
+                        .multiply(new Matrix3f().rotation(e.getRotation()))
+                        .inverse()
+                        .multiply(R.cross(normal))
+                        .multiply(jr.length());
+                e.velocity = e.velocity.add(velChange);
+                e.angvelocity = e.angvelocity.subtract(rotChange);
             }
 
-            e.grounded = e.velocity.y == 0;
+            e.setPosition(e.getPosition().add(depth));
 
+            e.grounded = e.velocity.y == 0;
         }
 
         e.setPosition(e.getPosition().add(depthchanges));

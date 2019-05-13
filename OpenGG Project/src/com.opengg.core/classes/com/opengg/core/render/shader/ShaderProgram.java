@@ -6,10 +6,12 @@
 
 package com.opengg.core.render.shader;
 
+import com.opengg.core.exceptions.ShaderException;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.internal.opengl.shader.OpenGLShaderProgram;
+import com.opengg.core.render.shader.ggsl.ShaderFile;
 
 import java.nio.ByteBuffer;
 
@@ -19,11 +21,34 @@ import java.nio.ByteBuffer;
  */
 public interface ShaderProgram{
     enum ShaderType{
-        VERTEX, TESS_CONTROL, TESS_EVAL, GEOMETRY, FRAGMENT, UTIL
+        VERTEX, TESS_CONTROL, TESS_EVAL, GEOMETRY, FRAGMENT, UTIL;
+        
+        public static ShaderType fromFileType(ShaderFile.ShaderFileType type){
+            ShaderType ntype;
+
+            switch(type) {
+                case FRAG:
+                    return ShaderType.FRAGMENT;
+                case VERT:
+                    return ShaderType.VERTEX;
+                case TESSCONTROL:
+                    return ShaderType.TESS_CONTROL;
+                case TESSEVAL:
+                    return ShaderType.TESS_EVAL;
+                case GEOM:
+                    return ShaderType.GEOMETRY;
+                default:
+                    throw new ShaderException("Attempted to load utility shader as GLSL");
+            }
+        }
     }
 
     static ShaderProgram create(ShaderType type, CharSequence source, String name){
         return new OpenGLShaderProgram(type, source, name);
+    }
+
+    static ShaderProgram createFromBinary(ShaderType type, ByteBuffer data, String name){
+        return new OpenGLShaderProgram(type, data, name);
     }
 
     void findUniformLocation(String pos);
@@ -31,18 +56,10 @@ public interface ShaderProgram{
     int getUniformLocation(String pos);
 
     void bindFragmentDataLocation(int number, CharSequence name);
+    
+    void enableVertexAttribute(int location);
 
-    void findAttributeLocation(String name);
-
-    int getAttributeLocation(String name);
-
-    void enableVertexAttribute(String location);
-
-    void disableVertexAttribute(String location);
-
-    void pointVertexAttribute(String location, int size, int type, int stride, int offset);
-
-    void setVertexAttribDivisor(String location, int divisor);
+    void disableVertexAttribute(int location);
 
     void setUniform(int location, int value);
 

@@ -29,12 +29,12 @@ public class TerrainCollider extends Collider{
     }
     
     @Override
-    public List<ContactManifold> collide(Collider c) {
+    public ContactManifold collide(Collider c) {
         if(c instanceof ConvexHull){
-            List<ContactManifold> cc = CollisionSolver.HullTerrain((ConvexHull) c, this).stream().map(ContactManifold::reverse).collect(Collectors.toList());
+            return CollisionSolver.HullTerrain((ConvexHull) c, this).reverse();
         }
             
-        return new ArrayList<>();
+        return null;
     }
     
 }

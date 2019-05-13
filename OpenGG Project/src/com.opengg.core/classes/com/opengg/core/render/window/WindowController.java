@@ -5,6 +5,7 @@
  */
 package com.opengg.core.render.window;
 
+import com.opengg.core.GGInfo;
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.math.Vector2i;
 import com.opengg.core.vr.render.VRWindow;
@@ -29,6 +30,7 @@ public class WindowController {
         window = WindowTypeRegister.getRegisteredWindow(windowinfo.type);
         GGConsole.log("Window registered under the name " + windowinfo.type + " requested and found, creating instance...");
         window.setup(windowinfo);
+        GGInfo.setGlVersion(windowinfo.glmajor + "." + windowinfo.glminor);
         oldsize = new Vector2i(windowinfo.width, windowinfo.height);
     }
     

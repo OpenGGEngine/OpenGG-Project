@@ -11,7 +11,6 @@ import com.opengg.core.exceptions.ShaderException;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
-import com.opengg.core.render.internal.opengl.shader.NativeOpenGLShaderProgram;
 import com.opengg.core.render.shader.ShaderProgram;
 
 import java.nio.ByteBuffer;
@@ -28,19 +27,26 @@ import static org.lwjgl.opengl.GL40.GL_TESS_EVALUATION_SHADER;
  * @author Javier
  */
 public class OpenGLShaderProgram implements ShaderProgram{
-
     private final String name;
     private final NativeOpenGLShaderProgram program;
     private final ShaderType type;
     
     private final HashMap<String, Integer> ulocs = new HashMap<>();
-    private final HashMap<String, Integer> alocs = new HashMap<>();
     private final HashMap<Integer, Object> uniformVals = new HashMap<>();
-    
+
     public OpenGLShaderProgram(ShaderType type, CharSequence source, String name){
         this.name = name;
         this.type = type;
+        program = new NativeOpenGLShaderProgram(getInternalType(type), source);
+    }
 
+    public OpenGLShaderProgram(ShaderType type, ByteBuffer source, String name){
+        this.name = name;
+        this.type = type;
+        program = new NativeOpenGLShaderProgram(getInternalType(type), source);
+    }
+
+    private static int getInternalType(ShaderType type){
         int internaltype = 0;
         switch(type){
             case VERTEX:
@@ -60,7 +66,7 @@ public class OpenGLShaderProgram implements ShaderProgram{
                 break;
         }
 
-        program = new NativeOpenGLShaderProgram(internaltype, source);
+        return internaltype;
     }
     
     @Override
@@ -83,26 +89,15 @@ public class OpenGLShaderProgram implements ShaderProgram{
     public void bindFragmentDataLocation(int number, CharSequence name) {
         program.bindFragmentDataLocation(number, name);
     }
-    
-    @Override
-    public void findAttributeLocation(String name) {
-         int nid = program.findAttributeLocation(name);
-         alocs.put(name, nid);
-    }
 
-    @Override
-    public int getAttributeLocation(String name){
-        return alocs.get(name);
-    }
-    
     /**
      * Enables a vertex attribute.
      *
      * @param location Location of the vertex attribute
      */
     @Override
-    public void enableVertexAttribute(String location) {
-        program.enableVertexAttribute(getAttributeLocation(location));
+    public void enableVertexAttribute(int location) {
+        program.enableVertexAttribute(location);
     }
 
     /**
@@ -111,35 +106,10 @@ public class OpenGLShaderProgram implements ShaderProgram{
      * @param location Location of the vertex attribute
      */
     @Override
-    public void disableVertexAttribute(String location) {
-        program.disableVertexAttribute(getAttributeLocation(location));
+    public void disableVertexAttribute(int location) {
+        program.disableVertexAttribute(location);
     }
 
-    /**
-     * Sets the vertex attribute pointer.
-     *
-     * @param location Location of the vertex attribute
-     * @param size Number of values per vertex
-     * @param type Type of data
-     * @param stride Offset between consecutive generic vertex attributes in
-     * bytes
-     * @param offset Offset of the first component of the first generic vertex
-     * attribute in bytes
-     */
-    @Override
-    public void pointVertexAttribute(String location, int size, int type, int stride, int offset) {
-        program.pointVertexAttribute(getAttributeLocation(location), size, type, stride, offset);
-    }
-    /**
-     * Sets the vertex attribute divisor
-     * 
-     * @param location Location of attribute
-     * @param divisor Set to 0 if not instanced, 1 if instanced
-     */
-    @Override
-    public void setVertexAttribDivisor(String location, int divisor){
-       program.setVertexAttribDivisor(getAttributeLocation(location), divisor);
-    }
     /**
      * Sets the uniform variable for specified location.
      *

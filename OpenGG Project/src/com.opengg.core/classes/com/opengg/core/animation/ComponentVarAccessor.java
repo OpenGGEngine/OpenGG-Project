@@ -65,7 +65,6 @@ public class ComponentVarAccessor {
     public static Object getVar(String s, Object instance) {
         Class c = instance.getClass();
         do {
-            System.out.println(c);
             if (c == Object.class) {
                 GGConsole.error("No getter defined " + s);
                 return null;

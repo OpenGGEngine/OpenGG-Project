@@ -21,12 +21,12 @@ import static org.lwjgl.util.lz4.LZ4.*;
 import static org.lwjgl.util.lz4.LZ4Frame.LZ4F_isError;
 
 public class BMFFile extends ModelProcess {
-    public static long MATERIAL = 1,NODE = 2,BONES = 4,ANIMATIONS=8,CONVEXHULL=16;
+    public static long MATERIAL = 1, NODE = 2, BONES = 4, ANIMATIONS = 8, CONVEXHULL = 16;
     private static final int VERSION = 1;
     private static final String HEADER_START = "OPENGG-BMF";
 
-    public void writeModel(Model model, String destination,long config) {
-        try(FileOutputStream fOut = new FileOutputStream(new File(model.fileLocation+"\\" + model.getName()+".bmf"))) {
+    public void writeModel(Model model, String destination, long config) {
+        try (FileOutputStream fOut = new FileOutputStream(new File(model.getFileLocation() + "\\" + model.getName() + ".bmf"))) {
             FileChannel fc = fOut.getChannel();
 
             ArrayList<FileSector> sectors = new ArrayList<>();
@@ -40,7 +40,7 @@ public class BMFFile extends ModelProcess {
             if ((config & CONVEXHULL) == CONVEXHULL)
                 sectors.add(new FileSector(model, FileSector.SectorType.CONVEXHULL));
 
-            ByteBuffer header = generateHeader(sectors,model);
+            ByteBuffer header = generateHeader(sectors, model);
 
             long filesize = sectors.stream().mapToLong(s -> s.length).sum() + header.limit();
             ByteBuffer uncompressed = Allocator.alloc((int) filesize);
@@ -64,16 +64,16 @@ public class BMFFile extends ModelProcess {
             ByteBuffer sizeBuf = Allocator.alloc(4).order(ByteOrder.BIG_ENDIAN).putInt(uncompressed.capacity()).flip();
             fc.write(sizeBuf);
             fc.write(compressed);
-            GGConsole.log("Exported Model: " + model.getName() + ".bmf at " + model.fileLocation);
-        }catch(IOException e){
+            GGConsole.log("Exported Model: " + model.getName() + ".bmf at " + model.getFileLocation());
+        } catch (IOException e) {
             GGConsole.error("Error in exporting.");
         }
     }
 
-    public static Model loadModel(String file) throws IOException{
+    public static Model loadModel(String file) throws IOException {
         String name = file;
         File f = new File(Resource.getAbsoluteFromLocal(name));
-        try(FileInputStream fIn = new FileInputStream(f)) {
+        try (FileInputStream fIn = new FileInputStream(f)) {
             //Get original file size from first 4 bytes.
             int originalsize = fIn.read() << 24 | (fIn.read() & 0xFF) << 16 | (fIn.read() & 0xFF) << 8 | (fIn.read() & 0xFF);
             if (originalsize > f.getTotalSpace() || originalsize < 0) {
@@ -82,14 +82,17 @@ public class BMFFile extends ModelProcess {
             }
             ByteBuffer original = Allocator.alloc(originalsize).order(ByteOrder.BIG_ENDIAN);
             ByteBuffer compressed = Allocator.alloc((int) f.length() - Integer.BYTES);
+
             while (fIn.getChannel().read(compressed) > 0) {
             }
             compressed.flip();
+
             long errorcode = LZ4_decompress_safe(compressed, original);
             if (LZ4F_isError(errorcode)) {
                 GGConsole.error("Decompression Failed: " + errorcode);
                 return null;
             }
+
             //Weak Check for Header Validity
             for (int i = 0; i < HEADER_START.length(); i++) {
                 if (original.get() != HEADER_START.charAt(i)) {
@@ -97,10 +100,13 @@ public class BMFFile extends ModelProcess {
                     return null;
                 }
             }
+
             int vNumber = original.getInt();
+
             String vaoFormat = MLoaderUtils.readString(original);
             int numSector = original.getInt();
             int[][] capacities = new int[numSector][];
+
             FileSector.SectorType[] types = new FileSector.SectorType[numSector];
             for (int sector = 0; sector < numSector; sector++) {
                 int numSubs = original.getInt();
@@ -110,7 +116,6 @@ public class BMFFile extends ModelProcess {
                     capacities[sector][i] = original.getInt();
                 }
             }
-            boolean hasAnim = false;
 
             GGConsole.log("Loading BMF Model " + f.getName() + " with " + capacities[0].length + " meshes and " + numSector + " sectors.");
             //Load VBO and IBO
@@ -127,9 +132,10 @@ public class BMFFile extends ModelProcess {
                 dupeIBBuf.put(fsIBO.subBuffers[i].rewind().asIntBuffer()).flip();
                 meshes.add(new Mesh(dupeFBBuf, dupeIBBuf));
             }
+
             boolean isAnim = false;
             Model model = new Model(meshes, name);
-            model.isAnim = isAnim;
+
             //Load Optional Sectors
             for (int i = 2; i < numSector; i++) {
                 FileSector fs = new FileSector(types[i], capacities[i], original);
@@ -143,8 +149,9 @@ public class BMFFile extends ModelProcess {
                             mesh.setMaterial(material.get(mesh.matIndex));
                             mesh.getMaterial().texpath = f.getParent() + "\\tex\\";
                         }
-                        model.materials = material;
+                        model.setMaterials(material);
                         break;
+
                     case BONES:
                         isAnim = true;
                         for (int i2 = 0; i2 < fs.subBuffers.length; i2++) {
@@ -156,19 +163,22 @@ public class BMFFile extends ModelProcess {
                             for (int i3 = 0; i3 < numbones; i3++) {
                                 bones[i3] = new GGBone(fs.subBuffers[i2]);
                             }
-                            model.meshes.get(i2).setBones(bones);
+                            model.getMeshes().get(i2).setBones(bones);
                         }
                         break;
+
                     case NODES:
                         ByteBuffer data = fs.subBuffers[0];
-                        model.root = recurNodeLoad(data);
+                        model.setRootAnimationNode(recurNodeLoad(data));
                         break;
+
                     case ANIMATIONS:
                         for (ByteBuffer b : fs.subBuffers) {
                             GGAnimation anim = new GGAnimation(b);
-                            model.animations.put(anim.name, anim);
+                            model.getAnimations().put(anim.name, anim);
                         }
                         break;
+
                     case CONVEXHULL:
                         for (int i2 = 0; i2 < fs.subBuffers.length; i2++) {
                             ConvexHull hull = new ConvexHull();
@@ -181,10 +191,13 @@ public class BMFFile extends ModelProcess {
                         break;
                 }
             }
+
+            model.setAnimated(isAnim);
+            model.setVaoFormat(vaoFormat);
+
             GGConsole.log("Loaded " + f.getName());
-            model.vaoFormat = vaoFormat;
             return model;
-        }catch(IOException e){
+        } catch (IOException e) {
             GGConsole.error("No file found: " + file);
         }
         return null;
@@ -192,31 +205,40 @@ public class BMFFile extends ModelProcess {
 
     }
 
-    public static ByteBuffer generateHeader(ArrayList<FileSector> sectors,Model m){
+    private static ByteBuffer generateHeader(ArrayList<FileSector> sectors, Model model) {
         //Header Contains: Version and OpenGG message, Number of sectors, SubSector sizes
-        int headerSize = (HEADER_START.length())+ (Integer.BYTES*3) + (Integer.BYTES+m.vaoFormat.length())+ (sectors.size()*Integer.BYTES *2) + (sectors.stream().mapToInt(s -> s.subBuffers.length).sum() * Integer.BYTES);
+        int headerSize = (HEADER_START.length()) +
+                (Integer.BYTES * 3) +
+                (Integer.BYTES + model.getVaoFormat().length()) +
+                (sectors.size() * Integer.BYTES * 2) +
+                (sectors.stream().mapToInt(s -> s.subBuffers.length).sum() * Integer.BYTES);
+
         ByteBuffer header = Allocator.alloc(headerSize).order(ByteOrder.BIG_ENDIAN);
         header.put(HEADER_START.getBytes(StandardCharsets.UTF_8)).putInt(VERSION);
-        MLoaderUtils.writeString(m.vaoFormat,header);
+
+        MLoaderUtils.writeString(model.getVaoFormat(), header);
         header.putInt(sectors.size());
-        for(FileSector sector: sectors){
+
+        for (FileSector sector : sectors) {
             header.putInt(sector.subBuffers.length).putInt(sector.type.ordinal());
-            for(ByteBuffer temp:sector.subBuffers) header.putInt(temp.capacity());
+            for (ByteBuffer temp : sector.subBuffers) header.putInt(temp.capacity());
         }
         return header.flip();
+    }
+
+    private static GGNode recurNodeLoad(ByteBuffer b) {
+        GGNode node = new GGNode(MLoaderUtils.readString(b), MLoaderUtils.loadMat4(b));
+        int children = b.getInt();
+        for (int i = 0; i < children; i++)
+            node.children.add(recurNodeLoad(b));
+        return node;
+
     }
 
 
     @Override
     public void process(Model model) {
-        writeModel(model,model.fileLocation,model.exportConfig);
+        writeModel(model, model.getFileLocation(), model.getExportConfig());
     }
 
-    public static GGNode recurNodeLoad(ByteBuffer b){
-        GGNode node = new GGNode(MLoaderUtils.readString(b), MLoaderUtils.loadMat4(b));
-        int children = b.getInt();
-        for(int i=0;i<children;i++) node.children.add(recurNodeLoad(b));
-        return node;
-
-    }
 }

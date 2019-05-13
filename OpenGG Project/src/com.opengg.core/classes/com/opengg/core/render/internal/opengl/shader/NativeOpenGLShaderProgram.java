@@ -30,6 +30,15 @@ public class NativeOpenGLShaderProgram{
         if(RenderEngine.validateInitialization()) id = -1;
         else id = glCreateShaderProgramv(type, source);
     }
+
+    public NativeOpenGLShaderProgram(int type, ByteBuffer source){
+        if(RenderEngine.validateInitialization()) id = -1;
+        else{
+            id = glCreateProgram();
+            glProgramParameteri(id, GL_PROGRAM_SEPARABLE, GL_TRUE);
+            glProgramBinary(id, 36894, source);
+        }
+    }
     
     public int findUniformLocation(String pos){
         if(RenderEngine.validateInitialization()) return -1;
@@ -39,11 +48,6 @@ public class NativeOpenGLShaderProgram{
     public void bindFragmentDataLocation(int number, CharSequence name) {
         if(RenderEngine.validateInitialization()) return;
         glBindFragDataLocation(id, number, name);
-    }
-    
-    public int findAttributeLocation(String name) {
-        if(RenderEngine.validateInitialization()) return -1;
-        return glGetAttribLocation(id, name);
     }
 
     /**
@@ -64,29 +68,6 @@ public class NativeOpenGLShaderProgram{
         glDisableVertexAttribArray(loc);
     }
 
-    /**
-     * Sets the vertex attribute pointer.
-     *
-     * @param location Location of the vertex attribute
-     * @param size Number of values per vertex
-     * @param type Type of data
-     * @param stride Offset between consecutive generic vertex attributes in
-     * bytes
-     * @param offset Offset of the first component of the first generic vertex
-     * attribute in bytes
-     */
-    public void pointVertexAttribute(int location, int size, int type, int stride, int offset) {
-        glVertexAttribPointer(location, size, type, false, stride, offset);
-    }
-    /**
-     * Sets the vertex attribute divisor
-     * 
-     * @param location Location of attribute
-     * @param divisor Set to 0 if not instanced, 1 if instanced
-     */
-    public void setVertexAttribDivisor(int location, int divisor){
-        glVertexAttribDivisor(location, divisor);
-    }
     /**
      * Sets the uniform variable for specified location.
      *
@@ -143,7 +124,7 @@ public class NativeOpenGLShaderProgram{
 
     public void setUniform(int location, Matrix4f value) {
         if(RenderEngine.validateInitialization()) return;
-        if(SystemInfo.getSysInfo().get("Graphics Vendor").equals("Intel")){
+        if(SystemInfo.get("Graphics Vendor").equals("Intel")){
             bind();
             glUniformMatrix4fv(location, false, value.getStackBuffer());
             unbind();
@@ -195,7 +176,6 @@ public class NativeOpenGLShaderProgram{
         IntBuffer type = Allocator.stackAllocInt(1);
         ByteBuffer data = Allocator.alloc(128*1024);
         glGetProgramBinary(id, length, type, data);
-        
         int truelength = length.get();
         ByteBuffer finaldata = Allocator.alloc(truelength);
         for(int i = 0; i < truelength; i++){

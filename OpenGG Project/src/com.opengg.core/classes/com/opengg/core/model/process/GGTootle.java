@@ -22,12 +22,12 @@ public class GGTootle extends ModelProcess {
     }
     @Override
     public void process(Model model){
-        this.totaltasks = model.meshes.size();
+        this.totaltasks = model.getMeshes().size();
         this.numcompleted = 0;
         GGConsole.log("Started Tootle Processing");
         if(!init) init();
         int index=0;
-        for(Mesh mesh: model.meshes) {
+        for(Mesh mesh: model.getMeshes()) {
             IntBuffer revised = Allocator.allocInt(mesh.getIndexBuffer().capacity());
             switch (TootleOptimize(mesh.getVbo(), mesh.getIndexBuffer(), 11 * Float.BYTES,
                     vcacheSize,

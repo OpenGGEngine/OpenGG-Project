@@ -6,14 +6,14 @@
 
 package com.opengg.core.render.shader;
 
-import com.opengg.core.render.RenderEngine;
 import com.opengg.core.render.GraphicsBuffer;
+import com.opengg.core.render.RenderEngine;
 
 import java.util.List;
 
-import static org.lwjgl.opengl.GL11.GL_BYTE;
-import static org.lwjgl.opengl.GL11.GL_FLOAT;
-import static org.lwjgl.opengl.GL11.GL_INT;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
+import static org.lwjgl.opengl.GL43.*;
 
 /**
  *
@@ -22,47 +22,38 @@ import static org.lwjgl.opengl.GL11.GL_INT;
 public class VertexArrayObject {
     VertexArrayFormat format;
     PureVertexArrayObject vao;
-    
+
     public VertexArrayObject(VertexArrayFormat format){
         vao = PureVertexArrayObject.create();
+        vao.bind();
         this.format = format;
-        findAttributes();
+        generateFormatBindingPoints();
+        vao.unbind();
     }
-    
+
     public VertexArrayFormat getFormat(){
         return format;
     }
 
-    public void applyFormat(GraphicsBuffer... buffers){
-        this.applyFormat(List.of(buffers));
+    private void generateFormatBindingPoints(){
+        for(var binding : format.getBindings()){
+            for(var attrib : binding.getAttributes()){
+                int bytes = 1;
+                if(attrib.type == GL_FLOAT) bytes = Float.BYTES;
+                if(attrib.type == GL_INT) bytes = Integer.BYTES;
+                if(attrib.type == GL_BYTE) bytes = 1;
+                glEnableVertexAttribArray(ShaderController.getVertexAttributeIndex(attrib.name));
+                glVertexAttribFormat(ShaderController.getVertexAttributeIndex(attrib.name), attrib.size, attrib.type, false, attrib.offset * bytes);
+                glVertexAttribBinding(ShaderController.getVertexAttributeIndex(attrib.name), binding.getBindingIndex());
+            }
+            glVertexBindingDivisor(binding.getBindingIndex(), binding.getDivisor());
+        }
     }
 
     public void applyFormat(List<GraphicsBuffer> buffers){
-        vao.bind();
-        int lastloc = 0;
-        buffers.get(0).bind();
-        for(VertexArrayAttribute attrib : format.attribs){
-            if(attrib.arrayindex != lastloc){
-                lastloc = attrib.arrayindex;
-                buffers.get(lastloc).bind();
-            }
-            int bytes = 1;
-            if(attrib.type == GL_FLOAT) bytes = Float.BYTES;
-            if(attrib.type == GL_INT) bytes = Integer.BYTES;
-            if(attrib.type == GL_BYTE) bytes = 1;
-            ShaderController.enableVertexAttribute(attrib.name);
-
-            ShaderController.pointVertexAttribute(attrib.name, attrib.size, attrib.type, attrib.buflength * Float.BYTES, attrib.offset * bytes);
-    
-            ShaderController.setVertexAttribDivisor(attrib.name, attrib.divisor ? 1 : 0);
-        }
-         
-    }
-
-    public void findAttributes(){
-        for(VertexArrayAttribute attribute : format.attribs){
-            ShaderController.findAttribLocation(attribute.name);
-        }
+       for(var binding : getFormat().getBindings()){
+           buffers.get(binding.getBindingIndex()).bindToAttribute(binding.getBindingIndex(), binding.getVertexSize());
+       }
     }
     
     public void bind(){

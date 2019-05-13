@@ -141,23 +141,23 @@ public class AssimpModelLoader {
         if(generatedTangent){
             formatConfig+="tangent_";
         }
-        model.vaoFormat = formatConfig;
-        System.out.println(model.vaoFormat);
-        if(scene.mNumMaterials() > 0) model.exportConfig |= BMFFile.MATERIAL;
+        model.setVaoFormat(formatConfig);
+        System.out.println(model.getVaoFormat());
+        if(scene.mNumMaterials() > 0) model.setExportConfig(model.getExportConfig() | BMFFile.MATERIAL);
 
         //Load animations
         if(scene.mNumAnimations() > 0){
             for(int i =0;i<scene.mNumAnimations();i++){
                 GGAnimation animation = processAnimation(AIAnimation.create(scene.mAnimations().get(i)));
-                model.animations.put(animation.name,animation);
+                model.getAnimations().put(animation.name,animation);
             }
             GGConsole.log("Loaded Animations");
         }
 
-        model.fileLocation = f.getParent();
-        model.isAnim = animationsEnabled;
-        model.materials = materials;
-        model.root = rootNode;
+        model.setFileLocation(f.getParent());
+        model.setAnimated(animationsEnabled);
+        model.setMaterials(materials);
+        model.setRootAnimationNode(rootNode);
         return model;
 
     }

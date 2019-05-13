@@ -469,7 +469,7 @@ public class Parser {
         throw new ShaderException("Failed parsing: current token is " + lexer.getContents().get(current));
     }
 
-    public class AbstractSyntaxTree {
+    public static class AbstractSyntaxTree {
         public List<Node> nodes = new ArrayList<>();
 
         public void printTree(){
@@ -488,15 +488,34 @@ public class Parser {
                 if(node2 != null) recursivePrint(level + 1, node2);
             }
         }
+
+        public List<Node> getAll(){
+            var list = new ArrayList<Node>();
+            for(var node : nodes){
+                list.addAll(recursiveGet(node));
+            }
+
+            return list;
+        }
+
+        private List<Node> recursiveGet(Node node){
+            var list = new ArrayList<Node>();
+            list.add(node);
+            for(Node node2 : node.getChildren()){
+                if(node2 != null) list.addAll(recursiveGet(node2));
+            }
+
+            return list;
+        }
     }
 
-    public abstract class Expression extends Node{}
+    public abstract static class Expression extends Node{}
 
-    public abstract class Node{
+    public abstract static class Node{
         public abstract List<Node> getChildren();
     }
 
-    public class If extends Node{
+    public static class If extends Node{
         public Expression conditional;
         public Body then;
         public Body els = new Body();
@@ -507,7 +526,7 @@ public class Parser {
         }
     }
 
-    public class For extends Node{
+    public static class For extends Node{
         public Expression assignment;
         public Expression conditional;
         public Expression modifier;
@@ -524,7 +543,7 @@ public class Parser {
         }
     }
 
-    public class While extends Node{
+    public static class While extends Node{
         public Expression conditional;
         public Body contents;
 
@@ -535,7 +554,7 @@ public class Parser {
         }
     }
 
-    public class Body extends Node{
+    public static class Body extends Node{
         public List<Node> expressions = new ArrayList<>();
 
         @Override
@@ -549,7 +568,7 @@ public class Parser {
         }
     }
 
-    public class Identifier extends Expression{
+    public static class Identifier extends Expression{
         public String value;
 
         public Identifier(String value) {
@@ -564,7 +583,7 @@ public class Parser {
         }
     }
 
-    public class Arguments extends Node{
+    public static class Arguments extends Node{
         public List<Expression> expressions = new ArrayList<>();
 
         @Override
@@ -578,7 +597,7 @@ public class Parser {
         }
     }
 
-    public class FloatLiteral extends Expression{
+    public static class FloatLiteral extends Expression{
         public float value;
 
         public FloatLiteral(float value) {
@@ -596,7 +615,7 @@ public class Parser {
         }
     }
 
-    public class IntegerLiteral extends Expression{
+    public static class IntegerLiteral extends Expression{
         public int value;
 
         public IntegerLiteral(int value) {
@@ -614,13 +633,13 @@ public class Parser {
         }
     }
 
-    public class AccessModifier extends Identifier{
+    public static class AccessModifier extends Identifier{
         public AccessModifier(String value) {
             super(value);
         }
     }
 
-    public class FieldAccessor extends Expression{
+    public static class FieldAccessor extends Expression{
         Identifier accessor;
         Expression value;
 
@@ -641,7 +660,7 @@ public class Parser {
 
     }
 
-    public class FunctionCall extends Expression{
+    public static class FunctionCall extends Expression{
         Identifier name;
         Arguments args = new Arguments();
 
@@ -656,8 +675,8 @@ public class Parser {
         }
     }
 
-    public class Modifiers extends Node{
-        List<Identifier> modifiers = new ArrayList<>();
+    public static class Modifiers extends Node{
+        public List<Identifier> modifiers = new ArrayList<>();
 
         @Override
         public String toString() {
@@ -670,7 +689,7 @@ public class Parser {
         }
     }
 
-    public class DeclarationArguments extends Node{
+    public static class DeclarationArguments extends Node{
         List<Declaration> args = new ArrayList<>();
 
         @Override
@@ -679,7 +698,7 @@ public class Parser {
         }
     }
 
-    public class EmptyExpression extends Expression{
+    public static class EmptyExpression extends Expression{
 
         @Override
         public String toString(){
@@ -692,7 +711,7 @@ public class Parser {
         }
     }
 
-    public class Return extends Expression{
+    public static class Return extends Expression{
         Expression returnValue;
 
         @Override
@@ -707,7 +726,7 @@ public class Parser {
 
     }
 
-    public class LoopControl extends Expression{
+    public static class LoopControl extends Expression{
         String value;
 
 
@@ -717,7 +736,7 @@ public class Parser {
         }
     }
 
-    public class Function extends Node{
+    public static class Function extends Node{
         Modifiers modifiers = new Modifiers();
         Identifier type;
         Identifier name;
@@ -735,7 +754,7 @@ public class Parser {
         }
     }
 
-    public class Struct extends Node{
+    public static class Struct extends Node{
         Modifiers modifiers= new Modifiers();
         public Identifier name = new Identifier("");
         public Body declarations = new Body();
@@ -752,7 +771,7 @@ public class Parser {
         }
     }
 
-    public class Interface extends Node{
+    public static class Interface extends Node{
         Modifiers modifiers= new Modifiers();
         public Identifier accessor = new Identifier("");
         public Identifier name = new Identifier("");
@@ -770,7 +789,7 @@ public class Parser {
         }
     }
 
-    public class UnaryOp extends Expression{
+    public static class UnaryOp extends Expression{
         Expression exp;
         String op;
         boolean after;
@@ -786,7 +805,7 @@ public class Parser {
         }
     }
 
-    public class BinaryOp extends Expression{
+    public static class BinaryOp extends Expression{
         Expression left;
         Expression right;
         String op;
@@ -802,7 +821,7 @@ public class Parser {
         }
     }
 
-    public class TernaryOp extends Expression{
+    public static class TernaryOp extends Expression{
         Expression conditional;
         Expression then;
         Expression els;
@@ -813,9 +832,9 @@ public class Parser {
         }
     }
 
-    public class Assignment extends Expression{
-        Identifier name;
-        String assigntype;
+    public static class Assignment extends Expression{
+        public Identifier name;
+        public String assigntype;
         Expression value = new EmptyExpression();
 
 
@@ -830,9 +849,9 @@ public class Parser {
         }
     }
 
-    public class Declaration extends Assignment{
-        Modifiers modifiers = new Modifiers();
-        Identifier type;
+    public static class Declaration extends Assignment{
+        public Modifiers modifiers = new Modifiers();
+        public Identifier type;
 
         @Override
         public String toString(){

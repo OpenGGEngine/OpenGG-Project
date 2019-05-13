@@ -36,7 +36,7 @@ public class ConvexHull extends Collider{
     }
 
     @Override
-    public List<ContactManifold> collide(Collider c) {
+    public ContactManifold collide(Collider c) {
         if(c instanceof ConvexHull)
             return CollisionSolver.HullHull(this, (ConvexHull)c);
         else if(c instanceof Mesh)
@@ -45,7 +45,7 @@ public class ConvexHull extends Collider{
             return CollisionSolver.HullTerrain(this, (TerrainCollider) c);
         else if(c instanceof Floor)
             return CollisionSolver.HullGround(this);
-        return new ArrayList<>();
+        return null;
     }
 
     @Override

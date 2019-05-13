@@ -19,8 +19,8 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * Represents one of the three standard OpenGG resources <br><br>
- *     This also contains static methods to load resources
+ * Used for loading and managing resources used in the engine <br>
+ *     Additionally, all subclasses of this interface are implementations of these types of resources
  * @author Javier
  */
 public interface Resource {
@@ -222,6 +222,11 @@ public interface Resource {
         return new GGFont(tpath,fpath);
     }
 
+    /**
+     * Gets a font stored in the TrueType format with the given name
+     * @param path Name/path of font
+     * @return
+     */
     static Font getTruetypeFont(String path){
         return TTF.getTruetypeFont(getFontPath(path), true);
     }

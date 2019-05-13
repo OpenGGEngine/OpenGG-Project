@@ -6,6 +6,10 @@ public class UnorderedTuple<X> extends Tuple<X, X> {
         super(x, x2);
     }
 
+    public static <T> UnorderedTuple<T> ofUnordered(T t1, T t2){
+        return new UnorderedTuple<>(t1,t2);
+    }
+
     @Override
     public int hashCode() {
         int hash = 1;

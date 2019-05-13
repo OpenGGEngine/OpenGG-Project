@@ -17,7 +17,7 @@ import java.util.List;
  * @author Javier
  */
 public abstract class Collider extends PhysicsObject{
-    public abstract List<ContactManifold> collide(Collider c);
+    public abstract ContactManifold collide(Collider c);
 
     public void updatePositions(){}
 

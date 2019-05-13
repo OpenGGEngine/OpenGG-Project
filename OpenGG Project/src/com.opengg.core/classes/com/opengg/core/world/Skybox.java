@@ -6,6 +6,9 @@
 
 package com.opengg.core.world;
 
+import com.opengg.core.math.Matrix4f;
+import com.opengg.core.math.Quaternionf;
+import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.render.objects.ObjectCreator;
 import com.opengg.core.render.texture.Texture;
@@ -17,11 +20,16 @@ import com.opengg.core.render.texture.Texture;
 public class Skybox {
     private Drawable d;
     private Texture cube;
-    public Skybox(Texture c, float size){
+
+    public Skybox(Texture tex, float size){
         d = ObjectCreator.createCube(size);
-        cube = c;
+        cube = tex;
     }
-    
+
+    public void setCubemapMatrix(Matrix4f mat){
+        d.setMatrix(mat);
+    }
+
     public Texture getCubemap(){
         return cube;
     }

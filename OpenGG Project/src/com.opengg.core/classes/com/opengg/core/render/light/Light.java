@@ -56,7 +56,7 @@ public class Light {
         return new Light(new Vector3f(), rot, color, 100000f, 360, ORTHO);
     }
 
-    public static Light createDirectionalShadow(Vector3f pos, Quaternionf rot, Vector3f color, float distance, Matrix4f perspective, int xres, int yres){
+    public static Light createDirectionalShadow(Quaternionf rot, Vector3f color, Vector3f pos, float distance, Matrix4f perspective, int xres, int yres){
         Light light = new Light(pos, rot, color, distance, 360, ORTHO);
         light.create2DMap(perspective, xres, yres);
         return light;

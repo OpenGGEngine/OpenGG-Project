@@ -35,7 +35,7 @@ public class ModelComponent extends RenderComponent implements ResourceUser{
     public ModelComponent(Model model, boolean collider){
         super();
         setModel(model);
-        this.setFormat(model.isAnim? RenderEngine.tangentAnimVAOFormat: RenderEngine.tangentVAOFormat);
+        this.setFormat(model.isAnimated() ? RenderEngine.tangentAnimVAOFormat: RenderEngine.tangentVAOFormat);
         this.setTransparency(true);
 
         if(collider){
@@ -49,13 +49,13 @@ public class ModelComponent extends RenderComponent implements ResourceUser{
     
     public void setModel(Model model) {
         this.model = model;
-        boolean hastan = model.vaoFormat.contains("tangent");
-        boolean hasanim = model.vaoFormat.contains("anim");
+        boolean hastan = model.getVaoFormat().contains("tangent");
+        boolean hasanim = model.getVaoFormat().contains("anim");
         if(hastan&&hasanim){
 
         }else if(hastan){
             this.setFormat(RenderEngine.tangentVAOFormat);
-            this.setShader("object");
+            this.setShader("tangent");
         }else if(hasanim){
 
         }else{

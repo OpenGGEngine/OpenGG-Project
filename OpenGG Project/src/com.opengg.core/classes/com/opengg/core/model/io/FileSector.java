@@ -62,30 +62,30 @@ public class FileSector {
         }
     }
     private void genVBOSector(Model model){
-        this.subBuffers = new ByteBuffer[model.meshes.size()];
-        for(int i=0;i<model.meshes.size();i++){
-            ByteBuffer sub = Allocator.alloc(model.meshes.get(i).getVbo().capacity()*Float.BYTES).order(ByteOrder.BIG_ENDIAN);
-            model.meshes.get(i).getVbo().rewind();
-            while(model.meshes.get(i).getVbo().hasRemaining())sub.putFloat(model.meshes.get(i).getVbo().get());
+        this.subBuffers = new ByteBuffer[model.getMeshes().size()];
+        for(int i=0;i<model.getMeshes().size();i++){
+            ByteBuffer sub = Allocator.alloc(model.getMeshes().get(i).getVbo().capacity()*Float.BYTES).order(ByteOrder.BIG_ENDIAN);
+            model.getMeshes().get(i).getVbo().rewind();
+            while(model.getMeshes().get(i).getVbo().hasRemaining())sub.putFloat(model.getMeshes().get(i).getVbo().get());
             this.subBuffers[i] = sub.flip();
             length += sub.limit();
         }
     }
     private void genIBOSector(Model model){
-        this.subBuffers = new ByteBuffer[model.meshes.size()];
-        for(int i=0;i<model.meshes.size();i++){
-            ByteBuffer sub = Allocator.alloc(model.meshes.get(i).getIndexBuffer().capacity()*Integer.BYTES).order(ByteOrder.BIG_ENDIAN);
-            model.meshes.get(i).getIndexBuffer().rewind();
-            while(model.meshes.get(i).getIndexBuffer().hasRemaining()) sub.putInt(model.meshes.get(i).getIndexBuffer().get());
+        this.subBuffers = new ByteBuffer[model.getMeshes().size()];
+        for(int i=0;i<model.getMeshes().size();i++){
+            ByteBuffer sub = Allocator.alloc(model.getMeshes().get(i).getIndexBuffer().capacity()*Integer.BYTES).order(ByteOrder.BIG_ENDIAN);
+            model.getMeshes().get(i).getIndexBuffer().rewind();
+            while(model.getMeshes().get(i).getIndexBuffer().hasRemaining()) sub.putInt(model.getMeshes().get(i).getIndexBuffer().get());
             this.subBuffers[i]= sub.flip();
             length += sub.limit();
         }
     }
     private void genBonesSector(Model model){
-        this.subBuffers = new ByteBuffer[model.meshes.size()];
+        this.subBuffers = new ByteBuffer[model.getMeshes().size()];
         length = 0;
-        for(int i=0;i<model.meshes.size();i++){
-            Mesh curmesh = model.meshes.get(i);
+        for(int i=0;i<model.getMeshes().size();i++){
+            Mesh curmesh = model.getMeshes().get(i);
             if(curmesh.getBones() == null || !curmesh.genAnim){
                 this.subBuffers[i] = ByteBuffer.allocate(0);
             }else{
@@ -104,19 +104,19 @@ public class FileSector {
         }
     }
     private void genMatSector(Model model) throws UnsupportedEncodingException {
-        this.subBuffers = new ByteBuffer[model.materials.size()+1];
+        this.subBuffers = new ByteBuffer[model.getMaterials().size()+1];
         for(int i=0;i<this.subBuffers.length-1;i++) {
-            this.subBuffers[i] = model.materials.get(i).toBuffer(); length+=this.subBuffers[i].limit(); }
-        this.subBuffers[this.subBuffers.length-1] = Allocator.alloc(Integer.BYTES*model.meshes.size()).order(ByteOrder.BIG_ENDIAN);
-        for(int i=0;i<model.meshes.size();i++) this.subBuffers[this.subBuffers.length-1].putInt(model.meshes.get(i).matIndex);
+            this.subBuffers[i] = model.getMaterials().get(i).toBuffer(); length+=this.subBuffers[i].limit(); }
+        this.subBuffers[this.subBuffers.length-1] = Allocator.alloc(Integer.BYTES*model.getMeshes().size()).order(ByteOrder.BIG_ENDIAN);
+        for(int i=0;i<model.getMeshes().size();i++) this.subBuffers[this.subBuffers.length-1].putInt(model.getMeshes().get(i).matIndex);
         length+= this.subBuffers[this.subBuffers.length-1].flip().limit();
 
     }
     private void genNodeSector(Model model){
-        if(model.root == null)GGConsole.error("Node graph has not been initialized");
-        length = model.root.byteSize;
-        this.subBuffers = new ByteBuffer[]{Allocator.alloc(model.root.byteSize).order(ByteOrder.BIG_ENDIAN)};
-        recurNodeStore(model.root,this.subBuffers[0]);
+        if(model.getRootAnimationNode() == null)GGConsole.error("Node graph has not been initialized");
+        length = model.getRootAnimationNode().byteSize;
+        this.subBuffers = new ByteBuffer[]{Allocator.alloc(model.getRootAnimationNode().byteSize).order(ByteOrder.BIG_ENDIAN)};
+        recurNodeStore(model.getRootAnimationNode(),this.subBuffers[0]);
         this.subBuffers[0].flip();
     }
     private void recurNodeStore(GGNode node, ByteBuffer b){
@@ -126,9 +126,9 @@ public class FileSector {
         for(GGNode c: node.children) recurNodeStore(c,b);
     }
     private void genAnimSector(Model model){
-        this.subBuffers = new ByteBuffer[model.animations.size()];
+        this.subBuffers = new ByteBuffer[model.getAnimations().size()];
         int index =0; length = 0;
-        for(GGAnimation anim:model.animations.values()){
+        for(GGAnimation anim:model.getAnimations().values()){
             subBuffers[index] = anim.toBuffer();
             length+=subBuffers[index].limit();
             index++;

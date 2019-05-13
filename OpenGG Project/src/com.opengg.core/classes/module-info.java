@@ -27,6 +27,8 @@ module com.opengg.core {
     requires org.lwjgl.openvr;
     requires org.lwjgl.tootle;
     requires org.lwjgl.tootle.natives;
+    requires org.lwjgl.meow;
+    requires org.lwjgl.meow.natives;
 
     exports com.opengg.core.audio;
     exports com.opengg.core.engine;

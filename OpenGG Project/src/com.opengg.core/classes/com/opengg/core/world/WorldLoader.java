@@ -51,15 +51,23 @@ public class WorldLoader {
         
     }
 
+    /**
+     * Requests a world loaded asynchronously and saves it into the World cache
+     * @see WorldStateManager
+     * @param worldname World file to load
+     */
     public static void preloadWorld(String worldname){
         ResourceLoader.prefetch(new ResourceRequest(Resource.getWorldPath(worldname), Resource.Type.WORLD))
                 .whenComplete((w, e) -> WorldLoader.keepWorld((World) w));
     }
 
     /**
-     *
-     * @param worldname
-     * @return
+     * Returns the world indicated by the given world name <br>
+     *     This will first attempt to retrieve the world from the world state cache.
+     *     If it is unable to find it in the cache, it will then attempt to load it from the file indicated.
+     *     If this also fails, it will return {@code null}
+     * @param worldname World name to load world from.
+     * @return World object from either the state manager or the file system, or null if neither exist
      */
     public static World getWorld(String worldname){
         if(WorldStateManager.loadedVersionExists(worldname))
@@ -68,11 +76,21 @@ public class WorldLoader {
             return loadWorld(worldname);
     }
 
+    /**
+     * Saves the given world into the world state cache for future loading<br>
+     *     This allows a world's state to be used in the future without
+     * @param world
+     */
     public static void keepWorld(World world){
         GGConsole.log("Saving state for " + world.getName());
         WorldStateManager.keepWorld(world);
     }
-    
+
+    /**
+     * Saves the given World to the given file <br>
+     * @param world
+     * @param worldname
+     */
     public static void saveWorld(World world, String worldname){
         GGConsole.log("Saving world " + worldname + "...");
         String tempPath = worldname.substring(0, worldname.lastIndexOf(new File(worldname).getName())) + "temp_" + new File(worldname).getName();

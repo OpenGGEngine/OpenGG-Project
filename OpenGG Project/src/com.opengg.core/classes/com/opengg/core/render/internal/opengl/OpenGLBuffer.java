@@ -103,7 +103,12 @@ public class OpenGLBuffer implements GraphicsBuffer{
         buffer.bindBase(fromBufferType(target), base);
         index = base;
     }
-    
+
+    @Override
+    public void bindToAttribute(int attrib, int size) {
+        buffer.bindAttribute(attrib, size);
+    }
+
     @Override
     public int getBase(){
         return index;

@@ -4,22 +4,19 @@ import com.opengg.core.audio.AudioListener;
 import com.opengg.core.audio.Soundtrack;
 import com.opengg.core.audio.SoundtrackHandler;
 import com.opengg.core.audio.SoundEngine;
-import com.opengg.core.engine.BindController;
-import com.opengg.core.engine.GGApplication;
-import com.opengg.core.engine.OpenGG;
+import com.opengg.core.engine.*;
 import com.opengg.core.gui.GUI;
 import com.opengg.core.gui.GUIButton;
 import com.opengg.core.io.input.mouse.MouseController;
-import com.opengg.core.math.Matrix4f;
-import com.opengg.core.math.Quaternionf;
+import com.opengg.core.math.*;
 import com.opengg.core.model.io.AssimpModelLoader;
 import com.opengg.core.network.NetworkEngine;
 import com.opengg.core.physics.collision.AABB;
 import com.opengg.core.physics.collision.ColliderGroup;
 import com.opengg.core.physics.collision.ConvexHull;
-import com.opengg.core.engine.Resource;
 import com.opengg.core.render.ProjectionData;
 import com.opengg.core.render.RenderEngine;
+import com.opengg.core.render.drawn.DrawnObject;
 import com.opengg.core.render.drawn.TexturedDrawnObject;
 import com.opengg.core.render.light.Light;
 import com.opengg.core.render.objects.ObjectCreator;
@@ -27,7 +24,6 @@ import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.text.Text;
 import com.opengg.core.render.texture.TextureManager;
 import com.opengg.core.render.window.WindowController;
-import com.opengg.core.system.Allocator;
 import com.opengg.core.world.Skybox;
 import com.opengg.core.world.WorldEngine;
 import com.opengg.core.gui.GUIController;
@@ -35,8 +31,6 @@ import com.opengg.core.io.ControlType;
 import static com.opengg.core.io.input.keyboard.Key.*;
 import static java.awt.Color.RED;
 
-import com.opengg.core.math.Vector2f;
-import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.text.impl.GGFont;
 import com.opengg.core.render.window.WindowInfo;
@@ -69,7 +63,9 @@ public class  OpenGGTest extends GGApplication{
         w.vsync = true;
         w.glmajor = 4;
         w.glminor = 3;
-        OpenGG.initialize(new OpenGGTest(), w);
+        OpenGG.initialize(new OpenGGTest(), new InitializationOptions()
+                                                .setApplicationName("OpenGG Test")
+                                                .setWindowInfo(w));
     }
 
     @Override
@@ -105,15 +101,13 @@ public class  OpenGGTest extends GGApplication{
 
         GUIController.addAndUse(mainview, "mainview");
 
-        WorldEngine.getCurrent().attach(new ModelComponent(Resource.getModel("pear")).setPositionOffset(new Vector3f(1,0,-3)));
-                //.setScaleOffset(new Vector3f(0.01f,0,0.01f)));
-
+        WorldEngine.getCurrent().attach(new ModelComponent(Resource.getModel("pear")).setPositionOffset(new Vector3f(0,0,-3)));
+        WorldEngine.getCurrent().attach(new ModelComponent(Resource.getModel("pear")).setPositionOffset(new Vector3f(0,0,-6)));
 
         WorldEngine.getCurrent().attach(new LightComponent(
-                //Light.createPointShadow(new Vector3f(0,-10,0), new Vector3f(1), 1000, 512, 512 )));
-                Light.createDirectional(new Quaternionf(new Vector3f(0,0f,-50)),
-                        new Vector3f(1,1,1))));
-
+               // Light.createPointShadow(new Vector3f(0,4,4), new Vector3f(1), 100, 512, 512 )).setName("testlight"));
+                Light.createDirectionalShadow(new Quaternionf(new Vector3f(0,0f,90)), new Vector3f(1,1,1),
+                        new Vector3f(0,0,0),1000, Matrix4f.orthographic(-10,10,-10,10,-10,10), 4096, 4096)));
 
         var cube = List.of(
                 new Vector3f(-1,-1,-1),
@@ -125,6 +119,18 @@ public class  OpenGGTest extends GGApplication{
                 new Vector3f(1,1,-1),
                 new Vector3f(1,1,1)
         );
+
+        for(int i = 0; i < 10; i++){
+            var phys = new PhysicsComponent();
+            phys.addCollider(new ColliderGroup(new AABB(new Vector3f(1,1,1)), new ConvexHull(cube)));
+            var renderable = new RenderComponent(new TexturedDrawnObject(ObjectCreator.createCube(1), Texture.ofColor(RED)));
+            renderable.setRotationOffset(new Vector3f(0,0,20));
+            renderable.attach(phys);
+            WorldEngine.getCurrent().attach(renderable);
+
+            //phys.getEntity().velocity = new Vector3f(10,0,0);
+            //phys.getEntity().angvelocity = new Vector3f(0,0.5f,0);
+        }
 
         player = new FreeFlyComponent();
         WorldEngine.getCurrent().attach(player);
@@ -158,6 +164,7 @@ public class  OpenGGTest extends GGApplication{
 
     @Override
     public void update(float delta){
-
+        i += delta;
+        //WorldEngine.getCurrent().find("testlight").setPositionOffset(0, 4 * FastMath.sin(i), 2);
     }
 }

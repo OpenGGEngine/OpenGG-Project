@@ -16,37 +16,37 @@ import java.util.stream.Collectors;
  * @author Javier
  */
 public class ContactManifold {
-    public Vector3f normal;
-    public List<Vector3f> points = new ArrayList<>(3);
-    public float depth;
+    public List<Contact> points = new ArrayList<>(3);
 
     public ContactManifold(){}
 
-    public ContactManifold(Vector3f normal, List<Vector3f> points, float depth) {
-        this.normal = normal;
-        this.points = points;
-        this.depth = depth;
+    public ContactManifold(Contact... points){
+        this.points = List.of(points);
     }
 
-    public static ContactManifold averageContactManifolds(List<ContactManifold> manifolds){
-        var normal  = Vector3f.averageOf(manifolds.stream().map(m -> m.normal).collect(Collectors.toList()));
-        var points = manifolds.stream().flatMap(m -> m.points.stream()).collect(Collectors.toList());
+    public ContactManifold(List<Contact> points) {
+        this.points = points;
+    }
 
-        var depth = (float) manifolds.stream().mapToDouble(m -> m.depth).max().getAsDouble();
-        return new ContactManifold(normal, points, depth);
+    public static ContactManifold combineManifolds(ContactManifold... manifolds) {
+        return combineManifolds(List.of(manifolds));
+    }
+
+    public static ContactManifold combineManifolds(List<ContactManifold> manifolds){
+        var points = manifolds.stream().flatMap(m -> m.points.stream()).limit(4).collect(Collectors.toList());
+
+        return new ContactManifold(points);
     }
 
     public ContactManifold reverse(){
-        normal = normal.inverse();
+        points.forEach(c -> c.normal = c.normal.inverse());
         return this;
     }
     
     @Override
     public String toString(){
         String s = "";
-        s += "Collision normal: " + normal + "\n";
         s += "Collision points: " + points + "\n";
-        s += "Collision depth: " + depth + "\n";
         return s;
     }
 }

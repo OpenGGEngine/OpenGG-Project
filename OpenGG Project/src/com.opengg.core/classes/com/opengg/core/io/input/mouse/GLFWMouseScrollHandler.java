@@ -16,7 +16,11 @@ public class GLFWMouseScrollHandler extends GLFWScrollCallback implements MouseS
 
     @Override
     public void invoke(long window, double xoffset, double yoffset) {
-        wheelX = xoffset;
-        wheelY = yoffset;
+        wheelX =+ xoffset;
+        wheelY =+ yoffset;
+
+        if(yoffset > 0) MouseController.scrolledUp();
+        if(yoffset < 0) MouseController.scrolledDown();
+
     }
 }

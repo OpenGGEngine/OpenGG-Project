@@ -2,6 +2,7 @@ package com.opengg.test;
 
 import com.opengg.core.audio.AudioListener;
 import com.opengg.core.engine.GGApplication;
+import com.opengg.core.engine.InitializationOptions;
 import com.opengg.core.engine.OpenGG;
 import com.opengg.core.math.FastMath;
 import com.opengg.core.network.NetworkEngine;
@@ -31,7 +32,7 @@ import java.util.*;
 public class OpenGGTestServer extends GGApplication{
 
     public static void main(String[] args){
-        OpenGG.initializeHeadless(new OpenGGTestServer());
+        OpenGG.initialize(new OpenGGTestServer(), new InitializationOptions().setHeadless(true));
     }
     int i = 0;
 

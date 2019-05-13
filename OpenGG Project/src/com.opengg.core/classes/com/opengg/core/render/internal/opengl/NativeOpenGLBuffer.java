@@ -21,6 +21,7 @@ import static org.lwjgl.opengl.GL15.glDeleteBuffers;
 import static org.lwjgl.opengl.GL15.glGenBuffers;
 import static org.lwjgl.opengl.GL15.glGetBufferParameteri;
 import static org.lwjgl.opengl.GL30.glBindBufferBase;
+import static org.lwjgl.opengl.GL43.glBindVertexBuffer;
 
 /**
  *
@@ -96,5 +97,9 @@ public class NativeOpenGLBuffer implements NativeResource {
     public Runnable onDestroy() {
         int id2 = id;
         return () -> glDeleteBuffers(id2);
+    }
+
+    public void bindAttribute(int attrib, int size) {
+        glBindVertexBuffer(attrib, this.id, 0, size * Float.BYTES);
     }
 }

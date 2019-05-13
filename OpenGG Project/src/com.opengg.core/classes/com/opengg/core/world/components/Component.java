@@ -33,13 +33,14 @@ import java.util.stream.Stream;
  * corresponding World. </p>
  * <p>
  * To create a custom component, first extend this class. This class, while lacking practical use by itself, contains all of the
- * code that should be needed to use the features described above, so take care when overriding these default classes.</p>
+ * code that should be needed to use the features described above, so take care when overriding these default methods.</p>
  * @author Javier
  */
 public abstract class Component{
     private static int curid = 0;
     private int id;
     private boolean absoluteOffset = false;
+    private boolean absoluteRotation = false;
     private boolean enabled = true;
     private float updatedistance = 0;
     private String name = "default";
@@ -59,7 +60,6 @@ public abstract class Component{
         ComponentVarAccessor.register(Component.class,Vector3f.class,"position",(BiConsumer<Component,Vector3f>)Component::setPositionOffset,(Function<Component,Vector3f>)Component::getPositionOffset);
         ComponentVarAccessor.register(Component.class,Quaternionf.class,"rotation",(BiConsumer<Component,Quaternionf>)Component::setRotationOffset,(Function<Component,Quaternionf>)Component::getRotationOffset);
         ComponentVarAccessor.register(Component.class,Vector3f.class,"scale",(BiConsumer<Component,Vector3f>)Component::setScaleOffset,(Function<Component,Vector3f>)Component::getScale);
-
     }
 
     /**
@@ -200,7 +200,12 @@ public abstract class Component{
     public final Component setRotationOffset(Quaternionf nrot){
         this.rotoffset = nrot;
         regenRot();
-        for(Component c : children) if(!c.getPositionOffset().equals(new Vector3f())) c.regenPos();
+        return this;
+    }
+
+    public final Component setAbsoluteRotation(boolean absolute){
+        absoluteRotation = absolute;
+        regenRot();
         return this;
     }
     
@@ -215,13 +220,14 @@ public abstract class Component{
     }
     
     private void regenRot(){
-        if(parent != null){
+        if(parent != null && !absoluteRotation){
             rot = parent.getRotation().multiply(rotoffset);
         }else{
             rot = rotoffset;
         }
         onRotationChange(rot);
         for(Component c : children) c.regenRot();
+        for(Component c : children) if(!c.getPositionOffset().equals(new Vector3f())) c.regenPos();
     }
     
     /**
@@ -235,6 +241,11 @@ public abstract class Component{
         return this;
     }
 
+    /**
+     * Sets the scaling offset of the component relative to the parent
+     * @param scale New scale offset
+     * @return
+     */
     public final Component setScaleOffset(float scale){
         return this.setScaleOffset(new Vector3f(scale));
     }
@@ -270,6 +281,10 @@ public abstract class Component{
         return scale;
     }
 
+    /**
+     * Gets the scale offset for this component
+     * @return
+     */
     public Vector3f getScaleOffset(){
         return scaleoffset;
     }
@@ -368,6 +383,9 @@ public abstract class Component{
         updatedistance = in.readInt();
     }
 
+    /**
+     * Called once when this component's parent world is loaded from a file or stream
+     */
     public void onWorldLoad(){
 
     }
@@ -469,10 +487,19 @@ public abstract class Component{
         this.serialize = serialize;
     }
 
+    /**
+     * Returns if this component should be serialized for updating <br>
+     *     This does not affect whether this component is serialized for creation
+     */
     public boolean shouldSerializeUpdate() {
         return updateSerialize;
     }
 
+    /**
+     * Sets if this component should be serialized for updating <br>
+     *     This does not affect whether this component is serialized for creation
+     * @param updateSerialize
+     */
     public void setSerializableUpdate(boolean updateSerialize) {
         this.updateSerialize = updateSerialize;
     }
@@ -643,10 +670,20 @@ public abstract class Component{
         child.changeParent(null);
     }
 
+    /**
+     * Gets the current ID counter for the component system <br>
+     *     This is normally equal to the ID of the newest component plus one
+     * @return
+     */
     public static int getCurrentIdCounter(){
         return curid;
     }
 
+    /**
+     * Sets the current ID counter for the component system <br>
+     *     This should only be set when components are being manually loaded from another source
+     * @param id
+     */
     public static void setCurrentIdCounter(int id){
         curid = id;
     }

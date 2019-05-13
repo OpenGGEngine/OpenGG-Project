@@ -139,7 +139,12 @@ public final class ResourceLoader {
 
         return request.future;
     }
-    
+
+    /**
+     * Checks to see if the resource at the given path has already been requested and is being processed
+     * @param pos
+     * @return
+     */
     public static boolean isRequested(String pos){
         for(ResourceRequest request : processor.getQueue()){
             if(request.location.equalsIgnoreCase(pos)) return true;

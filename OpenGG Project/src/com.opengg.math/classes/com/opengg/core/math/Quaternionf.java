@@ -47,6 +47,7 @@ public class Quaternionf implements Serializable{
     }
 
     public Quaternionf(float angle, Vector3f axis) {
+        axis = axis.normalize();
         while (angle > 360) {
             angle -= 360;
         }
@@ -54,7 +55,7 @@ public class Quaternionf implements Serializable{
             angle += 360;
         }
         float s = FastMath.sin((angle) / 2);
-        w = FastMath.cosDeg((angle) / 2);
+        w = FastMath.cos((angle) / 2);
         x = axis.x * s;
         y = axis.y * s;
         z = axis.z * s;
@@ -117,6 +118,22 @@ public class Quaternionf implements Serializable{
 //        }
 //    }
 
+    public float w(){
+        return w;
+    }
+
+    public float x(){
+        return x;
+    }
+
+    public float y(){
+        return y;
+    }
+    public float z(){
+        return z;
+    }
+
+
     public Quaternionf add(Quaternionf q) {
         return new Quaternionf(this.w + q.w, this.x + q.x, this.y + q.y, this.z + q.z);
     }
@@ -126,10 +143,10 @@ public class Quaternionf implements Serializable{
     }
 
     public Quaternionf multiply(Quaternionf q){
-        float nx = w * q.x + x * q.w + y * q.z - z * q.y;
-        float ny = w * q.y - x * q.z + y * q.w + z * q.x;
-        float nz = w * q.z + x * q.y - y * q.x + z * q.w;
         float nw = w * q.w - x * q.x - y * q.y - z * q.z;
+        float nx = w * q.x + x * q.w - y * q.z + z * q.y;
+        float ny = w * q.y + x * q.z + y * q.w - z * q.x;
+        float nz = w * q.z - x * q.y + y * q.x + z * q.w;
         return new Quaternionf(nw,nx,ny,nz);
     }
 
@@ -153,7 +170,8 @@ public class Quaternionf implements Serializable{
         return new Quaternionf(this.divide(this.length()));
     }
 
-    public Matrix4f convertMatrix() {
+    public Matrix4f
+    convertMatrix() {
         Quaternionf q = this.normalize();
         return new Matrix4f(
                 1.0f - 2.0f * q.y * q.y - 2.0f * q.z * q.z,     2.0f * q.x * q.y - 2.0f * q.z * q.w,            2.0f * q.x * q.z + 2.0f * q.y * q.w, 0,
@@ -189,7 +207,7 @@ public class Quaternionf implements Serializable{
    public static Quaternionf LookAt(Vector3f sourcePoint, Vector3f destPoint)
     {
         Vector3f up = new Vector3f(0,1,0);
-        Vector3f forward = new Vector3f(0,0,1);
+        Vector3f forward = new Vector3f(0,0,-1);
         Vector3f forwardVector = destPoint.subtract(sourcePoint).normalize();
 
         float dot = forward.dot(forwardVector);//Vector3f.Dot(Vector3f.forward, forwardVector);
@@ -222,6 +240,7 @@ public class Quaternionf implements Serializable{
     public final Quaternionf setAxis(Vector3f axis){
         return new Quaternionf(w,axis.x,axis.y,axis.z);
     }
+
     public Matrix4f ToRotationMatrix()
     {
         Vector3f forward =  new Vector3f(2.0f * (x * z - w * y), 2.0f * (y * z + w * x), 1.0f - 2.0f * (x * x + y * y));
@@ -230,6 +249,7 @@ public class Quaternionf implements Serializable{
 
         return new Matrix4f().InitRotation(forward, up, right);
     }
+
     public static final Quaternionf slerp(final Quaternionf a, final Quaternionf b, float t) {
         if (!(t >= 0 && t <= 1)) {
             throw new ArithmeticException("t not in range");

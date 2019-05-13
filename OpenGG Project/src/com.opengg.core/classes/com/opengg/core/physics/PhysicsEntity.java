@@ -5,6 +5,7 @@
  */
 package com.opengg.core.physics;
 
+import com.opengg.core.math.FastMath;
 import com.opengg.core.math.Matrix3f;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
@@ -28,9 +29,9 @@ public class PhysicsEntity extends PhysicsObject{
     public String name = "default";
     public Vector3f centerOfMass = new Vector3f();
     public Matrix3f inertialMatrix = new Matrix3f(
-            2/3f,-1/4f,-1/4f,
-            -1/4f,2/3f,-1/4f,
-            -1/4f,-1/4f,2/3f);
+            1/3f,0,0,
+            0,1/3f,0,
+            0,0,1/3f);
     public Vector3f lowestContact = new Vector3f(0,-1,0);
     
     public boolean gravEffect = true;
@@ -96,7 +97,7 @@ public class PhysicsEntity extends PhysicsObject{
         var angmomentum = finalRotForce();
         angaccel = angmomentum.divide(mass);
         angvelocity = angvelocity.add(angaccel.multiply(delta));
-        setRotation(getRotationOffset().multiply(new Quaternionf(angvelocity.multiply(delta))).normalize());
+        setRotation(getRotationOffset().multiply(new Quaternionf(angvelocity.multiply(delta).multiply(FastMath.radiansToDegrees))).normalize());
     }
     
     private Vector3f computeForces(float delta) {

@@ -27,6 +27,7 @@ public class MouseController {
     private static List<MouseButtonListener> buttonlisteners = new ArrayList<>();
     private static List<MouseMoveListener> poslisteners = new ArrayList<>();
     private static List<MouseScrollListener> scrollListeners = new ArrayList<>();
+    private static List<MouseScrollChangeListener> scrollChangeListeners = new ArrayList<>();
     private static MousePositionHandler poshandler;
     private static MouseButtonHandler buttonhandler;
     private static MouseScrollHandler scrollHandler;
@@ -40,6 +41,10 @@ public class MouseController {
 
     public static void addScrollListener(MouseScrollListener handle){
         scrollListeners.add(handle);
+    }
+
+    public static void addScrollChangeListener(MouseScrollChangeListener handle){
+        scrollChangeListeners.add(handle);
     }
 
     public static void setPosHandler(MousePositionHandler handle){
@@ -72,6 +77,14 @@ public class MouseController {
         }
     }
 
+    public static void scrolledUp(){
+        scrollChangeListeners.forEach(MouseScrollChangeListener::onScrollUp);
+    }
+
+    public static void scrolledDown(){
+        scrollChangeListeners.forEach(MouseScrollChangeListener::onScrollDown);
+    }
+
     public static PhysicsRay getRay(){
         Vector2f mouse = getRaw();
         return getRay(mouse.x,mouse.y);
@@ -99,6 +112,7 @@ public class MouseController {
                 for(var scrolll:scrollListeners){
                     scrolll.onScroll(scrollHandler.getWheelX(),scrollHandler.getWheelY());
                 }
+
                 oldSX = scrollHandler.getWheelX();
                 oldSY = scrollHandler.getWheelY();
             }

@@ -1,6 +1,7 @@
 package com.opengg.core.render.shader.ggsl;
 
 import com.opengg.core.console.GGConsole;
+import com.opengg.core.engine.Resource;
 import com.opengg.core.exceptions.ShaderException;
 import com.opengg.core.io.FileStringLoader;
 import com.opengg.core.render.shader.ShaderProgram;
@@ -48,32 +49,15 @@ public class ShaderFile{
 
     private List<String> alltypes = new ArrayList<>();
 
-    public ShaderFile(String name, String source){
+    public ShaderFile(String name){
         try{
             this.name = name;
-            String data = FileStringLoader.loadStringSequence(URLDecoder.decode(source, StandardCharsets.UTF_8));
+            type = getType(name);
+
+            String data = FileStringLoader.loadStringSequence(URLDecoder.decode(Resource.getShaderPath(name), StandardCharsets.UTF_8));
 
             data = data.trim().replaceAll(" +", " ");
-            String ending = source.substring(source.lastIndexOf(".") + 1);
-            switch(ending){
-                case "vert":
-                    type = ShaderFile.ShaderFileType.VERT;
-                    break;
-                case "tesc":
-                    type = ShaderFile.ShaderFileType.TESSCONTROL;
-                    break;
-                case "tese":
-                    type = ShaderFile.ShaderFileType.TESSEVAL;
-                    break;
-                case "geom":
-                    type = ShaderFile.ShaderFileType.GEOM;
-                    break;
-                case "frag":
-                    type = ShaderFile.ShaderFileType.FRAG;
-                    break;
-                default:
-                    type = ShaderFile.ShaderFileType.UTIL;
-            }
+
 
             try{data = runPreprocessor(data);}catch(Exception e){ return;}
 
@@ -87,7 +71,7 @@ public class ShaderFile{
         }catch(IOException e){
             e.printStackTrace();
         }catch(Exception e){
-            GGConsole.error("Failed to load shader file " + name + " (from file " + source + "): " + e.getMessage());
+            GGConsole.error("Failed to load shader file " + name + " (from file " + name + "): " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -149,7 +133,6 @@ public class ShaderFile{
         for(var val : glvals){
             compiledsource = "#" + val + "\n" + compiledsource;
         }
-
     }
 
     public String process(Parser.Node node){
@@ -341,6 +324,10 @@ public class ShaderFile{
         return version;
     }
 
+    public Parser.AbstractSyntaxTree getTree() {
+        return tree;
+    }
+
     public List<String> getGlValues() {
         return glvals;
     }
@@ -361,6 +348,24 @@ public class ShaderFile{
 
     public String getCompiledSource(){
         return compiledsource;
+    }
+
+    public static ShaderFileType getType(String path){
+        String ending = path.substring(path.lastIndexOf(".") + 1);
+        switch(ending){
+            case "vert":
+                return ShaderFile.ShaderFileType.VERT;
+            case "tesc":
+                return ShaderFile.ShaderFileType.TESSCONTROL;
+            case "tese":
+                return ShaderFile.ShaderFileType.TESSEVAL;
+            case "geom":
+                return ShaderFile.ShaderFileType.GEOM;
+            case "frag":
+                return ShaderFile.ShaderFileType.FRAG;
+            default:
+                return ShaderFile.ShaderFileType.UTIL;
+        }
     }
 
     public enum ShaderFileType{

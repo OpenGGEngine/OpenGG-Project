@@ -6,12 +6,12 @@
 
 package com.opengg.core.physics;
 
+import com.opengg.core.math.Vector3f;
 import com.opengg.core.physics.collision.ColliderGroup;
 import com.opengg.core.physics.collision.CollisionManager;
-import com.opengg.core.physics.collision.Floor;
+import com.opengg.core.physics.collision.ConvexHull;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
-import com.opengg.core.util.StreamUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,7 +31,17 @@ public class PhysicsSystem {
 
     public PhysicsSystem(){
         floor.setForceTest(true);
-        floor.getColliders().add(new Floor());
+        floor.getColliders().add(new ConvexHull(List.of(
+                new Vector3f(-10000,constants.BASE-20,-10000),
+                new Vector3f(-10000,constants.BASE-20,10000),
+                new Vector3f(-10000,constants.BASE,-10000),
+                new Vector3f(-10000,constants.BASE,10000),
+                new Vector3f(10000,constants.BASE-20,-10000),
+                new Vector3f(10000,constants.BASE-20,10000),
+                new Vector3f(10000,constants.BASE,-10000),
+                new Vector3f(10000,constants.BASE,10000)
+        )));
+        //floor.setPosition(new Vector3f(0, constants.BASE ,0));
         colliders.add(floor);
     }
 
@@ -73,8 +83,7 @@ public class PhysicsSystem {
         for(PhysicsEntity entity : entities){
             entity.update(delta);
         }
-        CollisionManager.testForCollisions(this);
-        CollisionManager.processCollisions();
+        CollisionManager.runCollisionStep(this);
     }
 
     public void serialize(GGOutputStream out) throws IOException {
@@ -111,7 +120,6 @@ public class PhysicsSystem {
         for(int i = 0; i < count; i++){
             ColliderGroup collider = new ColliderGroup();
             collider.deserialize(in);
-
             addCollider(collider);
         }
 

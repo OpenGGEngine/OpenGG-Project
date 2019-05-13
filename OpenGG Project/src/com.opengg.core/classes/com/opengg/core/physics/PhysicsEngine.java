@@ -5,6 +5,8 @@
  */
 package com.opengg.core.physics;
 
+import com.opengg.core.physics.collision.CollisionManager;
+
 /**
  *
  * @author Javier
@@ -14,7 +16,7 @@ public class PhysicsEngine {
     static PhysicsSystem instance;
     
     public static void initialize(){
-        
+
     }
     
     public static void addEntity(PhysicsEntity entity){

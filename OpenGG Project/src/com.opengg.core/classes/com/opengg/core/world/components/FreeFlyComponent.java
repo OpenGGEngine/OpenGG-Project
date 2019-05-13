@@ -31,7 +31,7 @@ public class FreeFlyComponent extends ControlledComponent implements Actionable,
     private Vector3f vel = new Vector3f();
 
     private float rotspeed = 30;
-    private float speed = 5;
+    private float speed = 25;
     private final WorldObject head;
     
     public FreeFlyComponent(){

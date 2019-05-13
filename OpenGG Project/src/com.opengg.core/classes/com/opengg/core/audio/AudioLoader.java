@@ -39,7 +39,7 @@ public class AudioLoader {
             throw new IOException("Failed to find file at " + new File(path).getAbsolutePath());
         }
         ShortBuffer buffer = stb_vorbis_decode_filename(absolutePath, channels, samplerate);
-        Allocator.register(buffer, Allocator.AllocType.MEMORYUTIL);
+        Allocator.register(buffer, Allocator.AllocType.NATIVE_HEAP);
         
         SoundData data = new SoundData();
         data.channels = channels.get();

@@ -5,10 +5,13 @@
  */
 package com.opengg.core.model;
 
+import com.opengg.core.engine.OpenGG;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
+
+import java.awt.*;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
@@ -85,6 +88,7 @@ public class Material {
         this.hasemm = !this.emmFilename.equals("");
         this.aoFilename = readString(b);
         this.nsExponent = b.getFloat();
+        OpenGG.asyncExec(() -> this.Kd = Texture.ofColor(Color.GRAY));
     }
 
     public Material(String name, String texpath, GGInputStream in) throws IOException {

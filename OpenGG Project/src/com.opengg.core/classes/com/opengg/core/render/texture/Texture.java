@@ -249,9 +249,27 @@ public interface Texture{
         return Texture.create(Texture.arrayConfig(), datums);
     }
 
+
+    static TextureData dataOfColor(Color color, float transparency){
+        return dataOfColor((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue(), (byte) (transparency*255f));
+    }
+
+    static TextureData dataOfColor(byte r, byte g, byte b, byte a){
+        TextureData data = new TextureData(1,1,4, Allocator.alloc(4)
+                .put(r)
+                .put(g)
+                .put(b)
+                .put(a)
+                .flip(),
+                "internal");
+
+        return data;
+    }
+
     static Texture ofColor(Color color){
         return ofColor(color, color.getTransparency());
     }
+
 
     static Texture ofColor(Color color, float transparency){
         return ofColor((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue(), (byte) (transparency*255f));

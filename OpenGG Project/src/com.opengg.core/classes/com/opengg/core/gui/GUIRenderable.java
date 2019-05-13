@@ -32,7 +32,7 @@ public class GUIRenderable extends GUIItem{
     }
     
     public void render(){
-        if(enabled){
+        if(enabled && d != null){
             d.setMatrix(Matrix4f.translate(getPosition().x, getPosition().y, layer));
             d.render();
         }

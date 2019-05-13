@@ -12,22 +12,15 @@ import com.opengg.core.engine.GGDebugRenderer;
 import com.opengg.core.engine.GGGameConsole;
 import com.opengg.core.exceptions.RenderException;
 import com.opengg.core.gui.GUIController;
-import com.opengg.core.math.Matrix4f;
-import com.opengg.core.math.Quaternionf;
-import com.opengg.core.math.Vector3f;
 import com.opengg.core.model.ModelManager;
 import com.opengg.core.physics.PhysicsRenderer;
 import com.opengg.core.render.light.Light;
 import com.opengg.core.render.postprocess.PostProcessController;
-import com.opengg.core.render.shader.ShaderController;
-import com.opengg.core.render.shader.VertexArrayAttribute;
-import com.opengg.core.render.shader.VertexArrayFormat;
-import com.opengg.core.render.shader.VertexArrayObject;
+import com.opengg.core.render.shader.*;
 import com.opengg.core.render.texture.Framebuffer;
 import com.opengg.core.render.texture.TextureManager;
 import com.opengg.core.render.window.WindowController;
 import com.opengg.core.system.Allocator;
-import com.opengg.core.system.SystemInfo;
 import com.opengg.core.world.Camera;
 import com.opengg.core.world.Skybox;
 
@@ -38,8 +31,6 @@ import java.util.List;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL14.GL_FUNC_ADD;
 import static org.lwjgl.opengl.GL14.glBlendEquation;
-import static org.lwjgl.opengl.GL20.GL_MAX_VERTEX_ATTRIBS;
-import static org.lwjgl.opengl.GL20.GL_MAX_VERTEX_UNIFORM_COMPONENTS;
 import static org.lwjgl.opengl.GL30.GL_MAJOR_VERSION;
 import static org.lwjgl.opengl.GL30.GL_MINOR_VERSION;
 import static org.lwjgl.opengl.GL32.GL_TEXTURE_CUBE_MAP_SEAMLESS;
@@ -68,6 +59,7 @@ public class RenderEngine {
     public static VertexArrayFormat tangentAnimVAOFormat;
 
     private static boolean cull = true;
+    private static boolean bindSkyboxToCamera = false;
     private static int lightoffset;
     private static View camera;
 
@@ -99,7 +91,7 @@ public class RenderEngine {
 
         lightBuffer = GraphicsBuffer.allocate(GraphicsBuffer.BufferType.UNIFORM_BUFFER, 1600, GraphicsBuffer.UsageType.STREAM_DRAW);
         lightBuffer.bindBase(ShaderController.getUniqueUniformBufferLocation());
-        lightoffset = (Allocator.allocFloat(Light.BUFFERSIZE).capacity());// << 2;
+        lightoffset = Allocator.allocFloat(Light.BUFFERSIZE).capacity();
 
         ShaderController.setUniformBlockLocation(lightBuffer, "LightBuffer");
 
@@ -127,30 +119,39 @@ public class RenderEngine {
 
     public static void initializeForHeadless() {
         defaultVAOFormat = new VertexArrayFormat();
-        defaultVAOFormat.addAttribute(new VertexArrayAttribute("position", 3, 12, GL_FLOAT, 0, 0, false));
-        //defaultVAOFormat.addAttribute(new VertexArrayAttribute("color", 4, 12, GL_FLOAT, 3, 0, false));
-        defaultVAOFormat.addAttribute(new VertexArrayAttribute("normal", 3, 12, GL_FLOAT, 7, 0, false));
-        defaultVAOFormat.addAttribute(new VertexArrayAttribute("texcoord", 2, 12, GL_FLOAT, 10, 0, false));
+        defaultVAOFormat.addBinding(new VertexArrayBinding(0,12, 0, List.of(
+                new VertexArrayAttribute("position", 3, GL_FLOAT, 0),
+                new VertexArrayAttribute("normal", 3, GL_FLOAT, 7),
+                new VertexArrayAttribute("texcoord", 2, GL_FLOAT, 10)
+        )));
 
         tangentVAOFormat = new VertexArrayFormat();
-        tangentVAOFormat.addAttribute(new VertexArrayAttribute("position", 3, 11, GL_FLOAT, 0, 0, false));
-        tangentVAOFormat.addAttribute(new VertexArrayAttribute("normal", 3, 11, GL_FLOAT, 3, 0, false));
-        //tangentVAOFormat.addAttribute(new VertexArrayAttribute("tangent", 3, 11, GL_FLOAT, 6, 0, false));
-        tangentVAOFormat.addAttribute(new VertexArrayAttribute("texcoord", 2, 11, GL_FLOAT, 9, 0, false));
+        tangentVAOFormat.addBinding(new VertexArrayBinding(0,11, 0, List.of(
+                new VertexArrayAttribute("position", 3, GL_FLOAT, 0),
+                new VertexArrayAttribute("normal", 3, GL_FLOAT, 3),
+                new VertexArrayAttribute("tangent", 3, GL_FLOAT, 6),
+                new VertexArrayAttribute("texcoord", 2, GL_FLOAT, 9)
+        )));
 
         tangentAnimVAOFormat = new VertexArrayFormat();
-        tangentAnimVAOFormat.addAttribute(new VertexArrayAttribute("position", 3, 19, GL_FLOAT, 0, 0, false));
-        tangentAnimVAOFormat.addAttribute(new VertexArrayAttribute("normal", 3, 19, GL_FLOAT, 3, 0, false));
-        tangentAnimVAOFormat.addAttribute(new VertexArrayAttribute("tangents", 3, 19, GL_FLOAT, 6, 0, false));
-        tangentAnimVAOFormat.addAttribute(new VertexArrayAttribute("texcoord", 2, 19, GL_FLOAT, 9, 0, false));
-        tangentAnimVAOFormat.addAttribute(new VertexArrayAttribute("jointindex", 4, 19, GL_FLOAT, 11, 0, false));
-        tangentAnimVAOFormat.addAttribute(new VertexArrayAttribute("weights", 4, 19, GL_FLOAT, 15, 0, false));
+        tangentAnimVAOFormat.addBinding(new VertexArrayBinding(0,19, 0, List.of(
+                new VertexArrayAttribute("position", 3, GL_FLOAT, 0),
+                new VertexArrayAttribute("normal", 3, GL_FLOAT, 3),
+                new VertexArrayAttribute("tangent", 3, GL_FLOAT, 6),
+                new VertexArrayAttribute("texcoord", 2, GL_FLOAT, 9),
+                new VertexArrayAttribute("jointindex", 4, GL_FLOAT, 11),
+                new VertexArrayAttribute("weights", 4, GL_FLOAT, 15)
+        )));
 
         particleVAOFormat = new VertexArrayFormat();
-        particleVAOFormat.addAttribute(new VertexArrayAttribute("position", 3, 12, GL_FLOAT, 0, 0, false));
-        particleVAOFormat.addAttribute(new VertexArrayAttribute("offset", 3, 3, GL_FLOAT, 0, 1, true));
-        particleVAOFormat.addAttribute(new VertexArrayAttribute("normal", 3, 12, GL_FLOAT, 7, 0, false));
-        particleVAOFormat.addAttribute(new VertexArrayAttribute("texcoord", 2, 12, GL_FLOAT, 10, 0, false));
+        particleVAOFormat.addBinding(new VertexArrayBinding(0,12, 0, List.of(
+                new VertexArrayAttribute("position", 3, GL_FLOAT, 0),
+                new VertexArrayAttribute("normal", 3, GL_FLOAT, 7),
+                new VertexArrayAttribute("texcoord", 2, GL_FLOAT, 10)
+        )));
+        particleVAOFormat.addBinding(new VertexArrayBinding(1,3, 1, List.of(
+                new VertexArrayAttribute("offset", 3, GL_FLOAT, 0)
+        )));
 
         TextureManager.initialize();
         ModelManager.initialize();
@@ -167,6 +168,7 @@ public class RenderEngine {
                 ShaderController.useConfiguration("sky");
                 currentEnvironment.getSkybox().getCubemap().use(2);
                 currentEnvironment.getSkybox().getDrawable().render();
+
             }
         });
 
@@ -474,6 +476,10 @@ public class RenderEngine {
     
     public static ProjectionData getData(){
         return projdata;
+    }
+
+    public static void setBindSkyboxToCamera(boolean bindSkyboxToCamera) {
+        RenderEngine.bindSkyboxToCamera = bindSkyboxToCamera;
     }
 
     public static void enableDefaultVP(){

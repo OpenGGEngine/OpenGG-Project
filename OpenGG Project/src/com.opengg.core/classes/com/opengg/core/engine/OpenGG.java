@@ -46,10 +46,10 @@ import java.util.List;
 public final class OpenGG{
     private static GGApplication app;
     private static Instant startTime;
-    private static boolean head = false;
     private static boolean force = false;
     private static boolean verbose = false;
     private static boolean test = false;
+    private static boolean warnOnMissedTarget = false;
     private static Time time;
     private static Thread mainthread;
     private static float targetUpdate = 0f;
@@ -61,28 +61,23 @@ public final class OpenGG{
      * Initializes the OpenGG Engine. This gives full runtime control of the thread to OpenGG,
      * so no code will run past this call until the engine closes
      * @param app Instance of the OpenGG-driven application
-     * @param info Window information
+     * @param options Initialization information
      */
-    public static void initialize(GGApplication app, WindowInfo info){
+    public static void initialize(GGApplication app, InitializationOptions options){
         try{
-            if(info == null){
-                initializeLocal(app, null, false);
+            if(options.isHeadless()){
+                initializeLocal(app, options, false);
             }else{
-                initializeLocal(app, info, true);
+                initializeLocal(app, options, true);
             }
         }catch(Exception e){
             GGConsole.error("Uncaught exception: " + e.getMessage());
             e.printStackTrace();
             try {Thread.sleep(10);} catch (InterruptedException ex) {}
-            closeEngine();
             writeErrorLog();
+            closeEngine();
             System.exit(0);
         }
-
-    }
-
-    public static void initializeHeadless(GGApplication app){
-        initialize(app, null);
     }
 
     private static void initializeClient(WindowInfo windowinfo){
@@ -90,7 +85,8 @@ public final class OpenGG{
         GGConsole.log("Window generation successful, using OpenGL context version " + RenderEngine.getGLVersion());
 
         SystemInfo.queryOpenGLInfo();
-        GGConsole.log("OpenGL instance info acquired");
+        GGConsole.log("OpenGL instantiation confirmed");
+        GGConsole.log("Running renderer on " + SystemInfo.get("Graphics Renderer") + " provided by " + SystemInfo.get("Graphics Vendor"));
 
         RenderEngine.initialize();
         GGGameConsole.initialize();
@@ -108,19 +104,21 @@ public final class OpenGG{
         GGConsole.log("Render Engine headless initialization complete");
     }
 
-    private static void initializeLocal(GGApplication ggapp, WindowInfo info, boolean client){
+    private static void initializeLocal(GGApplication ggapp, InitializationOptions options, boolean client){
         time = new Time();
         startTime = Instant.now();
         mainthread = Thread.currentThread();
-        head = client;
         app = ggapp;
 
         GGInfo.setServer(!client);
+        GGInfo.setApplicationName(options.getApplicationName());
+
         ThreadManager.initialize();
         Executor.initialize();
         GGConsole.initialize();
         GGConsole.addListener(new OpenGGCommandExtender());
         GGConsole.log("OpenGG initializing, isRunning on " + System.getProperty("os.name") + ", " + System.getProperty("os.arch"));
+        GGConsole.log("Initializing application " + options.getApplicationName() + " with app ID " + options.getApplicationId());
 
         Resource.initialize();
         GGConsole.log("Resource system initialized");
@@ -144,9 +142,11 @@ public final class OpenGG{
         GGConsole.log("Physics Engine initialized");
 
         if(client)
-            initializeClient(info);
+            initializeClient(options.getWindowInfo());
         else
             initializeServer();
+
+        SystemInfo.queryEngineInfo();
 
         GGConsole.log("Engine initialization complete, application setup beginning");
         app.setup();
@@ -193,13 +193,15 @@ public final class OpenGG{
         if(delta < targetUpdate) {
             try {
                 Thread.sleep((long) ((targetUpdate-delta)*1000));
+                delta = targetUpdate;
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+        }else if(delta > targetUpdate && targetUpdate != 0 && warnOnMissedTarget){
+            GGConsole.warning("Last update cycle missed the target update! (" + delta + " sec instead of " + targetUpdate + " sec)");
         }
 
         delta = overrideUpdate > 0f ? overrideUpdate : delta;
-
         Allocator.update();
         PerformanceManager.update(delta);
         Executor.getExecutor().update(delta);
@@ -338,8 +340,8 @@ public final class OpenGG{
     }
 
     private static void writeErrorLog(){
-        if(test) return;
         String error = SystemInfo.getInfo();
+        GGConsole.log(error);
     }
 
     /**
@@ -386,11 +388,42 @@ public final class OpenGG{
        Executor.sync(e);
     }
 
+    /**
+     * Sets the target update time, in seconds, for the engine <br>
+     *     If this is set to a nonzero value, the engine will delay each tick until the
+     *     target update is met (For example, if targetUpdate is 0.1 sec but the last tick took 0.03 sec, it will
+     *     add a real time delay of 0.07 sec) <br>
+     *     Note, this does not guarantee that a tick will take the given time, as it cannot do anything about a tick
+     *     that takes longer than the target.
+     *
+     * @param time Target update time in seconds
+     */
     public static void setTargetUpdateTime(float time) {
         OpenGG.targetUpdate = time;
     }
 
-    public static void setOverrideWorldUpdateTime(float time) {
+    /**
+     * Sets if the engine should warn to the console when the target update time was missed during the last cycle<br>
+     *     This only applies if the real update time was above the target.
+     * @param warn
+     */
+    public static void setWarnOnMissedTarget(boolean warn) {
+        OpenGG.warnOnMissedTarget = warn;
+    }
+
+    /**
+     * Sets the override delta update time for the engine, or disable override if its 0 <br>
+     *     This override is used in place of the real time delta, meaning that for every tick, all subsystems are fed
+     *     this value regardless of how much time actually passed.
+     *     <br>
+     *     Note, this delta time will be applied to all elements that use the engine's internal delta time, including
+     *     internal performance counters and the executor system. Additionally, as this does not actually slow
+     *     down or speed up the real time simulation, it can conflict with engine or application components that require
+     *     real time in some way, most importantly the networking system. Therefore, great care should be taken when
+     *     enabling this feature on networked application.
+     * @param time
+     */
+    public static void setOverrideUpdateTIme(float time) {
         OpenGG.overrideUpdate = time;
     }
 }

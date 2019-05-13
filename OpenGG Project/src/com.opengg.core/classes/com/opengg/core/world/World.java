@@ -167,17 +167,27 @@ public class World extends Component implements Resource {
         return  string;
     }
 
+    /**
+     * Enables this world for use by the World Engine
+     */
     public void use(){
         PhysicsEngine.setInstance(physics);
         RenderEngine.setCurrentEnvironment(environment);
         this.localOnWorldEnable();
     }
 
+    /**
+     * Safely deactivates the world and keeps its reference for further use
+     */
     public void deactivate(){
         WorldStateManager.keepWorld(this);
         this.localOnWorldDisable();
     }
 
+    /**
+     * Gets the rendering environment used by all rendering related objects
+     * @return
+     */
     public RenderEnvironment getRenderEnvironment(){
         return environment;
     }

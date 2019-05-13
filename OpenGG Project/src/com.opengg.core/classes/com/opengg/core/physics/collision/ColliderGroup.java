@@ -13,13 +13,12 @@ import com.opengg.core.physics.PhysicsObject;
 import com.opengg.core.util.ClassUtil;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
-import com.opengg.core.world.components.physics.PhysicsComponent;
 
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.opengg.core.physics.collision.ContactManifold.averageContactManifolds;
+import static com.opengg.core.physics.collision.ContactManifold.combineManifolds;
 
 /**
  *
@@ -73,12 +72,11 @@ public class ColliderGroup extends PhysicsObject{
         return aabb;
     }
 
-
     public void setForceTest(boolean forceTest) {
         this.forceTest = forceTest;
     }
 
-    public Optional<Collision> testForCollision(ColliderGroup other) {
+    public Optional<Collision> checkForCollision(ColliderGroup other) {
         this.aabb.recalculate();
         other.aabb.recalculate();
         if (!aabb.isColliding(other.aabb) && !(this.forceTest || other.forceTest))
@@ -90,11 +88,13 @@ public class ColliderGroup extends PhysicsObject{
                 .flatMap(s -> other.getColliders().stream()
                             .map(s2 -> new UnorderedTuple<>(s,s2)))
                 .distinct()
-                .flatMap(t -> t.x.collide(t.y).stream())
+                .map(t -> t.x.collide(t.y))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
-        return Optional.ofNullable(!collisions.isEmpty() ? new Collision(this, other, averageContactManifolds(collisions)) : null);
+        var finalManifold = Optional.ofNullable(!collisions.isEmpty() ? new Collision(this, other, combineManifolds(collisions)) : null);
+
+        return finalManifold;
     }
 
     @Override

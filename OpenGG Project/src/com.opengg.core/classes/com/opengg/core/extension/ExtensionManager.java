@@ -15,35 +15,35 @@ import java.util.List;
  * @author Javier
  */
 public class ExtensionManager {
-    static List<Tuple<Extension, Boolean>> extensions = new ArrayList<>();
+    static List<Extension> extensions = new ArrayList<>();
     
     public static void addExtension(Extension ext){
-        extensions.add(new Tuple(ext,false));
+        extensions.add(ext);
     }
     
     public static void loadStep(int requirements){
-        for(Tuple<Extension, Boolean> pair : extensions){
-            if(!pair.y){
-                if(pair.x.requirement == requirements){
-                    GGConsole.log("Loading extension " + pair.x.extname + "...");
-                    pair.x.loadExtension();
-                    GGConsole.log("Loaded " + pair.x.extname + " into OpenGG successfully");
-                    pair.y = true;
+        for(var ext : extensions){
+            if(!ext.initialized){
+                if(ext.requirement == requirements){
+                    GGConsole.log("Loading extension " + ext.extname + "...");
+                    ext.loadExtension();
+                    GGConsole.log("Loaded " + ext.extname + " into OpenGG successfully");
+                    ext.initialized = true;
                 }
             }
         }
     }
     
     public static void update(float delta){
-        for(Tuple<Extension, Boolean> pair : extensions){
-            if(pair.y)
-                pair.x.update(delta);
+        for(var ext : extensions){
+            if(ext.initialized)
+                ext.update(delta);
         }
     }
     public static void render(){
-        for(Tuple<Extension, Boolean> pair : extensions){
-            if(pair.y)
-                pair.x.render();
+        for(var ext : extensions){
+            if(ext.initialized)
+                ext.render();
         }
     }
 

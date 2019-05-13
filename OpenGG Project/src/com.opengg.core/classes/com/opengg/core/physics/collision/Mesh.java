@@ -57,11 +57,11 @@ public class Mesh extends Collider{
     }
 
     @Override
-    public List<ContactManifold> collide(Collider c) {
+    public ContactManifold collide(Collider c) {
         if(c instanceof Mesh)
             return CollisionSolver.MeshMesh(this, (Mesh)c);
         else if(c instanceof ConvexHull){
-            return CollisionSolver.HullMesh((ConvexHull)c, this).stream().map(ContactManifold::reverse).collect(Collectors.toList());
+            return CollisionSolver.HullMesh((ConvexHull)c, this).reverse();
         }
         else if(c == null)
             return CollisionSolver.MeshGround(this);

@@ -7,55 +7,58 @@
 package com.opengg.core.render.shader;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 /**
  *
  * @author Javier
  */
 public class VertexArrayFormat {
-    List<VertexArrayAttribute> attribs = new ArrayList<>();
+    List<VertexArrayBinding> bindingSites = new ArrayList<>();
     
     public VertexArrayFormat(){}
     
-    public VertexArrayFormat addAttribute(VertexArrayAttribute attrib){
-        attribs.add(attrib);
+    public VertexArrayFormat addBinding(VertexArrayBinding attrib){
+        bindingSites.add(attrib);
         sort();
         return this;
     }
     
     private void sort(){
-        attribs.sort((c,c2)->{
-            return Integer.compare(c.arrayindex, c2.arrayindex);
-        });
+        bindingSites.sort(Comparator.comparingInt(VertexArrayBinding::getBindingIndex));
     }
     
-    public List<VertexArrayAttribute> getAttributes(){
-        return List.copyOf(attribs);
+    public List<VertexArrayBinding> getBindings(){
+        return List.copyOf(bindingSites);
     }
     
     public int getVertexLength(){
-        return attribs.stream()
-                .filter(attrib -> attrib.arrayindex == 0)
-                .mapToInt(attrib -> attrib.size)
+        return bindingSites.stream()
+                .filter(attrib -> attrib.getBindingIndex() == 0)
+                .mapToInt(VertexArrayBinding::getVertexSize)
                 .sum();
     }
 
     @Override
     public String toString(){
-        return attribs.toString();
+        return bindingSites.toString();
     }
 
     @Override
-    public boolean equals(Object o){
-        if(o == this)
-            return true;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
-        if(!(o instanceof VertexArrayFormat))
-            return false;
+        VertexArrayFormat that = (VertexArrayFormat) o;
 
-        VertexArrayFormat form = (VertexArrayFormat)o;
+        return Objects.equals(bindingSites, that.bindingSites);
 
-        return form.attribs.size() == this.attribs.size();
+    }
+
+    @Override
+    public int hashCode() {
+        return bindingSites != null ? bindingSites.hashCode() : 0;
     }
 }

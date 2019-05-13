@@ -49,16 +49,16 @@ public class CapsuleCollider extends Collider{
     }
     
     @Override
-    public List<ContactManifold> collide(Collider c) {
+    public ContactManifold collide(Collider c) {
         if(c instanceof SphereCollider){
-            List<ContactManifold> cm = CollisionSolver.SphereCapsule((SphereCollider)c, this).stream().map(ContactManifold::reverse).collect(Collectors.toList());
+            return CollisionSolver.SphereCapsule((SphereCollider)c, this).reverse();
 
         }else if(c instanceof CapsuleCollider)
             return CollisionSolver.CapsuleCapsule(this, (CapsuleCollider)c);
         else if(c == null)
             return CollisionSolver.CapsuleGround(this);
         
-        return new ArrayList<>();
+        return null;
     }
     
     @Override

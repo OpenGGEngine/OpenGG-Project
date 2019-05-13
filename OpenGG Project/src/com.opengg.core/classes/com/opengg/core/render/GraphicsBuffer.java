@@ -104,6 +104,13 @@ public interface GraphicsBuffer{
     void bindBase(int base);
 
     /**
+     * Binds this buffer to the given attribute binding location
+     * @param attrib
+     * @param size
+     */
+    void bindToAttribute(int attrib, int size);
+
+    /**
      * Gets the base index this buffer is bound to
      * @return
      */

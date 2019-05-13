@@ -10,30 +10,32 @@ import com.opengg.core.console.GGConsole;
 import com.opengg.core.GGInfo;
 import java.io.IOException;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL20.GL_SHADING_LANGUAGE_VERSION;
 
 /**
  *
  * @author Javier
  */
 public class SystemInfo {
-    static LinkedHashMap<String, String> glinfo = new LinkedHashMap<>();
-    static LinkedHashMap<String, String> javainfo = new LinkedHashMap<>();
-    static LinkedHashMap<String, String> sysinfo = new LinkedHashMap<>();
-    static LinkedHashMap<String, String> engineinfo = new LinkedHashMap<>();
+    static Map<String, String> glinfo = new LinkedHashMap<>();
+    static Map<String, String> javainfo = new LinkedHashMap<>();
+    static Map<String, String> sysinfo = new LinkedHashMap<>();
+    static Map<String, String> engineinfo = new LinkedHashMap<>();
     
     private static boolean dxdiag = false;
     
     public static void querySystemInfo(){
         javainfo.put("Java Version", "" +System.getProperty("java.version"));
         javainfo.put("JVM Name", "" +System.getProperty("java.vm.name"));
-        javainfo.put("JVM Vendor", ""+System.getProperty("java.vm.vendor"));
+        javainfo.put("JVM Vendor", "" +System.getProperty("java.vm.vendor"));
         javainfo.put("Maximum Runtime Memory", ""+Runtime.getRuntime().maxMemory());
         javainfo.put("Used Runtime Memory",  ""+Runtime.getRuntime().totalMemory());
         javainfo.put("Free Runtime Memory",  ""+Runtime.getRuntime().freeMemory());
         javainfo.put("JVM CPU Availability",  ""+Runtime.getRuntime().availableProcessors());
-        
+
         sysinfo.put("Operating System", ""+System.getProperty("os.name"));
         sysinfo.put("OS Architecture", ""+System.getProperty("os.arch"));
         sysinfo.put("Processor", ""+System.getenv("PROCESSOR_IDENTIFIER"));
@@ -70,51 +72,41 @@ public class SystemInfo {
             }
         }
          */
-        
+
     }
-    
+
     public static void queryOpenGLInfo(){
         String glVersion = GGInfo.getGlVersion();
-        glinfo.put("GL Version", glVersion);
+        glinfo.put("Window GL Version", glVersion);
+        glinfo.put("Internal GL Version", glGetString(GL_VERSION));
+        glinfo.put("GLSL Version", glGetString(GL_SHADING_LANGUAGE_VERSION));
         glinfo.put("GL Initialization", !(glVersion == null || glVersion.isEmpty()) ? "Initialized successfully" : "Initialization failed");
 
         sysinfo.put("Graphics Renderer", glGetString(GL_RENDERER));
         sysinfo.put("Graphics Vendor", glGetString(GL_VENDOR));
     }
-    
-    public static void queryEngineInfo(){
-        
-    }
 
-    public static LinkedHashMap<String, String> getGlInfo() {
-        return glinfo;
-    }
-
-    public static LinkedHashMap<String, String> getJavaInfo() {
-        return javainfo;
-    }
-
-    public static LinkedHashMap<String, String> getSysInfo() {
-        return sysinfo;
-    }
-
-    public static LinkedHashMap<String, String> getEngineInfo() {
-        return engineinfo;
+    public static String get(String value){
+        if(glinfo.containsKey(value)) return glinfo.get(value);
+        if(sysinfo.containsKey(value)) return sysinfo.get(value);
+        if(engineinfo.containsKey(value)) return engineinfo.get(value);
+        if(javainfo.containsKey(value)) return javainfo.get(value);
+        return "";
     }
 
     public static String getInfo(){
         String data = "OpenGG Engine Version: " + GGInfo.getVersion();
-        
+
         data += "\n\nSystem Information";
         for(String line : sysinfo.keySet()){
             data += "\n" + line + ": " + sysinfo.get(line);
         }
-        
+
         data += "\n\nJava Information";
         for(String line : javainfo.keySet()){
             data += "\n" + line + ": " + javainfo.get(line);
         }
-        
+
         data += "\n\nEngine Information";
         for(String line : engineinfo.keySet()){
             data += "\n" + line + ": " + engineinfo.get(line);
@@ -127,21 +119,15 @@ public class SystemInfo {
         data += "\n";
         return data;
     }
-    
-    public static void genDxDiag(){
-        String filePath = "dxdiag.txt";
-        ProcessBuilder pb = new ProcessBuilder("cmd.exe","/c","dxdiag","/t",filePath);
-        Process p;
-        try {
-            p = pb.start();
-            p.waitFor();
-            dxdiag = true;
-        } catch (IOException | InterruptedException ex) {
-            GGConsole.warning("DxDiag does not exist or cannot be accessed, Java information may be inaccurate");
-        }
-        
-    }
 
     private SystemInfo() {
+    }
+
+    public static void queryEngineInfo() {
+        engineinfo.put("Headless mode", String.valueOf(GGInfo.isServer()));
+        engineinfo.put("Application Name", GGInfo.getApplicationName());
+        engineinfo.put("Application Path", GGInfo.getApplicationPath());
+        engineinfo.put("Default Allocator", GGInfo.getMemoryAllocator());
+        engineinfo.put("Aggressive Stack Management", String.valueOf(GGInfo.shouldAgressivelyManageMemory()));
     }
 }

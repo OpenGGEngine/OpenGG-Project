@@ -147,6 +147,9 @@ public class Executor {
         }
     }
 
+    /**
+     * Class used to wait for events passed to the Executor system
+     */
     public static class Sleeper {
         private final Object lock = new Object();
 
@@ -159,6 +162,9 @@ public class Executor {
             }
         }
 
+        /**
+         * Sleeps the current thread until the command has been executed
+         */
         public void waitUntilComplete() {
             synchronized (lock) {
                 try {

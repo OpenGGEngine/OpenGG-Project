@@ -70,7 +70,9 @@ public class Mesh {
     }
 
     public Drawable getDrawable(){
-        DrawnObject temp =new DrawnObject(genAnim?RenderEngine.tangentAnimVAOFormat:RenderEngine.tangentVAOFormat, this.getIndexBuffer(), this.getVbo());
+        DrawnObject temp = new DrawnObject(genAnim ?
+                RenderEngine.tangentAnimVAOFormat : RenderEngine.tangentVAOFormat,
+                this.getIndexBuffer(), this.getVbo());
         return new MaterialDrawnObject(temp, this.getMaterial());
     }
 

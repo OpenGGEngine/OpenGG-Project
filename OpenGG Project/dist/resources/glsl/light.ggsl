@@ -47,8 +47,8 @@ float getShadowCoverage(Light light){
         vec3 fragToLight = pos - light.lightpos.xyz;
         float currentDepth = length(fragToLight)/light.lightdistance;
 
-        float shadow = 0.0;
-        float bias   = 0.0005;
+        float shadow = 0.0f;
+        float bias   = 0.0005f;
         int samples  = 20;
 
         float diskRadius = (1.0 + (viewDistance / light.lightdistance)) / 25.0;
@@ -59,25 +59,18 @@ float getShadowCoverage(Light light){
                 shadow += 1.0;
         }
         shadow = shadow / float(samples);
-
-        /*vec3 fragToLight = pos - light.lightpos.xyz;
-        float closestDepth = texture(cube2, normalize(fragToLight)).r;
-        float currentDepth = length(fragToLight)/light.lightdistance;
-        float bias = 0.005;
-        float shadow = currentDepth -  bias > closestDepth ? 0.0 : 1.0f;
-*/
         return shadow;
     }else{
         vec4 lightspacePos = light.perspective*(light.view * vec4(pos, 1.0f));
-        vec3 projCoords = lightspacePos.xyz;
+        vec3 projCoords = lightspacePos.xyz/lightspacePos.w;
         projCoords = projCoords * 0.5f + 0.5f;
         float closestDepth = texture(shadowmap, projCoords.xy).r;
 
         vec3 lightDir = normalize(light.lightpos.xyz - pos.xyz);
-        float bias = max(0.05 * (1.0 - dot(n, lightDir)), 0.005);
+        float bias = max(0.05 * (1.0 - dot(n, lightDir)), 0.005f);
 
-        float shadow = (projCoords.z -0.5f) - bias > closestDepth ? 0.0f : 1.0f;
-        return shadow;
+        float shadow = projCoords.z - bias > closestDepth ? 0.0f : 1.0f;
+        return projCoords.z;
     }
 }
 

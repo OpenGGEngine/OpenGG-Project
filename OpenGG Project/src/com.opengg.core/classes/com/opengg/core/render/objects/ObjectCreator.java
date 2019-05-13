@@ -12,7 +12,6 @@ import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.drawn.Drawable;
 import com.opengg.core.render.drawn.DrawnObject;
 import com.opengg.core.system.Allocator;
-import org.lwjgl.system.MemoryStack;
 
 import java.nio.Buffer;
 import java.nio.FloatBuffer;
@@ -38,7 +37,7 @@ public class ObjectCreator {
     }
     
     public static Drawable createSquare(Vector2f c1, Vector2f c2, float z){
-        var b = createSquareBuffers(c1, c2, z, Allocator.AllocType.MEM_STACK);
+        var b = createSquareBuffers(c1, c2, z, Allocator.AllocType.NATIVE_STACK);
         var obj =  new DrawnObject(b.y, b.x);
         Allocator.popStack();
         Allocator.popStack();
@@ -46,7 +45,7 @@ public class ObjectCreator {
     }
     
     public static Tuple<FloatBuffer, IntBuffer> createSquareBuffers(Vector2f c1, Vector2f c2, float z){
-        return createSquareBuffers(c1,c2,z, Allocator.AllocType.MEMORYUTIL);
+        return createSquareBuffers(c1,c2,z, Allocator.AllocType.NATIVE_HEAP);
     }
 
     public static Tuple<FloatBuffer, IntBuffer> createSquareBuffers(Vector2f c1, Vector2f c2, float z, Allocator.AllocType type){

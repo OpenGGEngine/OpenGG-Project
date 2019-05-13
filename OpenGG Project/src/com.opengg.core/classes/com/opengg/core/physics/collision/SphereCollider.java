@@ -10,7 +10,6 @@ import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
@@ -33,14 +32,14 @@ public class SphereCollider extends Collider{
   
     
     @Override
-    public List<ContactManifold> collide(Collider c) {
+    public ContactManifold collide(Collider c) {
         if(c instanceof SphereCollider)
             return CollisionSolver.SphereSphere(this, (SphereCollider)c);
         if(c instanceof CapsuleCollider)
             return CollisionSolver.SphereCapsule(this, (CapsuleCollider)c);
         else if(c == null)
             return CollisionSolver.SphereGround(this);
-        return new ArrayList<>();
+        return null;
     }
     
     @Override

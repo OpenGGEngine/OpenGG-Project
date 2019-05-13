@@ -24,6 +24,7 @@ public class TextureManager {
     public static void initialize(){
         try {
             defaultdata = TextureLoader.loadTexture(Resource.getTexturePath("default.png"));
+            GGConsole.log("Loaded default texture at " + defaultdata.source);
         } catch (IOException ex) {
             GGConsole.error("Failed to load the default texture, nonexistent textures may crash the program!");
         }

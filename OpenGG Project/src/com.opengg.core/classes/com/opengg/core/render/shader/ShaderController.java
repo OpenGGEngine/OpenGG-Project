@@ -6,8 +6,6 @@
 
 package com.opengg.core.render.shader;
 
-import com.opengg.core.Configuration;
-import com.opengg.core.GGInfo;
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.engine.Resource;
 import com.opengg.core.exceptions.ShaderException;
@@ -17,50 +15,54 @@ import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.model.Material;
 import com.opengg.core.render.GraphicsBuffer;
+import com.opengg.core.render.shader.ggsl.Parser;
 import com.opengg.core.render.shader.ggsl.ShaderFile;
+import com.opengg.core.system.Allocator;
+import com.opengg.core.system.GGBufferUtils;
+import com.opengg.core.system.SystemInfo;
+import com.opengg.core.util.GGInputStream;
+import com.opengg.core.util.GGOutputStream;
+import com.opengg.core.util.HashUtil;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.StandardOpenOption;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.opengg.core.render.shader.ShaderProgram.ShaderType;
+import static java.util.function.Predicate.not;
 
 /**
  * Controller/manager for GLSL shaders
  * @author Javier
  */
 public class ShaderController {
+    private static int attributeCounter = 0;
     private static final Matrix4f model = new Matrix4f();
     private static final Map<String, ShaderProgram> programs = new HashMap<>();
     private static final Map<String, ShaderPipeline> pipelines = new HashMap<>();
-    private static final Map<String, String> rnames = new HashMap<>();
+    private static final Map<String, String> realConfigurationNames = new HashMap<>();
     private static final Map<String, ShaderFile> shaderfiles = new HashMap<>();
+    private static final Map<String, Integer> attributeLocations = new HashMap<>();
     private static final List<ShaderFileHolder> completedfiles = new ArrayList<>();
     private static final List<String> searchedUniforms = new ArrayList<>();
-    private static final List<String> searchedAttribs = new ArrayList<>();
     private static final Map<String, Object> currentUniforms = new HashMap<>();
     private static String currentshader = "";
     private static Matrix4f view = new Matrix4f(), proj = new Matrix4f();
     private static String currentvert, currenttesc, currenttese, currentgeom, currentfrag;
     private static int currentBind = 0;
+    private static boolean loadFromCache = true;
 
     public static void testInitialize(){
         GGConsole.initialize();
         var t = System.nanoTime();
-        var ww = new ShaderFile("object", Resource.getShaderPath("light.ggsl"));
-        ww.compile();
-        System.out.println(ww.getCompiledSource());
+        //var ww = new ShaderFile("object", Resource.getShaderPath("light.ggsl"));
+
         //loadShaderFiles();
         //linkShaders();
 
-        System.out.println((System.nanoTime()-t)/1_000_000f);
+        var time = (System.nanoTime()-t)/1_000_000f;
         //
     }
 
@@ -87,6 +89,7 @@ public class ShaderController {
         long time = System.currentTimeMillis();
 
         GGConsole.log("Loading shaders...");
+        loadCachedShaders();
         loadShaderFiles();
         linkShaders();
         createGLShaderFromFile();
@@ -396,25 +399,11 @@ public class ShaderController {
     }
     
     /**
-     * Gets the location of the given attribute in all vertex shaders and saves it per shader
-     * @param loc Attribute to search for, must be the same name as the one in GLSL
-     */
-    public static void findAttribLocation(String loc){
-        for(String s : searchedAttribs)
-            if(s.equals(loc))
-                return;
-
-        programs.values().stream().filter((p) -> (p.getType() == ShaderProgram.ShaderType.VERTEX)).forEach((p) -> p.findAttributeLocation(loc));
-        
-        searchedAttribs.add(loc);
-    }
-    
-    /**
      * Enables the given vertex attribute in the current vertex shader
      * @param loc Attribute to enable
      */
     public static void enableVertexAttribute(String loc){
-        programs.get(currentvert).enableVertexAttribute(loc);
+        programs.values().stream().filter((p) -> (p.getType() == ShaderProgram.ShaderType.VERTEX)).forEach((p) -> p.enableVertexAttribute(attributeLocations.get(loc)));
     }
     
     /**
@@ -422,29 +411,11 @@ public class ShaderController {
      * @param loc Attribute to disable
      */
     public static void disableVertexAttribute(String loc){
-        programs.get(currentvert).enableVertexAttribute(loc);
-    }
-    
-    /**
-     * Sets how the attribute should get values from the currently bound OpenGL buffer for rendering
-     * @param loc Name of attribute
-     * @param size Size of attribute value in bytes (ex. 4 for {@code int} )
-     * @param type Type of value in the buffer, either GL_INT, GL_FLOAT, or GL_BYTE
-     * @param tot Total size of vertex in the given buffer (ex. A buffer containing 3 {@code ints} per vertex would have size 12)
-     * @param start Starting point of attribute per vertex 
-     * (ex. The third attribute in a buffer containing 3 {@code ints} would have starting point 8)
-     */
-    public static void pointVertexAttribute(String loc, int size, int type, int tot, int start){
-        programs.get(currentvert).pointVertexAttribute(loc, size, type, tot, start);
+        programs.values().stream().filter((p) -> (p.getType() == ShaderProgram.ShaderType.VERTEX)).forEach((p) -> p.disableVertexAttribute(attributeLocations.get(loc)));
     }
 
-    /**
-     * Sets the amount of times the object should be rendered glDrawElementsInstanced before the attribute goes to the next value, 0 for per vertex
-     * @param loc Attribute to be instanced
-     * @param idk Renders per value change, 0 for normal rendering
-     */
-    public static void setVertexAttribDivisor(String loc, int idk){
-        programs.get(currentvert).setVertexAttribDivisor(loc, idk);
+    public static int getVertexAttributeIndex(String loc){
+        return attributeLocations.get(loc);
     }
     
     /**
@@ -704,7 +675,7 @@ public class ShaderController {
         ShaderProgram fragprogram = programs.get(frag);
         
         String id = getUniqueConfigID(vertprogram, tescprogram, teseprogram, geomprogram, fragprogram);
-        rnames.put(name, id);
+        realConfigurationNames.put(name, id);
     }
     
     /**
@@ -723,7 +694,7 @@ public class ShaderController {
      * @param name Name of configuration
      */
     public static void useConfiguration(String name){
-        String id = rnames.get(name);
+        String id = realConfigurationNames.get(name);
         ShaderPipeline pipeline = pipelines.get(id);
 
         if(pipeline == null){
@@ -808,19 +779,52 @@ public class ShaderController {
     }
 
     private static void loadShaderFiles(){
-        var dir = new File(GGInfo.getApplicationPath() + "\\resources\\glsl\\");
+        var dir = new File(Resource.getAbsoluteFromLocal("\\resources\\glsl\\"));
         var allfiles = dir.list();
 
-        shaderfiles.putAll(Arrays.stream(allfiles)
-                .parallel()
+        var filesToProcess = Arrays.stream(allfiles)
+                .filter(not(programs::containsKey))
+                .filter(not("error.glsl"::equals))
+                .collect(Collectors.toList());
+
+        if(filesToProcess.stream().allMatch(f -> ShaderFile.getType(f) == ShaderFile.ShaderFileType.UTIL)){
+            GGConsole.log("No new/modified shaders were found, using cache");
+            return;
+        }
+
+        shaderfiles.putAll(filesToProcess
+                .stream()
                 .unordered()
-                .filter(file -> !file.equals("error.glsl"))
-                .map(file -> new ShaderFile(file, GGInfo.getApplicationPath() + "\\resources\\glsl\\" + file))
+                .parallel()
+                .map(ShaderFile::new)
                 .filter(ShaderFile::isParsed)
+                .collect(Collectors.toList())
+                .stream()
+                .peek(ShaderController::processParsedShader)
                 .peek(ShaderFile::compile)
                 .collect(Collectors.toMap(ShaderFile::getName, shader -> shader)));
 
+        GGConsole.log("Detected changes/additions to cached shaders: " + shaderfiles.keySet());
+    }
 
+    private static void processParsedShader(ShaderFile file){
+        if(file.getType() == ShaderFile.ShaderFileType.VERT || file.getType() == ShaderFile.ShaderFileType.UTIL){
+            var wholeFile = file.getTree().getAll();
+            var inputs = wholeFile.stream()
+                    .filter(n -> n instanceof Parser.Declaration)
+                    .map(n -> (Parser.Declaration) n)
+                    .filter(n -> n.modifiers.modifiers.stream()
+                                .map(i -> i.value)
+                                .anyMatch(s -> s.equals("in")))
+                    .collect(Collectors.toList());
+            for(var in : inputs){
+                if(!attributeLocations.containsKey(in.name.value)){
+                    attributeLocations.put(in.name.value, attributeCounter);
+                    attributeCounter++;
+                }
+                in.modifiers.modifiers.add(0, new Parser.Identifier("layout(location = " + attributeLocations.get(in.name.value) + ")"));
+            }
+        }
     }
 
     private static void linkShaders(){
@@ -843,36 +847,15 @@ public class ShaderController {
         for(var entry : completedfiles){
             String source = entry.fulldata;
             String name = entry.name;
-            ShaderFile.ShaderFileType type = entry.type;
-
-            ShaderType ntype;
-
-            switch(type){
-                case FRAG:
-                    ntype = ShaderType.FRAGMENT;
-                    break;
-                case VERT:
-                    ntype = ShaderType.VERTEX;
-                    break;
-                case TESSCONTROL:
-                    ntype = ShaderType.TESS_CONTROL;
-                    break;
-                case TESSEVAL:
-                    ntype = ShaderType.TESS_EVAL;
-                    break;
-                case GEOM:
-                    ntype = ShaderType.GEOMETRY;
-                    break;
-                default:
-                    throw new ShaderException("Attempted to load utility shader " + entry.name + " as GLSL");
-            }
+            ShaderType ntype = ShaderType.fromFileType(entry.type);
 
             try{
                 var program = createShader(name, ntype, source);
+                cacheShader(entry, program);
                 programs.put(name, program);
             }catch(ShaderException e){
                 try{
-                    var errorfile = new File(GGInfo.getApplicationPath() + "\\resources\\glsl\\error.glsl");
+                    var errorfile = new File(Resource.getAbsoluteFromLocal("\\resources\\glsl\\error.glsl"));
                     errorfile.createNewFile();
 
                     PrintWriter writer = new PrintWriter(errorfile);
@@ -887,6 +870,108 @@ public class ShaderController {
                 ne.setStackTrace(e.getStackTrace());
                 GGConsole.exception(ne);
             }
+        }
+    }
+
+
+    private static void cacheShader(ShaderFileHolder holder, ShaderProgram compiled) {
+        try {
+            var cacheFile = new File(Resource.getAbsoluteFromLocal("/internal/cache/" + holder.source.getName() + ".bscf"));
+            cacheFile.getParentFile().mkdirs();
+
+            try(var out = new GGOutputStream(new BufferedOutputStream(new FileOutputStream(cacheFile)))){
+                out.write(SystemInfo.get("Graphics Renderer"));
+                out.write(SystemInfo.get("Graphics Vendor"));
+                out.write(SystemInfo.get("Internal GL Version"));
+                out.write(SystemInfo.get("Java Version"));
+
+                out.write(attributeLocations.size());
+                for(var attrib : attributeLocations.entrySet()){
+                    out.write(attrib.getKey());
+                    out.write(attrib.getValue());
+                }
+
+                out.write(holder.source.getName());
+
+                var hashLong = HashUtil.getMeowHash(Resource.getShaderPath(holder.source.getName()));
+                out.write(hashLong);
+
+                out.write(holder.dependencies.size());
+                for(var dependency : holder.dependencies){
+                    out.write(dependency.getName());
+                    var dependencyHashLong = HashUtil.getMeowHash(Resource.getShaderPath(dependency.getName()));
+
+                    out.write(dependencyHashLong);
+                }
+
+                var compiledData = compiled.getProgramBinary();
+                out.write(compiledData.limit());
+                out.write(GGBufferUtils.get(compiledData));
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void loadCachedShaders() {
+        if(!loadFromCache) return;
+        var path = Resource.getAbsoluteFromLocal("\\internal\\cache\\");
+        var dir = new File(path);
+        var allfiles = dir.list();
+        if(allfiles == null) return;
+        Arrays.stream(allfiles)
+                .map(s -> path + "\\" + s)
+                .forEach(ShaderController::parseCachedShader);
+    }
+
+    private static void parseCachedShader(String path) {
+        try(var in = new GGInputStream(new BufferedInputStream(new FileInputStream(path)))){
+            var renderer = in.readString();
+            var vendor = in.readString();
+            var version = in.readString();
+            var java = in.readString();
+
+            if(!renderer.equals(SystemInfo.get("Graphics Renderer"))) return;
+            if(!vendor.equals(SystemInfo.get("Graphics Vendor"))) return;
+            if(!version.equals(SystemInfo.get("Internal GL Version"))) return;
+            if(!java.equals(SystemInfo.get("Java Version"))) return;
+
+            var attributeAmount = in.readInt();
+            for(int i = 0; i < attributeAmount; i++){
+                var attribName = in.readString();
+                var attribId = in.readInt();
+                if(attributeLocations.get(attribName) != null && attributeLocations.get(attribName) != attribId){
+                    return;
+                }
+                attributeLocations.put(attribName, attribId);
+            }
+
+            var shaderName = in.readString();
+            var mainShaderHash = in.readLong();
+            var currentMainShaderHash = HashUtil.getMeowHash(Resource.getShaderPath(shaderName));
+            if(mainShaderHash != currentMainShaderHash) return;
+
+            var dependencyCount = in.readInt();
+            for(int i = 0; i < dependencyCount; i++){
+                var dependencyName = in.readString();
+                var dependencyHash = in.readLong();
+
+                var currentDependencyHash = HashUtil.getMeowHash(Resource.getShaderPath(dependencyName));
+                if(dependencyHash != currentDependencyHash) return;
+            }
+            //all checks passed
+
+            var binarySize = in.readInt();
+            var binary = Allocator.alloc(binarySize).put(in.readByteArray(binarySize)).flip();
+
+            var program = ShaderProgram.createFromBinary(ShaderType.fromFileType(ShaderFile.getType(shaderName)), binary, shaderName);
+
+            programs.put(shaderName, program);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

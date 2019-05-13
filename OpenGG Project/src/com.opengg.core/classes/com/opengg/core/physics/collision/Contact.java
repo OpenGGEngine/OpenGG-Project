@@ -5,6 +5,8 @@
  */
 package com.opengg.core.physics.collision;
 
+import com.opengg.core.math.Vector3f;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,25 +15,17 @@ import java.util.List;
  * @author Javier
  */
 public class Contact {
-    List<ContactManifold> manifolds = new ArrayList<>();
-    
-    public Contact(ContactManifold manifold){
-        manifolds.add(manifold);
+    Vector3f position;
+    Vector3f normal;
+    float depth;
+
+    public Contact() {
     }
 
-    public Contact(List<ContactManifold> manifold){
-        manifolds.addAll(manifold);
-    }
-
-    public Contact(){
-        
-    }
-    
-    public Contact reverse(){
-        for(ContactManifold manifold : manifolds){
-            manifold.reverse();
-        }
-        return this;
+    public Contact(Vector3f position, Vector3f normal, float depth) {
+        this.position = position;
+        this.normal = normal;
+        this.depth = depth;
     }
 }
 

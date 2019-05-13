@@ -14,14 +14,14 @@ import com.opengg.core.audio.SoundManager;
 import com.opengg.core.audio.SoundtrackHandler;
 import com.opengg.core.console.GGConsole;
 import java.util.ArrayList;
-import org.lwjgl.openal.AL;
-import org.lwjgl.openal.AL10;
+
+import org.lwjgl.openal.*;
+
 import static org.lwjgl.openal.AL10.AL_NO_ERROR;
 import static org.lwjgl.openal.AL10.AL_POSITION;
 import static org.lwjgl.openal.AL10.AL_VELOCITY;
 import static org.lwjgl.openal.AL10.alGetError;
 import static org.lwjgl.openal.AL10.alListener3f;
-import org.lwjgl.openal.ALC;
 
 /**
  * Primary controller and manager for the OpenAL audio engine
@@ -47,7 +47,9 @@ public class SoundEngine {
             GGConsole.error("OpenAL Error in initialization: " + AL10.alGetError());
         else
             initialized = true;
-        
+
+        GGConsole.log("Initializing sound engine on " + ALUtil.getStringList(device.device, ALC11.ALC_CAPTURE_DEVICE_SPECIFIER).get(0));
+
         SoundManager.initialize();
         GGConsole.log("Audio Controller initialized, using OpenAL version " +  AL10.alGetString(AL10.AL_VERSION) 
                 + " from " + AL10.alGetString(AL10.AL_VENDOR));

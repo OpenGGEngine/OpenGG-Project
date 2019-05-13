@@ -5,6 +5,7 @@
  */
 package com.opengg.core.world.components.particle;
 
+import com.opengg.core.math.Matrix4f;
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
@@ -15,11 +16,8 @@ import com.opengg.core.render.texture.TextureManager;
 import com.opengg.core.system.Allocator;
 import com.opengg.core.world.components.RenderComponent;
 
-import java.awt.*;
-import java.nio.Buffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -30,22 +28,23 @@ import java.util.List;
  * This represents a group of particles
  */
 public abstract class ParticleEmitter extends RenderComponent{
-    List<Particle> particles = new LinkedList<>();
-    Texture t;
+    private List<Particle> particles = new LinkedList<>();
+    private Texture texture;
+    private boolean bindParticlesToEmitter = false;
 
     public ParticleEmitter() {
         this(Texture.create(Texture.config(),TextureManager.getDefault()));
     }
 
-    public ParticleEmitter(Texture t){
+    public ParticleEmitter(Texture texture){
         createDrawable();
         this.setFormat(RenderEngine.getParticleFormat());
         this.setShader("particle");
-        this.t = t;
+        this.texture = texture;
     }
     
     private void createDrawable(){
-        var buffers = ObjectCreator.createSquareBuffers(new Vector2f(-0.05f,-0.05f), new Vector2f(0.05f,0.05f), 0);
+        var buffers = ObjectCreator.createSquareBuffers(new Vector2f(-1,-1), new Vector2f(1,1), 0);
         FloatBuffer fb = buffers.x;
         IntBuffer ib = buffers.y;
         this.setDrawable(new DrawnObject(RenderEngine.getParticleFormat(), ib, fb, Allocator.allocFloat(3)));
@@ -66,15 +65,23 @@ public abstract class ParticleEmitter extends RenderComponent{
     }
 
     public Texture getTexture() {
-        return t;
+        return texture;
     }
 
     public void setTexture(Texture t) {
-        this.t = t;
+        this.texture = t;
     }
 
     public List<Particle> getParticles(){
         return particles;
+    }
+
+    public boolean isBindParticlesToEmitter() {
+        return bindParticlesToEmitter;
+    }
+
+    public void setBindParticlesToEmitter(boolean bindParticlesToEmitter) {
+        this.bindParticlesToEmitter = bindParticlesToEmitter;
     }
 
     @Override
@@ -86,7 +93,8 @@ public abstract class ParticleEmitter extends RenderComponent{
     public void render(){
         ((DrawnObject)getDrawable()).updateBuffer(1, createParticleVBO());
         ((DrawnObject)getDrawable()).setInstanceCount(particles.size());
-        //t.use(0);
+        if(!bindParticlesToEmitter) this.setOverrideMatrix(new Matrix4f().scale(this.getScale()));
+        texture.use(0);
         super.render();
     }
 }

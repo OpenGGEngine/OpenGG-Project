@@ -12,7 +12,6 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
-import java.util.stream.Collectors;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.system.MemoryStack;
@@ -26,8 +25,12 @@ public class Allocator {
     //private static Map<Buffer, BufferData> buffers = Collections.synchronizedMap(new WeakHashMap<>());
     
     public static final int FLOAT = 0, INT = 1, SHORT = 2, BYTE = 3, LONG = 4;
-    public static AllocType currentAllocator = AllocType.MEMORYUTIL;
-    
+    public static AllocType currentAllocator = AllocType.NATIVE_HEAP;
+
+    static {
+        GGInfo.setMemoryAllocator(currentAllocator.name());
+    }
+
     public static void update(){
         
         if(getStackFrameIndex() != 0){
@@ -46,7 +49,7 @@ public class Allocator {
     }
     
     public static FloatBuffer stackAllocFloat(int size){
-        return allocFloat(size, AllocType.MEM_STACK);
+        return allocFloat(size, AllocType.NATIVE_STACK);
     }
     
     public static FloatBuffer allocFloat(int size, AllocType allocator){
@@ -58,13 +61,12 @@ public class Allocator {
             case DIRECT:
                 buffer = BufferUtils.createFloatBuffer(size);
                 break;
-            case MEMORYUTIL:
+            case NATIVE_HEAP:
                 buffer = MemoryUtil.memAllocFloat(size);
                 break;
-            case MEM_STACK:
+            case NATIVE_STACK:
                 MemoryStack stack = MemoryStack.stackPush();
                 buffer = stack.callocFloat(size);
-                
                 break;
         }
         register(buffer, allocator);
@@ -76,7 +78,7 @@ public class Allocator {
     }
     
     public static IntBuffer stackAllocInt(int size){
-        return allocInt(size, AllocType.MEM_STACK);
+        return allocInt(size, AllocType.NATIVE_STACK);
     }
     
     public static IntBuffer allocInt(int size, AllocType allocator){
@@ -88,10 +90,10 @@ public class Allocator {
             case DIRECT:
                 buffer = BufferUtils.createIntBuffer(size);
                 break;
-            case MEMORYUTIL:
+            case NATIVE_HEAP:
                 buffer = MemoryUtil.memAllocInt(size);
                 break;
-            case MEM_STACK:
+            case NATIVE_STACK:
                 MemoryStack stack = MemoryStack.stackPush();
                 buffer = stack.callocInt(size);
                 
@@ -106,7 +108,7 @@ public class Allocator {
     }
     
     public static ByteBuffer stackAlloc(int size){
-        return alloc(size, AllocType.MEM_STACK);
+        return alloc(size, AllocType.NATIVE_STACK);
     }
     
     public static ByteBuffer alloc(int size, AllocType allocator){
@@ -118,10 +120,10 @@ public class Allocator {
             case DIRECT:
                 buffer = BufferUtils.createByteBuffer(size);
                 break;
-            case MEMORYUTIL:
+            case NATIVE_HEAP:
                 buffer = MemoryUtil.memAlloc(size);
                 break;
-            case MEM_STACK:
+            case NATIVE_STACK:
                 MemoryStack stack = MemoryStack.stackPush();
                 buffer = stack.calloc(size);
                 
@@ -136,7 +138,7 @@ public class Allocator {
     }
     
     public static ShortBuffer stackAllocShort(int size){
-        return allocShort(size, AllocType.MEM_STACK);
+        return allocShort(size, AllocType.NATIVE_STACK);
     }
     
     public static ShortBuffer allocShort(int size, AllocType allocator){
@@ -148,10 +150,10 @@ public class Allocator {
             case DIRECT:
                 buffer = BufferUtils.createShortBuffer(size);
                 break;
-            case MEMORYUTIL:
+            case NATIVE_HEAP:
                 buffer = MemoryUtil.memAllocShort(size);
                 break;
-            case MEM_STACK:
+            case NATIVE_STACK:
                 MemoryStack stack = MemoryStack.stackPush();
                 buffer = stack.mallocShort(size);
                 
@@ -172,19 +174,17 @@ public class Allocator {
         if(buffer instanceof IntBuffer) type = INT;
         if(buffer instanceof ShortBuffer) type = SHORT;
 
-        if(allocator == AllocType.MEMORYUTIL){
-            var list = StackWalker.getInstance().walk(s ->
+        if(allocator == AllocType.NATIVE_HEAP){
+            /*var list = StackWalker.getInstance().walk(s ->
                     s
                             .skip(2)
                             .limit(5)
                             .filter(s3 -> s3.getClassName().contains("opengg"))
                             .map(s2 -> s2.getClassName() + ":" + s2.getMethodName())
                             .collect(Collectors.toList()));
-            System.out.println(list);
+            System.out.println(list);*/
             long address = MemoryUtil.memAddress(buffer);
-            NativeResourceManager.register(buffer, () -> {
-                MemoryUtil.nmemFree(address);
-            });
+            NativeResourceManager.register(buffer, () -> MemoryUtil.nmemFree(address));
         }
         
         //buffers.put(buffer, data);
@@ -214,7 +214,7 @@ public class Allocator {
     }
 
     public enum AllocType {
-        MEMORYUTIL, MEM_STACK, DIRECT, JAVA;
+        NATIVE_HEAP, NATIVE_STACK, DIRECT, JAVA
     }
 }
 

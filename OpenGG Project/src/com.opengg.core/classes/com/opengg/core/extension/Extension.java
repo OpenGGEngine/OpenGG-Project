@@ -6,7 +6,7 @@
 package com.opengg.core.extension;
 
 /**
- *
+ * //TODO
  * @author Javier
  */
 public abstract class Extension {
@@ -14,10 +14,21 @@ public abstract class Extension {
     
     public String extname = "DEFAULT";
     public int requirement = GRAPHICS;
-    
+    public boolean initialized = false;
+
+    /**
+     * Called on engine initialization
+     */
     public abstract void loadExtension();
-    
+
+    /**
+     * Called once per update cycle once initialized
+     * @param delta delta time (in seconds) since initialization
+     */
     public void update(float delta){}
-    
+
+    /**
+     * Called once per frame once initialized
+     */
     public void render(){}
 }

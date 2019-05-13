@@ -381,7 +381,6 @@ public class Matrix4f {
         Vector3f f = forward;
         Vector3f r = right;
         Vector3f u = up;
-        System.out.println(f.toString() +" X " + r.toString()  +" Y  "+ u.toString());
         Matrix4f news = new Matrix4f(r.x,r.y,r.z, 0,
                 u.x,u.y ,u.z, 0,
                 f.x, f.y,f.z, 0,

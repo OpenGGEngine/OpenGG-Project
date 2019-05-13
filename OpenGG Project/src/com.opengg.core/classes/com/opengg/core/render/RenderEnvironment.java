@@ -16,6 +16,7 @@ public class RenderEnvironment{
     }
 
     public void addLight(Light light){
+        if(lights.contains(light)) return;
         lights.add(light);
     }
 

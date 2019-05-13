@@ -71,7 +71,43 @@ public class Matrix3f {
         this.m21 = arr[2][1];
         this.m22 = arr[2][2];
     }
-    
+
+    public float m00() {
+        return m00;
+    }
+
+    public float m01() {
+        return m01;
+    }
+
+    public float m02() {
+        return m02;
+    }
+
+    public float m10() {
+        return m10;
+    }
+
+    public float m11() {
+        return m11;
+    }
+
+    public float m12() {
+        return m12;
+    }
+
+    public float m20() {
+        return m20;
+    }
+
+    public float m21() {
+        return m21;
+    }
+
+    public float m22() {
+        return m22;
+    }
+
     public Vector3f multiply(Vector3f v) {
         Vector3fm result = new Vector3fm();
         result.x = m00*v.x + m01* v.y + m02 * v.z;
@@ -93,7 +129,54 @@ public class Matrix3f {
         result.m22 = m22*scalar;
         return result;
     }
-    
+
+    public Matrix3f rotation(Quaternionf quat) {
+        float w2 = quat.w() * quat.w();
+        float x2 = quat.x() * quat.x();
+        float y2 = quat.y() * quat.y();
+        float z2 = quat.z() * quat.z();
+        float zw = quat.z() * quat.w(), dzw = zw + zw;
+        float xy = quat.x() * quat.y(), dxy = xy + xy;
+        float xz = quat.x() * quat.z(), dxz = xz + xz;
+        float yw = quat.y() * quat.w(), dyw = yw + yw;
+        float yz = quat.y() * quat.z(), dyz = yz + yz;
+        float xw = quat.x() * quat.w(), dxw = xw + xw;
+        Matrix3f result = new Matrix3f();
+        result.m00 = w2 + x2 - z2 - y2;
+        result.m01 = dxy + dzw;
+        result.m02 = dxz - dyw;
+        result.m10 = -dzw + dxy;
+        result.m11 = y2 - z2 + w2 - x2;
+        result.m12 = dyz + dxw;
+        result.m20 = dyw + dxz;
+        result.m21 = dyz - dxw;
+        result.m22 = z2 - y2 - x2 + w2;
+        return result;
+    }
+
+    public Matrix3f multiply(Matrix3f right) {
+        float nm00 = m00 * right.m00() + m10 * right.m01() + m20 * right.m02();
+        float nm01 = m01 * right.m00() + m11 * right.m01() + m21 * right.m02();
+        float nm02 = m02 * right.m00() + m12 * right.m01() + m22 * right.m02();
+        float nm10 = m00 * right.m10() + m10 * right.m11() + m20 * right.m12();
+        float nm11 = m01 * right.m10() + m11 * right.m11() + m21 * right.m12();
+        float nm12 = m02 * right.m10() + m12 * right.m11() + m22 * right.m12();
+        float nm20 = m00 * right.m20() + m10 * right.m21() + m20 * right.m22();
+        float nm21 = m01 * right.m20() + m11 * right.m21() + m21 * right.m22();
+        float nm22 = m02 * right.m20() + m12 * right.m21() + m22 * right.m22();
+        Matrix3f dest = new Matrix3f();
+        dest.m00 = nm00;
+        dest.m01 = nm01;
+        dest.m02 = nm02;
+        dest.m10 = nm10;
+        dest.m11 = nm11;
+        dest.m12 = nm12;
+        dest.m20 = nm20;
+        dest.m21 = nm21;
+        dest.m22 = nm22;
+        return dest;
+    }
+
     public float determinant() {
         return (m11*m22 - m12*m21) + -1*(m10*m22 - m20*m12) + (m10*m21 - m11*m20);
     }
