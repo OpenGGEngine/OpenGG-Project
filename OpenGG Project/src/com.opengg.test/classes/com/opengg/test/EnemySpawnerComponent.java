@@ -22,7 +22,7 @@ public class EnemySpawnerComponent extends Component implements Triggerable{
     
     public EnemySpawnerComponent(){
         current = new EnemyComponent();
-        WorldEngine.getCurrent().attach(current);
+        this.getWorld().attach(current);
     }
     
     public void update(float delta){

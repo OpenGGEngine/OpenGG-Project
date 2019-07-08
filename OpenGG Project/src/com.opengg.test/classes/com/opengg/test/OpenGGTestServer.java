@@ -1,6 +1,5 @@
 package com.opengg.test;
 
-import com.opengg.core.audio.AudioListener;
 import com.opengg.core.engine.GGApplication;
 import com.opengg.core.engine.InitializationOptions;
 import com.opengg.core.engine.OpenGG;
@@ -10,21 +9,13 @@ import com.opengg.core.network.server.ConnectionListener;
 import com.opengg.core.network.server.Server;
 import com.opengg.core.engine.Resource;
 import com.opengg.core.network.server.ServerClient;
-import com.opengg.core.render.text.Text;
-import com.opengg.core.world.Terrain;
 import com.opengg.core.world.WorldEngine;
-import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
-import com.opengg.core.physics.collision.AABB;
-import com.opengg.core.physics.collision.ColliderGroup;
-import com.opengg.core.physics.collision.SphereCollider;
 import com.opengg.core.render.light.Light;
 import com.opengg.core.render.texture.Texture;
-import com.opengg.core.render.text.impl.GGFont;
 import com.opengg.core.world.Skybox;
 import com.opengg.core.world.components.*;
-import com.opengg.core.world.components.physics.PhysicsComponent;
 
 import java.util.*;
 
@@ -100,7 +91,7 @@ public class OpenGGTestServer extends GGApplication{
             i = 0;
 
             var removecomp = comps.get(new Random().nextInt(comps.size()));
-            WorldEngine.markForRemoval(removecomp);
+            WorldEngine.markComponentForRemoval(removecomp);
             comps.remove(removecomp);
 
             var newcomp = new ModelComponent(Resource.getModel("pear"));

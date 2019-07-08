@@ -5,6 +5,7 @@ public class Text {
     private boolean kern = true;
     private boolean newline = true;
     private float size = 12;
+    private float linePadding = 0;
     private float maxlinesize = -1f;
     private boolean centered = false;
 
@@ -41,6 +42,11 @@ public class Text {
         return this;
     }
 
+    public Text linePadding(float linePadding){
+        this.linePadding = linePadding;
+        return this;
+    }
+
     public void setText(String text) {
         this.text = text;
     }
@@ -51,6 +57,10 @@ public class Text {
 
     public float getMaxLineSize() {
         return maxlinesize;
+    }
+
+    public float getLinePadding() {
+        return linePadding;
     }
 
     public String getText() {

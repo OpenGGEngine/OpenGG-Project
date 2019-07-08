@@ -51,10 +51,15 @@ public class Animation {
         }
     }
 
-    public void start(){
+    public void setToRun(){
         running = true;
         current = 0;
         reverse = false;
+    }
+
+    public void start(){
+        setToRun();
+        AnimationManager.register(this);
     }
 
     public void togglePause(){
@@ -131,10 +136,12 @@ public class Animation {
         }
     }
 
-    public void addStaticEvent(AnimationStage... e){
+    public Animation addStaticEvent(AnimationStage... e){
         if(Arrays.stream(e).anyMatch(s -> s.accessType != AccessType.STATIC)) throw new RuntimeException("Attempting to bind a non-static stage with no object!");
 
         addEvent("none", e);
+
+        return this;
     }
 
 
@@ -169,7 +176,7 @@ public class Animation {
     public static class AnimationStage<T> {
         public double start, end;
         public boolean complete = true;
-        //Chooses whether the start is the start of the sequence or the start of the animation
+        //Chooses whether the setToRun is the setToRun of the sequence or the setToRun of the animation
         public boolean useLocalTimeReference = true;
 
         public String field;

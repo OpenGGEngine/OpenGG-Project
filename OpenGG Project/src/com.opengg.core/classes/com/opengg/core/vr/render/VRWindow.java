@@ -233,7 +233,7 @@ public class VRWindow implements Window {
             Vector3f pos = new Vector3f(matrix.m03, matrix.m13, matrix.m23);
 
             if(controllerpose.bPoseIsValid() && controllerpose.bDeviceIsConnected() && controllerpose.eTrackingResult() == ETrackingResult_TrackingResult_Running_OK && !pos.equals(new Vector3f(0,0,0))){
-                var comp = WorldEngine.getCurrent().find(i == 0 ? "box" : "box2");
+                var comp = WorldEngine.getCurrent().findByName(i == 0 ? "box" : "box2").get(0);
                 comp.setPositionOffset(pos);
                 comp.setRotationOffset(VRUtil.getQuaternionFrom43(m43).invert());
             }

@@ -29,6 +29,7 @@ module com.opengg.core {
     requires org.lwjgl.tootle.natives;
     requires org.lwjgl.meow;
     requires org.lwjgl.meow.natives;
+    requires java.compiler;
 
     exports com.opengg.core.audio;
     exports com.opengg.core.engine;
@@ -66,4 +67,5 @@ module com.opengg.core {
     exports com.opengg.core.model.io;
     exports com.opengg.core.model.process;
     exports com.opengg.core.animation;
+    exports com.opengg.core.script;
 }

@@ -25,6 +25,7 @@ import com.opengg.core.render.text.Text;
 import com.opengg.core.render.texture.TextureManager;
 import com.opengg.core.render.window.WindowController;
 import com.opengg.core.world.Skybox;
+import com.opengg.core.world.World;
 import com.opengg.core.world.WorldEngine;
 import com.opengg.core.gui.GUIController;
 import com.opengg.core.io.ControlType;
@@ -51,6 +52,7 @@ public class  OpenGGTest extends GGApplication{
     private Texture worldterrain;
     float i = 0;
     Light l;
+    boolean lastNew = false;
     private FreeFlyComponent player;
 
     public static void main(String[] args){
@@ -101,6 +103,8 @@ public class  OpenGGTest extends GGApplication{
 
         GUIController.addAndUse(mainview, "mainview");
 
+        WorldEngine.setOnlyActiveWorld((World) new World().setName("world1"));
+
         WorldEngine.getCurrent().attach(new ModelComponent(Resource.getModel("pear")).setPositionOffset(new Vector3f(0,0,-3)));
         WorldEngine.getCurrent().attach(new ModelComponent(Resource.getModel("pear")).setPositionOffset(new Vector3f(0,0,-6)));
 
@@ -109,31 +113,16 @@ public class  OpenGGTest extends GGApplication{
                 Light.createDirectionalShadow(new Quaternionf(new Vector3f(0,0f,90)), new Vector3f(1,1,1),
                         new Vector3f(0,0,0),1000, Matrix4f.orthographic(-10,10,-10,10,-10,10), 4096, 4096)));
 
-        var cube = List.of(
-                new Vector3f(-1,-1,-1),
-                new Vector3f(-1,-1,1),
-                new Vector3f(-1,1,-1),
-                new Vector3f(-1,1,1),
-                new Vector3f(1,-1,-1),
-                new Vector3f(1,-1,1),
-                new Vector3f(1,1,-1),
-                new Vector3f(1,1,1)
-        );
-
-        for(int i = 0; i < 10; i++){
-            var phys = new PhysicsComponent();
-            phys.addCollider(new ColliderGroup(new AABB(new Vector3f(1,1,1)), new ConvexHull(cube)));
-            var renderable = new RenderComponent(new TexturedDrawnObject(ObjectCreator.createCube(1), Texture.ofColor(RED)));
-            renderable.setRotationOffset(new Vector3f(0,0,20));
-            renderable.attach(phys);
-            WorldEngine.getCurrent().attach(renderable);
-
-            //phys.getEntity().velocity = new Vector3f(10,0,0);
-            //phys.getEntity().angvelocity = new Vector3f(0,0.5f,0);
-        }
-
         player = new FreeFlyComponent();
         WorldEngine.getCurrent().attach(player);
+
+        World w2 = new World();
+
+        w2.setName("world2");
+        w2.attach(new ModelComponent(Resource.getModel("pear")).setPositionOffset(new Vector3f(2,0,-3)));
+        w2.attach(new FreeFlyComponent());
+
+        WorldEngine.activateWorld(w2);
 
         WorldEngine.getCurrent().getRenderEnvironment().setSkybox(new Skybox(Texture.getSRGBCubemap(Resource.getTexturePath("skybox\\majestic_ft.png"),
                 Resource.getTexturePath("skybox\\majestic_bk.png"),
@@ -165,6 +154,13 @@ public class  OpenGGTest extends GGApplication{
     @Override
     public void update(float delta){
         i += delta;
-        //WorldEngine.getCurrent().find("testlight").setPositionOffset(0, 4 * FastMath.sin(i), 2);
+        if(i >= 4){
+            i = 0;
+            if(this.lastNew) WorldEngine.setPrimaryWorld(WorldEngine.getExistingWorld("world1"));
+            else WorldEngine.setPrimaryWorld(WorldEngine.getExistingWorld("world2"));
+            lastNew = !lastNew;
+        }
     }
+
+
 }

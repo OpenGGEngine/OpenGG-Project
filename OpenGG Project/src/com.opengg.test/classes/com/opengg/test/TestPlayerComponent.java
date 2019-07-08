@@ -11,7 +11,6 @@ import com.opengg.core.math.FastMath;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.math.Vector3fm;
-import com.opengg.core.physics.Force;
 import com.opengg.core.physics.collision.AABB;
 import com.opengg.core.physics.collision.ConvexHull;
 import com.opengg.core.world.Action;
@@ -41,7 +40,6 @@ public class TestPlayerComponent extends Component implements Actionable{
     Vector3f weaponpos = new Vector3f(0.5f,1.1f,-2f);
     Vector3f aweaponpos = new Vector3f(0f,1.2f,-2f);
     Vector3f cweaponpos = weaponpos;
-    Force force = new Force();
     float speed = 20;
     float rotspeed = 30;
     float bobspeed = 30;
@@ -70,8 +68,7 @@ public class TestPlayerComponent extends Component implements Actionable{
                 
                 //new CapsuleCollider(new Vector3f(-1,0,0), new Vector3f(1,0,0), 2)));
         playerphysics.getEntity().mass = 20f;
-        playerphysics.getEntity().addForce(force);
-        
+
         //gun = new GunComponent();
         //gun.setPositionOffset(weaponpos);
         //gun.setRotationOffset(new Quaternionf(new Vector3f(0,90,0)));
@@ -95,7 +92,6 @@ public class TestPlayerComponent extends Component implements Actionable{
         
         head.setRotationOffset(new Quaternionf(new Vector3f(currot.x,0,0)));
         
-        force.force = new Vector3f(movement.x,0,movement.z);
         if((control.y == 1) && playerphysics.getEntity().lowestContact.y > 0.6f)
             playerphysics.getEntity().velocity = playerphysics.getEntity().velocity.add(new Vector3f(0,5,0));
         

@@ -27,10 +27,17 @@ public class NativeResourceManager {
 
     public static void runQueuedFinalization() {
         synchronized (block) {
-            var tempClean = List.copyOf(cleanEvents);
+            var tempClean = new ArrayList<Runnable>();
+            for(int i = 0; i < cleanEvents.size() * 1.5; i++) {
+                tempClean.add(() -> {
+                });
+            }
+            Collections.copy(tempClean, cleanEvents);
             cleanEvents.clear();
-            tempClean.forEach(Runnable::run);
+            for(var v : tempClean){
+                if(v != null)
+                    v.run();
+            }
         }
     }
-
 }

@@ -66,12 +66,7 @@ public class BindController implements KeyboardListener, MouseButtonListener{
      */
     public static void addController(ActionTransmitter controller) {
         if(controllers.contains(controller)) return;
-        for(var key : current){
-            Action a = new Action();
-            a.name = key;
-            a.type = ActionType.PRESS;
-            controller.doAction(a);
-        }
+        startAllActionsFor(controller);
         controllers.add(controller);
 
     }
@@ -82,13 +77,30 @@ public class BindController implements KeyboardListener, MouseButtonListener{
      */
     public static void removeController(ActionTransmitter controller) {
         if(!controllers.contains(controller)) return;
+        endAllActionsFor(controller);
+        controllers.remove(controller);
+    }
+
+    public static void startAllActionsFor(ActionTransmitter controller){
+        for(var key : current){
+            Action a = new Action();
+            a.name = key;
+            a.type = ActionType.PRESS;
+            controller.doAction(a);
+        }
+    }
+
+    public static void endAllActionsFor(ActionTransmitter controller){
         for(var key : current){
             Action a = new Action();
             a.name = key;
             a.type = ActionType.RELEASE;
             controller.doAction(a);
         }
-        controllers.remove(controller);
+    }
+
+    public static boolean contains(ActionTransmitter controller){
+        return controllers.contains(controller);
     }
     
     /**

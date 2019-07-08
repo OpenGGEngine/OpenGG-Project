@@ -15,9 +15,8 @@ import com.opengg.core.render.texture.TextureManager;
 import com.opengg.core.thread.ParallelWorkerPool;
 import com.opengg.core.util.LambdaContainer;
 import com.opengg.core.world.World;
+import com.opengg.core.world.WorldEngine;
 import com.opengg.core.world.WorldLoader;
-import com.opengg.core.world.WorldStateManager;
-
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -120,7 +119,7 @@ public final class ResourceLoader {
         }
 
         if(request.type == Resource.Type.WORLD){
-            Resource r = WorldStateManager.getLoadedWorld(request.location);
+            Resource r = WorldEngine.getExistingWorld(request.location);
             if(r != null){
                 request.future.complete(r);
                 return request.future;

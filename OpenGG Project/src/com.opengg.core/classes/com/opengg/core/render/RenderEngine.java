@@ -12,6 +12,7 @@ import com.opengg.core.engine.GGDebugRenderer;
 import com.opengg.core.engine.GGGameConsole;
 import com.opengg.core.exceptions.RenderException;
 import com.opengg.core.gui.GUIController;
+import com.opengg.core.math.Vector3f;
 import com.opengg.core.model.ModelManager;
 import com.opengg.core.physics.PhysicsRenderer;
 import com.opengg.core.render.light.Light;
@@ -361,6 +362,20 @@ public class RenderEngine {
     }
 
     public static void setSkybox(Skybox skybox) {
+    }
+
+    public static void setClearColor(Vector3f color){
+        glClearColor(color.x, color.y, color.z, 1);
+    }
+
+    public static void endFrame(){
+        WindowController.getWindow().endFrame();
+        checkForGLErrors();
+    }
+
+    public static void startFrame(){
+        WindowController.getWindow().startFrame();
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     }
 
     public RenderGroup getRenderGroup(String name){

@@ -106,7 +106,7 @@ public class TextVBOGenerator {
                 curserX += metaData.getSpaceWidth() * text.getSize();
             }
             curserX = 0;
-            curserY += LINE_HEIGHT * text.getSize();
+            curserY += LINE_HEIGHT * text.getSize() + text.getLinePadding();
         }
         FloatBuffer f = Allocator.allocFloat(vertices.size() * 12);
         int texpointer = 0;
