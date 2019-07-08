@@ -8,22 +8,25 @@ package com.opengg.core.util;
 import com.opengg.core.exceptions.ClassInstantiationException;
 import com.opengg.core.world.Deserializer;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * @author Javier
  */
 public class ClassUtil {
+    public static List<ClassLoader> loaders = new ArrayList<>();
+
     public static Object createByName(String name) throws ClassInstantiationException {
         Class clazz = null;
         try{
             clazz = Class.forName(name);
         }catch (ClassNotFoundException ex) {
-            for(ClassLoader cl : Deserializer.loaders){
-                try{
-                    clazz = Class.forName(name, true, cl);
-                }catch(ClassNotFoundException e){
-                    throw new RuntimeException("Failed to create class " + name + "!");
-                }
+            try{
+                clazz = Class.forName(name, true, JarClassUtil.getLoader());
+            }catch(ClassNotFoundException e){
+                throw new RuntimeException("Failed to create class " + name + "!");
             }
         }
 

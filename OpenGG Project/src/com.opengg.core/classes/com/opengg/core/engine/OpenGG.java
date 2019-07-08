@@ -15,8 +15,8 @@ import com.opengg.core.audio.SoundtrackHandler;
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.extension.Extension;
 import com.opengg.core.extension.ExtensionManager;
-import static com.opengg.core.render.window.RenderUtil.endFrame;
-import static com.opengg.core.render.window.RenderUtil.startFrame;
+import static com.opengg.core.render.RenderEngine.endFrame;
+import static com.opengg.core.render.RenderEngine.startFrame;
 
 import com.opengg.core.gui.GUIController;
 import com.opengg.core.io.input.mouse.MouseController;
@@ -26,6 +26,8 @@ import com.opengg.core.render.RenderEngine;
 import com.opengg.core.render.window.WindowController;
 import com.opengg.core.render.window.Window;
 import com.opengg.core.render.window.WindowInfo;
+import com.opengg.core.script.ScriptLoader;
+import com.opengg.core.security.OpenGGSecurityPolicy;
 import com.opengg.core.system.Allocator;
 import com.opengg.core.system.NativeResourceManager;
 import com.opengg.core.system.SystemInfo;
@@ -35,6 +37,7 @@ import com.opengg.core.world.WorldEngine;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.Policy;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -120,8 +123,16 @@ public final class OpenGG{
         GGConsole.log("OpenGG initializing, isRunning on " + System.getProperty("os.name") + ", " + System.getProperty("os.arch"));
         GGConsole.log("Initializing application " + options.getApplicationName() + " with app ID " + options.getApplicationId());
 
+
+        Policy.setPolicy(new OpenGGSecurityPolicy());
+        System.setSecurityManager(new SecurityManager());
+
+        GGConsole.log("Switched runtime security to OpenGG security policy");
+
         Resource.initialize();
         GGConsole.log("Resource system initialized");
+
+        ScriptLoader.initialize();
 
         getVMOptions();
 

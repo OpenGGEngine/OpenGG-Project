@@ -14,6 +14,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
@@ -23,13 +24,24 @@ import java.nio.IntBuffer;
  */
 public class GGInputStream extends InputStream{
     private InputStream in;
-    
+    private boolean littleEndian = false;
+
+
     public GGInputStream(InputStream bais){
         this.in = bais;
     }
 
     public GGInputStream(byte[] data){
         this(ByteBuffer.wrap(data));
+    }
+
+    public GGInputStream(byte[] data, boolean littleEndian){
+        this(ByteBuffer.wrap(data), littleEndian);
+    }
+
+    public GGInputStream(ByteBuffer buffer, boolean littleEndian){
+        this(buffer);
+        this.littleEndian = littleEndian;
     }
 
     public GGInputStream(ByteBuffer buffer){
@@ -99,7 +111,9 @@ public class GGInputStream extends InputStream{
     }
 
     public int readInt() throws IOException{
-        ByteBuffer b = ByteBuffer.allocate(Integer.BYTES).put(readByteArray(Integer.BYTES));
+        ByteBuffer b;
+        if(littleEndian) b = ByteBuffer.allocate(Integer.BYTES).order(ByteOrder.LITTLE_ENDIAN).put(readByteArray(Integer.BYTES));
+        else  b = ByteBuffer.allocate(Integer.BYTES).put(readByteArray(Integer.BYTES));
         b.flip();
         return b.getInt();
     }
@@ -116,7 +130,9 @@ public class GGInputStream extends InputStream{
         return b.getFloat();
     }
     public double readDouble() throws IOException{
-        ByteBuffer b = ByteBuffer.allocate(Double.BYTES).put(readByteArray(Double.BYTES));
+        ByteBuffer b;
+        if(littleEndian) b = ByteBuffer.allocate(Double.BYTES).order(ByteOrder.LITTLE_ENDIAN).put(readByteArray(Double.BYTES));
+        else  b = ByteBuffer.allocate(Double.BYTES).put(readByteArray(Double.BYTES));
         b.flip();
         return b.getDouble();
     }
