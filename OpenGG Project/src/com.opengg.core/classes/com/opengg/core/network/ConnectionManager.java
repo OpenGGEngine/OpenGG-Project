@@ -3,7 +3,11 @@ package com.opengg.core.network;
 import com.opengg.core.engine.OpenGG;
 import com.opengg.core.engine.PerformanceManager;
 import com.opengg.core.math.Tuple;
+import com.opengg.core.network.common.ConnectionData;
+import com.opengg.core.network.common.Packet;
+import com.opengg.core.network.common.PacketType;
 import com.opengg.core.thread.ThreadManager;
+import com.opengg.core.util.GGFuture;
 import com.opengg.core.util.GGInputStream;
 
 import java.io.IOException;
@@ -15,15 +19,15 @@ import java.util.stream.Stream;
 
 public class ConnectionManager implements Runnable{
     private final Map<Byte, List<Consumer<Packet>>> processors; //since im definitely going to forget why the tuple contains a byte its a packet identifier
-    private final List<Tuple<Packet, Float>> packetsWaiting = new ArrayList<>();
+    private final List<Tuple<Tuple<Packet, GGFuture<Boolean>>, Float>> packetsWaiting = new ArrayList<>();
     private final List<Tuple<Tuple<Tuple<Long, Byte>, ConnectionData>, Float>> receivedPacketsWithAck = new ArrayList<>();
+    private final HashMap<Byte, List<GGFuture<Packet>>> waitingForPacket = new HashMap<>();
     private final DatagramSocket socket;
     private int packetsize;
     private final float RESEND_DELAY = 0.1f;
 
     private final static Object RECEIVED_BLOCK = new Object();
     private final static Object SENT_BLOCK = new Object();
-
 
     public ConnectionManager(DatagramSocket socket, int packetsize){
         processors = new HashMap<>();
@@ -51,9 +55,9 @@ public class ConnectionManager implements Runnable{
         ThreadManager.runDaemon(this, "ConnectionManager");
     }
 
-    public void sendWithAcknowledgement(Packet packet){
+    public void sendWithAcknowledgement(Packet packet, GGFuture<Boolean> future){
         synchronized (SENT_BLOCK) {
-            packetsWaiting.add(Tuple.of(packet, 0f));
+            packetsWaiting.add(Tuple.of(Tuple.of(packet,future), 0f));
             packet.send();
         }
     }
@@ -63,8 +67,9 @@ public class ConnectionManager implements Runnable{
             synchronized (SENT_BLOCK) {
                 var packetTimestamp = new GGInputStream(packet.getData()).readLong();
                 var foundPacket = packetsWaiting.stream()
-                        .filter(p -> p.x.getTimestamp() == packetTimestamp)
-                        .filter(p -> p.x.getConnection().equals(packet.getConnection()))
+                        .filter(p -> p.x.x.getTimestamp() == packetTimestamp)
+                        .filter(p -> p.x.x.getConnection().equals(packet.getConnection()))
+                        .peek(p -> p.x.y.set(true))
                         .collect(Collectors.toList());
                 packetsWaiting.removeAll(foundPacket);
             }
@@ -77,8 +82,8 @@ public class ConnectionManager implements Runnable{
         if(packet.requestsAcknowledgement()){
             Packet.sendAcknowledgement(NetworkEngine.getSocket(), packet, packet.getConnection());
             synchronized (RECEIVED_BLOCK) {
-                if (!receivedPacketsWithAck.stream()
-                        .anyMatch(c -> c.x.equals(Tuple.of(Tuple.of(packet.getTimestamp(), packet.getType()), packet.getConnection())))) {
+                if (receivedPacketsWithAck.stream()
+                        .noneMatch(c -> c.x.equals(Tuple.of(Tuple.of(packet.getTimestamp(), packet.getType()), packet.getConnection())))) {
 
                     receivedPacketsWithAck.add(Tuple.of(Tuple.of(Tuple.of(packet.getTimestamp(), packet.getType()), packet.getConnection()), 0f));
 
@@ -99,7 +104,7 @@ public class ConnectionManager implements Runnable{
                     .filter(p -> p.y >= RESEND_DELAY)
                     .peek(p -> p.y = 0f)
                     .peek(p -> PerformanceManager.registerPacketResent())
-                    .forEach(p -> p.x.send());
+                    .forEach(p -> p.x.x.send());
         }
 
         synchronized (RECEIVED_BLOCK){
@@ -112,8 +117,9 @@ public class ConnectionManager implements Runnable{
     public void run(){
         while(NetworkEngine.isRunning() && OpenGG.getEnded()){
             Packet packet = Packet.receive(socket);
-            if(validatePacket(packet))
+            if(validatePacket(packet)) {
                 processors.getOrDefault(packet.getType(), List.of()).forEach(p -> p.accept(packet));
+            }
         }
     }
 

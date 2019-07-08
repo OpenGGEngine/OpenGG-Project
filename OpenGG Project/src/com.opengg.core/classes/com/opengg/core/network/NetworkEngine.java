@@ -8,12 +8,13 @@ package com.opengg.core.network;
 
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.network.client.Client;
+import com.opengg.core.network.common.ConnectionData;
+import com.opengg.core.network.common.PacketType;
 import com.opengg.core.network.server.Server;
 
 import java.io.IOException;
 import java.net.DatagramSocket;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.net.InetAddress;
 
  /**
  *
@@ -53,17 +54,16 @@ public class NetworkEngine {
 
      public static Server initializeServer(String name, int port){
         try {
-            var tcpsocket = new ServerSocket(port);
             var udpsocket = new DatagramSocket(port);
 
-            var server = new Server(name, port, tcpsocket, udpsocket);
+            var server = new Server(name, port, udpsocket);
+            createReceiver(udpsocket, server.getPacketSize());
 
             GGConsole.log("Server initialized on port " + port);
 
             server.start();
             NetworkEngine.server = server;
 
-            createReceiver(udpsocket, server.getPacketSize());
             receiver.addProcessor(PacketType.CLIENT_ACTION_UPDATE, server::accept);
 
             return server;
@@ -76,14 +76,13 @@ public class NetworkEngine {
     public static Client connect(String ip, int port) {
         try {
             GGConsole.log("Connecting to " + ip + "...");
-            var tcp = new Socket(ip, port);
             var udpsocket = new DatagramSocket();
 
-            client = new Client(tcp, udpsocket, ConnectionData.get(tcp.getInetAddress(), port));
+            client = new Client(udpsocket, ConnectionData.get(InetAddress.getByName(ip), port));
 
             client.start();
 
-            client.doHandshake();
+            //client.doHandshake();
 
             GGConsole.log("Downloaded world, joining...");
 
@@ -108,7 +107,7 @@ public class NetworkEngine {
         }
     }
 
-    public static ConnectionManager getReceiver(){
+    public static ConnectionManager getPacketReceiver(){
         return receiver;
     }
 

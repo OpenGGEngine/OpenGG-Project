@@ -4,10 +4,12 @@
  * and open the template in the editor.
  */
 
-package com.opengg.core.network;
+package com.opengg.core.network.common;
 
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.engine.PerformanceManager;
+import com.opengg.core.network.NetworkEngine;
+import com.opengg.core.util.GGFuture;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
 
@@ -15,7 +17,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.InetAddress;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.BitSet;
@@ -76,9 +77,11 @@ public class Packet implements Serializable{
         return packet;
     }
 
-    public static void sendGuaranteed(DatagramSocket ds, byte type, byte[] bytes, ConnectionData connectionData){
+    public static GGFuture<Boolean> sendGuaranteed(DatagramSocket ds, byte type, byte[] bytes, ConnectionData connectionData){
         Packet p = new Packet(ds, type, true, bytes, connectionData);
-        NetworkEngine.getReceiver().sendWithAcknowledgement(p);
+        var future = new GGFuture<Boolean>();
+        NetworkEngine.getPacketReceiver().sendWithAcknowledgement(p, future);
+        return future;
     }
 
     public static void send(DatagramSocket ds, byte type, byte[] bytes, ConnectionData connectionData){

@@ -7,14 +7,12 @@
 package com.opengg.core.network.server;
 
 import com.opengg.core.math.Vector2f;
-import com.opengg.core.network.ConnectionData;
-import com.opengg.core.network.Packet;
+import com.opengg.core.network.common.ConnectionData;
 import com.opengg.core.network.client.ActionQueuer;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.world.components.ActionTransmitterComponent;
 
 import java.io.IOException;
-import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.time.Instant;
 import java.util.ArrayList;

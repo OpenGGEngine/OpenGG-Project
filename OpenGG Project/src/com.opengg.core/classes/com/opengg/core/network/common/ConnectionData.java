@@ -1,6 +1,7 @@
-package com.opengg.core.network;
+package com.opengg.core.network.common;
 
 import java.net.InetAddress;
+import java.util.Objects;
 
 public class ConnectionData {
     public InetAddress address;
@@ -27,7 +28,7 @@ public class ConnectionData {
         ConnectionData that = (ConnectionData) o;
 
         if (port != that.port) return false;
-        if (address != null ? !address.equals(that.address) : that.address != null) return false;
+        if (!Objects.equals(address, that.address)) return false;
 
         return true;
     }

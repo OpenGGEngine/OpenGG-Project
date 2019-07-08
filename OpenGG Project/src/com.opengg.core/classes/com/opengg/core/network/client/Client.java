@@ -11,24 +11,20 @@ import com.opengg.core.GGInfo;
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.engine.OpenGG;
 import com.opengg.core.io.input.mouse.MouseController;
-import com.opengg.core.network.ConnectionData;
-import com.opengg.core.network.Packet;
-import com.opengg.core.network.PacketType;
+import com.opengg.core.network.common.ConnectionData;
+import com.opengg.core.network.common.Packet;
+import com.opengg.core.network.common.PacketType;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
 import com.opengg.core.world.Deserializer;
-import com.opengg.core.world.World;
 import com.opengg.core.world.WorldEngine;
-import com.opengg.core.world.components.Component;
 
 import java.io.*;
 import java.net.DatagramSocket;
-import java.net.InetAddress;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Base64;
 
 /**
  *
@@ -39,7 +35,6 @@ public class Client {
 
     private ConnectionData connectionData;
     private Instant timeConnected;
-    private Socket tcpSocket;
     private DatagramSocket udpSocket;
     private long latency;
     private long timedifference;
@@ -48,8 +43,7 @@ public class Client {
 
     private ActionQueuer queuer;
     
-    public Client(Socket tcp, DatagramSocket udp, ConnectionData connectionData){
-        this.tcpSocket = tcp;
+    public Client(DatagramSocket udp, ConnectionData connectionData){
         this.udpSocket = udp;
         this.connectionData = connectionData;
         this.timeConnected = Instant.now();
@@ -60,55 +54,10 @@ public class Client {
         running = true;
     }
 
-    public void doHandshake() throws IOException{
-        var in = new BufferedReader(new InputStreamReader(tcpSocket.getInputStream()));
-        var out = new PrintWriter(new OutputStreamWriter(tcpSocket.getOutputStream()), true);
-
-        out.println("hey server");
-        var handshake = in.readLine();
-
-        if (!handshake.equals("hey client")) {
-            GGConsole.warning("Failed to connect to " + tcpSocket.getInetAddress().getHostAddress() + ", invalid handshake");
-        }
-
-        out.println("oh shit we out here");
-        servName = in.readLine();
-        out.println(OpenGG.getApp().applicationName);
-
-        packetsize = Integer.decode(in.readLine());
-        int id = Integer.decode(in.readLine());
-
-        var start = Instant.now();
-        out.println("Sonic");
-
-        in.readLine();
-        var end = Instant.now();
-
-        latency = end.toEpochMilli() - start.toEpochMilli();
-
-        var time = in.readLine();
-        var longtime = Long.decode(time) + (latency/2);
-
-        timedifference = end.toEpochMilli() - longtime;
-
-        GGInfo.setUserId(id);
-
-        byte[] decodedBytes = Base64.getDecoder().decode(in.readLine());
-        GGConsole.log("Downloading world (" + decodedBytes.length + " bytes)");
-
-        var buffer = ByteBuffer.wrap(decodedBytes);
-
-        World w = Deserializer.deserialize(buffer);
-        WorldEngine.useWorld(w);
-
-        GGConsole.log("World downloaded");
-        GGConsole.log("Connected to " + tcpSocket.getInetAddress());
-    }
-
     public void udpHandshake(){
         for(int i = 0; i < 5; i++){
             var bb = ByteBuffer.wrap(new byte[packetsize]).putInt(GGInfo.getUserId());
-            Packet.send(udpSocket, PacketType.HANDSHAKE_MESSAGE, bb.array(), connectionData);
+            //Packet.send(udpSocket, PacketType.HANDSHAKE_MESSAGE, bb.array(), connectionData);
             try{
                 Thread.sleep(10);
             }catch(InterruptedException e){
@@ -140,13 +89,17 @@ public class Client {
                 short amount = in.readShort();
                 var delta = (Instant.now().toEpochMilli() - (packet.getTimestamp() + timedifference)) / 1000f;
                 for (int i = 0; i < amount; i++) {
-                    short id = in.readShort();
+                    long id = in.readLong();
 
-                    var component = WorldEngine.getCurrent().find(id);
+                    WorldEngine.getCurrent().findByGUID(id)
+                            .ifPresentOrElse(c -> {
+                                try {
+                                    c.deserializeUpdate(in, delta);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }, () -> GGConsole.warning("Failed to find component of id " + id + " during server deserialization"));
 
-                    if (component != null) {
-                        component.deserializeUpdate(in, delta);
-                    }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -155,24 +108,25 @@ public class Client {
     }
 
     public void acceptNewComponents(Packet packet) {
-
             OpenGG.asyncExec(() -> {
                 try {
                     var in = new GGInputStream(packet.getData());
                     var compAmount = in.readInt();
                     var loadedCompList = new ArrayList<Deserializer.SerialHolder>();
+
                     for (int i = 0; i < compAmount; i++) {
                         loadedCompList.add(Deserializer.deserializeSingleComponent(in));
                     }
 
                     for (var comp : loadedCompList) {
-                        if (comp.parent == 0) WorldEngine.getCurrent().attach(comp.comp);
-                        if (WorldEngine.getCurrent().find(comp.parent) != null)
-                            WorldEngine.getCurrent().find(comp.parent).attach(comp.comp);
-                        loadedCompList.stream()
-                                .filter(c -> c.comp.getId() == comp.parent)
-                                .findFirst()
-                                .ifPresent(c -> c.comp.attach(comp.comp));
+                        WorldEngine.findEverywherByGUID(comp.parent)
+                                .ifPresentOrElse(c -> c.attach(comp.comp),
+                                        () ->  loadedCompList.stream()
+                                                .filter(c -> c.comp.getName().equals(comp.parent))
+                                                .findFirst()
+                                                .ifPresentOrElse(c -> c.comp.attach(comp.comp),
+                                                        () -> GGConsole.warning("Failed to findByName component " + comp.parent + " while deserializing " + comp.comp.getName())));
+
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -186,8 +140,8 @@ public class Client {
             var in = new GGInputStream(packet.getData());
             var amount = in.readInt();
             for(int i = 0; i < amount; i++){
-                var comp = in.readInt();
-                WorldEngine.markForRemoval(WorldEngine.getCurrent().find(comp));
+                var comp = in.readLong();
+                WorldEngine.markComponentForRemoval(WorldEngine.getCurrent().findByGUID(comp).orElseThrow(() -> new IllegalStateException("Failed to find component with id " + comp + " to remove!")));
             }
         }catch (IOException e){
             e.printStackTrace();
@@ -205,10 +159,6 @@ public class Client {
 
     public Instant getTimeConnected() {
         return timeConnected;
-    }
-
-    public Socket getTcpSocket() {
-        return tcpSocket;
     }
 
     public DatagramSocket getUdpSocket() {

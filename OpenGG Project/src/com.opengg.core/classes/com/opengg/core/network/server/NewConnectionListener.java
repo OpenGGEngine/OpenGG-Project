@@ -30,7 +30,7 @@ public class NewConnectionListener implements Runnable{
     
     @Override
     public void run() {
-        while(!close && OpenGG.getEnded()){
+        while(!close && OpenGG.getEnded()){/*
             try (Socket s = server.getTCPSocket().accept()) {
                 var ip = s.getInetAddress().getHostAddress();
                 var time = Instant.now();
@@ -66,7 +66,7 @@ public class NewConnectionListener implements Runnable{
 
                 GGConsole.log(ip + " connected to server, sending game state");
 
-                byte[] bytes = Serializer.serialize(WorldEngine.getCurrent());
+                byte[] bytes = Serializer.serializeWorld(WorldEngine.getCurrent());
 
                 out.println(Base64.getEncoder().encodeToString(bytes));
 
@@ -76,7 +76,7 @@ public class NewConnectionListener implements Runnable{
                 
             } catch (IOException ex) {
                 GGConsole.warning("Client failed to connect!");
-            }           
+            }           */
         }
     }
     

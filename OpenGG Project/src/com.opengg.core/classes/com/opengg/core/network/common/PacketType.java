@@ -1,4 +1,4 @@
-package com.opengg.core.network;
+package com.opengg.core.network.common;
 
 public class PacketType {
     public static final byte
@@ -7,6 +7,6 @@ public class PacketType {
             ACK = 127,
             SERVER_COMPONENT_CREATE = 1,
             SERVER_COMPONENT_REMOVE = 2,
-            HANDSHAKE_MESSAGE = 0;
-
+            BULK_DATA_INIT = 5,
+            BULK_DATA_CHUNK = 6;
 }

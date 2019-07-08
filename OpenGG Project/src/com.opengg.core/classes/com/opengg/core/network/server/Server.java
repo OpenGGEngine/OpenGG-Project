@@ -7,9 +7,9 @@
 package com.opengg.core.network.server;
 
 import com.opengg.core.console.GGConsole;
-import com.opengg.core.network.ConnectionData;
-import com.opengg.core.network.Packet;
-import com.opengg.core.network.PacketType;
+import com.opengg.core.network.common.ConnectionData;
+import com.opengg.core.network.common.Packet;
+import com.opengg.core.network.common.PacketType;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
 import com.opengg.core.util.LambdaContainer;
@@ -22,7 +22,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.ServerSocket;
 import java.nio.ByteBuffer;
 import java.time.Instant;
 import java.util.*;
@@ -34,7 +33,6 @@ import java.util.stream.Collectors;
  */
 public class Server {
     private String name;
-    private ServerSocket tcpsocket;
     private DatagramSocket udpsocket;
     private List<ServerClient> clients;
     private List<ServerClient> newclients;
@@ -49,9 +47,9 @@ public class Server {
     private List<Component> newComponents;
     private List<Component> removedComponents;
 
-    private Map<Integer, byte[]> lastUpdate = new HashMap<>();
+    private Map<Long, byte[]> lastUpdate = new HashMap<>();
 
-    public Server(String name, int port, ServerSocket ssocket, DatagramSocket dsocket){
+    public Server(String name, int port, DatagramSocket dsocket){
         this.name = name;
         this.port = port;
         this.clients = new ArrayList<>();
@@ -59,7 +57,6 @@ public class Server {
         this.listeners = new ArrayList<>();
         this.newComponents = new ArrayList<>();
         this.removedComponents = new ArrayList<>();
-        this.tcpsocket = ssocket;
         this.udpsocket = dsocket;
         this.clistener = new NewConnectionListener(this);
         WorldEngine.getCurrent().addNewChildListener(this::saveNewComponent);
@@ -115,10 +112,10 @@ public class Server {
             List<byte[]> processedComponents = new ArrayList<>();
             for(var comp : componentsToSerialize){
                 GGOutputStream compOut = new GGOutputStream();
-                compOut.write((short) comp.getId());
+                compOut.write((short) comp.getGUID());
                 comp.serializeUpdate(compOut);
-                if(!Arrays.equals(lastUpdate.get(comp.getId()), compOut.asByteArray()) || new Random().nextInt(15) == 0){
-                    lastUpdate.put(comp.getId(), compOut.asByteArray());
+                if(!Arrays.equals(lastUpdate.get(comp.getGUID()), compOut.asByteArray()) || new Random().nextInt(15) == 0){
+                    lastUpdate.put(comp.getGUID(), compOut.asByteArray());
                     processedComponents.add(compOut.asByteArray());
                 }
             }
@@ -170,7 +167,7 @@ public class Server {
                 var out = new GGOutputStream();
                 out.write(removedComponents.size());
                 for(var comp : removedComponents){
-                    out.write(comp.getId());
+                    out.write(comp.getGUID());
                 }
                 for(var client : clients){
                     Packet.sendGuaranteed(getUDPSocket(), PacketType.SERVER_COMPONENT_REMOVE, out.asByteArray(), client.getConnection());
@@ -227,10 +224,6 @@ public class Server {
 
     public String getName() {
         return name;
-    }
-
-    public ServerSocket getTCPSocket() {
-        return tcpsocket;
     }
 
     public DatagramSocket getUDPSocket() {
