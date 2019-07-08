@@ -1,11 +1,13 @@
 package com.opengg.core.engine;
 
+import com.opengg.core.GGInfo;
 import com.opengg.core.render.window.WindowInfo;
 
 public class InitializationOptions {
     private String applicationName = "default";
     private long applicationId = -1;
     private boolean headless = false;
+    private GGInfo.UserDataOption localDataLocation = GGInfo.UserDataOption.DOCUMENTS;
 
     private WindowInfo windowInfo = new WindowInfo();
 
@@ -33,6 +35,15 @@ public class InitializationOptions {
 
     public InitializationOptions setHeadless(boolean headless) {
         this.headless = headless;
+        return this;
+    }
+
+    public GGInfo.UserDataOption getLocalDataLocation() {
+        return localDataLocation;
+    }
+
+    public InitializationOptions setLocalDataLocation(GGInfo.UserDataOption localDataLocation) {
+        this.localDataLocation = localDataLocation;
         return this;
     }
 

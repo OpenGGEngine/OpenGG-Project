@@ -7,6 +7,7 @@
 package com.opengg.core.audio;
 
 import com.opengg.core.engine.Resource;
+import com.opengg.core.math.Vector3f;
 
 /**
  * High level abstraction of a sound<br>
@@ -69,13 +70,25 @@ public class Sound{
         if(b) so.play();
         else so.pause();
     }
-    
+
+    public void shouldLoop(boolean loop){
+        so.setLoop(loop);
+    }
+
     /**
      * Stops the sound
      */
     public void stop(){
         isPlaying = false;
         so.stop();
+    }
+
+    public void setPosition(Vector3f position){
+        so.setPosition(position);
+    }
+
+    public void setPitch(float offset){
+        so.setPitch(offset);
     }
     
     /**
