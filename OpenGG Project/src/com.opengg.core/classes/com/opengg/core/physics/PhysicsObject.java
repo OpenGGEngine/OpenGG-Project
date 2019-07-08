@@ -13,7 +13,9 @@ import com.opengg.core.util.GGOutputStream;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -108,4 +110,12 @@ public class PhysicsObject {
     public void setParent(PhysicsObject object){
         this.parent = object;
     }
+
+    public void internalUpdate(float delta){
+        this.update(delta);
+        this.children.forEach(c -> c.internalUpdate(delta));
+    }
+
+    public void update(float delta){}
+
 }

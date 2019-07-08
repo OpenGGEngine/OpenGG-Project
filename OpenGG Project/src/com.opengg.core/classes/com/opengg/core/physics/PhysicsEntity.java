@@ -39,7 +39,6 @@ public class PhysicsEntity extends PhysicsObject{
     public boolean touched = false;
     public boolean overrideFriction = false;
     
-    public List<Force> forces = new LinkedList<>();
     public List<Vector3f> rotforces = new LinkedList<>();
 
     public Vector3f acceleration = new Vector3f();
@@ -50,6 +49,9 @@ public class PhysicsEntity extends PhysicsObject{
 
     public float mass = 1f;
     public float density = 1f;
+
+    public float charge = 0f;
+
     public float dynamicfriction = 0.4f;
     public float staticfriction = 0.3f;
     public float restitution = 0.0f;
@@ -63,7 +65,7 @@ public class PhysicsEntity extends PhysicsObject{
     
     public PhysicsEntity(PhysicsSystem system){
         this();
-        system.addEntity(this);
+        system.addObject(this);
     }
 
     public PhysicsEntity(PhysicsSystem system, ColliderGroup collider){
@@ -71,6 +73,7 @@ public class PhysicsEntity extends PhysicsObject{
         addCollider(collider);
     }
 
+    @Override
     public void update(float delta) {
         grounded = false;
         computeLinearMotion(delta);
@@ -101,14 +104,7 @@ public class PhysicsEntity extends PhysicsObject{
     }
     
     private Vector3f computeForces(float delta) {
-        overrideFriction = false;
         Vector3f fforce = new Vector3f();
-        for(Force forcee : forces){
-            if(velocity.add(fforce.multiply(mass)).multiply(delta).length() < forcee.velLimit){
-                fforce = fforce.add(forcee.force);
-                overrideFriction = overrideFriction || forcee.frictionDisable;
-            }
-        }
         return fforce;
     }
     
@@ -145,21 +141,14 @@ public class PhysicsEntity extends PhysicsObject{
     public void onSystemChange(){
         super.onSystemChange();
         this.system = system;
-        for(ColliderGroup col : getChildren()){
-            system.addCollider(col);
-        }
      }
     
-    public void addForce(Force force){
-        forces.add(force);
-    }
-    
+
     public void addAngularForce(Vector3f force){
         rotforces.add(force);
     }
     
     public void clearForces(){
-        forces.clear();
         rotforces.clear();
     }
     

@@ -17,6 +17,8 @@ import com.opengg.core.physics.collision.ColliderGroup;
 import com.opengg.core.physics.collision.SphereCollider;
 import com.opengg.core.render.drawn.Drawable;
 
+import java.util.stream.Collectors;
+
 /**
  *
  * @author Javier
@@ -39,7 +41,7 @@ public class PhysicsRenderer {
         */
         path = new RenderOperation("physics", () -> {
             RenderEngine.setWireframe(true);
-            for(ColliderGroup group : PhysicsEngine.getInstance().getColliders()){
+            for(var group : PhysicsEngine.getInstance().getObjects().stream().filter(c -> c instanceof ColliderGroup).map(c -> (ColliderGroup)c).collect(Collectors.toList())){
                 for(Collider c : group.getColliders()){
                     renderCollider(c);
                 }

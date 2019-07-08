@@ -5,8 +5,6 @@
  */
 package com.opengg.core.physics;
 
-import com.opengg.core.physics.collision.CollisionManager;
-
 /**
  *
  * @author Javier
@@ -20,11 +18,11 @@ public class PhysicsEngine {
     }
     
     public static void addEntity(PhysicsEntity entity){
-        instance.addEntity(entity);
+        instance.addObject(entity);
     }
     
     public static void removeEntity(PhysicsEntity entity){
-        instance.removeEntity(entity);
+        instance.removeObject(entity);
     }
     
     public static void updatePhysics(float delta){

@@ -16,7 +16,7 @@ import com.opengg.core.util.GGOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -26,8 +26,7 @@ public class PhysicsSystem {
     private final ColliderGroup floor = new ColliderGroup();
 
     private final PhysicsConstants constants = new PhysicsConstants();
-    private List<ColliderGroup> colliders = new ArrayList<>();
-    private List<PhysicsEntity> entities = new ArrayList<>();
+    private List<PhysicsObject> objects = new ArrayList<>();
 
     public PhysicsSystem(){
         floor.setForceTest(true);
@@ -42,36 +41,22 @@ public class PhysicsSystem {
                 new Vector3f(10000,constants.BASE,10000)
         )));
         //floor.setPosition(new Vector3f(0, constants.BASE ,0));
-        colliders.add(floor);
+        objects.add(floor);
     }
 
-    public List<PhysicsEntity> getEntities(){
-        return entities;
+    public List<PhysicsObject> getObjects(){
+        return objects;
     }
-    
-    public List<ColliderGroup> getColliders(){
-        return colliders;
-    }
-    
-    public void addCollider(ColliderGroup collider){
-        if(colliders.contains(collider)) return;
-        colliders.add(collider);
-        collider.system = this;
-        collider.onSystemChange();
-    }
-    
-    public void removeCollider(ColliderGroup collider){
-        colliders.remove(collider);
-    }
-    
-    public void addEntity(PhysicsEntity entity){
-        entities.add(entity);
+
+    public void addObject(PhysicsObject entity){
+        if(objects.contains(entity)) return;
+        objects.add(entity);
         entity.system = this;
         entity.onSystemChange();
     }
     
-    public void removeEntity(PhysicsEntity entity){
-        entities.remove(entity);
+    public void removeObject(PhysicsObject entity){
+        objects.remove(entity);
     }
 
     public PhysicsConstants getConstants(){
@@ -80,8 +65,8 @@ public class PhysicsSystem {
     
     public void update(float delta) {
         CollisionManager.clearCollisions();
-        for(PhysicsEntity entity : entities){
-            entity.update(delta);
+        for(PhysicsObject entity : objects){
+            entity.internalUpdate(delta);
         }
         CollisionManager.runCollisionStep(this);
     }
@@ -90,14 +75,9 @@ public class PhysicsSystem {
         out.write(constants.BASE);
         out.write(constants.GRAVITY);
 
-        out.write(entities.size());
-        for(var entity : entities){
+        out.write(objects.size());
+        for(var entity : objects){
             entity.serialize(out);
-        }
-
-        out.write(colliders.size());
-        for(var collider : colliders){
-            collider.serialize(out);
         }
     }
 
@@ -106,38 +86,23 @@ public class PhysicsSystem {
         constants.BASE = 1f;
         constants.GRAVITY = in.readVector3f();
 
-        entities.clear();
+        objects.clear();
         int count = in.readInt();
 
         for(int i = 0; i < count; i++){
             PhysicsEntity entity = new PhysicsEntity();
             entity.deserialize(in);
-            addEntity(entity);
+            addObject(entity);
         }
 
-        count = in.readInt();
-
-        for(int i = 0; i < count; i++){
-            ColliderGroup collider = new ColliderGroup();
-            collider.deserialize(in);
-            addCollider(collider);
-        }
-
-        PhysicsEntity.idcount = Stream.concat(entities.stream(), colliders.stream())
+        PhysicsEntity.idcount = objects.stream()
                 .mapToInt(PhysicsObject::getId)
                 .max().orElse(0);
     }
 
-    public PhysicsEntity getEntityById(int id){
-        for (var entity : entities) {
+    public PhysicsObject getObjectByID(int id){
+        for (var entity : objects) {
             if(entity.id == id) return entity;
-        }
-        return null;
-    }
-
-    public ColliderGroup getColliderById(int id){
-        for (var collider : colliders) {
-            if(collider.id == id) return collider;
         }
         return null;
     }

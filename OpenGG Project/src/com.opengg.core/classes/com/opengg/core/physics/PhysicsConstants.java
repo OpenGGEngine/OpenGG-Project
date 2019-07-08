@@ -15,4 +15,6 @@ import com.opengg.core.math.Vector3f;
 public class PhysicsConstants {
     public Vector3f GRAVITY = new Vector3f(0,-9.81f,0);
     public float BASE = -10;
+    public double COULOMBS_CONSTANT = 9.0E09;
+    public double GRAVITATIONAL_CONSTANT = 6.6740831E-11;
 }
