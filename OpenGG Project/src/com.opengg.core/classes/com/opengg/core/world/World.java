@@ -28,7 +28,6 @@ import com.opengg.core.world.components.RenderComponent;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -48,6 +47,7 @@ public class World extends Component implements Resource {
     private PhysicsSystem physics = new PhysicsSystem();
     private RenderEnvironment environment = new RenderEnvironment();
     private boolean forceUpdate = false;
+    private boolean active = false;
 
     private List<Consumer<Component>> addSubs = new ArrayList<>();
 
@@ -61,29 +61,6 @@ public class World extends Component implements Resource {
         setName(name);
     }
 
-    /**
-     * Finds the unique {@link com.opengg.core.world.components.Component} with a certain ID, returns {@code null}  if none are found
-     * @param id ID being searched for
-     * @return Component with given ID or {@code null}  if nonexistent
-     */
-    public Component find(int id){
-        return getAllDescendants()
-                .stream()
-                .filter(c -> c.getId() == id)
-                .findFirst().orElse(null);
-    }
-
-    /**
-     * Finds the first {@link com.opengg.core.world.components.Component} with a certain name, returns {@code null} if none are found
-     * @param name Name being searched for
-     * @return Component with given name or {@code null}  if nonexistent
-     */
-    public Component find(String name){
-        return getAllDescendants()
-                .stream()
-                .filter(c -> c.getName().equals(name))
-                .findFirst().orElse(null);
-    }
 
     /**
      * Regenerates the render groups for this world and sends them to {@link RenderEngine},
@@ -119,7 +96,7 @@ public class World extends Component implements Resource {
         }
 
         if(!found){
-            RenderGroup group = new RenderGroup("world " + getId() + " " + renderable.getShader() + " "
+            RenderGroup group = new RenderGroup("world " + getGUID() + " " + renderable.getShader() + " "
                     + renderable.getFormat().toString() +
                     " group: " + (environment.getGroups().size() + 1),
                     renderable.getFormat());
@@ -170,18 +147,36 @@ public class World extends Component implements Resource {
     /**
      * Enables this world for use by the World Engine
      */
-    public void use(){
+    public void setAsPrimary(){
         PhysicsEngine.setInstance(physics);
         RenderEngine.setCurrentEnvironment(environment);
+        this.localOnWorldMadePrimary();
+    }
+
+    public void removeAsPrimary(){
+        this.localOnWorldNoLongerPrimary();
+    }
+
+    public void activate(){
+        this.active = true;
+        this.setEnabled(true);
         this.localOnWorldEnable();
     }
 
     /**
-     * Safely deactivates the world and keeps its reference for further use
+     * Safely deactivates the world
      */
     public void deactivate(){
-        WorldStateManager.keepWorld(this);
+        this.active = false;
+        this.setEnabled(false);
         this.localOnWorldDisable();
+    }
+
+    /**
+     * Returns if this World is currently active in the world system, whether or not it is updating
+     */
+    public boolean isActive(){
+        return active;
     }
 
     /**
@@ -192,6 +187,10 @@ public class World extends Component implements Resource {
         return environment;
     }
 
+    public boolean isPrimaryWorld(){
+        return this == WorldEngine.getCurrent();
+    }
+
     public boolean isForcedUpdate() {
         return forceUpdate;
     }
@@ -199,7 +198,6 @@ public class World extends Component implements Resource {
     public void addNewChildListener(Consumer<Component> sub){
         this.addSubs.add(sub);
     }
-
 
     public void triggerNewChild(Component newChild){
         addSubs.forEach(c -> c.accept(newChild));
@@ -280,7 +278,7 @@ public class World extends Component implements Resource {
         var size = in.readInt();
         var data = in.readByteArray(size);
 
-        physics.deserialize(new GGInputStream(data));
+        //physics.deserialize(new GGInputStream(data));
     }
 
     /**

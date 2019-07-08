@@ -49,7 +49,7 @@ public class Trigger extends Component implements ITrigger{
         out.write(subscribers.size());
         for(Triggerable t : subscribers){
             Component c = (Component)t;
-            out.write(c.getId());
+            out.write(c.getGUID());
         }
     }
     
@@ -63,8 +63,8 @@ public class Trigger extends Component implements ITrigger{
         }
         
         OpenGG.asyncExec(() ->{
-            for(int i : ids){
-                subscribers.add((Triggerable) this.getWorld().find(i));
+            for(long i : ids){
+                subscribers.add((Triggerable) this.getWorld().findByGUID(i).get());
             }
         });
     }

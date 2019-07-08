@@ -52,7 +52,7 @@ public class Zone extends Trigger{
                 ti.triggerSource = this;
                 ti.data = c;
                 ti.type = 0;
-                ti.info = "collide:" + c.getId();
+                ti.info = "collide:" + c.getGUID();
                 trigger(ti);
             }
         }

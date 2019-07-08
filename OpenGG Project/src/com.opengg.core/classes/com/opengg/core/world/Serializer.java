@@ -13,49 +13,61 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  *
  * @author Javier
  */
 public class Serializer {
-    private GGOutputStream stream;
-    private HashMap<String, Integer> classnames;
-    private World world;
+    public static byte[] serializeSingleComponent(Component component) throws IOException {
+        var stream = new GGOutputStream();
+        stream.write(component.getClass().getName());
+        serializeComponent(stream, component);
+        return stream.asByteArray();
+    }
 
-    public static byte[] serialize(World world) {
-        try {
+    public static byte[] serializeComponentTree(Component head) throws IOException {
+        return serializeComponentTree(head, null);
+    }
 
-            var serializer = new Serializer(world);
-            serializer.serialize();
+    public static byte[] serializeComponentTree(Component head, Map<String, Integer> names) throws IOException {
+        var out = new GGOutputStream();
 
-            return ((ByteArrayOutputStream) serializer.stream.getStream()).toByteArray();
-        } catch (IOException ex) {
-            GGConsole.error("IOException thrown during serialization of world!");
+        if(names == null)
+            out.write(head.getClass().getName());
+        else
+            out.write(names.get(head.getClass().getName()));
+
+        serializeComponent(out, head);
+
+        out.write(getAllSerializable(head.getChildren()));
+        for(Component component : head.getChildren()){
+            if(component.shouldSerialize()){
+                out.write(serializeComponentTree(component, names));
+            }
         }
-        return null;
+
+        return out.asByteArray();
     }
 
-    private Serializer(World world) {
-        this.classnames = new HashMap<>();
-        this.world = world;
-        this.stream = new GGOutputStream();
-    }
-
-    private void serialize() throws IOException {
+    public static byte[] serializeWorld(World world) throws IOException {
         var allcomps = world.getAllDescendants();
 
-        var allserializablenames = allcomps
-                .stream()
+        var allSerializableComponentTypes = Stream.concat(allcomps.stream(), List.of(world).stream())
                 .filter(Component::shouldSerialize)
                 .map(comp -> comp.getClass().getName())
                 .distinct()
                 .collect(Collectors.toList());
 
-        for(int i = 0; i < allserializablenames.size(); i++){
-            classnames.put(allserializablenames.get(i), i);
+        var classnames = new HashMap<String, Integer>();
+        for(int i = 0; i < allSerializableComponentTypes.size(); i++){
+            classnames.put(allSerializableComponentTypes.get(i), i);
         }
+
+        var stream = new GGOutputStream();
 
         stream.write(classnames.size());
 
@@ -64,41 +76,22 @@ public class Serializer {
             stream.write(entry.getKey());
         }
 
-        world.serialize(stream);
-        traverse(world.getChildren());
-    }
-    
-    private void traverse(List<Component> components) throws IOException{
-        stream.write(getAllSerializable(components));
-        for(Component component : components){
-            if(component.shouldSerialize()){
-                stream.write(classnames.get(component.getClass().getName()));
-                stream.write(component.getId());
-                stream.write(component.getParent().getId());
-
-                var substream = new GGOutputStream();
-                component.serialize(substream);
-
-                stream.write(substream.asByteArray().length);
-                stream.write(substream.asByteArray());
-                traverse(component.getChildren());
-            }
-        }
+        stream.write(serializeComponentTree(world, classnames));
+        return stream.asByteArray();
     }
 
-    public static byte[] serializeSingleComponent(Component component) throws IOException {
-        var stream = new GGOutputStream();
-        stream.write(component.getClass().getName());
-        stream.write(component.getId());
-        stream.write(component.getParent().getId());
+    private static void serializeComponent(GGOutputStream stream, Component component) throws IOException {
+        stream.write(component.getGUID());
+        if(component.getParent() == null)
+            stream.write((long)-1);
+        else
+            stream.write(component.getParent().getGUID());
 
         var substream = new GGOutputStream();
         component.serialize(substream);
 
         stream.write(substream.asByteArray().length);
         stream.write(substream.asByteArray());
-
-        return stream.asByteArray();
     }
 
     private static int getAllSerializable(List<Component> components){

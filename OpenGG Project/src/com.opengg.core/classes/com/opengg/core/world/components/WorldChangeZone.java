@@ -2,7 +2,6 @@ package com.opengg.core.world.components;
 
 import com.opengg.core.animation.Animation;
 import com.opengg.core.animation.AnimationManager;
-import com.opengg.core.console.GGConsole;
 import com.opengg.core.engine.Executor;
 import com.opengg.core.gui.GUIController;
 import com.opengg.core.gui.GUITexture;
@@ -45,7 +44,7 @@ public class WorldChangeZone extends Zone {
                         .setOnComplete(() -> {
                             World newWorld = WorldLoader.getWorld(world);
                             Executor.async(() -> {
-                                WorldEngine.useWorld(newWorld);
+                                WorldEngine.setOnlyActiveWorld(newWorld);
                                 onExit.accept(data);
                             });
                         }));
@@ -55,7 +54,7 @@ public class WorldChangeZone extends Zone {
                     (t) -> ((GUITexture) GUIController.get("black").getRoot().getItem("tex")).setTexture(t))
                     .setUseLocalTimeReference(true));
 
-            sceneSwitch.start();
+            sceneSwitch.setToRun();
             AnimationManager.register(sceneSwitch);
 
         }

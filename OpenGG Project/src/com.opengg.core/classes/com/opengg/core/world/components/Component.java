@@ -15,10 +15,7 @@ import com.opengg.core.world.World;
 import com.opengg.core.world.WorldEngine;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.BitSet;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -37,24 +34,29 @@ import java.util.stream.Stream;
  * @author Javier
  */
 public abstract class Component{
-    private static int curid = 0;
-    private int id;
-    private boolean absoluteOffset = false;
-    private boolean absoluteRotation = false;
+    private long guid;
+    private String name = "default";
+
     private boolean enabled = true;
     private float updatedistance = 0;
-    private String name = "default";
+
     private Component parent;
+
     private Vector3f posoffset = new Vector3f();
     private Quaternionf rotoffset = new Quaternionf();
     private Vector3f scaleoffset = new Vector3f(1,1,1);
-    protected List<Component> children = Collections.synchronizedList(new ArrayList<>());
+    private boolean absoluteOffset = false;
+    private boolean absoluteRotation = false;
+
     private Vector3f pos = new Vector3f();
     private Quaternionf rot = new Quaternionf();
     private Vector3f scale = new Vector3f(1,1,1);
+
     private boolean serialize = true;
     private boolean updateSerialize = true;
     private Runnable whenAttachedToWorld = null;
+    private Function<Component, Boolean> parentValidator = (c) -> true;
+    protected List<Component> children = Collections.synchronizedList(new ArrayList<>());
 
     static{
         ComponentVarAccessor.register(Component.class,Vector3f.class,"position",(BiConsumer<Component,Vector3f>)Component::setPositionOffset,(Function<Component,Vector3f>)Component::getPositionOffset);
@@ -66,8 +68,7 @@ public abstract class Component{
      * Creates a component with a new ID
      */
     public Component(){
-        id = curid;
-        curid++;
+        guid = UUID.randomUUID().getLeastSignificantBits();
     }
     
     /**
@@ -91,18 +92,12 @@ public abstract class Component{
      * Gets the component's unique ID
      * @return component's ID
      */
-    public int getId(){
-        return id;
+    public long getGUID(){
+        return guid;
     }
-    
-    
-    /**
-     * Sets the component's new ID, should only be used in very specific circumstances. If component identification 
-     * is needed, use {@link #setName(java.lang.String) } and {@link  #getName() } instead
-     * @param id component's new ID
-     */
-    public void setId(int id){
-        this.id = id;
+
+    public void setGUID(long guid) {
+        this.guid = guid;
     }
 
     /**
@@ -322,7 +317,6 @@ public abstract class Component{
     }
 
     public final void localUpdate(float delta){
-        if(getWorld() != WorldEngine.getCurrent()) return;
         if(!getWorld().isForcedUpdate()
                 &&
                 (!isEnabled()
@@ -347,7 +341,7 @@ public abstract class Component{
     /**
      * Called by various sources for serialization of the component, and by default only serializes position, rotation, and scale offsets<br><br>
      * 
-     * For correct functionality, the variables serialized here must match the variables deserialized in {@link #deserialize(GGInputStream)} ) deserialize()}<br>
+     * For correct functionality, the variables serialized here must match the variables deserialized in {@link #deserialize(GGInputStream)} ) deserializeWorld()}<br>
      * In addition, any component that overrides this must also override the {@linkplain #Component() default constructor} for the serializer to function<br><br>
      * 
      * It is recommended to allow for complete recreation of the component using these two methods
@@ -366,7 +360,7 @@ public abstract class Component{
     /**
      * Called for deserialization of a byte stream to a component, and by default only deserializes position, rotation, and scale<br><br>
      * 
-     * For correct functionality, variable deserialization here must match the variables serialized in {@link #serialize(GGOutputStream)} ) serialize()}<br>
+     * For correct functionality, variable deserialization here must match the variables serialized in {@link #serialize(GGOutputStream)} ) serializeWorld()}<br>
      * In addition, any component that overrides this must also override the {@link #Component() default constructor} for the deserializer to function<br><br>
      * 
      * As this method is normally run on a separate thread, any methods that have OpenGL calls have to be run in an {@link Runnable Runnable} to be run in the main thread. <br>
@@ -414,7 +408,40 @@ public abstract class Component{
         if(getrot) setRotationOffset(in.readQuaternionf());
         if(getscale) setScaleOffset(in.readVector3f());
     }
-    
+
+    /**
+     *  If the component is marked for serialization, eg for world saving or networking
+     * @return If should serializeWorld
+     */
+    public final boolean shouldSerialize(){
+        return serialize;
+    }
+
+    /**
+     * Sets if serialization should occur, eg for world saving and loading
+     * @param serialize Should serializeWorld
+     */
+    public final void setSerializable(boolean serialize){
+        this.serialize = serialize;
+    }
+
+    /**
+     * Returns if this component should be serialized for updating <br>
+     *     This does not affect whether this component is serialized for creation
+     */
+    public boolean shouldSerializeUpdate() {
+        return updateSerialize;
+    }
+
+    /**
+     * Sets if this component should be serialized for updating <br>
+     *     This does not affect whether this component is serialized for creation
+     * @param updateSerialize
+     */
+    public void setSerializableUpdate(boolean updateSerialize) {
+        this.updateSerialize = updateSerialize;
+    }
+
     /**
      * Returns the current world of this component
      * @return Current world
@@ -470,39 +497,6 @@ public abstract class Component{
     public void onDisable(){
 
     }
-    
-    /**
-     *  If the component is marked for serialization, eg for world saving or networking
-     * @return If should serialize
-     */
-    public final boolean shouldSerialize(){
-        return serialize;
-    }
-    
-    /**
-     * Sets if serialization should occur, eg for world saving and loading
-     * @param serialize Should serialize
-     */
-    public final void setSerializable(boolean serialize){
-        this.serialize = serialize;
-    }
-
-    /**
-     * Returns if this component should be serialized for updating <br>
-     *     This does not affect whether this component is serialized for creation
-     */
-    public boolean shouldSerializeUpdate() {
-        return updateSerialize;
-    }
-
-    /**
-     * Sets if this component should be serialized for updating <br>
-     *     This does not affect whether this component is serialized for creation
-     * @param updateSerialize
-     */
-    public void setSerializableUpdate(boolean updateSerialize) {
-        this.updateSerialize = updateSerialize;
-    }
 
     /**
      * Called when a component is removed, override if needed. It should not be called directly
@@ -519,6 +513,10 @@ public abstract class Component{
      * @return This component
      */
     public Component attach(Component c) {
+        if(!c.parentValidator.apply(this)){
+            throw new IllegalArgumentException(this.getClass().getCanonicalName() + " failed to attach " + c.getClass().getName());
+        }
+
         if(c == this)
             return this;
         if(c.getParent() == this)
@@ -534,7 +532,7 @@ public abstract class Component{
 
     private void changeParent(Component parent){
         if(parent == null){
-            WorldEngine.markForRemoval(this);
+            WorldEngine.markComponentForRemoval(this);
             return;
         }
 
@@ -582,6 +580,20 @@ public abstract class Component{
         if(isEnabled()) onDisable();
     }
 
+    public final void localOnWorldMadePrimary(){
+        for(var child : children){
+            child.localOnWorldMadePrimary();
+        }
+        this.onWorldMadePrimary();
+    }
+
+    public final void localOnWorldNoLongerPrimary(){
+        for(var child : children){
+            child.localOnWorldNoLongerPrimary();
+        }
+        this.onWorldNoLongerPrimary();
+    }
+
     /**
      * Called when the world of this component is enabled. <br>
      *     This is also called if the component is initially attached to a world that is active
@@ -594,6 +606,20 @@ public abstract class Component{
      * Called when the world of this component is disabled.
      */
     public void onWorldDisable(){
+
+    }
+
+    /**
+     * Called when this component's world is made into the primary world
+     */
+    public void onWorldMadePrimary(){
+
+    }
+
+    /**
+     * Called when this component's world is no longer the primary world
+     */
+    public void onWorldNoLongerPrimary(){
 
     }
 
@@ -634,6 +660,30 @@ public abstract class Component{
     }
 
     /**
+     * Finds the first {@link com.opengg.core.world.components.Component} with a certain simple name, returns {@code null} if none are found
+     * @param name Name being searched for
+     * @return Component with given name or {@code null}  if nonexistent
+     */
+    public List<Component> findByName(String name){
+        return getAllDescendants()
+                .stream()
+                .filter(c -> c.getName().equals(name))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Finds the first {@link com.opengg.core.world.components.Component} with a certain GUID, returns {@code null} if none are found
+     * @param name GUID being searched for
+     * @return Component with given GUID if nonexistent
+     */
+    public Optional<Component> findByGUID(long guid){
+        return getAllDescendants()
+                .stream()
+                .filter(c -> c.getGUID() == guid)
+                .findFirst();
+    }
+
+    /**
      * Returns this component's parent, or null it has none
      * @return
      */
@@ -668,23 +718,5 @@ public abstract class Component{
         if(child == null) return;
         children.remove(child);
         child.changeParent(null);
-    }
-
-    /**
-     * Gets the current ID counter for the component system <br>
-     *     This is normally equal to the ID of the newest component plus one
-     * @return
-     */
-    public static int getCurrentIdCounter(){
-        return curid;
-    }
-
-    /**
-     * Sets the current ID counter for the component system <br>
-     *     This should only be set when components are being manually loaded from another source
-     * @param id
-     */
-    public static void setCurrentIdCounter(int id){
-        curid = id;
     }
 }

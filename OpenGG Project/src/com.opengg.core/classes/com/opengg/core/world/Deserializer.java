@@ -13,35 +13,46 @@ import com.opengg.core.util.GGInputStream;
 import com.opengg.core.world.components.Component;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  *
  * @author Javier
  */
 public class Deserializer {
-    private GGInputStream in;
-    private List<SerialHolder> components;
-    public static List<ClassLoader> loaders = new ArrayList<>();
-    private HashMap<Integer, String> classnames;
-    private World world;
-    
-    public static World deserialize(ByteBuffer buffer) {
-        var deserializer = new Deserializer(buffer);
-        return deserializer.deserialize();
+
+    public static SerialHolder deserializeSingleComponent(GGInputStream in) throws IOException {
+        String classname = in.readString();
+
+        return deserializeComponent(in, classname);
     }
 
-    private Deserializer(ByteBuffer buffer){
-        in = new GGInputStream(buffer);
-        components = new LinkedList<>();
-        classnames = new HashMap<>();
+    public static Component deserializeComponentTree(GGInputStream in) throws IOException {
+        return deserializeComponentTree(in, null);
     }
 
-    private World deserialize(){
+    public static Component deserializeComponentTree(GGInputStream in, Map<Integer, String> names) throws IOException {
+        String name;
+        if (names == null)
+            name = in.readString();
+        else
+            name = names.get(in.readInt());
+
+        var comp = deserializeComponent(in, name);
+
+        var children = in.readInt();
+        for(int i = 0; i < children; i++){
+            comp.comp.attach(deserializeComponentTree(in, names));
+        }
+
+        return comp.comp;
+    }
+
+    public static World deserializeWorld(ByteBuffer data){
         try {
+            var in = new GGInputStream(data);
+            var classnames = new HashMap<Integer, String>();
+
             int namecount = in.readInt();
             for(int i = 0; i < namecount; i++){
                 var id = in.readInt();
@@ -49,102 +60,42 @@ public class Deserializer {
                 classnames.put(id, name);
             }
 
-            world = new World();
-            world.deserialize(in);
-            world.setId(0);
-            doList();
+            var world = deserializeComponentTree(in, classnames);
+
+            world.getAllDescendants().forEach(Component::onWorldLoad);
+
+            return (World) world;
         } catch (IOException ex) {
             GGConsole.error("IOException thrown during deserialization of world!");
-        }
-        
-        if(world == null)
-            return null;
-
-        for(var holder : components){
-            components
-                    .stream()
-                    .filter(holder2 -> holder.parent == holder2.comp.getId())
-                    .map(holder2 -> holder2.comp)
-                    .findFirst()
-                    .ifPresentOrElse(comp -> comp.attach(holder.comp), () -> world.attach(holder.comp));
-        }
-
-        components.forEach(c -> c.comp.onWorldLoad());
-
-        var highest = world.getAllDescendants()
-                .stream()
-                .mapToInt(Component::getId)
-                .max().orElse(0);
-
-        if(Component.getCurrentIdCounter() <= highest) Component.setCurrentIdCounter(highest + 1);
-
-        return world;
-    }
-    
-    private void doList() throws IOException{
-        int l = in.readInt();
-        for(int i = 0; i < l; i++){
-            String classname = classnames.get(in.readInt());
-            try {
-                int id = in.readInt();
-                int pid = in.readInt();
-                Object nclazz = ClassUtil.createByName(classname);
-
-                Component comp = (Component)nclazz;
-                comp.removeAll();
-
-                int len = in.readInt();
-
-                byte[] data = in.readByteArray(len);
-                comp.deserialize(new GGInputStream(data));
-                comp.setId(id);
-                
-                var holder = new SerialHolder();
-                holder.comp = comp;
-                holder.parent = pid;
-                components.add(holder);
-
-                doList();
-            }  catch (ClassInstantiationException ex) {
-                GGConsole.error("Failed to instantiate class " + classname + ": " + ex.getMessage());
-            }
+            throw new RuntimeException(ex);
         }
     }
 
-    public static SerialHolder deserializeSingleComponent(GGInputStream in) throws IOException {
-        String classname = in.readString();
+    private static SerialHolder deserializeComponent(GGInputStream in, String classname){
         try {
-            int id = in.readInt();
-            int pid = in.readInt();
-            Object nclazz = ClassUtil.createByName(classname);
-
-            Component comp = (Component)nclazz;
+            long id = in.readLong();
+            long parentId = in.readLong();
+            Component comp =  (Component)ClassUtil.createByName(classname);
+            comp.setGUID(id);
             comp.removeAll();
 
             int len = in.readInt();
+            comp.deserialize(new GGInputStream(in.readByteArray(len)));
 
-            byte[] data = in.readByteArray(len);
-            comp.deserialize(new GGInputStream(data));
-            comp.setId(id);
-
-            var holder = new SerialHolder();
-            holder.comp = comp;
-            holder.parent = pid;
-
-            return holder;
-        }  catch (ClassInstantiationException ex) {
+            return new SerialHolder(comp, parentId);
+        }  catch (ClassInstantiationException | IOException ex) {
             GGConsole.error("Failed to instantiate class " + classname + ": " + ex.getMessage());
+            throw new RuntimeException(ex);
         }
-
-        return null;
     }
 
-    /**
-     *
-     * @author Javier
-     */
     public static class SerialHolder {
         public Component comp;
-        public int parent;
+        public long parent;
+
+        public SerialHolder(Component comp, long parent) {
+            this.comp = comp;
+            this.parent = parent;
+        }
     }
 }

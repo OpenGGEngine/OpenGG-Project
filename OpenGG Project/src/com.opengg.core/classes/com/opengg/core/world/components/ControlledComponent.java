@@ -12,6 +12,7 @@ import java.io.IOException;
 
 public class ControlledComponent extends Component{
     private int userid = 0;
+    private boolean enableAcrossWorlds = false;
 
     public Vector2f getMouse(){
         if(!GGInfo.isServer() && isCurrentUser()){
@@ -27,7 +28,7 @@ public class ControlledComponent extends Component{
     }
 
     public boolean isCurrentUser(){
-        return userid == GGInfo.getUserId() || GGInfo.getUserId() == -1;
+        return (userid == GGInfo.getUserId() || GGInfo.getUserId() == -1) && (this.getWorld().isPrimaryWorld() || enableAcrossWorlds) ;
     }
 
     public int getUserId() {
@@ -38,6 +39,22 @@ public class ControlledComponent extends Component{
         this.userid = userid;
         onUserChange();
         return this;
+    }
+
+    /**
+     * Returns if this component is active if it's world is active but not the primary world
+     * @return
+     */
+    public boolean isEnabledAcrossWorlds() {
+        return enableAcrossWorlds;
+    }
+
+    /**
+     * Sets if this component should be considered active if its world is active but not the primary world
+     * @param enableAcrossWorlds
+     */
+    public void setEnabledAcrossWorlds(boolean enableAcrossWorlds) {
+        this.enableAcrossWorlds = enableAcrossWorlds;
     }
 
     public void onUserChange(){

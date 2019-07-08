@@ -59,7 +59,7 @@ public class CollisionComponent extends Component{
     
     @Override
     public void onWorldChange(){
-        this.getWorld().getSystem().addCollider(collidergroup);
+        this.getWorld().getSystem().addObject(collidergroup);
     }
     
     @Override
@@ -94,7 +94,7 @@ public class CollisionComponent extends Component{
         int id = in.readInt();
 
         OpenGG.asyncExec(() -> {
-           this.collidergroup = this.getWorld().getSystem().getColliderById(id);
+            this.collidergroup = (ColliderGroup) this.getWorld().getSystem().getObjectByID(id);
             collidergroup.setPosition(getPosition());
             collidergroup.setRotation(getRotation());
             collidergroup.setScale(getScale());
@@ -103,6 +103,6 @@ public class CollisionComponent extends Component{
 
     @Override
     public void finalizeComponent(){
-        this.getWorld().getSystem().removeCollider(collidergroup);
+        this.getWorld().getSystem().removeObject(collidergroup);
     }
 }

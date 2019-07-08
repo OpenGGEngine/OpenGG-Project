@@ -38,12 +38,12 @@ public class WorldLoader {
             for(int i = 0; i < worlddata.length; i++){
                 worlddata[i] = in.readByte();
             }
-            World world = Deserializer.deserialize(ByteBuffer.wrap(worlddata));
+            World world = Deserializer.deserializeWorld(ByteBuffer.wrap(worlddata));
             world.setName(worldname);
             GGConsole.log("World " + worldname + " has been successfully loaded");
             return world;
         } catch (FileNotFoundException ex) {
-            GGConsole.error("Failed to find world named " + worldname);
+            GGConsole.error("Failed to findByName world named " + worldname);
         } catch (IOException ex) {
             GGConsole.error("Failed to access file named " + worldname);
         }
@@ -52,38 +52,28 @@ public class WorldLoader {
     }
 
     /**
-     * Requests a world loaded asynchronously and saves it into the World cache
+     * Requests a world load asynchronously and saves it into the World cache
      * @see WorldStateManager
      * @param worldname World file to load
      */
     public static void preloadWorld(String worldname){
         ResourceLoader.prefetch(new ResourceRequest(Resource.getWorldPath(worldname), Resource.Type.WORLD))
-                .whenComplete((w, e) -> WorldLoader.keepWorld((World) w));
+                .whenComplete((w, e) -> WorldEngine.registerWorld((World) w));
     }
 
     /**
      * Returns the world indicated by the given world name <br>
      *     This will first attempt to retrieve the world from the world state cache.
-     *     If it is unable to find it in the cache, it will then attempt to load it from the file indicated.
+     *     If it is unable to findByName it in the cache, it will then attempt to load it from the file indicated.
      *     If this also fails, it will return {@code null}
      * @param worldname World name to load world from.
      * @return World object from either the state manager or the file system, or null if neither exist
      */
     public static World getWorld(String worldname){
-        if(WorldStateManager.loadedVersionExists(worldname))
-            return WorldStateManager.getLoadedWorld(worldname);
+        if(WorldEngine.hasExistingCopy(worldname))
+            return WorldEngine.getExistingWorld(worldname);
         else
             return loadWorld(worldname);
-    }
-
-    /**
-     * Saves the given world into the world state cache for future loading<br>
-     *     This allows a world's state to be used in the future without
-     * @param world
-     */
-    public static void keepWorld(World world){
-        GGConsole.log("Saving state for " + world.getName());
-        WorldStateManager.keepWorld(world);
     }
 
     /**
@@ -91,14 +81,14 @@ public class WorldLoader {
      * @param world
      * @param worldname
      */
-    public static void saveWorld(World world, String worldname){
+    public static void saveWorldFile(World world, String worldname){
         GGConsole.log("Saving world " + worldname + "...");
         String tempPath = worldname.substring(0, worldname.lastIndexOf(new File(worldname).getName())) + "temp_" + new File(worldname).getName();
         try(GGOutputStream out = new GGOutputStream(new DataOutputStream(new FileOutputStream(Resource.getAbsoluteFromLocal(tempPath))))) {
             out.write(1);
             out.write(GGInfo.getVersion());
             
-            byte[] bworld = Serializer.serialize(world);
+            byte[] bworld = Serializer.serializeWorld(world);
             out.write(bworld.length);
             out.write(bworld);
             out.flush();

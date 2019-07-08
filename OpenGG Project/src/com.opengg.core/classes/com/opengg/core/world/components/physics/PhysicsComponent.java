@@ -26,7 +26,7 @@ public class PhysicsComponent extends Component {
     public PhysicsComponent(){
         entity = new PhysicsEntity();
         id = entity.id;
-        this.onWorldChange(() -> this.getWorld().getSystem().addEntity(entity));
+        this.onWorldChange(() -> this.getWorld().getSystem().addObject(entity));
     }
     
     public PhysicsComponent(ColliderGroup collider){
@@ -44,7 +44,7 @@ public class PhysicsComponent extends Component {
     }
     
     public void setSystem(PhysicsSystem system){
-       system.addEntity(entity);
+       system.addObject(entity);
     }
     
     public PhysicsEntity getEntity(){
@@ -81,14 +81,14 @@ public class PhysicsComponent extends Component {
     public void deserialize(GGInputStream in) throws IOException{
         super.deserialize(in);
         id = in.readInt();
-        this.onWorldChange(() -> this.entity = this.getWorld().getSystem().getEntityById(id));
+        this.onWorldChange(() -> this.entity = (PhysicsEntity) this.getWorld().getSystem().getObjectByID(id));
 
     }
     
     @Override
     public void finalizeComponent(){
         try{
-            this.getWorld().getSystem().removeEntity(entity);
+            this.getWorld().getSystem().removeObject(entity);
         }catch (NullPointerException e){}
     }
 }

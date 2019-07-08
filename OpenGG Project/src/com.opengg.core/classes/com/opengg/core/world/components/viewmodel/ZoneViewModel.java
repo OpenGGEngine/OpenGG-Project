@@ -70,7 +70,7 @@ public class ZoneViewModel extends ViewModel<Zone>{
             String[] strings = lists.split(";");
             for(String s : strings){
                 s = s.trim();
-                Component c = WorldEngine.getCurrent().find(s);
+                Component c = WorldEngine.getCurrent().findByName(s).get(0);
                 if(c instanceof Triggerable)
                     ((ITrigger)component).addSubscriber((Triggerable) c);
             }

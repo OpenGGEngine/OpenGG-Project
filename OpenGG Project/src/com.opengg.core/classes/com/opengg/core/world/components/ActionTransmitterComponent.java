@@ -6,14 +6,11 @@
 
 package com.opengg.core.world.components;
 
-import com.opengg.core.GGInfo;
 import com.opengg.core.engine.BindController;
 import com.opengg.core.exceptions.InvalidParentException;
-import com.opengg.core.util.GGInputStream;
 import com.opengg.core.world.Action;
 import com.opengg.core.world.ActionTransmitter;
 import com.opengg.core.world.Actionable;
-import java.io.IOException;
 
 /**
  *
@@ -23,12 +20,25 @@ public class ActionTransmitterComponent extends ControlledComponent implements A
 
     @Override
     public void onEnable(){
-        BindController.addController(this);
+        if(this.getWorld().isPrimaryWorld() || this.isEnabledAcrossWorlds()) BindController.addController(this);
     }
 
     @Override
     public void onDisable(){
         BindController.removeController(this);
+    }
+
+    @Override
+    public void onWorldMadePrimary(){
+        if(!this.isEnabledAcrossWorlds())
+            if(isEnabled())
+                BindController.addController(this);
+    }
+
+    @Override
+    public void onWorldNoLongerPrimary(){
+        if(!this.isEnabledAcrossWorlds())
+            BindController.removeController(this);
     }
 
     @Override

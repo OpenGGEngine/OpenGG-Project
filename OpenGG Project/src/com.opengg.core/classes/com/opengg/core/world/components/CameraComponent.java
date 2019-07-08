@@ -28,6 +28,12 @@ public class CameraComponent extends ControlledComponent{
     }
 
     @Override
+    public void onWorldMadePrimary(){
+        if(isCurrentUser())
+            RenderEngine.useView(camera);
+    }
+
+    @Override
     public void onUserChange(){
         if(isCurrentUser())
             RenderEngine.useView(camera);
