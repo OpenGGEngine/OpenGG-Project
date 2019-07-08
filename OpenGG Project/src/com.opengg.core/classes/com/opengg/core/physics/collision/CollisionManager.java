@@ -41,7 +41,7 @@ public class CollisionManager {
     public static void runCollisionStep(PhysicsSystem system){
         var newCollisions = test.stream()
                 .filter(Objects::nonNull)
-                .flatMap(c -> system.getColliders().stream()
+                .flatMap(c -> test.stream()
                         .map(c2 ->new UnorderedTuple<>(c,c2)))
                 .filter(t -> t.x != t.y)
                 .distinct()
