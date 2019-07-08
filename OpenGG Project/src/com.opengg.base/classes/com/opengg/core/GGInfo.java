@@ -13,6 +13,7 @@ import java.io.IOException;
  * @author Javier
  */
 public class GGInfo {
+    private static UserDataOption userDataLocation = UserDataOption.DOCUMENTS;
     private static final String version = "0.1";
     private static String appname = "default";
     private static String memallocator = "system";
@@ -86,6 +87,14 @@ public class GGInfo {
         return agressiveMemory;
     }
 
+    public static UserDataOption getUserDataLocation() {
+        return userDataLocation;
+    }
+
+    public static void setUserDataLocation(UserDataOption userDataLocation) {
+        GGInfo.userDataLocation = userDataLocation;
+    }
+
     public static void setAgressiveMemoryManagement(boolean agressiveMemory) {
         GGInfo.agressiveMemory = agressiveMemory;
     }
@@ -124,6 +133,9 @@ public class GGInfo {
 
     private GGInfo() {
     }
-    
+
+    public enum UserDataOption{
+        DOCUMENTS, APP_DATA
+    }
     
 }

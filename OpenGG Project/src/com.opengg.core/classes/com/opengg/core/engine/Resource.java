@@ -62,6 +62,17 @@ public interface Resource {
         return null;
     }
 
+    static String getApplicationPath(){
+        return GGInfo.getApplicationPath();
+    }
+
+    static String getUserDataPath(){
+        if(GGInfo.getUserDataLocation() == GGInfo.UserDataOption.DOCUMENTS)
+            return System.getProperty("user.home") + File.separator + "Documents" + File.separator + GGInfo.getApplicationName();
+        else
+            return System.getenv("APPDATA") + File.separator + GGInfo.getApplicationName();
+    }
+
     /**
      * Returns if this filename is absolute
      * @param name Filename
@@ -83,7 +94,8 @@ public interface Resource {
 
     private static String validate(String name){
         if(isAbsolute(name)) return name;
-        if(exists(GGInfo.getApplicationPath() + "\\"+ name)) return name;
+        if(exists(Resource.getApplicationPath() + File.separator + name)) return name;
+        if(exists(Resource.getUserDataPath()    + File.separator + name)) return name;
         return null;
     }
     
