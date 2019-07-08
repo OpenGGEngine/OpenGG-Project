@@ -113,29 +113,14 @@ public abstract class ViewModel<T extends Component> {
     final void onChangeLocal(Element element){
         if(component != null){
             switch (element.internalname) {
-                case "pos":
-                    component.setPositionOffset((Vector3f)element.value);
-                    break;
-                case "rot":
-                    component.setRotationOffset(new Quaternionf((Vector3f)element.value));
-                    break;
-                case "scale":
-                    component.setScaleOffset((Vector3f)element.value);
-                    break;
-                case "name":
-                    component.setName((String)element.value);
-                    break;
-                case "enabled":
-                    component.setEnabled((Boolean)element.value);
-                    break;
-                case "serialize":
-                    component.setSerializable((Boolean)element.value);
-                    break;
-                case "abs":
-                    component.setAbsoluteOffset((Boolean)element.value);
-                    break;
+                case "pos" -> component.setPositionOffset((Vector3f) element.value);
+                case "rot" -> component.setRotationOffset(new Quaternionf((Vector3f) element.value));
+                case "scale" -> component.setScaleOffset((Vector3f) element.value);
+                case "name" -> component.setName((String) element.value);
+                case "enabled" -> component.setEnabled((Boolean) element.value);
+                case "serialize" -> component.setSerializable((Boolean) element.value);
+                case "abs" -> component.setAbsoluteOffset((Boolean) element.value);
             }
-            
             onChange(element); 
         }
     }
@@ -148,31 +133,15 @@ public abstract class ViewModel<T extends Component> {
     }
 
     public final void updateLocal(Element element){
-            switch (element.internalname) {
-                case "pos":
-                    element.value = component.getPositionOffset();
-                    break;
-                case "rot":
-                    element.value = component.getRotationOffset().toEuler();
-                    break;
-                case "scale":
-                    element.value = component.getScale();
-                    break;
-                case "enabled":
-                    element.value = component.isEnabled();
-                    break;
-                case "serialize":
-                    element.value = component.shouldSerialize();
-                    break;
-                case "abs":
-                    element.value = component.isAbsoluteOffset();
-                    break;
-                case "name":
-                    element.value = component.getName();
-                    break;
-            }        
-
-        
+        switch (element.internalname) {
+            case "pos" -> element.value = component.getPositionOffset();
+            case "rot" -> element.value = component.getRotationOffset().toEuler();
+            case "scale" -> element.value = component.getScale();
+            case "enabled" -> element.value = component.isEnabled();
+            case "serialize" -> element.value = component.shouldSerialize();
+            case "abs" -> element.value = component.isAbsoluteOffset();
+            case "name" -> element.value = component.getName();
+        }
         updateView(element);
     }
     

@@ -10,7 +10,7 @@ import com.opengg.core.util.GGOutputStream;
 import java.io.IOException;
 
 /**
- *
+ * Empty implementation of Component, can be used as a container
  * @author Javier
  */
 public class WorldObject extends Component{

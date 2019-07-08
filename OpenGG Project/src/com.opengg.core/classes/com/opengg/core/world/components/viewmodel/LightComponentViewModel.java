@@ -45,11 +45,11 @@ public class LightComponentViewModel extends ViewModel<LightComponent>{
 
     @Override
     public void onChange(Element element) {
-        if(element.internalname.equals("color"))
+        if(element.internalname.equals("color")) {
             component.getLight().setColor((Vector3f)element.value);
-        
-        if(element.internalname.equals("distance"))
+        } else if(element.internalname.equals("distance")) {
             component.getLight().setDistance((Float)element.value);
+        }
         component.update(0);
     }
 

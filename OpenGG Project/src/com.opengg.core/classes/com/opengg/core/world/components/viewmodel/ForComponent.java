@@ -1,5 +1,7 @@
 package com.opengg.core.world.components.viewmodel;
 
+import com.opengg.core.world.components.Component;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -12,5 +14,5 @@ public @interface ForComponent{
      * Class object from the Component that this ViewModel represents
      * @return
      */
-    Class value();
+    Class<? extends Component> value();
 }

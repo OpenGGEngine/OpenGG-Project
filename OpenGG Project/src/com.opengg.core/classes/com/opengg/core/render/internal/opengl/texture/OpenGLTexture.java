@@ -121,9 +121,12 @@ public class OpenGLTexture implements Texture {
             case DXT1,DXT3,DXT5:
                 int blockSize = (data.getTextureType() == TextureData.TType.DXT1)?8:16;
                 int width = data.width; int height = data.height;
-                int internalFormat = switch(data.getTextureType()){case DXT1 -> GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
-                    case DXT3 -> GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;case DXT5 -> GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
-                default -> GL_COMPRESSED_RGBA_S3TC_DXT1_EXT ;};
+                int internalFormat = switch(data.getTextureType()){
+                    case DXT1 -> GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
+                    case DXT3 -> GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
+                    case DXT5 -> GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+                    default -> GL_COMPRESSED_RGBA_S3TC_DXT1_EXT ;
+                };
                 for(int level = 0;level < data.getMipMapCount(); level++){
                     int size = ((data.width+3)/4)*((data.height+3)/4)*blockSize;
                     byte[] sub = new byte[size];

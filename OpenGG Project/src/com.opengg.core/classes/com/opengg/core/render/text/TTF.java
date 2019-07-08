@@ -215,13 +215,11 @@ public class TTF implements Font{
             i += getCP(text, to, i, pCodePoint);
 
             int cp = pCodePoint.get(0);
-            System.out.print((char)cp);
             if (cp == '\n' || (x1 > wholetext.getMaxLineSize() && wholetext.getMaxLineSize() > 0f)) {
-                lineY = lineY + (ascent - descent + lineGap) * scale * 2;
+                lineY = lineY + (ascent - descent + lineGap) * scale * 2 + wholetext.getLinePadding();
                 y.put(0, lineY);
                 x.put(0, 0.0f);
                 x1 = 0;
-                System.out.println("newlined");
                 continue;
             } else if (cp < 32 || 128 <= cp) {
                 continue;

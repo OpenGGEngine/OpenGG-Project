@@ -37,7 +37,7 @@ public class GUITextBox extends GUIGroup{
         Animation animation = new Animation(0.1f, false);
         animation.addStaticEvent(Animation.AnimationStage.createStaticStage(0,0.1f, d -> Texture.ofColor(Color.BLACK, d.floatValue()*10), t -> background.setTexture(t)));
         animation.setOnCompleteAction(() -> setRunning(true));
-        animation.start();
+        animation.setToRun();
         AnimationManager.register(animation);
     }
 

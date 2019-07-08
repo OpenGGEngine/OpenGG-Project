@@ -75,7 +75,7 @@ public class FastGGInputStream extends GGInputStream{
     }
 
     public boolean readBoolean() throws IOException{
-        return (in.read() !=0 );
+        return (read() !=0 );
     }
 
     public String readString() throws IOException{

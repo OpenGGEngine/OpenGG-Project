@@ -52,7 +52,7 @@ public class ShaderController {
     private static Matrix4f view = new Matrix4f(), proj = new Matrix4f();
     private static String currentvert, currenttesc, currenttese, currentgeom, currentfrag;
     private static int currentBind = 0;
-    private static boolean loadFromCache = true;
+    private static boolean loadFromCache = false;
 
     public static void testInitialize(){
         GGConsole.initialize();
@@ -798,7 +798,7 @@ public class ShaderController {
         shaderfiles.putAll(filesToProcess
                 .stream()
                 .unordered()
-                .parallel()
+                //.parallel()
                 .map(ShaderFile::new)
                 .filter(ShaderFile::isParsed)
                 .collect(Collectors.toList())

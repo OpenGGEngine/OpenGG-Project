@@ -170,8 +170,7 @@ public class Quaternionf implements Serializable{
         return new Quaternionf(this.divide(this.length()));
     }
 
-    public Matrix4f
-    convertMatrix() {
+    public Matrix4f convertMatrix() {
         Quaternionf q = this.normalize();
         return new Matrix4f(
                 1.0f - 2.0f * q.y * q.y - 2.0f * q.z * q.z,     2.0f * q.x * q.y - 2.0f * q.z * q.w,            2.0f * q.x * q.z + 2.0f * q.y * q.w, 0,
