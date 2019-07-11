@@ -32,6 +32,10 @@ public class FileUtil {
         int lio = fname.lastIndexOf('.');
         return fname.substring(0, lio);
     }
+
+    public static String getFileExt(String file){
+        return (file.substring(file.lastIndexOf('.') + 1));
+    }
     
     private static ByteBuffer resizeBuffer(ByteBuffer buffer, int newCapacity) {
         ByteBuffer newBuffer = BufferUtils.createByteBuffer(newCapacity);
