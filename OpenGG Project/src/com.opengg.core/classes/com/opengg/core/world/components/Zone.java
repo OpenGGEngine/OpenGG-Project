@@ -10,7 +10,6 @@ import com.opengg.core.math.Vector3f;
 import com.opengg.core.physics.collision.AABB;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
-import com.opengg.core.world.components.triggers.Trigger;
 import com.opengg.core.world.components.triggers.TriggerInfo;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -20,7 +19,7 @@ import java.util.List;
  *
  * @author ethachu19
  */
-public class Zone extends Trigger{
+public class Zone extends TriggerComponent {
     private AABB box;
     private boolean repeat = false;
     List<Component> lastFrames = new ArrayList<>();
@@ -51,7 +50,7 @@ public class Zone extends Trigger{
                 TriggerInfo ti = new TriggerInfo();
                 ti.triggerSource = this;
                 ti.data = c;
-                ti.type = 0;
+                ti.type = TriggerInfo.TriggerType.SINGLE;
                 ti.info = "collide:" + c.getGUID();
                 trigger(ti);
             }

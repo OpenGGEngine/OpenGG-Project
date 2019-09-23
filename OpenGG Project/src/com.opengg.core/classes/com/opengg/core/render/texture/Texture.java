@@ -298,6 +298,10 @@ public interface Texture{
         return create(config, textures);
     }
 
+    static Texture create(TextureConfig config, List<TextureData> data){
+        return create(config, data.toArray(new TextureData[0]));
+    }
+
     static Texture create(TextureConfig config, TextureData... data){
         if(data.length == 0) return Texture.create(Texture.config(), TextureManager.getDefault());
 

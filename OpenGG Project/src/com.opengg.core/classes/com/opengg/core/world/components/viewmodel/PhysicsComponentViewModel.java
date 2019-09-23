@@ -5,6 +5,9 @@
  */
 package com.opengg.core.world.components.viewmodel;
 
+import com.opengg.core.editor.DataBinding;
+import com.opengg.core.editor.ForComponent;
+import com.opengg.core.editor.Initializer;
 import com.opengg.core.world.components.physics.PhysicsComponent;
 
 /**
@@ -16,46 +19,48 @@ public class PhysicsComponentViewModel extends ViewModel<PhysicsComponent>{
 
     @Override
     public void createMainViewModel() {
-        Element mass = new Element();
-        mass.type = Element.Type.FLOAT;
+        super.createMainViewModel();
+
+        var mass = new DataBinding.FloatBinding();
         mass.autoupdate = true;
         mass.name = "Mass";
         mass.internalname = "mass";
-        mass.value = 100f;
-        
-        Element density = new Element();
-        density.type = Element.Type.FLOAT;
+        mass.setValueAccessorFromData(() -> component.getEntity().mass);
+        mass.onViewChange(s -> component.getEntity().mass = s);
+
+        var density = new DataBinding.FloatBinding();
         density.autoupdate = true;
         density.name = "Density";
         density.internalname = "density";
-        density.value = 1f;
-        
-        Element restitution = new Element();
-        restitution.type = Element.Type.FLOAT;
+        density.setValueAccessorFromData(() -> component.getEntity().density);
+        density.onViewChange(s -> component.getEntity().density = s);
+
+        var restitution = new DataBinding.FloatBinding();
         restitution.autoupdate = true;
         restitution.name = "Restitution";
         restitution.internalname = "restitution";
-        restitution.value = 0.5f;
-        
-        Element sfriction = new Element();
-        sfriction.type = Element.Type.FLOAT;
+        restitution.setValueAccessorFromData(() -> component.getEntity().restitution);
+        restitution.onViewChange(s -> component.getEntity().restitution = s);
+
+        var sfriction = new DataBinding.FloatBinding();
         sfriction.autoupdate = true;
         sfriction.name = "Static friction";
         sfriction.internalname = "sfriction";
-        sfriction.value = 0.6f;
-        
-        Element dfriction = new Element();
-        dfriction.type = Element.Type.FLOAT;
+        sfriction.setValueAccessorFromData(() -> component.getEntity().staticfriction);
+        sfriction.onViewChange(s -> component.getEntity().staticfriction = s);
+
+        var dfriction = new DataBinding.FloatBinding();
         dfriction.autoupdate = true;
         dfriction.name = "Dynamic friction";
         dfriction.internalname = "dfriction";
-        dfriction.value = 0.6f;
-        
-        elements.add(mass);
-        elements.add(density);
-        elements.add(restitution);
-        elements.add(sfriction);
-        elements.add(dfriction);
+        dfriction.setValueAccessorFromData(() -> component.getEntity().dynamicfriction);
+        dfriction.onViewChange(s -> component.getEntity().dynamicfriction = s);
+
+        addElement(mass);
+        addElement(density);
+        addElement(restitution);
+        addElement(sfriction);
+        addElement(dfriction);
     }
 
     @Override
@@ -68,35 +73,4 @@ public class PhysicsComponentViewModel extends ViewModel<PhysicsComponent>{
         return new PhysicsComponent();
     }
 
-    @Override
-    public void onChange(Element element) {
-        switch (element.internalname) {
-            case "name":
-                component.getEntity().name = (String)element.value;
-                break;
-            case "mass":
-                component.getEntity().mass = (Float)element.value;
-                break;
-            case "density":
-                component.getEntity().density = (Float)element.value;
-                break;
-            case "restitution":
-                component.getEntity().restitution = (Float)element.value;
-                break;
-            case "sfriction":
-                component.getEntity().staticfriction = (Float)element.value;
-                break;
-            case "dfriction":
-                component.getEntity().dynamicfriction = (Float)element.value;
-                break;
-            default:
-                break;
-        }
-    }
-
-    @Override
-    public void updateView(Element element) {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-    
 }

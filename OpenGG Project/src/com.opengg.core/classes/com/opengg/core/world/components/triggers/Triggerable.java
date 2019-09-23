@@ -6,11 +6,12 @@
 
 package com.opengg.core.world.components.triggers;
 
+import com.opengg.core.world.components.TriggerComponent;
+
 /**
  *
  * @author Javier
  */
 public interface Triggerable{
-    void onTrigger(Trigger source, TriggerInfo info);
-    default void onSubscribe(Trigger trigger){}
+    void onTrigger(TriggerComponent source, TriggerInfo info);
 }

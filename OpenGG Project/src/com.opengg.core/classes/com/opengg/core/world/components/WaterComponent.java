@@ -28,11 +28,11 @@ import java.io.IOException;
  * @author Javier
  */
 public class WaterComponent extends RenderComponent{
-    float movespeed;
-    float current;
-    float tscale;
-    float size;
-    TextureData texture;
+    private float movespeed;
+    private float current;
+    private float textureScale;
+    private float size;
+    private TextureData texture;
     
     public WaterComponent(){}
     
@@ -40,7 +40,7 @@ public class WaterComponent extends RenderComponent{
         this(tex, 0.1f, 100, size);
     }
     
-    public WaterComponent(TextureData texture, float movespeed, float tscale, float size){
+    public WaterComponent(TextureData texture, float movespeed, float textureScale, float size){
         OpenGG.asyncExec(() -> {
             Drawable drawn = ObjectCreator.createSquare(new Vector2f(-size,-size), new Vector2f(size,size), 0);
             setDrawable(new TexturedDrawnObject(drawn, Texture.get2DSRGBTexture(texture)));
@@ -48,7 +48,7 @@ public class WaterComponent extends RenderComponent{
         
         this.texture = texture;
         this.size = size;
-        this.tscale = tscale;
+        this.textureScale = textureScale;
         this.movespeed = movespeed;
         this.setRotationOffset(new Quaternionf(new Vector3f(90,0,0)));
         this.setShader("water");
@@ -61,7 +61,7 @@ public class WaterComponent extends RenderComponent{
     
     @Override
     public void render(){
-        ShaderController.setUVMultX(tscale);
+        ShaderController.setUVMultX(textureScale);
         ShaderController.setUniform("uvoffsetx", FastMath.sin(current)/4);
         ShaderController.setUniform("uvoffsety", FastMath.sin(current)/4);
         if(RenderEngine.getSkybox() == null) return;
@@ -80,12 +80,12 @@ public class WaterComponent extends RenderComponent{
         this.movespeed = movespeed;
     }
 
-    public float getTscale() {
-        return tscale;
+    public float getTextureScale() {
+        return textureScale;
     }
 
-    public void setTscale(float tscale) {
-        this.tscale = tscale;
+    public void setTextureScale(float textureScale) {
+        this.textureScale = textureScale;
     }
     
     public TextureData getTexture() {
@@ -102,7 +102,7 @@ public class WaterComponent extends RenderComponent{
         out.write(size);
         out.write(movespeed);
         out.write(current);
-        out.write(tscale);
+        out.write(textureScale);
         out.write(texture.source);
     }
     
@@ -112,7 +112,7 @@ public class WaterComponent extends RenderComponent{
         size = in.readFloat();
         movespeed = in.readFloat();
         current = in.readFloat();
-        tscale = in.readFloat();
+        textureScale = in.readFloat();
         texture = TextureManager.loadTexture(in.readString());
         OpenGG.asyncExec(() -> {
             Drawable drawn = ObjectCreator.createSquare(new Vector2f(-size,-size), new Vector2f(size,size), 0);

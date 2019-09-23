@@ -5,6 +5,7 @@
  */
 package com.opengg.core.world.components.viewmodel;
 
+import com.opengg.core.editor.Initializer;
 import com.opengg.core.world.components.Component;
 
 /**
@@ -15,7 +16,9 @@ import com.opengg.core.world.components.Component;
 public class GenericComponentViewModel extends ViewModel{
 
     @Override
-    public void createMainViewModel() {}
+    public void createMainViewModel() {
+        super.createMainViewModel();
+    }
 
     @Override
     public Initializer getInitializer(Initializer init) {
@@ -25,14 +28,6 @@ public class GenericComponentViewModel extends ViewModel{
     @Override
     public Component getFromInitializer(Initializer init) {
         throw new UnsupportedOperationException("Cannot create a generic viewmodel, this class is only usable for emergency support for components without custom ViewModels");
-    }
-
-    @Override
-    public void onChange(Element element) {}
-
-    @Override
-    public void updateView(Element element) {
-        
     }
     
 }

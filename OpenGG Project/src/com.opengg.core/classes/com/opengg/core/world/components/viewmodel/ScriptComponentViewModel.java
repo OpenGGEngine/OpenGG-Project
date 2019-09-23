@@ -1,16 +1,29 @@
 package com.opengg.core.world.components.viewmodel;
 
+import com.opengg.core.editor.DataBinding;
+import com.opengg.core.editor.ForComponent;
+import com.opengg.core.editor.Initializer;
 import com.opengg.core.world.components.ScriptComponent;
 
 @ForComponent(ScriptComponent.class)
 public class ScriptComponentViewModel extends ViewModel<ScriptComponent>{
     @Override
     public void createMainViewModel() {
-        this.addElement(new Element()
-                        .name("Script Name")
-                        .internalName("script")
-                        .type(Element.Type.STRING)
-                        .value(""));
+        super.createMainViewModel();
+
+        var name = new DataBinding.StringBinding();
+        name.name("Script Name");
+        name.internalName("script");
+        name.setValueAccessorFromData(component::getScriptName);
+        name.onViewChange(component::setScript);
+        this.addElement(name);
+
+        var mode = new DataBinding.BooleanBinding();
+        mode.name("Enable on trigger");
+        mode.internalName("mode");
+        mode.setValueAccessorFromData(() -> component.getRunMode() == ScriptComponent.RunMode.ON_TRIGGER);
+        mode.onViewChange(b -> component.setRunMode(b ? ScriptComponent.RunMode.ON_TRIGGER : ScriptComponent.RunMode.CONTINUOUS));
+        this.addElement(mode);
     }
 
     @Override
@@ -21,19 +34,5 @@ public class ScriptComponentViewModel extends ViewModel<ScriptComponent>{
     @Override
     public ScriptComponent getFromInitializer(Initializer init) {
         return new ScriptComponent();
-    }
-
-    @Override
-    public void onChange(Element element) {
-        switch (element.name) {
-            case "script" -> this.component.setScript((String) element.value);
-        }
-    }
-
-    @Override
-    public void updateView(Element element) {
-        switch (element.name) {
-            case "script" -> element.value = this.component.getScriptName();
-        }
     }
 }

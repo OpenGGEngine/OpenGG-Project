@@ -5,9 +5,13 @@
  */
 package com.opengg.core.world.components.viewmodel;
 
+import com.opengg.core.editor.DataBinding;
+import com.opengg.core.editor.ForComponent;
+import com.opengg.core.editor.Initializer;
 import com.opengg.core.render.texture.TextureData;
 import com.opengg.core.render.texture.TextureManager;
 import com.opengg.core.world.components.Component;
+import com.opengg.core.world.components.RenderComponent;
 import com.opengg.core.world.components.WaterComponent;
 
 /**
@@ -15,78 +19,51 @@ import com.opengg.core.world.components.WaterComponent;
  * @author Javier
  */
 @ForComponent(WaterComponent.class)
-public class WaterComponentViewModel extends ViewModel{
+public class WaterComponentViewModel extends RenderComponentViewModel<WaterComponent>{
 
     @Override
     public void createMainViewModel() {
-        Element tex = new Element();
-        tex.type = Element.Type.TEXTURE;
+        super.createMainViewModel();
+
+        var tex = new DataBinding.TextureBinding();
         tex.internalname = "tex";
         tex.name = "Water Texture";
         tex.autoupdate = true;
-        tex.value = TextureManager.getDefault();
+        tex.setValueAccessorFromData(component::getTexture);
+        tex.onViewChange(component::setTexture);
         
-        Element texsize = new Element();
-        texsize.type = Element.Type.FLOAT;
+        var texsize = new DataBinding.FloatBinding();
         texsize.internalname = "size";
         texsize.name = "Water Texture Scale";
-        texsize.value = 0.1f;
+        texsize.setValueAccessorFromData(component::getTextureScale);
+        texsize.onViewChange(component::setTextureScale);
         
-        Element movementspeed = new Element();
-        movementspeed.type = Element.Type.FLOAT;
+        var movementspeed = new DataBinding.FloatBinding();
         movementspeed.internalname = "speed";
         movementspeed.name = "Texture Animation Speed";
-        movementspeed.value = 100f;
-        
-        elements.add(tex);
-        elements.add(texsize);
-        elements.add(movementspeed);
+        movementspeed.setValueAccessorFromData(component::getMovespeed);
+        movementspeed.onViewChange(component::setMovespeed);
+
+        addElement(tex);
+        addElement(texsize);
+        addElement(movementspeed);
     }
 
     @Override
     public Initializer getInitializer(Initializer init) {
 
-        Element tex = new Element();
-        tex.type = Element.Type.TEXTURE;
+        var tex = new DataBinding.TextureBinding();
         tex.internalname = "tex";
         tex.name = "Water Texture";
         tex.autoupdate = true;
-        tex.value = TextureManager.getDefault();
+        tex.setValueFromData(TextureManager.getDefault());
         init.addElement(tex);
-        
-        Element size = new Element();
-        size.type = Element.Type.FLOAT;
-        size.internalname = "size";
-        size.name = "Water Mesh Size";
-        size.autoupdate = true;
-        size.value = 100f;
-        init.addElement(size);
-        
+
         return init;
     }
 
     @Override
-    public Component getFromInitializer(Initializer init) {
-        return new WaterComponent(((TextureData)init.elements.get(0).value), (Float)init.elements.get(1).value);
+    public WaterComponent getFromInitializer(Initializer init) {
+        return new WaterComponent(((TextureData)init.dataBindings.get(0).getValue()), 1);
     }
-
-    @Override
-    public void onChange(Element element) {
-        if(element.internalname.equals("size"))
-            ((WaterComponent)component).setTscale((Float)element.value);
-        
-        if(element.internalname.equals("speed"))
-            ((WaterComponent)component).setMovespeed((Float)element.value);
-        
-        if(element.internalname.equals("tex"))
-            ((WaterComponent)component).setTexture((TextureData)element.value);
-        
-    }
-
-    @Override
-    public void updateView(Element element) {
-        getByName("size").value = ((WaterComponent)component).getTscale();
-        getByName("speed").value = ((WaterComponent)component).getMovespeed();
-    }
-    
 }

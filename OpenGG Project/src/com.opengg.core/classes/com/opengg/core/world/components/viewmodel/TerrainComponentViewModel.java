@@ -5,6 +5,9 @@
  */
 package com.opengg.core.world.components.viewmodel;
 
+import com.opengg.core.editor.DataBinding;
+import com.opengg.core.editor.ForComponent;
+import com.opengg.core.editor.Initializer;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.texture.TextureData;
 import com.opengg.core.render.texture.TextureManager;
@@ -12,88 +15,85 @@ import com.opengg.core.world.Terrain;
 import com.opengg.core.world.components.Component;
 import com.opengg.core.world.components.TerrainComponent;
 
+import java.util.List;
+
 /**
  *
  * @author Javier
  */
 @ForComponent(TerrainComponent.class)
-public class TerrainComponentViewModel extends ViewModel{
+public class TerrainComponentViewModel extends ViewModel<TerrainComponent>{
 
     @Override
-    public void createMainViewModel() {       
-        Element blot = new Element();
-        blot.type = Element.Type.TEXTURE;
-        blot.name = "Terrain Blotmap";
-        blot.value = TextureManager.getDefault();
+    public void createMainViewModel() {
+        var blot = new DataBinding.TextureBinding();
+        blot.name = "Blotmap";
         blot.internalname = "blot";
+        blot.setValueAccessorFromData(() -> component.getBlotmap().getData().get(0));
+        blot.onViewChange(t -> component.setBlotmap(t));
         
-        Element t1 = new Element();
-        t1.type = Element.Type.TEXTURE;
+        var t1 = new DataBinding.TextureBinding();
         t1.name = "Texture 1";
-        t1.value = TextureManager.getDefault();
         t1.internalname = "t1";
-        
-        Element t2 = new Element();
-        t2.type = Element.Type.TEXTURE;
+        t1.setValueAccessorFromData(() -> component.getGroundArray().getData().get(0));
+        t1.onViewChange(t -> component.setIndividualGroundArrayValue(t,0));
+
+        var t2 = new DataBinding.TextureBinding();
         t2.name = "Texture 2";
-        t2.value = TextureManager.getDefault();
         t2.internalname = "t2";
-        
-        Element t3 = new Element();
-        t3.type = Element.Type.TEXTURE;
+        t2.setValueAccessorFromData(() -> component.getGroundArray().getData().get(1));
+        t2.onViewChange(t -> component.setIndividualGroundArrayValue(t,1));
+
+        var t3 = new DataBinding.TextureBinding();
         t3.name = "Texture 3";
-        t3.value = TextureManager.getDefault();
         t3.internalname = "t3";
-        
-        Element t4 = new Element();
-        t4.type = Element.Type.TEXTURE;
+        t3.setValueAccessorFromData(() -> component.getGroundArray().getData().get(2));
+        t3.onViewChange(t -> component.setIndividualGroundArrayValue(t,2));
+
+        var t4 = new DataBinding.TextureBinding();
         t4.name = "Texture 4";
-        t4.value = TextureManager.getDefault();
         t4.internalname = "t4";
+        t4.setValueAccessorFromData(() -> component.getGroundArray().getData().get(3));
+        t4.onViewChange(t -> component.setIndividualGroundArrayValue(t,3));
         
-        elements.add(blot);
-        elements.add(t1);
-        elements.add(t2);
-        elements.add(t3);
-        elements.add(t4);
+        addElement(blot);
+        addElement(t1);
+        addElement(t2);
+        addElement(t3);
+        addElement(t4);
+        
     }
 
     @Override
     public Initializer getInitializer(Initializer init) {
-        Element height = new Element();
-        height.type = Element.Type.TEXTURE;
+        var height = new DataBinding.TextureBinding();
         height.name = "Terrain Heightmap";
-        height.value = TextureManager.getDefault();
+        height.setValueFromData(TextureManager.getDefault());
         height.internalname = "height";
         
-        Element blot = new Element();
-        blot.type = Element.Type.TEXTURE;
+        var blot = new DataBinding.TextureBinding();
         blot.name = "Terrain Blotmap";
-        blot.value = TextureManager.getDefault();
+        blot.setValueFromData(TextureManager.getDefault());
         blot.internalname = "blot";
         
-        Element t1 = new Element();
-        t1.type = Element.Type.TEXTURE;
+        var t1 = new DataBinding.TextureBinding();
         t1.name = "Texture 1";
-        t1.value = TextureManager.getDefault();
+        t1.setValueFromData(TextureManager.getDefault());
         t1.internalname = "t1";
         
-        Element t2 = new Element();
-        t2.type = Element.Type.TEXTURE;
+        var t2 = new DataBinding.TextureBinding();
         t2.name = "Texture 2";
-        t2.value = TextureManager.getDefault();
+        t2.setValueFromData(TextureManager.getDefault());
         t2.internalname = "t2";
         
-        Element t3 = new Element();
-        t3.type = Element.Type.TEXTURE;
+        var t3 = new DataBinding.TextureBinding();
         t3.name = "Texture 3";
-        t3.value = TextureManager.getDefault();
+        t3.setValueFromData(TextureManager.getDefault());
         t3.internalname = "t3";
         
-        Element t4 = new Element();
-        t4.type = Element.Type.TEXTURE;
+        var t4 = new DataBinding.TextureBinding();
         t4.name = "Texture 4";
-        t4.value = TextureManager.getDefault();
+        t4.setValueFromData(TextureManager.getDefault());
         t4.internalname = "t4";
         
         init.addElement(height);
@@ -107,35 +107,17 @@ public class TerrainComponentViewModel extends ViewModel{
     }
 
     @Override
-    public Component getFromInitializer(Initializer init) {
-        Terrain terrain = Terrain.generate((TextureData)init.get("height").value);
-        
-        Texture blot = Texture.get2DTexture((TextureData)init.get("blot").value);
-        Texture tex = Texture.getArrayTexture((TextureData)init.get("t1").value, (TextureData)init.get("t2").value, (TextureData)init.get("t3").value, (TextureData)init.get("t4").value);
-        
+    public TerrainComponent getFromInitializer(Initializer init) {
+        Terrain terrain = Terrain.generate((TextureData)init.get("height").getValue());
+
         TerrainComponent comp = new TerrainComponent(terrain);
-        comp.setBlotmap(blot);
-        comp.setGroundArray(tex);
+        comp.setBlotmap((TextureData)init.get("blot").getValue());
+        comp.setGroundArray(List.of(
+                (TextureData)init.get("t1").getValue(),
+                (TextureData)init.get("t2").getValue(),
+                (TextureData)init.get("t3").getValue(),
+                (TextureData)init.get("t4").getValue()));
         
         return comp;
-    }
-
-    @Override
-    public void onChange(Element element) {
-        if(element.internalname.equals("blot"))
-            ((TerrainComponent)component).setBlotmap(Texture.get2DTexture((TextureData)element.value));
-        
-        else if(element.internalname.startsWith("t"))
-            ((TerrainComponent)component).setGroundArray(Texture.getArrayTexture((TextureData)getByName("t1").value, (TextureData)getByName("t2").value, (TextureData)getByName("t3").value, (TextureData)getByName("t4").value));
-    }
-
-    @Override
-    public void updateView(Element element) {
-        /*getByName("blot").value = ((TerrainComponent)component).blotmap.getData().get(0);
-        getByName("t1").value = ((TerrainComponent)component).array.getData().get(0);
-        getByName("t2").value = ((TerrainComponent)component).array.getData().get(1);
-        getByName("t3").value = ((TerrainComponent)component).array.getData().get(2);
-        getByName("t4").value = ((TerrainComponent)component).array.getData().get(3);*/
-        
     }
 }

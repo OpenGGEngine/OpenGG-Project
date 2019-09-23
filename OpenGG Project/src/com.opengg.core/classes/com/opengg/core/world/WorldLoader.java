@@ -62,21 +62,6 @@ public class WorldLoader {
     }
 
     /**
-     * Returns the world indicated by the given world name <br>
-     *     This will first attempt to retrieve the world from the world state cache.
-     *     If it is unable to findByName it in the cache, it will then attempt to load it from the file indicated.
-     *     If this also fails, it will return {@code null}
-     * @param worldname World name to load world from.
-     * @return World object from either the state manager or the file system, or null if neither exist
-     */
-    public static World getWorld(String worldname){
-        if(WorldEngine.hasExistingCopy(worldname))
-            return WorldEngine.getExistingWorld(worldname);
-        else
-            return loadWorld(worldname);
-    }
-
-    /**
      * Saves the given World to the given file <br>
      * @param world
      * @param worldname

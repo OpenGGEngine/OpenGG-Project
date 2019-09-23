@@ -7,7 +7,6 @@ package com.opengg.core.world.components;
 
 import com.opengg.core.audio.Sound;
 import com.opengg.core.engine.Resource;
-import com.opengg.core.world.components.triggers.Trigger;
 import com.opengg.core.world.components.triggers.TriggerInfo;
 import com.opengg.core.world.components.triggers.Triggerable;
 
@@ -21,6 +20,7 @@ public class SoundComponent extends Component implements Triggerable, ResourceUs
     public SoundComponent(){
         super();
     }
+
     public SoundComponent(Sound sound){
         super();
         this.sound = sound;
@@ -31,13 +31,10 @@ public class SoundComponent extends Component implements Triggerable, ResourceUs
     }
 
     @Override
-    public void onTrigger(Trigger source, TriggerInfo data) {
+    public void onTrigger(TriggerComponent source, TriggerInfo data) {
         sound.stop();
         sound.play();
     }
-
-    @Override
-    public void onSubscribe(Trigger trigger) {}
 
     @Override
     public Resource getResource(){

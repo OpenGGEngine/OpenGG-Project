@@ -5,6 +5,9 @@
  */
 package com.opengg.core.world.components.viewmodel;
 
+import com.opengg.core.editor.DataBinding;
+import com.opengg.core.editor.ForComponent;
+import com.opengg.core.editor.Initializer;
 import com.opengg.core.model.Model;
 import com.opengg.core.model.ModelManager;
 import com.opengg.core.world.components.ModelComponent;
@@ -14,56 +17,45 @@ import com.opengg.core.world.components.ModelComponent;
  * @author Javier
  */
 @ForComponent(com.opengg.core.world.components.ModelComponent.class)
-public class ModelComponentViewModel extends ViewModel<ModelComponent>{
+public class ModelComponentViewModel extends RenderComponentViewModel<ModelComponent>{
     
     @Override
     public Initializer getInitializer(Initializer init) {
 
-        Element modelpath = new Element();
+        DataBinding<Model> modelpath = DataBinding.ofType(DataBinding.Type.MODEL);
         modelpath.autoupdate = true;
-        modelpath.type = Element.Type.MODEL;
         modelpath.name = "Model";
         modelpath.internalname = "model";
-        modelpath.value = ModelManager.getDefaultModel();
+        modelpath.setValueFromData(ModelManager.getDefaultModel());
 
-        Element createCollider = new Element();
+        DataBinding<Boolean> createCollider = DataBinding.ofType(DataBinding.Type.BOOLEAN);
         createCollider.autoupdate = true;
-        createCollider.type = Element.Type.BOOLEAN;
         createCollider.name = "Create Collider";
         createCollider.internalname = "createcollider";
-        createCollider.value = false;
+        createCollider.setValueFromData(false);
 
-        init.elements.add(modelpath);
-        init.elements.add(createCollider);
+        init.addElement(modelpath);
+        init.addElement(createCollider);
         return init;
     }
 
     @Override
     public ModelComponent getFromInitializer(Initializer init) {
-        return new ModelComponent((Model)init.get("model").value, (boolean)init.get("createcollider").value);
-    }
-
-    @Override
-    public void onChange(Element element) {
-        if(element.internalname.equals("model")){
-            component.setModel((Model)element.value);
-        }
+        return new ModelComponent((Model)init.get("model").getValue(), (boolean)init.get("createcollider").getValue());
     }
 
     @Override
     public void createMainViewModel() {
-        Element modelpath = new Element();
+        super.createMainViewModel();
+
+        DataBinding<Model> modelpath = DataBinding.ofType(DataBinding.Type.MODEL);
         modelpath.autoupdate = true;
-        modelpath.type = Element.Type.MODEL;
         modelpath.name = "Model";
         modelpath.internalname = "model";
-        modelpath.value = ModelManager.getDefaultModel();
-        
-        elements.add(modelpath);
-    }
+        modelpath.setValueAccessorFromData(() -> component.getModel());
+        modelpath.onViewChange(component::setModel);
 
-    @Override
-    public void updateView(Element element) {
-       
+        
+        addElement(modelpath);
     }
 }

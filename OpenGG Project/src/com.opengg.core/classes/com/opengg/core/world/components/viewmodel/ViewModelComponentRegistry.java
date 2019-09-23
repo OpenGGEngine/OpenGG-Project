@@ -6,6 +6,7 @@
 package com.opengg.core.world.components.viewmodel;
 
 import com.opengg.core.console.GGConsole;
+import com.opengg.core.editor.ForComponent;
 import com.opengg.core.util.JarClassUtil;
 import com.opengg.core.world.components.*;
 import com.opengg.core.world.components.particle.*;
@@ -41,6 +42,8 @@ public class ViewModelComponentRegistry {
         register(ExplosionParticleEmitter.class);
         register(Zone.class);
         register(SoundtrackComponent.class);
+        register(WorldChangeZone.class);
+        register(ScriptComponent.class);
         
         register(ModelComponentViewModel.class);
         register(WaterComponentViewModel.class);
@@ -53,6 +56,8 @@ public class ViewModelComponentRegistry {
         register(ExplosionParticleEmitterViewModel.class);
         register(ZoneViewModel.class);
         register(SoundtrackComponentViewModel.class);
+        register(WorldChangeZoneViewModel.class);
+        register(ScriptComponentViewModel.class);
         
     }
     

@@ -7,14 +7,16 @@
 package com.opengg.core.world.components.triggers;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
  * @author Javier
  */
 public interface ITrigger {
-    
+    List<Triggerable> getSubscribers();
+
     void addSubscriber(Triggerable dest);
-    ArrayList<Triggerable> getSubscribers();
     void trigger(TriggerInfo ti);
+    void clearSubscribers();
 }

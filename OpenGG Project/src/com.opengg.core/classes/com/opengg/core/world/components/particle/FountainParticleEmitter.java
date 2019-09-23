@@ -15,21 +15,20 @@ import com.opengg.core.render.texture.Texture;
  * @author Javier
  */
 public class FountainParticleEmitter extends ParticleEmitter{
-    float pps;
-    float speed;
-    float lifeLength;
-    float timeSinceLast = 0f;
-    float deviation;
-    Vector3f angle;
-    boolean paused;
+    private float pps;
+    private float speed;
+    private float timeSinceLast = 0f;
+    private float deviation;
+    private Vector3f angle;
+    private boolean paused;
     
     public FountainParticleEmitter(float pps, float speed, float lifeLength, float deviation, Vector3f angle, Texture t) {
         super(t);
         this.pps = pps;
         this.speed = speed;
-        this.lifeLength = lifeLength;
         this.deviation = deviation;
         this.angle = angle.normalize();
+        this.setLifeLength(lifeLength);
     }
     
     private void emitParticle(){
@@ -43,7 +42,7 @@ public class FountainParticleEmitter extends ParticleEmitter{
         finalv = getRotation().transform(finalv);
         finalv = finalv.multiply(speed);
 
-        addParticle(new Particle(getPosition(), finalv, new Vector3f(0,0,0), lifeLength,1f));
+        addParticle(new Particle(getPosition(), finalv, new Vector3f(0,0,0), this.getLifeLength(),1f));
     }
     
     @Override

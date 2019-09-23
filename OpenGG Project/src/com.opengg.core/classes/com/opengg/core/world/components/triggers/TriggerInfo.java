@@ -14,7 +14,10 @@ public class TriggerInfo {
     public static final int TOGGLE = 2;
     public Object data;
     public String info;
-    public int type;
+    public TriggerType type;
     public Object triggerSource;
-    
+
+    public static enum TriggerType{
+        SINGLE, TOGGLE
+    }
 }

@@ -5,6 +5,8 @@
  */
 package com.opengg.core.world.components.viewmodel;
 
+import com.opengg.core.editor.ForComponent;
+import com.opengg.core.editor.Initializer;
 import com.opengg.core.world.components.WorldObject;
 
 /**
@@ -15,9 +17,7 @@ import com.opengg.core.world.components.WorldObject;
 public class WorldObjectViewModel extends ViewModel<WorldObject>{
 
     @Override
-    public void createMainViewModel() {
-        
-    }
+    public void createMainViewModel() {}
 
     @Override
     public Initializer getInitializer(Initializer init) {
@@ -27,16 +27,6 @@ public class WorldObjectViewModel extends ViewModel<WorldObject>{
     @Override
     public WorldObject getFromInitializer(Initializer init) {
         return new WorldObject();
-    }
-
-    @Override
-    public void onChange(Element element) {
-        
-    }
-
-    @Override
-    public void updateView(Element element) {
-       
     }
     
 }

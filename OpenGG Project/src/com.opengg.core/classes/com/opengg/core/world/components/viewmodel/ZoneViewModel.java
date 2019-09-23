@@ -5,81 +5,48 @@
  */
 package com.opengg.core.world.components.viewmodel;
 
-import com.opengg.core.world.WorldEngine;
+import com.opengg.core.editor.DataBinding;
+import com.opengg.core.editor.ForComponent;
+import com.opengg.core.editor.Initializer;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.physics.collision.AABB;
+import com.opengg.core.world.WorldEngine;
 import com.opengg.core.world.components.Component;
 import com.opengg.core.world.components.Zone;
-import com.opengg.core.world.components.triggers.ITrigger;
 import com.opengg.core.world.components.triggers.Triggerable;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 /**
- *
  * @author Javier
  */
 @ForComponent(Zone.class)
-public class ZoneViewModel extends ViewModel<Zone>{
+public class ZoneViewModel<T extends Zone> extends TriggerComponentViewModel<T> {
 
     @Override
     public void createMainViewModel() {
-        Element lwh = new Element();
-        lwh.type = Element.Type.VECTOR3F;
+        super.createMainViewModel();
+
+        var lwh = new DataBinding.Vector3fBinding();
         lwh.autoupdate = true;
         lwh.name = "LWH";
         lwh.internalname = "lwh";
         lwh.visible = true;
-        lwh.value = new Vector3f(1,1,1);
-        
-        Element children = new Element();
-        children.type = Element.Type.STRING;
-        children.autoupdate = false;
-        children.name = "Children";
-        children.internalname = "children";
-        children.visible = true;
-        children.value = ";";
-        
-        elements.add(lwh);
-        elements.add(children);
+        lwh.setValueAccessorFromData(() -> component.getBox().getLWH());
+        lwh.onViewChange(v -> component.setBox(new AABB(v)));
+
+        addElement(lwh);
+
     }
 
     @Override
     public Initializer getInitializer(Initializer init) {
-        Element lwh = new Element();
-        lwh.type = Element.Type.VECTOR3F;
-        lwh.autoupdate = true;
-        lwh.internalname = "lwh";
-        lwh.visible = true;
-        lwh.value = new Vector3f(1,1,1);
-        init.addElement(lwh);
         return init;
     }
 
     @Override
-    public Zone getFromInitializer(Initializer init) {
-        return new Zone(new AABB((Vector3f) init.get("lwh").value));
+    public T getFromInitializer(Initializer init) {
+        return (T) new Zone();
     }
-
-    @Override
-    public void onChange(Element element) {
-        if(element.internalname.equalsIgnoreCase("lwh")){
-            component.getBox().setLWH((Vector3f) element.value);
-            component.getBox().recalculate();
-        }
-        if(element.internalname.equalsIgnoreCase("children")){
-            String lists = (String) element.value;
-            String[] strings = lists.split(";");
-            for(String s : strings){
-                s = s.trim();
-                Component c = WorldEngine.getCurrent().findByName(s).get(0);
-                if(c instanceof Triggerable)
-                    ((ITrigger)component).addSubscriber((Triggerable) c);
-            }
-        }
-    }
-
-    @Override
-    public void updateView(Element element) {
-        
-    }
-    
 }

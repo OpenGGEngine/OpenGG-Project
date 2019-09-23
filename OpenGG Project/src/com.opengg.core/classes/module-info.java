@@ -68,4 +68,5 @@ module com.opengg.core {
     exports com.opengg.core.model.process;
     exports com.opengg.core.animation;
     exports com.opengg.core.script;
+    exports com.opengg.core.editor;
 }

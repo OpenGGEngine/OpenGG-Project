@@ -1,4 +1,4 @@
-package com.opengg.core.world.components.viewmodel;
+package com.opengg.core.editor;
 
 import com.opengg.core.world.components.Component;
 

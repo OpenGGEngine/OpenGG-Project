@@ -42,7 +42,7 @@ public class WorldChangeZone extends Zone {
                     (d) -> Texture.ofColor(Color.BLACK, d.floatValue()),
                     (t) -> ((GUITexture) GUIController.get("black").getRoot().getItem("tex")).setTexture(t))
                         .setOnComplete(() -> {
-                            World newWorld = WorldLoader.getWorld(world);
+                            World newWorld = WorldEngine.getWorld(world);
                             Executor.async(() -> {
                                 WorldEngine.setOnlyActiveWorld(newWorld);
                                 onExit.accept(data);

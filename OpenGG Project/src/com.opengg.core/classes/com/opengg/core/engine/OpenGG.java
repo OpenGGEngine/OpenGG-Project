@@ -50,11 +50,10 @@ public final class OpenGG{
     private static GGApplication app;
     private static Instant startTime;
     private static boolean force = false;
-    private static boolean verbose = false;
     private static boolean test = false;
-    private static boolean warnOnMissedTarget = false;
     private static Time time;
     private static Thread mainthread;
+    private static DebugOptions options = new DebugOptions();
     private static float targetUpdate = 0f;
     private static float overrideUpdate = -1f;
 
@@ -208,7 +207,7 @@ public final class OpenGG{
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        }else if(delta > targetUpdate && targetUpdate != 0 && warnOnMissedTarget){
+        }else if(delta > targetUpdate && targetUpdate != 0 && OpenGG.getDebugOptions().warnOnMissedTarget()){
             GGConsole.warning("Last update cycle missed the target update! (" + delta + " sec instead of " + targetUpdate + " sec)");
         }
 
@@ -301,6 +300,17 @@ public final class OpenGG{
         System.exit(0);
     }
 
+
+    private static void closeEngine(){
+        RenderEngine.destroy();
+        SoundEngine.destroy();
+        GGConsole.log("Audio controller has been finalized");
+        WindowController.destroy();
+        ThreadManager.destroy();
+        GGConsole.log("Thread Manager has closed all remaining threads");
+        GGConsole.log("OpenGG has closed gracefully, application can now be ended");
+    }
+
     /**
      * Returns the current {@link com.opengg.core.render.window.Window} for this instance
      * @return The current window
@@ -324,24 +334,6 @@ public final class OpenGG{
      */
     public static boolean getEnded(){
         return !GGInfo.isEnded();
-    }
-
-    /**
-     * Returns if the logging setting is verbose
-     * @return If the logging is set to verbose
-     */
-    public static boolean isVerbose() {
-        return verbose;
-    }
-
-    private static void closeEngine(){
-        RenderEngine.destroy();
-        SoundEngine.destroy();
-        GGConsole.log("Audio controller has been finalized");
-        WindowController.destroy();
-        ThreadManager.destroy();
-        GGConsole.log("Thread Manager has closed all remaining threads");
-        GGConsole.log("OpenGG has closed gracefully, application can now be ended");
     }
 
     private static void writeLog(){
@@ -414,15 +406,6 @@ public final class OpenGG{
     }
 
     /**
-     * Sets if the engine should warn to the console when the target update time was missed during the last cycle<br>
-     *     This only applies if the real update time was above the target.
-     * @param warn
-     */
-    public static void setWarnOnMissedTarget(boolean warn) {
-        OpenGG.warnOnMissedTarget = warn;
-    }
-
-    /**
      * Sets the override delta update time for the engine, or disable override if its 0 <br>
      *     This override is used in place of the real time delta, meaning that for every tick, all subsystems are fed
      *     this value regardless of how much time actually passed.
@@ -436,5 +419,62 @@ public final class OpenGG{
      */
     public static void setOverrideUpdateTIme(float time) {
         OpenGG.overrideUpdate = time;
+    }
+
+    /**
+     * Returns the current set of debug options and flags enabled in the engine <br>
+     *     Most can be updated as needed as the engine runs with no issue2
+     * @return
+     */
+    public static DebugOptions getDebugOptions() {
+        return options;
+    }
+
+    /**
+     * Contains options for various debugging and detailed logging options for the OpenGG Engine
+     */
+    public static class DebugOptions{
+        private boolean verbose = false;
+        private boolean warnOnMissedTarget = false;
+        private boolean logOnComponentCreation = false;
+
+        /**
+         * Enables all debug logging options
+         * @return
+         */
+        public boolean isVerbose() {
+            return verbose;
+        }
+
+        public DebugOptions setVerbose(boolean verbose) {
+            this.verbose = verbose;
+            return this;
+        }
+
+        /**
+         * Returns if the engine should log if a tick length exceeded the target
+         * @return
+         */
+        public boolean warnOnMissedTarget() {
+            return warnOnMissedTarget || verbose;
+        }
+
+        public DebugOptions setWarnOnMissedTarget(boolean warnOnMissedTarget) {
+            this.warnOnMissedTarget = warnOnMissedTarget;
+            return this;
+        }
+
+        /**
+         * Returns if all component creations should be logged
+         * @return
+         */
+        public boolean logOnComponentCreation() {
+            return logOnComponentCreation || verbose;
+        }
+
+        public DebugOptions setLogOnComponentCreation(boolean logOnComponentCreation) {
+            this.logOnComponentCreation = logOnComponentCreation;
+            return this;
+        }
     }
 }

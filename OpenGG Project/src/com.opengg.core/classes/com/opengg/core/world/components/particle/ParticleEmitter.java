@@ -12,6 +12,7 @@ import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.drawn.DrawnObject;
 import com.opengg.core.render.objects.ObjectCreator;
 import com.opengg.core.render.texture.Texture;
+import com.opengg.core.render.texture.TextureData;
 import com.opengg.core.render.texture.TextureManager;
 import com.opengg.core.system.Allocator;
 import com.opengg.core.world.components.RenderComponent;
@@ -31,9 +32,10 @@ public abstract class ParticleEmitter extends RenderComponent{
     private List<Particle> particles = new LinkedList<>();
     private Texture texture;
     private boolean bindParticlesToEmitter = false;
+    private float lifeLength = 1f;
 
     public ParticleEmitter() {
-        this(Texture.create(Texture.config(),TextureManager.getDefault()));
+        this(Texture.create(Texture.config(), TextureManager.getDefault()));
     }
 
     public ParticleEmitter(Texture texture){
@@ -42,7 +44,7 @@ public abstract class ParticleEmitter extends RenderComponent{
         this.setShader("particle");
         this.texture = texture;
     }
-    
+
     private void createDrawable(){
         var buffers = ObjectCreator.createSquareBuffers(new Vector2f(-1,-1), new Vector2f(1,1), 0);
         FloatBuffer fb = buffers.x;
@@ -68,20 +70,28 @@ public abstract class ParticleEmitter extends RenderComponent{
         return texture;
     }
 
-    public void setTexture(Texture t) {
-        this.texture = t;
+    public void setTexture(TextureData tex) {
+        this.texture = Texture.create(Texture.config(), tex);
     }
 
-    public List<Particle> getParticles(){
-        return particles;
+    public float getLifeLength() {
+        return lifeLength;
     }
 
-    public boolean isBindParticlesToEmitter() {
+    public void setLifeLength(float lifeLength) {
+        this.lifeLength = lifeLength;
+    }
+
+    public boolean areParticlesBound() {
         return bindParticlesToEmitter;
     }
 
     public void setBindParticlesToEmitter(boolean bindParticlesToEmitter) {
         this.bindParticlesToEmitter = bindParticlesToEmitter;
+    }
+
+    public List<Particle> getParticles(){
+        return particles;
     }
 
     @Override

@@ -5,7 +5,9 @@
  */
 package com.opengg.core.world.components.viewmodel;
 
-import com.opengg.core.math.Quaternionf;
+import com.opengg.core.editor.DataBinding;
+import com.opengg.core.editor.ForComponent;
+import com.opengg.core.editor.Initializer;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.world.components.Component;
 import java.util.ArrayList;
@@ -17,141 +19,102 @@ import java.util.List;
  */
 @ForComponent(Component.class)
 public abstract class ViewModel<T extends Component> {
+
     public T component;
-    List<Element> elements = new ArrayList<>();
+    private final List<DataBinding> dataBindings = new ArrayList<>();
     
     public ViewModel(){
-        Element pos = new Element();
+
+    }
+
+    public void createMainViewModel(){
+        DataBinding<Vector3f> pos = DataBinding.ofType(DataBinding.Type.VECTOR3F);
         pos.autoupdate = true;
-        pos.type = Element.Type.VECTOR3F;
         pos.name = "Position";
         pos.internalname = "pos";
-        pos.value = new Vector3f(0,0,0);
-        
-        Element rot = new Element();
+        pos.setValueAccessorFromData(() -> component.getPosition());
+        pos.onViewChange(component::setPositionOffset);
+
+        DataBinding<Vector3f> rot = DataBinding.ofType(DataBinding.Type.VECTOR3F);
         rot.autoupdate = true;
-        rot.type = Element.Type.VECTOR3F;
         rot.name = "Rotation";
         rot.internalname = "rot";
-        rot.value = new Vector3f(0,0,0);
-        
-        Element scale = new Element();
+        rot.setValueAccessorFromData(() -> component.getRotation().toEuler());
+        rot.onViewChange(component::setRotationOffset);
+
+        DataBinding<Vector3f> scale = DataBinding.ofType(DataBinding.Type.VECTOR3F);
         scale.autoupdate = true;
-        scale.type = Element.Type.VECTOR3F;
         scale.name = "Scale";
         scale.internalname = "scale";
-        scale.value = new Vector3f(1,1,1);
-        
-        Element name = new Element();
+        scale.setValueAccessorFromData(() -> component.getScale());
+        scale.onViewChange(component::setScaleOffset);
+
+        DataBinding<String> name = DataBinding.ofType(DataBinding.Type.STRING);
         name.autoupdate = true;
-        name.type = Element.Type.STRING;
         name.name = "Name";
         name.internalname = "name";
-        name.value = "default";
-        
-        Element update = new Element();
+        name.setValueAccessorFromData(component::getName);
+        name.onViewChange(component::setName);
+
+        DataBinding<Boolean> update = DataBinding.ofType(DataBinding.Type.BOOLEAN);
         update.autoupdate = true;
-        update.type = Element.Type.BOOLEAN;
         update.name = "Enabled";
         update.internalname = "enabled";
-        update.value = true;
-        update.forceupdate = true;
-        
-        Element serialize = new Element();
+        update.setValueAccessorFromData(component::isEnabled);
+        update.onViewChange(component::setEnabled);
+
+        DataBinding<Boolean> serialize = DataBinding.ofType(DataBinding.Type.BOOLEAN);
         serialize.autoupdate = true;
-        serialize.type = Element.Type.BOOLEAN;
         serialize.name = "Should serialize";
         serialize.internalname = "serialize";
-        serialize.value = true;
-        serialize.forceupdate = true;
-        
-        Element abs = new Element();
+        serialize.setValueAccessorFromData(component::shouldSerialize);
+        serialize.onViewChange(component::setSerializable);
+
+        DataBinding<Boolean> abs = DataBinding.ofType(DataBinding.Type.BOOLEAN);
         abs.autoupdate = true;
-        abs.type = Element.Type.BOOLEAN;
         abs.name = "Is position absolute";
         abs.internalname = "abs";
-        abs.value = false;
-        abs.forceupdate = true;
-        
-        elements.add(pos);
-        elements.add(rot);
-        elements.add(scale);
-        elements.add(name);
-        elements.add(update);
-        elements.add(serialize);
-        elements.add(abs);
-        
-        createMainViewModel();
+        abs.setValueAccessorFromData(component::isAbsoluteOffset);
+        abs.onViewChange(component::setAbsoluteOffset);
+
+        addElement(pos);
+        addElement(rot);
+        addElement(scale);
+        addElement(name);
+        addElement(update);
+        addElement(serialize);
+        addElement(abs);
     }
-    
-    public abstract void createMainViewModel();
-    
+
     public abstract Initializer getInitializer(Initializer init);
     
     public abstract T getFromInitializer(Initializer init);
     
-    public void setComponent(T c){
+    public final void setComponent(T c){
         this.component = c;
     }
     
-    public T getComponent(){
+    public final T getComponent(){
         return component;
     }
     
-    public List<Element> getElements(){
-        return elements;
+    public final List<DataBinding> getDataBindings(){
+        return dataBindings;
     }
 
-    public void addElement(Element element){
-        getElements().add(element);
-    }
-    
-    public final void fireEvent(Element element){
-        onChangeLocal(element);
-    }
-    
-    final void onChangeLocal(Element element){
-        if(component != null){
-            switch (element.internalname) {
-                case "pos" -> component.setPositionOffset((Vector3f) element.value);
-                case "rot" -> component.setRotationOffset(new Quaternionf((Vector3f) element.value));
-                case "scale" -> component.setScaleOffset((Vector3f) element.value);
-                case "name" -> component.setName((String) element.value);
-                case "enabled" -> component.setEnabled((Boolean) element.value);
-                case "serialize" -> component.setSerializable((Boolean) element.value);
-                case "abs" -> component.setAbsoluteOffset((Boolean) element.value);
-            }
-            onChange(element); 
-        }
-    }
-    
-    public abstract void onChange(Element element);
-
-    public final void updateAll(){
-        for(Element element : elements)
-            updateLocal(element);
+    public final void addElement(DataBinding dataBinding){
+        getDataBindings().add(dataBinding);
     }
 
-    public final void updateLocal(Element element){
-        switch (element.internalname) {
-            case "pos" -> element.value = component.getPositionOffset();
-            case "rot" -> element.value = component.getRotationOffset().toEuler();
-            case "scale" -> element.value = component.getScale();
-            case "enabled" -> element.value = component.isEnabled();
-            case "serialize" -> element.value = component.shouldSerialize();
-            case "abs" -> element.value = component.isAbsoluteOffset();
-            case "name" -> element.value = component.getName();
-        }
-        updateView(element);
-    }
-    
-    public abstract void updateView(Element element);
-    
-    public final Element getByName(String name){
-        for(Element e : elements){
+    public final DataBinding getByName(String name){
+        for(DataBinding e : dataBindings){
             if(e.internalname.equalsIgnoreCase(name))
                 return e;
         }
         return null;
+    }
+
+    private Boolean get() {
+        return component.isAbsoluteOffset();
     }
 }

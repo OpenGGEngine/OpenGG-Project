@@ -21,6 +21,9 @@ import com.opengg.core.physics.collision.AABB;
 import com.opengg.core.physics.collision.TerrainCollider;
 import com.opengg.core.world.components.physics.CollisionComponent;
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  *
@@ -33,11 +36,13 @@ public class TerrainComponent extends RenderComponent{
     private Texture array = Texture.getArrayTexture(TextureManager.getDefault(),
             TextureManager.getDefault(),TextureManager.getDefault(),TextureManager.getDefault());
     
-    public TerrainComponent(){}
+    public TerrainComponent(){
+        this.setShader("terrain");
+    }
     
     public TerrainComponent(Terrain terrain){
+        this();
         this.terrain = terrain;
-        this.setShader("terrain");
         this.setDrawable(terrain.getDrawable());
     }
 
@@ -63,15 +68,31 @@ public class TerrainComponent extends RenderComponent{
             }
         }
     }
-    
-    public void setGroundArray(Texture tex){
-        this.array = tex;
+
+    public void setBlotmap(TextureData data){
+        this.blotmap = Texture.create(Texture.config(), data);
     }
-    
-    public void setBlotmap(Texture tex){
-        this.blotmap = tex;
+
+    public Texture getBlotmap(){
+        return this.blotmap;
     }
-    
+
+    public void setGroundArray(List<TextureData> tex){
+        this.array = Texture.create(Texture.arrayConfig(), tex.subList(0,4));
+    }
+
+
+    public void setIndividualGroundArrayValue(TextureData tex, int index){
+        var list = IntStream.range(0,4)
+                .mapToObj(i -> i == index ? tex : this.getGroundArray().getData().get(i))
+                .collect(Collectors.toList());
+        setGroundArray(list);
+    }
+
+    public Texture getGroundArray(){
+        return this.array;
+    }
+
     public Terrain getTerrain(){
         return terrain;
     }
@@ -109,19 +130,16 @@ public class TerrainComponent extends RenderComponent{
     @Override
     public void deserialize(GGInputStream in) throws IOException{
         super.deserialize(in);
-        this.setShader("terrain");
-        String tp = in.readString();
-        terrain = Terrain.generate(tp);
+
+        String terrainPath = in.readString();
+        terrain = Terrain.generate(terrainPath);
         this.setDrawable(terrain.getDrawable());
 
-
         String blot = in.readString();
-
         String s1 = in.readString(), s2 = in.readString(), s3 = in.readString(), s4 = in.readString();
 
-
-        setBlotmap(Resource.getTexture(blot));
-        setGroundArray(Texture.create(Texture.arrayConfig(), Resource.getTextureData(s1), Resource.getTextureData(s2), Resource.getTextureData(s3), Resource.getTextureData(s4)));
+        setBlotmap(Resource.getTextureData(blot));
+        setGroundArray(List.of(s1,s2,s3,s4).stream().map(Resource::getTextureData).collect(Collectors.toList()));
 
     }
 }

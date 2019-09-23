@@ -10,10 +10,18 @@ import com.opengg.core.util.GGOutputStream;
 
 import java.io.IOException;
 
+/**
+ * Represents a component that is specific to a single human player <br>
+ *
+ */
 public class ControlledComponent extends Component{
     private int userid = 0;
     private boolean enableAcrossWorlds = false;
 
+    /**
+     * Returns the mouse position of the player assigned to this component
+     * @return
+     */
     public Vector2f getMouse(){
         if(!GGInfo.isServer() && isCurrentUser()){
             return MouseController.get().multiply(Configuration.getFloat("sensitivity"));
@@ -27,10 +35,18 @@ public class ControlledComponent extends Component{
         return new Vector2f();
     }
 
+    /**
+     * Returns if the user assigned to this component is the same user as the one running this instance of the engine
+     * @return
+     */
     public boolean isCurrentUser(){
         return (userid == GGInfo.getUserId() || GGInfo.getUserId() == -1) && (this.getWorld().isPrimaryWorld() || enableAcrossWorlds) ;
     }
 
+    /**
+     * Returns the User ID assigned to this component
+     * @return
+     */
     public int getUserId() {
         return userid;
     }
@@ -42,7 +58,7 @@ public class ControlledComponent extends Component{
     }
 
     /**
-     * Returns if this component is active if it's world is active but not the primary world
+     * Returns if this component is active if its world is active but not the primary world
      * @return
      */
     public boolean isEnabledAcrossWorlds() {
@@ -50,7 +66,7 @@ public class ControlledComponent extends Component{
     }
 
     /**
-     * Sets if this component should be considered active if its world is active but not the primary world
+     * Sets if this component should be considered active if its world is active but is not the primary world
      * @param enableAcrossWorlds
      */
     public void setEnabledAcrossWorlds(boolean enableAcrossWorlds) {

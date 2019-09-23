@@ -5,6 +5,9 @@
  */
 package com.opengg.core.world.components.viewmodel;
 
+import com.opengg.core.editor.DataBinding;
+import com.opengg.core.editor.ForComponent;
+import com.opengg.core.editor.Initializer;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.world.components.LightComponent;
 
@@ -17,20 +20,22 @@ public class LightComponentViewModel extends ViewModel<LightComponent>{
 
     @Override
     public void createMainViewModel() {
-        Element color = new Element();
-        color.type = Element.Type.VECTOR3F;
+        super.createMainViewModel();
+
+        var color = new DataBinding.Vector3fBinding();
         color.internalname = "color";
         color.name = "Light Color";
-        color.value = new Vector3f(1,1,1);
+        color.setValueAccessorFromData(() -> component.getLight().getColor());
+        color.onViewChange(c -> component.getLight().setColor(c));
 
-        Element distance = new Element();
-        distance.type = Element.Type.FLOAT;
+        var distance = new DataBinding.FloatBinding();
         distance.internalname = "distance";
         distance.name = "Light Distance";
-        distance.value = 100f;
+        distance.setValueAccessorFromData(() -> component.getLight().getDistance());
+        distance.onViewChange(d -> component.getLight().setDistance(d));
         
-        elements.add(color);
-        elements.add(distance);
+        this.addElement(color);
+        this.addElement(distance);
     }
 
     @Override
@@ -42,20 +47,4 @@ public class LightComponentViewModel extends ViewModel<LightComponent>{
     public LightComponent getFromInitializer(Initializer init) {
         return new LightComponent();
     }
-
-    @Override
-    public void onChange(Element element) {
-        if(element.internalname.equals("color")) {
-            component.getLight().setColor((Vector3f)element.value);
-        } else if(element.internalname.equals("distance")) {
-            component.getLight().setDistance((Float)element.value);
-        }
-        component.update(0);
-    }
-
-    @Override
-    public void updateView(Element element) {
-        getByName("color").value = component.getLight().getColor();
-        getByName("distance").value = component.getLight().getDistance();
-    } 
 }

@@ -48,6 +48,7 @@ public class World extends Component implements Resource {
     private RenderEnvironment environment = new RenderEnvironment();
     private boolean forceUpdate = false;
     private boolean active = false;
+    private boolean shouldMultipleInstancesExist = false;
 
     private List<Consumer<Component>> addSubs = new ArrayList<>();
 
@@ -145,7 +146,11 @@ public class World extends Component implements Resource {
     }
 
     /**
-     * Enables this world for use by the World Engine
+     * Sets this world to be the primary world for the World Engine <br>
+     *     The primary world is the world that is currently being rendered. Additionally,
+     *     certain components {@link com.opengg.core.world.components.ControlledComponent such as ControlledComponent}
+     *     can have differing functionality depending on what world is set as primary. For most components, however,
+     *     there is no difference, meaning that what world is set as primary on a server is mostly meaningless
      */
     public void setAsPrimary(){
         PhysicsEngine.setInstance(physics);
@@ -153,10 +158,24 @@ public class World extends Component implements Resource {
         this.localOnWorldMadePrimary();
     }
 
+    /**
+     * Changes this world to no longer be considered as the primary world
+     */
     public void removeAsPrimary(){
         this.localOnWorldNoLongerPrimary();
     }
 
+    /**
+     * Returns whether or not this world is set as the primary
+     * @return
+     */
+    public boolean isPrimaryWorld(){
+        return this == WorldEngine.getCurrent();
+    }
+
+    /**
+     * Enables the world for use
+     */
     public void activate(){
         this.active = true;
         this.setEnabled(true);
@@ -180,15 +199,35 @@ public class World extends Component implements Resource {
     }
 
     /**
+     * Gets if multiple instances of this world should be allowed to exist concurrently. <br>
+     *     If this is {@code true}, this world is referenced by the format name + @ + GUID. For example, if
+     *     this world was loaded from a file named foo.bwf, this world, once loaded, would be aquired by calling
+     *     {@code WorldEngine.getWorld("foo.bwf@GU82l1SI1")}. This is to allow for multiple of the same world to exist
+     *     at the same time.<br>
+     *     If this is {@code false}, this world is referenced by its name only, with no GUID. For example, a world from
+     *     a file named foo.bwf would be gotten by calling {@code WorldEngine.getWorld("foo.bwf")}
+     *
+     * @return
+     */
+    public boolean shouldMultipleInstancesExist() {
+        return shouldMultipleInstancesExist;
+    }
+
+    /**
+     * Sets if multiple instances of this world should be allowed to exist concurrently
+     * @param val
+     * @see World#shouldMultipleInstancesExist()
+     */
+    public void setShouldMultipleInstancesExist(boolean val){
+        this.shouldMultipleInstancesExist = val;
+    }
+
+    /**
      * Gets the rendering environment used by all rendering related objects
      * @return
      */
     public RenderEnvironment getRenderEnvironment(){
         return environment;
-    }
-
-    public boolean isPrimaryWorld(){
-        return this == WorldEngine.getCurrent();
     }
 
     public boolean isForcedUpdate() {
@@ -247,6 +286,8 @@ public class World extends Component implements Resource {
     @Override
     public void serialize(GGOutputStream out) throws IOException{
         super.serialize(out);
+        out.write(shouldMultipleInstancesExist);
+
         out.write(environment.getSkybox() != null);
         if(environment.getSkybox() != null){
             for(TextureData data : environment.getSkybox().getCubemap().getData()){
@@ -264,6 +305,8 @@ public class World extends Component implements Resource {
     @Override
     public void deserialize(GGInputStream in) throws IOException{
         super.deserialize(in);
+        shouldMultipleInstancesExist = in.readBoolean();
+
         var datums = new TextureData[6];
         boolean skybox = in.readBoolean();
         if(skybox){

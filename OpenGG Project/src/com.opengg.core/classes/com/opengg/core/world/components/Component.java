@@ -6,6 +6,8 @@
 package com.opengg.core.world.components;
 
 import com.opengg.core.animation.ComponentVarAccessor;
+import com.opengg.core.console.GGConsole;
+import com.opengg.core.engine.OpenGG;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.RenderEngine;
@@ -69,6 +71,9 @@ public abstract class Component{
      */
     public Component(){
         guid = UUID.randomUUID().getLeastSignificantBits();
+        if(OpenGG.getDebugOptions().logOnComponentCreation()){
+            GGConsole.debug("Created component of type " + this.getClass().getName() + " with ID "  + this.guid);
+        }
     }
     
     /**

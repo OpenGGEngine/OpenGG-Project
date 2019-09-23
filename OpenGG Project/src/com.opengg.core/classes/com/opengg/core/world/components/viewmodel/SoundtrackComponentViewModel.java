@@ -1,6 +1,9 @@
 package com.opengg.core.world.components.viewmodel;
 
 import com.opengg.core.audio.Sound;
+import com.opengg.core.editor.DataBinding;
+import com.opengg.core.editor.ForComponent;
+import com.opengg.core.editor.Initializer;
 import com.opengg.core.world.components.SoundtrackComponent;
 
 import java.util.Arrays;
@@ -10,13 +13,20 @@ import java.util.stream.Collectors;
 public class SoundtrackComponentViewModel extends ViewModel<SoundtrackComponent>{
     @Override
     public void createMainViewModel() {
-        addElement(new Element()
-                    .name("Track list (;)")
-                    .value("")
-                    .internalName("tracks")
-                    .type(Element.Type.STRING)
-                    .autoUpdate(false));
+        DataBinding<String> tracks = new DataBinding.StringBinding();
+        tracks.name("Track list (;)")
+                .internalName("tracks")
+                .autoUpdate(false)
+                .onViewChange(s ->
+                        Arrays.stream(((String)s).split(";"))
+                                .map(Sound::new)
+                                .forEach(ss -> component.getSoundtrack().addSong(ss)))
+                .setValueAccessorFromData(() ->
+                        component.getSoundtrack().getSongs().stream()
+                                .map(s -> s.getData().getSource())
+                                .collect(Collectors.joining(";")));
 
+        this.addElement(tracks);
     }
 
     @Override
@@ -27,22 +37,5 @@ public class SoundtrackComponentViewModel extends ViewModel<SoundtrackComponent>
     @Override
     public SoundtrackComponent getFromInitializer(Initializer init) {
         return new SoundtrackComponent();
-    }
-
-    @Override
-    public void onChange(Element element) {
-        if(element.internalname.equals("tracks")) {
-            var songs = Arrays.stream(((String) element.value).split(";"))
-                    .map(Sound::new)
-                    .collect(Collectors.toList());
-            if(!songs.isEmpty())
-                songs.forEach(s -> component.getSoundtrack().addSong(s));
-        }
-
-    }
-
-    @Override
-    public void updateView(Element element) {
-
     }
 }

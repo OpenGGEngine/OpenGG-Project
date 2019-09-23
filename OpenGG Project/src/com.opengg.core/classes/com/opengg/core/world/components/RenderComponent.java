@@ -94,7 +94,15 @@ public class RenderComponent extends Component implements Renderable{
     public void setTransparency(boolean trans) {
         this.transparent = trans;
     }
-    
+
+    public float getRenderDistance() {
+        return renderDistance;
+    }
+
+    public void setRenderDistance(float renderDistance) {
+        this.renderDistance = renderDistance;
+    }
+
     public void setDrawable(Drawable d){
         this.drawable = d;
     }
@@ -103,17 +111,17 @@ public class RenderComponent extends Component implements Renderable{
         return drawable;
     }
 
-    @Override
-    public void onWorldChange(){
-        this.getWorld().addRenderable(this);
-    }
-
     public boolean shouldRender(){
         return render;
     }
 
     public void setShouldRender(boolean render){
         this.render = render;
+    }
+
+    @Override
+    public void onWorldChange(){
+        this.getWorld().addRenderable(this);
     }
 
     @Override
