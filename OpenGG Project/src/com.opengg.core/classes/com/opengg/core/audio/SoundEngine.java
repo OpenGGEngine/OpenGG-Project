@@ -6,22 +6,14 @@
 
 package com.opengg.core.audio;
 
-import com.opengg.core.audio.ALCContext;
-import com.opengg.core.audio.ALCDevice;
-import com.opengg.core.audio.AudioListener;
-import com.opengg.core.audio.Sound;
-import com.opengg.core.audio.SoundManager;
-import com.opengg.core.audio.SoundtrackHandler;
+import com.opengg.core.audio.openal.ALCContext;
+import com.opengg.core.audio.openal.ALCDevice;
 import com.opengg.core.console.GGConsole;
 import java.util.ArrayList;
 
 import org.lwjgl.openal.*;
 
-import static org.lwjgl.openal.AL10.AL_NO_ERROR;
-import static org.lwjgl.openal.AL10.AL_POSITION;
-import static org.lwjgl.openal.AL10.AL_VELOCITY;
-import static org.lwjgl.openal.AL10.alGetError;
-import static org.lwjgl.openal.AL10.alListener3f;
+import static org.lwjgl.openal.AL10.*;
 
 /**
  * Primary controller and manager for the OpenAL audio engine
@@ -48,7 +40,7 @@ public class SoundEngine {
         else
             initialized = true;
 
-        GGConsole.log("Initializing sound engine on " + ALUtil.getStringList(device.device, ALC11.ALC_CAPTURE_DEVICE_SPECIFIER).get(0));
+        GGConsole.log("Initializing sound engine on " + ALUtil.getStringList(device.getDeviceID(), ALC11.ALC_CAPTURE_DEVICE_SPECIFIER).get(0));
 
         SoundManager.initialize();
         GGConsole.log("Audio Controller initialized, using OpenAL version " +  AL10.alGetString(AL10.AL_VERSION) 
@@ -78,8 +70,8 @@ public class SoundEngine {
     }
     
     public static void setListener(AudioListener s){
-        alListener3f(AL_POSITION, s.pos.x, s.pos.y, s.pos.z);
-        alListener3f(AL_VELOCITY, s.vel.x, s.vel.y, s.vel.z);
+        alListener3f(AL_POSITION, s.getPosition().x, s.getPosition().y, s.getPosition().z);
+        alListener3f(AL_VELOCITY, s.getVelocity().x, s.getVelocity().y, s.getVelocity().z);
 
         int i = AL10.alGetError();
         if(i != AL10.AL_NO_ERROR)

@@ -6,6 +6,8 @@
 
 package com.opengg.core.audio;
 
+import com.opengg.core.audio.openal.ALBuffer;
+import com.opengg.core.audio.openal.NativeSound;
 import com.opengg.core.engine.Resource;
 import com.opengg.core.math.Vector3f;
 

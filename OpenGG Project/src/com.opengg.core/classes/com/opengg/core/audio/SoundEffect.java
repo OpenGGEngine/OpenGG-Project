@@ -6,6 +6,8 @@
 
 package com.opengg.core.audio;
 
+import com.opengg.core.audio.openal.ALBuffer;
+
 import java.util.ArrayList;
 import java.util.List;
 

@@ -40,6 +40,22 @@ public class SoundData implements Resource{
      */
     int samplerate;
 
+    public ShortBuffer getData() {
+        return data;
+    }
+
+    public int getChannels() {
+        return channels;
+    }
+
+    public int getFormat() {
+        return format;
+    }
+
+    public int getSampleRate() {
+        return samplerate;
+    }
+
     @Override
     public Type getType() {
         return Type.SOUND;
