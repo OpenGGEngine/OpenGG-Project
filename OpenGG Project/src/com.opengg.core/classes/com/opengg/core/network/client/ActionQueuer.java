@@ -29,7 +29,7 @@ public class ActionQueuer implements ActionTransmitter{
     private List<ActionContainer> actions = Collections.synchronizedList(new ArrayList<>());
     
     private ActionQueuer(){
-        BindController.addController(this);
+        BindController.addTransmitter(this);
     }
     
     public static ActionQueuer get(){

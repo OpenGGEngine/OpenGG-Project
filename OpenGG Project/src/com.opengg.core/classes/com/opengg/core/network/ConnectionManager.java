@@ -18,21 +18,17 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ConnectionManager implements Runnable{
-    private final Map<Byte, List<Consumer<Packet>>> processors; //since im definitely going to forget why the tuple contains a byte its a packet identifier
+    private final Map<Byte, List<Consumer<Packet>>> processors;
     private final List<Tuple<Tuple<Packet, GGFuture<Boolean>>, Float>> packetsWaiting = new ArrayList<>();
     private final List<Tuple<Tuple<Tuple<Long, Byte>, ConnectionData>, Float>> receivedPacketsWithAck = new ArrayList<>();
     private final HashMap<Byte, List<GGFuture<Packet>>> waitingForPacket = new HashMap<>();
-    private final DatagramSocket socket;
-    private int packetsize;
-    private final float RESEND_DELAY = 0.1f;
+    private final float RESEND_DELAY = 0.2f;
 
     private final static Object RECEIVED_BLOCK = new Object();
     private final static Object SENT_BLOCK = new Object();
 
-    public ConnectionManager(DatagramSocket socket, int packetsize){
+    public ConnectionManager(){
         processors = new HashMap<>();
-        this.socket = socket;
-        this.packetsize = packetsize;
 
         this.addProcessor(PacketType.ACK, this::receiveAcknowledgement);
     }
@@ -41,14 +37,6 @@ public class ConnectionManager implements Runnable{
         processors.merge(type,
                 List.of(processor),
                 (l1,l2) -> Stream.concat(l1.stream(),l2.stream()).collect(Collectors.toList()));
-    }
-
-    public int getPacketSize(){
-        return packetsize;
-    }
-
-    public void setPacketSize(int size){
-        this.packetsize = size;
     }
 
     public void start(){
@@ -80,11 +68,11 @@ public class ConnectionManager implements Runnable{
 
     public boolean validatePacket(Packet packet){
         if(packet.requestsAcknowledgement()){
-            Packet.sendAcknowledgement(NetworkEngine.getSocket(), packet, packet.getConnection());
+            Packet.sendAcknowledgement(packet, packet.getConnection());
+
             synchronized (RECEIVED_BLOCK) {
                 if (receivedPacketsWithAck.stream()
                         .noneMatch(c -> c.x.equals(Tuple.of(Tuple.of(packet.getTimestamp(), packet.getType()), packet.getConnection())))) {
-
                     receivedPacketsWithAck.add(Tuple.of(Tuple.of(Tuple.of(packet.getTimestamp(), packet.getType()), packet.getConnection()), 0f));
 
                     return true;
@@ -109,19 +97,18 @@ public class ConnectionManager implements Runnable{
 
         synchronized (RECEIVED_BLOCK){
             receivedPacketsWithAck.forEach(c -> c.y += delta);
-            receivedPacketsWithAck.removeIf(c -> c.y >= 1f);
+            receivedPacketsWithAck.removeIf(c -> c.y >= 10f);
         }
+
     }
 
     @Override
     public void run(){
         while(NetworkEngine.isRunning() && OpenGG.getEnded()){
-            Packet packet = Packet.receive(socket);
+            Packet packet = Packet.receive();
             if(validatePacket(packet)) {
                 processors.getOrDefault(packet.getType(), List.of()).forEach(p -> p.accept(packet));
             }
         }
     }
-
-
 }

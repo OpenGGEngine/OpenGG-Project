@@ -6,26 +6,27 @@
 
 package com.opengg.core.network.server;
 
+import com.opengg.core.GGInfo;
 import com.opengg.core.console.GGConsole;
+import com.opengg.core.math.Tuple;
+import com.opengg.core.network.NetworkEngine;
 import com.opengg.core.network.common.ConnectionData;
 import com.opengg.core.network.common.Packet;
 import com.opengg.core.network.common.PacketType;
+import com.opengg.core.network.common.ReceivingBulkMessage;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
-import com.opengg.core.util.LambdaContainer;
 import com.opengg.core.world.Serializer;
 import com.opengg.core.world.WorldEngine;
 import com.opengg.core.world.components.ActionTransmitterComponent;
 import com.opengg.core.world.components.Component;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.nio.ByteBuffer;
 import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  *
@@ -33,23 +34,20 @@ import java.util.stream.Collectors;
  */
 public class Server {
     private String name;
-    private DatagramSocket udpsocket;
     private List<ServerClient> clients;
     private List<ServerClient> newclients;
 
-    private NewConnectionListener clistener;
-
     private boolean running;
     private int port;
-    private final int packetsize = 2048;
 
     private List<ConnectionListener> listeners;
     private List<Component> newComponents;
     private List<Component> removedComponents;
+    private List<Tuple<Component, Component>> movedComponents;
 
     private Map<Long, byte[]> lastUpdate = new HashMap<>();
 
-    public Server(String name, int port, DatagramSocket dsocket){
+    public Server(String name, int port){
         this.name = name;
         this.port = port;
         this.clients = new ArrayList<>();
@@ -57,15 +55,29 @@ public class Server {
         this.listeners = new ArrayList<>();
         this.newComponents = new ArrayList<>();
         this.removedComponents = new ArrayList<>();
-        this.udpsocket = dsocket;
-        this.clistener = new NewConnectionListener(this);
-        WorldEngine.getCurrent().addNewChildListener(this::saveNewComponent);
-        WorldEngine.addComponentRemovalListener(c -> removedComponents.add(c));
+        this.movedComponents = new ArrayList<>();
+        WorldEngine.addComponentAdditionListener(this::saveNewComponent);
+        WorldEngine.addComponentRemovalListener(this::saveRemovedComponent);
+        WorldEngine.addComponentMoveListener(this::saveMovedComponent);
     }
 
     public void start(){
         running = true;
-        new Thread(clistener).start();
+
+        NetworkEngine.getPacketReceiver().addProcessor(PacketType.CLIENT_ACTION_UPDATE, this::accept);
+        NetworkEngine.getChatManager().addServerChatConsumer(m -> {
+            GGConsole.log("(Chat) " + m.toString());
+            if(m.getContents().charAt(0) != '/'){
+                getClients().forEach(c -> {
+                    m.send(c.getConnection());
+                });
+            }
+        });
+        NetworkEngine.getBulkNetworkDataManager().onMessageArrival(m -> {
+            if(m.getName().equals("initial")){
+                onNewConnection(m);
+            }
+        });
     }
 
     public void update(){
@@ -87,40 +99,39 @@ public class Server {
         for(var client : this.clients){
             if(client.getLastMessage() != null && Instant.now().toEpochMilli() - client.getLastMessage().toEpochMilli() > 5000){
                 removal.add(client);
-                GGConsole.log(client.getConnection().getAddress().getHostAddress() + " has timed out");
-
+                GGConsole.log(client + " has timed out");
+                for(var listener : listeners)
+                    listener.onDisconnection(client);
                 //todo
             }
         }
 
         clients.removeAll(removal);
 
-        clients.addAll(newclients);
-        newclients.clear();
-
         sendNewComponents();
-        sendDeletedComponent();
+        sendMovedComponents();
+        sendDeletedComponents();
         sendState();
     }
 
     public void sendState(){
         try {
-            var componentsToSerialize = WorldEngine.getCurrent().getAllDescendants().stream()
+            var componentsToSerialize = Stream.concat(WorldEngine.getCurrent().getAllDescendants().stream(), List.of(WorldEngine.getCurrent()).stream())
                     .filter(Component::shouldSerializeUpdate)
-                   // .filter(s -> new Random().nextInt(2) == 1)
+                    .filter(Component::shouldSerialize)
                     .collect(Collectors.toList());
+
             List<byte[]> processedComponents = new ArrayList<>();
             for(var comp : componentsToSerialize){
                 GGOutputStream compOut = new GGOutputStream();
-                compOut.write((short) comp.getGUID());
+                compOut.write(comp.getGUID());
                 comp.serializeUpdate(compOut);
-                if(!Arrays.equals(lastUpdate.get(comp.getGUID()), compOut.asByteArray()) || new Random().nextInt(15) == 0){
+
+                if(!Arrays.equals(lastUpdate.get(comp.getGUID()), compOut.asByteArray()) || new Random().nextInt(6) == 0){
                     lastUpdate.put(comp.getGUID(), compOut.asByteArray());
                     processedComponents.add(compOut.asByteArray());
                 }
             }
-
-            var remainingPacketSize = LambdaContainer.encapsulate(getPacketSize()); //extra spot for type, amount of comps, and timestamp
 
             var componentsToSend = new ArrayList<>(processedComponents);
 
@@ -131,9 +142,8 @@ public class Server {
                 out.write(compArray);
             }
 
-            var bytes = ((ByteArrayOutputStream)out.getStream()).toByteArray();
             for(var client : clients){
-                Packet.send(this.getUDPSocket(), PacketType.SERVER_UPDATE, bytes, client.getConnection());
+                Packet.send(PacketType.SERVER_UPDATE, out.asByteArray(), client.getConnection());
             }
 
         } catch (IOException e) {
@@ -144,6 +154,7 @@ public class Server {
     public void sendNewComponents(){
         if(newComponents.isEmpty()) return;
         try {
+
             var out = new GGOutputStream();
             out.write(newComponents.size());
             for(var comp : newComponents){
@@ -154,14 +165,14 @@ public class Server {
 
             var bytes = out.asByteArray();
             for(var client : clients){
-                Packet.sendGuaranteed(this.getUDPSocket(), PacketType.SERVER_COMPONENT_CREATE, bytes, client.getConnection());
+                Packet.sendGuaranteed(PacketType.SERVER_COMPONENT_CREATE, bytes, client.getConnection());
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void sendDeletedComponent() {
+    private void sendDeletedComponents() {
         if(!removedComponents.isEmpty()){
             try {
                 var out = new GGOutputStream();
@@ -170,7 +181,7 @@ public class Server {
                     out.write(comp.getGUID());
                 }
                 for(var client : clients){
-                    Packet.sendGuaranteed(getUDPSocket(), PacketType.SERVER_COMPONENT_REMOVE, out.asByteArray(), client.getConnection());
+                    Packet.sendGuaranteed(PacketType.SERVER_COMPONENT_REMOVE, out.asByteArray(), client.getConnection());
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -179,10 +190,48 @@ public class Server {
         removedComponents.clear();
     }
 
-    public void saveNewComponent(Component component){
+    private void sendMovedComponents() {
+        if(!movedComponents.isEmpty()){
+            try {
 
+                var out = new GGOutputStream();
+                out.write(movedComponents.size());
+                for(var comp : movedComponents){
+                    out.write(comp.x.getGUID());
+                    out.write(comp.y.getGUID());
+
+                }
+                for(var client : clients){
+                    Packet.sendGuaranteed(PacketType.SERVER_COMPONENT_MOVE, out.asByteArray(), client.getConnection());
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        movedComponents.clear();
+    }
+
+    public void saveNewComponent(Component component){
         if(component == null) return;
+        if(component.shouldSerialize() == false) return;
         newComponents.add(component);
+    }
+
+    public void saveRemovedComponent(Component component){
+        if(component == null) return;
+        if(component.shouldSerialize() == false) return;
+        removedComponents.add(component);
+    }
+
+    public void saveMovedComponent(Component component, Component parent){
+        if(component == null) return;
+        if(component.shouldSerialize() == false) return;
+        if(!parent.shouldSerialize()) throw new IllegalStateException("Serializable component attached to non-serializable one");
+        movedComponents.add(Tuple.of(component, parent));
+    }
+
+    public List<ServerClient> getClients() {
+        return clients;
     }
 
     public ServerClient getClient(ConnectionData data){
@@ -192,10 +241,6 @@ public class Server {
                 .findFirst().orElse(null);
     }
 
-    public List<ServerClient> getClients() {
-        return clients;
-    }
-
     public List<ServerClient> getClients(InetAddress ip){
         var tempclients =  List.copyOf(clients);
         return tempclients.stream()
@@ -203,12 +248,12 @@ public class Server {
                 .collect(Collectors.toList());
     }
 
-    public ServerClient getByID(int id){
-        for(var client : clients){
-            if(client.getId() == id) return client;
-        }
+    public Optional<ServerClient> getClientByID(int id){
+        return clients.stream().filter(c -> c.getId() == id).findFirst();
+    }
 
-        return null;
+    public List<ServerClient> getClientsByName(String name){
+        return clients.stream().filter(c -> c.getName().equals(name)).collect(Collectors.toList());
     }
 
     public void subscribe(ConnectionListener listener){
@@ -216,7 +261,7 @@ public class Server {
     }
 
     public void addServerClient(ServerClient sc){
-        newclients.add(sc);
+        clients.add(sc);
 
         for(var listener : listeners)
             listener.onConnection(sc);
@@ -224,10 +269,6 @@ public class Server {
 
     public String getName() {
         return name;
-    }
-
-    public DatagramSocket getUDPSocket() {
-        return udpsocket;
     }
 
     public boolean isRunning() {
@@ -238,36 +279,52 @@ public class Server {
         return port;
     }
 
-    public int getPacketSize() {
-        return packetsize;
-    }
-
     public void accept(Packet packet){
         var packetSource = getClient(packet.getConnection());
-
-        if(packetSource == null){
-            for(var client : getClients(packet.getConnection().address)){
-                if(client.getConnection().port == 0) packetSource = client;
-            }
-        }
-
-        if(packetSource == null) return;
-
         packetSource.setLastMessage(Instant.now());
+        packetSource.processData(new GGInputStream(packet.getData()));
+    }
 
-        if(!packetSource.receivedFirstMessage()){
-            packetSource.setPort(packet.getConnection().getPort());
-            packetSource.initialize(true);
-            GGConsole.log("User at " + packetSource.getConnection().getAddress() +":" + packetSource.getConnection() + " connected");
+    public void onNewConnection(ReceivingBulkMessage message){
+        var in = new GGInputStream(message.getAllData());
+        var connectionData = message.getSource();
+        var connectionTime = Instant.now();
 
-            return;
+        GGConsole.log("Receiving new connection from " + connectionData);
+        try {
+            var check = in.readString();
+            if(!check.equals("ratio tile"))
+                throw new RuntimeException("Invalid header for new connection message!");
+            var application = in.readString();
+            var version = in.readString();
+            var username = in.readString();
+
+            boolean validConnection = application.equals(GGInfo.getApplicationName()) && version.equals(GGInfo.getVersion());
+
+            var out = new GGOutputStream();
+            out.write(validConnection);
+            if(validConnection){
+                GGConsole.log("User at " + connectionData + " (" + username + ") validated, sending game state");
+                var worldData = Serializer.serializeWorld(WorldEngine.getCurrent());
+                out.write(ServerClient.getNextID());
+                out.write(worldData.length);
+                out.write(worldData);
+            }else{
+                GGConsole.warning(username + " failed to connect:" +
+                        " Invalid application or version (using " + application + " v " + version +
+                        ", server is " + GGInfo.getApplicationName() + " v " + GGInfo.getVersion() + ")");
+            }
+
+            NetworkEngine.getBulkNetworkDataManager().send(out.asByteArray(), "initialResponse", connectionData).thenRun(() -> {
+                if(validConnection){
+                    addServerClient(new ServerClient(username, connectionData, connectionTime));
+                    GGConsole.log(username + " connected");
+                }
+            });
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
-        if(Arrays.equals(
-                packet.getData(),
-                ByteBuffer.wrap(new byte[getPacketSize()]).putInt(packetSource.getId()).array()))
-            return;
-
-        packetSource.processData(new GGInputStream(packet.getData()));
     }
 }

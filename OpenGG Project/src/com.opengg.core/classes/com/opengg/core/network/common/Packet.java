@@ -71,40 +71,40 @@ public class Packet implements Serializable{
         internalPacket = new DatagramPacket(data, RECEIVER_PACKET_SIZE);
     }
 
-    public static Packet receive(DatagramSocket ds){
+    public static Packet receive(){
         var packet = new Packet();
-        packet.receivePacket(ds);
+        packet.receivePacket();
         return packet;
     }
 
-    public static GGFuture<Boolean> sendGuaranteed(DatagramSocket ds, byte type, byte[] bytes, ConnectionData connectionData){
-        Packet p = new Packet(ds, type, true, bytes, connectionData);
+    public static GGFuture<Boolean> sendGuaranteed(byte type, byte[] bytes, ConnectionData connectionData){
+        Packet p = new Packet(NetworkEngine.getSocket(), type, true, bytes, connectionData);
         var future = new GGFuture<Boolean>();
         NetworkEngine.getPacketReceiver().sendWithAcknowledgement(p, future);
         return future;
     }
 
-    public static void send(DatagramSocket ds, byte type, byte[] bytes, ConnectionData connectionData){
-        Packet p = new Packet(ds, type, false, bytes, connectionData);
+    public static void send(byte type, byte[] bytes, ConnectionData connectionData){
+        Packet p = new Packet(NetworkEngine.getSocket(), type, false, bytes, connectionData);
         p.send();
     }
 
-    public static void sendAcknowledgement(DatagramSocket ds, Packet packet, ConnectionData connectionData){
+    public static void sendAcknowledgement(Packet packet, ConnectionData connectionData){
         try {
             var stream = new GGOutputStream();
             stream.write(packet.getTimestamp());
             var data = stream.asByteArray();
 
-            Packet p = new Packet(ds, PacketType.ACK,false, data, connectionData);
+            Packet p = new Packet(NetworkEngine.getSocket(), PacketType.ACK,false, data, connectionData);
             p.send();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void receivePacket(DatagramSocket ds){
+    private void receivePacket(){
         try {
-            ds.receive(internalPacket);
+            NetworkEngine.getSocket().receive(internalPacket);
             var address = internalPacket.getAddress();
             var port = internalPacket.getPort();
             connectionData = ConnectionData.get(address,port);

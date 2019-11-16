@@ -9,22 +9,27 @@ package com.opengg.core.network.client;
 import com.opengg.core.Configuration;
 import com.opengg.core.GGInfo;
 import com.opengg.core.console.GGConsole;
+import com.opengg.core.engine.Executor;
 import com.opengg.core.engine.OpenGG;
 import com.opengg.core.io.input.mouse.MouseController;
+import com.opengg.core.network.NetworkEngine;
 import com.opengg.core.network.common.ConnectionData;
 import com.opengg.core.network.common.Packet;
 import com.opengg.core.network.common.PacketType;
+import com.opengg.core.network.common.ReceivingBulkMessage;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
+import com.opengg.core.util.LambdaContainer;
 import com.opengg.core.world.Deserializer;
 import com.opengg.core.world.WorldEngine;
+import com.opengg.core.world.components.Component;
 
 import java.io.*;
-import java.net.DatagramSocket;
-import java.net.Socket;
 import java.nio.ByteBuffer;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.concurrent.CompletableFuture;
 
 /**
  *
@@ -32,73 +37,125 @@ import java.util.ArrayList;
  */
 public class Client {
     private String servName;
+    private String username = "Testo";
 
     private ConnectionData connectionData;
     private Instant timeConnected;
-    private DatagramSocket udpSocket;
-    private long latency;
-    private long timedifference;
     private int packetsize;
     private boolean running;
+    private float currentDelay = 0;
+    private float delayRecountTime = 0.25f;
+    private float timer = 0;
 
     private ActionQueuer queuer;
     
-    public Client(DatagramSocket udp, ConnectionData connectionData){
-        this.udpSocket = udp;
-        this.connectionData = connectionData;
+    public Client(NetworkEngine.ClientOptions options){
+        this.connectionData = options.data;
+        this.username = options.username;
         this.timeConnected = Instant.now();
-        this.queuer = ActionQueuer.get();
     }
 
-    public void start(){
-        running = true;
-    }
+    public void connect(){
+        var out = new GGOutputStream();
+        try {
+            out.write("ratio tile");
+            out.write(GGInfo.getApplicationName());
+            out.write(GGInfo.getVersion());
+            out.write(this.username);
 
-    public void udpHandshake(){
-        for(int i = 0; i < 5; i++){
-            var bb = ByteBuffer.wrap(new byte[packetsize]).putInt(GGInfo.getUserId());
-            //Packet.send(udpSocket, PacketType.HANDSHAKE_MESSAGE, bb.array(), connectionData);
-            try{
+            NetworkEngine.getPacketReceiver().addProcessor(PacketType.SERVER_UPDATE, this::acceptUpdate);
+            NetworkEngine.getPacketReceiver().addProcessor(PacketType.SERVER_COMPONENT_CREATE, this::acceptNewComponents);
+            NetworkEngine.getPacketReceiver().addProcessor(PacketType.SERVER_COMPONENT_REMOVE, this::acceptRemovedComponent);
+            NetworkEngine.getPacketReceiver().addProcessor(PacketType.SERVER_COMPONENT_MOVE, this::acceptMovedComponent);
+            var container = new LambdaContainer<Boolean>();
+            container.value = false;
+            NetworkEngine.getBulkNetworkDataManager().onMessageArrival(m -> {
+                if(m.getName().equals("initialResponse")){
+                    processInitialResponse(m);
+                    container.value = true;
+                }
+            });
+
+            GGConsole.log("Connecting to " + connectionData);
+            NetworkEngine.getBulkNetworkDataManager().send(out.asByteArray(), "initial", connectionData);
+            GGConsole.log("Sent initial connection request to " + connectionData);
+            while(!container.value){
                 Thread.sleep(10);
-            }catch(InterruptedException e){
-                e.printStackTrace();
+                NetworkEngine.update(0.01f);
             }
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
-    public void update(){
+    private void processInitialResponse(ReceivingBulkMessage message){
+        var in = new GGInputStream(message.getAllData());
         try {
+            if(!in.readBoolean())
+                throw new RuntimeException("Invalid application ID/version!");
+
+            var userId = in.readInt();
+            GGInfo.setUserId(userId);
+
+            var worldLength = in.readInt();
+            GGConsole.log("Validated game version, receiving world (" + worldLength+ " bytes)");
+            var worldBuffer = in.readByteArray(worldLength);
+            OpenGG.asyncExec(() -> {
+                var world = Deserializer.deserializeWorld(ByteBuffer.wrap(worldBuffer));
+                WorldEngine.setOnlyActiveWorld(world);
+
+                this.queuer = ActionQueuer.get();
+                GGConsole.log("Successfully connected to server!");
+
+                running = true;
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void update(float delta){
+        try {
+            if(!running) return;
             var out = new GGOutputStream();
 
             out.write(MouseController.get().multiply(Configuration.getFloat("sensitivity")));
             queuer.writeData(out);
 
             var data = ((ByteArrayOutputStream)out.getStream()).toByteArray();
-            Packet.sendGuaranteed(udpSocket, PacketType.CLIENT_ACTION_UPDATE, data, connectionData);
+            Packet.sendGuaranteed(PacketType.CLIENT_ACTION_UPDATE, data, connectionData);
+            timer += delta;
+            if(timer > delayRecountTime){
+                timer = 0;
+                NetworkEngine.getClient().calculateLatency().thenAccept(c -> this.currentDelay = c.floatValue());
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void accept(Packet packet){
+    public void acceptUpdate(Packet packet){
         byte[] bytes = packet.getData();
         var in = new GGInputStream(bytes);
 
         OpenGG.asyncExec(() -> {
             try {
                 short amount = in.readShort();
-                var delta = (Instant.now().toEpochMilli() - (packet.getTimestamp() + timedifference)) / 1000f;
+                var delta = this.currentDelay/(1000*2);
                 for (int i = 0; i < amount; i++) {
                     long id = in.readLong();
-
-                    WorldEngine.getCurrent().findByGUID(id)
+                    WorldEngine.findEverywhereByGUID(id)
                             .ifPresentOrElse(c -> {
                                 try {
-                                    c.deserializeUpdate(in, delta);
+                                    c.deserializeUpdate(in, 0);
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }
-                            }, () -> GGConsole.warning("Failed to find component of id " + id + " during server deserialization"));
+                            }, () -> {
+                                GGConsole.warning("Failed to find component of id " + id + " during server deserialization");
+                                //WorldEngine.getCurrent().getWorld().printLayout();
+                            });
 
                 }
             } catch (IOException e) {
@@ -119,13 +176,13 @@ public class Client {
                     }
 
                     for (var comp : loadedCompList) {
-                        WorldEngine.findEverywherByGUID(comp.parent)
+                        WorldEngine.findEverywhereByGUID(comp.parent)
                                 .ifPresentOrElse(c -> c.attach(comp.comp),
                                         () ->  loadedCompList.stream()
-                                                .filter(c -> c.comp.getName().equals(comp.parent))
+                                                .filter(c -> c.comp.getGUID() == comp.parent)
                                                 .findFirst()
                                                 .ifPresentOrElse(c -> c.comp.attach(comp.comp),
-                                                        () -> GGConsole.warning("Failed to findByName component " + comp.parent + " while deserializing " + comp.comp.getName())));
+                                                        () -> GGConsole.warning("Failed to find component " + comp.parent + " while deserializing " + comp.comp.getName())));
 
                     }
                 } catch (IOException e) {
@@ -141,13 +198,29 @@ public class Client {
             var amount = in.readInt();
             for(int i = 0; i < amount; i++){
                 var comp = in.readLong();
-                WorldEngine.markComponentForRemoval(WorldEngine.getCurrent().findByGUID(comp).orElseThrow(() -> new IllegalStateException("Failed to find component with id " + comp + " to remove!")));
+                WorldEngine.findEverywhereByGUID(comp).ifPresent(Component::delete);
             }
         }catch (IOException e){
             e.printStackTrace();
         }
     }
 
+    public void acceptMovedComponent(Packet packet) {
+        try {
+            var in = new GGInputStream(packet.getData());
+            var amount = in.readInt();
+            for(int i = 0; i < amount; i++){
+                var compID = in.readLong();
+                var newC = in.readLong();
+
+                WorldEngine.findEverywhereByGUID(compID).ifPresent(cc -> {
+                    WorldEngine.findEverywhereByGUID(newC).ifPresent(nc -> nc.attach(cc));
+                });
+            }
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
 
     public ConnectionData getConnection() {
         return connectionData;
@@ -161,12 +234,12 @@ public class Client {
         return timeConnected;
     }
 
-    public DatagramSocket getUdpSocket() {
-        return udpSocket;
-    }
-
-    public long getLatency(){
-        return latency;
+    public CompletableFuture<Long> calculateLatency()  {
+        var pre = System.currentTimeMillis();
+        var future = new CompletableFuture<Long>();
+        Packet.sendGuaranteed(PacketType.PING, new byte[]{}, NetworkEngine.getClient().getConnection())
+                .whenComplete(b -> future.complete(System.currentTimeMillis()-pre));
+        return future;
     }
 
     public boolean isRunning(){
@@ -175,5 +248,9 @@ public class Client {
 
     public int getPacketSize(){
         return packetsize;
+    }
+
+    public String getUsername() {
+        return username;
     }
 }

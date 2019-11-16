@@ -36,9 +36,9 @@ public class ServerClient {
 
     private List<ActionTransmitterComponent> transmitters;
 
-    public ServerClient(String name, InetAddress ip, Instant timeConnected){
+    public ServerClient(String name, ConnectionData data, Instant timeConnected){
         this.name = name;
-        this.connectionData = ConnectionData.get(ip, 0);
+        this.connectionData = data;
         this.timeConnected = timeConnected;
         this.id = idcounter;
         this.transmitters = new ArrayList<>();
@@ -55,10 +55,6 @@ public class ServerClient {
 
     public ConnectionData getConnection(){
         return connectionData;
-    }
-
-    public void setPort(int port){
-        this.connectionData = ConnectionData.get(connectionData.address, port);
     }
 
     public int getId(){
@@ -102,5 +98,14 @@ public class ServerClient {
         }catch (IOException e){
             e.printStackTrace();
         }
+    }
+
+    public static int getNextID(){
+        return idcounter;
+    }
+
+    @Override
+    public String toString(){
+        return name + " (" + connectionData + ")";
     }
 }
