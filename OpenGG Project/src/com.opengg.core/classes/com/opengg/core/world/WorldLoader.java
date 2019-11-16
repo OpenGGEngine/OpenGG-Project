@@ -28,8 +28,8 @@ public class WorldLoader {
      */
     public static World loadWorld(String worldname){
         GGConsole.log("Loading world " + worldname + "...");
-        
-        try (GGInputStream in = new GGInputStream(new FileInputStream(Resource.getWorldPath(worldname)))){
+        var path = Resource.getWorldPath(worldname);
+        try (GGInputStream in = new GGInputStream(new FileInputStream(path))){
             int worldversion = in.readInt();
             String ggversion = in.readString();
 
@@ -43,7 +43,7 @@ public class WorldLoader {
             GGConsole.log("World " + worldname + " has been successfully loaded");
             return world;
         } catch (FileNotFoundException ex) {
-            GGConsole.error("Failed to findByName world named " + worldname);
+            GGConsole.error("Failed to find world named " + worldname);
         } catch (IOException ex) {
             GGConsole.error("Failed to access file named " + worldname);
         }

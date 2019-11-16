@@ -6,10 +6,12 @@
 package com.opengg.core.world;
 
 import com.opengg.core.console.GGConsole;
+import com.opengg.core.math.Tuple;
 import com.opengg.core.world.components.Component;
 import com.opengg.core.world.components.RenderComponent;
 
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -23,7 +25,10 @@ public class WorldEngine{
     private static boolean enabled = true;
 
     private static List<Consumer<World>> worldActivationListeners = new ArrayList<>();
-    private static List<Consumer<Component>> componentRemovalListenersS = new ArrayList<>();
+    private static List<Consumer<Component>> componentRemovalListeners = new ArrayList<>();
+    private static List<Consumer<Component>> componentAdditionListeners = new ArrayList<>();
+    private static List<BiConsumer<Component, Component>> componentMoveListeners = new ArrayList<>();
+
 
     private static Map<String, World> worlds = new HashMap<>();
 
@@ -44,16 +49,27 @@ public class WorldEngine{
     }
 
     public static void addComponentRemovalListener(Consumer<Component> consumer){
-        componentRemovalListenersS.add(consumer);
+        componentRemovalListeners.add(consumer);
     }
 
-    public static void removeMarked(){
-        var tempremove = List.copyOf(removal);
-        for(Component c : tempremove){
-            remove(c);
-            componentRemovalListenersS.forEach(cc -> cc.accept(c));
-        }
-        removal.clear();
+    public static void addComponentAdditionListener(Consumer<Component> listener) {
+        componentAdditionListeners.add(listener);
+    }
+
+    public static void addComponentMoveListener(BiConsumer<Component, Component> listener) {
+        componentMoveListeners.add(listener);
+    }
+
+    public static void onComponentAdded(Component comp){
+        componentAdditionListeners.forEach(c -> c.accept(comp));
+    }
+
+    public static void onComponentMoved(Component comp, Component newParent){
+        componentMoveListeners.forEach(c -> c.accept(comp, newParent));
+    }
+
+    public static void onComponentRemoved(Component comp){
+        componentRemovalListeners.forEach(c -> c.accept(comp));
     }
 
     /**
@@ -72,10 +88,13 @@ public class WorldEngine{
      * @param guid
      * @return Optional containing the component with the given GUID, or an empty Optional
      */
-    public static Optional<Component> findEverywherByGUID(long guid){
+    public static Optional<Component> findEverywhereByGUID(long guid){
         return worlds.values().stream()
                 .flatMap(w -> w.findByGUID(guid).stream())
-                .findFirst();
+                .findFirst()
+                .or(() -> worlds.values().stream()
+                        .filter(w -> w.getGUID() == guid)
+                        .findFirst());
     }
 
     /**
@@ -83,7 +102,6 @@ public class WorldEngine{
      * @param delta Time since last update, in seconds
      */
     public static void update(float delta){
-        removeMarked();
         if(enabled){
             WorldEngine.worlds.values().forEach(w -> w.localUpdate(delta));
         }
@@ -98,8 +116,7 @@ public class WorldEngine{
      * @see WorldEngine#registerWorld(World)
      */
     public static void activateWorld(World world){
-        if(!isRegistered(world.getName()))
-            registerWorld(world);
+        registerWorld(world);
         if(world.isActive() == false){
             world.activate();
             worldActivationListeners.forEach(c -> c.accept(world));
@@ -212,23 +229,8 @@ public class WorldEngine{
         return worlds.containsKey(world) && (worlds.get(world) != null);
     }
 
-    public static void markComponentForRemoval(Component c){
-        if(c != null)
-            iterateMark(c);
-    }
-
-    private static void iterateMark(Component c){
-        for(Component cc : c.getChildren()){
-            iterateMark(cc);
-        }
-        removal.add(c);
-    }
-
     private static void remove(Component c){
-        c.finalizeComponent();
-        if(c instanceof RenderComponent)
-            c.getWorld().removeRenderable((RenderComponent)c);
-        c.getParent().remove(c);
+        c.delete();
     }
 
     /**

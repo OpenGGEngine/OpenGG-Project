@@ -18,6 +18,7 @@ import com.opengg.core.render.RenderGroup;
 import com.opengg.core.exceptions.InvalidParentException;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
+import com.opengg.core.render.Renderable;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.texture.TextureData;
 import com.opengg.core.render.texture.TextureManager;
@@ -25,6 +26,7 @@ import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
 import com.opengg.core.world.components.Component;
 import com.opengg.core.world.components.RenderComponent;
+import com.opengg.core.world.structure.WorldStructure;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -46,14 +48,15 @@ import java.util.function.Consumer;
 public class World extends Component implements Resource {
     private PhysicsSystem physics = new PhysicsSystem();
     private RenderEnvironment environment = new RenderEnvironment();
+    private WorldStructure structure;
     private boolean forceUpdate = false;
     private boolean active = false;
     private boolean shouldMultipleInstancesExist = false;
-
-    private List<Consumer<Component>> addSubs = new ArrayList<>();
+    private boolean shouldSerializePhysics = false;
 
     public World(){
         forceUpdate = GGInfo.isServer();
+        structure = new WorldStructure(this);
         setName("default");
     }
 
@@ -61,7 +64,6 @@ public class World extends Component implements Resource {
         this();
         setName(name);
     }
-
 
     /**
      * Regenerates the render groups for this world and sends them to {@link RenderEngine},
@@ -81,6 +83,7 @@ public class World extends Component implements Resource {
      * @param renderable
      */
     public void addRenderable(RenderComponent renderable){
+        if(GGInfo.isServer()) return;
         boolean found = false;
         for(RenderGroup rg : environment.getGroups()){
             if(rg.isTransparent() == renderable.isTransparent()){
@@ -97,18 +100,16 @@ public class World extends Component implements Resource {
         }
 
         if(!found){
-            RenderGroup group = new RenderGroup("world " + getGUID() + " " + renderable.getShader() + " "
-                    + renderable.getFormat().toString() +
-                    " group: " + (environment.getGroups().size() + 1),
-                    renderable.getFormat());
-            group.add(renderable);
-            group.setTransparent(renderable.isTransparent());
-            group.setPipeline(renderable.getShader());
-            environment.addGroup(group);
-        }
-
-        for(RenderGroup rg : environment.getGroups()){
-            rg.setEnabled(true);
+            OpenGG.asyncExec(() -> {
+                RenderGroup group = new RenderGroup("world " + getGUID() + " " + renderable.getShader() + " "
+                            + renderable.getFormat().toString() + " group: " + (environment.getGroups().size() + 1),
+                        renderable.getFormat());
+                group.add(renderable);
+                group.setTransparent(renderable.isTransparent());
+                group.setPipeline(renderable.getShader());
+                group.setEnabled(true);
+                environment.addGroup(group);
+            });
         }
     }
 
@@ -116,31 +117,23 @@ public class World extends Component implements Resource {
      * Removes a {@link com.opengg.core.world.components.RenderComponent} from the World's {@link RenderGroup}s
      * @param r RenderComponent to be removed
      */
-    public void removeRenderable(RenderComponent r){
+    public void removeRenderable(Renderable r){
         for(RenderGroup rg : environment.getGroups()){
             rg.remove(r);
         }
     }
 
     /**
-     * Returns the {@link com.opengg.core.physics.PhysicsSystem} associated with the World
-     * @return PhysicsSystem associated with the world
-     */
-    public PhysicsSystem getSystem(){
-        return physics;
-    }
-
-    /**
      * Recursively prints the Component layout of this world to the default {@link java.io.PrintStream}
      */
     public void printLayout(){
-        GGConsole.log(printLayout(this, ""));
+        GGConsole.log("\n" + printLayout(this, 1));
     }
 
-    private String printLayout(Component comp, String string){
-        string += comp.getClass().getSimpleName() + ": " + comp.getName() + "\n";
+    private String printLayout(Component comp, int tabCount){
+        var string = comp.getClass().getSimpleName() + ": " + comp.getName() + " (" + comp.getGUID() + ")\n";
         for(var child : comp.getChildren()){
-            string = "----" + printLayout(child, string);
+            string += " ".repeat(tabCount*3) + printLayout(child, tabCount + 1) + "";
         }
         return  string;
     }
@@ -222,6 +215,18 @@ public class World extends Component implements Resource {
         this.shouldMultipleInstancesExist = val;
     }
 
+    public boolean shouldSerializePhysics() {
+        return shouldSerializePhysics;
+    }
+
+    public void setShouldSerializePhysics(boolean shouldSerializePhysics) {
+        this.shouldSerializePhysics = shouldSerializePhysics;
+    }
+
+    public boolean isForcedUpdate() {
+        return forceUpdate;
+    }
+
     /**
      * Gets the rendering environment used by all rendering related objects
      * @return
@@ -230,17 +235,18 @@ public class World extends Component implements Resource {
         return environment;
     }
 
-    public boolean isForcedUpdate() {
-        return forceUpdate;
+    /**
+     * Returns the {@link com.opengg.core.physics.PhysicsSystem} associated with the World
+     * @return PhysicsSystem associated with the world
+     */
+    public PhysicsSystem getSystem(){
+        return physics;
     }
 
-    public void addNewChildListener(Consumer<Component> sub){
-        this.addSubs.add(sub);
+    public WorldStructure getStructure() {
+        return structure;
     }
 
-    public void triggerNewChild(Component newChild){
-        addSubs.forEach(c -> c.accept(newChild));
-    }
     /**
      * Overrides {@link com.opengg.core.world.components.Component#getPosition()}, always returns 0,0,0
      * @return returns Vector3f containing 0,0,0
@@ -266,6 +272,11 @@ public class World extends Component implements Resource {
     @Override
     public Vector3f getScale(){
         return new Vector3f(1,1,1);
+    }
+
+    @Override
+    public boolean isAllEnabled() {
+        return isEnabled();
     }
 
     /**
@@ -295,6 +306,13 @@ public class World extends Component implements Resource {
             }
         }
 
+        GGOutputStream out3 = new GGOutputStream();
+        structure.serialize(out3);
+
+        out.write(out3.asByteArray().length);
+        out.write(out3.asByteArray());
+
+        if(!shouldSerializePhysics) return;
         GGOutputStream out2 = new GGOutputStream();
         physics.serialize(out2);
 
@@ -312,16 +330,22 @@ public class World extends Component implements Resource {
         if(skybox){
             for (int i = 0; i < 6; i++) {
                 var instring = in.readString();
-                datums[i] = TextureManager.loadTexture(instring, false);
+                datums[i] = Resource.getTextureData(instring);
             }
+            OpenGG.asyncExec(() -> environment.setSkybox(new Skybox(Texture.create(Texture.cubemapConfig(), datums), 1000)));
         }
 
-        OpenGG.asyncExec(() -> environment.setSkybox(new Skybox(Texture.create(Texture.cubemapConfig(), datums), 1000)));
+        var size2 = in.readInt();
+        var data2 = in.readByteArray(size2);
+
+        structure.deserialize(data2);
+        OpenGG.onMainThread(() -> structure.remakeRenderGroups());
+        if(in.available() <= 0) return;
 
         var size = in.readInt();
         var data = in.readByteArray(size);
 
-        //physics.deserialize(new GGInputStream(data));
+        physics.deserialize(new GGInputStream(data));
     }
 
     /**
