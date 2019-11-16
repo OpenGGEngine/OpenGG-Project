@@ -10,6 +10,7 @@ import com.opengg.core.render.RenderEngine;
 import com.opengg.core.exceptions.RenderException;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.render.GraphicsBuffer;
+import com.opengg.core.render.Renderable;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.shader.VertexArrayFormat;
 import com.opengg.core.system.Allocator;
@@ -26,7 +27,7 @@ import static org.lwjgl.opengl.GL42.glDrawElementsInstancedBaseVertexBaseInstanc
  *
  * @author Javier
  */
-public class DrawnObject implements Drawable {
+public class DrawnObject implements Renderable {
     private List<GraphicsBuffer> vertexBufferObjects = new ArrayList<>();
     private GraphicsBuffer elementBuffer;
     private VertexArrayFormat format;
@@ -34,8 +35,6 @@ public class DrawnObject implements Drawable {
     private int drawtype = GL_TRIANGLES;
     private int instanceCount = 1;
     private int basevertex = 0;
-    
-    Matrix4f model = Matrix4f.translate(0, 0, 0);
 
     /**
      * Creates a drawn object containing the given {@link FloatBuffer FloatBuffers}
@@ -140,11 +139,6 @@ public class DrawnObject implements Drawable {
         }
     }
 
-    @Override
-    public void setMatrix(Matrix4f model){
-        this.model = model;
-    }
-
     public void setRenderType(int type){
         this.drawtype = type;
     }
@@ -156,8 +150,6 @@ public class DrawnObject implements Drawable {
     @Override
     public void render(){
         if(RenderEngine.validateInitialization()) return;
-
-        ShaderController.setModel(model);
 
         elementBuffer.bind();
 

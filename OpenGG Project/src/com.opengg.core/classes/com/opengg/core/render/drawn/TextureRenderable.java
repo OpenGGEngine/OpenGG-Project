@@ -6,18 +6,19 @@
 package com.opengg.core.render.drawn;
 
 import com.opengg.core.math.Matrix4f;
+import com.opengg.core.render.Renderable;
 import com.opengg.core.render.texture.Texture;
 
 /**
  *
  * @author Warren
  */
-public class TexturedDrawnObject implements Drawable{
+public class TextureRenderable implements Renderable {
     public Texture tex;
-    Drawable object;
+    Renderable object;
     
-    public TexturedDrawnObject(Drawable drawable, Texture t){
-        object = drawable;
+    public TextureRenderable(Renderable renderable, Texture t){
+        object = renderable;
         this.tex = t;
     }
     
@@ -25,11 +26,6 @@ public class TexturedDrawnObject implements Drawable{
     public void render() {
         tex.use(0);
         object.render();
-    }
-
-    @Override
-    public void setMatrix(Matrix4f m) {
-        object.setMatrix(m);
     }
 
     public void setTexture(Texture tex) {

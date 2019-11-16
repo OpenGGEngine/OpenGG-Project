@@ -6,8 +6,8 @@
 
 package com.opengg.core.render.drawn;
 
-import com.opengg.core.math.Matrix4f;
 import com.opengg.core.model.Material;
+import com.opengg.core.render.Renderable;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.shader.VertexArrayFormat;
 import java.nio.FloatBuffer;
@@ -18,42 +18,42 @@ import java.util.List;
  *
  * @author Javier
  */
-public class MaterialDrawnObject implements Drawable {
-    Drawable d;
-    Material mat = Material.defaultmaterial;
-    
-    public void setM(Material m) {
-        this.mat = m;
-    }
+public class MaterialRenderable implements Renderable {
+    private Renderable d;
+    private Material mat = Material.defaultmaterial;
 
-    public MaterialDrawnObject(Drawable d){
+    public MaterialRenderable(Renderable d){
         this.d = d;
     }
     
-    public MaterialDrawnObject(Drawable d, Material m){
+    public MaterialRenderable(Renderable d, Material m){
         this.d = d;
         this.mat = m;
         m.loadTextures();
     }
     
-    public MaterialDrawnObject(FloatBuffer b, VertexArrayFormat format){
+    public MaterialRenderable(FloatBuffer b, VertexArrayFormat format){
         d = new DrawnObject(format, b);
     }
     
-    public MaterialDrawnObject(List<FloatBuffer> buffers, VertexArrayFormat format){
+    public MaterialRenderable(List<FloatBuffer> buffers, VertexArrayFormat format){
         d = new DrawnObject(format, buffers.toArray(new FloatBuffer[0]));
     }
     
-    public MaterialDrawnObject(FloatBuffer b, IntBuffer index, Material m){
+    public MaterialRenderable(FloatBuffer b, IntBuffer index, Material m){
         d = new DrawnObject(index, b);
         this.mat = m;
         m.loadTextures();
     }
     
-    public MaterialDrawnObject(FloatBuffer b, IntBuffer index){
+    public MaterialRenderable(FloatBuffer b, IntBuffer index){
         this(b, index, Material.defaultmaterial);
     }
-    
+
+    public void setMaterial(Material m) {
+        this.mat = m;
+    }
+
     public Material getMaterial(){
         return mat;
     }
@@ -74,11 +74,6 @@ public class MaterialDrawnObject implements Drawable {
         ShaderController.passMaterial(mat);
 
         d.render();
-    }
-
-    @Override
-    public void setMatrix(Matrix4f m) {
-        d.setMatrix(m);
     }
 
 }
