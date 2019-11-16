@@ -5,13 +5,12 @@ import com.opengg.core.animation.AnimationManager;
 import com.opengg.core.engine.Executor;
 import com.opengg.core.gui.GUIController;
 import com.opengg.core.gui.GUITexture;
-import com.opengg.core.physics.collision.AABB;
+import com.opengg.core.physics.collision.colliders.AABB;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
 import com.opengg.core.world.World;
 import com.opengg.core.world.WorldEngine;
-import com.opengg.core.world.WorldLoader;
 import com.opengg.core.world.components.triggers.TriggerInfo;
 
 import java.awt.*;

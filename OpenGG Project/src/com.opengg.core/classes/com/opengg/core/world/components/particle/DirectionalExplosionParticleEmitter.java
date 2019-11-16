@@ -34,7 +34,7 @@ public class DirectionalExplosionParticleEmitter extends ExplosionParticleEmitte
             float offy = (float) Math.random() * deviation * 2 - deviation;
             float offz = (float) Math.random() * deviation * 2 - deviation;
         
-            Quaternionf offset = new Quaternionf(new Vector3f(offx, offy, offz));
+            Quaternionf offset = Quaternionf.createXYZ(new Vector3f(offx, offy, offz));
         
             Vector3f finalv = offset.transform(direction);
             finalv = getRotation().transform(finalv);

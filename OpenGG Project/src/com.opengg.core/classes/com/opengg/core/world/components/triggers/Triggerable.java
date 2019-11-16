@@ -13,5 +13,5 @@ import com.opengg.core.world.components.TriggerComponent;
  * @author Javier
  */
 public interface Triggerable{
-    void onTrigger(TriggerComponent source, TriggerInfo info);
+    void onTrigger(Trigger source, TriggerInfo info);
 }

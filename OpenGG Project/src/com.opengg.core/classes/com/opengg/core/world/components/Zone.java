@@ -7,13 +7,14 @@ package com.opengg.core.world.components;
 
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
-import com.opengg.core.physics.collision.AABB;
+import com.opengg.core.physics.collision.colliders.AABB;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
 import com.opengg.core.world.components.triggers.TriggerInfo;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  *
@@ -22,7 +23,7 @@ import java.util.List;
 public class Zone extends TriggerComponent {
     private AABB box;
     private boolean repeat = false;
-    List<Component> lastFrames = new ArrayList<>();
+    private List<Component> lastFrames = new ArrayList<>();
 
     public Zone(){
         box = new AABB(0,0,0);
@@ -30,6 +31,11 @@ public class Zone extends TriggerComponent {
     
     public Zone(AABB box){
         this.box = box;
+    }
+
+    public Zone(AABB box, Consumer<TriggerInfo> triggerInfoConsumer){
+        this.box = box;
+        this.addListener((s,i) -> triggerInfoConsumer.accept(i));
     }
 
     public void setBox(AABB box) {
@@ -42,16 +48,14 @@ public class Zone extends TriggerComponent {
     }
     
     public void checkForCollisions(){
-        for(Component c : this.getWorld().getAllDescendants()){
-            if(c == this) continue;
-            if(lastFrames.contains(c)) continue;
-            if(box.isColliding(c.getPosition())){
-                lastFrames.add(c);
-                TriggerInfo ti = new TriggerInfo();
-                ti.triggerSource = this;
-                ti.data = c;
-                ti.type = TriggerInfo.TriggerType.SINGLE;
-                ti.info = "collide:" + c.getGUID();
+        box.setPosition(this.getPosition());
+        box.recalculate();
+        for(var collidingComp : this.getWorld().getAllDescendants()){
+            if(collidingComp == this) continue;
+            if(lastFrames.contains(collidingComp)) continue;
+            if(box.isColliding(collidingComp.getPosition())){
+                lastFrames.add(collidingComp);
+                var ti = new TriggerInfo(collidingComp, "collide:" + collidingComp.getGUID(), TriggerInfo.TriggerType.SINGLE);
                 trigger(ti);
             }
         }

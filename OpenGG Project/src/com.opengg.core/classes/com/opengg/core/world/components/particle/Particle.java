@@ -40,7 +40,6 @@ public class Particle {
     public boolean update(float delta){
         velocity = velocity.add(gravity.multiply(delta));
         position = position.add(velocity.multiply(delta));
-
         lifelength += delta;
         return lifespan > 0 && lifelength > lifespan;
     }

@@ -15,9 +15,14 @@ public class TriggerInfo {
     public Object data;
     public String info;
     public TriggerType type;
-    public Object triggerSource;
 
     public static enum TriggerType{
         SINGLE, TOGGLE
+    }
+
+    public TriggerInfo(Object data, String info, TriggerType type) {
+        this.data = data;
+        this.info = info;
+        this.type = type;
     }
 }
