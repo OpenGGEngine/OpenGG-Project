@@ -1,8 +1,10 @@
-package com.opengg.core.gui;
+package com.opengg.core.gui.text;
 
 import com.opengg.core.animation.Animation;
 import com.opengg.core.animation.AnimationManager;
 import com.opengg.core.engine.Resource;
+import com.opengg.core.gui.GUIGroup;
+import com.opengg.core.gui.GUITexture;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.render.text.Font;
 import com.opengg.core.render.text.Text;
@@ -10,7 +12,7 @@ import com.opengg.core.render.texture.Texture;
 
 import java.awt.*;
 
-public class GUITextBox extends GUIGroup{
+public class GUITextBox extends GUIGroup {
     private String value = "";
     private GUIText text;
     private GUITexture background;

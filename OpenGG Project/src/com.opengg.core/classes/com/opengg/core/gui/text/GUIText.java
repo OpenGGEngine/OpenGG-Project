@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.opengg.core.gui;
+package com.opengg.core.gui.text;
 
+import com.opengg.core.gui.GUIRenderable;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.render.shader.ShaderController;
@@ -19,7 +20,6 @@ import java.awt.*;
  * @author Javier
  */
 public class GUIText extends GUIRenderable {
-
     public Text text;
     Font font;
 
@@ -48,6 +48,10 @@ public class GUIText extends GUIRenderable {
         this.setDrawable(font.createFromText(text));
     }
 
+    public String getContents(){
+        return text.getText();
+    }
+
     public void setFont(Font font) {
         this.font = font;
         this.setDrawable(font.createFromText(text));
@@ -55,7 +59,7 @@ public class GUIText extends GUIRenderable {
 
     @Override
     public void render() {
-        ShaderController.useConfiguration("text");
         super.render();
+        ShaderController.useConfiguration("gui");
     }
 }
