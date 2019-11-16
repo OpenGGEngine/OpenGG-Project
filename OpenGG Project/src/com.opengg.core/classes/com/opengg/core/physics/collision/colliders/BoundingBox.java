@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.opengg.core.physics.collision;
+package com.opengg.core.physics.collision.colliders;
 
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;

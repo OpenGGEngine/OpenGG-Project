@@ -7,6 +7,7 @@ package com.opengg.core.physics.collision;
 
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.math.geom.Ray;
+import com.opengg.core.physics.collision.colliders.AABB;
 
 /**
  *
