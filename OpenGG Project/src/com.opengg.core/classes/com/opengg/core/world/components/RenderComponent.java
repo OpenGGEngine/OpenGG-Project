@@ -5,34 +5,28 @@
  */
 package com.opengg.core.world.components;
 
-import com.opengg.core.math.Tuple;
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.render.Renderable;
-import com.opengg.core.render.drawn.Drawable;
+import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.shader.VertexArrayAttribute;
 import com.opengg.core.render.shader.VertexArrayBinding;
 import com.opengg.core.render.shader.VertexArrayFormat;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
-import com.opengg.core.util.StreamUtil;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.ArrayList;
 
 /**
  *
  * @author Javier
  */
-public class RenderComponent extends Component implements Renderable{
-    private Drawable drawable;
+public class RenderComponent extends Component implements com.opengg.core.render.Renderable {
+    private Renderable renderable;
     private String shader;
     private VertexArrayFormat format;
     private boolean transparent;
-    private boolean render = true;
     private float renderDistance = 0f;
     private Matrix4f override;
     
@@ -42,28 +36,24 @@ public class RenderComponent extends Component implements Renderable{
         shader = "object";
     }
 
-    public RenderComponent(Drawable drawable){
+    public RenderComponent(Renderable renderable){
         this();
-        this.drawable = drawable;
+        this.renderable = renderable;
     }
 
     @Override
     public void render() {
-        Matrix4f matrix;
         if(override == null)
-            matrix = new Matrix4f().translate(getPosition()).rotate(getRotation()).scale(getScale());
+            ShaderController.setPosRotScale(this.getPosition(), this.getRotation(), this.getScale());
         else
-            matrix = override;
+            ShaderController.setModel(this.override);
 
         if((renderDistance > 0) && (getPosition().subtract(RenderEngine.getCurrentView().getPosition()).length() > renderDistance)) {
             return;
         }
 
-        if(!render) return;
-
-        if(drawable != null){
-            drawable.setMatrix(matrix);
-            drawable.render();
+        if(isEnabled() && renderable != null){
+            renderable.render();
         }
     }
 
@@ -103,20 +93,18 @@ public class RenderComponent extends Component implements Renderable{
         this.renderDistance = renderDistance;
     }
 
-    public void setDrawable(Drawable d){
-        this.drawable = d;
+    public void setRenderable(Renderable d){
+        this.renderable = d;
     }
     
-    public Drawable getDrawable(){
-        return drawable;
+    public Renderable getRenderable(){
+        return renderable;
     }
 
-    public boolean shouldRender(){
-        return render;
-    }
-
-    public void setShouldRender(boolean render){
-        this.render = render;
+    @Override
+    public void finalizeComponent(){
+        if(this.getWorld() != null)
+            this.getWorld().removeRenderable((RenderComponent)this);
     }
 
     @Override
@@ -132,14 +120,15 @@ public class RenderComponent extends Component implements Renderable{
         out.write(renderDistance);
         out.write(format.getBindings().size());
         for(var binding : format.getBindings()){
+            out.write(binding.getBindingIndex());
+            out.write(binding.getVertexSize());
+            out.write(binding.getDivisor());
+            out.write(binding.getAttributes().size());
             for(var attrib : binding.getAttributes()){
-                out.write(binding.getBindingIndex());
-                out.write(binding.getDivisor());
                 out.write(attrib.name);
-                out.write(attrib.offset);
                 out.write(attrib.size);
-                out.write(binding.getVertexSize());
                 out.write(attrib.type);
+                out.write(attrib.offset);
             }
         }
     }
@@ -150,26 +139,25 @@ public class RenderComponent extends Component implements Renderable{
         shader = in.readString();
         transparent = in.readBoolean();
         renderDistance = in.readFloat();
-        int attlength = in.readInt();
-        format = new VertexArrayFormat();
-        var tempMap = new HashMap<Integer, Tuple<Tuple<Integer, Integer>, List<VertexArrayAttribute>>>();
-        for(int i = 0; i < attlength; i++){
-            int index = in.readInt();
-            boolean divisor = in.readBoolean();
-            String name = in.readString();
-            int offset = in.readInt();
-            int size = in.readInt();
-            int buflength = in.readInt();
-            int type = in.readInt();
-            VertexArrayAttribute attrib = new VertexArrayAttribute(name, size, type, offset);
-            tempMap.merge(index, Tuple.of(Tuple.of(divisor ? 1 : 0, buflength), List.of(attrib)), (x,y) -> {
-                var newList = Stream.concat(x.y.stream(), y.y.stream()).collect(Collectors.toList());
-                return Tuple.of(x.x, newList);
-            });
-        }
 
-        tempMap.entrySet().stream()
-                .map(c -> new VertexArrayBinding(c.getKey(), c.getValue().x.y, c.getValue().x.x, c.getValue().y))
-                .forEach(format::addBinding);
+        format = new VertexArrayFormat();
+        int bindingCount = in.readInt();
+        for(int i = 0; i < bindingCount; i++){
+            var list = new ArrayList<VertexArrayAttribute>();
+            var index = in.readInt();
+            var vertexSize = in.readInt();
+            var divisor = in.readInt();
+            int attribCount = in.readInt();
+            for(int ii = 0; ii < attribCount; ii++){
+                var name = in.readString();
+                var size = in.readInt();
+                var type = in.readInt();
+                var offset = in.readInt();
+                var attrib = new VertexArrayAttribute(name, size, type, offset);
+                list.add(attrib);
+            }
+            var binding = new VertexArrayBinding(index, vertexSize, divisor, list);
+            format.addBinding(binding);
+        }
     }
 }

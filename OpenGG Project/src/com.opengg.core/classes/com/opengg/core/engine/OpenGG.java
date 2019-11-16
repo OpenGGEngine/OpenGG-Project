@@ -52,7 +52,7 @@ public final class OpenGG{
     private static boolean force = false;
     private static boolean test = false;
     private static Time time;
-    private static Thread mainthread;
+    private static Thread mainThread;
     private static DebugOptions options = new DebugOptions();
     private static float targetUpdate = 0f;
     private static float overrideUpdate = -1f;
@@ -109,7 +109,7 @@ public final class OpenGG{
     private static void initializeLocal(GGApplication ggapp, InitializationOptions options, boolean client){
         time = new Time();
         startTime = Instant.now();
-        mainthread = Thread.currentThread();
+        mainThread = Thread.currentThread();
         app = ggapp;
 
         GGInfo.setServer(!client);
@@ -199,30 +199,30 @@ public final class OpenGG{
     }
 
     private static void runUpdate() {
-        float delta = time.getDeltaSec();
-        if(delta < targetUpdate) {
+        float realDelta = time.getDeltaSec();
+        if(realDelta < targetUpdate) {
             try {
-                Thread.sleep((long) ((targetUpdate-delta)*1000));
-                delta = targetUpdate;
+                Thread.sleep((long) ((targetUpdate-realDelta)*1000));
+                realDelta = targetUpdate;
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        }else if(delta > targetUpdate && targetUpdate != 0 && OpenGG.getDebugOptions().warnOnMissedTarget()){
-            GGConsole.warning("Last update cycle missed the target update! (" + delta + " sec instead of " + targetUpdate + " sec)");
+        }else if(realDelta > targetUpdate && targetUpdate != 0 && OpenGG.getDebugOptions().warnOnMissedTarget()){
+            GGConsole.warning("Last update cycle missed the target update! (" + realDelta + " sec instead of " + targetUpdate + " sec)");
         }
 
-        delta = overrideUpdate > 0f ? overrideUpdate : delta;
+        var gameDelta = overrideUpdate > 0f ? overrideUpdate : realDelta;
         Allocator.update();
-        PerformanceManager.update(delta);
-        Executor.getExecutor().update(delta);
-        ExtensionManager.update(delta);
-        WorldEngine.update(delta);
-        GUIController.update(delta);
-        AnimationManager.update(delta);
-        PhysicsEngine.updatePhysics(delta);
-        getApp().update(delta);
+        PerformanceManager.update(realDelta);
+        Executor.getExecutor().update(gameDelta);
+        ExtensionManager.update(gameDelta);
+        WorldEngine.update(gameDelta);
+        GUIController.update(realDelta);
+        AnimationManager.update(gameDelta);
+        PhysicsEngine.updatePhysics(gameDelta);
+        getApp().update(gameDelta);
         SoundtrackHandler.update();
-        NetworkEngine.update(delta);
+        NetworkEngine.update(realDelta);
     }
 
     private static void runInput() {
@@ -264,8 +264,11 @@ public final class OpenGG{
         }
     }
 
-    private static List<File> recursiveLoadConfigs(File directory){
+    private static List<File> recursiveLoadConfigs(File directory) {
         var allfiles = directory.listFiles();
+        if(allfiles == null){
+            throw new RuntimeException("Failed to find config directory " + directory.getAbsolutePath());
+        }
         var allcfgs = new ArrayList<File>();
         for (var file : allfiles) {
             if (file.isFile()) {
@@ -360,7 +363,7 @@ public final class OpenGG{
      * @return If is in main thread
      */
     public static boolean inMainThread(){
-        return mainthread == Thread.currentThread();
+        return mainThread == Thread.currentThread();
     }
 
     /**
@@ -370,6 +373,13 @@ public final class OpenGG{
      */
     public static Executor.Sleeper asyncExec(Runnable e){
         return Executor.async(e);
+    }
+
+    public static void onMainThread(Runnable e){
+        if(inMainThread())
+            e.run();
+        else
+            asyncExec(e);
     }
 
     /**

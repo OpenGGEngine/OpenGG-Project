@@ -1,12 +1,11 @@
 package com.opengg.core.model;
 
 import com.opengg.core.engine.Resource;
-import com.opengg.core.math.Vector3f;
-import com.opengg.core.physics.collision.AABB;
-import com.opengg.core.physics.collision.ColliderGroup;
-import com.opengg.core.physics.collision.ConvexHull;
-import com.opengg.core.render.drawn.Drawable;
-import com.opengg.core.render.drawn.DrawnObjectGroup;
+import com.opengg.core.physics.collision.colliders.AABB;
+import com.opengg.core.physics.RigidBody;
+import com.opengg.core.physics.collision.colliders.ConvexHull;
+import com.opengg.core.render.Renderable;
+import com.opengg.core.render.drawn.RenderableGroup;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,12 +40,12 @@ public class Model implements Resource {
      * Generates a drawable usable to render this model
      * @return
      */
-    public Drawable getDrawable(){
-        ArrayList<Drawable> objects = new ArrayList<>(meshes.size());
+    public Renderable getDrawable(){
+        ArrayList<Renderable> objects = new ArrayList<>(meshes.size());
 
         for(Mesh mesh: meshes) objects.add(mesh.getDrawable());
 
-        DrawnObjectGroup group = new DrawnObjectGroup(objects);
+        RenderableGroup group = new RenderableGroup(objects);
         return group;
     }
 
@@ -66,7 +65,7 @@ public class Model implements Resource {
         this.materials = materials;
     }
 
-    public ColliderGroup getCollider(){
+    public RigidBody getCollider(){
         var hulls = meshes.stream()
                 .filter(Mesh::hasConvexHull)
                 .map(Mesh::getConvexHull)
@@ -81,7 +80,7 @@ public class Model implements Resource {
                 .flatMap(List::stream)
                 .collect(Collectors.toList());
 
-        return new ColliderGroup(new AABB(points), realHulls);
+        return new RigidBody(new AABB(points), realHulls);
     }
 
     public boolean isAnimated() {

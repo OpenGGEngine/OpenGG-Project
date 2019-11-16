@@ -20,7 +20,7 @@ public class ActionTransmitterComponent extends ControlledComponent implements A
 
     @Override
     public void onEnable(){
-        if(this.getWorld().isPrimaryWorld() || this.isEnabledAcrossWorlds()) BindController.addController(this);
+        if(this.getWorld().isPrimaryWorld() || this.isEnabledAcrossWorlds()) BindController.addTransmitter(this);
     }
 
     @Override
@@ -32,7 +32,7 @@ public class ActionTransmitterComponent extends ControlledComponent implements A
     public void onWorldMadePrimary(){
         if(!this.isEnabledAcrossWorlds())
             if(isEnabled())
-                BindController.addController(this);
+                BindController.addTransmitter(this);
     }
 
     @Override

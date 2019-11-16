@@ -6,7 +6,8 @@ import com.opengg.core.io.input.keyboard.KeyboardListener;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.network.NetworkEngine;
 import com.opengg.core.render.RenderEngine;
-import com.opengg.core.render.drawn.Drawable;
+import com.opengg.core.render.Renderable;
+import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.text.Font;
 import com.opengg.core.render.text.Text;
 import com.opengg.core.world.WorldEngine;
@@ -18,7 +19,7 @@ public class GGDebugRenderer implements KeyboardListener {
 
     private static Font font = Resource.getTruetypeFont("consolas.ttf");
     private static Text displaytext = Text.from("");
-    private static Drawable display;
+    private static Renderable display;
 
     private static final float FONT_SCALE = 0.08f;
 
@@ -59,9 +60,9 @@ public class GGDebugRenderer implements KeyboardListener {
                         .kerning(true)
                         .size(FONT_SCALE);
                 display = font.createFromText(displaytext);
-                display.setMatrix(Matrix4f.translate(0.02f,0.975f,0));
             }
 
+            ShaderController.setModel(Matrix4f.translate(0.02f,0.975f,0));
             display.render();
             RenderEngine.setDepthCheck(true);
 

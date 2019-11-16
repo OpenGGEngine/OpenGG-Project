@@ -1,6 +1,4 @@
-@version 420 
-
-
+@version 420
 
 in vec2 texcoord;
 in vec3 normal;

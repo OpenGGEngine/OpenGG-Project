@@ -4,6 +4,7 @@ import com.opengg.core.script.Script;
 import com.opengg.core.script.ScriptLoader;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
+import com.opengg.core.world.components.triggers.Trigger;
 import com.opengg.core.world.components.triggers.TriggerInfo;
 import com.opengg.core.world.components.triggers.Triggerable;
 
@@ -73,7 +74,10 @@ public class ScriptComponent extends Component implements Triggerable {
     }
 
     @Override
-    public void onTrigger(TriggerComponent source, TriggerInfo info) {
+    public void onTrigger(Trigger source, TriggerInfo info) {
+        scriptValues.put("lastTrigger", info);
+        if(script == null)
+            script = ScriptLoader.getScriptByName(scriptName);
         if(runMode == RunMode.ON_TRIGGER)
             script.accept(this, -1f);
     }

@@ -34,7 +34,13 @@ public class RenderGroup {
         this.name = name;
         vao = new VertexArrayObject(format);
     }
-  
+
+    public RenderGroup(String name, VertexArrayFormat format, String pipeline) {
+        this.pipeline = pipeline;
+        this.name = name;
+        vao = new VertexArrayObject(format);
+    }
+
     public VertexArrayFormat getFormat(){
         return vao.getFormat();
     }
@@ -98,5 +104,15 @@ public class RenderGroup {
     
     public void remove(Renderable r){
         items.remove(r);
+    }
+
+    @Override
+    public String toString() {
+        return "RenderGroup{" +
+                "pipeline='" + pipeline + '\'' +
+                ", name='" + name + '\'' +
+                ", enabled=" + enabled +
+                ", item count=" + items.size() +
+                '}';
     }
 }

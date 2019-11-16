@@ -7,6 +7,7 @@ package com.opengg.core.render.internal.opengl.texture;
 
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.math.Tuple;
+import com.opengg.core.math.Vector4f;
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.texture.TextureData;
@@ -151,8 +152,8 @@ public class OpenGLTexture implements Texture {
         y = data1.height;
         tex.setImageData(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, internalformat, data1.width, data1.height, 0, colorformat, datatype, (ByteBuffer)data1.buffer);
         tex.setImageData(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, internalformat, data2.width, data2.height, 0, colorformat, datatype, (ByteBuffer)data2.buffer);
-        tex.setImageData(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, internalformat, data3.width, data3.height, 0, colorformat, datatype, (ByteBuffer)data3.buffer);
-        tex.setImageData(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, internalformat, data4.width, data4.height, 0, colorformat, datatype, (ByteBuffer)data4.buffer);
+        tex.setImageData(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, internalformat, data3.width, data3.height, 0, colorformat, datatype, (ByteBuffer)data4.buffer); //inverted to compensate for coordinate issues
+        tex.setImageData(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, internalformat, data4.width, data4.height, 0, colorformat, datatype, (ByteBuffer)data3.buffer);
         tex.setImageData(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, internalformat, data5.width, data5.height, 0, colorformat, datatype, (ByteBuffer)data5.buffer);
         tex.setImageData(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, internalformat, data6.width, data6.height, 0, colorformat, datatype, (ByteBuffer)data6.buffer);
         tdata.add(data1);
@@ -240,7 +241,12 @@ public class OpenGLTexture implements Texture {
         tex.setParameteri(type, GL_TEXTURE_WRAP_T, wtype);
         tex.setParameteri(type, GL_TEXTURE_WRAP_R, wtype);
     }
-    
+
+    @Override
+    public void setBorderColor(Vector4f borderColor) {
+        tex.setParameterfv(type, GL_TEXTURE_BORDER_COLOR, borderColor.toArray());
+    }
+
     @Override
     public List<TextureData> getData(){
         return Collections.unmodifiableList(tdata);

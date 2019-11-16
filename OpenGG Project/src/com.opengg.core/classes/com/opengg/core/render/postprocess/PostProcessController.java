@@ -6,10 +6,11 @@
 package com.opengg.core.render.postprocess;
 
 import com.opengg.core.console.GGConsole;
+import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Tuple;
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.math.Vector2f;
-import com.opengg.core.render.drawn.Drawable;
+import com.opengg.core.render.Renderable;
 import com.opengg.core.render.objects.ObjectCreator;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.texture.Framebuffer;
@@ -23,7 +24,7 @@ import java.util.*;
  * @author Javier
  */
 public class PostProcessController {
-    public static Drawable drawable;
+    public static Renderable renderable;
     private static final Map<String, PostProcessingPass> passes = new HashMap<>();
     private static Framebuffer utility;
     static Framebuffer currentBuffer = null;
@@ -31,7 +32,7 @@ public class PostProcessController {
     
     public static void initialize(){
         utility = WindowFramebuffer.getFloatingPointWindowFramebuffer(1);
-        drawable = ObjectCreator.createSquare(new Vector2f(0f,0f), new Vector2f(1f,1f), -0.9f);
+        renderable = ObjectCreator.createSquare(new Vector2f(0f,0f), new Vector2f(1f,1f), -0.9f);
 
         Stage ssao = new Stage("ssao");
         PostProcessingPass ssaopass = new PostProcessingPass(PostProcessingPass.SET, ssao);
@@ -75,6 +76,7 @@ public class PostProcessController {
     
     public static void process(Framebuffer initial){
         RenderEngine.setCulling(false);
+        ShaderController.setModel(new Matrix4f());
         
         currentBuffer = initial;
         initial.useTexture(0, 0);
@@ -90,7 +92,7 @@ public class PostProcessController {
                     utility.enableRendering();
                     utility.useEnabledAttachments();
                     ShaderController.useConfiguration("add");
-                    drawable.render();
+                    renderable.render();
                     utility.disableRendering();
                     utility.useTexture(0, 0);
                     currentBuffer = utility;
@@ -100,10 +102,8 @@ public class PostProcessController {
         initial.enableRendering();
         initial.useEnabledAttachments();
         ShaderController.useConfiguration("texture");
-        drawable.render();
+        renderable.render();
         initial.disableRendering();
-
-
     }
 
     private PostProcessController() {

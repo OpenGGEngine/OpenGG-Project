@@ -16,8 +16,9 @@ import com.opengg.core.render.View;
  * @author Javier
  */
 public class Camera implements View {
-    Vector3f pos;
-    Quaternionf rot;
+    private Vector3f pos;
+    private Quaternionf rot;
+
     public Camera(){
         this.pos = new Vector3f();
         this.rot = new Quaternionf();
@@ -51,6 +52,6 @@ public class Camera implements View {
     }
     
     public Matrix4f getMatrix(){
-        return new Matrix4f().rotate(rot.invert()).translate(pos.inverse());
+        return new Matrix4f().translate(pos).rotate(rot).invert();
     }
 }

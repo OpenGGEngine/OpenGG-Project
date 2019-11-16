@@ -7,6 +7,7 @@ package com.opengg.core.world.components;
 
 import com.opengg.core.audio.Sound;
 import com.opengg.core.engine.Resource;
+import com.opengg.core.world.components.triggers.Trigger;
 import com.opengg.core.world.components.triggers.TriggerInfo;
 import com.opengg.core.world.components.triggers.Triggerable;
 
@@ -31,7 +32,7 @@ public class SoundComponent extends Component implements Triggerable, ResourceUs
     }
 
     @Override
-    public void onTrigger(TriggerComponent source, TriggerInfo data) {
+    public void onTrigger(Trigger source, TriggerInfo data) {
         sound.stop();
         sound.play();
     }

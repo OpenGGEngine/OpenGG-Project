@@ -27,8 +27,7 @@ public class ControlledComponent extends Component{
             return MouseController.get().multiply(Configuration.getFloat("sensitivity"));
         }else{
             if(GGInfo.isServer()){
-                var user = NetworkEngine.getServer().getByID(userid);
-                if(user != null) return user.getMousePosition();
+                return NetworkEngine.getServer().getClientByID(userid).map(c -> c.getMousePosition()).orElse(new Vector2f());
             }
         }
 
@@ -40,7 +39,8 @@ public class ControlledComponent extends Component{
      * @return
      */
     public boolean isCurrentUser(){
-        return (userid == GGInfo.getUserId() || GGInfo.getUserId() == -1) && (this.getWorld().isPrimaryWorld() || enableAcrossWorlds) ;
+        return (userid == GGInfo.getUserId() || GGInfo.getUserId() == -1) &&
+                ((this.getWorld() != null && this.getWorld().isPrimaryWorld()) || enableAcrossWorlds) ;
     }
 
     /**
@@ -86,6 +86,7 @@ public class ControlledComponent extends Component{
     @Override
     public void deserialize(GGInputStream in) throws IOException{
         super.deserialize(in);
-        userid = in.readInt();
+        var userId = in.readInt();
+        setUserId(userId);
     }
 }

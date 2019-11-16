@@ -49,7 +49,7 @@ public abstract class ParticleEmitter extends RenderComponent{
         var buffers = ObjectCreator.createSquareBuffers(new Vector2f(-1,-1), new Vector2f(1,1), 0);
         FloatBuffer fb = buffers.x;
         IntBuffer ib = buffers.y;
-        this.setDrawable(new DrawnObject(RenderEngine.getParticleFormat(), ib, fb, Allocator.allocFloat(3)));
+        this.setRenderable(new DrawnObject(RenderEngine.getParticleFormat(), ib, fb, Allocator.allocFloat(3)));
     }
     
     private FloatBuffer createParticleVBO(){
@@ -101,9 +101,9 @@ public abstract class ParticleEmitter extends RenderComponent{
     
     @Override
     public void render(){
-        ((DrawnObject)getDrawable()).updateBuffer(1, createParticleVBO());
-        ((DrawnObject)getDrawable()).setInstanceCount(particles.size());
-        if(!bindParticlesToEmitter) this.setOverrideMatrix(new Matrix4f().scale(this.getScale()));
+        ((DrawnObject) getRenderable()).updateBuffer(1, createParticleVBO());
+        ((DrawnObject) getRenderable()).setInstanceCount(particles.size());
+        //if(!bindParticlesToEmitter) this.setOverrideMatrix(new Matrix4f().scale(this.getScale()));
         texture.use(0);
         super.render();
     }

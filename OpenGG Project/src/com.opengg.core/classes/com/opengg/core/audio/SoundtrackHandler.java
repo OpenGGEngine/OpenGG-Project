@@ -34,7 +34,12 @@ public class SoundtrackHandler {
         current = track;
         current.play();
     }
-    
+
+    public static void removeSoundtrack(){
+        current.stop();
+        current = null;
+    }
+
     /**
      * Updates the current soundtrack, does not have to be called
      */

@@ -2,7 +2,7 @@ package com.opengg.core.gui;
 
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
-import com.opengg.core.render.drawn.Drawable;
+import com.opengg.core.render.Renderable;
 import com.opengg.core.render.objects.ObjectCreator;
 import com.opengg.core.render.shader.ShaderController;
 
@@ -18,7 +18,7 @@ public class GUIProgressBar extends GUIRenderable{
         this.fill = fill;
         this.back = back;
 
-        Drawable drawn = ObjectCreator.createSquare(new Vector2f(0,0), size, 0.2f);
+        Renderable drawn = ObjectCreator.createSquare(new Vector2f(0,0), size, 0.2f);
 
         this.setDrawable(drawn);
         this.setPositionOffset(pos);

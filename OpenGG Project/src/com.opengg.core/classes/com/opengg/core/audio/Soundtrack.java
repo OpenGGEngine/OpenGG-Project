@@ -122,6 +122,14 @@ public class Soundtrack {
         current = soundtrack.get(0);
     }
 
+    /**
+     * Sets the volume for the whole soundtrack
+     * @param volume
+     */
+    public void setVolume(float volume){
+        soundtrack.forEach(s -> s.setGain(volume));
+    }
+
     public List<Sound> getSongs() {
         return soundtrack;
     }

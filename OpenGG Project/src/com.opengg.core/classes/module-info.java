@@ -31,7 +31,9 @@ module com.opengg.core {
     requires org.lwjgl.meow.natives;
     requires java.compiler;
 
+    exports com.opengg.core.animation;
     exports com.opengg.core.audio;
+    exports com.opengg.core.editor;
     exports com.opengg.core.engine;
     exports com.opengg.core.exceptions;
     exports com.opengg.core.extension;
@@ -40,8 +42,11 @@ module com.opengg.core {
     exports com.opengg.core.io.input.keyboard;
     exports com.opengg.core.io.input.mouse;
     exports com.opengg.core.model;
+    exports com.opengg.core.model.io;
+    exports com.opengg.core.model.process;
     exports com.opengg.core.network;
     exports com.opengg.core.network.client;
+    exports com.opengg.core.network.common;
     exports com.opengg.core.network.server;
     exports com.opengg.core.physics;
     exports com.opengg.core.physics.collision;
@@ -54,6 +59,7 @@ module com.opengg.core {
     exports com.opengg.core.render.texture;
     exports com.opengg.core.render.text.impl;
     exports com.opengg.core.render.window;
+    exports com.opengg.core.script;
     exports com.opengg.core.states;
     exports com.opengg.core.util;
     exports com.opengg.core.render.text;
@@ -64,9 +70,9 @@ module com.opengg.core {
     exports com.opengg.core.world.components.triggers;
     exports com.opengg.core.world.components.viewmodel;
     exports com.opengg.core.world.generators;
-    exports com.opengg.core.model.io;
-    exports com.opengg.core.model.process;
-    exports com.opengg.core.animation;
-    exports com.opengg.core.script;
-    exports com.opengg.core.editor;
+    exports com.opengg.core.gui.text;
+    exports com.opengg.core.world.structure;
+    exports com.opengg.core.world.structure.viewmodel;
+    exports com.opengg.core.physics.collision.colliders;
+    exports com.opengg.core.physics.mechanics;
 }

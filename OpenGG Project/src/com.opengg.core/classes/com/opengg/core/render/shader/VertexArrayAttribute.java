@@ -32,4 +32,14 @@ public class VertexArrayAttribute{
             return false;
         return this.name.equals(other.name);
     }
+
+    @Override
+    public String toString() {
+        return "VertexArrayAttribute{" +
+                "name='" + name + '\'' +
+                ", offset=" + offset +
+                ", type=" + type +
+                ", size=" + size +
+                '}';
+    }
 }

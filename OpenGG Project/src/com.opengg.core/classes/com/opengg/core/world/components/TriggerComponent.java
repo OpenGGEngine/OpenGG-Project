@@ -10,8 +10,7 @@ import com.opengg.core.engine.OpenGG;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
 import com.opengg.core.world.WorldEngine;
-import com.opengg.core.world.components.*;
-import com.opengg.core.world.components.triggers.ITrigger;
+import com.opengg.core.world.components.triggers.Trigger;
 import com.opengg.core.world.components.triggers.TriggerInfo;
 import com.opengg.core.world.components.triggers.Triggerable;
 
@@ -22,15 +21,10 @@ import java.util.ArrayList;
  *
  * @author Javier
  */
-public class TriggerComponent extends Component implements ITrigger {
+public class TriggerComponent extends Component implements com.opengg.core.world.components.triggers.Trigger {
     private ArrayList<Triggerable> subscribers = new ArrayList<>();
 
-    @Override
-    public void addSubscriber(Triggerable dest){
-        subscribers.add(dest);
-    }
-    
-    @Override
+
     public void trigger(TriggerInfo ti){
         onTrigger(ti);
         for(Triggerable t : subscribers){
@@ -42,12 +36,14 @@ public class TriggerComponent extends Component implements ITrigger {
 
     }
 
-    @Override
+    public void addListener(Triggerable dest){
+        subscribers.add(dest);
+    }
+
     public ArrayList<Triggerable> getSubscribers() {
         return subscribers;
     }
 
-    @Override
     public void clearSubscribers() {
         subscribers = new ArrayList<>();
     }
@@ -66,14 +62,14 @@ public class TriggerComponent extends Component implements ITrigger {
     public void deserialize(GGInputStream in) throws IOException{
         super.deserialize(in);
         int size = in.readInt();
-        int[] ids = new int[size];
+        long[] ids = new long[size];
         for(int i = 0; i < size; i++){
-            ids[i] = in.readInt();
+            ids[i] = in.readLong();
         }
         
         OpenGG.asyncExec(() ->{
             for(long i : ids){
-                subscribers.add((Triggerable) WorldEngine.findEverywherByGUID(i).get());
+                subscribers.add((Triggerable) WorldEngine.findEverywhereByGUID(i).get());
             }
         });
     }

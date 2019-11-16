@@ -5,15 +5,13 @@
  */
 package com.opengg.core.world.components;
 
-import com.opengg.core.console.GGConsole;
 import com.opengg.core.engine.OpenGG;
-import com.opengg.core.physics.collision.ColliderGroup;
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.engine.Resource;
 import com.opengg.core.model.Model;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
-import com.opengg.core.world.components.physics.CollisionComponent;
+import com.opengg.core.world.components.physics.RigidBodyComponent;
 
 import java.io.IOException;
 
@@ -24,7 +22,8 @@ import java.io.IOException;
  * This Component Renders a Drawable
  */
 public class ModelComponent extends RenderComponent implements ResourceUser{
-    Model model;
+    private Model model;
+    private boolean collider;
     
     public ModelComponent(){}
 
@@ -37,12 +36,18 @@ public class ModelComponent extends RenderComponent implements ResourceUser{
         setModel(model);
         this.setFormat(model.isAnimated() ? RenderEngine.tangentAnimVAOFormat: RenderEngine.tangentVAOFormat);
         this.setTransparency(true);
+        this.collider = collider;
 
         if(collider){
-            this.attach(new CollisionComponent(model.getCollider()));
+            setupCollider();
         }
     }
-    
+
+    private void setupCollider() {
+        var collision = new RigidBodyComponent(model.getCollider(), false);
+        collision.setSerializable(false);
+        this.attach(collision);
+    }
     public Model getModel(){
         return model;
     }
@@ -61,13 +66,14 @@ public class ModelComponent extends RenderComponent implements ResourceUser{
         }else{
         }
 
-        OpenGG.asyncExec(() -> setDrawable(model.getDrawable()));
+        OpenGG.asyncExec(() -> setRenderable(model.getDrawable()));
     }
     
     @Override
     public void serialize(GGOutputStream out) throws IOException{
         super.serialize(out);
         out.write(model.getName());
+        out.write(collider);
     }
     
     @Override
@@ -75,7 +81,10 @@ public class ModelComponent extends RenderComponent implements ResourceUser{
         super.deserialize(in);
         String path = in.readString();
         model = Resource.getModel(path);
-        OpenGG.asyncExec(() -> setDrawable(model.getDrawable()));
+        OpenGG.asyncExec(() -> setRenderable(model.getDrawable()));
+        var collider = in.readBoolean();
+        if (collider)
+            setupCollider();
     }
 
     @Override

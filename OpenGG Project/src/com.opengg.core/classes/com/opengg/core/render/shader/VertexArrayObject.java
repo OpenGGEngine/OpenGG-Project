@@ -6,6 +6,7 @@
 
 package com.opengg.core.render.shader;
 
+import com.opengg.core.GGInfo;
 import com.opengg.core.render.GraphicsBuffer;
 import com.opengg.core.render.RenderEngine;
 
@@ -24,6 +25,7 @@ public class VertexArrayObject {
     PureVertexArrayObject vao;
 
     public VertexArrayObject(VertexArrayFormat format){
+        if(GGInfo.isServer()) return;
         vao = PureVertexArrayObject.create();
         vao.bind();
         this.format = format;

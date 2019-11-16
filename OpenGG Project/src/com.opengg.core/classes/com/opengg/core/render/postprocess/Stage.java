@@ -41,7 +41,7 @@ public class Stage {
 
         buffer.enableRendering();
         buffer.useEnabledAttachments();
-        PostProcessController.drawable.render();
+        PostProcessController.renderable.render();
         buffer.disableRendering();
         for (Tuple<Integer, Integer> bind : colorbinds) {
             buffer.useTexture(bind.x, bind.y);

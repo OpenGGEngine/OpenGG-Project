@@ -11,6 +11,7 @@ import com.opengg.core.engine.Resource;
 import com.opengg.core.exceptions.ShaderException;
 import com.opengg.core.io.FileStringLoader;
 import com.opengg.core.math.Matrix4f;
+import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.model.Material;
@@ -48,7 +49,7 @@ public class ShaderController {
     private static final List<ShaderFileHolder> completedfiles = new ArrayList<>();
     private static final List<String> searchedUniforms = new ArrayList<>();
     private static final Map<String, Object> currentUniforms = new HashMap<>();
-    private static String currentshader = "";
+    private static String currentShader = "";
     private static Matrix4f view = new Matrix4f(), proj = new Matrix4f();
     private static String currentvert, currenttesc, currenttese, currentgeom, currentfrag;
     private static int currentBind = 0;
@@ -146,10 +147,16 @@ public class ShaderController {
         saveCurrentConfiguration("volume");
 
         use("object.vert", "text.frag");
-        saveCurrentConfiguration("text");
+        saveCurrentConfiguration("sdf");
+
+        use("object.vert", "color_alpha.frag");
+        saveCurrentConfiguration("ttf");
 
         use("object.vert", "texture.frag");
         saveCurrentConfiguration("texture");
+
+        use("object.vert", "cuboid_scaling.frag");
+        saveCurrentConfiguration("cuboid");
 
         use("object.vert", "gui.frag");
         saveCurrentConfiguration("gui");
@@ -194,9 +201,6 @@ public class ShaderController {
         findUniform("cubemap");
         setTextureLocation("cubemap", 2);
 
-        findUniform("skycolor");
-        setUniform("skycolor", new Vector3f(0.5f,0.5f,0.5f));
-
         findUniform("divAmount");
         setUniform("divAmount", 1f);
 
@@ -218,6 +222,12 @@ public class ShaderController {
         findUniform("uvoffsety");
         setUniform("uvoffsety", 0f);
 
+        findUniform("cuboidscale");
+        setUniform("cuboidscale", new Vector3f(1,1,1));
+
+        findUniform("cuboidscaling");
+        setUniform("cuboidscaling", 0f);
+
         findUniform("fill");
         setUniform("fill", new Vector3f());
 
@@ -232,6 +242,9 @@ public class ShaderController {
 
         findUniform("camera");
         setUniform("camera", new Vector3f(0,0,0));
+
+        findUniform("color");
+        setUniform("color", new Vector3f(1,1,1));
 
         findUniform("numLights");
         setUniform("numLights", 1);
@@ -262,15 +275,14 @@ public class ShaderController {
         findUniform("cube");
         setTextureLocation("cube", 9);
 
-        findUniform("cube2");
-        setTextureLocation("cube2", 10);
+        findUniform("shadowcube");
+        setTextureLocation("shadowcube", 10);
 
         findUniform("cube3");
         setTextureLocation("cube3", 11);
 
         findUniform("lightPos");
         findUniform("farplane");
-
 
         setMatLinks();
     }
@@ -331,7 +343,16 @@ public class ShaderController {
     public static void setLightPos(Vector3f pos){ 
         setUniform("light.lightpos", pos);
     }
-    
+
+    /**
+     * Sets the model uniform by calculating it from the given position, rotation, and scale values
+     * @param position
+     * @param rotation
+     */
+    public static void setPosRotScale(Vector3f position, Quaternionf rotation, Vector3f scale){
+        setModel(new Matrix4f().translate(position).rotate(rotation).scale(scale));
+    }
+
     public static void setModel(Matrix4f model){
         setUniform("model", model);
     }
@@ -372,11 +393,11 @@ public class ShaderController {
         return proj.multiply(view).multiply(model);
     }
     
-    public static void setUVMultX(float f){
+    public static void setUVCoordinateMultiplierX(float f){
         setUniform("uvmultx", f);
     }
     
-    public static void setUVMultY(float f){
+    public static void setUVCoordinateMultiplierY(float f){
         setUniform("uvmulty", f);
     }
     
@@ -697,6 +718,8 @@ public class ShaderController {
      * @param name Name of configuration
      */
     public static void useConfiguration(String name){
+        if(currentShader.equals(name)) return;
+
         String id = realConfigurationNames.get(name);
         ShaderPipeline pipeline = pipelines.get(id);
 
@@ -706,7 +729,7 @@ public class ShaderController {
 
         pipeline.bind();
 
-        currentshader = name;
+        currentShader = name;
 
         currentvert = pipeline.getShader(ShaderType.VERTEX);
         currenttesc = pipeline.getShader(ShaderType.TESS_CONTROL);
@@ -727,7 +750,7 @@ public class ShaderController {
     }
 
     public static String getCurrentConfiguration(){
-        return currentshader;
+        return currentShader;
     }
 
     public static ShaderProgram loadShader(String name, String loc){

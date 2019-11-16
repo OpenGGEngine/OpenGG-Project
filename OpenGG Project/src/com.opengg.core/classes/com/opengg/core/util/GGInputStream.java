@@ -213,4 +213,9 @@ public class GGInputStream extends InputStream{
     public int read() throws IOException {
         return in.read();
     }
+
+    @Override
+    public int available() throws IOException {
+        return in.available();
+    }
 }

@@ -27,10 +27,7 @@ public class KeyTriggerComponent extends TriggerComponent implements KeyboardLis
     public void keyPressed(int key) {
         for(int wkey : keys){
             if(key == wkey){
-                TriggerInfo t = new TriggerInfo();
-                t.info = Integer.toString(key);
-                t.triggerSource = this;
-                t.type = TriggerInfo.TriggerType.TOGGLE;
+                TriggerInfo t = new TriggerInfo(null, Integer.toString(key), TriggerInfo.TriggerType.TOGGLE);
                 trigger(t);
             }
         }

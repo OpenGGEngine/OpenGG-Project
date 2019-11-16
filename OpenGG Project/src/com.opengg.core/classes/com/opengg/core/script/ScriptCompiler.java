@@ -26,13 +26,13 @@ public class ScriptCompiler {
         out.println(imports);
         out.println("import java.util.function.BiConsumer;");
         out.println("import com.opengg.core.script.Script;");
-        out.println("import com.opengg.core.world.components.Component;");
+        out.println("import com.opengg.core.world.components.*;");
         out.println("public class " + name + " extends Script{");
         out.println("public " + name + "(){");
         out.println(" super(\"" + GGInfo.getVersion() + "\", \"" + GGInfo.getApplicationName() + "\");");
         out.println("}");
         out.println("@Override");
-        out.println("public void accept(Component component, Float delta){");
+        out.println("public void accept(ScriptComponent c, Float delta){");
         out.println(script);
         out.println("}");
         out.println("}");

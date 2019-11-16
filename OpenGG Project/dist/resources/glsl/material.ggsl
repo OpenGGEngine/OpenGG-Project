@@ -1,3 +1,4 @@
+@include stdfrag.ggsl
 struct Material
 {
     float hasnormmap;
@@ -57,7 +58,7 @@ vec3 calculatenormal( vec3 N, vec3 V, vec3 map, vec2 texcoord){
 void useMaterial(Material mat, vec4 color){
 	diffuse = color.rgb;
 
-	emmisive = texture(em, textureCoord).xyz * mat.hasem;
+	emmisive = getTex(em).xyz * mat.hasem;
 
     trans = color.a;
 
@@ -74,5 +75,5 @@ void useMaterial(Material mat, vec4 color){
 }
 
 void useMaterial(Material mat){
-    useMaterial(mat, texture(Kd, textureCoord));
+    useMaterial(mat, getTex(Kd));
 }

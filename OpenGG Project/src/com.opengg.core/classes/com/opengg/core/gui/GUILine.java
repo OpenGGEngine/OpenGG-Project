@@ -37,11 +37,10 @@ public class GUILine extends GUIRenderable{
     }
 
     public void setPoints(List<Vector2f> points){
-        var buffer = Allocator.allocFloat(points.size()*12);
+        var buffer = Allocator.allocFloat(points.size()*8);
         var instancebuffer = Allocator.allocInt(points.size()*2);
         for(var p : points){
             buffer.put(p.x).put(p.y).put(0);
-            buffer.put(new float[]{0,0,0,0});
             buffer.put(new float[]{0,0,0,0,0});
         }
         IntStream.range(0,points.size()-1)

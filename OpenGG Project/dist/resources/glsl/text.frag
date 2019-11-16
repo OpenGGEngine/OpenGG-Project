@@ -1,6 +1,4 @@
 @version 4.2
-
-
 layout(location = 0) out vec4 fcolor;
 
 in vertexData{
@@ -13,7 +11,6 @@ in vertexData{
 float width = 0.5f;
 float edge = 0.1f;
 uniform sampler2D Kd;
-
 
 vec4 getTex(sampler2D tname){
         vec4 col = texture(tname, textureCoord);

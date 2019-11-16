@@ -7,11 +7,11 @@ import com.opengg.core.math.Vector2f;
 public class GUIScrollBox extends GUIGroup implements MouseScrollListener {
     Vector2f dampen = new Vector2f(1);
 
-    public void setxBounds(Vector2f xBounds) {
+    public void setXBounds(Vector2f xBounds) {
         this.xBounds = xBounds;
     }
 
-    public void setyBounds(Vector2f yBounds) {
+    public void setYBounds(Vector2f yBounds) {
         this.yBounds = yBounds;
     }
 
@@ -22,6 +22,7 @@ public class GUIScrollBox extends GUIGroup implements MouseScrollListener {
         this.dampen = dampen;
         return this;
     }
+
     @Override
     public int onScroll(double x, double y) {
         Vector2f c = getPositionOffset().add(new Vector2f((float)x,(float)y).multiply(dampen));

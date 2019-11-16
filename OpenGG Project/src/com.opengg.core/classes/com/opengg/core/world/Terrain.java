@@ -10,7 +10,7 @@ import com.opengg.core.engine.Resource;
 import com.opengg.core.math.geom.Triangle;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
-import com.opengg.core.render.drawn.Drawable;
+import com.opengg.core.render.Renderable;
 import com.opengg.core.render.drawn.DrawnObject;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.texture.TextureData;
@@ -36,7 +36,7 @@ public class Terrain {
 
     private static final int MAX_COLOR = 255 * 255 * 255;
 
-    private Drawable drawable;
+    private Renderable renderable;
     private List<Triangle> mesh;
     
     private float[][] map;
@@ -234,10 +234,10 @@ public class Terrain {
         return triangle;
     }
     
-    public Drawable getDrawable(){
-        if(drawable != null) return drawable;
+    public Renderable getRenderable(){
+        if(renderable != null) return renderable;
         
-        FloatBuffer bf = Allocator.allocFloat(12 * map.length * map[0].length);
+        FloatBuffer bf = Allocator.allocFloat(8 * map.length * map[0].length);
         IntBuffer indices = Allocator.allocInt(6 * map.length * map[0].length);
         
         for(int i = 0; i < map.length-1; i++){
@@ -276,14 +276,14 @@ public class Terrain {
                     nz = normal.z;
                 }
 
-                bf.put(x).put(y).put(z).put(1).put(1).put(1).put(1).put(nx).put(ny).put(nz).put(u).put(v);
+                bf.put(x).put(y).put(z).put(nx).put(ny).put(nz).put(u).put(v);
 
             }
         }
         bf.flip();
         indices.flip();
-        this.drawable = new DrawnObject(indices,bf);
-        return this.drawable;
+        this.renderable = new DrawnObject(indices,bf);
+        return this.renderable;
     }
     
     public Vector3f getNormalAt(float x, float z){

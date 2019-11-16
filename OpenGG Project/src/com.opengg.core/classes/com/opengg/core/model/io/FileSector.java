@@ -2,7 +2,7 @@ package com.opengg.core.model.io;
 
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.model.*;
-import com.opengg.core.physics.collision.ConvexHull;
+import com.opengg.core.physics.collision.colliders.ConvexHull;
 import com.opengg.core.system.Allocator;
 import com.opengg.core.util.GGOutputStream;
 

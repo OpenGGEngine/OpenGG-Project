@@ -11,13 +11,8 @@ import com.opengg.core.system.NativeResource;
 import com.opengg.core.system.NativeResourceManager;
 
 import java.nio.ByteBuffer;
-import static org.lwjgl.opengl.GL11.glBindTexture;
-import static org.lwjgl.opengl.GL11.glDeleteTextures;
-import static org.lwjgl.opengl.GL11.glGenTextures;
-import static org.lwjgl.opengl.GL11.glTexImage2D;
-import static org.lwjgl.opengl.GL11.glTexParameterf;
-import static org.lwjgl.opengl.GL11.glTexParameteri;
-import static org.lwjgl.opengl.GL11.glTexSubImage2D;
+
+import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL12.glTexImage3D;
 import static org.lwjgl.opengl.GL12.glTexSubImage3D;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
@@ -93,6 +88,11 @@ public class NativeOpenGLTexture implements NativeResource{
     public void setParameterf(int type, int param, float value){
         if(RenderEngine.validateInitialization()) return;
         glTexParameterf(type, param, value);
+    }
+
+    public void setParameterfv(int type, int param, float[] value){
+        if(RenderEngine.validateInitialization()) return;
+        glTexParameterfv(type, param, value);
     }
     
     public void generateMipmap(int type){

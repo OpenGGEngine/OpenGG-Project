@@ -3,9 +3,9 @@ package com.opengg.core.model;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.RenderEngine;
-import com.opengg.core.render.drawn.Drawable;
+import com.opengg.core.render.Renderable;
 import com.opengg.core.render.drawn.DrawnObject;
-import com.opengg.core.render.drawn.MaterialDrawnObject;
+import com.opengg.core.render.drawn.MaterialRenderable;
 import com.opengg.core.system.Allocator;
 
 import java.nio.FloatBuffer;
@@ -69,11 +69,11 @@ public class Mesh {
         return convexHull;
     }
 
-    public Drawable getDrawable(){
+    public Renderable getDrawable(){
         DrawnObject temp = new DrawnObject(genAnim ?
                 RenderEngine.tangentAnimVAOFormat : RenderEngine.tangentVAOFormat,
                 this.getIndexBuffer(), this.getVbo());
-        return new MaterialDrawnObject(temp, this.getMaterial());
+        return new MaterialRenderable(temp, this.getMaterial());
     }
 
     public ArrayList<GGVertex> getVertices(){

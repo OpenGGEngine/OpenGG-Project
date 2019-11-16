@@ -54,9 +54,7 @@ public class Serializer {
     }
 
     public static byte[] serializeWorld(World world) throws IOException {
-        var allcomps = world.getAllDescendants();
-
-        var allSerializableComponentTypes = Stream.concat(allcomps.stream(), List.of(world).stream())
+        var allSerializableComponentTypes = Stream.concat(world.getAllDescendants().stream(), List.of(world).stream())
                 .filter(Component::shouldSerialize)
                 .map(comp -> comp.getClass().getName())
                 .distinct()

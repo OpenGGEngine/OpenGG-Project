@@ -8,8 +8,8 @@ package com.opengg.core.world.components;
 import com.opengg.core.engine.OpenGG;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
-import com.opengg.core.render.drawn.Drawable;
-import com.opengg.core.render.drawn.TexturedDrawnObject;
+import com.opengg.core.render.Renderable;
+import com.opengg.core.render.drawn.TextureRenderable;
 import com.opengg.core.render.light.Light;
 import com.opengg.core.render.objects.ObjectCreator;
 import com.opengg.core.render.shader.ShaderController;
@@ -42,8 +42,8 @@ public class SunComponent extends RenderComponent{
     public SunComponent(TextureData texture, float rotspeed){
         super();
         OpenGG.asyncExec(() -> {
-            Drawable drawn = ObjectCreator.createSquare(new Vector2f(0,0), new Vector2f(1,1), 0f);
-            setDrawable(new TexturedDrawnObject(drawn, Texture.get2DSRGBTexture(texture)));
+            Renderable drawn = ObjectCreator.createSquare(new Vector2f(0,0), new Vector2f(1,1), 0f);
+            setRenderable(new TextureRenderable(drawn, Texture.get2DSRGBTexture(texture)));
         });
         
         this.rotspeed = rotspeed;

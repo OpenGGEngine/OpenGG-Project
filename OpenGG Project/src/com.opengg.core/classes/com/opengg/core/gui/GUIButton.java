@@ -5,7 +5,7 @@ import com.opengg.core.io.input.mouse.MouseButton;
 import com.opengg.core.io.input.mouse.MouseButtonListener;
 import com.opengg.core.io.input.mouse.MouseController;
 import com.opengg.core.math.Vector2f;
-import com.opengg.core.render.drawn.TexturedDrawnObject;
+import com.opengg.core.render.drawn.TextureRenderable;
 import com.opengg.core.render.objects.ObjectCreator;
 import com.opengg.core.render.texture.Texture;
 
@@ -14,16 +14,18 @@ import java.awt.*;
 public class GUIButton extends GUIRenderable implements MouseButtonListener{
     final static Texture CLEAR = Texture.ofColor(Color.RED, 0f);
 
-    Texture buttonTex;
-    Runnable onClick = () -> {};
-    Runnable onRelease = () -> {};
+    private Texture buttonTex;
+    private Runnable onClick = () -> {};
+    private Runnable onRelease = () -> {};
+    private Runnable onClickOutside = () -> {};
+
 
     Vector2f dim;
 
     public GUIButton(Vector2f pos, Vector2f size , Texture texture){
         this.buttonTex = texture;
 
-        TexturedDrawnObject drawn = new TexturedDrawnObject(ObjectCreator.createSquare(new Vector2f(0,0), size,0), buttonTex);
+        TextureRenderable drawn = new TextureRenderable(ObjectCreator.createSquare(new Vector2f(0,0), size,0), buttonTex);
         this.setDrawable(drawn);
         this.dim = size;
 
@@ -55,6 +57,10 @@ public class GUIButton extends GUIRenderable implements MouseButtonListener{
         this.onClick = runnable;
     }
 
+    public void setOnClickOutside(Runnable runnable){
+        this.onClickOutside = runnable;
+    }
+
     public void setOnRelease(Runnable runnable){
         this.onRelease = runnable;
     }
@@ -73,6 +79,8 @@ public class GUIButton extends GUIRenderable implements MouseButtonListener{
         if(!this.isEnabled()) return;
         if(button == MouseButton.LEFT && checkIn(MouseController.get())){
             OpenGG.asyncExec(() -> onClick.run());
+        }else if(button == MouseButton.LEFT){
+            onClickOutside.run();
         }
     }
 

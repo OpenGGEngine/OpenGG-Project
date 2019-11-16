@@ -17,17 +17,7 @@ import java.util.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL14.GL_DEPTH_COMPONENT32;
 import static org.lwjgl.opengl.GL20.glDrawBuffers;
-import static org.lwjgl.opengl.GL30.GL_COLOR_ATTACHMENT0;
-import static org.lwjgl.opengl.GL30.GL_DEPTH24_STENCIL8;
-import static org.lwjgl.opengl.GL30.GL_DEPTH_ATTACHMENT;
-import static org.lwjgl.opengl.GL30.GL_DEPTH_STENCIL;
-import static org.lwjgl.opengl.GL30.GL_DRAW_FRAMEBUFFER;
-import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER;
-import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER_COMPLETE;
-import static org.lwjgl.opengl.GL30.GL_READ_FRAMEBUFFER;
-import static org.lwjgl.opengl.GL30.GL_RGBA16F;
-import static org.lwjgl.opengl.GL30.GL_UNSIGNED_INT_24_8;
-import static org.lwjgl.opengl.GL30.glBindFramebuffer;
+import static org.lwjgl.opengl.GL30.*;
 
 /**
  *
@@ -109,12 +99,12 @@ public class OpenGLFramebuffer implements Framebuffer{
     
     @Override
     public void attachDepthTexture(int width, int height){
-        attachTexture(Texture.TextureType.TEXTURE_2D, width, height, GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT32, GL_FLOAT, GL_DEPTH_ATTACHMENT);
+        attachTexture(Texture.TextureType.TEXTURE_2D, width, height, GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT32F, GL_FLOAT, GL_DEPTH_ATTACHMENT);
     }
 
     @Override
     public void attachDepthCubemap(int width, int height){
-        attachTexture(Texture.TextureType.TEXTURE_CUBEMAP, width, height, GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT32, GL_FLOAT, GL_DEPTH_ATTACHMENT);
+        attachTexture(Texture.TextureType.TEXTURE_CUBEMAP, width, height, GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT32F, GL_FLOAT, GL_DEPTH_ATTACHMENT);
     }
 
     @Override

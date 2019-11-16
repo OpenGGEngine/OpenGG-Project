@@ -6,7 +6,6 @@
 
 package com.opengg.core.world.components;
 
-import com.opengg.core.io.input.mouse.MouseMoveListener;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
@@ -22,7 +21,7 @@ import java.io.IOException;
  *
  * @author Javier
  */
-public class FreeFlyComponent extends ControlledComponent implements Actionable, MouseMoveListener{
+public class FreeFlyComponent extends ControlledComponent implements Actionable{
     private ActionTransmitterComponent actionTransmitter;
     private CameraComponent camera;
 
@@ -48,8 +47,8 @@ public class FreeFlyComponent extends ControlledComponent implements Actionable,
     public void update(float delta){
         if(isCurrentUser()){
             Vector2f mousepos = getMouse();
-            currot = new Vector3f(mousepos.y, mousepos.x, 0);
-            this.setRotationOffset(new Quaternionf(currot));
+            currot = new Vector3f(-mousepos.y, -mousepos.x, 0);
+            this.setRotationOffset(Quaternionf.createYXZ(currot));
 
             vel = this.getRotation().transform(new Vector3f(control).multiply(delta * speed));
             setPositionOffset(getPositionOffset().add(vel));
@@ -81,8 +80,8 @@ public class FreeFlyComponent extends ControlledComponent implements Actionable,
                 case "down":
                     control.y -= 1;
                     break;
-                case "lookright":
-                    //controlrot.y -= 1;
+                case "fast":
+                    speed = 12;
                     break;
                 case "lookleft":
                     //controlrot.y += 1;
@@ -117,8 +116,8 @@ public class FreeFlyComponent extends ControlledComponent implements Actionable,
                 case "down":
                     control.y += 1;
                     break;
-                case "lookright":
-                    //controlrot.y += 1;
+                case "fast":
+                    speed = 5;
                     break;
                 case "lookleft":
                     //controlrot.y -= 1;
@@ -167,10 +166,5 @@ public class FreeFlyComponent extends ControlledComponent implements Actionable,
     public void onUserChange(){
         actionTransmitter.setUserId(getUserId());
         camera.setUserId(getUserId());
-    }
-
-    @Override
-    public void onMove(Vector2f pos){
-        Vector2f controlrot = pos;
     }
 }

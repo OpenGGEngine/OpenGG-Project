@@ -24,7 +24,7 @@ public class Deserializer {
     public static SerialHolder deserializeSingleComponent(GGInputStream in) throws IOException {
         String classname = in.readString();
 
-        return deserializeComponent(in, classname);
+        return deserializeComponentWithParent(in, classname);
     }
 
     public static Component deserializeComponentTree(GGInputStream in) throws IOException {
@@ -42,10 +42,10 @@ public class Deserializer {
 
         var children = in.readInt();
         for(int i = 0; i < children; i++){
-            comp.comp.attach(deserializeComponentTree(in, names));
+            comp.attach(deserializeComponentTree(in, names));
         }
 
-        return comp.comp;
+        return comp;
     }
 
     public static World deserializeWorld(ByteBuffer data){
@@ -71,16 +71,23 @@ public class Deserializer {
         }
     }
 
-    private static SerialHolder deserializeComponent(GGInputStream in, String classname){
+    private static Component deserializeComponent(GGInputStream in, String classname){
+        return deserializeComponentWithParent(in, classname).comp;
+    }
+
+    private static SerialHolder deserializeComponentWithParent(GGInputStream in, String classname){
         try {
             long id = in.readLong();
             long parentId = in.readLong();
             Component comp =  (Component)ClassUtil.createByName(classname);
             comp.setGUID(id);
-            comp.removeAll();
+            for(int i = comp.getChildren().size(); i > 0; i--){
+                comp.getChildren().get(0).delete();
+            }
 
             int len = in.readInt();
-            comp.deserialize(new GGInputStream(in.readByteArray(len)));
+            var serializedData = in.readByteArray(len);
+            comp.deserialize(new GGInputStream(serializedData));
 
             return new SerialHolder(comp, parentId);
         }  catch (ClassInstantiationException | IOException ex) {
