@@ -5,33 +5,42 @@
  */
 package com.opengg.core.world.structure;
 
-import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
-import com.opengg.core.physics.collision.ColliderGroup;
-import com.opengg.core.render.drawn.Drawable;
+import com.opengg.core.physics.RigidBody;
+import com.opengg.core.render.Renderable;
+import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
 
 import java.io.IOException;
+import java.util.UUID;
 
 /**
  *
  * @author Javier
  */
-public abstract class WorldGeometry {
+public abstract class WorldGeometry implements Renderable{
+    private long guid;
     private Vector3f pos;
     private Quaternionf rot;
     private Vector3f scale;
-    private Drawable drawable;
-    private ColliderGroup collider;
+    private Renderable renderable;
+    private RigidBody collider;
+    private WorldStructure parent;
 
-    public WorldGeometry(){}
+    public WorldGeometry(){
+        guid = UUID.randomUUID().getLeastSignificantBits();
+    }
 
     public void initalize(Vector3f pos, Quaternionf rot, Vector3f scale){
         this.pos = pos;
         this.rot = rot;
         this.scale = scale;
+    }
+
+    public long getGuid() {
+        return guid;
     }
 
     public Vector3f getPosition(){
@@ -46,29 +55,55 @@ public abstract class WorldGeometry {
         return scale;
     }
 
-    public Drawable getDrawable(){
-        return drawable;
+    public void setPosition(Vector3f pos) {
+        this.pos = pos;
     }
 
-    public void setDrawable(Drawable drawable){
-        if(this.drawable == null)
-            this.drawable = drawable;
-        else
-            throw new UnsupportedOperationException("Tried to set drawable on WorldGeometry that already had one");
+    public void setRotation(Quaternionf rot) {
+        this.rot = rot;
     }
 
-    public void setCollider(ColliderGroup collider){
-        if(this.collider == null)
-            this.collider = collider;
-        else
-            throw new UnsupportedOperationException("Tried to set collider on WorldGeometry that already had one");
+    public void setRotation(Vector3f rot) {
+        this.rot = Quaternionf.createYXZ(rot);
     }
 
+    public void setScale(Vector3f scale) {
+        this.scale = scale;
+    }
+
+    public Renderable getRenderable(){
+        return renderable;
+    }
+
+    public RigidBody getCollider() {
+        return collider;
+    }
+
+    public void setRenderable(Renderable renderable){
+        this.renderable = renderable;
+    }
+
+    public void setCollider(RigidBody collider){
+        this.collider = collider;
+        this.collider.setSerialize(false);
+    }
+
+    public void setParent(WorldStructure parent){
+        this.parent = parent;
+        if(this.collider != null) {
+            this.parent.getParent().getSystem().addObject(this.collider);
+        }
+    }
+
+    public WorldStructure getParent() {
+        return parent;
+    }
+
+    @Override
     public void render(){
-        if(drawable != null){
-            var matrix = new Matrix4f().scale(getScale()).translate(getPosition()).rotate(getRotation());
-            drawable.setMatrix(matrix);
-            drawable.render();
+        if(renderable != null){
+            ShaderController.setPosRotScale(getPosition(), getRotation(), getScale());
+            renderable.render();
         }
     }
 
@@ -76,7 +111,7 @@ public abstract class WorldGeometry {
         out.write(pos);
         out.write(rot);
         out.write(scale);
-        out.write(drawable != null);
+        out.write(renderable != null);
         out.write(collider != null);
         serialize(out);
     }
@@ -88,6 +123,18 @@ public abstract class WorldGeometry {
         boolean draw = in.readBoolean();
         boolean collide = in.readBoolean();
         deserialize(in, draw, collide);
+    }
+
+    public final void deleteParts(){
+        if(this.renderable != null)
+            this.getParent().getParent().removeRenderable(this);
+        if(this.collider != null)
+            this.getParent().getParent().getSystem().removeObject(this.collider);
+    }
+
+    public final void delete(){
+        deleteParts();
+        this.getParent().removeGeometry(this);
     }
 
     public abstract void serialize(GGOutputStream out) throws IOException;

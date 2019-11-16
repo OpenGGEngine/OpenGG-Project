@@ -12,8 +12,9 @@ import java.io.IOException;
 
 public class ModelWorldGeometry extends WorldGeometry{
     private Model model;
+
     public void initialize(String model, Vector3f pos, Quaternionf rot, Vector3f scale, boolean render, boolean collide){
-        this.initialize(Resource.getModel("model"), pos, rot, scale, render, collide);
+        this.initialize(Resource.getModel(model), pos, rot, scale, render, collide);
     }
 
     public void initialize(Model model, Vector3f pos, Quaternionf rot, Vector3f scale, boolean render, boolean collide){
@@ -21,7 +22,8 @@ public class ModelWorldGeometry extends WorldGeometry{
         this.model = model;
         OpenGG.asyncExec(() -> {
             if(render)
-                this.setDrawable(model.getDrawable());
+                this.setRenderable(model.getDrawable());
+            getParent().remakeRenderGroups();
         });
     }
 
@@ -33,9 +35,6 @@ public class ModelWorldGeometry extends WorldGeometry{
     @Override
     public void deserialize(GGInputStream in, boolean render, boolean collide) throws IOException{
         this.model = Resource.getModel(in.readString());
-        OpenGG.asyncExec(() -> {
-            if(render)
-                this.setDrawable(model.getDrawable());
-        });
+        initialize(model, getPosition(), getRotation(), getScale(), render, collide);
     }
 }
