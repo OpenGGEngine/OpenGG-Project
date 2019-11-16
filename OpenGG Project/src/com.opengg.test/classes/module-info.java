@@ -8,4 +8,6 @@ module com.opengg.test {
     requires com.opengg.math;
     requires java.desktop;
     requires com.opengg.system;
+    requires com.opengg.base;
+    exports com.opengg.test.network.components to com.opengg.core;
 }

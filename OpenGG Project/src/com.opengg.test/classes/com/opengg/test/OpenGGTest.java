@@ -1,54 +1,39 @@
 package com.opengg.test;
 
-import com.opengg.core.audio.AudioListener;
-import com.opengg.core.audio.Soundtrack;
-import com.opengg.core.audio.SoundtrackHandler;
-import com.opengg.core.audio.SoundEngine;
 import com.opengg.core.engine.*;
-import com.opengg.core.gui.GUI;
-import com.opengg.core.gui.GUIButton;
-import com.opengg.core.io.input.mouse.MouseController;
+import com.opengg.core.gui.*;
+import com.opengg.core.gui.text.GUIText;
 import com.opengg.core.math.*;
-import com.opengg.core.model.io.AssimpModelLoader;
-import com.opengg.core.network.NetworkEngine;
-import com.opengg.core.physics.collision.AABB;
-import com.opengg.core.physics.collision.ColliderGroup;
-import com.opengg.core.physics.collision.ConvexHull;
+import com.opengg.core.physics.collision.colliders.AABB;
+import com.opengg.core.physics.RigidBody;
+import com.opengg.core.physics.collision.colliders.ConvexHull;
 import com.opengg.core.render.ProjectionData;
 import com.opengg.core.render.RenderEngine;
-import com.opengg.core.render.drawn.DrawnObject;
-import com.opengg.core.render.drawn.TexturedDrawnObject;
+import com.opengg.core.render.drawn.TextureRenderable;
 import com.opengg.core.render.light.Light;
 import com.opengg.core.render.objects.ObjectCreator;
-import com.opengg.core.render.shader.ShaderController;
+import com.opengg.core.render.text.Font;
 import com.opengg.core.render.text.Text;
-import com.opengg.core.render.texture.TextureManager;
 import com.opengg.core.render.window.WindowController;
-import com.opengg.core.world.Skybox;
-import com.opengg.core.world.World;
-import com.opengg.core.world.WorldEngine;
-import com.opengg.core.gui.GUIController;
 import com.opengg.core.io.ControlType;
 import static com.opengg.core.io.input.keyboard.Key.*;
-import static java.awt.Color.RED;
 
 import com.opengg.core.render.texture.Texture;
-import com.opengg.core.render.text.impl.GGFont;
 import com.opengg.core.render.window.WindowInfo;
 import com.opengg.core.render.window.WindowOptions;
+import com.opengg.core.world.*;
 import com.opengg.core.world.components.*;
-import com.opengg.core.world.components.physics.PhysicsComponent;
-import com.opengg.core.world.components.viewmodel.ViewModelComponentRegistry;
+import com.opengg.core.world.components.physics.RigidBodyComponent;
+import com.opengg.core.world.structure.WorldGeometryBuilder;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
+import java.awt.*;
 import java.util.List;
 
 
 public class  OpenGGTest extends GGApplication{
-    private GGFont font;
+    private Font font;
     private Text text;
+    private GUIText gtext;
     private Texture worldterrain;
     float i = 0;
     Light l;
@@ -72,59 +57,110 @@ public class  OpenGGTest extends GGApplication{
 
     @Override
     public  void setup(){
-        Soundtrack track = new Soundtrack();
-        track.addSong(Resource.getSoundData("windgarden.ogg"));
-        track.addSong(Resource.getSoundData("battlerock.ogg"));
+        //Soundtrack track = new Soundtrack();
+        //track.addSong(Resource.getSoundData("windgarden.ogg"));
+        //track.addSong(Resource.getSoundData("battlerock.ogg"));
         //track.addSong(Resource.getSoundData("floaterland.ogg"));
         //track.addSong(Resource.getSoundData("hell.ogg"));
         //track.addSong(Resource.getSoundData("intogalaxy.ogg"));
         //track.addSong(Resource.getSoundData("koopa.ogg"));
         //track.addSong(Resource.getSoundData("megaleg.ogg"));
         //track.addSong(Resource.getSoundData("stardust.ogg"));
-        track.shuffle();
-        track.play();   
-        SoundEngine.setGlobalGain(0f);
-        SoundtrackHandler.setSoundtrack(track);
+        //track.shuffle();
+        //track.play();
+        //SoundEngine.setGlobalGain(0f);
+        //SoundtrackHandler.setSoundtrack(track);
         
-        font = Resource.getFont("test.fnt", "test.png");
-        text = Text.from("Turmoil has engulfed the Galactic Republic. The taxation of trade routes to outlying star systems is in dispute. \n\n"
-                + " Hoping to resolve the matter with a blockade of deadly battleships, "
-                + " the greedy Trade Federation has stopped all shipping to the small planet of Naboo. \n\n"
-                + " While the congress of the Republic endlessly debates this alarming chain of events,"
-                + " the Supreme Chancellor has secretly dispatched two Jedi Knights,"
-                + " the guardians of peace and justice in the galaxy, to settle the conflict...")
-                    .size(0.32f)
+        font = Resource.getTruetypeFont("consolas.ttf");
+        text = Text.from("""
+                        Turmoil has engulfed the Galactic Republic.
+                        The taxation of trade routes to outlying star systems is in dispute.
+                        Hoping to resolve the matter with a blockade of deadly battleships,
+                        the greedy Trade Federation has stopped all shipping to the small planet of Naboo.
+
+                        While the congress of the Republic endlessly debates this alarming chain of events,
+                        the Supreme Chancellor has secretly dispatched two Jedi Knights,
+                        the guardians of peace and justice in the galaxy, to settle the conflict...
+                        """)
+                    .size(0.08f)
                     .kerning(true)
                     .center(false)
-                    .maxLineSize(0.25f);
+                    .maxLineSize(0.6f);
 
         GUI mainview = new GUI();
-        //mainview.getRoot().addItem("aids", new GUIText(text, font, new Vector2f(1,0)));
 
-        GUIController.addAndUse(mainview, "mainview");
+        mainview.getRoot().addItem("aids", gtext = new GUIText(text, font, new Vector2f(0,1)));
+       // GUIController.addAndUse(mainview, "mainview");
 
-        WorldEngine.setOnlyActiveWorld((World) new World().setName("world1"));
+        //NetworkEngine.connect("localhost", 25565);
+        //WorldEngine.setOnlyActiveWorld(WorldEngine.getWorld("Test.bwf"));
 
-        WorldEngine.getCurrent().attach(new ModelComponent(Resource.getModel("pear")).setPositionOffset(new Vector3f(0,0,-3)));
-        WorldEngine.getCurrent().attach(new ModelComponent(Resource.getModel("pear")).setPositionOffset(new Vector3f(0,0,-6)));
+        WorldEngine.getCurrent().attach(new ModelComponent(Resource.getModel("pear"), true).setPositionOffset(new Vector3f(2,0,-3)));
+        WorldEngine.getCurrent().attach(new ModelComponent(Resource.getModel("pear"), true).setPositionOffset(new Vector3f(0,0,-6)));
+        WorldEngine.getCurrent().attach(new ModelComponent(Resource.getModel("pear"), true).setPositionOffset(new Vector3f(0,0,6)));
+        WorldEngine.getCurrent().attach(new ModelComponent(Resource.getModel("pear"), true).setPositionOffset(new Vector3f(5,0,0)));
 
-        WorldEngine.getCurrent().attach(new LightComponent(
-               // Light.createPointShadow(new Vector3f(0,4,4), new Vector3f(1), 100, 512, 512 )).setName("testlight"));
-                Light.createDirectionalShadow(new Quaternionf(new Vector3f(0,0f,90)), new Vector3f(1,1,1),
-                        new Vector3f(0,0,0),1000, Matrix4f.orthographic(-10,10,-10,10,-10,10), 4096, 4096)));
+        WorldEngine.getCurrent().attach(new ModelComponent(Resource.getModel("pear"), true).setPositionOffset(new Vector3f(35,0,-32)));
+        WorldEngine.getCurrent().attach(new ModelComponent(Resource.getModel("pear"), true).setPositionOffset(new Vector3f(30,0,-28)));
 
+        WorldEngine.getCurrent().getStructure().addGeometry(
+                WorldGeometryBuilder.fromCuboid(new Vector3f(45,0,-30), new Quaternionf(), new Vector3f(2,10,30), Resource.getTextureData("water.png"), true));
+        WorldEngine.getCurrent().getStructure().addGeometry(
+                WorldGeometryBuilder.fromCuboid(new Vector3f(15,0,-30), new Quaternionf(), new Vector3f(2,10,30), Resource.getTextureData("water.png"), true));
+        WorldEngine.getCurrent().getStructure().addGeometry(
+                WorldGeometryBuilder.fromCuboid(new Vector3f(30,0,-45), new Quaternionf(), new Vector3f(30,10,2), Resource.getTextureData("water.png"), true));
+        WorldEngine.getCurrent().getStructure().addGeometry(
+                WorldGeometryBuilder.fromCuboid(new Vector3f(30,0,-15), new Quaternionf(), new Vector3f(30,10,2), Resource.getTextureData("water.png"), true));
+        WorldEngine.getCurrent().getStructure().addGeometry(
+                WorldGeometryBuilder.fromCuboid(new Vector3f(0,-6,0), new Quaternionf(), new Vector3f(400,10,400), Resource.getTextureData("grass.png"), true));
+
+        var light = new LightComponent(
+                //Light.createPointShadow(new Vector3f(2,6,-4), new Vector3f(1), 100, 1024, 1024 )).setName("testlight");
+                Light.createDirectionalShadow(Quaternionf.createYXZ(new Vector3f(45,0,0)), new Vector3f(1, 1, 1),
+                        new Vector3f(0, 0, 0), Matrix4f.orthographic(-100, 100, -100, 100, -100, 100), 4096, 4096));
+               // Light.createDirectional(new Quaternionf(new Vector3f(45,10,0)), new Vector3f(1, 1, 1)));
+        WorldEngine.getCurrent().attach(light);
         player = new FreeFlyComponent();
         WorldEngine.getCurrent().attach(player);
 
-        World w2 = new World();
+        var cube = List.of(
+                new Vector3f(-1,-1,-1),
+                new Vector3f(-1,-1,1),
+                new Vector3f(-1,1,-1),
+                new Vector3f(-1,1,1),
+                new Vector3f(1,-1,-1),
+                new Vector3f(1,-1,1),
+                new Vector3f(1,1,-1),
+                new Vector3f(1,1,1)
+        );
 
-        w2.setName("world2");
-        w2.attach(new ModelComponent(Resource.getModel("pear")).setPositionOffset(new Vector3f(2,0,-3)));
-        w2.attach(new FreeFlyComponent());
+        for (int i = 0; i < 2; i++) {
+            var multiple = i == 0 ? -1 : 1;
 
-        WorldEngine.activateWorld(w2);
+            RigidBody object = new RigidBody(new AABB( 3, 3, 3), new ConvexHull(cube));
+            object.enablePhysicsProvider();
+            object.getPhysicsProvider().get().velocity = new Vector3f(multiple * -8, multiple*0.01f, 5);
+            if(i == 1) object.getPhysicsProvider().get().mass = 2;
 
-        WorldEngine.getCurrent().getRenderEnvironment().setSkybox(new Skybox(Texture.getSRGBCubemap(Resource.getTexturePath("skybox\\majestic_ft.png"),
+           WorldEngine.getCurrent().attach(
+                    new RenderComponent(
+                            new TextureRenderable(ObjectCreator.createQuadPrism(new Vector3f(-1,-1,-1), new Vector3f(1,1,1)),
+                                    i == 0 ? Texture.ofColor(Color.RED) : Texture.ofColor(Color.BLUE))).attach(new RigidBodyComponent(object, true))
+                            .setPositionOffset(new Vector3f(10f * multiple, (float) (10f), -15)));
+        }
+
+        var object = new RigidBodyComponent(new RigidBody(new AABB( 3, 3, 3),  new ConvexHull(cube)), true);
+        WorldEngine.getCurrent().attach(
+                new RenderComponent(new TextureRenderable(ObjectCreator.createQuadPrism(new Vector3f(-1,-1,-1), new Vector3f(1,1,1)),
+                                Texture.ofColor(Color.GRAY))).attach(object).setPositionOffset(new Vector3f(28, 5, -33)));
+
+        BindController.addTransmitter(a -> {
+            if(a.type.equals(ActionType.PRESS) && a.name.equals("test"))
+                object.getRigidBody().getPhysicsProvider().get().velocity = new Vector3f((FastMath.random() - 0.5f) * 20f, 0, (FastMath.random() - 0.5f)*20f);
+        });
+
+        WorldEngine.getCurrent().getRenderEnvironment().setSkybox(new Skybox(Texture.getSRGBCubemap(
+                Resource.getTexturePath("skybox\\majestic_ft.png"),
                 Resource.getTexturePath("skybox\\majestic_bk.png"),
                 Resource.getTexturePath("skybox\\majestic_up.png"),
                 Resource.getTexturePath("skybox\\majestic_dn.png"),
@@ -137,15 +173,13 @@ public class  OpenGGTest extends GGApplication{
         BindController.addBind(ControlType.KEYBOARD, "right", KEY_D);
         BindController.addBind(ControlType.KEYBOARD, "up", KEY_SPACE);
         BindController.addBind(ControlType.KEYBOARD, "down", KEY_LEFT_SHIFT);
-        BindController.addBind(ControlType.KEYBOARD, "lookright", KEY_RIGHT);
-        BindController.addBind(ControlType.KEYBOARD, "lookleft", KEY_LEFT);
-        BindController.addBind(ControlType.KEYBOARD, "lookup", KEY_UP);
-        BindController.addBind(ControlType.KEYBOARD, "lookdown", KEY_DOWN);
+        BindController.addBind(ControlType.KEYBOARD, "fast", KEY_LEFT_CONTROL);
         BindController.addBind(ControlType.KEYBOARD, "aim", KEY_K);
+        BindController.addBind(ControlType.KEYBOARD, "test", KEY_P);
 
         RenderEngine.setProjectionData(ProjectionData.getPerspective(100, 0.2f, 3000f));
+        WindowController.getWindow().setCursorLock(true);
 
-        WindowController.getWindow().setCursorLock(false);
     }
 
     @Override
@@ -153,14 +187,5 @@ public class  OpenGGTest extends GGApplication{
 
     @Override
     public void update(float delta){
-        i += delta;
-        if(i >= 4){
-            i = 0;
-            if(this.lastNew) WorldEngine.setPrimaryWorld(WorldEngine.getExistingWorld("world1"));
-            else WorldEngine.setPrimaryWorld(WorldEngine.getExistingWorld("world2"));
-            lastNew = !lastNew;
-        }
     }
-
-
 }
