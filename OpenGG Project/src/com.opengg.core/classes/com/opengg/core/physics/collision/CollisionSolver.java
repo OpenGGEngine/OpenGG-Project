@@ -8,6 +8,7 @@ package com.opengg.core.physics.collision;
 
 import com.opengg.core.math.*;
 import com.opengg.core.math.geom.CollisionMath;
+import com.opengg.core.math.geom.Simplex;
 import com.opengg.core.physics.PhysicsEngine;
 import com.opengg.core.physics.collision.colliders.*;
 
