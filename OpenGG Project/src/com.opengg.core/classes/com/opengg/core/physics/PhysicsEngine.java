@@ -16,15 +16,7 @@ public class PhysicsEngine {
     public static void initialize(){
 
     }
-    
-    public static void addEntity(PhysicsEntity entity){
-        instance.addObject(entity);
-    }
-    
-    public static void removeEntity(PhysicsEntity entity){
-        instance.removeObject(entity);
-    }
-    
+
     public static void updatePhysics(float delta){
         if(enablephysics)
             instance.update(delta);

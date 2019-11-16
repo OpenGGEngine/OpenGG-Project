@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -22,18 +23,23 @@ import java.util.stream.Collectors;
  * @author Javier
  */
 public class PhysicsObject {
-    public static int idcount = 0;
+    protected long id;
 
-    public int id;
-
-    public PhysicsSystem system;
-    public PhysicsObject parent;
+    protected PhysicsSystem system;
+    protected PhysicsObject parent;
     protected List<PhysicsObject> children = new ArrayList<>();
     private Vector3f position = new Vector3f();
     private Quaternionf rotation = new Quaternionf();
     private Vector3f offset = new Vector3f();
     private Quaternionf rotoffset = new Quaternionf();
     private Vector3f scale = new Vector3f(1,1,1);
+
+    private boolean serialize = true;
+
+
+    public PhysicsObject(){
+        id = UUID.randomUUID().getLeastSignificantBits();
+    }
 
     public Vector3f getPosition() {
         return position;
@@ -48,8 +54,9 @@ public class PhysicsObject {
         children.forEach(PhysicsObject::recalculatePosition);
     }
 
-    public void setPosition(Vector3f position) {
+    public PhysicsObject setPosition(Vector3f position) {
         this.offset = position; recalculatePosition();
+        return this;
     }
 
     public Quaternionf getRotation(){
@@ -66,8 +73,9 @@ public class PhysicsObject {
         children.forEach(PhysicsObject::recalculateRotation);
     }
 
-    public void setRotation(Quaternionf rotation) {
+    public PhysicsObject setRotation(Quaternionf rotation) {
         this.rotoffset = rotation; recalculateRotation(); recalculatePosition();
+        return this;
     }
 
     public Vector3f getScale() {
@@ -94,8 +102,16 @@ public class PhysicsObject {
         return system;
     }
 
-    public int getId(){
+    public long getId(){
         return id;
+    }
+
+    public boolean shouldSerialize(){
+        return serialize;
+    }
+
+    public void setSerialize(boolean serialize){
+        this.serialize = serialize;
     }
 
     public void serialize(GGOutputStream out) throws IOException{}

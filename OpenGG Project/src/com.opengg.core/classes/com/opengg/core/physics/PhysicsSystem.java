@@ -6,10 +6,11 @@
 
 package com.opengg.core.physics;
 
-import com.opengg.core.math.Vector3f;
-import com.opengg.core.physics.collision.ColliderGroup;
+import com.opengg.core.exceptions.ClassInstantiationException;
 import com.opengg.core.physics.collision.CollisionManager;
-import com.opengg.core.physics.collision.ConvexHull;
+import com.opengg.core.physics.mechanics.ForceGenerator;
+import com.opengg.core.physics.mechanics.GravityGenerator;
+import com.opengg.core.util.ClassUtil;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
 
@@ -23,25 +24,16 @@ import java.util.stream.Collectors;
  * @author Javier
  */
 public class PhysicsSystem {
-    private final ColliderGroup floor = new ColliderGroup();
+    private final RigidBody floor = new RigidBody();
 
     private final PhysicsConstants constants = new PhysicsConstants();
     private List<PhysicsObject> objects = new ArrayList<>();
 
+    private long tick;
+
     public PhysicsSystem(){
-        floor.setForceTest(true);
-        floor.getColliders().add(new ConvexHull(List.of(
-                new Vector3f(-10000,constants.BASE-20,-10000),
-                new Vector3f(-10000,constants.BASE-20,10000),
-                new Vector3f(-10000,constants.BASE,-10000),
-                new Vector3f(-10000,constants.BASE,10000),
-                new Vector3f(10000,constants.BASE-20,-10000),
-                new Vector3f(10000,constants.BASE-20,10000),
-                new Vector3f(10000,constants.BASE,-10000),
-                new Vector3f(10000,constants.BASE,10000)
-        )));
-        //floor.setPosition(new Vector3f(0, constants.BASE ,0));
-        objects.add(floor);
+
+        objects.add(new GravityGenerator());
     }
 
     public List<PhysicsObject> getObjects(){
@@ -54,29 +46,46 @@ public class PhysicsSystem {
         entity.system = this;
         entity.onSystemChange();
     }
-    
+
     public void removeObject(PhysicsObject entity){
         objects.remove(entity);
+    }
+
+    public long getTick() {
+        return tick;
     }
 
     public PhysicsConstants getConstants(){
         return constants;
     }
-    
+
     public void update(float delta) {
         CollisionManager.clearCollisions();
-        for(PhysicsObject entity : objects){
-            entity.internalUpdate(delta);
+
+        var forces = objects.stream().filter(o -> o instanceof ForceGenerator).map(o -> (ForceGenerator)o).collect(Collectors.toList());
+        var rigidBodies = objects.stream().filter(o -> o instanceof RigidBody).map(o -> (RigidBody)o).collect(Collectors.toList());
+
+        for(var force : forces){
+            for(var body : rigidBodies){
+                body.getPhysicsProvider().ifPresent(force::applyTo);
+            }
+        }
+
+        for(var body : rigidBodies){
+            body.internalUpdate(delta);
         }
         CollisionManager.runCollisionStep(this);
+        tick++;
     }
 
     public void serialize(GGOutputStream out) throws IOException {
         out.write(constants.BASE);
         out.write(constants.GRAVITY);
 
-        out.write(objects.size());
+        out.write(objects.stream().filter(PhysicsObject::shouldSerialize).collect(Collectors.toList()).size());
         for(var entity : objects){
+            if(!entity.shouldSerialize()) continue;
+            out.write(entity.getClass().getName());
             entity.serialize(out);
         }
     }
@@ -90,17 +99,17 @@ public class PhysicsSystem {
         int count = in.readInt();
 
         for(int i = 0; i < count; i++){
-            PhysicsEntity entity = new PhysicsEntity();
-            entity.deserialize(in);
-            addObject(entity);
+            try {
+                var entity = (PhysicsObject) ClassUtil.createByName(in.readString());
+                entity.deserialize(in);
+                addObject(entity);
+            } catch (ClassInstantiationException e) {
+                e.printStackTrace();
+            }
         }
-
-        PhysicsEntity.idcount = objects.stream()
-                .mapToInt(PhysicsObject::getId)
-                .max().orElse(0);
     }
 
-    public PhysicsObject getObjectByID(int id){
+    public PhysicsObject getObjectByID(long id){
         for (var entity : objects) {
             if(entity.id == id) return entity;
         }
