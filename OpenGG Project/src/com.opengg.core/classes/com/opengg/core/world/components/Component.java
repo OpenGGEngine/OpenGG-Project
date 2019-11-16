@@ -2,6 +2,7 @@
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
+ * ok mom
  */
 package com.opengg.core.world.components;
 
@@ -60,6 +61,8 @@ public abstract class Component{
     private Function<Component, Boolean> parentValidator = (c) -> true;
     protected List<Component> children = Collections.synchronizedList(new ArrayList<>());
 
+    private boolean firstAttachment = true;
+
     static{
         ComponentVarAccessor.register(Component.class,Vector3f.class,"position",(BiConsumer<Component,Vector3f>)Component::setPositionOffset,(Function<Component,Vector3f>)Component::getPositionOffset);
         ComponentVarAccessor.register(Component.class,Quaternionf.class,"rotation",(BiConsumer<Component,Quaternionf>)Component::setRotationOffset,(Function<Component,Quaternionf>)Component::getRotationOffset);
@@ -87,6 +90,9 @@ public abstract class Component{
     
     /**
      * Get the component's readable name
+     * <p>
+     * This method should be prioritized for identification of components over {@link Component#getGUID()}, as
+     * certain cases of serialization and deserialization may not guarantee that the GUID is saved.
      * @return the component's name
      */
     public String getName(){
@@ -101,6 +107,10 @@ public abstract class Component{
         return guid;
     }
 
+    /**
+     * Sets the component's uni
+     * @param guid
+     */
     public void setGUID(long guid) {
         this.guid = guid;
     }
@@ -181,7 +191,7 @@ public abstract class Component{
      * @return This component
      */
     public final Component setRotationOffset(Vector3f nrot){
-        return this.setRotationOffset(new Quaternionf(nrot));
+        return this.setRotationOffset(Quaternionf.createYXZ(nrot));
     }
     
     /**
@@ -203,6 +213,11 @@ public abstract class Component{
         return this;
     }
 
+    /**
+     * Sets whether or not the rotation offset of this component should be treated as the actual rotation or as an offset
+     * @param absolute
+     * @return
+     */
     public final Component setAbsoluteRotation(boolean absolute){
         absoluteRotation = absolute;
         regenRot();
@@ -359,11 +374,12 @@ public abstract class Component{
         out.write(name);
         out.write(enabled);
         out.write(absoluteOffset);
+        out.write(absoluteRotation);
         out.write(updatedistance);
     }
     
     /**
-     * Called for deserialization of a byte stream to a component, and by default only deserializes position, rotation, and scale<br><br>
+     * Called for deserialization of a byte stream to a component<br><br>
      * 
      * For correct functionality, variable deserialization here must match the variables serialized in {@link #serialize(GGOutputStream)} ) serializeWorld()}<br>
      * In addition, any component that overrides this must also override the {@link #Component() default constructor} for the deserializer to function<br><br>
@@ -377,9 +393,14 @@ public abstract class Component{
         rotoffset = in.readQuaternionf();
         scaleoffset = in.readVector3f();
         name = in.readString();
-        enabled = in.readBoolean(); enabled = true;
+        enabled = in.readBoolean();
         absoluteOffset = in.readBoolean();
+        absoluteRotation = in.readBoolean();
         updatedistance = in.readInt();
+
+        regenPos();
+        regenRot();
+        regenScale();
     }
 
     /**
@@ -389,6 +410,17 @@ public abstract class Component{
 
     }
 
+    /**
+     * Called for serialization of components while being updated in a networked application
+     * <p>
+     * This should be able to fully recreate any state in the component that may change, although it can be assumed
+     * that the component is in a functional state before this is called.
+     * <p>
+     * As components are serialized constantly during the runtime of an application, care should be taken to ensure
+     * that the output of this method is the smallest possible needed to recreate the component to save bandwidth.
+     * @param out
+     * @throws IOException
+     */
     public void serializeUpdate(GGOutputStream out) throws IOException{
         var set = new BitSet();
         set.set(0,true);
@@ -402,6 +434,12 @@ public abstract class Component{
         //out.write(scaleoffset);
     }
 
+    /**
+     * Called for deserialization of components while being updated in a networked application
+     * @param in
+     * @param delta
+     * @throws IOException
+     */
     public void deserializeUpdate(GGInputStream in, float delta) throws IOException{
         var set = BitSet.valueOf(new byte[]{in.readByte()});
         var getpos = set.get(0);
@@ -426,8 +464,9 @@ public abstract class Component{
      * Sets if serialization should occur, eg for world saving and loading
      * @param serialize Should serializeWorld
      */
-    public final void setSerializable(boolean serialize){
+    public final Component setSerializable(boolean serialize){
         this.serialize = serialize;
+        return this;
     }
 
     /**
@@ -463,6 +502,14 @@ public abstract class Component{
     public boolean isEnabled(){
         return enabled;
     }
+
+    /**
+     * Returns if the component is currently enabled for rendering and updating
+     * @return if the component is currently enabled
+     */
+    public boolean isAllEnabled(){
+        return enabled && this.getParent().isAllEnabled();
+    }
     
     /**
      * Sets if the component should be currently enabled for rendering and updating
@@ -483,7 +530,7 @@ public abstract class Component{
     }
 
     private void localOnDisable(){
-         onDisable();
+        onDisable();
         for(Component c : children) c.localOnDisable();
     }
 
@@ -503,6 +550,12 @@ public abstract class Component{
 
     }
 
+    private void localFinalizeComponent(){
+        for(var comp : children)
+            comp.localFinalizeComponent();
+        this.finalizeComponent();
+    }
+
     /**
      * Called when a component is removed, override if needed. It should not be called directly
      */
@@ -510,36 +563,40 @@ public abstract class Component{
 
     }
 
+    public final void delete(){
+        this.localFinalizeComponent();
+        this.getParent().remove(this);
+        WorldEngine.onComponentRemoved(this);
+    }
     /**
      * Attaches a component to this component<br>
      * This contains checks to prevent a component to be attached to itself. Additionally, it goes
      * through the cleanup of removing a component from its existing parent, and calls {@link #changeParent(com.opengg.core.world.components.Component) }
-     * @param c Component to be attached
+     * @param component Component to be attached
      * @return This component
      */
-    public Component attach(Component c) {
-        if(!c.parentValidator.apply(this)){
-            throw new IllegalArgumentException(this.getClass().getCanonicalName() + " failed to attach " + c.getClass().getName());
-        }
-
-        if(c == this)
+    public Component attach(Component component) {
+        if(!component.parentValidator.apply(this))
+            throw new IllegalArgumentException(this.getClass().getCanonicalName() + " failed to attach " + component.getClass().getName());
+        if(component == this)
             return this;
-        if(c.getParent() == this)
+        if(component.getParent() == this)
             return this;
-        if(c.getParent() != null)
-            c.getParent().remove(c);
+        if(component.getParent() != null)
+            component.getParent().remove(component);
 
-        c.changeParent(this);
-        children.add(c);
+        component.changeParent(this);
+        children.add(component);
 
         return this;
     }
 
     private void changeParent(Component parent){
         if(parent == null){
-            WorldEngine.markComponentForRemoval(this);
             return;
         }
+
+        WorldEngine.onComponentMoved(this, parent);
 
         if(getWorld() != parent.getWorld() && parent.getWorld() != null){
             this.parent = parent;
@@ -566,7 +623,12 @@ public abstract class Component{
     public final void localOnWorldChange(){
         for(Component c : children) c.localOnWorldChange();
         onWorldChange();
-        parent.getWorld().triggerNewChild(this);
+
+        if(firstAttachment){
+            firstAttachment = false;
+            WorldEngine.onComponentAdded(this);
+        }
+
         if(WorldEngine.getCurrent() == this.getWorld() && this.getWorld().isEnabled()) localOnWorldEnable();
         if(whenAttachedToWorld != null){
             whenAttachedToWorld.run();
@@ -678,7 +740,7 @@ public abstract class Component{
 
     /**
      * Finds the first {@link com.opengg.core.world.components.Component} with a certain GUID, returns {@code null} if none are found
-     * @param name GUID being searched for
+     * @param guid GUID being searched for
      * @return Component with given GUID if nonexistent
      */
     public Optional<Component> findByGUID(long guid){
@@ -721,7 +783,13 @@ public abstract class Component{
      */
     public void remove(Component child){
         if(child == null) return;
+        if(!children.contains(child)) return;
         children.remove(child);
         child.changeParent(null);
+    }
+
+    @Override
+    public String toString(){
+        return this.getClass().getSimpleName() + ": " + this.getName();
     }
 }
