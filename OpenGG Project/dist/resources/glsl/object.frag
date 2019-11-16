@@ -19,14 +19,13 @@ void main() {
 
 	useMaterial(material);
 
-	if(trans == 0.1f) discard;
+	//if(trans == 0.1f) discard;
 
 	vec3 col = ambient;
 	col += emmisive;
 
-	for(int i = 0; i < 1; i++){
+	for(int i = 0; i < numLights; i++){
 		col += getPhongFrom(lights[i]);
 	}
-
 	fcolor = vec4(col, trans);
 }

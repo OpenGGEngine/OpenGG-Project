@@ -32,33 +32,56 @@ public class LightComponent extends Component{
         this.setPositionOffset(light.getPosition());
     }
 
-    @Override
-    public void onEnable(){
-        getWorld().getRenderEnvironment().addLight(getLight());
-    }
-    
-    @Override
-    public void update(float delta) {
-        light.setPosition(getPosition());
-    }    
-    
     public Light getLight(){
         return light;
     }
-    
+
+    @Override
+    public void onWorldChange(){
+        getWorld().getRenderEnvironment().addLight(getLight());
+    }
+
+    @Override
+    public void onEnable(){
+        this.light.setActive(true);
+    }
+
+    @Override
+    public void onDisable() {
+        this.light.setActive(false);
+    }
+
+    @Override
+    public void finalizeComponent() {
+        getWorld().getRenderEnvironment().removeLight(getLight());
+    }
+
+    @Override
+    public void onPositionChange(Vector3f npos) {
+        light.setPosition(npos);
+    }
+
+    @Override
+    public void onRotationChange(Quaternionf nrot) {
+        light.setRotation(nrot);
+    }
+
     @Override
     public void serialize(GGOutputStream stream) throws IOException{
         super.serialize(stream);
-        stream.write(light.getColor());
-        stream.write(light.getDistance());
+        light.serialize(stream);
     }
     
     @Override
     public void deserialize(GGInputStream stream) throws IOException{
         super.deserialize(stream);
-       // light = Light.createPoint(new Vector3f(), stream.readVector3f(), stream.readFloat());
-        light = Light.createDirectional(new Quaternionf(new Vector3f(0,0,-80)), new Vector3f(1,1,200f/255f));
-        this.setPositionOffset(light.getPosition());
+        OpenGG.onMainThread(() -> {
+            try {
+                light = Light.createFromStream(stream);
+                this.setPositionOffset(light.getPosition());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
-
 }

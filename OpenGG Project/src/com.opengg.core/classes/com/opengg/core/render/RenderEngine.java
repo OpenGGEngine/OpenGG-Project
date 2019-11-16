@@ -12,6 +12,7 @@ import com.opengg.core.engine.GGDebugRenderer;
 import com.opengg.core.engine.GGGameConsole;
 import com.opengg.core.exceptions.RenderException;
 import com.opengg.core.gui.GUIController;
+import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.model.ModelManager;
 import com.opengg.core.physics.PhysicsRenderer;
@@ -120,10 +121,10 @@ public class RenderEngine {
 
     public static void initializeForHeadless() {
         defaultVAOFormat = new VertexArrayFormat();
-        defaultVAOFormat.addBinding(new VertexArrayBinding(0,12, 0, List.of(
+        defaultVAOFormat.addBinding(new VertexArrayBinding(0,8, 0, List.of(
                 new VertexArrayAttribute("position", 3, GL_FLOAT, 0),
-                new VertexArrayAttribute("normal", 3, GL_FLOAT, 7),
-                new VertexArrayAttribute("texcoord", 2, GL_FLOAT, 10)
+                new VertexArrayAttribute("normal", 3, GL_FLOAT, 3),
+                new VertexArrayAttribute("texcoord", 2, GL_FLOAT, 6)
         )));
 
         tangentVAOFormat = new VertexArrayFormat();
@@ -145,10 +146,10 @@ public class RenderEngine {
         )));
 
         particleVAOFormat = new VertexArrayFormat();
-        particleVAOFormat.addBinding(new VertexArrayBinding(0,12, 0, List.of(
+        particleVAOFormat.addBinding(new VertexArrayBinding(0,8, 0, List.of(
                 new VertexArrayAttribute("position", 3, GL_FLOAT, 0),
-                new VertexArrayAttribute("normal", 3, GL_FLOAT, 7),
-                new VertexArrayAttribute("texcoord", 2, GL_FLOAT, 10)
+                new VertexArrayAttribute("normal", 3, GL_FLOAT, 3),
+                new VertexArrayAttribute("texcoord", 2, GL_FLOAT, 6)
         )));
         particleVAOFormat.addBinding(new VertexArrayBinding(1,3, 1, List.of(
                 new VertexArrayAttribute("offset", 3, GL_FLOAT, 0)
@@ -165,12 +166,15 @@ public class RenderEngine {
         groups.add(defaultList);
 
         RenderOperation skybox = new RenderOperation("skyboxpath", () -> {
+            RenderEngine.setCulling(false);
             if(currentEnvironment.getSkybox() != null){
                 ShaderController.useConfiguration("sky");
+                ShaderController.setModel(new Matrix4f());
                 currentEnvironment.getSkybox().getCubemap().use(2);
                 currentEnvironment.getSkybox().getDrawable().render();
 
             }
+            RenderEngine.setCulling(true);
         });
 
         RenderOperation path = new RenderOperation("mainpath", () -> {
@@ -183,23 +187,17 @@ public class RenderEngine {
         RenderOperation light = new RenderOperation("shadowmap", () -> {
             int used = 0;
             var lights = getActiveLights();
-            glCullFace(GL_FRONT);
             var fb = getCurrentFramebuffer();
             for(int i = 0; i < lights.size() && used < 2; i++){
                 if(lights.get(i).hasShadow()){
                     lights.get(i).initializeRender();
-
                     for(RenderGroup d : getActiveRenderGroups()){
                         d.render();
                     }
-
-                    lights.get(i).finalizeRender(10 + used);
-                    lights.get(i).getLightbuffer().blitToBack();
-
+                    lights.get(i).finalizeRender(used);
                     used++;
                 }
             }
-            glCullFace(GL_BACK);
             fb.restartRendering();
             fb.useEnabledAttachments();
             useLights();
@@ -208,7 +206,7 @@ public class RenderEngine {
         });
 
         paths.add(skybox);
-        //paths.add(light);
+        paths.add(light);
         paths.add(path);
     }
 
@@ -230,11 +228,8 @@ public class RenderEngine {
                 path.render();
                 resetConfig();
             }
-
             pass.getSceneBuffer().disableRendering();
-
             defaultvao.bind();
-
             enableDefaultVP();
 
             if(pass.isPostProcessEnabled())
@@ -243,14 +238,15 @@ public class RenderEngine {
             if(pass.shouldBlitToBack())
                 pass.getSceneBuffer().blitToBack();
 
-            RenderEngine.setCulling(true);
 
             pass.runDisableOp();
         }
 
+        RenderEngine.setCulling(false);
         GUIController.render();
         GGGameConsole.render();
         GGDebugRenderer.render();
+        RenderEngine.setCulling(true);
     }
 
     static List<Light> getActiveLights(){
@@ -288,9 +284,9 @@ public class RenderEngine {
         glBlendEquation(GL_FUNC_ADD);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         
-        //if(cull)
-        //    glEnable(GL_CULL_FACE);
-        //else
+        if(cull)
+            glEnable(GL_CULL_FACE);
+        else
             glDisable(GL_CULL_FACE);
     }
     
@@ -343,25 +339,10 @@ public class RenderEngine {
         else
             glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
     }
-    
-    public static void addLight(Light l){
-        lights.add(l);
-    }
-    
-    public static void removeLight(Light l){
-        lights.remove(l);
-    }
-    
-    public static List<Light> getLights(){
-        return lights;
-    }
-    
+
     public static void addRenderGroup(RenderGroup r){
         if(!groups.contains(r))
             groups.add(r);
-    }
-
-    public static void setSkybox(Skybox skybox) {
     }
 
     public static void setClearColor(Vector3f color){
