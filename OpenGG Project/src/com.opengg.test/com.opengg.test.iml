@@ -13,5 +13,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="com.opengg.math" />
     <orderEntry type="module" module-name="com.opengg.core" />
+    <orderEntry type="module" module-name="com.opengg.system" />
+    <orderEntry type="module" module-name="com.opengg.base" />
   </component>
 </module>
