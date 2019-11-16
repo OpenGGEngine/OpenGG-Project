@@ -68,9 +68,9 @@ public interface Resource {
 
     static String getUserDataPath(){
         if(GGInfo.getUserDataLocation() == GGInfo.UserDataOption.DOCUMENTS)
-            return System.getProperty("user.home") + File.separator + "Documents" + File.separator + GGInfo.getApplicationName();
+            return System.getProperty("user.home") + File.separator + "Documents" + File.separator + GGInfo.getApplicationName() + File.separator;
         else
-            return System.getenv("APPDATA") + File.separator + GGInfo.getApplicationName();
+            return System.getenv("APPDATA") + File.separator + GGInfo.getApplicationName() + File.separator;
     }
 
     /**
@@ -92,11 +92,11 @@ public interface Resource {
     }
 
 
-    private static String validate(String name){
-        if(isAbsolute(name)) return name;
-        if(exists(Resource.getApplicationPath() + File.separator + name)) return name;
-        if(exists(Resource.getUserDataPath()    + File.separator + name)) return name;
-        return null;
+    private static boolean validate(String name){
+        if(isAbsolute(name)) return true;
+        if(exists(Resource.getApplicationPath() + File.separator + name)) return true;
+        if(exists(Resource.getUserDataPath()    + File.separator + name)) return true;
+        return false;
     }
     
     /**
@@ -105,8 +105,7 @@ public interface Resource {
      * @return Relative path to the model
      */
     static String getModelPath(String name){
-        String source = validate(name);
-        if(source != null) return source;
+        if(validate(name)) return name;
         if(name.contains(".bmf"))
             return "resources" + File.separator + "models" + File.separator + name;
         else
@@ -119,8 +118,7 @@ public interface Resource {
      * @return Relative path to the file
      */
     static String getConfigPath(String name){
-        String source = validate(name);
-        if(source != null) return source;
+        if(validate(name)) return name;
         return "cfg" + File.separator + name + ".cfg";
     }
     
@@ -130,8 +128,7 @@ public interface Resource {
      * @return Relative path to the shader file
      */
     static String getShaderPath(String name){
-        String source = validate(name);
-        if(source != null) return source;
+        if(validate(name)) return name;
         return "resources" + File.separator + "glsl" + File.separator +  name;
     }
     
@@ -141,8 +138,7 @@ public interface Resource {
      * @return Relative path to the texture
      */
     static String getTexturePath(String name){
-        String source = validate(name);
-        if(source != null) return source;
+        if(validate(name)) return name;
         return "resources" + File.separator + "tex" + File.separator +  name;
     }
     
@@ -152,8 +148,7 @@ public interface Resource {
      * @return Relative path to the font file
      */
     static String getFontPath(String name){
-        String source = validate(name);
-        if(source != null) return source;
+        if(validate(name)) return name;
         return "resources" + File.separator + "font" + File.separator +  name;
     }
     
@@ -163,8 +158,7 @@ public interface Resource {
      * @return Relative path to the sound
      */
     static String getSoundPath(String name){
-        String source = validate(name);
-        if(source != null) return source;
+        if(validate(name)) return name;
         return "resources" + File.separator + "audio" + File.separator +  name;
     }
     
@@ -174,8 +168,7 @@ public interface Resource {
      * @return Relative path to the world file
      */
     static String getWorldPath(String name){
-        String source = validate(name);
-        if(source != null) return source;
+        if(validate(name)) return name;
         return "resources" + File.separator + "worlds" + File.separator +  name + ".bwf";
     }
     
@@ -206,7 +199,7 @@ public interface Resource {
      * @return Texture object loaded from file
      */
     static Texture getTexture(String name){
-        return Texture.get2DTexture((TextureData) ResourceLoader.get(new ResourceRequest(getTexturePath(name), Resource.Type.TEXTURE, 1)));
+        return Texture.get2DTexture((TextureData) ResourceLoader.get(new ResourceRequest(name, Resource.Type.TEXTURE, 1)));
     }
     
     /**
@@ -216,7 +209,7 @@ public interface Resource {
      * @return Texture object loaded from file
      */
     static Texture getSRGBTexture(String name){
-        return Texture.get2DSRGBTexture((TextureData) ResourceLoader.get(new ResourceRequest(getTexturePath(name), Resource.Type.TEXTURE, 1)));
+        return Texture.get2DSRGBTexture((TextureData) ResourceLoader.get(new ResourceRequest(name, Resource.Type.TEXTURE, 1)));
     }
     
     /**
@@ -225,7 +218,7 @@ public interface Resource {
      * @return Texture data object loaded from file
      */
     static TextureData getTextureData(String name){
-        return (TextureData) ResourceLoader.get(new ResourceRequest(getTexturePath(name), Resource.Type.TEXTURE, 1));
+        return (TextureData) ResourceLoader.get(new ResourceRequest(name, Resource.Type.TEXTURE, 1));
     }
     
     static GGFont getFont(String fname, String ftexname){

@@ -11,6 +11,7 @@ import com.opengg.core.model.Material;
 import com.opengg.core.model.Mesh;
 import com.opengg.core.model.Model;
 import com.opengg.core.model.ModelManager;
+import com.opengg.core.render.texture.TextureGenerator;
 import com.opengg.core.render.texture.TextureManager;
 import com.opengg.core.thread.ParallelWorkerPool;
 import com.opengg.core.util.LambdaContainer;
@@ -43,7 +44,10 @@ public final class ResourceLoader {
 
     private static Resource processRequest(ResourceRequest request){
         if(request.type == Resource.Type.TEXTURE){
-            return TextureManager.loadTexture(request.location);
+            if(request.location.startsWith("generated:"))
+                return TextureGenerator.generateFromURI(request.location);
+            else
+                return TextureManager.loadTexture(Resource.getTexturePath(request.location));
         }
 
         if(request.type == Resource.Type.SOUND){
@@ -55,22 +59,22 @@ public final class ResourceLoader {
             for(Mesh mesh : model.getMeshes()){
                 Material material = mesh.getMaterial();
                 if (material.mapKdFilename != null && !material.mapKdFilename.isEmpty()) {
-                    TextureManager.loadTexture(material.texpath + material.mapKdFilename);
+                    Resource.getTextureData(material.texpath + material.mapKdFilename);
                 }
                 if (material.mapKaFilename != null && !material.mapKaFilename.isEmpty()) {
-                    TextureManager.loadTexture(material.texpath + material.mapKaFilename);
+                    Resource.getTextureData(material.texpath + material.mapKaFilename);
                 }
                 if (material.mapKsFilename != null && !material.mapKsFilename.isEmpty()) {
-                    TextureManager.loadTexture(material.texpath + material.mapKsFilename);
+                    Resource.getTextureData(material.texpath + material.mapKsFilename);
                 }
                 if (material.mapNsFilename != null && !material.mapNsFilename.isEmpty()) {
-                    TextureManager.loadTexture(material.texpath + material.mapNsFilename);
+                    Resource.getTextureData(material.texpath + material.mapNsFilename);
                 }
                 if (material.mapDFilename != null && !material.mapDFilename.isEmpty()) {
-                    TextureManager.loadTexture(material.texpath + material.mapDFilename);
+                    Resource.getTextureData(material.texpath + material.mapDFilename);
                 }
                 if (material.bumpFilename != null && !material.bumpFilename.isEmpty()) {
-                    TextureManager.loadTexture(material.texpath + material.bumpFilename);
+                    Resource.getTextureData(material.texpath + material.bumpFilename);
                 }
             }
             return model;
@@ -78,7 +82,7 @@ public final class ResourceLoader {
 
         if(request.type == Resource.Type.WORLD){
             LambdaContainer<World> worldLambdaContainer = new LambdaContainer<>();
-            OpenGG.asyncExec(() -> {worldLambdaContainer.value = WorldLoader.loadWorld(request.location);}).waitUntilComplete();
+            OpenGG.asyncExec(() -> worldLambdaContainer.value = WorldLoader.loadWorld(request.location)).waitUntilComplete();
             return worldLambdaContainer.value;
         }
         return null;
@@ -90,12 +94,15 @@ public final class ResourceLoader {
      * @return The {@link Resource} described by the resource request, or the default resources of its type if the one in the request fails to load
      */
     public static Resource get(ResourceRequest request){
-        try {
-            return prefetch(request).get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+        if(OpenGG.inMainThread()) {
+            return processRequest(request);
+        } else {
+            try {
+                return prefetch(request).get();
+            } catch (InterruptedException | ExecutionException e) {
+                throw new RuntimeException(e);
+            }
         }
-        return null;
     }
 
     /**
@@ -128,10 +135,10 @@ public final class ResourceLoader {
 
         if(request.type == Resource.Type.MODEL){
            Resource r = ModelManager.getModel(request.location);
-           if(r != ModelManager.getDefaultModel()){
-               request.future.complete(r);
-               return request.future;
-           }
+           //if(r != ModelManager.getDefaultModel()){
+              // request.future.complete(r);
+               //return request.future;
+           //}
         }
 
         processor.add(request, request.priority);
