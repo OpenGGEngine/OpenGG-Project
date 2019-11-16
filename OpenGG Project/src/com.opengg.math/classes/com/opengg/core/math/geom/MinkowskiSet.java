@@ -15,18 +15,18 @@ import com.opengg.core.math.Vector3f;
 public class MinkowskiSet {
     public Vector3f a;
     public Vector3f b;
-    public Vector3f v;
+    public Vector3f vec;
     
     public MinkowskiSet(){
         this.a = new Vector3f();
         this.b = new Vector3f();
-        this.v = new Vector3f();
+        this.vec = new Vector3f();
     }
     
-    public MinkowskiSet(Vector3f a, Vector3f b, Vector3f v){
+    public MinkowskiSet(Vector3f a, Vector3f b, Vector3f vec){
         this.a = a;
         this.b = b;
-        this.v = v;
+        this.vec = vec;
     }
 
     @Override
@@ -34,7 +34,27 @@ public class MinkowskiSet {
         return "MinkowskiSet{" +
                 "a=" + a +
                 ", b=" + b +
-                ", v=" + v +
+                ", v=" + vec +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        MinkowskiSet that = (MinkowskiSet) o;
+
+        if (!a.equals(that.a)) return false;
+        if (!b.equals(that.b)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = a.hashCode();
+        result = 31 * result + b.hashCode();
+        return result;
     }
 }

@@ -21,6 +21,6 @@ public class MinkowskiTriangle {
         this.a = a;
         this.b = b;
         this.c = c;
-        n = b.v.subtract(a.v).cross(c.v.subtract(a.v)).normalize();
+        n = b.vec.subtract(a.vec).cross(c.vec.subtract(a.vec)).normalize();
     }
 }
