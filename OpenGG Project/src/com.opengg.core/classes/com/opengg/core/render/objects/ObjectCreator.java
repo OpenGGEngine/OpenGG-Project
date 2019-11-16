@@ -9,7 +9,7 @@ package com.opengg.core.render.objects;
 import com.opengg.core.math.Tuple;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
-import com.opengg.core.render.drawn.Drawable;
+import com.opengg.core.render.Renderable;
 import com.opengg.core.render.drawn.DrawnObject;
 import com.opengg.core.system.Allocator;
 
@@ -22,12 +22,12 @@ import java.nio.IntBuffer;
  * @author Javier
  */
 public class ObjectCreator {
-    public static Drawable createQuadPrism(Vector3f c1, Vector3f c2){
+    public static Renderable createQuadPrism(Vector3f c1, Vector3f c2){
         Buffer[] b = createQuadPrismBuffers(c1,c2);
         return new DrawnObject((IntBuffer)b[1], (FloatBuffer)b[0]);
     }
     
-    public static Drawable createInstancedQuadPrism(Vector3f c1, Vector3f c2){
+    public static Renderable createInstancedQuadPrism(Vector3f c1, Vector3f c2){
         Buffer[] b = createQuadPrismBuffers(c1,c2);
         return new DrawnObject((IntBuffer)b[1], (FloatBuffer)b[0], Allocator.allocFloat(3));
     }
@@ -36,7 +36,7 @@ public class ObjectCreator {
         return ObjectBuffers.genQuadPrism(c1,c2);
     }
     
-    public static Drawable createSquare(Vector2f c1, Vector2f c2, float z){
+    public static Renderable createSquare(Vector2f c1, Vector2f c2, float z){
         var b = createSquareBuffers(c1, c2, z, Allocator.AllocType.NATIVE_STACK);
         var obj =  new DrawnObject(b.y, b.x);
         Allocator.popStack();
@@ -53,8 +53,8 @@ public class ObjectCreator {
 
     }
     
-    public static Drawable createCube(float size){
-        Buffer[] b = ObjectBuffers.genCube(size);
+    public static Renderable createCube(float size){
+        Buffer[] b = ObjectBuffers.genQuadPrism(new Vector3f(-size/2), new Vector3f(size/2));
         return new DrawnObject((IntBuffer)b[1], (FloatBuffer)b[0]);
     }
 
