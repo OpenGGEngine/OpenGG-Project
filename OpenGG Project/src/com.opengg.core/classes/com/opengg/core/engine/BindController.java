@@ -11,7 +11,7 @@ import com.opengg.core.io.Bind;
 import com.opengg.core.io.ControlType;
 import com.opengg.core.io.input.keyboard.KeyboardController;
 import com.opengg.core.io.input.keyboard.KeyboardListener;
-import com.opengg.core.io.input.mouse.MouseButtonListener;
+import com.opengg.core.io.input.mouse.*;
 import com.opengg.core.world.Action;
 import com.opengg.core.world.ActionTransmitter;
 import com.opengg.core.world.ActionType;
@@ -26,7 +26,7 @@ import java.util.List;
  * This allows for configurations to be easily saved, by simply connecting a key to a command purely through Strings
  * @author Javier
  */
-public class BindController implements KeyboardListener, MouseButtonListener{
+public class BindController implements KeyboardListener, MouseButtonListener, MouseScrollChangeListener {
     private static BindController bc;
     static List<ActionTransmitter> controllers = new ArrayList<>();
     static List<Bind> binds = new ArrayList<>();
@@ -35,6 +35,8 @@ public class BindController implements KeyboardListener, MouseButtonListener{
     private static boolean enabled = true;
 
     private BindController(){
+        MouseController.onButtonPress(this);
+        MouseController.addScrollChangeListener(this);
         KeyboardController.addKeyboardListener(this);
     }
     
@@ -64,7 +66,7 @@ public class BindController implements KeyboardListener, MouseButtonListener{
      * Adds an {@link ActionTransmitter} to the system, which will receive all future commands 
      * @param controller ActionTransmitter to be added
      */
-    public static void addController(ActionTransmitter controller) {
+    public static void addTransmitter(ActionTransmitter controller) {
         if(controllers.contains(controller)) return;
         startAllActionsFor(controller);
         controllers.add(controller);
@@ -205,5 +207,35 @@ public class BindController implements KeyboardListener, MouseButtonListener{
 
     private boolean act(){
         return !enabled || GGInfo.isMenu();
+    }
+
+    @Override
+    public void onScrollUp() {
+        if(act()) return;
+        for(Bind bind : binds){
+            if(bind.button == MouseButton.SCROLL_UP && bind.type == ControlType.SCROLLWHEEL){
+                for(ActionTransmitter c : controllers){
+                    Action a = new Action();
+                    a.name = bind.action;
+                    a.type = ActionType.PRESS;
+                    c.doAction(a);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onScrollDown() {
+        if(act()) return;
+        for(Bind bind : binds){
+            if(bind.button == MouseButton.SCROLL_DOWN && bind.type == ControlType.SCROLLWHEEL){
+                for(ActionTransmitter c : controllers){
+                    Action a = new Action();
+                    a.name = bind.action;
+                    a.type = ActionType.PRESS;
+                    c.doAction(a);
+                }
+            }
+        }
     }
 }

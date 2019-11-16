@@ -11,5 +11,5 @@ package com.opengg.core.io;
  * @author Javier
  */
 public enum ControlType {
-    KEYBOARD, MOUSEBUTTON, JOYSTICK
+    KEYBOARD, MOUSEBUTTON, SCROLLWHEEL, JOYSTICK
 }

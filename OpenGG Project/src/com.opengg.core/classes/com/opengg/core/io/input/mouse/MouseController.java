@@ -16,6 +16,8 @@ import com.opengg.core.render.RenderEngine;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.opengg.core.io.input.keyboard.Key.MOUSE_BUTTON_LEFT;
+
 /**
  *
  * @author Javier
@@ -37,7 +39,6 @@ public class MouseController {
         poslisteners.clear();
         scrollListeners.clear();
     }
-
 
     public static void addScrollListener(MouseScrollListener handle){
         scrollListeners.add(handle);
