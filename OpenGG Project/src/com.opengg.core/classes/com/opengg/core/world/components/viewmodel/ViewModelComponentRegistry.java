@@ -34,7 +34,7 @@ public class ViewModelComponentRegistry {
         register(com.opengg.core.world.components.ModelComponent.class);
         register(WaterComponent.class);
         register(WorldObject.class);
-        register(PhysicsComponent.class);
+        register(RigidBodyComponent.class);
         register(TerrainComponent.class);
         register(SunComponent.class);
         register(LightComponent.class);
@@ -48,7 +48,7 @@ public class ViewModelComponentRegistry {
         register(ModelComponentViewModel.class);
         register(WaterComponentViewModel.class);
         register(WorldObjectViewModel.class);
-        register(PhysicsComponentViewModel.class);
+        register(RigidBodyComponentViewModel.class);
         register(TerrainComponentViewModel.class);
         register(SunComponentViewModel.class);
         register(LightComponentViewModel.class);
@@ -73,7 +73,7 @@ public class ViewModelComponentRegistry {
     
     public static void register(Class component, boolean error){
         boolean iscomponent = Component.class.isAssignableFrom(component);
-        boolean isviewmodel = ViewModel.class.isAssignableFrom(component);
+        boolean isviewmodel = ComponentViewModel.class.isAssignableFrom(component);
         
         if(iscomponent){
             if(!components.contains(component))
@@ -147,12 +147,12 @@ public class ViewModelComponentRegistry {
         return null;
     }
 
-    public static ViewModel getViewModelFor(String classname){
+    public static ComponentViewModel getViewModelFor(String classname){
         var info = ViewModelComponentRegistry.getByClassname(classname);
         Class clazz = info.getComponent();
         Class vmclazz = ViewModelComponentRegistry.findViewModel(clazz);
         try {
-            return (ViewModel) Objects.requireNonNull(vmclazz).getDeclaredConstructor().newInstance();
+            return (ComponentViewModel) Objects.requireNonNull(vmclazz).getDeclaredConstructor().newInstance();
         } catch (Exception ex) {
             GGConsole.error("Failed to create instance of a ViewModel for " + clazz.getName() + ", is there a default constructor?");
             return null;

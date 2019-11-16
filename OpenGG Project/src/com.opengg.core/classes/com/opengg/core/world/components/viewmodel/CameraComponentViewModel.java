@@ -6,7 +6,7 @@
 package com.opengg.core.world.components.viewmodel;
 
 import com.opengg.core.editor.ForComponent;
-import com.opengg.core.editor.Initializer;
+import com.opengg.core.editor.BindingAggregate;
 import com.opengg.core.world.components.CameraComponent;
 
 /**
@@ -14,7 +14,7 @@ import com.opengg.core.world.components.CameraComponent;
  * @author Javier
  */
 @ForComponent(CameraComponent.class)
-public class CameraComponentViewModel extends ViewModel<CameraComponent>{
+public class CameraComponentViewModel extends ComponentViewModel<CameraComponent> {
 
     @Override
     public void createMainViewModel() {
@@ -22,12 +22,12 @@ public class CameraComponentViewModel extends ViewModel<CameraComponent>{
     }
 
     @Override
-    public Initializer getInitializer(Initializer init) {
+    public BindingAggregate getInitializer(BindingAggregate init) {
         return init;
     }
 
     @Override
-    public CameraComponent getFromInitializer(Initializer init) {
+    public CameraComponent getFromInitializer(BindingAggregate init) {
         return new CameraComponent();
     }
     

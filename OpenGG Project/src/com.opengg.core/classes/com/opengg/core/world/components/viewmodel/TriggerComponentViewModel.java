@@ -2,7 +2,7 @@ package com.opengg.core.world.components.viewmodel;
 
 import com.opengg.core.editor.DataBinding;
 import com.opengg.core.editor.ForComponent;
-import com.opengg.core.editor.Initializer;
+import com.opengg.core.editor.BindingAggregate;
 import com.opengg.core.world.WorldEngine;
 import com.opengg.core.world.components.Component;
 import com.opengg.core.world.components.TriggerComponent;
@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 
 @ForComponent(TriggerComponent.class)
-public class TriggerComponentViewModel<T extends TriggerComponent> extends ViewModel<T> {
+public class TriggerComponentViewModel<T extends TriggerComponent> extends ComponentViewModel<T> {
 
     @Override
     public void createMainViewModel() {
@@ -25,18 +25,19 @@ public class TriggerComponentViewModel<T extends TriggerComponent> extends ViewM
         children.internalname = "children";
         children.visible = true;
         children.setValueAccessorFromData(() ->
-                component.getSubscribers()
+                model.getSubscribers()
                         .stream().filter(t -> t instanceof Component)
                         .map(t -> (Component) t)
                         .map(Component::getName)
                         .collect(Collectors.joining(";")));
         children.onViewChange(ss -> {
-                    component.clearSubscribers();
+                    model.clearSubscribers();
                     Arrays.stream(ss.split(";"))
                             .flatMap(s -> WorldEngine.findEverywhereByName(s).stream())
+                            .peek(s -> System.out.println("Found " + s.toString()))
                             .filter(c -> c instanceof Triggerable)
                             .map(c -> (Triggerable) c)
-                            .forEach(component::addSubscriber);
+                            .forEach(model::addListener);
                 }
         );
 
@@ -44,12 +45,12 @@ public class TriggerComponentViewModel<T extends TriggerComponent> extends ViewM
     }
 
     @Override
-    public Initializer getInitializer(Initializer init) {
+    public BindingAggregate getInitializer(BindingAggregate init) {
         return init;
     }
 
     @Override
-    public T getFromInitializer(Initializer init) {
+    public T getFromInitializer(BindingAggregate init) {
         return (T) new TriggerComponent();
     }
 }

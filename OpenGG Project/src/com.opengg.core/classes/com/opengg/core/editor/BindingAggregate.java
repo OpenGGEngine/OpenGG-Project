@@ -14,11 +14,15 @@ import java.util.List;
  *
  * @author Javier
  */
-public class Initializer {
-    public List<DataBinding> dataBindings = new ArrayList<>();
+public class BindingAggregate {
+    private List<DataBinding> dataBindings = new ArrayList<>();
     
     public void addElement(DataBinding e){
         dataBindings.add(e);
+    }
+
+    public List<DataBinding> getDataBindings(){
+        return dataBindings;
     }
     
     public DataBinding get(String name){

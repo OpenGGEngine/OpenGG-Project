@@ -7,16 +7,9 @@ package com.opengg.core.world.components.viewmodel;
 
 import com.opengg.core.editor.DataBinding;
 import com.opengg.core.editor.ForComponent;
-import com.opengg.core.editor.Initializer;
-import com.opengg.core.math.Vector3f;
-import com.opengg.core.physics.collision.AABB;
-import com.opengg.core.world.WorldEngine;
-import com.opengg.core.world.components.Component;
+import com.opengg.core.editor.BindingAggregate;
+import com.opengg.core.physics.collision.colliders.AABB;
 import com.opengg.core.world.components.Zone;
-import com.opengg.core.world.components.triggers.Triggerable;
-
-import java.util.Arrays;
-import java.util.stream.Collectors;
 
 /**
  * @author Javier
@@ -33,20 +26,20 @@ public class ZoneViewModel<T extends Zone> extends TriggerComponentViewModel<T> 
         lwh.name = "LWH";
         lwh.internalname = "lwh";
         lwh.visible = true;
-        lwh.setValueAccessorFromData(() -> component.getBox().getLWH());
-        lwh.onViewChange(v -> component.setBox(new AABB(v)));
+        lwh.setValueAccessorFromData(() -> model.getBox().getLWH());
+        lwh.onViewChange(v -> model.setBox(new AABB(v)));
 
         addElement(lwh);
 
     }
 
     @Override
-    public Initializer getInitializer(Initializer init) {
+    public BindingAggregate getInitializer(BindingAggregate init) {
         return init;
     }
 
     @Override
-    public T getFromInitializer(Initializer init) {
+    public T getFromInitializer(BindingAggregate init) {
         return (T) new Zone();
     }
 }

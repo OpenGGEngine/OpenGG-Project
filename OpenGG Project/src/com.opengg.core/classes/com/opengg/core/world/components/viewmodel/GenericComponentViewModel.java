@@ -5,7 +5,7 @@
  */
 package com.opengg.core.world.components.viewmodel;
 
-import com.opengg.core.editor.Initializer;
+import com.opengg.core.editor.BindingAggregate;
 import com.opengg.core.world.components.Component;
 
 /**
@@ -13,7 +13,7 @@ import com.opengg.core.world.components.Component;
  * @author Javier
  */
 
-public class GenericComponentViewModel extends ViewModel{
+public class GenericComponentViewModel extends ComponentViewModel {
 
     @Override
     public void createMainViewModel() {
@@ -21,12 +21,12 @@ public class GenericComponentViewModel extends ViewModel{
     }
 
     @Override
-    public Initializer getInitializer(Initializer init) {
+    public BindingAggregate getInitializer(BindingAggregate init) {
         throw new UnsupportedOperationException("Cannot create a generic viewmodel initializer, this class is only usable for emergency support for components without custom ViewModels");
     }
 
     @Override
-    public Component getFromInitializer(Initializer init) {
+    public Component getFromInitializer(BindingAggregate init) {
         throw new UnsupportedOperationException("Cannot create a generic viewmodel, this class is only usable for emergency support for components without custom ViewModels");
     }
     

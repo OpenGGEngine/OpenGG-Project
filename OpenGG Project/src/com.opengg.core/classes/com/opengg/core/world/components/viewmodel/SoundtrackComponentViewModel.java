@@ -3,14 +3,14 @@ package com.opengg.core.world.components.viewmodel;
 import com.opengg.core.audio.Sound;
 import com.opengg.core.editor.DataBinding;
 import com.opengg.core.editor.ForComponent;
-import com.opengg.core.editor.Initializer;
+import com.opengg.core.editor.BindingAggregate;
 import com.opengg.core.world.components.SoundtrackComponent;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
 @ForComponent(SoundtrackComponent.class)
-public class SoundtrackComponentViewModel extends ViewModel<SoundtrackComponent>{
+public class SoundtrackComponentViewModel extends ComponentViewModel<SoundtrackComponent> {
     @Override
     public void createMainViewModel() {
         DataBinding<String> tracks = new DataBinding.StringBinding();
@@ -20,9 +20,9 @@ public class SoundtrackComponentViewModel extends ViewModel<SoundtrackComponent>
                 .onViewChange(s ->
                         Arrays.stream(((String)s).split(";"))
                                 .map(Sound::new)
-                                .forEach(ss -> component.getSoundtrack().addSong(ss)))
+                                .forEach(ss -> model.getSoundtrack().addSong(ss)))
                 .setValueAccessorFromData(() ->
-                        component.getSoundtrack().getSongs().stream()
+                        model.getSoundtrack().getSongs().stream()
                                 .map(s -> s.getData().getSource())
                                 .collect(Collectors.joining(";")));
 
@@ -30,12 +30,12 @@ public class SoundtrackComponentViewModel extends ViewModel<SoundtrackComponent>
     }
 
     @Override
-    public Initializer getInitializer(Initializer init) {
+    public BindingAggregate getInitializer(BindingAggregate init) {
         return init;
     }
 
     @Override
-    public SoundtrackComponent getFromInitializer(Initializer init) {
+    public SoundtrackComponent getFromInitializer(BindingAggregate init) {
         return new SoundtrackComponent();
     }
 }

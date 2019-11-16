@@ -2,11 +2,11 @@ package com.opengg.core.world.components.viewmodel;
 
 import com.opengg.core.editor.DataBinding;
 import com.opengg.core.editor.ForComponent;
-import com.opengg.core.editor.Initializer;
+import com.opengg.core.editor.BindingAggregate;
 import com.opengg.core.world.components.ScriptComponent;
 
 @ForComponent(ScriptComponent.class)
-public class ScriptComponentViewModel extends ViewModel<ScriptComponent>{
+public class ScriptComponentViewModel extends ComponentViewModel<ScriptComponent> {
     @Override
     public void createMainViewModel() {
         super.createMainViewModel();
@@ -14,25 +14,25 @@ public class ScriptComponentViewModel extends ViewModel<ScriptComponent>{
         var name = new DataBinding.StringBinding();
         name.name("Script Name");
         name.internalName("script");
-        name.setValueAccessorFromData(component::getScriptName);
-        name.onViewChange(component::setScript);
+        name.setValueAccessorFromData(model::getScriptName);
+        name.onViewChange(model::setScript);
         this.addElement(name);
 
         var mode = new DataBinding.BooleanBinding();
         mode.name("Enable on trigger");
         mode.internalName("mode");
-        mode.setValueAccessorFromData(() -> component.getRunMode() == ScriptComponent.RunMode.ON_TRIGGER);
-        mode.onViewChange(b -> component.setRunMode(b ? ScriptComponent.RunMode.ON_TRIGGER : ScriptComponent.RunMode.CONTINUOUS));
+        mode.setValueAccessorFromData(() -> model.getRunMode() == ScriptComponent.RunMode.ON_TRIGGER);
+        mode.onViewChange(b -> model.setRunMode(b ? ScriptComponent.RunMode.ON_TRIGGER : ScriptComponent.RunMode.CONTINUOUS));
         this.addElement(mode);
     }
 
     @Override
-    public Initializer getInitializer(Initializer init) {
+    public BindingAggregate getInitializer(BindingAggregate init) {
         return init;
     }
 
     @Override
-    public ScriptComponent getFromInitializer(Initializer init) {
+    public ScriptComponent getFromInitializer(BindingAggregate init) {
         return new ScriptComponent();
     }
 }

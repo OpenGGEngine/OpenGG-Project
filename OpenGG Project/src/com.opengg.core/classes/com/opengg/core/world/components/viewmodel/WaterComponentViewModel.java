@@ -7,11 +7,9 @@ package com.opengg.core.world.components.viewmodel;
 
 import com.opengg.core.editor.DataBinding;
 import com.opengg.core.editor.ForComponent;
-import com.opengg.core.editor.Initializer;
+import com.opengg.core.editor.BindingAggregate;
 import com.opengg.core.render.texture.TextureData;
 import com.opengg.core.render.texture.TextureManager;
-import com.opengg.core.world.components.Component;
-import com.opengg.core.world.components.RenderComponent;
 import com.opengg.core.world.components.WaterComponent;
 
 /**
@@ -29,20 +27,20 @@ public class WaterComponentViewModel extends RenderComponentViewModel<WaterCompo
         tex.internalname = "tex";
         tex.name = "Water Texture";
         tex.autoupdate = true;
-        tex.setValueAccessorFromData(component::getTexture);
-        tex.onViewChange(component::setTexture);
+        tex.setValueAccessorFromData(model::getTexture);
+        tex.onViewChange(model::setTexture);
         
         var texsize = new DataBinding.FloatBinding();
         texsize.internalname = "size";
         texsize.name = "Water Texture Scale";
-        texsize.setValueAccessorFromData(component::getTextureScale);
-        texsize.onViewChange(component::setTextureScale);
+        texsize.setValueAccessorFromData(model::getTextureScale);
+        texsize.onViewChange(model::setTextureScale);
         
         var movementspeed = new DataBinding.FloatBinding();
         movementspeed.internalname = "speed";
         movementspeed.name = "Texture Animation Speed";
-        movementspeed.setValueAccessorFromData(component::getMovespeed);
-        movementspeed.onViewChange(component::setMovespeed);
+        movementspeed.setValueAccessorFromData(model::getMovespeed);
+        movementspeed.onViewChange(model::setMovespeed);
 
         addElement(tex);
         addElement(texsize);
@@ -50,7 +48,7 @@ public class WaterComponentViewModel extends RenderComponentViewModel<WaterCompo
     }
 
     @Override
-    public Initializer getInitializer(Initializer init) {
+    public BindingAggregate getInitializer(BindingAggregate init) {
 
         var tex = new DataBinding.TextureBinding();
         tex.internalname = "tex";
@@ -63,7 +61,7 @@ public class WaterComponentViewModel extends RenderComponentViewModel<WaterCompo
     }
 
     @Override
-    public WaterComponent getFromInitializer(Initializer init) {
-        return new WaterComponent(((TextureData)init.dataBindings.get(0).getValue()), 1);
+    public WaterComponent getFromInitializer(BindingAggregate init) {
+        return new WaterComponent(((TextureData)init.getDataBindings().get(0).getValue()), 1);
     }
 }

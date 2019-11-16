@@ -7,7 +7,7 @@ package com.opengg.core.world.components.viewmodel;
 
 import com.opengg.core.editor.DataBinding;
 import com.opengg.core.editor.ForComponent;
-import com.opengg.core.editor.Initializer;
+import com.opengg.core.editor.BindingAggregate;
 import com.opengg.core.model.Model;
 import com.opengg.core.model.ModelManager;
 import com.opengg.core.world.components.ModelComponent;
@@ -20,7 +20,7 @@ import com.opengg.core.world.components.ModelComponent;
 public class ModelComponentViewModel extends RenderComponentViewModel<ModelComponent>{
     
     @Override
-    public Initializer getInitializer(Initializer init) {
+    public BindingAggregate getInitializer(BindingAggregate init) {
 
         DataBinding<Model> modelpath = DataBinding.ofType(DataBinding.Type.MODEL);
         modelpath.autoupdate = true;
@@ -40,7 +40,7 @@ public class ModelComponentViewModel extends RenderComponentViewModel<ModelCompo
     }
 
     @Override
-    public ModelComponent getFromInitializer(Initializer init) {
+    public ModelComponent getFromInitializer(BindingAggregate init) {
         return new ModelComponent((Model)init.get("model").getValue(), (boolean)init.get("createcollider").getValue());
     }
 
@@ -52,8 +52,8 @@ public class ModelComponentViewModel extends RenderComponentViewModel<ModelCompo
         modelpath.autoupdate = true;
         modelpath.name = "Model";
         modelpath.internalname = "model";
-        modelpath.setValueAccessorFromData(() -> component.getModel());
-        modelpath.onViewChange(component::setModel);
+        modelpath.setValueAccessorFromData(() -> model.getModel());
+        modelpath.onViewChange(model::setModel);
 
         
         addElement(modelpath);

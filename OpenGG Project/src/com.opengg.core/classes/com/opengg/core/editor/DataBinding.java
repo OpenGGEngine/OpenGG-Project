@@ -20,7 +20,7 @@ import java.util.function.Supplier;
 import static com.opengg.core.editor.DataBinding.Type.*;
 
 /**
- *
+ * Represents a data binding between an engine object and its representation in a visual editor
  * @author Javier
  */
 public abstract class DataBinding<T> {
@@ -42,6 +42,11 @@ public abstract class DataBinding<T> {
         this.type = type;
     }
 
+    /**
+     * Retusn a DataBinding generified to the type represented by the Type passed
+     * @param type
+     * @return
+     */
     public static DataBinding ofType(Type type){
         return switch (type){
             case INTEGER -> new IntBinding();
@@ -124,11 +129,21 @@ public abstract class DataBinding<T> {
         }
     }
 
+    /**
+     * Sets the UI visible name of this DataBinding
+     * @param name
+     * @return
+     */
     public DataBinding name(String name){
         this.name = name;
         return this;
     }
 
+    /**
+     * Sets the internal name of this DataBinding
+     * @param name
+     * @return
+     */
     public DataBinding internalName(String internalname){
         this.internalname = internalname;
         return this;
@@ -169,9 +184,10 @@ public abstract class DataBinding<T> {
         onViewChange.accept(t);
     }
 
-    public void setValueFromData(T t){
+    public DataBinding<T> setValueFromData(T t){
         this.value = t;
         onUpdate.accept(t);
+        return this;
     }
 
     public DataBinding setValueAccessorFromData(Supplier<T> supplier){

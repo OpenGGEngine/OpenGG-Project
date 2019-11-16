@@ -6,7 +6,7 @@
 package com.opengg.core.world.components.viewmodel;
 
 import com.opengg.core.editor.ForComponent;
-import com.opengg.core.editor.Initializer;
+import com.opengg.core.editor.BindingAggregate;
 import com.opengg.core.world.components.WorldObject;
 
 /**
@@ -14,18 +14,18 @@ import com.opengg.core.world.components.WorldObject;
  * @author Javier
  */
 @ForComponent(WorldObject.class)
-public class WorldObjectViewModel extends ViewModel<WorldObject>{
+public class WorldObjectViewModel extends ComponentViewModel<WorldObject> {
 
     @Override
     public void createMainViewModel() {}
 
     @Override
-    public Initializer getInitializer(Initializer init) {
+    public BindingAggregate getInitializer(BindingAggregate init) {
         return init;
     }
 
     @Override
-    public WorldObject getFromInitializer(Initializer init) {
+    public WorldObject getFromInitializer(BindingAggregate init) {
         return new WorldObject();
     }
     
