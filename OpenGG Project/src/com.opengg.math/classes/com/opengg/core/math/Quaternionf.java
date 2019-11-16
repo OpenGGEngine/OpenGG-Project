@@ -7,7 +7,7 @@ package com.opengg.core.math;
 
 import java.io.Serializable;
 
-import static com.opengg.core.math.FastMath.*;
+import static com.opengg.core.math.FastMath.sin;
 
 /**
  *
@@ -54,69 +54,52 @@ public class Quaternionf implements Serializable{
         while (angle < 0) {
             angle += 360;
         }
-        float s = FastMath.sin((angle) / 2);
+        float s = sin((angle) / 2);
         w = FastMath.cos((angle) / 2);
         x = axis.x * s;
         y = axis.y * s;
         z = axis.z * s;
     }
-    
-    public Quaternionf(Vector3f euler){
-        float angleX = euler.x, angleY = euler.y, angleZ = euler.z;
-        angleX = (float)Math.toRadians(angleX);
-        angleY = (float)Math.toRadians(angleY);
-        angleZ = (float)Math.toRadians(angleZ);
-        
-        float sx = sin(angleX * 0.5f);
-        float cx = cos(angleX * 0.5f);
-        float sy = sin(angleY * 0.5f);
-        float cy = cos(angleY * 0.5f);
-        float sz = sin(angleZ * 0.5f);
-        float cz = cos(angleZ * 0.5f);
 
-        float cycz = cy * cz;
-        float sysz = sy * sz;
-        float sycz = sy * cz;
-        float cysz = cy * sz;
-        w = cx*cycz - sx*sysz;
-        x = sx*cycz + cx*sysz;
-        y = cx*sycz - sx*cysz;
-        z = cx*cysz + sx*sycz;
+    public static Quaternionf createXYZ(Vector3f euler) {
+        double pitch = euler.x, yaw = euler.y, roll = euler.z;
+        pitch = Math.toRadians(pitch);
+        yaw = Math.toRadians(yaw);
+        roll = Math.toRadians(roll);
+
+        double sp = Math.sin(pitch * 0.5f);
+        double cp = Math.cos(pitch * 0.5f);
+        double sy = Math.sin(yaw * 0.5f);
+        double cy = Math.cos(yaw * 0.5f);
+        double sr = Math.sin(roll * 0.5f);
+        double cr = Math.cos(roll * 0.5f);
+
+        var w = (float) (cp*cy*cr - sp*sy*sr);
+        var x = (float) (sp*cy*cr + cp*sy*sr);
+        var y = (float) (cp*sy*cr - sp*cy*sr);
+        var z = (float) (cp*cy*sr + sp*sy*cr);
+        return new Quaternionf(w,x,y,z);
     }
-//        
-//
-//    public Quaternionf(Matrix4f matrix) {
-//        final float trace = matrix.m11 + matrix.m22 + matrix.m33;
-//
-//        if (trace > 0) {
-//            float root = (float) Math.sqrt(trace + 1.0f);
-//            w = 0.5f * root;
-//            root = 0.5f / root;
-//            x = (matrix.m32 - matrix.m23) * root;
-//            y = (matrix.m13 - matrix.m31) * root;
-//            z = (matrix.m21 - matrix.m12) * root;
-//        } else {
-//            int[] next = {2, 3, 1};
-//
-//            int i = 1;
-//            if (matrix.m22 > matrix.m11) {
-//                i = 2;
-//            }
-//            if (matrix.m33 > matrix.access(i, i)) {
-//                i = 3;
-//            }
-//            int j = next[i];
-//            int k = next[j];
-//
-//            float root = (float) Math.sqrt(matrix.access(i, i) - matrix.access(j, j) - matrix.access(k, k) + 1.0f);
-//            float[] quaternion = {x, y, z};
-//            quaternion[i] = 0.5f * root;
-//            root = 0.5f / root;
-//            w = (matrix.access(k, j) - matrix.access(j, k)) * root;
-//            quaternion[j] = (matrix.access(j, i) + matrix.access(i, j)) * root;
-//            quaternion[k] = (matrix.access(k, i) + matrix.access(i, k)) * root;
-//        }
-//    }
+
+    public static Quaternionf createYXZ(Vector3f euler) {
+        float x = euler.x, y = euler.y, z = euler.z;
+        x = (float) Math.toRadians(x);
+        y = (float) Math.toRadians(y);
+        z = (float) Math.toRadians(z);
+
+        double sx = Math.sin(x * 0.5f);
+        double cx = Math.cos(x * 0.5f);
+        double sy = Math.sin(y * 0.5f);
+        double cy = Math.cos(y * 0.5f);
+        double sz = Math.sin(z * 0.5f);
+        double cz = Math.cos(z * 0.5f);
+
+            x = (float) (cy*sx*cz + sy*cx*sz);
+            y = (float) (sy*cx*cz - cy*sx*sz);
+            z = (float) (cy*cx*sz - sy*sx*cz);
+        var w = (float) (cy*cx*cz + sy*sx*sz);
+        return new Quaternionf(w,x,y,z);
+    }
 
     public float w(){
         return w;
@@ -170,22 +153,26 @@ public class Quaternionf implements Serializable{
         return new Quaternionf(this.divide(this.length()));
     }
 
-    public Matrix4f convertMatrix() {
-        Quaternionf q = this.normalize();
-        return new Matrix4f(
-                1.0f - 2.0f * q.y * q.y - 2.0f * q.z * q.z,     2.0f * q.x * q.y - 2.0f * q.z * q.w,            2.0f * q.x * q.z + 2.0f * q.y * q.w, 0,
-                2.0f * q.x * q.y + 2.0f * q.z * q.w,            1.0f - 2.0f * q.x * q.x - 2.0f * q.z * q.z,     2.0f * q.y * q.z - 2.0f * q.x * q.w, 0,
-                2.0f * q.x * q.z - 2.0f * q.y * q.w,            2.0f * q.y * q.z + 2.0f * q.x * q.w,            1.0f - 2.0f * q.x * q.x - 2.0f * q.y * y, 0,
-                0,                                              0,                                              0,                                        1);
-    }
-    
-
     public Vector3f axis(){
         return new Vector3f(x,y,z);
     }
     
     public float angle() {
         return 2.0f * (float) Math.toDegrees(Math.acos(w));
+    }
+
+    public Quaternionf setAngle(float degrees) {
+        while (degrees > 360) {
+            degrees -= 360;
+        }
+        while (degrees < 0) {
+            degrees += 360;
+        }
+        return new Quaternionf(FastMath.cosDeg((degrees) / 2),x,y,z);
+    }
+
+    public final Quaternionf setAxis(Vector3f axis){
+        return new Quaternionf(w,axis.x,axis.y,axis.z);
     }
     
     public float dot(Quaternionf otherQuat) {
@@ -203,7 +190,7 @@ public class Quaternionf implements Serializable{
         return new Quaternionf(FastMath.cosDeg((res) / 2),x,y,z);
     }
 
-   public static Quaternionf LookAt(Vector3f sourcePoint, Vector3f destPoint)
+   public static Quaternionf lookAt(Vector3f sourcePoint, Vector3f destPoint)
     {
         Vector3f up = new Vector3f(0,1,0);
         Vector3f forward = new Vector3f(0,0,-1);
@@ -213,7 +200,7 @@ public class Quaternionf implements Serializable{
 
         if (Math.abs(dot - (-1.0f)) < 0.000001f)
         {
-            return new Quaternionf(3.1415926535897932f, up.x, up.y, up.z);
+            return new Quaternionf(FastMath.PI, up.x, up.y, up.z);
         }
         if (Math.abs(dot - (1.0f)) < 0.000001f)
         {
@@ -224,29 +211,6 @@ public class Quaternionf implements Serializable{
         Vector3f rotAxis = forward.cross(forwardVector);//Vector3.Cross(Vector3.forward, forwardVector);
         rotAxis = rotAxis.normalize();
         return new Quaternionf(rotAngle, rotAxis);
-    }
-
-    public Quaternionf setAngle(float degrees) {
-        while (degrees > 360) {
-            degrees -= 360;
-        }
-        while (degrees < 0) {
-            degrees += 360;
-        }
-        return new Quaternionf(FastMath.cosDeg((degrees) / 2),x,y,z);
-    }
-
-    public final Quaternionf setAxis(Vector3f axis){
-        return new Quaternionf(w,axis.x,axis.y,axis.z);
-    }
-
-    public Matrix4f ToRotationMatrix()
-    {
-        Vector3f forward =  new Vector3f(2.0f * (x * z - w * y), 2.0f * (y * z + w * x), 1.0f - 2.0f * (x * x + y * y));
-        Vector3f up = new Vector3f(2.0f * (x * y + w * z), 1.0f - 2.0f * (x * x + z * z), 2.0f * (y * z - w * x));
-        Vector3f right = new Vector3f(1.0f - 2.0f * (y * y + z * z), 2.0f * (x * y - w * z), 2.0f * (x * z + w * y));
-
-        return new Matrix4f().InitRotation(forward, up, right);
     }
 
     public static final Quaternionf slerp(final Quaternionf a, final Quaternionf b, float t) {
@@ -274,119 +238,43 @@ public class Quaternionf implements Serializable{
         return a.multiply(beta).add(b.multiply(alpha));
     }
 
-    public Quaternionf slerp (Quaternionf end, float alpha) {
-        final float d = this.x * end.x + this.y * end.y + this.z * end.z + this.w * end.w;
-        float absDot = d < 0.f ? -d : d;
-
-        // Set the first and second scale for the interpolation
-        float scale0 = 1f - alpha;
-        float scale1 = alpha;
-
-        // Check if the angle between the 2 quaternions was big enough to
-        // warrant such calculations
-        if ((1 - absDot) > 0.1) {// Get the angle between the 2 quaternions,
-            // and then store the sin() of that angle
-            final float angle = (float)Math.acos(absDot);
-            final float invSinTheta = 1f / (float)Math.sin(angle);
-
-            // Calculate the scale for q1 and q2, according to the angle and
-            // it's sine value
-            scale0 = ((float)Math.sin((1f - alpha) * angle) * invSinTheta);
-            scale1 = ((float)Math.sin((alpha * angle)) * invSinTheta);
-        }
-
-        if (d < 0.f) scale1 = -scale1;
-
-        // Calculate the x, y, z and w values for the quaternion by using a
-        // special form of linear interpolation for quaternions.
-        Quaternionf quat = new Quaternionf((scale0 * w) + (scale1 * end.w),
-                (scale0 * x) + (scale1 * end.x),
-                (scale0 * y) + (scale1 * end.y),
-                (scale0 * z) + (scale1 * end.z)
-                );
-        // Return the interpolated quaternion
-        return quat;
-    }
-
-    public Quaternionf NLerp(Quaternionf dest, float lerpFactor, boolean shortest)
-    {
-        Quaternionf correctedDest = dest;
-
-        if(shortest && this.Dot(dest) < 0)
-            correctedDest = new Quaternionf( -dest.w,-dest.x, -dest.y, -dest.z);
-
-        return correctedDest.subtract(this).multiply(lerpFactor).add(this).normalize();
-    }
-
-    public Quaternionf SLerp(Quaternionf dest, float lerpFactor, boolean shortest)
-    {
-        final float EPSILON = 1e3f;
-
-        float cos = this.Dot(dest);
-        Quaternionf correctedDest = dest;
-
-        if(shortest && cos < 0)
-        {
-            cos = -cos;
-            correctedDest = new Quaternionf( -dest.w,-dest.x, -dest.y, -dest.z);
-        }
-
-        if(Math.abs(cos) >= 1 - EPSILON)
-            return NLerp(correctedDest, lerpFactor, false);
-
-        float sin = (float)Math.sqrt(1.0f - cos * cos);
-        float angle = (float)Math.atan2(sin, cos);
-        float invSin =  1.0f/sin;
-
-        float srcFactor = (float)Math.sin((1.0f - lerpFactor) * angle) * invSin;
-        float destFactor = (float)Math.sin((lerpFactor) * angle) * invSin;
-
-        return this.multiply(srcFactor).add(correctedDest.multiply(destFactor));
-    }
-    
     public Quaternionf invert() {
         float invNorm = 1.0f / (x * x + y * y + z * z + w * w);
         return new Quaternionf(w*invNorm,-x*invNorm,-y*invNorm,-z*invNorm);
     }
-
-    public Quaternionf invertIndirect() {
-        Vector3f v = this.toEuler();
-        v = v.inverse();
-        return new Quaternionf(v);
-    }
     
     public Vector3f toEuler(){
-        float nx,ny,nz;
-        
-        float ysqr = y * y;
-        
-	float t0 = + 2.0f * (w * x + y * z);
-	float t1 = + 1.0f - 2.0f * (x * x + ysqr);
-	nx = FastMath.atan2(t0, t1);
 
-	float t2 = + 2.0f * (w * y - z * x);
-	t2 = t2 > 1.0f ? 1.0f : t2;
-	t2 = t2 < -1.0f ? -1.0f : t2;
-	ny = (float)Math.asin(t2);
+	    float t0 = 2.0f * (w * x - y * z);
+	    float t1 = 1.0f - 2.0f * (x * x + y * y);
+	    float pitch = (float) Math.atan2(t0, t1);
 
-	float t3 = + 2.0f * (w * z + x * y);
-	float t4 = + 1.0f - 2.0f * (ysqr + z * z);  
-	nz = FastMath.atan2(t3, t4);
+        float yaw = (float)Math.asin((2 * (x * z + y * w)));
+
+	    float t3 = 2.0f * (w * z - x * y);
+	    float t4 = 1.0f - 2.0f * (y * y + z * z);
+        float roll = (float) Math.atan2(t3, t4);
+
+        roll = (float)Math.toDegrees(roll);
+        pitch = (float)Math.toDegrees(pitch);
+        yaw = (float)Math.toDegrees(yaw);
         
-        nx = (float)Math.toDegrees(nx);
-        ny = (float)Math.toDegrees(ny);
-        nz = (float)Math.toDegrees(nz);
-        
-        Vector3f end = new Vector3f(nx,ny,nz);
+        Vector3f end = new Vector3f(pitch,yaw,roll);
         
         return end;
     }
-    public float Dot(Quaternionf r)
-    {
-        return x * r.x + y * r.y + z * r.z + w * r.w;
+
+    public Matrix4f toMatrix() {
+        Quaternionf q = this.normalize();
+        return new Matrix4f(
+                w*w + x*x - z*z - y*y,    2.0f * q.x * q.y + 2.0f * q.z * q.w,            2.0f * q.x * q.z - 2.0f * q.y * q.w, 0,
+                2.0f * q.x * q.y - 2.0f * q.z * q.w,            y*y - z*z + w*w - x*x,     2.0f * q.y * q.z + 2.0f * q.x * q.w, 0,
+                2.0f * q.x * q.z + 2.0f * q.y * q.w,            2.0f * q.y * q.z - 2.0f * q.x * q.w,            z*z - y*y - x*x + w*w, 0,
+                0,                                              0,                                              0,                                        1);
     }
+
     public Vector3f transform(Vector3f v){
-        return this.convertMatrix().transform(new Vector4f(v)).truncate();
+        return this.toMatrix().transform(new Vector4f(v)).truncate();
     }
     
     @Override

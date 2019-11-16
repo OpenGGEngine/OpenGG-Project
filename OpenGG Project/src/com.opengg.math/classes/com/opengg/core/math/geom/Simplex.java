@@ -4,8 +4,9 @@
  * and open the template in the editor.
  */
 
-package com.opengg.core.math;
+package com.opengg.core.math.geom;
 
+import com.opengg.core.math.Vector3f;
 import com.opengg.core.math.geom.MinkowskiSet;
 
 /**

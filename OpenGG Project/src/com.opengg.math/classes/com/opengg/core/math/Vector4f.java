@@ -309,6 +309,10 @@ public class Vector4f {
         return new Vector3f(x,y,z);
     }
 
+    public float[] toArray() {
+        return new float[]{x,y,z,w};
+    }
+
     @Override
     public int hashCode() {
         int hash = 5;
@@ -349,4 +353,6 @@ public class Vector4f {
     public String toString(){
         return x + ", " + y + ", " + z + ", " + w; 
     }
+
+
 }

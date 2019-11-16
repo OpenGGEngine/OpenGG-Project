@@ -8,8 +8,6 @@ package com.opengg.core.math;
 import com.opengg.core.system.Allocator;
 import java.nio.FloatBuffer;
 
-import static java.lang.Math.*;
-
 /**
  *
  * @author Javier
@@ -132,11 +130,11 @@ public class Matrix4f {
     }
 
     public Matrix4f rotate(Quaternionf quat) {
-        return this.multiply(quat.convertMatrix());
+        return this.multiply(quat.toMatrix());
     }
 
     public Matrix4f rotate(float x, float y, float z) {
-        return this.multiply(new Quaternionf(new Vector3f(x,y,z)).convertMatrix());
+        return this.multiply(Quaternionf.createXYZ(new Vector3f(x,y,z)).toMatrix());
     }
 
     public static Matrix4f translate(float x, float y, float z) {
@@ -375,24 +373,6 @@ public class Matrix4f {
                             nm20, nm21, nm22, nm23,
                             nm30, nm31, nm32, nm33);
     }
-    
-    public Matrix4f InitRotation(Vector3f forward, Vector3f up, Vector3f right)
-    {
-        Vector3f f = forward;
-        Vector3f r = right;
-        Vector3f u = up;
-        Matrix4f news = new Matrix4f(r.x,r.y,r.z, 0,
-                u.x,u.y ,u.z, 0,
-                f.x, f.y,f.z, 0,
-                0,0,0,0);
-       /* m[0][0] = r.x;	m[0][1] = r.y;	m[0][2] = r.z;	m[0][3] = 0;
-        m[1][0] = u.x;	m[1][1] = u.y;	m[1][2] = u.z;	m[1][3] = 0;
-        m[2][0] = f.x;	m[2][1] = f.y;	m[2][2] = f.z;	m[2][3] = 0;
-        m[3][0] = 0;		m[3][1] = 0;		m[3][2] = 0;		m[3][3] = 1;
-*/
-        return news;
-    }
-
 
     public FloatBuffer getStackBuffer() {
         FloatBuffer buffer = Allocator.stackAllocFloat(16);
