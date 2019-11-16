@@ -8,6 +8,7 @@
 package com.opengg.core.render.texture;
 
 import com.opengg.core.engine.Resource;
+import com.opengg.core.math.Vector4f;
 import com.opengg.core.render.internal.opengl.texture.OpenGLTexture;
 import com.opengg.core.system.Allocator;
 import com.opengg.core.system.NativeResource;
@@ -24,6 +25,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL13.GL_CLAMP_TO_BORDER;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP;
 import static org.lwjgl.opengl.GL21.GL_SRGB8_ALPHA8;
 import static org.lwjgl.opengl.GL21.GL_SRGB_ALPHA;
@@ -143,6 +145,12 @@ public interface Texture{
     void setTextureWrapType(int wtype);
 
     /**
+     * Sets the color of the texture border if using GL_CLAMP_TO_BORDER
+     * @param borderColor
+     */
+    void setBorderColor(Vector4f borderColor);
+
+    /**
      * Returns all TextureData objets used to create this texture
      * @return
      */
@@ -155,7 +163,7 @@ public interface Texture{
     int getID();
 
     static Texture get2DTexture(String path){
-        return get2DTexture(TextureManager.loadTexture(path));
+        return get2DTexture(Resource.getTextureData(path));
     }
 
     static Texture get2DTexture(TextureData data){
@@ -180,9 +188,10 @@ public interface Texture{
         Texture texture = new OpenGLTexture(GL_TEXTURE_2D, format, intformat, input);
         texture.bind();
         texture.set2DData(data);
-        //texture.setTextureWrapType(GL_CLAMP);
+        texture.setTextureWrapType(GL_CLAMP_TO_BORDER);
         texture.setMinimumFilterType(GL_LINEAR);
         texture.setMaximumFilterType(GL_NEAREST);
+        texture.setBorderColor(new Vector4f(0,1,1,1));
         return texture;
     }
 
@@ -199,12 +208,12 @@ public interface Texture{
     }
 
     static Texture getCubemap(String path1, String path2, String path3, String path4, String path5, String path6){
-        TextureData data1 = TextureManager.loadTexture(path1, false);
-        TextureData data2 = TextureManager.loadTexture(path2, false);
-        TextureData data3 = TextureManager.loadTexture(path3, false);
-        TextureData data4 = TextureManager.loadTexture(path4, false);
-        TextureData data5 = TextureManager.loadTexture(path5, false);
-        TextureData data6 = TextureManager.loadTexture(path6, false);
+        TextureData data1 = Resource.getTextureData(path1);
+        TextureData data2 = Resource.getTextureData(path2);
+        TextureData data3 = Resource.getTextureData(path3);
+        TextureData data4 = Resource.getTextureData(path4);
+        TextureData data5 = Resource.getTextureData(path5);
+        TextureData data6 = Resource.getTextureData(path6);
         return getCubemap(data1,data2,data3,data4,data5,data6);
     }
 
@@ -213,12 +222,12 @@ public interface Texture{
     }
 
     static Texture getSRGBCubemap(String path1, String path2, String path3, String path4, String path5, String path6){
-        TextureData data1 = TextureManager.loadTexture(path1, false);
-        TextureData data2 = TextureManager.loadTexture(path2, false);
-        TextureData data3 = TextureManager.loadTexture(path3, false);
-        TextureData data4 = TextureManager.loadTexture(path4, false);
-        TextureData data5 = TextureManager.loadTexture(path5, false);
-        TextureData data6 = TextureManager.loadTexture(path6, false);
+        TextureData data1 = Resource.getTextureData(path1);
+        TextureData data2 = Resource.getTextureData(path2);
+        TextureData data3 = Resource.getTextureData(path3);
+        TextureData data4 = Resource.getTextureData(path4);
+        TextureData data5 = Resource.getTextureData(path5);
+        TextureData data6 = Resource.getTextureData(path6);
         return getSRGBCubemap(data1,data2,data3,data4,data5,data6);
     }
 
@@ -241,29 +250,12 @@ public interface Texture{
 
     static Texture getArrayTexture(String... paths){
         TextureData[] datums = new TextureData[paths.length];
-        for(int i = 0; i < paths.length; i++) datums[i] = TextureManager.loadTexture(paths[i]);
+        for(int i = 0; i < paths.length; i++) datums[i] = Resource.getTextureData(paths[i]);
         return  getArrayTexture(datums);
     }
 
     static Texture getArrayTexture(TextureData... datums){
         return Texture.create(Texture.arrayConfig(), datums);
-    }
-
-
-    static TextureData dataOfColor(Color color, float transparency){
-        return dataOfColor((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue(), (byte) (transparency*255f));
-    }
-
-    static TextureData dataOfColor(byte r, byte g, byte b, byte a){
-        TextureData data = new TextureData(1,1,4, Allocator.alloc(4)
-                .put(r)
-                .put(g)
-                .put(b)
-                .put(a)
-                .flip(),
-                "internal");
-
-        return data;
     }
 
     static Texture ofColor(Color color){
@@ -282,7 +274,7 @@ public interface Texture{
                 .put(b)
                 .put(a)
                 .flip(),
-                "internal");
+                "generated:color(%d, %d, %d, %d)".formatted(r,g,b,a));
 
         var tex = create(Texture.config(), data);
         Allocator.popStack();

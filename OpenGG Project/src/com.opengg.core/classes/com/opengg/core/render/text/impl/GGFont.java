@@ -5,7 +5,7 @@
  */
 package com.opengg.core.render.text.impl;
 
-import com.opengg.core.render.drawn.Drawable;
+import com.opengg.core.render.Renderable;
 import com.opengg.core.render.text.Font;
 import com.opengg.core.render.text.Text;
 import com.opengg.core.render.texture.Texture;
@@ -38,12 +38,12 @@ public class GGFont implements Font {
     }
 
     @Override
-    public Drawable createFromText(Text text) {
+    public Renderable createFromText(Text text) {
         return badname.createTextData(text, this);
     }
 
     @Override
-    public Drawable createFromText(String text) {
+    public Renderable createFromText(String text) {
         return this.createFromText(Text.from(text));
     }
 

@@ -3,9 +3,10 @@ package com.opengg.core.render.text;
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
-import com.opengg.core.render.drawn.Drawable;
+import com.opengg.core.render.Renderable;
 import com.opengg.core.render.drawn.DrawnObject;
-import com.opengg.core.render.drawn.TexturedDrawnObject;
+import com.opengg.core.render.drawn.TextureRenderable;
+import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.texture.TextureData;
 import com.opengg.core.system.Allocator;
@@ -142,11 +143,9 @@ public class TTF implements Font{
         for (int i = 0; i < BITMAP_H * BITMAP_W; i++) {
             realmap.put((byte) (color.x * 255)).put((byte) (color.y * 255)).put((byte) (color.z * 255)).put(bitmap.get());
         }
-
         realmap.flip();
 
-        TextureData data = new TextureData(BITMAP_W, BITMAP_H, 4, realmap, "internal");
-
+        TextureData data = new TextureData(BITMAP_W, BITMAP_H, 4, realmap, "generated:font");
         var texture = Texture.create(Texture.config(), data);
 
         return texture;
@@ -182,12 +181,12 @@ public class TTF implements Font{
     }
 
     @Override
-    public Drawable createFromText(String text) {
+    public Renderable createFromText(String text) {
         return createFromText(Text.from(text));
     }
 
     @Override
-    public Drawable createFromText(Text wholetext) {
+    public Renderable createFromText(Text wholetext) {
 
         String text = wholetext.getText();
         if(text.length() == 0){
@@ -262,18 +261,22 @@ public class TTF implements Font{
         Allocator.popStack();
         Allocator.popStack();
 
-        FloatBuffer data = Allocator.allocFloat(poss.size()*12);
+        FloatBuffer data = Allocator.allocFloat(poss.size()*8);
 
         for(int i = 0; i < poss.size(); i++){
             var uv = uvs.get(i);
             var pos = poss.get(i);
 
-            data.put(pos.x).put(-pos.y-wholetext.getSize()*0.2f).put(0).put(1).put(0).put(0).put(1).put(1f).put(0f).put(0f).put(uv.x).put(uv.y);
+            data.put(pos.x).put(-pos.y-wholetext.getSize()*0.2f).put(0).put(1f).put(0f).put(0f).put(uv.x).put(uv.y);
         }
         data.flip();
 
-        var object = new TexturedDrawnObject(new DrawnObject(data), this.texture);
-        //Allocator.popStack();
-        return object;
+        var object = new DrawnObject(data);
+        return () -> {
+            ShaderController.useConfiguration("ttf");
+            ShaderController.setUniform("color", wholetext.getColor());
+            texture.use(0);
+            object.render();
+        };
     }
 }

@@ -1,6 +1,6 @@
 package com.opengg.core.render.text;
 
-import com.opengg.core.render.drawn.Drawable;
+import com.opengg.core.render.Renderable;
 
 public interface Font {
     static Font load(String path){
@@ -10,6 +10,6 @@ public interface Font {
         throw new RuntimeException();
     }
 
-    Drawable createFromText(String text);
-    Drawable createFromText(Text text);
+    Renderable createFromText(String text);
+    Renderable createFromText(Text text);
 }

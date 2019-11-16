@@ -1,12 +1,15 @@
 package com.opengg.core.render.text;
 
+import com.opengg.core.math.Vector3f;
+
 public class Text {
     private String text;
     private boolean kern = true;
     private boolean newline = true;
-    private float size = 12;
+    private float size = 0.5f;
     private float linePadding = 0;
-    private float maxlinesize = -1f;
+    private float maxLineSize = -1f;
+    private Vector3f color = new Vector3f(1,1,1);
     private boolean centered = false;
 
     private Text(String text){
@@ -33,7 +36,7 @@ public class Text {
     }
 
     public Text maxLineSize(float maxlinesize) {
-        this.maxlinesize = maxlinesize;
+        this.maxLineSize = maxlinesize;
         return this;
     }
 
@@ -47,6 +50,11 @@ public class Text {
         return this;
     }
 
+    public Text color(Vector3f color) {
+        this.color = color;
+        return this;
+    }
+
     public void setText(String text) {
         this.text = text;
     }
@@ -56,7 +64,7 @@ public class Text {
     }
 
     public float getMaxLineSize() {
-        return maxlinesize;
+        return maxLineSize;
     }
 
     public float getLinePadding() {
@@ -73,6 +81,10 @@ public class Text {
 
     public boolean hasNewlines() {
         return newline;
+    }
+
+    public Vector3f getColor() {
+        return color;
     }
 
     public float getSize() {

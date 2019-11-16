@@ -8,7 +8,7 @@ package com.opengg.core.render.text.impl;
 import com.opengg.core.math.Tuple;
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.model.Material;
-import com.opengg.core.render.drawn.MaterialDrawnObject;
+import com.opengg.core.render.drawn.MaterialRenderable;
 import com.opengg.core.render.text.Text;
 import com.opengg.core.system.Allocator;
 
@@ -30,11 +30,11 @@ public class TextVBOGenerator {
         metaData = new GGFontFile(metaFile);
     }
 
-    protected MaterialDrawnObject createTextData(Text text, GGFont f) {
+    protected MaterialRenderable createTextData(Text text, GGFont f) {
         List<TextLine> lines = createStructure(text);
         FloatBuffer data = createQuadVertices(text, lines);
-        MaterialDrawnObject t = new MaterialDrawnObject(data, RenderEngine.getDefaultFormat());
-        t.setM(Material.defaultmaterial);
+        MaterialRenderable t = new MaterialRenderable(data, RenderEngine.getDefaultFormat());
+        t.setMaterial(Material.defaultmaterial);
         t.getMaterial().Kd = f.texture;
         return t;
     }
@@ -108,18 +108,13 @@ public class TextVBOGenerator {
             curserX = 0;
             curserY += LINE_HEIGHT * text.getSize() + text.getLinePadding();
         }
-        FloatBuffer f = Allocator.allocFloat(vertices.size() * 12);
+        FloatBuffer f = Allocator.allocFloat(vertices.size() * 8);
         int texpointer = 0;
         for (int i = 0; i < vertices.size(); i += 3) {
             //vertices
             f.put(vertices.get(i));
             f.put(vertices.get(i + 1));
             f.put(vertices.get(i + 2));
-            //color
-            f.put(1);
-            f.put(1);
-            f.put(1);
-            f.put(1);
 
             //normals
             f.put(1);

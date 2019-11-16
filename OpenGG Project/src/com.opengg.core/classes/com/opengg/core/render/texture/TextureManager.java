@@ -62,6 +62,7 @@ public class TextureManager {
             data.buffer.rewind();
             return data;
         }
+
         try{
             TextureData data = TextureLoader.loadTexture(path, flip);
             addTexture(data);
@@ -70,13 +71,7 @@ public class TextureManager {
             GGConsole.warn("Failed to load texture at " + path + ", using default instead");
             return defaultdata;
         }catch(Exception e){
-            StackTraceElement code = e.getStackTrace()[0];
-            System.err.println(code.getClassName() + "   " + code.toString());
-            System.err.println(path);
-            System.exit(0);
-
-            //throw new RuntimeException("Exception while loading texture " + path);//, e);
-            return null;
+            throw new RuntimeException("Exception while loading texture " + path, e);
         }
     }
     
