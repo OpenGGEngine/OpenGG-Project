@@ -1,16 +1,21 @@
 package com.opengg.core.network.common;
 
-import com.opengg.core.util.ArrayUtil;
+import com.opengg.core.console.GGConsole;
+import com.opengg.core.engine.Resource;
 import com.opengg.core.util.GGInputStream;
+import com.opengg.core.util.GGOutputStream;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
+import java.nio.file.Files;
+import java.nio.file.OpenOption;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 
-public class BulkMessage {
+public class ReceivingBulkMessage {
     private final Object RECEPTION_LOCK = new Object();
 
     private final ConnectionData source;
@@ -23,10 +28,10 @@ public class BulkMessage {
     private final int packetAmount;
     private final BulkMessagePacket[] data;
 
-    private int amountReceived = 0;
+    private int packetAmountReceived = 0;
     private byte[] dataCache;
 
-    public BulkMessage(Packet initialPacket) throws IOException {
+    public ReceivingBulkMessage(Packet initialPacket) throws IOException {
         var in = new GGInputStream(initialPacket.getData());
         source = initialPacket.getConnection();
         id = in.readLong();
@@ -48,8 +53,9 @@ public class BulkMessage {
         var bulkPacket = new BulkMessagePacket(packet);
         data[bulkPacket.id] = bulkPacket;
 
-        amountReceived++;
-        if(amountReceived == packetAmount){
+        packetAmountReceived++;
+        if(isComplete()){
+            GGConsole.debug("Fully received bulk message");
             synchronized (RECEPTION_LOCK){
                 RECEPTION_LOCK.notifyAll();
             }
@@ -58,7 +64,7 @@ public class BulkMessage {
 
     public byte[] getAllData(){
         synchronized (RECEPTION_LOCK){
-            if(getPacketAmount() != getAmountReceived()){
+            if(!isComplete()){
                 try {
                     RECEPTION_LOCK.wait();
                 } catch (InterruptedException e) {
@@ -104,7 +110,7 @@ public class BulkMessage {
         return isFile;
     }
 
-    public long getSize() {
+    public int getSize() {
         return size;
     }
 
@@ -116,11 +122,15 @@ public class BulkMessage {
         return packetAmount;
     }
 
-    public int getAmountReceived() {
-        return amountReceived;
+    public int getPacketAmountReceived() {
+        return packetAmountReceived;
     }
 
-    public static class BulkMessagePacket{
+    public boolean isComplete(){
+        return packetAmountReceived == packetAmount;
+    }
+
+    private static class BulkMessagePacket{
         int id;
         int length;
         byte[] data;
@@ -128,6 +138,7 @@ public class BulkMessage {
 
         public BulkMessagePacket(Packet packet) throws IOException {
             var in = new GGInputStream(packet.getData());
+            in.readLong(); //message identifier, useless
             id = in.readInt();
             length = in.readInt();
             data = in.readByteArray(length);
