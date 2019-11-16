@@ -5,6 +5,7 @@ import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAmount;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -46,6 +47,8 @@ public class Executor {
         containers.removeAll(tlist);
 
         tlist.forEach(ExecutorContainer::execute);
+        //if(!tempcontainers.isEmpty()) System.out.println(Arrays.toString(tempcontainers.get(0).source));
+        if(!tempcontainers.isEmpty()) update(time);
     }
 
     /**
@@ -121,7 +124,7 @@ public class Executor {
             return new UselessSleeper();
         }
 
-        var container = new ExecutorContainer(exec, secs);
+        var container = new ExecutorContainer(exec, secs, Thread.currentThread().getStackTrace());
         tempcontainers.add(container);
         return container.sleeper;
     }
@@ -130,11 +133,13 @@ public class Executor {
         private Runnable runnable;
         private Sleeper sleeper;
         private float time;
+        private StackTraceElement[] source;
 
-        private ExecutorContainer(Runnable runnable, float time) {
+        private ExecutorContainer(Runnable runnable, float time, StackTraceElement[] source) {
             this.runnable = runnable;
             this.sleeper = new Sleeper();
             this.time = time;
+            this.source = source;
         }
 
         private boolean isComplete() {
@@ -142,7 +147,14 @@ public class Executor {
         }
 
         private void execute() {
-            runnable.run();
+            try{
+                runnable.run();
+            }catch (Exception e){
+                var newException = new RuntimeException("Caused in executable:");
+                newException.setStackTrace(this.source);
+                e.addSuppressed(newException);
+                throw e;
+            }
             sleeper.awaken();
         }
     }
