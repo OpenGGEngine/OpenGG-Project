@@ -6,12 +6,12 @@
 
 package com.opengg.core.physics.collision;
 
-import com.opengg.core.math.Matrix3f;
 import com.opengg.core.math.Tuple;
 import com.opengg.core.math.UnorderedTuple;
 import com.opengg.core.math.Vector3f;
-import com.opengg.core.physics.PhysicsEntity;
+import com.opengg.core.physics.PhysicsProvider;
 import com.opengg.core.physics.PhysicsSystem;
+import com.opengg.core.physics.RigidBody;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -21,8 +21,8 @@ import java.util.stream.Collectors;
  * @author Javier
  */
 public class CollisionManager {
-    private static Map<UnorderedTuple<ColliderGroup>, Collision> contactCache = new HashMap<>();
-    private static final List<ColliderGroup> test = new LinkedList<>();
+    private static Map<UnorderedTuple<RigidBody>, Collision> contactCache = new HashMap<>();
+    private static final List<RigidBody> test = new LinkedList<>();
     public static boolean parallelProcessing = false;
     public static boolean enableResponse = true;
 
@@ -30,11 +30,11 @@ public class CollisionManager {
         test.clear();
     }
 
-    public static void addToTest(ColliderGroup c){
+    public static void addToTest(RigidBody c){
         test.add(c);
     }
 
-    public static void addToTest(List<ColliderGroup> c){
+    public static void addToTest(List<RigidBody> c){
         test.addAll(c);
     }
 
@@ -45,124 +45,78 @@ public class CollisionManager {
                         .map(c2 ->new UnorderedTuple<>(c,c2)))
                 .filter(t -> t.x != t.y)
                 .distinct()
-                .map(t -> t.x.checkForCollision(t.y))
-                .flatMap(Optional::stream)
+                .filter(t -> t.x.hasPhysicsProvider() || t.y.hasPhysicsProvider())
+                .map(t -> Tuple.of(t, t.x.checkForCollision(t.y)))
+                .filter(t -> t.y.isPresent())
+                .map(t -> new Collision(t.x.x, t.x.y, t.y.get()))
                 .collect(Collectors.toList());
 
-        var previousCaches = newCollisions.stream()
-                .filter(c -> contactCache.containsKey(UnorderedTuple.ofUnordered(c.thiscollider,c.other)))
-                .map(c -> Tuple.of(c, contactCache.get(UnorderedTuple.ofUnordered(c.thiscollider,c.other))))
+        var cacheHits = newCollisions.stream()
+                .filter(collision -> contactCache.containsKey(UnorderedTuple.ofUnordered(collision.thiscollider,collision.other)))
+                .map(collision -> Tuple.of(collision, contactCache.get(UnorderedTuple.ofUnordered(collision.thiscollider,collision.other))))
                 .collect(Collectors.toList());
 
-        var uncachedCollisions = newCollisions.stream()
+        var mergedFromHits = cacheHits.stream()
+                .peek(pair -> {
+                    if(pair.x.thiscollider == pair.y.other){
+                        pair.y = Collision.reverse(pair.y);
+                    }
+                }).map(pair -> new Collision(pair.x.thiscollider, pair.x.other, ContactManifold.combineManifolds(List.of(pair.x.manifold, pair.y.manifold)))).collect(Collectors.toList());
+
+        var cacheMisses = newCollisions.stream()
                 .filter(c -> !contactCache.containsKey(UnorderedTuple.ofUnordered(c.thiscollider,c.other)))
                 .collect(Collectors.toList());
 
-        for(var cachedCollision : previousCaches){
-            if(cachedCollision.x.thiscollider == cachedCollision.y.other){
-                cachedCollision.y = Collision.reverse(cachedCollision.y);
-            }
-
-            ContactManifold.combineManifolds(cachedCollision.x.manifold, cachedCollision.y.manifold);
-        }
-
         contactCache.clear();
-        contactCache.putAll(previousCaches.stream()
-                            .collect(Collectors.toMap(c -> UnorderedTuple.ofUnordered(c.x.thiscollider,c.y.other), c -> c.x)));
-
-        contactCache.putAll(uncachedCollisions.stream()
+        contactCache.putAll(mergedFromHits.stream()
                 .collect(Collectors.toMap(c -> UnorderedTuple.ofUnordered(c.thiscollider,c.other), c -> c)));
+
+        contactCache.putAll(cacheMisses.stream()
+                .collect(Collectors.toMap(c -> UnorderedTuple.ofUnordered(c.thiscollider,c.other), c -> c)));
+
 
         var collisions = contactCache.values();
 
         if(parallelProcessing) collisions.parallelStream().forEach(CollisionManager::processCollision);
         else for(Collision c : collisions) processCollision(c);
 
-        for(ColliderGroup next : test){
-            processResponse((PhysicsEntity) next.parent);
+        for(RigidBody next : test){
+            if(next.hasPhysicsProvider())
+                processResponse((PhysicsProvider) next.getPhysicsProvider().get());
         }
     }
 
-    public static void processCollision(Collision col){
-        PhysicsEntity e1 = (PhysicsEntity) col.thiscollider.parent;
-        PhysicsEntity e2 = (PhysicsEntity) col.other.parent;
-        if(e1 != null && e2 != null){
-            var contacts = col.manifold.points.stream().map(c -> processContact(e1, c)).collect(Collectors.toList());
-            e1.responses.addAll(contacts);
-            e2.responses.addAll(contacts.stream().map(c -> c.invert()).collect(Collectors.toList()));
-        }else if(e1 == null ^ e2 == null){
-            e1.responses.addAll(col.manifold.points.stream().map(c -> processContact(e1, c)).collect(Collectors.toList()));
-        }
+    public static void processCollision(Collision col) {
+        var contacts = col.manifold.contactsInUse.stream().map(c -> processContact(col.thiscollider, col.other, c)).collect(Collectors.toList());
+        col.thiscollider.getPhysicsProvider().ifPresent(c -> c.responses.add(new ResponseSet(contacts)));
+        col.other.getPhysicsProvider().ifPresent(c -> c.responses.add(new ResponseSet(contacts.stream().map(Response::invert).collect(Collectors.toList()))));
     }
 
-    private static Response processContact(PhysicsEntity e1, Contact manifold) {
+    private static Response processContact(RigidBody e1, RigidBody e2, Contact manifold) {
         var responseManifold = new Response();
 
-        var point = manifold.position;
+        Vector3f R1 = manifold.offset1;
+        Vector3f R2 = manifold.offset2;
 
-        Vector3f R = point.subtract(e1.getPosition());
-        Vector3f v = e1.velocity.add(R.cross(e1.angvelocity));
+        Vector3f v1 = e1.getPhysicsProvider().map(e -> e.velocity.add(R1.cross(e.angvelocity))).orElse(new Vector3f());
+        Vector3f v2 = e2.getPhysicsProvider().map(e -> e.velocity.add(R2.cross(e.angvelocity))).orElse(new Vector3f());
 
-        float jnum = v.dot(manifold.normal) * -(1 + e1.restitution);//v.multiply(-(1 + e1.restitution)).dot(manifold.normal);
-        float jdenom = 1/ e1.mass +
-                (e1.inertialMatrix.scale(e1.mass).multiply(new Matrix3f().rotation(e1.getRotation())).inverse()
-                        .multiply(R.cross(manifold.normal))
-                        .cross(R)).dot(manifold.normal);
-        float jr = jnum/jdenom;
-
-        float jd = e1.dynamicfriction * v.dot(manifold.normal) * -1;
-        float js = e1.staticfriction * v.dot(manifold.normal) * -1;
-
-        Vector3f tan = new Vector3f();
-        if(!v.cross(manifold.normal).rezero().equals(new Vector3f())){
-            tan = v.subtract(manifold.normal.multiply(v.dot(manifold.normal))).normalize();
-        }
-        Vector3f jf = tan.multiply(-jd);
-
-        if(js >= v.dot(tan) * e1.mass){
-            jf = tan.multiply(v.dot(tan) * e1.mass * -1f);
-        }
-
-        Vector3f jrv = manifold.normal.multiply(jr);
-        responseManifold.jr = jrv;
-        responseManifold.jf = jf;
-        responseManifold.R1 = R;
-        responseManifold.normal = manifold.normal;
-        responseManifold.depth = manifold.depth;
-        responseManifold.ratio = 1;
-
-        return responseManifold;
-    }
-
-    private static Response processContact(PhysicsEntity e1, PhysicsEntity e2, Contact manifold) {
-        var responseManifold = new Response();
-
-        var point = manifold.position;
-
-        Vector3f R1 = point.subtract(e1.getPosition());
-        Vector3f R2 = point.subtract(e2.getPosition());
-
-        Vector3f v1 = e1.velocity.add(R1.cross(e1.angvelocity));
-        Vector3f v2 = e2.velocity.add(R2.cross(e2.angvelocity));
+        float m1 = e1.getPhysicsProvider().map(e -> e.mass).orElse(0f);
+        float m2 = e2.getPhysicsProvider().map(e -> e.mass).orElse(0f);
 
         Vector3f v = v1.subtract(v2);
 
         float jnum = v.dot(manifold.normal) * -(1 + (e1.restitution + e2.restitution) / 2f);
-        float jdenom = 1 / e1.mass + 1 / e2.mass +
-                (e1.inertialMatrix
-                        .scale(e1.mass)
-                        .multiply(new Matrix3f().rotation(e1.getRotation()))
+        float jdenom = (m1 == 0 ? 0 : 1/m1) +
+                       (m2 == 0 ? 0 : 1/m2) +
+                (e1.hasPhysicsProvider() ? e1.getPhysicsProvider().get().inertialMatrix
+                        .scale(m1)
                         .inverse()
-                        .multiply(R1.cross(manifold.normal))
-                        .cross(R1)
-                    .add(
-                            e2.inertialMatrix
-                                    .scale(e2.mass)
-                                    .multiply(new Matrix3f().rotation(e2.getRotation()))
-                                    .inverse()
-                                    .multiply(R2.cross(manifold.normal))
-                                    .cross(R2)))
-                    .dot(manifold.normal);
+                        .multiply(R1.cross(manifold.normal).cross(R1)) : new Vector3f())
+                .add((e2.hasPhysicsProvider() ? e2.getPhysicsProvider().get().inertialMatrix
+                        .scale(m2)
+                        .inverse()
+                        .multiply(R2.cross(manifold.normal).cross(R2)) : new Vector3f())).dot(manifold.normal);
 
         float jr = jnum / jdenom; //reaction force size
 
@@ -175,8 +129,8 @@ public class CollisionManager {
         }
         Vector3f jf = tan.multiply(-jd); //friction force for dynamic collision
 
-        if (js >= v.dot(tan) * (e1.mass + e2.mass)) {
-            jf = tan.multiply(v.dot(tan) * (e1.mass + e2.mass) * -1f); //static friction
+        if (js >= v.dot(tan) * (m1 + m2)) {
+            jf = tan.multiply(v.dot(tan) * (m1 + m2) * -1f); //static friction
         }
 
         Vector3f jrv = manifold.normal.multiply(jr); //reaction force along normal vector
@@ -187,43 +141,40 @@ public class CollisionManager {
         responseManifold.R2 = R2;
         responseManifold.normal = manifold.normal;
         responseManifold.depth = manifold.depth;
-        responseManifold.ratio = e1.velocity.length()/e2.velocity.length();
 
         return responseManifold;
     }
 
-    private static void processResponse(PhysicsEntity e) {
+    private static void processResponse(PhysicsProvider e) {
         if(e.responses.isEmpty()) return;
 
-        Vector3f depthchanges = new Vector3f();
+        for(var responseSet : e.responses) {
+            for (var response : responseSet.responses) {
+                var R = response.R1;//Vector3f.averageOf(response.manifolds.stream().map(m -> m.R1).collect(Collectors.toList()));
+                var jf = response.jf;//Vector3f.averageOf(response.manifolds.stream().map(m -> m.jf).collect(Collectors.toList()));
+                var jr = response.jr;//Vector3f.averageOf(response.manifolds.stream().map(m -> m.jr).collect(Collectors.toList()));
 
-        for(var response : e.responses){
-            var R  = response.R1;//Vector3f.averageOf(response.manifolds.stream().map(m -> m.R1).collect(Collectors.toList()));
-            var jf = response.jf;//Vector3f.averageOf(response.manifolds.stream().map(m -> m.jf).collect(Collectors.toList()));
-            var jr = response.jr;//Vector3f.averageOf(response.manifolds.stream().map(m -> m.jr).collect(Collectors.toList()));
+                var normal = response.normal;//Vector3f.averageOf(response.manifolds.stream().map(s -> s.normal).collect(Collectors.toList()));
 
-            var normal = response.normal;//Vector3f.averageOf(response.manifolds.stream().map(s -> s.normal).collect(Collectors.toList()));
+                var depth = response.depth;
+                if (enableResponse) {
+                    var velChange = jr.add(jf).divide(e.mass).divide(responseSet.responses.size());
 
-            var depth = response.depth;
-
-            if(enableResponse) {
-                var velChange = jr.add(jf).divide(e.mass);
-                var rotChange = e.inertialMatrix
-                        .scale(e.mass)
-                        .multiply(new Matrix3f().rotation(e.getRotation()))
-                        .inverse()
-                        .multiply(R.cross(normal))
-                        .multiply(jr.length());
-                e.velocity = e.velocity.add(velChange);
-                e.angvelocity = e.angvelocity.subtract(rotChange);
+                    e.velocity = e.velocity.add(velChange);
+                    if (e.applyRotationChangeOnCollision) {
+                        var rotChange =
+                                e.inertialMatrix.scale(e.mass).inverse().multiply(
+                                        R.cross(normal)
+                                ).multiply(jr.length())
+                                .add(e.inertialMatrix.scale(e.mass).inverse().multiply(
+                                        R.cross(jf)
+                                ).multiply(jf.length()));
+                        e.angvelocity = e.angvelocity.add(rotChange).divide(responseSet.responses.size());
+                    }
+                }
+                e.grounded = e.velocity.y == 0;
             }
-
-            e.setPosition(e.getPosition().add(depth));
-
-            e.grounded = e.velocity.y == 0;
         }
-
-        e.setPosition(e.getPosition().add(depthchanges));
         e.responses.clear();
     }
 
@@ -246,9 +197,18 @@ public class CollisionManager {
             inverted.normal = normal.inverse();
             inverted.R1 = R2;
             inverted.R2 = R1;
+            inverted.depth = depth;
             inverted.ratio = 1-ratio;
 
             return inverted;
+        }
+    }
+
+    public static class ResponseSet{
+        List<Response> responses = new ArrayList<>();
+
+        public ResponseSet(List<Response> responses) {
+            this.responses = responses;
         }
     }
 }

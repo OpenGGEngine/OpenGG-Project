@@ -6,6 +6,8 @@
 
 package com.opengg.core.physics.collision;
 
+import com.opengg.core.physics.RigidBody;
+
 /**
  *
  * @author Javier
@@ -13,10 +15,10 @@ package com.opengg.core.physics.collision;
 public class Collision{
     Collision(){}
 
-    public ColliderGroup thiscollider, other;
+    public RigidBody thiscollider, other;
     public ContactManifold manifold;
 
-    public Collision(ColliderGroup thiscollider, ColliderGroup other, ContactManifold manifold) {
+    public Collision(RigidBody thiscollider, RigidBody other, ContactManifold manifold) {
         this.thiscollider = thiscollider;
         this.other = other;
         this.manifold = manifold;
@@ -30,7 +32,7 @@ public class Collision{
         return c2;
     }
     
-    public boolean contains(ColliderGroup c){
+    public boolean contains(RigidBody c){
         return (c == thiscollider || c == other);
     }
 }
