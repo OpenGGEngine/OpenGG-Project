@@ -1,11 +1,6 @@
-/OpenGG Project/build/
-/OpenGG Project/dist/OpenGG_Test.jar
-/OpenGG Project/dist/logs/
-/OpenGG Project/out/
-/OpenGG Project/docs/
-/OpenGG Project/.idea/
-/OpenGG Project/.idea/workspace.xml
-/OpenGG Project/build/
-/OpenGG Project/nbproject/
-/cloc-1.70.exe
-*.bscf
+# Ignore Gradle project-specific cache directory
+.gradle
+.idea
+
+# Ignore Gradle build output directory
+build/
