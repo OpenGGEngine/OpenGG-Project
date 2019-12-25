@@ -1,0 +1,15 @@
+plugins{
+    id 'java-library'
+}
+
+dependencies {
+  compile project(':modules:system')
+}
+
+sourceSets {
+  main {
+    java {
+      srcDirs = ['classes']
+    }
+  }
+}

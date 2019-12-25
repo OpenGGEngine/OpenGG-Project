@@ -36,7 +36,7 @@ day we celebrate the "commitment" of the developers who work on Opengg and the d
 happened on this fine day.
 
 ## Graveyard
-Netbeans, OpenGGTest, entities, OBJLoader2, OBJLoader 1, OBJLoader 3, GlobalUtil, GlobalInfo, Universal Model Loader, Frankenshader, Matrix4f.getBuffer bug
+Netbeans, OpenGGTest, entities, OBJLoader2, OBJLoader 1, OBJLoader 3, GlobalUtil, GlobalInfo, Universal Model Loader, Frankenshader, Matrix4f.getBuffer bug, c:/res, c:/lib, Ethan Mak
 
 ## Resurrected
 Entities

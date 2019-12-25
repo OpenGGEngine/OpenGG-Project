@@ -1,0 +1,26 @@
+plugins{
+    id 'application'
+}
+
+dependencies {
+  compile project(':modules:system')
+  compile project(':modules:core')
+  compile project(':modules:math')
+  compile project(':modules:console')
+}
+
+mainClassName = 'com.opengg.test.OpenGGTest'
+
+tasks.run.workingDir = "../../dist/"
+
+application {
+    applicationDefaultJvmArgs = ['--enable-preview']
+}
+
+sourceSets {
+  main {
+    java {
+      srcDirs = ['classes']
+    }
+  }
+}
