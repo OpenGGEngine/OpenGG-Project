@@ -14,7 +14,8 @@ mainClassName = 'com.opengg.test.OpenGGTest'
 tasks.run.workingDir = "../../dist/"
 
 application {
-    applicationDefaultJvmArgs = ['--enable-preview']
+  mainModule = 'com.opengg.test'
+  applicationDefaultJvmArgs = ['--enable-preview']
 }
 
 sourceSets {

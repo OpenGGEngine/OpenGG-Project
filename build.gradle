@@ -6,13 +6,8 @@
  * User Manual available at https://docs.gradle.org/6.0.1/userguide/java_library_plugin.html
  */
 
-plugins {
-  id "rgoldberg.experimental-jigsaw" version "0.5-SNAPSHOT" apply false
-}
-
 configure(subprojects.findAll {it.name != 'modules'}) {
     apply plugin: 'java'
-    apply plugin: 'rgoldberg.experimental-jigsaw'
 
     sourceCompatibility = 1.14
     targetCompatibility = 1.14
@@ -20,6 +15,10 @@ configure(subprojects.findAll {it.name != 'modules'}) {
     project.ext.lwjglVersion = "3.2.3"
     project.ext.steamworks4jVersion = "1.8.0"
     project.ext.lwjglNatives = "natives-windows"
+
+    java {
+        modularity.inferModulePath = true
+    }
 
     compileJava {
         options.compilerArgs << '--enable-preview'

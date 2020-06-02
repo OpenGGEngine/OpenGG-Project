@@ -21,9 +21,10 @@ dependencies {
 	implementation "org.lwjgl:lwjgl"
 	implementation "org.lwjgl:lwjgl-jemalloc"
 	implementation "org.lwjgl:lwjgl-opengl"
-	runtimeOnly "org.lwjgl:lwjgl::$lwjglNatives"
-	runtimeOnly "org.lwjgl:lwjgl-jemalloc::$lwjglNatives"
-	runtimeOnly "org.lwjgl:lwjgl-opengl::$lwjglNatives"
+
+    implementation "org.lwjgl:lwjgl::$lwjglNatives"
+    implementation "org.lwjgl:lwjgl-jemalloc::$lwjglNatives"
+    implementation "org.lwjgl:lwjgl-opengl::$lwjglNatives"
 
 	implementation "com.code-disaster.steamworks4j:steamworks4j:${steamworks4jVersion}"
 }

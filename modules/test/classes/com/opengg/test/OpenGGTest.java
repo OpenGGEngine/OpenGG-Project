@@ -54,7 +54,7 @@ public class  OpenGGTest extends GGApplication{
         w.vsync = true;
         w.glmajor = 4;
         w.glminor = 3;
-        w.renderer = WindowInfo.RendererType.VULKAN;
+        w.renderer = WindowInfo.RendererType.OPENGL;
         OpenGG.initialize(new OpenGGTest(), new InitializationOptions()
                                                 .setApplicationName("OpenGG Test")
                                                 .setWindowInfo(w));

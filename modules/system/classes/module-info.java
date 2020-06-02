@@ -6,8 +6,12 @@
 module com.opengg.system {
     requires com.opengg.base;
     requires com.opengg.console;
+
     requires org.lwjgl;
     requires org.lwjgl.opengl;
+
+    requires org.lwjgl.natives;
+    requires org.lwjgl.opengl.natives;
 
     exports com.opengg.core.system;
 }
