@@ -8,12 +8,14 @@
 package com.opengg.core.render.texture;
 
 import com.opengg.core.engine.Resource;
+import com.opengg.core.math.Vector2i;
+import com.opengg.core.math.Vector3i;
 import com.opengg.core.math.Vector4f;
+import com.opengg.core.render.RenderEngine;
 import com.opengg.core.render.internal.opengl.texture.OpenGLTexture;
+import com.opengg.core.render.internal.vulkan.texture.VulkanImage;
+import com.opengg.core.render.window.WindowInfo;
 import com.opengg.core.system.Allocator;
-import com.opengg.core.system.NativeResource;
-import com.opengg.core.system.NativeResourceManager;
-import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
 
 import java.awt.*;
@@ -26,15 +28,12 @@ import java.util.List;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.GL_CLAMP_TO_BORDER;
-import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP;
-import static org.lwjgl.opengl.GL21.GL_SRGB8_ALPHA8;
-import static org.lwjgl.opengl.GL21.GL_SRGB_ALPHA;
-import static org.lwjgl.opengl.GL30.GL_TEXTURE_2D_ARRAY;
+import static org.lwjgl.vulkan.VK10.*;
+import static org.lwjgl.vulkan.VK10.VK_IMAGE_USAGE_TRANSFER_DST_BIT;
 
 /**
  * Represents an instance of a graphics API texture <br><br>
  * @author Javier
- * @throws com.opengg.core.exceptions.RenderException Thrown if there is no instance of a graphics API in the current thread
  */
 public interface Texture{
     /**
@@ -54,27 +53,6 @@ public interface Texture{
     void setActiveTexture(int loc);
 
     /**
-     * Binds the texture to the given texture unit
-     * @param loc Texture unit to bind this texture to
-     */
-    void use(int loc);
-
-    /**
-     * Creates an empty 2d storage buffer for this texture
-     * @param width Texture width
-     * @param height Texture heights
-     */
-    void set2DStorage(int width, int height);
-
-    /**
-     * Creates an empty 3d storage buffer for this texture
-     * @param width Texture width
-     * @param height Texture height
-     * @param depth Texture depth, or alternatively array size if using array textures
-     */
-    void set3DStorage(int width, int height, int depth);
-
-    /**
      * Uploads the given {@link TextureData} object to the texture<br><br>
      * This method automatically creates the required storage using the size of the given object
      * @param data TextureData to create a texture from
@@ -84,71 +62,15 @@ public interface Texture{
     /**
      * Uploads the given {@link TextureData} object to the texture, starting at the given x and y offsets <br><br>
      * This method copies the data from the TextureData object from {@code xoffset, yoffset} to {@code xoffset + data.width, yoffset + data.height}
-     * Because this method does not create storage for this texture, instead just updating a subsection, calling it before {@link #set2DStorage(int, int)} will cause an API error
-     * @param xoffset x position offset
-     * @param yoffset y position offset
      * @param data TextureData to upload starting at the given offsets
      */
-    void set2DSubData(int xoffset, int yoffset, TextureData data);
+    void set2DSubData(TextureData data, Vector2i offset);
 
     void setCubemapData(TextureData data1, TextureData data2, TextureData data3, TextureData data4, TextureData data5, TextureData data6);
 
     void set3DData(TextureData[] datums);
 
     void set3DSubData(int xoffset, int yoffset, int zoffset, TextureData[] datums);
-
-    /**
-     * Creates mipmap levels for this texture
-     */
-    void generateMipmaps();
-
-    /**
-     * Sets the minimum LOD/mipmap level for this texture
-     * @param mlod Minimum LOD level
-     */
-    void setMinimumLOD(int mlod);
-
-    /**
-     * Sets the maximum LOD/mipmap level for this texture
-     * @param mlod Maximum LOD level
-     */
-    void setMaximumLOD(int mlod);
-
-    /**
-     * Sets the minimum filter type. This determines how OpenGL interpolates between pixels
-     * @param ftype
-     */
-    void setMinimumFilterType(int ftype);
-
-    /**
-     * Sets the maximum filter type. This determines how OpenGL blends pixels when a fragment contains multiple pixels when sampling
-     * @param ftype
-     */
-    void setMaximumFilterType(int ftype);
-
-    /**
-     * Sets the anisotropy level
-     * @param level
-     */
-    void setAnisotropyLevel(int level);
-
-    /**
-     * Sets the LOD bias for this texture. All LOD levels will be shifted by this bias (for example, if {@code bias} is 2, this texture will be 2 mipmap levels higher than normal
-     * @param bias
-     */
-    void setLODBias(int bias);
-
-    /**
-     * Sets the texture wrap type, values can be GL_CLAMP or GL_REPEAT
-     * @param wtype
-     */
-    void setTextureWrapType(int wtype);
-
-    /**
-     * Sets the color of the texture border if using GL_CLAMP_TO_BORDER
-     * @param borderColor
-     */
-    void setBorderColor(Vector4f borderColor);
 
     /**
      * Returns all TextureData objets used to create this texture
@@ -167,7 +89,7 @@ public interface Texture{
     }
 
     static Texture get2DTexture(TextureData data){
-        return get2DTexture(data, GL_RGBA, GL_RGBA8, GL_UNSIGNED_BYTE);
+        return get2DTexture(data, SamplerFormat.RGBA, TextureFormat.SRGBA8, InputFormat.UNSIGNED_BYTE);
     }
 
     static Texture get2DSRGBTexture(String path){
@@ -175,50 +97,30 @@ public interface Texture{
     }
 
     static Texture get2DSRGBTexture(TextureData data){
-        return get2DTexture(data, GL_RGBA, GL_SRGB_ALPHA, GL_UNSIGNED_BYTE);
+        return get2DTexture(data, SamplerFormat.RGBA, TextureFormat.SRGBA8, InputFormat.UNSIGNED_BYTE);
     }
 
-    static Texture get2DTexture(TextureData data, int format, int intformat, int storage){
-        return create(Texture.config().format(format).internalFormat(intformat).inputType(storage), data);
+    static Texture get2DTexture(TextureData data, SamplerFormat format, TextureFormat intformat, InputFormat storage){
+        return create(Texture.config().samplerFormat(format).internalFormat(intformat).inputFormat(storage), data);
     }
 
-    static Texture get2DFramebufferTexture(int x, int y, int format, int intformat, int input){
+    static Texture get2DFramebufferTexture(int x, int y, SamplerFormat format, TextureFormat intformat, InputFormat input){
         TextureData data = new TextureData(x, y, 4, null, "framebuffer");
 
-        Texture texture = new OpenGLTexture(GL_TEXTURE_2D, format, intformat, input);
+        Texture texture = new OpenGLTexture(Texture.config().samplerFormat(format).internalFormat(intformat).inputFormat(input)
+                .wrapType(WrapType.CLAMP_BORDER).minimumFilter(FilterType.LINEAR).maxFilter(FilterType.LINEAR), new Vector3i(x,y,1));
         texture.bind();
         texture.set2DData(data);
-        texture.setTextureWrapType(GL_CLAMP_TO_BORDER);
-        texture.setMinimumFilterType(GL_LINEAR);
-        texture.setMaximumFilterType(GL_NEAREST);
-        texture.setBorderColor(new Vector4f(0,1,1,1));
         return texture;
     }
 
-    static Texture getCubemapFramebufferTexture(int x, int y, int format, int intformat, int input){
+    static Texture getCubemapFramebufferTexture(int x, int y, SamplerFormat format, TextureFormat intformat, InputFormat input){
         TextureData data = new TextureData(x, y, 4, null, "framebuffer");
-
-        Texture texture = new OpenGLTexture(GL_TEXTURE_CUBE_MAP, format, intformat, input);
+        Texture texture = new OpenGLTexture(Texture.cubemapConfig().samplerFormat(format).internalFormat(intformat).inputFormat(input)
+                .wrapType(WrapType.CLAMP_BORDER).minimumFilter(FilterType.LINEAR).maxFilter(FilterType.NEAREST), new Vector3i(x,y,1));
         texture.bind();
         texture.setCubemapData(data, data, data, data, data, data);
-        //texture.setTextureWrapType(GL_CLAMP);
-        texture.setMinimumFilterType(GL_LINEAR);
-        texture.setMaximumFilterType(GL_NEAREST);
         return texture;
-    }
-
-    static Texture getCubemap(String path1, String path2, String path3, String path4, String path5, String path6){
-        TextureData data1 = Resource.getTextureData(path1);
-        TextureData data2 = Resource.getTextureData(path2);
-        TextureData data3 = Resource.getTextureData(path3);
-        TextureData data4 = Resource.getTextureData(path4);
-        TextureData data5 = Resource.getTextureData(path5);
-        TextureData data6 = Resource.getTextureData(path6);
-        return getCubemap(data1,data2,data3,data4,data5,data6);
-    }
-
-    static Texture getCubemap(TextureData data1, TextureData data2, TextureData data3, TextureData data4, TextureData data5, TextureData data6){
-        return getCubemap(data1, data2, data3, data4, data5, data6, GL_RGBA, GL_RGBA8, GL_UNSIGNED_BYTE);
     }
 
     static Texture getSRGBCubemap(String path1, String path2, String path3, String path4, String path5, String path6){
@@ -232,36 +134,16 @@ public interface Texture{
     }
 
     static Texture getSRGBCubemap(TextureData data1, TextureData data2, TextureData data3, TextureData data4, TextureData data5, TextureData data6){
-        return getCubemap(data1, data2, data3, data4, data5, data6, GL_RGBA, GL_SRGB_ALPHA, GL_UNSIGNED_BYTE);
+        return getCubemap(data1, data2, data3, data4, data5, data6, SamplerFormat.RGBA, TextureFormat.SRGBA8, InputFormat.UNSIGNED_BYTE);
     }
 
-    static Texture getCubemap(TextureData data1, TextureData data2, TextureData data3, TextureData data4, TextureData data5, TextureData data6, int format, int intformat, int storage){
-        Texture texture = new OpenGLTexture(GL_TEXTURE_CUBE_MAP, format, intformat, storage);
-        texture.setActiveTexture(0);
-        texture.bind();
-        texture.setCubemapData(data1, data2, data3, data4, data5, data6);
-        texture.setTextureWrapType(GL_REPEAT);
-        texture.setMinimumFilterType(GL_LINEAR);
-        texture.setMaximumFilterType(GL_NEAREST);
-        texture.generateMipmaps();
-        texture.unbind();
-        return texture;
-    }
-
-    static Texture getArrayTexture(String... paths){
-        TextureData[] datums = new TextureData[paths.length];
-        for(int i = 0; i < paths.length; i++) datums[i] = Resource.getTextureData(paths[i]);
-        return  getArrayTexture(datums);
-    }
-
-    static Texture getArrayTexture(TextureData... datums){
-        return Texture.create(Texture.arrayConfig(), datums);
+    static Texture getCubemap(TextureData data1, TextureData data2, TextureData data3, TextureData data4, TextureData data5, TextureData data6, SamplerFormat format, TextureFormat intformat, InputFormat storage){
+        return Texture.create(Texture.cubemapConfig().samplerFormat(format).internalFormat(intformat).inputFormat(storage), data1, data2, data3, data4, data5, data6);
     }
 
     static Texture ofColor(Color color){
         return ofColor(color, color.getTransparency());
     }
-
 
     static Texture ofColor(Color color, float transparency){
         return ofColor((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue(), (byte) (transparency*255f));
@@ -286,36 +168,43 @@ public interface Texture{
     }
 
     static Texture create(TextureConfig config, TextureData... data){
-        if(data.length == 0) return Texture.create(Texture.config(), TextureManager.getDefault());
+        if(data.length == 0) return Texture.create(config, TextureManager.getDefault());
 
-        Texture texture = new OpenGLTexture(config.internaltype, config.format, config.intformat, config.input);
-        texture.setActiveTexture(0);
-        texture.bind();
-        if(config.type == TextureType.TEXTURE_2D) {
-            texture.set2DData(data[0]);
+        var size = switch (config.getType()){
+            case TEXTURE_ARRAY -> {
+                var x = Arrays.stream(data).mapToInt(d ->  d.width).max().getAsInt();
+                var y = Arrays.stream(data).mapToInt(d ->  d.height).max().getAsInt();
+                yield new Vector3i(x,y,data.length);
+            }
+            case TEXTURE_CUBEMAP, TEXTURE_2D -> new Vector3i(data[0].width, data[0].height, 1);
+            case TEXTURE_3D -> new Vector3i(data[0].width, data[0].height, data.length);
+        };
 
-        }else if(config.type == TextureType.TEXTURE_ARRAY){
-            var x = Arrays.stream(data).mapToInt(d ->  d.width).max().getAsInt();
-            var y = Arrays.stream(data).mapToInt(d ->  d.height).max().getAsInt();
-
+        if(config.getType() == TextureType.TEXTURE_ARRAY) {
             try {
-                data = setSize(data,x,y);
+                data = setSize(data,size.x,size.y);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-            texture.set3DStorage(data[0].width, data[0].height, data.length);
-            texture.set3DSubData(0, 0, 0, data);
-
-        }else if(config.type == TextureType.TEXTURE_CUBEMAP){
-            if(data.length < 6) throw new InvalidParameterException("Incorrect amount of textures passed to cubemap generation  (expected 6, got " + data.length + ")");
-            texture.setCubemapData(data[0], data[1], data[2], data[3], data[4], data[5]);
         }
 
-        //texture.setTextureWrapType(config.wraptype);
-        texture.setMinimumFilterType(config.minfilter);
-        texture.setMaximumFilterType(config.maxfilter);
-        texture.unbind();
+        var texture = switch (RenderEngine.getRendererType()){
+            case OPENGL -> new OpenGLTexture(config, size);
+            case VULKAN -> new VulkanImage(config, VK_SAMPLE_COUNT_1_BIT, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT, new Vector3i(size.x, size.y, 1), 6);
+        };
+
+        switch (config.type) {
+            case TEXTURE_2D -> texture.set2DData(data[0]);
+            case TEXTURE_ARRAY -> texture.set3DData(data);
+            case TEXTURE_CUBEMAP -> {
+                if (data.length < 6)
+                    throw new InvalidParameterException("Incorrect amount of textures passed to cubemap generation  (expected 6, got " + data.length + ")");
+                texture.setCubemapData(data[0], data[1], data[2], data[3], data[4], data[5]);
+            }
+        }
+
+        if(RenderEngine.getRendererType() == WindowInfo.RendererType.OPENGL) texture.unbind();
+
         return texture;
     }
 
@@ -356,7 +245,7 @@ public interface Texture{
     }
 
     static TextureConfig SRGBConfig(){
-        return TextureConfig.defaultconfig.internalFormat(GL_SRGB_ALPHA);
+        return TextureConfig.defaultconfig.internalFormat(TextureFormat.SRGBA8);
     }
 
     static TextureConfig arrayConfig(){
@@ -364,7 +253,7 @@ public interface Texture{
     }
 
     static TextureConfig arraySRGBConfig(){
-        return TextureConfig.defaultconfig.internalFormat(GL_SRGB_ALPHA).type(TextureType.TEXTURE_ARRAY);
+        return TextureConfig.defaultconfig.internalFormat(TextureFormat.SRGBA8).type(TextureType.TEXTURE_ARRAY);
     }
 
     static TextureConfig cubemapConfig(){
@@ -372,83 +261,140 @@ public interface Texture{
     }
 
     static TextureConfig cubemapSRGBConfig(){
-        return TextureConfig.defaultconfig.internalFormat(GL_SRGB_ALPHA).type(TextureType.TEXTURE_CUBEMAP);
+        return TextureConfig.defaultconfig.internalFormat(TextureFormat.SRGBA8).type(TextureType.TEXTURE_CUBEMAP);
     }
 
     class TextureConfig{
         static final TextureConfig defaultconfig = new TextureConfig();
 
         final TextureType type;
-        final int internaltype;
-        final int minfilter;
-        final int maxfilter;
-        final int wraptype;
-        final int format;
-        final int intformat;
-        final int input;
+        final FilterType minFilter;
+        final FilterType maxFilter;
+        final WrapType wrapType;
+        final SamplerFormat samplerFormat;
+        final TextureFormat internalFormat;
+        final InputFormat inputFormat;
         final boolean anisotropic;
 
         public TextureConfig(){
-            this(TextureType.TEXTURE_2D, GL_TEXTURE_2D, GL_NEAREST, GL_NEAREST, GL_REPEAT, GL_RGBA, GL_SRGB8_ALPHA8, GL_UNSIGNED_BYTE, false);
+            this(TextureType.TEXTURE_2D, FilterType.NEAREST, FilterType.NEAREST, WrapType.REPEAT, SamplerFormat.RGBA, TextureFormat.SRGBA8, InputFormat.UNSIGNED_BYTE, true);
         }
 
-        public TextureConfig(TextureType type, int internaltype, int minfilter, int maxfilter, int wraptype, int format, int intformat, int input, boolean anisotropic) {
+        public TextureConfig(TextureType type, FilterType minFilter, FilterType maxFilter, WrapType wrapType, SamplerFormat samplerFormat, TextureFormat internalFormat, InputFormat inputFormat, boolean anisotropic) {
             this.type = type;
-            this.internaltype = internaltype;
-            this.minfilter = minfilter;
-            this.maxfilter = maxfilter;
-            this.wraptype = wraptype;
-            this.format = format;
-            this.intformat = intformat;
-            this.input = input;
+            this.minFilter = minFilter;
+            this.maxFilter = maxFilter;
+            this.wrapType = wrapType;
+            this.samplerFormat = samplerFormat;
+            this.internalFormat = internalFormat;
+            this.inputFormat = inputFormat;
             this.anisotropic = anisotropic;
         }
 
         public TextureConfig type(TextureType type) {
-            int internaltype = 0;
-            switch(type){
-                case TEXTURE_2D:
-                    internaltype = GL_TEXTURE_2D;
-                    break;
-                case TEXTURE_3D:
-                    //s = GL_TEXTURE_3D;
-                    break;
-                case TEXTURE_ARRAY:
-                    internaltype = GL_TEXTURE_2D_ARRAY;
-                    break;
-                case TEXTURE_CUBEMAP:
-                    internaltype = GL_TEXTURE_CUBE_MAP;
-                    break;
-            }
-            return new TextureConfig(type, internaltype, minfilter, maxfilter, wraptype, format, intformat, input, anisotropic);
+            return new TextureConfig(type, minFilter, maxFilter, wrapType, samplerFormat, internalFormat, inputFormat, anisotropic);
         }
 
-        public TextureConfig minimumFilter(int minfilter) {
-            return new TextureConfig(type, internaltype, minfilter, maxfilter, wraptype, format, intformat, input, anisotropic);
+        public TextureConfig minimumFilter(FilterType minfilter) {
+            return new TextureConfig(type, minfilter, maxFilter, wrapType, samplerFormat, internalFormat, inputFormat, anisotropic);
         }
 
-        public TextureConfig maxFilter(int maxfilter) {
-            return new TextureConfig(type, internaltype, minfilter, maxfilter, wraptype, format, intformat, input, anisotropic);
+        public TextureConfig maxFilter(FilterType maxfilter) {
+            return new TextureConfig(type, minFilter, maxfilter, wrapType, samplerFormat, internalFormat, inputFormat, anisotropic);
         }
 
-        public TextureConfig wrapType(int wraptype) {
-            return new TextureConfig(type, internaltype, minfilter, maxfilter, wraptype, format, intformat, input, anisotropic);
+        public TextureConfig wrapType(WrapType wraptype) {
+            return new TextureConfig(type, minFilter, maxFilter, wraptype, samplerFormat, internalFormat, inputFormat, anisotropic);
         }
 
-        public TextureConfig format(int format) {
-            return new TextureConfig(type, internaltype, minfilter, maxfilter, wraptype, format, intformat, input, anisotropic);
+        public TextureConfig samplerFormat(SamplerFormat format) {
+            return new TextureConfig(type, minFilter, maxFilter, wrapType, format, internalFormat, inputFormat, anisotropic);
         }
 
-        public TextureConfig internalFormat(int intformat) {
-            return new TextureConfig(type, internaltype, minfilter, maxfilter, wraptype, format, intformat, input, anisotropic);
+        public TextureConfig internalFormat(TextureFormat intformat) {
+            return new TextureConfig(type, minFilter, maxFilter, wrapType, samplerFormat, intformat, inputFormat, anisotropic);
         }
 
-        public TextureConfig inputType(int input) {
-            return new TextureConfig(type, internaltype, minfilter, maxfilter, wraptype, format, intformat, input, anisotropic);
+        public TextureConfig inputFormat(InputFormat input) {
+            return new TextureConfig(type, minFilter, maxFilter, wrapType, samplerFormat, internalFormat, input, anisotropic);
+        }
+
+        public TextureType getType() {
+            return type;
+        }
+
+        public FilterType getMinFilter() {
+            return minFilter;
+        }
+
+        public FilterType getMaxFilter() {
+            return maxFilter;
+        }
+
+        public WrapType getWrapType() {
+            return wrapType;
+        }
+
+        public SamplerFormat getSamplerFormat() {
+            return samplerFormat;
+        }
+
+        public TextureFormat getInternalFormat() {
+            return internalFormat;
+        }
+
+        public InputFormat getInputFormat() {
+            return inputFormat;
+        }
+
+        public boolean isAnisotropic() {
+            return anisotropic;
         }
     }
 
+    enum FilterType{
+        LINEAR, NEAREST
+    }
+
+    enum WrapType{
+        CLAMP_BORDER,
+        CLAMP_EDGE,
+        REPEAT,
+        REPEAT_MIRRORED
+    }
+
     enum TextureType{
-        TEXTURE_ARRAY, TEXTURE_2D, TEXTURE_3D, TEXTURE_CUBEMAP
+        TEXTURE_ARRAY,
+        TEXTURE_2D,
+        TEXTURE_3D,
+        TEXTURE_CUBEMAP
+    }
+
+    enum InputFormat{
+        UNSIGNED_BYTE,
+        UNSIGNED_INT_24_8,
+        FLOAT
+    }
+
+    enum SamplerFormat {
+        RGB,
+        RGBA,
+        DEPTH,
+        DEPTH_STENCIL
+    }
+
+    enum TextureFormat{
+        RGB8,
+        RGBA8,
+        SRGB8,
+        SRGBA8,
+        RGB16,
+        RGBA16,
+        RGBA16F,
+        RGBA32F,
+        RGB32F,
+        DEPTH32,
+        DEPTH24_STENCIL8,
+        DEPTH32_STENCIL8
     }
 }

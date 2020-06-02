@@ -9,7 +9,7 @@ import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.physics.RigidBody;
 import com.opengg.core.render.Renderable;
-import com.opengg.core.render.shader.ShaderController;
+import com.opengg.core.render.shader.CommonUniforms;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
 
@@ -102,7 +102,7 @@ public abstract class WorldGeometry implements Renderable{
     @Override
     public void render(){
         if(renderable != null){
-            ShaderController.setPosRotScale(getPosition(), getRotation(), getScale());
+            CommonUniforms.setPosRotScale(getPosition(), getRotation(), getScale());
             renderable.render();
         }
     }

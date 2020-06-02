@@ -1,8 +1,7 @@
 @version 4.2
 @include stdfrag.ggsl
-uniform sampler2D Kd;
-uniform sampler2D Ka;
 
+uniform sampler2D Ka;
 
 vec2 camerarange = vec2(1280, 960);
 vec2 screensize = vec2(1280, 960);

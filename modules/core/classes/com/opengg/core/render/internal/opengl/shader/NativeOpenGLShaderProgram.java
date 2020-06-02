@@ -10,6 +10,7 @@ import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.RenderEngine;
+import com.opengg.core.render.internal.opengl.OpenGLRenderer;
 import com.opengg.core.system.Allocator;
 import com.opengg.core.system.SystemInfo;
 

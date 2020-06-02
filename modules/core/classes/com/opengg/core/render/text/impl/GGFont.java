@@ -26,14 +26,12 @@ public class GGFont implements Font {
     public GGFont(String texture, String fontFile) {
         //Use of Texture.create is necessary because setMinFilter does not appear to work.
         //Both min and max filters must be on GL_LINEAR for distance fields to work.
-        this.texture = Texture.create(Texture.config().minimumFilter(GL_LINEAR).maxFilter(GL_LINEAR),texture);
+        this.texture = Texture.create(Texture.config().minimumFilter(Texture.FilterType.LINEAR).maxFilter(Texture.FilterType.LINEAR),texture);
         this.badname = new TextVBOGenerator(new File(fontFile));
     }
 
     public GGFont(Texture texture, String fontFile) {
         this.texture = texture;
-        this.texture.setMinimumFilterType(GL_LINEAR);
-        this.texture.setMaximumFilterType(GL_LINEAR);
         this.badname = new TextVBOGenerator(new File(fontFile));
     }
 

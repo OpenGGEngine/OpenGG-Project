@@ -282,7 +282,7 @@ public class Terrain {
         }
         bf.flip();
         indices.flip();
-        this.renderable = new DrawnObject(indices,bf);
+        this.renderable = DrawnObject.create(indices,bf);
         return this.renderable;
     }
     

@@ -2,7 +2,7 @@ package com.opengg.core.render.shader.ggsl;
 
 import java.util.regex.Pattern;
 
-public enum Token {
+public enum TokenType {
     OPEN_BRACE (Pattern.quote("{"), true, "{"),
     CLOSE_BRACE (Pattern.quote("}"), true, "}"),
     OPEN_PARENTHESIS (Pattern.quote("("), true, "("),
@@ -54,19 +54,19 @@ public enum Token {
     INT_LITERAL ("\\s(?<![.a-zA-Z])\\d+(?![.a-zA-Z])\\s", false),
     EOF ("a^", false);
 
-    Token(String pattern, boolean space){
+    TokenType(String pattern, boolean space){
         this(Pattern.compile(pattern, Pattern.MULTILINE), space, "");
     }
 
-    Token(String pattern, boolean space, String match){
+    TokenType(String pattern, boolean space, String match){
         this(Pattern.compile(pattern, Pattern.MULTILINE), space, match);
     }
 
-    Token(Pattern pattern, boolean space){
+    TokenType(Pattern pattern, boolean space){
         this(pattern, space, "");
     }
 
-    Token(Pattern pattern, boolean space, String match){
+    TokenType(Pattern pattern, boolean space, String match){
         this.pattern = pattern;
         this.spaced = space;
         this.match = match;

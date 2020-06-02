@@ -7,7 +7,7 @@ package com.opengg.test.network.components;
 
 import com.opengg.core.audio.Sound;
 import com.opengg.core.engine.Resource;
-import com.opengg.core.render.drawn.TextureRenderable;
+import com.opengg.core.render.objects.TextureRenderable;
 import com.opengg.core.render.objects.ObjectCreator;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.world.WorldEngine;

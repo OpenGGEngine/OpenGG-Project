@@ -5,7 +5,7 @@ import com.opengg.core.physics.collision.colliders.AABB;
 import com.opengg.core.physics.RigidBody;
 import com.opengg.core.physics.collision.colliders.ConvexHull;
 import com.opengg.core.render.Renderable;
-import com.opengg.core.render.drawn.RenderableGroup;
+import com.opengg.core.render.objects.RenderableGroup;
 
 import java.util.ArrayList;
 import java.util.HashMap;

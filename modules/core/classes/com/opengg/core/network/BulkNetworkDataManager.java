@@ -2,13 +2,11 @@ package com.opengg.core.network;
 
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.engine.Resource;
-import com.opengg.core.math.Tuple;
+import com.opengg.core.math.util.Tuple;
 import com.opengg.core.network.common.ReceivingBulkMessage;
 import com.opengg.core.network.common.ConnectionData;
 import com.opengg.core.network.common.PacketType;
 import com.opengg.core.network.common.SendingBulkMessage;
-import com.opengg.core.util.FileUtil;
-import com.opengg.core.util.GGFuture;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
 
@@ -16,7 +14,6 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
@@ -90,10 +87,10 @@ public class BulkNetworkDataManager {
         if(counter > perPacketTime){
             counter = 0;
             var done = currentSendingMessages.stream()
-                    .peek(c -> c.x.sendNextPacket())
-                    .filter(c -> c.x.isComplete())
+                    .peek(c -> c.x().sendNextPacket())
+                    .filter(c -> c.x().isComplete())
                     .collect(Collectors.toList());
-            done.forEach(c -> c.y.complete(true));
+            done.forEach(c -> c.y().complete(true));
             currentSendingMessages.removeAll(done);
         }
     }

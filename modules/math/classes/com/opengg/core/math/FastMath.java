@@ -13,12 +13,9 @@ package com.opengg.core.math;
  * @author Warren
  */
 
-import com.opengg.core.math.geom.MinkowskiSet;
-import com.opengg.core.math.geom.MinkowskiTriangle;
 import com.opengg.core.math.geom.Ray;
+import com.opengg.core.math.util.Tuple;
 
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
@@ -667,7 +664,7 @@ public final class FastMath {
         float max = Float.NEGATIVE_INFINITY;
         int index = 0;
         for (int i = 0; i < vertices.size(); i++) {
-            var closestApproach = FastMath.closestPointTo(line.x, line.y, vertices.get(i), false);
+            var closestApproach = FastMath.closestPointTo(line.x(), line.y(), vertices.get(i), false);
             var dist2 = closestApproach.distanceToSquared(vertices.get(i));
             if (dist2 > max) {
                 max = dist2;

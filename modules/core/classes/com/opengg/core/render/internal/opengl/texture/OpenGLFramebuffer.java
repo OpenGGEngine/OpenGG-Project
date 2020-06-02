@@ -7,6 +7,8 @@ package com.opengg.core.render.internal.opengl.texture;
 
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.render.RenderEngine;
+import com.opengg.core.render.internal.opengl.OpenGLRenderer;
+import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.window.WindowController;
 import com.opengg.core.render.texture.Framebuffer;
 import com.opengg.core.render.texture.Renderbuffer;
@@ -15,7 +17,6 @@ import com.opengg.core.render.texture.Texture;
 import java.util.*;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL14.GL_DEPTH_COMPONENT32;
 import static org.lwjgl.opengl.GL20.glDrawBuffers;
 import static org.lwjgl.opengl.GL30.*;
 
@@ -65,7 +66,7 @@ public class OpenGLFramebuffer implements Framebuffer{
     }
     
     @Override
-    public void useTexture(int attachment, int loc){
+    public void useTexture(int attachment, String loc){
         Texture tex;
         if(attachment != DEPTH)
             tex = textures.get(GL_COLOR_ATTACHMENT0 + attachment);
@@ -73,7 +74,7 @@ public class OpenGLFramebuffer implements Framebuffer{
             tex = textures.get(attachment);
 
         if(tex != null){
-            tex.use(loc);
+            ShaderController.setUniform(loc, tex);
         }
     }
 
@@ -84,36 +85,36 @@ public class OpenGLFramebuffer implements Framebuffer{
 
     @Override
     public void attachColorTexture(int width, int height, int attachment){
-        attachTexture(Texture.TextureType.TEXTURE_2D, width, height, GL_RGBA, GL_RGBA8, GL_UNSIGNED_BYTE,  GL_COLOR_ATTACHMENT0 + attachment);
+        attachTexture(Texture.TextureType.TEXTURE_2D, width, height, Texture.SamplerFormat.RGBA, Texture.TextureFormat.RGBA8, Texture.InputFormat.UNSIGNED_BYTE,  GL_COLOR_ATTACHMENT0 + attachment);
     }
     
     @Override
     public void attachFloatingPointTexture(int width, int height, int attachment){
-        attachTexture(Texture.TextureType.TEXTURE_2D, width, height, GL_RGBA, GL_RGBA16F, GL_FLOAT, GL_COLOR_ATTACHMENT0 + attachment);
+        attachTexture(Texture.TextureType.TEXTURE_2D, width, height, Texture.SamplerFormat.RGBA, Texture.TextureFormat.RGBA16F, Texture.InputFormat.FLOAT, GL_COLOR_ATTACHMENT0 + attachment);
     }
     
     @Override
     public void attachDepthStencilTexture(int width, int height){
-        attachTexture(Texture.TextureType.TEXTURE_2D, width, height, GL_DEPTH_STENCIL, GL_DEPTH24_STENCIL8, GL_UNSIGNED_INT_24_8, GL_DEPTH_ATTACHMENT);
+        attachTexture(Texture.TextureType.TEXTURE_2D, width, height, Texture.SamplerFormat.DEPTH_STENCIL, Texture.TextureFormat.DEPTH24_STENCIL8, Texture.InputFormat.UNSIGNED_INT_24_8, GL_DEPTH_ATTACHMENT);
     }
     
     @Override
     public void attachDepthTexture(int width, int height){
-        attachTexture(Texture.TextureType.TEXTURE_2D, width, height, GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT32F, GL_FLOAT, GL_DEPTH_ATTACHMENT);
+        attachTexture(Texture.TextureType.TEXTURE_2D, width, height, Texture.SamplerFormat.DEPTH, Texture.TextureFormat.DEPTH32, Texture.InputFormat.FLOAT, GL_DEPTH_ATTACHMENT);
     }
 
     @Override
     public void attachDepthCubemap(int width, int height){
-        attachTexture(Texture.TextureType.TEXTURE_CUBEMAP, width, height, GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT32F, GL_FLOAT, GL_DEPTH_ATTACHMENT);
+        attachTexture(Texture.TextureType.TEXTURE_CUBEMAP, width, height, Texture.SamplerFormat.DEPTH, Texture.TextureFormat.DEPTH32, Texture.InputFormat.FLOAT, GL_DEPTH_ATTACHMENT);
     }
 
     @Override
     public void attachColorCubemap(int width, int height, int attachment){
-        attachTexture(Texture.TextureType.TEXTURE_CUBEMAP, width, height, GL_RGBA, GL_RGBA8, GL_UNSIGNED_BYTE, GL_COLOR_ATTACHMENT0 + attachment);
+        attachTexture(Texture.TextureType.TEXTURE_CUBEMAP, width, height, Texture.SamplerFormat.RGBA, Texture.TextureFormat.RGBA8, Texture.InputFormat.UNSIGNED_BYTE, GL_COLOR_ATTACHMENT0 + attachment);
     }
 
     @Override
-    public void attachTexture(Texture.TextureType type, int width, int height, int format, int intformat, int input, int attachment){
+    public void attachTexture(Texture.TextureType type, int width, int height, Texture.SamplerFormat format, Texture.TextureFormat intformat, Texture.InputFormat input, int attachment){
         Texture tex;
         if(type.equals(Texture.TextureType.TEXTURE_CUBEMAP))
             tex = Texture.getCubemapFramebufferTexture(width, height, format, intformat, input);
@@ -124,7 +125,6 @@ public class OpenGLFramebuffer implements Framebuffer{
         fb.attachTexture(attachment, tex.getID(), 0);
         checkForCompletion();
         fb.unbind(GL_FRAMEBUFFER);
-
         textures.put(attachment, tex);
         usedAttachments.add(attachment);
 
@@ -188,7 +188,7 @@ public class OpenGLFramebuffer implements Framebuffer{
 
     @Override
     public void enableRendering(int x1, int y1, int x2, int y2, boolean clear) {
-        RenderEngine.setCurrentFramebuffer(this);
+        ((OpenGLRenderer) RenderEngine.renderer).setCurrentFramebuffer(this);
         fb.bind(GL_FRAMEBUFFER);
         if(clear)
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -197,7 +197,7 @@ public class OpenGLFramebuffer implements Framebuffer{
     
     @Override
     public void restartRendering(){
-        RenderEngine.setCurrentFramebuffer(this);
+        ((OpenGLRenderer) RenderEngine.renderer).setCurrentFramebuffer(this);
         fb.bind(GL_FRAMEBUFFER);
         glViewport(0, 0, lx, ly);
     }

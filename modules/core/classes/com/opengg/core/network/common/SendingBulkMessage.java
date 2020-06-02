@@ -1,7 +1,6 @@
 package com.opengg.core.network.common;
 
-import com.opengg.core.math.Tuple;
-import com.opengg.core.network.BulkNetworkDataManager;
+import com.opengg.core.math.util.Tuple;
 import com.opengg.core.network.NetworkEngine;
 import com.opengg.core.util.GGOutputStream;
 import com.opengg.core.util.HashUtil;
@@ -22,7 +21,7 @@ public class SendingBulkMessage {
     private final int size;
     private final long hash;
     private final int packetAmount;
-    private final List<Tuple<BulkMessageSection, Boolean>> data;
+    private final List<BulkMessageSection> data;
 
     private boolean beganSending = false;
 
@@ -45,9 +44,7 @@ public class SendingBulkMessage {
         id = UUID.randomUUID().getLeastSignificantBits();
         this.target = target;
         this.hash = HashUtil.getMeowHash(data);
-        this.data = this.split(data).stream()
-                .map(d -> Tuple.of(d,false))
-                .collect(Collectors.toList());
+        this.data = this.split(data);
     }
 
     public void sendNextPacket(){
@@ -71,23 +68,20 @@ public class SendingBulkMessage {
             }
         }else{
             var nextSentOpt = data.stream()
-                    .filter(t -> t.y == false)
+                    .filter(t -> !t.sent)
                     .findFirst();
             if(nextSentOpt.isEmpty()){
                 return;
             }
 
             var nextSent = nextSentOpt.get();
-            nextSent.x.send();
-            nextSent.y = true;
+            nextSent.send();
+            nextSent.sent = true;
         }
     }
 
     public boolean isComplete() {
-        return data.stream()
-                .filter(t -> t.y == false)
-                .findFirst().isEmpty();
-
+        return data.stream().allMatch(t -> t.sent);
     }
 
     private List<BulkMessageSection> split(byte[] data){
@@ -113,6 +107,7 @@ public class SendingBulkMessage {
         int sectionId;
         int length;
         byte[] data;
+        public boolean sent;
 
         void send(){
             try {

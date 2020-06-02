@@ -6,8 +6,9 @@ import com.opengg.core.io.input.keyboard.KeyboardListener;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.network.NetworkEngine;
 import com.opengg.core.render.RenderEngine;
+import com.opengg.core.render.internal.opengl.OpenGLRenderer;
 import com.opengg.core.render.Renderable;
-import com.opengg.core.render.shader.ShaderController;
+import com.opengg.core.render.shader.CommonUniforms;
 import com.opengg.core.render.text.Font;
 import com.opengg.core.render.text.Text;
 import com.opengg.core.world.WorldEngine;
@@ -31,7 +32,7 @@ public class GGDebugRenderer implements KeyboardListener {
 
     public static void render(){
         if(render){
-            RenderEngine.setDepthCheck(false);
+            //((OpenGLRenderer) RenderEngine.renderer).setDepthCheck(false);
 
             counter++;
 
@@ -62,9 +63,9 @@ public class GGDebugRenderer implements KeyboardListener {
                 display = font.createFromText(displaytext);
             }
 
-            ShaderController.setModel(Matrix4f.translate(0.02f,0.975f,0));
+            CommonUniforms.setModel(Matrix4f.translate(0.02f,0.975f,0));
             display.render();
-            RenderEngine.setDepthCheck(true);
+            //((OpenGLRenderer) RenderEngine.renderer).setDepthCheck(true);
 
         }
     }

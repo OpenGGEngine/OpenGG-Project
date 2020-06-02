@@ -6,8 +6,7 @@
 
 package com.opengg.core.physics.collision;
 
-import com.opengg.core.math.Tuple;
-import com.opengg.core.math.UnorderedTuple;
+import com.opengg.core.math.util.Tuple;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.physics.PhysicsProvider;
 import com.opengg.core.physics.PhysicsSystem;
@@ -21,7 +20,7 @@ import java.util.stream.Collectors;
  * @author Javier
  */
 public class CollisionManager {
-    private static Map<UnorderedTuple<RigidBody>, Collision> contactCache = new HashMap<>();
+    private static Map<Tuple.UnorderedTuple<RigidBody>, Collision> contactCache = new HashMap<>();
     private static final List<RigidBody> test = new LinkedList<>();
     public static boolean parallelProcessing = false;
     public static boolean enableResponse = true;
@@ -42,37 +41,39 @@ public class CollisionManager {
         var newCollisions = test.stream()
                 .filter(Objects::nonNull)
                 .flatMap(c -> test.stream()
-                        .map(c2 ->new UnorderedTuple<>(c,c2)))
-                .filter(t -> t.x != t.y)
+                        .map(c2 -> Tuple.ofUnordered(c,c2)))
+                .filter(t -> t.x() != t.y())
                 .distinct()
-                .filter(t -> t.x.hasPhysicsProvider() || t.y.hasPhysicsProvider())
-                .map(t -> Tuple.of(t, t.x.checkForCollision(t.y)))
-                .filter(t -> t.y.isPresent())
-                .map(t -> new Collision(t.x.x, t.x.y, t.y.get()))
+                .filter(t -> t.x().hasPhysicsProvider() || t.y().hasPhysicsProvider())
+                .map(t -> Tuple.of(t, t.x().checkForCollision(t.y())))
+                .filter(t -> t.y().isPresent())
+                .map(t -> new Collision(t.x().x(), t.x().y(), t.y().get()))
                 .collect(Collectors.toList());
 
         var cacheHits = newCollisions.stream()
-                .filter(collision -> contactCache.containsKey(UnorderedTuple.ofUnordered(collision.thiscollider,collision.other)))
-                .map(collision -> Tuple.of(collision, contactCache.get(UnorderedTuple.ofUnordered(collision.thiscollider,collision.other))))
+                .filter(collision -> contactCache.containsKey(Tuple.ofUnordered(collision.thiscollider,collision.other)))
+                .map(collision -> Tuple.of(collision, contactCache.get(Tuple.ofUnordered(collision.thiscollider,collision.other))))
                 .collect(Collectors.toList());
 
         var mergedFromHits = cacheHits.stream()
-                .peek(pair -> {
-                    if(pair.x.thiscollider == pair.y.other){
-                        pair.y = Collision.reverse(pair.y);
+                .map(pair -> {
+                    if(pair.x().thiscollider == pair.y().other){
+                        return Tuple.of(pair.x(), Collision.reverse(pair.y()));
+                    }else{
+                        return pair;
                     }
-                }).map(pair -> new Collision(pair.x.thiscollider, pair.x.other, ContactManifold.combineManifolds(List.of(pair.x.manifold, pair.y.manifold)))).collect(Collectors.toList());
+                }).map(pair -> new Collision(pair.x().thiscollider, pair.x().other, ContactManifold.combineManifolds(List.of(pair.x().manifold, pair.y().manifold)))).collect(Collectors.toList());
 
         var cacheMisses = newCollisions.stream()
-                .filter(c -> !contactCache.containsKey(UnorderedTuple.ofUnordered(c.thiscollider,c.other)))
+                .filter(c -> !contactCache.containsKey(Tuple.ofUnordered(c.thiscollider,c.other)))
                 .collect(Collectors.toList());
 
         contactCache.clear();
         contactCache.putAll(mergedFromHits.stream()
-                .collect(Collectors.toMap(c -> UnorderedTuple.ofUnordered(c.thiscollider,c.other), c -> c)));
+                .collect(Collectors.toMap(c -> Tuple.ofUnordered(c.thiscollider,c.other), c -> c)));
 
         contactCache.putAll(cacheMisses.stream()
-                .collect(Collectors.toMap(c -> UnorderedTuple.ofUnordered(c.thiscollider,c.other), c -> c)));
+                .collect(Collectors.toMap(c -> Tuple.ofUnordered(c.thiscollider,c.other), c -> c)));
 
 
         var collisions = contactCache.values();

@@ -5,7 +5,7 @@
  */
 package com.opengg.core.render.objects;
 
-import com.opengg.core.math.Tuple;
+import com.opengg.core.math.util.Tuple;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.math.geom.Triangle;
@@ -20,7 +20,7 @@ import java.util.List;
  * @author Javier
  */
 public class ObjectBuffers {
-    public static Tuple<FloatBuffer, IntBuffer> getSquare(Vector2f v1, Vector2f v2, float z1 , float transparency, boolean flippedTex, Allocator.AllocType type){
+    public static VertexIndexPair getSquare(Vector2f v1, Vector2f v2, float z1 , float transparency, boolean flippedTex, Allocator.AllocType type){
         FloatBuffer sq = Allocator.allocFloat(4*8, type);
         sq.put(v1.x).put(v1.y).put(z1).put(1f).put(1f).put(1f).put(0).put(0);
         sq.put(v1.x).put(v2.y).put(z1).put(1f).put(1f).put(1f).put(0).put(1);
@@ -32,7 +32,7 @@ public class ObjectBuffers {
         indices.put(new int[]{0,1,2,
             2,3,0});
         indices.flip();
-        return Tuple.of(sq, indices);
+        return new VertexIndexPair(sq, indices);
     }
 
     static FloatBuffer getSquare(float x1, float z1, float x2, float z2, float y1,float y2, float y3, float y4,  float transparency,boolean flippedTex){
@@ -70,12 +70,12 @@ public class ObjectBuffers {
     static Buffer[] genQuadPrism(Vector3f c1, Vector3f c2){
         FloatBuffer d = Allocator.allocFloat(24*8);
         IntBuffer d2 = Allocator.allocInt(6*6);
+
         d.put(c1.x).put(c1.y).put(c1.z).put(0).put(-1).put(0).put(0).put(1);
         d.put(c1.x).put(c1.y).put(c2.z).put(0).put(-1).put(0).put(0).put(0);
         d.put(c2.x).put(c1.y).put(c2.z).put(0).put(-1).put(0).put(1).put(0);
         d.put(c2.x).put(c1.y).put(c1.z).put(0).put(-1).put(0).put(1).put(1);
         d2.put(new int[]{3,2,1,3,1,0});
-
 
         d.put(c1.x).put(c2.y).put(c1.z).put(0).put(1).put(0).put(0).put(1);
         d.put(c1.x).put(c2.y).put(c2.z).put(0).put(1).put(0).put(0).put(0);
@@ -118,4 +118,5 @@ public class ObjectBuffers {
 
     private ObjectBuffers() {
     }
+
 }

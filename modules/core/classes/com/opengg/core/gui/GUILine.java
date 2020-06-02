@@ -2,12 +2,11 @@ package com.opengg.core.gui;
 
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.render.drawn.DrawnObject;
+import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.system.Allocator;
 
-import java.nio.FloatBuffer;
 import java.util.List;
-import java.util.function.IntSupplier;
 import java.util.stream.IntStream;
 
 import static org.lwjgl.opengl.GL11.GL_LINES;
@@ -47,14 +46,14 @@ public class GUILine extends GUIRenderable{
                 .forEach(i -> instancebuffer.put(i).put(i+1));
         buffer.flip();
         instancebuffer.flip();
-        var drawable = new DrawnObject(instancebuffer,buffer);
-        drawable.setRenderType(GL_LINES);
+        var drawable = DrawnObject.create(instancebuffer,buffer);
+        drawable.setRenderType(DrawnObject.DrawType.LINES);
         this.setDrawable(drawable);
     }
 
     @Override
     public void render(){
-        if(tex != null) tex.use(0);
+        if(tex != null) ShaderController.setUniform("Kd", tex);
         super.render();
     }
 }

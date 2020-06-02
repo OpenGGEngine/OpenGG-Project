@@ -8,7 +8,7 @@ package com.opengg.core.network.server;
 
 import com.opengg.core.GGInfo;
 import com.opengg.core.console.GGConsole;
-import com.opengg.core.math.Tuple;
+import com.opengg.core.math.util.Tuple;
 import com.opengg.core.network.NetworkEngine;
 import com.opengg.core.network.common.*;
 import com.opengg.core.util.GGInputStream;
@@ -200,8 +200,8 @@ public class Server {
                 var out = new GGOutputStream();
                 out.write(movedComponents.size());
                 for(var comp : movedComponents){
-                    out.write(comp.x.getGUID());
-                    out.write(comp.y.getGUID());
+                    out.write(comp.x().getGUID());
+                    out.write(comp.y().getGUID());
 
                 }
                 for(var client : clients){

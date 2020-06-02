@@ -109,12 +109,12 @@ public class CollisionSolver {
         if(!result.simplex.contact){
             var points = CollisionMath.getClosestPoints(result.simplex);
 
-            if(points.x.distanceTo(points.y) < h2.getRadius()) {
+            if(points.x().distanceTo(points.y()) < h2.getRadius()) {
                 var contact = new Contact();
-                contact.offset1 = CollisionMath.getClosestPoints(result.simplex).x.subtract(h1.getPosition());
-                contact.offset2 = CollisionMath.getClosestPoints(result.simplex).x.subtract(h2.getPosition());
-                contact.normal = points.x.subtract(points.y).normalize();
-                contact.depth = Math.abs(points.x.distanceTo(points.y) - h2.getRadius());
+                contact.offset1 = CollisionMath.getClosestPoints(result.simplex).x().subtract(h1.getPosition());
+                contact.offset2 = CollisionMath.getClosestPoints(result.simplex).x().subtract(h2.getPosition());
+                contact.normal = points.x().subtract(points.y()).normalize();
+                contact.depth = Math.abs(points.x().distanceTo(points.y()) - h2.getRadius());
                 return Optional.of(new ContactManifold(contact));
             }else{
                 return Optional.empty();
@@ -161,8 +161,8 @@ public class CollisionSolver {
             return Optional.empty();
 
         var contact = new Contact();
-        contact.offset1 = CollisionMath.getClosestPoints(simplex).x.subtract(pos1);//contactTriangle.a.a.multiply(bary.x).add(contactTriangle.b.a.multiply(bary.y)).add(contactTriangle.c.a.multiply(bary.z));
-        contact.offset2 = CollisionMath.getClosestPoints(simplex).x.subtract(pos2);//contactTriangle.a.a.multiply(bary.x).add(contactTriangle.b.a.multiply(bary.y)).add(contactTriangle.c.a.multiply(bary.z));
+        contact.offset1 = CollisionMath.getClosestPoints(simplex).x().subtract(pos1);//contactTriangle.a.a.multiply(bary.x).add(contactTriangle.b.a.multiply(bary.y)).add(contactTriangle.c.a.multiply(bary.z));
+        contact.offset2 = CollisionMath.getClosestPoints(simplex).x().subtract(pos2);//contactTriangle.a.a.multiply(bary.x).add(contactTriangle.b.a.multiply(bary.y)).add(contactTriangle.c.a.multiply(bary.z));
         contact.normal = contactTriangle.n.inverse();
         contact.depth = distanceFromOrigin;
         /*System.out.println();

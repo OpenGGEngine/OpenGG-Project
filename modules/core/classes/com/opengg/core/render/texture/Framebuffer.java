@@ -32,7 +32,7 @@ public interface Framebuffer{
 
     void useEnabledAttachments();
 
-    void useTexture(int attachment, int loc);
+    void useTexture(int attachment, String loc);
 
     List<Texture> getTextures();
 
@@ -52,7 +52,7 @@ public interface Framebuffer{
 
     void attachColorCubemap(int width, int height, int attachment);
 
-    void attachTexture(Texture.TextureType type, int width, int height, int format, int intformat, int input, int attachment);
+    void attachTexture(Texture.TextureType type, int width, int height, Texture.SamplerFormat format, Texture.TextureFormat intformat, Texture.InputFormat input, int attachment);
 
     void blitTo(Framebuffer target);
 

@@ -13,6 +13,6 @@ public class VRHMDComponent extends Component {
     @Override
     public void update(float delta){
 
-        var values = GGVR.getHMDPose();
+        var values = VR.getHMDPose();
     }
 }

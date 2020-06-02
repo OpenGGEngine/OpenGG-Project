@@ -6,7 +6,6 @@
 package com.opengg.core.render.internal.opengl.shader;
 
 import com.opengg.core.render.RenderEngine;
-import com.opengg.core.render.shader.PureVertexArrayObject;
 
 import static org.lwjgl.opengl.GL30.*;
 
@@ -14,7 +13,7 @@ import static org.lwjgl.opengl.GL30.*;
  *
  * @author Javier
  */
-public class NativeOpenGLPureVertexArrayObject implements PureVertexArrayObject{
+public class NativeOpenGLVertexArrayObject {
 
     /**
      * Stores the handle of the NativeOpenGLPureVertexArrayObject.
@@ -24,7 +23,7 @@ public class NativeOpenGLPureVertexArrayObject implements PureVertexArrayObject{
     /**
      * Creates a Vertex Array Object (VAO).
      */
-    public NativeOpenGLPureVertexArrayObject() {
+    public NativeOpenGLVertexArrayObject() {
         if(RenderEngine.validateInitialization()) id = -1;
         else id = glGenVertexArrays();
     }
@@ -32,7 +31,7 @@ public class NativeOpenGLPureVertexArrayObject implements PureVertexArrayObject{
     /**
      * Binds the NativeOpenGLPureVertexArrayObject.
      */
-    @Override
+
     public void bind() {
         if(RenderEngine.validateInitialization()) return;
         glBindVertexArray(id);
@@ -41,7 +40,7 @@ public class NativeOpenGLPureVertexArrayObject implements PureVertexArrayObject{
     /**
      * Deletes the NativeOpenGLPureVertexArrayObject.
      */
-    @Override
+
     public void delete(){
         if(RenderEngine.validateInitialization()) return;
         glDeleteVertexArrays(id);
@@ -52,14 +51,14 @@ public class NativeOpenGLPureVertexArrayObject implements PureVertexArrayObject{
      *
      * @return Handle of the NativeOpenGLPureVertexArrayObject
      */
-    @Override
+
     public int getID() {
         return id;
     }
     /**
      * Unbinds NativeOpenGLPureVertexArrayObject
      */
-    @Override
+
     public void unbind(){
         if(RenderEngine.validateInitialization()) return;
         glBindVertexArray(0);

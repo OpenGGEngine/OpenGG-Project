@@ -2,7 +2,7 @@
 @include stdfrag.ggsl
 
 vec4 getCube(){
-    return texture(cubemap, normalize((vec4(pos.x, -pos.y, pos.z, 1)).xyz));
+    return texture(cubemap, vec3(pos.x, -pos.y, pos.z));
 }
 
 void main() {   

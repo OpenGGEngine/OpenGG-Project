@@ -6,7 +6,7 @@
 package com.opengg.core.render.text.impl;
 
 import com.opengg.core.console.GGConsole;
-import com.opengg.core.math.Tuple;
+import com.opengg.core.math.util.Tuple;
 import com.opengg.core.render.window.WindowController;
 import java.io.BufferedReader;
 import java.io.File;
@@ -159,7 +159,7 @@ public class GGFontFile {
         int first = getValueOfVariable("first");
         int second = getValueOfVariable("second");
         double amount = (getValueOfVariable("amount")) * horizontalPerPixelSize;
-        kernings.put(new Tuple<Integer, Integer>(first,second),amount);
+        kernings.put(Tuple.of(first,second),amount);
     }
     private GGCharacter loadCharacter(int imageSize) {
         int id = getValueOfVariable("id");

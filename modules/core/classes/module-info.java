@@ -8,6 +8,7 @@ module com.opengg.core {
     requires org.lwjgl.glfw;
     requires org.lwjgl.openal;
     requires org.lwjgl.opengl;
+    requires org.lwjgl.vulkan;
     requires org.lwjgl.stb;
     requires org.lwjgl.assimp;
     requires org.lwjgl.lz4;
@@ -23,6 +24,7 @@ module com.opengg.core {
     requires com.opengg.base;
     requires com.opengg.system;
     requires com.opengg.console;
+    requires org.lwjgl.shaderc;
 
     exports com.opengg.core.animation;
     exports com.opengg.core.audio;

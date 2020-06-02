@@ -17,42 +17,38 @@ import static org.lwjgl.opengl.GL41.*;
  */
 public class OpenGLShaderPipeline implements com.opengg.core.render.shader.ShaderPipeline{
     final private NativeOpenGLShaderPipeline nativepipeline;
-    final private String vert, frag, tesc, tese, geom;
+    private ShaderProgram vert, frag, tesc, tese, geom;
     
     public OpenGLShaderPipeline(ShaderProgram vert, ShaderProgram tesc, ShaderProgram tese, ShaderProgram geom, ShaderProgram frag){
-        this.vert = vert.getName();
+        this.vert = vert;
         
         if(tesc != null)
-            this.tesc = tesc.getName();
-        else
-            this.tesc = "";
+            this.tesc = tesc;
+
         
         if(tese != null)
-            this.tese = tese.getName();
-        else
-            this.tese = "";
+            this.tese = tese;
         
         if(geom != null)
-            this.geom = geom.getName();
-        else
-            this.geom = "";
+            this.geom = geom;
 
-        this.frag = frag.getName();
+
+        this.frag = frag;
         
         nativepipeline = new NativeOpenGLShaderPipeline();
 
-        nativepipeline.useProgramStages(vert, GL_VERTEX_SHADER_BIT);
+        nativepipeline.useProgramStages((OpenGLShaderProgram) vert, GL_VERTEX_SHADER_BIT);
         
         if(tesc != null)
-            nativepipeline.useProgramStages(tesc, GL_TESS_CONTROL_SHADER_BIT);
+            nativepipeline.useProgramStages((OpenGLShaderProgram) tesc, GL_TESS_CONTROL_SHADER_BIT);
         
         if(tese != null)
-            nativepipeline.useProgramStages(tese, GL_TESS_EVALUATION_SHADER_BIT);
+            nativepipeline.useProgramStages((OpenGLShaderProgram) tese, GL_TESS_EVALUATION_SHADER_BIT);
         
         if(geom != null)
-            nativepipeline.useProgramStages(geom, GL_GEOMETRY_SHADER_BIT);
+            nativepipeline.useProgramStages((OpenGLShaderProgram) geom, GL_GEOMETRY_SHADER_BIT);
 
-        nativepipeline.useProgramStages(frag, GL_FRAGMENT_SHADER_BIT);
+        nativepipeline.useProgramStages((OpenGLShaderProgram) frag, GL_FRAGMENT_SHADER_BIT);
         validate();
         unbind();
     }
@@ -68,7 +64,7 @@ public class OpenGLShaderPipeline implements com.opengg.core.render.shader.Shade
     }
 
     @Override
-    public void bind(){
+    public void use(){
         nativepipeline.bind();
     }
 
@@ -78,20 +74,14 @@ public class OpenGLShaderPipeline implements com.opengg.core.render.shader.Shade
     }
 
     @Override
-    public String getShader(ShaderProgram.ShaderType type){
-        switch(type){
-            case VERTEX:
-                return vert;
-            case TESS_CONTROL:
-                return tesc;
-            case TESS_EVAL:
-                return tese;
-            case GEOMETRY:
-                return geom;
-            case FRAGMENT:
-                return frag;
-        }
-        return null;
+    public ShaderProgram getShader(ShaderProgram.ShaderType type){
+        return switch (type) {
+            case VERTEX -> vert;
+            case TESS_CONTROL -> tesc;
+            case TESS_EVAL -> tese;
+            case GEOMETRY -> geom;
+            case FRAGMENT -> frag;
+            default -> null;
+        };
     }
-
 }

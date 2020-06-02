@@ -1,5 +1,6 @@
 @version 4.2
 @glsl define MAX_JOINTS 100
+@include stdvert.ggsl
 
 in vec3 normal;
 in vec4 weights;
@@ -7,22 +8,8 @@ in vec2 texcoord;
 in vec4 color;
 in vec3 position;
 in vec4 jointindex;
-            
-out gl_PerVertex{
-    vec4 gl_Position;
-};
 
-out vertexData{
-	
-	vec2 textureCoord;
-	vec3 pos;
-	vec3 norm;
-};
-
-uniform mat4 model;
 uniform mat4 jointsMatrix[MAX_JOINTS];
-uniform mat4 view;
-uniform mat4 projection;
 uniform vec3 rot;
 uniform vec3 lightpos;
 uniform mat4 shmvp;

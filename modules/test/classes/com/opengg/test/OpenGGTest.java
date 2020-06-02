@@ -1,19 +1,21 @@
 package com.opengg.test;
 
 import com.opengg.core.engine.*;
-import com.opengg.core.gui.*;
+import com.opengg.core.gui.GUI;
+import com.opengg.core.gui.GUIController;
 import com.opengg.core.gui.text.GUIText;
 import com.opengg.core.math.*;
-import com.opengg.core.physics.collision.colliders.AABB;
 import com.opengg.core.physics.RigidBody;
+import com.opengg.core.physics.collision.colliders.AABB;
 import com.opengg.core.physics.collision.colliders.ConvexHull;
 import com.opengg.core.render.ProjectionData;
 import com.opengg.core.render.RenderEngine;
-import com.opengg.core.render.drawn.TextureRenderable;
 import com.opengg.core.render.light.Light;
 import com.opengg.core.render.objects.ObjectCreator;
+import com.opengg.core.render.objects.TextureRenderable;
 import com.opengg.core.render.text.Font;
 import com.opengg.core.render.text.Text;
+import com.opengg.core.render.texture.TextureGenerator;
 import com.opengg.core.render.window.WindowController;
 import com.opengg.core.io.ControlType;
 import static com.opengg.core.io.input.keyboard.Key.*;
@@ -21,7 +23,9 @@ import static com.opengg.core.io.input.keyboard.Key.*;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.window.WindowInfo;
 import com.opengg.core.render.window.WindowOptions;
-import com.opengg.core.world.*;
+import com.opengg.core.world.ActionType;
+import com.opengg.core.world.Skybox;
+import com.opengg.core.world.WorldEngine;
 import com.opengg.core.world.components.*;
 import com.opengg.core.world.components.physics.RigidBodyComponent;
 import com.opengg.core.world.structure.WorldGeometryBuilder;
@@ -50,6 +54,7 @@ public class  OpenGGTest extends GGApplication{
         w.vsync = true;
         w.glmajor = 4;
         w.glminor = 3;
+        w.renderer = WindowInfo.RendererType.VULKAN;
         OpenGG.initialize(new OpenGGTest(), new InitializationOptions()
                                                 .setApplicationName("OpenGG Test")
                                                 .setWindowInfo(w));
@@ -70,7 +75,7 @@ public class  OpenGGTest extends GGApplication{
         //track.play();
         //SoundEngine.setGlobalGain(0f);
         //SoundtrackHandler.setSoundtrack(track);
-        
+
         font = Resource.getTruetypeFont("consolas.ttf");
         text = Text.from("""
                         Turmoil has engulfed the Galactic Republic.
@@ -90,11 +95,10 @@ public class  OpenGGTest extends GGApplication{
         GUI mainview = new GUI();
 
         mainview.getRoot().addItem("aids", gtext = new GUIText(text, font, new Vector2f(0,1)));
-       // GUIController.addAndUse(mainview, "mainview");
+        GUIController.addAndUse(mainview, "mainview");
 
         //NetworkEngine.connect("localhost", 25565);
         //WorldEngine.setOnlyActiveWorld(WorldEngine.getWorld("Test.bwf"));
-
         WorldEngine.getCurrent().attach(new ModelComponent(Resource.getModel("pear"), true).setPositionOffset(new Vector3f(2,0,-3)));
         WorldEngine.getCurrent().attach(new ModelComponent(Resource.getModel("pear"), true).setPositionOffset(new Vector3f(0,0,-6)));
         WorldEngine.getCurrent().attach(new ModelComponent(Resource.getModel("pear"), true).setPositionOffset(new Vector3f(0,0,6)));
@@ -104,21 +108,21 @@ public class  OpenGGTest extends GGApplication{
         WorldEngine.getCurrent().attach(new ModelComponent(Resource.getModel("pear"), true).setPositionOffset(new Vector3f(30,0,-28)));
 
         WorldEngine.getCurrent().getStructure().addGeometry(
-                WorldGeometryBuilder.fromCuboid(new Vector3f(45,0,-30), new Quaternionf(), new Vector3f(2,10,30), Resource.getTextureData("water.png"), true));
+                WorldGeometryBuilder.fromCuboid(new Vector3f(45,0,-30), new Quaternionf(), new Vector3f(2,10,30), TextureGenerator.ofColor(Color.RED, 1), true));
         WorldEngine.getCurrent().getStructure().addGeometry(
-                WorldGeometryBuilder.fromCuboid(new Vector3f(15,0,-30), new Quaternionf(), new Vector3f(2,10,30), Resource.getTextureData("water.png"), true));
+                WorldGeometryBuilder.fromCuboid(new Vector3f(15,0,-30), new Quaternionf(), new Vector3f(2,10,30), Resource.getTextureData("water.jpg"), true));
         WorldEngine.getCurrent().getStructure().addGeometry(
-                WorldGeometryBuilder.fromCuboid(new Vector3f(30,0,-45), new Quaternionf(), new Vector3f(30,10,2), Resource.getTextureData("water.png"), true));
+                WorldGeometryBuilder.fromCuboid(new Vector3f(30,0,-45), new Quaternionf(), new Vector3f(30,10,2), Resource.getTextureData("water.jpg"), true));
         WorldEngine.getCurrent().getStructure().addGeometry(
-                WorldGeometryBuilder.fromCuboid(new Vector3f(30,0,-15), new Quaternionf(), new Vector3f(30,10,2), Resource.getTextureData("water.png"), true));
+                WorldGeometryBuilder.fromCuboid(new Vector3f(30,0,-15), new Quaternionf(), new Vector3f(30,10,2), Resource.getTextureData("water.jpg"), true));
         WorldEngine.getCurrent().getStructure().addGeometry(
                 WorldGeometryBuilder.fromCuboid(new Vector3f(0,-6,0), new Quaternionf(), new Vector3f(400,10,400), Resource.getTextureData("grass.png"), true));
 
         var light = new LightComponent(
                 //Light.createPointShadow(new Vector3f(2,6,-4), new Vector3f(1), 100, 1024, 1024 )).setName("testlight");
-                Light.createDirectionalShadow(Quaternionf.createYXZ(new Vector3f(45,0,0)), new Vector3f(1, 1, 1),
-                        new Vector3f(0, 0, 0), Matrix4f.orthographic(-100, 100, -100, 100, -100, 100), 4096, 4096));
-               // Light.createDirectional(new Quaternionf(new Vector3f(45,10,0)), new Vector3f(1, 1, 1)));
+                //Light.createDirectionalShadow(Quaternionf.createYXZ(new Vector3f(45,0,0)), new Vector3f(1, 1, 1),
+                //        new Vector3f(0, 0, 0), Matrix4f.orthographic(-100, 100, -100, 100, -100, 100), 4096, 4096));
+                Light.createDirectional(Quaternionf.createYXZ(new Vector3f(45,30,0)), new Vector3f(1, 1, 1)));
         WorldEngine.getCurrent().attach(light);
         player = new FreeFlyComponent();
         WorldEngine.getCurrent().attach(player);
@@ -146,7 +150,7 @@ public class  OpenGGTest extends GGApplication{
                     new RenderComponent(
                             new TextureRenderable(ObjectCreator.createQuadPrism(new Vector3f(-1,-1,-1), new Vector3f(1,1,1)),
                                     i == 0 ? Texture.ofColor(Color.RED) : Texture.ofColor(Color.BLUE))).attach(new RigidBodyComponent(object, true))
-                            .setPositionOffset(new Vector3f(10f * multiple, (float) (10f), -15)));
+                            .setPositionOffset(new Vector3f(10f * multiple, 10f, -15)));
         }
 
         var object = new RigidBodyComponent(new RigidBody(new AABB( 3, 3, 3),  new ConvexHull(cube)), true);
@@ -159,7 +163,7 @@ public class  OpenGGTest extends GGApplication{
                 object.getRigidBody().getPhysicsProvider().get().velocity = new Vector3f((FastMath.random() - 0.5f) * 20f, 0, (FastMath.random() - 0.5f)*20f);
         });
 
-        WorldEngine.getCurrent().getRenderEnvironment().setSkybox(new Skybox(Texture.getSRGBCubemap(
+        WorldEngine.getCurrent().getRenderEnvironment().setSkybox(new Skybox(Texture.create(Texture.cubemapConfig(),
                 Resource.getTexturePath("skybox\\majestic_ft.png"),
                 Resource.getTexturePath("skybox\\majestic_bk.png"),
                 Resource.getTexturePath("skybox\\majestic_up.png"),
@@ -180,6 +184,8 @@ public class  OpenGGTest extends GGApplication{
         RenderEngine.setProjectionData(ProjectionData.getPerspective(100, 0.2f, 3000f));
         WindowController.getWindow().setCursorLock(true);
 
+        player = new FreeFlyComponent();
+        WorldEngine.getCurrent().attach(player);
     }
 
     @Override

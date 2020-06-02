@@ -7,13 +7,12 @@
 package com.opengg.core.physics.collision;
 
 import com.opengg.core.math.FastMath;
-import com.opengg.core.math.Tuple;
+import com.opengg.core.math.util.Tuple;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.physics.PhysicsEngine;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -56,9 +55,9 @@ public class ContactManifold {
             var p1 = getFarthestInDirection(new Vector3f(1,1,1), points);
             var p2 = ContactManifold.getFarthest(p1, points);
             var last2 = ContactManifold.getBothFarthestFromLine(Tuple.of(p1, p2), points);
-            var p3 = last2.x;
+            var p3 = last2.x();
             if(FastMath.isCollinear(p1.offset1, p2.offset1, p3.offset1)) return new ContactManifold(List.of(p1,p2));
-            var p4 = last2.y;
+            var p4 = last2.y();
             var unused = points.stream()
                     .filter(p -> p != p1 && p != p2 && p != p3 && p != p4)
                     .collect(Collectors.toList());
@@ -96,7 +95,7 @@ public class ContactManifold {
         Vector3f closestApproachBig = new Vector3f();
         int index = 0;
         for (int i = 0; i < vertices.size(); i++) {
-            var closestApproach = FastMath.closestPointTo(line.x.offset1, line.y.offset1, vertices.get(i).offset1, false);
+            var closestApproach = FastMath.closestPointTo(line.x().offset1, line.y().offset1, vertices.get(i).offset1, false);
             var dist2 = closestApproach.distanceToSquared(vertices.get(i).offset1);
             if (dist2 > max) {
                 max = dist2;

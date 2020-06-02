@@ -4,9 +4,6 @@
 
 layout(location = 1) out vec4 bright;
 
-uniform sampler2D Kd;
-
-
 void main() {
     vec3 val = getTex(Kd).xyz;
     bright = vec4(0,0,0,1);

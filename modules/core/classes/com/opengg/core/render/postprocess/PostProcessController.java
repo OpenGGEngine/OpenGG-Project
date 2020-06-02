@@ -7,11 +7,13 @@ package com.opengg.core.render.postprocess;
 
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.math.Matrix4f;
-import com.opengg.core.math.Tuple;
+import com.opengg.core.math.util.Tuple;
 import com.opengg.core.render.RenderEngine;
+import com.opengg.core.render.internal.opengl.OpenGLRenderer;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.render.Renderable;
 import com.opengg.core.render.objects.ObjectCreator;
+import com.opengg.core.render.shader.CommonUniforms;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.texture.Framebuffer;
 import com.opengg.core.render.texture.Texture;
@@ -40,7 +42,7 @@ public class PostProcessController {
 
         int blurpasses = 4;
         Stage[] blurs = new Stage[blurpasses*2+2];
-        Stage extract = new Stage("bright", new Tuple<>(0,1), new Tuple<>(1,0));
+        Stage extract = new Stage("bright", Tuple.of(0,"Ka"), Tuple.of(1,"Kd"));
         Stage blurv = new Stage("blurv");
         Stage blurh = new Stage("blurh");
         blurs[0] = extract;
@@ -75,27 +77,26 @@ public class PostProcessController {
     }
     
     public static void process(Framebuffer initial){
-        RenderEngine.setCulling(false);
-        ShaderController.setModel(new Matrix4f());
+        ((OpenGLRenderer) RenderEngine.renderer).setCulling(false);
+        CommonUniforms.setModel(new Matrix4f());
         
         currentBuffer = initial;
-        initial.useTexture(0, 0);
-        initial.useTexture(Framebuffer.DEPTH, 1);
+        initial.useTexture(0, "Kd");
+        initial.useTexture(Framebuffer.DEPTH, "Ka");
         for(PostProcessingPass pass : passes.values()){
             if(!pass.isEnabled()) continue;
             pass.render();
-            switch(pass.op){
-                case PostProcessingPass.SET:
-                    currentBuffer.useTexture(0, 0);
-                    break;
-                case PostProcessingPass.ADD:
+            switch (pass.op) {
+                case PostProcessingPass.SET -> currentBuffer.useTexture(0, "Kd");
+                case PostProcessingPass.ADD -> {
                     utility.enableRendering();
                     utility.useEnabledAttachments();
                     ShaderController.useConfiguration("add");
                     renderable.render();
                     utility.disableRendering();
-                    utility.useTexture(0, 0);
+                    utility.useTexture(0, "Kd");
                     currentBuffer = utility;
+                }
             }
         }
 

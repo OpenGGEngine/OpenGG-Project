@@ -1,27 +1,12 @@
 @version 420
+@include stdvert.ggsl
 
 in vec2 texcoord;
 in vec3 normal;
 in vec3 offset;
 in vec3 position;
-            
-out gl_PerVertex{
-    vec4 gl_Position;
-};
 
-out vertexData{
-	
-	vec2 textureCoord;
-	vec3 pos;
-	vec3 norm;
-};
-
-uniform mat4 model;
-uniform mat4 view;
-uniform mat4 projection;
 uniform vec3 rot;
-
-
 
 void main() {
     textureCoord = texcoord;

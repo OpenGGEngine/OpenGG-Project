@@ -8,8 +8,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.channels.FileChannel;
 
 public class DDSLoader {
     private static final int DXT1 = (0x44585431);
@@ -44,7 +42,7 @@ public class DDSLoader {
             b.flip();
             //System.out.println(fourCC+","+DXT1+","+DXT3+","+DXT5);
             TextureData data = new TextureData(width,height,numComponents,b,path,switch(fourCC){
-                case DXT1 -> TextureData.TType.DXT1; case DXT3 -> TextureData.TType.DXT3;case DXT5 -> TextureData.TType.DXT5;default->TextureData.TType.DXT1;
+                case DXT1 -> TextureData.TextureDataType.DXT1; case DXT3 -> TextureData.TextureDataType.DXT3;case DXT5 -> TextureData.TextureDataType.DXT5;default-> TextureData.TextureDataType.DXT1;
             });
             data.setMipMapCount(mipMapCount);
             return data;

@@ -7,6 +7,7 @@ package com.opengg.core.world.structure;
 
 import com.opengg.core.exceptions.ClassInstantiationException;
 import com.opengg.core.render.RenderEngine;
+import com.opengg.core.render.internal.opengl.OpenGLRenderer;
 import com.opengg.core.render.RenderGroup;
 import com.opengg.core.util.ClassUtil;
 import com.opengg.core.util.GGInputStream;
@@ -52,7 +53,7 @@ public class WorldStructure {
 
     public void remakeRenderGroups(){
         if(renderGroups.isEmpty()){
-            renderGroups.add(new RenderGroup("world structure models", RenderEngine.tangentVAOFormat, "tangent"));
+            renderGroups.add(new RenderGroup("world structure models", RenderEngine.getTangentVAOFormat(), "tangent"));
             renderGroups.add(new RenderGroup("world structure cuboids", RenderEngine.getDefaultFormat(), "cuboid"));
             renderGroups.forEach(r -> r.setEnabled(true));
             renderGroups.forEach(parent.getRenderEnvironment()::addGroup);

@@ -1,8 +1,10 @@
 package com.opengg.core.render;
 
+import com.opengg.core.exceptions.RenderException;
 import com.opengg.core.render.internal.opengl.OpenGLBuffer;
-import com.opengg.core.system.NativeResource;
+import com.opengg.core.render.internal.vulkan.VulkanBuffer;
 
+import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
@@ -19,7 +21,10 @@ public interface GraphicsBuffer{
      * @return
      */
     static GraphicsBuffer allocate(BufferType type, UsageType access){
-        return new OpenGLBuffer(type, access);
+        return switch (RenderEngine.getRendererType()){
+            case OPENGL -> new OpenGLBuffer(type, access);
+            case VULKAN -> throw new RenderException("Cannot instantiate empty buffer in Vulkan");
+        };
     }
 
     /**
@@ -30,7 +35,23 @@ public interface GraphicsBuffer{
      * @return
      */
     static GraphicsBuffer allocate(BufferType type, int size, UsageType access){
-        return new OpenGLBuffer(type, size, access);
+        return switch (RenderEngine.getRendererType()){
+            case OPENGL -> new OpenGLBuffer(type, size, access);
+            case VULKAN -> new VulkanBuffer(type, size);
+        };    }
+
+    /**
+     * Allocates and uploads the given {@code FloatBuffer} to the GPU using the given buffer type and access type
+     * @param type Memory usage type
+     * @param buffer Buffer to upload
+     * @param access Memory usage (can be GL_STATIC_DRAW, GL_DYNAMIC_DRAW, or GL_STREAM_DRAW)
+     * @return
+     */
+    static GraphicsBuffer allocate(BufferType type, ByteBuffer buffer, UsageType access){
+        return switch (RenderEngine.getRendererType()){
+            case OPENGL -> new OpenGLBuffer(type, buffer, access);
+            case VULKAN -> new VulkanBuffer(type, buffer);
+        };
     }
 
     /**
@@ -41,7 +62,10 @@ public interface GraphicsBuffer{
      * @return
      */
     static GraphicsBuffer allocate(BufferType type, FloatBuffer buffer, UsageType access){
-        return new OpenGLBuffer(type, buffer, access);
+        return switch (RenderEngine.getRendererType()){
+            case OPENGL -> new OpenGLBuffer(type, buffer, access);
+            case VULKAN -> new VulkanBuffer(type, buffer);
+        };
     }
 
     /**
@@ -52,7 +76,10 @@ public interface GraphicsBuffer{
      * @return
      */
     static GraphicsBuffer allocate(BufferType type, IntBuffer buffer, UsageType access){
-        return new OpenGLBuffer(type, buffer, access);
+        return switch (RenderEngine.getRendererType()){
+            case OPENGL -> new OpenGLBuffer(type, buffer, access);
+            case VULKAN -> new VulkanBuffer(type, buffer);
+        };
     }
 
     /**
@@ -66,10 +93,10 @@ public interface GraphicsBuffer{
     void unbind();
 
     /**
-     * Clears and reallocates a buffer of size {@code size}
-     * @param size New size
+     * Uploads the given {@code FloatBuffer} to the buffer
+     * @param data
      */
-    void alloc(int size);
+    void uploadData(ByteBuffer data);
 
     /**
      * Uploads the given {@code FloatBuffer} to the buffer

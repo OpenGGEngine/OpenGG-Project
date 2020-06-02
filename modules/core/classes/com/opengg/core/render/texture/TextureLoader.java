@@ -12,7 +12,6 @@ import org.lwjgl.stb.STBDXT;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
@@ -21,7 +20,6 @@ import java.nio.channels.FileChannel;
 import static org.lwjgl.stb.STBDXT.STB_DXT_HIGHQUAL;
 import static org.lwjgl.stb.STBImage.stbi_load;
 import static org.lwjgl.stb.STBImage.stbi_set_flip_vertically_on_load;
-import static org.lwjgl.stb.STBDXT.stb_compress_dxt_block;
 
 /**
  *
@@ -54,7 +52,7 @@ public class  TextureLoader {
         ByteBuffer dataBuffer = Allocator.alloc(tex.remaining());
         byte[] tempCopy = new byte[tex.remaining()];
         tex.get(tempCopy); dataBuffer.put(tempCopy).flip();
-        TextureData data = new TextureData(texWidth,texHeight,4,dataBuffer,path,TextureData.TType.ATSC);
+        TextureData data = new TextureData(texWidth,texHeight,4,dataBuffer,path, TextureData.TextureDataType.ATSC);
         data.setBlockSize(xDim,yDim);
         fIn.close();
         return data;

@@ -7,11 +7,8 @@ package com.opengg.core.system;
 
 import com.opengg.core.GGInfo;
 import com.opengg.core.console.GGConsole;
-import java.nio.Buffer;
-import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
-import java.nio.ShortBuffer;
+
+import java.nio.*;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.system.MemoryStack;
@@ -140,7 +137,7 @@ public class Allocator {
     public static ShortBuffer stackAllocShort(int size){
         return allocShort(size, AllocType.NATIVE_STACK);
     }
-    
+
     public static ShortBuffer allocShort(int size, AllocType allocator){
         ShortBuffer buffer = null;
         switch(allocator){
@@ -156,9 +153,31 @@ public class Allocator {
             case NATIVE_STACK:
                 MemoryStack stack = MemoryStack.stackPush();
                 buffer = stack.mallocShort(size);
-                
+
                 break;
         }
+        register(buffer, allocator);
+        return buffer;
+    }
+
+    public static LongBuffer allocLong(int size){
+        return allocLong(size, currentAllocator);
+    }
+
+    public static LongBuffer stackAllocLong(int size){
+        return allocLong(size, AllocType.NATIVE_STACK);
+    }
+
+    public static LongBuffer allocLong(int size, AllocType allocator){
+        LongBuffer buffer = switch (allocator) {
+            case JAVA -> LongBuffer.allocate(size);
+            case DIRECT -> BufferUtils.createLongBuffer(size);
+            case NATIVE_HEAP -> MemoryUtil.memAllocLong(size);
+            case NATIVE_STACK -> {
+                MemoryStack stack = MemoryStack.stackPush();
+                yield stack.mallocLong(size);
+            }
+        };
         register(buffer, allocator);
         return buffer;
     }

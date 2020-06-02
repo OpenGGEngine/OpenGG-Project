@@ -14,21 +14,21 @@ struct Light
 	float angle;
 };
 
-layout(std140) uniform LightBuffer {
+layout(std140, set = 2, binding = 1) uniform LightBuffer {
 	Light lights[LIGHTNUM];
 };
 
-uniform int numLights;
-uniform int shadow;
-uniform float nearplane;
-uniform float farplane;
+layout(set = 2, binding = 2) unwrap uniform GlobalLightData{
+    int numLights;
+    int shadow;
+    float nearplane;
+    float farplane;
+};
 
-uniform sampler2D shadowmap;
-uniform sampler2D shadowmap2;
-uniform sampler2D shadowmap3;
-
-uniform samplerCube shadowcube;
-uniform samplerCube cube3;
+uniform layout(set = 3, binding = 0) sampler2D shadowmap0;
+uniform layout(set = 3, binding = 1) sampler2D shadowmap1;
+uniform layout(set = 3, binding = 2) sampler2D shadowmap2;
+uniform layout(set = 3, binding = 3) samplerCube shadowcube;
 
 float pointLight(Light light){
         vec3 sampleOffsetDirections[20] = vec3[]
@@ -76,10 +76,10 @@ float directionalLight(Light light){
     projCoords = (projCoords * 0.5f) + 0.5f;
 
     float shadow = 0.0;
-    vec2 texelSize = 1.0 / textureSize(shadowmap, 0);
+    vec2 texelSize = 1.0 / textureSize(shadowmap0, 0);
     for(float x = -1.5; x < 1.6; x++){
         for(float y = -1.5; y < 1.6; y++){
-                float pcfDepth = texture(shadowmap, projCoords.xy + vec2(x, y) * texelSize).r;
+                float pcfDepth = texture(shadowmap0, projCoords.xy + vec2(x, y) * texelSize).r;
                 shadow += projCoords.z - depthBias > pcfDepth ? 1.0 : 0.0;
             }
     }

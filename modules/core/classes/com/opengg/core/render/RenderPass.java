@@ -49,11 +49,11 @@ public class RenderPass {
         isPostProcessEnabled = postProcessEnabled;
     }
     
-    void runEnableOp(){
+    public void runEnableOp(){
         enableOp.run();
     }
 
-    void runDisableOp(){
+    public void runDisableOp(){
         disableOp.accept(sceneBuffer);
     }
 

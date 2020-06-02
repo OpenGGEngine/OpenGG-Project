@@ -50,7 +50,7 @@ public class WindowController {
     
     public static void update(){
 
-        Vector2i newsize = new Vector2i(window.getWidth(), window.getHeight());
+        Vector2i newsize = new Vector2i(Math.abs(window.getWidth()), Math.abs(window.getHeight()));
         if(!newsize.equals(oldsize)){
             oldsize = newsize;
             resize(newsize);

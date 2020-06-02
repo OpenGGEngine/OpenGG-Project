@@ -9,9 +9,10 @@ import com.opengg.core.engine.OpenGG;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.Renderable;
-import com.opengg.core.render.drawn.TextureRenderable;
+import com.opengg.core.render.objects.TextureRenderable;
 import com.opengg.core.render.light.Light;
 import com.opengg.core.render.objects.ObjectCreator;
+import com.opengg.core.render.shader.CommonUniforms;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.texture.TextureData;
@@ -54,10 +55,10 @@ public class SunComponent extends RenderComponent{
     
     @Override
     public void render() {
-        ShaderController.setBillBoard(1);
-        texture.use(0);
+        CommonUniforms.setBillBoard(1);
+        ShaderController.setUniform("Kd", texture);
         super.render();
-        ShaderController.setBillBoard(0);
+        CommonUniforms.setBillBoard(0);
     }
     
     @Override

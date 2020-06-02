@@ -9,12 +9,12 @@ package com.opengg.core.render.light;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
+import com.opengg.core.render.shader.CommonUniforms;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.texture.Framebuffer;
 import com.opengg.core.system.Allocator;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
-import org.lwjgl.system.CallbackI;
 
 import java.io.IOException;
 import java.nio.FloatBuffer;
@@ -139,8 +139,8 @@ public class Light {
     public void initializeRender(){
         if(!shadow) throw new IllegalStateException("No shadowmap has been created for this light");
 
-        ShaderController.setView(getView());
-        ShaderController.setProjection(getPerspective());
+        CommonUniforms.setView(getView());
+        CommonUniforms.setProjection(getPerspective());
         if(type == ORTHO){
             ShaderController.useConfiguration("passthrough");
         }else{
@@ -173,9 +173,9 @@ public class Light {
     public void finalizeRender(int pos){
         lightBuffer.disableRendering();
         if(this.type == POINT)
-            lightBuffer.useTexture(Framebuffer.DEPTH, 10+pos);
+            lightBuffer.useTexture(Framebuffer.DEPTH, "shadowcube");
         else
-            lightBuffer.useTexture(Framebuffer.DEPTH, 6+pos);
+            lightBuffer.useTexture(Framebuffer.DEPTH, "shadowmap" + pos);
     }
     
     public Vector3f getPosition() {

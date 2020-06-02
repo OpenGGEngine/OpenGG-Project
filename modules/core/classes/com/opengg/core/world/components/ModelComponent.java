@@ -7,6 +7,7 @@ package com.opengg.core.world.components;
 
 import com.opengg.core.engine.OpenGG;
 import com.opengg.core.render.RenderEngine;
+import com.opengg.core.render.internal.opengl.OpenGLRenderer;
 import com.opengg.core.engine.Resource;
 import com.opengg.core.model.Model;
 import com.opengg.core.util.GGInputStream;
@@ -34,7 +35,7 @@ public class ModelComponent extends RenderComponent implements ResourceUser{
     public ModelComponent(Model model, boolean collider){
         super();
         setModel(model);
-        this.setFormat(model.isAnimated() ? RenderEngine.tangentAnimVAOFormat: RenderEngine.tangentVAOFormat);
+        this.setFormat(model.isAnimated() ? RenderEngine.getTangentAnimVAOFormat(): RenderEngine.getTangentVAOFormat());
         this.setTransparency(true);
         this.collider = collider;
 
@@ -59,7 +60,7 @@ public class ModelComponent extends RenderComponent implements ResourceUser{
         if(hastan&&hasanim){
 
         }else if(hastan){
-            this.setFormat(RenderEngine.tangentVAOFormat);
+            this.setFormat(RenderEngine.getTangentVAOFormat());
             this.setShader("tangent");
         }else if(hasanim){
 

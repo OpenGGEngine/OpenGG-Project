@@ -6,7 +6,9 @@
 
 package com.opengg.core.render.shader;
 
+import com.opengg.core.render.RenderEngine;
 import com.opengg.core.render.internal.opengl.shader.OpenGLShaderPipeline;
+import com.opengg.core.render.internal.vulkan.shader.VulkanShaderPipeline;
 
 /**
  *
@@ -14,20 +16,26 @@ import com.opengg.core.render.internal.opengl.shader.OpenGLShaderPipeline;
  */
 public interface ShaderPipeline{
     static ShaderPipeline create(ShaderProgram vertex, ShaderProgram fragment){
-        return new OpenGLShaderPipeline(vertex, null, null, null, fragment);
+        return switch (RenderEngine.getRendererType()) {
+            case OPENGL -> new OpenGLShaderPipeline(vertex, null, null, null, fragment);
+            case VULKAN -> new VulkanShaderPipeline(vertex, null, null, null, fragment);
+        };
     }
 
     static ShaderPipeline create(ShaderProgram vertex, ShaderProgram tesc, ShaderProgram tese, ShaderProgram geom, ShaderProgram fragment){
-        return new OpenGLShaderPipeline(vertex, tesc, tese, geom, fragment);
+        return switch (RenderEngine.getRendererType()){
+            case OPENGL -> new OpenGLShaderPipeline(vertex, tesc, tese, geom, fragment);
+            case VULKAN -> new VulkanShaderPipeline(vertex, tesc, tese, geom, fragment);
+        };
     }
 
     void delete();
 
     void validate();
 
-    void bind();
+    void use();
 
     void unbind();
 
-    String getShader(ShaderProgram.ShaderType type);
+    ShaderProgram getShader(ShaderProgram.ShaderType type);
 }

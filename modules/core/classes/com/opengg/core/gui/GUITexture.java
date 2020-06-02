@@ -7,7 +7,7 @@ package com.opengg.core.gui;
 
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.render.Renderable;
-import com.opengg.core.render.drawn.TextureRenderable;
+import com.opengg.core.render.objects.TextureRenderable;
 import com.opengg.core.render.objects.ObjectCreator;
 import com.opengg.core.render.texture.Texture;
 

@@ -7,7 +7,7 @@
 package com.opengg.core.render;
 
 import com.opengg.core.math.Matrix4f;
-import com.opengg.core.render.shader.ShaderController;
+import com.opengg.core.render.shader.CommonUniforms;
 import com.opengg.core.render.window.WindowController;
 
 /**
@@ -25,7 +25,7 @@ public class ProjectionData {
     float maxz;
     
     float fov;
-    float ratio;
+    public float ratio;
     
     float miny;
     float maxy;
@@ -59,13 +59,14 @@ public class ProjectionData {
     
     public void use(){
         if(type == PERSPECTIVE)
-            ShaderController.setPerspective(fov, ratio, minz, maxz);
+            CommonUniforms.setPerspective(fov, ratio, minz, maxz);
         else if(type == CUSTOM)
-            ShaderController.setProjection(custom);
+            CommonUniforms.setProjection(custom);
     }
 
     public Matrix4f getMatrix(){
         return Matrix4f.perspective(fov, ratio, minz, maxz);
     }
+
 
 }

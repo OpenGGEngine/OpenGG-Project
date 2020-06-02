@@ -8,10 +8,7 @@ package com.opengg.core.world.components;
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.render.Renderable;
-import com.opengg.core.render.shader.ShaderController;
-import com.opengg.core.render.shader.VertexArrayAttribute;
-import com.opengg.core.render.shader.VertexArrayBinding;
-import com.opengg.core.render.shader.VertexArrayFormat;
+import com.opengg.core.render.shader.*;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
 
@@ -44,9 +41,9 @@ public class RenderComponent extends Component implements com.opengg.core.render
     @Override
     public void render() {
         if(override == null)
-            ShaderController.setPosRotScale(this.getPosition(), this.getRotation(), this.getScale());
+            CommonUniforms.setPosRotScale(this.getPosition(), this.getRotation(), this.getScale());
         else
-            ShaderController.setModel(this.override);
+            CommonUniforms.setModel(this.override);
 
         if((renderDistance > 0) && (getPosition().subtract(RenderEngine.getCurrentView().getPosition()).length() > renderDistance)) {
             return;
@@ -125,10 +122,10 @@ public class RenderComponent extends Component implements com.opengg.core.render
             out.write(binding.getDivisor());
             out.write(binding.getAttributes().size());
             for(var attrib : binding.getAttributes()){
-                out.write(attrib.name);
-                out.write(attrib.size);
-                out.write(attrib.type);
-                out.write(attrib.offset);
+                out.write(attrib.name());
+                out.write(attrib.size());
+                out.write(attrib.type().name());
+                out.write(attrib.offset());
             }
         }
     }
@@ -143,7 +140,7 @@ public class RenderComponent extends Component implements com.opengg.core.render
         format = new VertexArrayFormat();
         int bindingCount = in.readInt();
         for(int i = 0; i < bindingCount; i++){
-            var list = new ArrayList<VertexArrayAttribute>();
+            var list = new ArrayList<VertexArrayFormat.VertexArrayAttribute>();
             var index = in.readInt();
             var vertexSize = in.readInt();
             var divisor = in.readInt();
@@ -151,9 +148,9 @@ public class RenderComponent extends Component implements com.opengg.core.render
             for(int ii = 0; ii < attribCount; ii++){
                 var name = in.readString();
                 var size = in.readInt();
-                var type = in.readInt();
+                var type = in.readString();
                 var offset = in.readInt();
-                var attrib = new VertexArrayAttribute(name, size, type, offset);
+                var attrib = new VertexArrayFormat.VertexArrayAttribute(name, size, VertexArrayFormat.VertexArrayAttribute.Type.valueOf(type), offset);
                 list.add(attrib);
             }
             var binding = new VertexArrayBinding(index, vertexSize, divisor, list);

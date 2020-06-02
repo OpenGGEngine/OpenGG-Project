@@ -5,12 +5,12 @@
  */
 package com.opengg.core.world.components.particle;
 
-import com.opengg.core.math.Matrix4f;
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.drawn.DrawnObject;
 import com.opengg.core.render.objects.ObjectCreator;
+import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.texture.TextureData;
 import com.opengg.core.render.texture.TextureManager;
@@ -47,9 +47,9 @@ public abstract class ParticleEmitter extends RenderComponent{
 
     private void createDrawable(){
         var buffers = ObjectCreator.createSquareBuffers(new Vector2f(-1,-1), new Vector2f(1,1), 0);
-        FloatBuffer fb = buffers.x;
-        IntBuffer ib = buffers.y;
-        this.setRenderable(new DrawnObject(RenderEngine.getParticleFormat(), ib, fb, Allocator.allocFloat(3)));
+        FloatBuffer fb = buffers.vertices();
+        IntBuffer ib = buffers.indices();
+        this.setRenderable(DrawnObject.create(RenderEngine.getParticleFormat(), ib, fb, Allocator.allocFloat(3)));
     }
     
     private FloatBuffer createParticleVBO(){
@@ -104,7 +104,7 @@ public abstract class ParticleEmitter extends RenderComponent{
         ((DrawnObject) getRenderable()).updateBuffer(1, createParticleVBO());
         ((DrawnObject) getRenderable()).setInstanceCount(particles.size());
         //if(!bindParticlesToEmitter) this.setOverrideMatrix(new Matrix4f().scale(this.getScale()));
-        texture.use(0);
+        ShaderController.setUniform("Kd", texture);
         super.render();
     }
 }

@@ -5,8 +5,8 @@
  */
 package com.opengg.core.render.internal.opengl.texture;
 
-import com.opengg.core.engine.OpenGG;
 import com.opengg.core.render.RenderEngine;
+import com.opengg.core.render.internal.opengl.OpenGLRenderer;
 import com.opengg.core.system.NativeResource;
 import com.opengg.core.system.NativeResourceManager;
 
@@ -17,7 +17,6 @@ import static org.lwjgl.opengl.GL12.glTexImage3D;
 import static org.lwjgl.opengl.GL12.glTexSubImage3D;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL13.glCompressedTexImage2D;
-import static org.lwjgl.opengl.GL30.GL_TEXTURE_2D_ARRAY;
 import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 import static org.lwjgl.opengl.GL42.glTexStorage2D;
 import static org.lwjgl.opengl.GL42.glTexStorage3D;

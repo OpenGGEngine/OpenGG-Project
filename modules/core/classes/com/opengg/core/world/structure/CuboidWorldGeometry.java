@@ -7,7 +7,7 @@ import com.opengg.core.math.Vector3f;
 import com.opengg.core.physics.collision.colliders.AABB;
 import com.opengg.core.physics.RigidBody;
 import com.opengg.core.physics.collision.colliders.ConvexHull;
-import com.opengg.core.render.drawn.TextureRenderable;
+import com.opengg.core.render.objects.TextureRenderable;
 import com.opengg.core.render.objects.ObjectCreator;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.texture.Texture;

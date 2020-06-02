@@ -5,10 +5,10 @@
  */
 package com.opengg.core.render.text.impl;
 
-import com.opengg.core.math.Tuple;
+import com.opengg.core.math.util.Tuple;
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.model.Material;
-import com.opengg.core.render.drawn.MaterialRenderable;
+import com.opengg.core.render.objects.MaterialRenderable;
 import com.opengg.core.render.text.Text;
 import com.opengg.core.system.Allocator;
 
@@ -92,10 +92,10 @@ public class TextVBOGenerator {
                 int previous = Integer.MAX_VALUE;
                 for (GGCharacter letter : word.getCharacters()) {
                     double kerningAmount;
-                    if(!metaData.kernings.containsKey(new Tuple<>(previous,letter.textureid))){
+                    if(!metaData.kernings.containsKey(Tuple.of(previous,letter.textureid))){
                         kerningAmount = 0;
                     }else{
-                        kerningAmount = metaData.kernings.get(new Tuple<>(previous,letter.textureid));
+                        kerningAmount = metaData.kernings.get(Tuple.of(previous,letter.textureid));
                     }
                     addVerticesForCharacter((kerning?kerningAmount:0)+curserX, curserY, letter, text.getSize(), vertices);
                     addTexCoords(textureCoords, letter.xTextureCoord, letter.yTextureCoord,

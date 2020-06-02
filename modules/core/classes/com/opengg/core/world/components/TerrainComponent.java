@@ -110,8 +110,8 @@ public class TerrainComponent extends RenderComponent{
     @Override
     public void render(){
         if(blotmap == null || array == null)
-        blotmap.use(1);
-        array.use(11);
+        ShaderController.setUniform("Ka", blotmap);
+        ShaderController.setUniform("terrain", array);
         ShaderController.setUniform("scale", this.getScale());
         super.render();
     }

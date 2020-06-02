@@ -1,24 +1,23 @@
 @include stdfrag.ggsl
 struct Material
 {
+    float ns;
+    vec3 ks;
+    vec3 ka;
+    vec3 kd;
     float hasnormmap;
     float hasambmap;
     float hasspec;
     float hasspecpow;
-	float hascolormap;
-	float hasem;
-    vec3 ks;
-    vec3 ka;
-    vec3 kd;
-    float ns;
+    float hascolormap;
+    float hasem;
 };
 
-uniform sampler2D Kd;
-uniform sampler2D Ka;
-uniform sampler2D Ks;
-uniform sampler2D Ns;
-uniform sampler2D em;
-uniform sampler2D bump;
+layout(set = 4, binding = 1) uniform sampler2D Ka;
+layout(set = 4, binding = 2) uniform sampler2D Ks;
+layout(set = 4, binding = 3) uniform sampler2D Ns;
+layout(set = 4, binding = 4) uniform sampler2D em;
+layout(set = 4, binding = 5) uniform sampler2D bump;
 
 vec3 ambient;
 vec3 specular;
@@ -62,7 +61,7 @@ void useMaterial(Material mat, vec4 color){
 
     trans = color.a;
 
-    ambient = 0.05f * diffuse;
+    ambient = 0.3f * diffuse;
 
     specular = getTex(Ks).xyz * mat.hasspec + mat.ks * (1-mat.hasspec);
 

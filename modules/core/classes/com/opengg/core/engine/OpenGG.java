@@ -15,14 +15,13 @@ import com.opengg.core.audio.SoundtrackHandler;
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.extension.Extension;
 import com.opengg.core.extension.ExtensionManager;
-import static com.opengg.core.render.RenderEngine.endFrame;
-import static com.opengg.core.render.RenderEngine.startFrame;
 
 import com.opengg.core.gui.GUIController;
 import com.opengg.core.io.input.mouse.MouseController;
 import com.opengg.core.network.NetworkEngine;
 import com.opengg.core.physics.PhysicsEngine;
 import com.opengg.core.render.RenderEngine;
+import com.opengg.core.render.internal.opengl.OpenGLRenderer;
 import com.opengg.core.render.window.WindowController;
 import com.opengg.core.render.window.Window;
 import com.opengg.core.render.window.WindowInfo;
@@ -35,6 +34,7 @@ import com.opengg.core.thread.ThreadManager;
 import com.opengg.core.util.Time;
 import com.opengg.core.world.WorldEngine;
 
+import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
 import java.security.Policy;
@@ -48,6 +48,7 @@ import java.util.List;
  */
 public final class OpenGG{
     private static GGApplication app;
+    private static InitializationOptions initOptions;
     private static Instant startTime;
     private static boolean force = false;
     private static boolean test = false;
@@ -82,15 +83,16 @@ public final class OpenGG{
         }
     }
 
-    private static void initializeClient(WindowInfo windowinfo){
-        WindowController.setup(windowinfo);
-        GGConsole.log("Window generation successful, using OpenGL context version " + RenderEngine.getGLVersion());
+    private static void initializeClient(WindowInfo windowInfo){
+        WindowController.setup(windowInfo);
 
-        SystemInfo.queryOpenGLInfo();
+        //SystemInfo.queryRendererInfo("OpenGL");
         GGConsole.log("OpenGL instantiation confirmed");
         GGConsole.log("Running renderer on " + SystemInfo.get("Graphics Renderer") + " provided by " + SystemInfo.get("Graphics Vendor"));
 
-        RenderEngine.initialize();
+        RenderEngine.initialize(windowInfo);
+        //GGConsole.log("Using OpenGL context version " + ((OpenGLRenderer) RenderEngine.renderer).getGLVersion());
+
         GGGameConsole.initialize();
         GGDebugRenderer.initialize();
         SoundEngine.initialize();
@@ -110,6 +112,7 @@ public final class OpenGG{
         time = new Time();
         startTime = Instant.now();
         mainThread = Thread.currentThread();
+        initOptions = options;
         app = ggapp;
 
         GGInfo.setServer(!client);
@@ -119,12 +122,12 @@ public final class OpenGG{
         Executor.initialize();
         GGConsole.initialize();
         GGConsole.addListener(new OpenGGCommandExtender());
-        GGConsole.log("OpenGG initializing, isRunning on " + System.getProperty("os.name") + ", " + System.getProperty("os.arch"));
+        GGConsole.log("OpenGG initializing, running on " + System.getProperty("os.name") + ", " + System.getProperty("os.arch"));
         GGConsole.log("Initializing application " + options.getApplicationName() + " with app ID " + options.getApplicationId());
 
 
-        Policy.setPolicy(new OpenGGSecurityPolicy());
-        System.setSecurityManager(new SecurityManager());
+        //Policy.setPolicy(new OpenGGSecurityPolicy());
+        //System.setSecurityManager(new SecurityManager());
 
         GGConsole.log("Switched runtime security to OpenGG security policy");
 
@@ -145,16 +148,17 @@ public final class OpenGG{
 
         ExtensionManager.loadStep(Extension.CONFIG);
 
+        if(client)
+            initializeClient(options.getWindowInfo());
+        else
+            initializeServer();
+
+
         WorldEngine.initialize();
         GGConsole.log("World Engine initialized");
 
         PhysicsEngine.initialize();
         GGConsole.log("Physics Engine initialized");
-
-        if(client)
-            initializeClient(options.getWindowInfo());
-        else
-            initializeServer();
 
         SystemInfo.queryEngineInfo();
 
@@ -231,12 +235,11 @@ public final class OpenGG{
 
     private static void runRender() {
         WindowController.update();
-        startFrame();
+        RenderEngine.startFrame();
         getApp().render();
         ExtensionManager.render();
         RenderEngine.render();
-        RenderEngine.checkForGLErrors();
-        endFrame();
+        RenderEngine.endFrame();
         NativeResourceManager.runQueuedFinalization();
     }
 
@@ -250,6 +253,10 @@ public final class OpenGG{
         if(stest != null)
             if(stest.equals("true"))
                 test = true;
+    }
+
+    public static InitializationOptions getInitOptions() {
+        return initOptions;
     }
 
     private static void loadConfigs(){

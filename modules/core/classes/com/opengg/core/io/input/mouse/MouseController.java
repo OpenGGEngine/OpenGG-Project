@@ -12,11 +12,10 @@ import com.opengg.core.math.Vector3f;
 import com.opengg.core.math.Vector4f;
 import com.opengg.core.physics.collision.PhysicsRay;
 import com.opengg.core.render.RenderEngine;
+import com.opengg.core.render.internal.opengl.OpenGLRenderer;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.opengg.core.io.input.keyboard.Key.MOUSE_BUTTON_LEFT;
 
 /**
  *
@@ -98,7 +97,7 @@ public class MouseController {
         float z = 1.0f;
         Vector3f ray_nds = new Vector3f((2*xpos)/OpenGG.getWindow().getWidth()-1.0f, 1-(ypos*2)/OpenGG.getWindow().getHeight(), z);
         Vector4f ray_clip = new Vector4f(ray_nds.x,ray_nds.y, -1.0f, 1.0f);
-        Vector4f ray_eye = ray_clip.multiply(RenderEngine.getData().getMatrix().invert());
+        Vector4f ray_eye = ray_clip.multiply(RenderEngine.getProjectionData().getMatrix().invert());
         ray_eye = new Vector4f(ray_eye.x,ray_eye.y, -1.0f, 0.0f);
         Vector3f ray_wor = ray_eye.multiply(RenderEngine.getCurrentView().getMatrix().invert()).truncate();
         ray_wor = ray_wor.normalize();

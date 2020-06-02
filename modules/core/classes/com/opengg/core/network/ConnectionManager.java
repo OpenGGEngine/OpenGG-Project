@@ -2,7 +2,7 @@ package com.opengg.core.network;
 
 import com.opengg.core.engine.OpenGG;
 import com.opengg.core.engine.PerformanceManager;
-import com.opengg.core.math.Tuple;
+import com.opengg.core.math.util.Tuple;
 import com.opengg.core.network.common.ConnectionData;
 import com.opengg.core.network.common.Packet;
 import com.opengg.core.network.common.PacketType;
@@ -11,7 +11,6 @@ import com.opengg.core.util.GGFuture;
 import com.opengg.core.util.GGInputStream;
 
 import java.io.IOException;
-import java.net.DatagramSocket;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -19,8 +18,8 @@ import java.util.stream.Stream;
 
 public class ConnectionManager implements Runnable{
     private final Map<Byte, List<Consumer<Packet>>> processors;
-    private final List<Tuple<Tuple<Packet, GGFuture<Boolean>>, Float>> packetsWaiting = new ArrayList<>();
-    private final List<Tuple<Tuple<Tuple<Long, Byte>, ConnectionData>, Float>> receivedPacketsWithAck = new ArrayList<>();
+    private final Map<SentPacketTracker, Float> packetsWaiting = new HashMap<>();
+    private final Map<ReceivedPacketTracker, Float> receivedPacketsWithAck = new HashMap<>();
     private final HashMap<Byte, List<GGFuture<Packet>>> waitingForPacket = new HashMap<>();
     private final float RESEND_DELAY = 0.2f;
 
@@ -45,7 +44,7 @@ public class ConnectionManager implements Runnable{
 
     public void sendWithAcknowledgement(Packet packet, GGFuture<Boolean> future){
         synchronized (SENT_BLOCK) {
-            packetsWaiting.add(Tuple.of(Tuple.of(packet,future), 0f));
+            packetsWaiting.put(new SentPacketTracker(packet, future), 0f);
             packet.send();
         }
     }
@@ -54,12 +53,12 @@ public class ConnectionManager implements Runnable{
         try {
             synchronized (SENT_BLOCK) {
                 var packetTimestamp = new GGInputStream(packet.getData()).readLong();
-                var foundPacket = packetsWaiting.stream()
-                        .filter(p -> p.x.x.getTimestamp() == packetTimestamp)
-                        .filter(p -> p.x.x.getConnection().equals(packet.getConnection()))
-                        .peek(p -> p.x.y.set(true))
+                var foundPacket = packetsWaiting.keySet().stream()
+                        .filter(p -> p.packet().getTimestamp() == packetTimestamp)
+                        .filter(p -> p.packet().getConnection().equals(packet.getConnection()))
+                        .peek(p -> p.future().set(true))
                         .collect(Collectors.toList());
-                packetsWaiting.removeAll(foundPacket);
+                foundPacket.forEach(packetsWaiting::remove);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -71,10 +70,8 @@ public class ConnectionManager implements Runnable{
             Packet.sendAcknowledgement(packet, packet.getConnection());
 
             synchronized (RECEIVED_BLOCK) {
-                if (receivedPacketsWithAck.stream()
-                        .noneMatch(c -> c.x.equals(Tuple.of(Tuple.of(packet.getTimestamp(), packet.getType()), packet.getConnection())))) {
-                    receivedPacketsWithAck.add(Tuple.of(Tuple.of(Tuple.of(packet.getTimestamp(), packet.getType()), packet.getConnection()), 0f));
-
+                if (!receivedPacketsWithAck.containsKey(new ReceivedPacketTracker(packet.getTimestamp(), packet.getConnection(), packet.getType()))) {
+                    receivedPacketsWithAck.put(new ReceivedPacketTracker(packet.getTimestamp(), packet.getConnection(), packet.getType()), 0f);
                     return true;
                 } else {
                     return false;
@@ -87,17 +84,23 @@ public class ConnectionManager implements Runnable{
 
     public void update(float delta){
         synchronized (SENT_BLOCK) {
-            packetsWaiting.stream()
-                    .peek(p -> p.y += delta)
-                    .filter(p -> p.y >= RESEND_DELAY)
-                    .peek(p -> p.y = 0f)
-                    .peek(p -> PerformanceManager.registerPacketResent())
-                    .forEach(p -> p.x.x.send());
+            for(var packet : packetsWaiting.keySet()){
+                float time = packetsWaiting.get(packet);
+                time += delta;
+                if(time > RESEND_DELAY){
+                    time = 0;
+                    PerformanceManager.registerPacketResent();
+                    packet.packet.send();
+                }
+                packetsWaiting.put(packet, time);
+            }
         }
 
         synchronized (RECEIVED_BLOCK){
-            receivedPacketsWithAck.forEach(c -> c.y += delta);
-            receivedPacketsWithAck.removeIf(c -> c.y >= 10f);
+            for(var key : receivedPacketsWithAck.keySet()){
+                if(receivedPacketsWithAck.get(key) >= 10f) receivedPacketsWithAck.remove(key);
+                else receivedPacketsWithAck.put(key, receivedPacketsWithAck.get(key) - delta);
+            }
         }
 
     }
@@ -111,4 +114,7 @@ public class ConnectionManager implements Runnable{
             }
         }
     }
+
+    record ReceivedPacketTracker(long timestamp, ConnectionData source, byte type){}
+    record SentPacketTracker(Packet packet, GGFuture<Boolean> future){}
 }

@@ -4,21 +4,20 @@ import com.opengg.core.console.GGConsole;
 import com.opengg.core.engine.Resource;
 import com.opengg.core.exceptions.ShaderException;
 import com.opengg.core.io.FileStringLoader;
+import com.opengg.core.render.shader.ShaderController;
 
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class ShaderFile{
     private List<String> includes;
     private List<String> glvals;
-    private HashMap<String, String> preprocessor;
+    private Map<String, String> preprocessor;
+    private List<ShaderController.Uniform> uniforms = new ArrayList<>();
     private String version;
     private ShaderFileType type;
     private String name;
@@ -52,7 +51,6 @@ public class ShaderFile{
         try{
             this.name = name;
             type = getType(name);
-
             String data = FileStringLoader.loadStringSequence(URLDecoder.decode(Resource.getShaderPath(name), StandardCharsets.UTF_8));
 
             data = data.trim().replaceAll(" +", " ");
@@ -128,7 +126,9 @@ public class ShaderFile{
                 .map(s -> s + "\n")
                 .collect(Collectors.joining());
 
-        compiledsource = compiledsource.replaceAll(";;", ";");
+        compiledsource = compiledsource.replaceAll(";\\s*;", ";");
+        compiledsource = compiledsource.replaceAll("\\n\\s*;", ";");
+
         for(var val : glvals){
             compiledsource = "#" + val + "\n" + compiledsource;
         }
@@ -138,9 +138,8 @@ public class ShaderFile{
         var builder = new StringBuilder();
         if(node instanceof Parser.Body){
             var body = (Parser.Body) node;
-
             for(var node2 : body.expressions){
-                builder.append(process(node2)).append(";\n");
+                builder.append(process(node2).indent(4)).append(";\n");
             }
         }
         else if(node instanceof Parser.Function){
@@ -175,7 +174,7 @@ public class ShaderFile{
             var struct = (Parser.Struct) node;
 
             for(var modifier : struct.modifiers.modifiers){
-                builder.append(modifier.value).append(" ");
+                builder.append(process(modifier)).append(" ");
             }
 
 
@@ -189,7 +188,7 @@ public class ShaderFile{
             var interfacee = (Parser.Interface) node;
 
             for(var modifier : interfacee.modifiers.modifiers){
-                builder.append(modifier.value).append(" ");
+                builder.append(process(modifier)).append(" ");
             }
 
             builder.append(interfacee.accessor.value).append(" ");
@@ -204,8 +203,9 @@ public class ShaderFile{
             var iff = (Parser.If) node;
             builder.append("if(");
             builder.append(process(iff.conditional)).append("){\n");
-            builder.append(process(iff.then)).append("}else{\n");
-            builder.append(process(iff.els)).append("}\n");
+            builder.append(process(iff.then)).append("}");
+            if(!iff.els.expressions.isEmpty())
+                builder.append("else{\n").append(process(iff.els)).append("}\n");
         }
         else if(node instanceof Parser.While){
             var whil = (Parser.While) node;
@@ -232,7 +232,7 @@ public class ShaderFile{
                     var dec = (Parser.Declaration) node;
 
                     for(var mod : dec.modifiers.modifiers){
-                        builder.append(mod.value).append(" ");
+                        builder.append(process(mod)).append(" ");
                     }
 
                     builder.append(dec.type).append(" ");
@@ -252,6 +252,13 @@ public class ShaderFile{
             else if(node instanceof Parser.Identifier){
                 builder.append(((Parser.Identifier)node).value);
             }
+            else if(node instanceof Parser.Modifier){
+                if(node instanceof Parser.Layout){
+                    builder.append("layout(" + ((Parser.Layout)node).expressions.stream().map(this::process).collect(Collectors.joining(", ")) + ")");
+                }else {
+                    builder.append(((Parser.Modifier)node).value);
+                }
+            }
             else if(node instanceof Parser.FloatLiteral){
                 builder.append(Float.valueOf(((Parser.FloatLiteral)node).value)).append("f");
             }
@@ -261,11 +268,11 @@ public class ShaderFile{
             else if(node instanceof Parser.BinaryOp){
                 var binop = (Parser.BinaryOp) node;
 
-                builder.append("(");
+                if(!binop.op.equals("=")) builder.append("(");
                 builder.append(process(binop.left)).append(" ");
                 builder.append(binop.op);
                 builder.append(" ").append(process(binop.right));
-                builder.append(")");
+                if(!binop.op.equals("=")) builder.append(")");
             }
             else if(node instanceof Parser.UnaryOp){
                 var unop = (Parser.UnaryOp) node;
@@ -347,6 +354,15 @@ public class ShaderFile{
 
     public String getCompiledSource(){
         return compiledsource;
+    }
+
+    public List<ShaderController.Uniform> getUniforms() {
+        return uniforms;
+    }
+
+    public ShaderFile setUniforms(List<ShaderController.Uniform> uniforms) {
+        this.uniforms = uniforms;
+        return this;
     }
 
     public static ShaderFileType getType(String path){

@@ -9,9 +9,6 @@ const float u_mulReduce = 0.01f;
 const float u_minReduce = 0.01f;
 const float u_maxSpan = 0.04f;
 
-uniform sampler2D Kd;
-
-
 // see FXAA
 // http://developer.download.nvidia.com/assets/gamedev/files/sdk/11/FXAA_WhitePaper.pdf
 // http://iryoku.com/aacourse/downloads/09-FXAA-3.11-in-15-Slides.pdf

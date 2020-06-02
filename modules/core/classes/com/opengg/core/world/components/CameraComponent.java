@@ -6,8 +6,8 @@
 
 package com.opengg.core.world.components;
 
-import com.opengg.core.GGInfo;
 import com.opengg.core.render.RenderEngine;
+import com.opengg.core.render.internal.opengl.OpenGLRenderer;
 import com.opengg.core.world.Camera;
 
 /**

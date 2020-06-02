@@ -515,6 +515,10 @@ public class Vector3f implements Serializable{
         return ByteBuffer.allocate(12).putFloat(x).putFloat(y).putFloat(z).array();
         //return b.putFloat(x).putFloat(y).putFloat(z).array();
     }
+
+    public float[] toFloatArray() {
+        return new float[]{x,y,z};
+    }
     
     @Override
     public boolean equals(Object ot){
@@ -538,4 +542,5 @@ public class Vector3f implements Serializable{
     public String toString(){
         return x + ", " + y + ", " + z;
     }
+
 }

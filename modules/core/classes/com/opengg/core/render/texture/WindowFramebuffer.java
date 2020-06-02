@@ -94,7 +94,7 @@ public class WindowFramebuffer implements WindowResizeListener, Framebuffer{
     }
 
     @Override
-    public void useTexture(int attachment, int loc){
+    public void useTexture(int attachment, String loc){
         underlyingBuffer.useTexture(attachment, loc);
     }
 
@@ -144,7 +144,7 @@ public class WindowFramebuffer implements WindowResizeListener, Framebuffer{
     }
 
     @Override
-    public void attachTexture(Texture.TextureType type, int width, int height, int format, int intformat, int input, int attachment){
+    public void attachTexture(Texture.TextureType type, int width, int height, Texture.SamplerFormat format, Texture.TextureFormat intformat, Texture.InputFormat input, int attachment){
         underlyingBuffer.attachTexture(type, width, height, format, intformat, input, attachment);
     }
 

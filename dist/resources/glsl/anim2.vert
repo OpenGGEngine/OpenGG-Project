@@ -1,4 +1,5 @@
 @version 4.2
+@include stdvert.ggsl
 
 
 in vec3 normal;
@@ -7,25 +8,11 @@ in vec2 texcoord;
 in vec3 tangent;
 in vec3 position;
 in vec4 jointindex;
-            
-out gl_PerVertex{
-    vec4 gl_Position;
-};
 
-out vertexData{
-	
-	vec2 textureCoord;
-	vec3 pos;
-	vec3 norm;
-};
+const int MAX_WEIGHTS = 4;
+const int MAX_JOINTS = 200;
 
- const int MAX_WEIGHTS = 4;
- const int MAX_JOINTS = 200;
-
-uniform mat4 model;
 uniform mat4 jointsMatrix[MAX_JOINTS];
-uniform mat4 view;
-uniform mat4 projection;
 uniform vec3 rot;
 uniform vec3 lightpos;
 uniform mat4 shmvp;

@@ -1,7 +1,6 @@
 @version 4.2
 @include stdfrag.ggsl
 
-uniform sampler2D Kd;
 uniform vec3 color;
 
 void main() {

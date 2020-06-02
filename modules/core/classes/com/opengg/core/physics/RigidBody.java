@@ -8,7 +8,7 @@ package com.opengg.core.physics;
 
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.exceptions.ClassInstantiationException;
-import com.opengg.core.math.UnorderedTuple;
+import com.opengg.core.math.util.Tuple;
 import com.opengg.core.physics.collision.Collider;
 import com.opengg.core.physics.collision.CollisionManager;
 import com.opengg.core.physics.collision.ContactManifold;
@@ -16,7 +16,6 @@ import com.opengg.core.physics.collision.colliders.AABB;
 import com.opengg.core.util.ClassUtil;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
-import com.opengg.core.world.components.Component;
 import com.opengg.core.world.components.physics.RigidBodyComponent;
 import com.opengg.core.world.components.triggers.Trigger;
 import com.opengg.core.world.components.triggers.TriggerInfo;
@@ -118,9 +117,9 @@ public class RigidBody extends PhysicsObject implements Trigger {
 
         var collisions = this.getColliders().stream()
                 .flatMap(s -> other.getColliders().stream()
-                            .map(s2 -> new UnorderedTuple<>(s,s2)))
+                            .map(s2 -> Tuple.ofUnordered(s,s2)))
                 .distinct()
-                .map(t -> t.x.collide(t.y))
+                .map(t -> t.x().collide(t.y()))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 

@@ -9,6 +9,7 @@ import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.ProjectionData;
 import com.opengg.core.render.RenderEngine;
+import com.opengg.core.render.internal.opengl.OpenGLRenderer;
 import com.opengg.core.render.RenderOperation;
 import com.opengg.core.render.RenderPass;
 import com.opengg.core.vr.VRUtil;
@@ -157,7 +158,7 @@ public class VRWindow implements Window {
             RenderEngine.addRenderPath(new RenderOperation("vr", () -> {
                 data.use();
 
-                var fb = RenderEngine.getCurrentFramebuffer();
+                var fb = ((OpenGLRenderer) RenderEngine.renderer).getCurrentFramebuffer();
 
                 VRView view = new VRView(RenderEngine.getCurrentView());
                 view.setEyeMatrix(VRSystem.VRSystem_GetEyeToHeadTransform(EVREye_Eye_Left, HmdMatrix34.create()));

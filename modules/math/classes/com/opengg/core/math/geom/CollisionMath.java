@@ -1,6 +1,7 @@
 package com.opengg.core.math.geom;
 
 import com.opengg.core.math.*;
+import com.opengg.core.math.util.Tuple;
 
 import java.util.*;
 
@@ -466,7 +467,7 @@ public class CollisionMath {
         return false;
     }
 
-    public static Tuple<Vector3f, Vector3f> getClosestPoints(Simplex s){
+    public static Tuple.OrderedTuple<Vector3f, Vector3f> getClosestPoints(Simplex s){
         Vector3f p1 = new Vector3f(), p2 = new Vector3f();
         
         /* calculate normalization denominator */
@@ -544,11 +545,11 @@ public class CollisionMath {
         for(int currentIter = 0; currentIter < EXIT_ITERATION_LIMIT; currentIter++) {
             // find closest triangle to origin
             var face = findClosestFace(faces);
-            var support = getSupport(face.y.n, v1, v2);
-            var dist = support.vec.dot(face.y.n);
+            var support = getSupport(face.y().n, v1, v2);
+            var dist = support.vec.dot(face.y().n);
 
-            if(face.y.n.dot(support.vec) - face.x < 0.001) {
-                return Optional.of(new EPAResult(dist, face.y));
+            if(face.y().n.dot(support.vec) - face.x() < 0.001) {
+                return Optional.of(new EPAResult(dist, face.y()));
             }
 
             reconstruct(faces, support);
@@ -586,7 +587,7 @@ public class CollisionMath {
         }
     }
 
-    private static Tuple<Float, MinkowskiTriangle> findClosestFace(List<MinkowskiTriangle> simplexFaces){
+    private static Tuple.OrderedTuple<Float, MinkowskiTriangle> findClosestFace(List<MinkowskiTriangle> simplexFaces){
         float closest = Float.MAX_VALUE;
         MinkowskiTriangle closestTri = new MinkowskiTriangle(new MinkowskiSet(), new MinkowskiSet(), new MinkowskiSet());
 

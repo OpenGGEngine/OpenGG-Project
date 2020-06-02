@@ -2,8 +2,9 @@
 
 layout(location = 0) out vec4 fcolor;
 
-in vec4 FragPos;
+layout(location = 5) in vec4 FragPos;
 
+uniform sampler2D Kd;
 uniform vec3 lightPos;
 uniform float farplane;
 

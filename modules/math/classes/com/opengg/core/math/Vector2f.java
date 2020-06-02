@@ -209,6 +209,10 @@ public class Vector2f implements Serializable{
         return b.putFloat(x).putFloat(y).array();
     }
 
+    public float[] toFloatArray() {
+        return new float[]{x,y};
+    }
+
     public static Vector2f parseVector2f(String value){
         String fixed = value.replace('(', ' ');
         fixed = fixed.replace(')', ' ');
@@ -240,4 +244,6 @@ public class Vector2f implements Serializable{
     public String toString(){
         return x + ", " + y;
     }
+
+
 }

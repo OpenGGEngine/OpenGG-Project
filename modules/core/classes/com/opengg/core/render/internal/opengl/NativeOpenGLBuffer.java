@@ -6,11 +6,11 @@
 
 package com.opengg.core.render.internal.opengl;
 
-import com.opengg.core.engine.OpenGG;
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.system.NativeResource;
 import com.opengg.core.system.NativeResourceManager;
 
+import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import static org.lwjgl.opengl.GL15.GL_BUFFER_SIZE;
@@ -48,7 +48,12 @@ public class NativeOpenGLBuffer implements NativeResource {
         if(RenderEngine.validateInitialization()) return;
         glBindBuffer(target, 0);
     }
-    
+
+    public void uploadData(int target, ByteBuffer data, int usage) {
+        if(RenderEngine.validateInitialization()) return;
+        glBufferData(target, data, usage);
+    }
+
     public void uploadData(int target, FloatBuffer data, int usage) {
         if(RenderEngine.validateInitialization()) return;
         glBufferData(target, data, usage);
@@ -100,6 +105,6 @@ public class NativeOpenGLBuffer implements NativeResource {
     }
 
     public void bindAttribute(int attrib, int size) {
-        glBindVertexBuffer(attrib, this.id, 0, size * Float.BYTES);
+        glBindVertexBuffer(attrib, this.id, 0, size);
     }
 }

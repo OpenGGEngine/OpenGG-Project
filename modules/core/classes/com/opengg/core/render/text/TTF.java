@@ -5,7 +5,7 @@ import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.Renderable;
 import com.opengg.core.render.drawn.DrawnObject;
-import com.opengg.core.render.drawn.TextureRenderable;
+import com.opengg.core.render.objects.ObjectCreator;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.texture.TextureData;
@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import static com.opengg.core.util.FileUtil.ioResourceToByteBuffer;
+import static org.lwjgl.opengl.GL11.glGetError;
 import static org.lwjgl.stb.STBTruetype.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
@@ -190,7 +191,7 @@ public class TTF implements Font{
 
         String text = wholetext.getText();
         if(text.length() == 0){
-            return new DrawnObject(Allocator.allocFloat(0));
+            return ObjectCreator.createQuadPrism(new Vector3f(), new Vector3f());
         }
 
         IntBuffer pCodePoint = Allocator.stackAllocInt(1);
@@ -271,11 +272,11 @@ public class TTF implements Font{
         }
         data.flip();
 
-        var object = new DrawnObject(data);
+        var object = DrawnObject.create(data);
         return () -> {
             ShaderController.useConfiguration("ttf");
             ShaderController.setUniform("color", wholetext.getColor());
-            texture.use(0);
+            ShaderController.setUniform("Kd", texture);
             object.render();
         };
     }

@@ -1,13 +1,12 @@
 package com.opengg.core.render.shader.ggsl;
 
 import com.opengg.core.exceptions.ShaderException;
-import com.opengg.core.math.Tuple;
 import com.opengg.core.util.LambdaContainer;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.opengg.core.render.shader.ggsl.Token.*;
+import static com.opengg.core.render.shader.ggsl.TokenType.*;
 
 public class Parser {
 
@@ -37,28 +36,28 @@ public class Parser {
 
     public Function parseFunction(){
         Function function = new Function();
-        var identifierStack = new ArrayDeque<String>();
+        var modifierStack = new ArrayDeque<String>();
         while(!(next(OPEN_PARENTHESIS))){
-            identifierStack.push(consume(IDENTIFIER).y);
+            modifierStack.push(consume(IDENTIFIER).contents());
         }
 
-        function.name = new Identifier(identifierStack.pop());
-        function.type = new Identifier(identifierStack.pop());
-        function.modifiers.modifiers = identifierStack.stream().map(Identifier::new).collect(Collectors.toList());
+        function.name = new Identifier(modifierStack.pop());
+        function.type = new Identifier(modifierStack.pop());
+        function.modifiers.modifiers = modifierStack.stream().map(Modifier::new).collect(Collectors.toList());
 
         consume(OPEN_PARENTHESIS);
 
         while(!(next(CLOSE_PARENTHESIS))){
             Declaration declaration = new Declaration();
 
-            identifierStack = new ArrayDeque<>();
+            modifierStack = new ArrayDeque<>();
             while(!(next(COMMA) || next(CLOSE_PARENTHESIS))){
-                identifierStack.push(consume(IDENTIFIER, UNIFORM).y);
+                modifierStack.push(consume(IDENTIFIER, UNIFORM).contents());
             }
 
-            declaration.name = new Identifier(identifierStack.pop());
-            declaration.type = new Identifier(identifierStack.pop());
-            declaration.modifiers.modifiers = identifierStack.stream().map(Identifier::new).collect(Collectors.toList());
+            declaration.name = new Identifier(modifierStack.pop());
+            declaration.type = new Identifier(modifierStack.pop());
+            declaration.modifiers.modifiers = modifierStack.stream().map(Modifier::new).collect(Collectors.toList());
 
             accept(COMMA);
 
@@ -174,13 +173,13 @@ public class Parser {
         while(!next(CLOSE_PARENTHESIS, SEMICOLON, COMMA, TERNARY_OR)){
             subexpressions.add(parseIndividualValue());
 
-            LambdaContainer<Token> opcontainer = new LambdaContainer<>();
+            LambdaContainer<TokenType> opcontainer = new LambdaContainer<>();
 
-            accept(PLUS, MINUS, MULTIPLY, DIVIDE, LESS, LEQUAL, GEQUAL, GREATER, EQUALS, NOT_EQUALS, BOOL_AND, BOOL_OR, BIT_AND, BIT_OR)
+            accept(ASSIGNMENT, PLUS, MINUS, MULTIPLY, DIVIDE, LESS, LEQUAL, GEQUAL, GREATER, EQUALS, NOT_EQUALS, BOOL_AND, BOOL_OR, BIT_AND, BIT_OR)
                     .ifPresentOrElse(i -> {
-                        opcontainer.value = i.x;
+                        opcontainer.value = i.type();
                         BinaryOp op = new BinaryOp();
-                        op.op = i.y;
+                        op.op = i.contents();
                         subexpressions.add(op);
                     }, () -> accept(TERNARY_IF).ifPresentOrElse(ii -> {
                         TernaryOp op = new TernaryOp();
@@ -196,7 +195,6 @@ public class Parser {
 
         consume(CLOSE_PARENTHESIS, SEMICOLON, COMMA, TERNARY_OR);
 
-
         if(subexpressions.size() == 0) return new EmptyExpression();
 
         if(subexpressions.size() == 1) return subexpressions.get(0);
@@ -210,7 +208,8 @@ public class Parser {
                 List.of("+", "-"),
                 List.of("|", "&"),
                 List.of("==", ">=", "<=", "<", ">", "!="),
-                List.of("||", "&&"));
+                List.of("||", "&&"),
+                List.of("="));
 
         for(List<String> charlist : chars){
             reset: while(true){
@@ -241,7 +240,7 @@ public class Parser {
         return expressions.get(0);
     }
 
-    private static boolean contains(List<Token> list, Token... vars){
+    private static boolean contains(List<TokenType> list, TokenType... vars){
         for(var e : list){
             for(var val : vars){
                 if(e == val) return true;
@@ -253,28 +252,27 @@ public class Parser {
 
     public Expression parseIndividualValue(){
         LambdaContainer<Expression> container = LambdaContainer.create();
-
         accept(OPEN_PARENTHESIS).ifPresent(i -> container.value = parseExpression());
 
         accept(IDENTIFIER).ifPresent(i -> accept(OPEN_PARENTHESIS).ifPresentOrElse(p -> {
             FunctionCall fcall = new FunctionCall();
-            fcall.name = new Identifier(i.y);
+            fcall.name = new Identifier(i.contents());
             while(!previous(CLOSE_PARENTHESIS)){
                 fcall.args.expressions.add(parseExpression());
             }
 
             container.value = fcall;
-        }, () -> container.value = new Identifier(i.y)));
+        }, () -> container.value = new Identifier(i.contents())));
 
-        accept(FLOAT_LITERAL).ifPresent(i -> container.value = new FloatLiteral(Float.parseFloat(i.y)));
+        accept(FLOAT_LITERAL).ifPresent(i -> container.value = new FloatLiteral(Float.parseFloat(i.contents())));
 
-        accept(INT_LITERAL).ifPresent(i -> container.value = new IntegerLiteral(Integer.parseInt(i.y)));
+        accept(INT_LITERAL).ifPresent(i -> container.value = new IntegerLiteral(Integer.parseInt(i.contents())));
 
-        accept(RETURN_ACCESSOR).ifPresent(i -> container.value = new FieldAccessor(new Identifier(i.y), container.value));
+        accept(RETURN_ACCESSOR).ifPresent(i -> container.value = new FieldAccessor(new Identifier(i.contents()), container.value));
 
         accept(PLUSPLUS, MINUSMINUS).ifPresent(i -> {
             UnaryOp op = new UnaryOp();
-            op.op = i.y;
+            op.op = i.contents();
             op.exp = container.value;
             op.after = true;
             container.value = op;
@@ -298,10 +296,10 @@ public class Parser {
 
         Assignment assignment = new Assignment();
 
-        assignment.name = new Identifier(consume(IDENTIFIER).y);
+        assignment.name = new Identifier(consume(IDENTIFIER).contents());
 
         var assigntype = consume(ASSIGNMENT, MULT_ASSIGNMENT, DIV_ASSIGNMENT, ADD_ASSIGNMENT, SUB_ASSIGNMENT);
-        assignment.assigntype = assigntype.y;
+        assignment.assigntype = assigntype.contents();
         assignment.value = parseExpression();
 
         return assignment;
@@ -311,11 +309,17 @@ public class Parser {
         Declaration declaration = new Declaration();
         while(!(next(ASSIGNMENT, SEMICOLON))){
             accept(LAYOUT).ifPresent(s -> declaration.modifiers.modifiers.add(parseLayout()));
-            accept(IDENTIFIER, UNIFORM, IN, OUT, INOUT).ifPresent(s -> declaration.modifiers.modifiers.add(new Identifier(s.y)));
+            accept(IDENTIFIER, UNIFORM, IN, OUT, INOUT).ifPresent(s -> declaration.modifiers.modifiers.add(new Modifier(s.contents())));
         }
 
-        declaration.name = declaration.modifiers.modifiers.remove(declaration.modifiers.modifiers.size()-1);
-        declaration.type = declaration.modifiers.modifiers.remove(declaration.modifiers.modifiers.size()-1);
+        if(declaration.modifiers.modifiers.get(declaration.modifiers.modifiers.size()-1).value.equals("in") ||
+                declaration.modifiers.modifiers.get(declaration.modifiers.modifiers.size()-1).value.equals("out")){
+            declaration.name = new Identifier("");
+        }else{
+            declaration.name = new Identifier(declaration.modifiers.modifiers.remove(declaration.modifiers.modifiers.size()-1).value);
+        }
+        declaration.type = new Identifier(declaration.modifiers.modifiers.remove(declaration.modifiers.modifiers.size()-1).value);
+
         if(accept(SEMICOLON).isPresent()) return declaration;
         consume(ASSIGNMENT);
         declaration.assigntype = "=";
@@ -328,11 +332,11 @@ public class Parser {
         Struct struct = new Struct();
         while(!next(STRUCT)){
             accept(LAYOUT).ifPresent(s -> struct.modifiers.modifiers.add(parseLayout()));
-            accept(IDENTIFIER).ifPresent(s -> struct.modifiers.modifiers.add(new Identifier(s.y)));
+            accept(IDENTIFIER).ifPresent(s -> struct.modifiers.modifiers.add(new Modifier(s.contents())));
         }
 
         consume(STRUCT);
-        struct.name = new Identifier(consume(IDENTIFIER).y);
+        struct.name = new Identifier(consume(IDENTIFIER).contents());
 
         consume(OPEN_BRACE);
         while(!next(CLOSE_BRACE)){
@@ -342,7 +346,7 @@ public class Parser {
         consume(CLOSE_BRACE);
 
         accept(IDENTIFIER).ifPresentOrElse(i -> {
-            struct.variable = new Identifier(i.y);
+            struct.variable = new Identifier(i.contents());
             consume(SEMICOLON);
         }, () -> consume(SEMICOLON));
 
@@ -354,11 +358,11 @@ public class Parser {
         interfacee.modifiers = new Modifiers();
         while(!next(UNIFORM, IN, OUT, INOUT)){
             accept(LAYOUT).ifPresent(s -> interfacee.modifiers.modifiers.add(parseLayout()));
-            accept(IDENTIFIER).ifPresent(s -> interfacee.modifiers.modifiers.add(new Identifier(s.y)));
+            accept(IDENTIFIER).ifPresent(s -> interfacee.modifiers.modifiers.add(new Modifier(s.contents())));
         }
 
-        interfacee.accessor = new Identifier(consume(UNIFORM, IN, OUT, INOUT).y);
-        interfacee.name = new Identifier(consume(IDENTIFIER).y);
+        interfacee.accessor = new Identifier(consume(UNIFORM, IN, OUT, INOUT).contents());
+        interfacee.name = new Identifier(consume(IDENTIFIER).contents());
 
         consume(OPEN_BRACE);
         while(!next(CLOSE_BRACE)){
@@ -368,24 +372,27 @@ public class Parser {
         consume(CLOSE_BRACE);
 
         accept(IDENTIFIER).ifPresentOrElse(i -> {
-                interfacee.variable = new Identifier(i.y);
+                interfacee.variable = new Identifier(i.contents());
                 consume(SEMICOLON);
         }, () -> consume(SEMICOLON));
 
         return interfacee;
     }
 
-    public Identifier parseLayout(){
-        String layout = "layout(";
+    public Layout parseLayout(){
+        List<Expression> layoutValues = new ArrayList<>();
         consume(OPEN_PARENTHESIS);
 
         do {
-            layout = layout + consume().y;
-        } while (!next(CLOSE_PARENTHESIS));
+            if(findNext(ASSIGNMENT) < findNext(COMMA, CLOSE_PARENTHESIS))
+                layoutValues.add(parseExpression());
+            else {
+                layoutValues.add(parseIndividualValue());
+                consume(CLOSE_PARENTHESIS, COMMA);
+            }
+        } while (!previous(CLOSE_PARENTHESIS));
 
-        layout = layout + ")";
-        consume(CLOSE_PARENTHESIS);
-        return new Identifier(layout);
+        return new Layout(layoutValues);
 
     }
 
@@ -393,39 +400,39 @@ public class Parser {
         this.current = current;
     }
 
-    public Tuple<Token, String> consume(Token... tokens){
-        if(tokens.length == 0){
+    public Lexer.Token consume(TokenType... tokenTypes){
+        if(tokenTypes.length == 0){
             var value = lexer.getContents().get(current);
             current++;
             return value;
         }
-        for(Token token : tokens){
-            if(lexer.getContents().get(current).x == token){
+        for(TokenType tokenType : tokenTypes){
+            if(lexer.getContents().get(current).type() == tokenType){
                 var value = lexer.getContents().get(current);
                 current++;
                 return value;
             }
         }
         throw new ShaderException("Failed to consume token at position " + current
-                + ": token assigntype is " + lexer.getContents().get(current).x.name()
-                + ", expected one of " + Arrays.stream(tokens).map(token -> token.name() + " ").collect(Collectors.joining()));
+                + ": token assigntype is " + lexer.getContents().get(current).type().name()
+                + ", expected one of " + Arrays.stream(tokenTypes).map(tokenType -> tokenType.name() + " ").collect(Collectors.joining()));
     }
 
-    public Optional<Tuple<Token, String>> accept(Token... tokens){
-        for(Token token : tokens){
-            if(lexer.getContents().get(current).x == token){
+    public Optional<Lexer.Token> accept(TokenType... tokenTypes){
+        for(TokenType tokenType : tokenTypes){
+            if(lexer.getContents().get(current).type() == tokenType){
                 var value = lexer.getContents().get(current);
                 current++;
                 return Optional.of(value);
             }
         }
 
-        return Optional.ofNullable(null);
+        return Optional.empty();
     }
 
-    public boolean next(Token... tokens){
-        for(Token token : tokens){
-            if(lexer.getContents().get(current).x.equals(token)){
+    public boolean next(TokenType... tokenTypes){
+        for(TokenType tokenType : tokenTypes){
+            if(lexer.getContents().get(current).type().equals(tokenType)){
                 return true;
             }
         }
@@ -433,9 +440,9 @@ public class Parser {
         return false;
     }
 
-    public boolean previous(Token... tokens){
-        for(Token token : tokens){
-            if(lexer.getContents().get(current - 1).x == token){
+    public boolean previous(TokenType... tokenTypes){
+        for(TokenType tokenType : tokenTypes){
+            if(lexer.getContents().get(current - 1).type() == tokenType){
                 return true;
             }
         }
@@ -443,11 +450,11 @@ public class Parser {
         return false;
     }
 
-    public int findNext(Token... tokens){
+    public int findNext(TokenType... tokenTypes){
        int smallest = Integer.MAX_VALUE;
-       for(Token token : tokens){
+       for(TokenType tokenType : tokenTypes){
            for(int i = current; i < lexer.getContents().size(); i++){
-               if(lexer.getContents().get(i).x == token){
+               if(lexer.getContents().get(i).type() == tokenType){
                    if(i < smallest) smallest = i;
                }
            }
@@ -456,8 +463,8 @@ public class Parser {
         return smallest;
     }
 
-    public int distanceTo(Token... tokens){
-        int next = findNext(tokens);
+    public int distanceTo(TokenType... tokenTypes){
+        int next = findNext(tokenTypes);
         return next - current;
     }
 
@@ -466,7 +473,8 @@ public class Parser {
     }
 
     public void fail(){
-        throw new ShaderException("Failed parsing: current token is " + lexer.getContents().get(current));
+        System.out.println(lexer.getContents());
+        throw new ShaderException("Failed parsing: current token is " + lexer.getContents().get(current) + " at token " + current);
     }
 
     public static class AbstractSyntaxTree {
@@ -483,7 +491,7 @@ public class Parser {
             for(int i = 0; i < level; i++) value += "   ";
             value += node.toString();
 
-            System.out.println(value);
+            System.out.println(value + " (" + node.getClass().getSimpleName() + ")");
             for(Node node2 : node.getChildren()){
                 if(node2 != null) recursivePrint(level + 1, node2);
             }
@@ -583,6 +591,35 @@ public class Parser {
         }
     }
 
+    public static class Modifier extends Expression{
+        public String value;
+
+        public Modifier(String value) {
+            this.value = value;
+        }
+
+        @Override public String toString() { return value;}
+
+        @Override
+        public List<Node> getChildren() {
+            return new ArrayList<>();
+        }
+    }
+
+    public static class Layout extends Modifier{
+        public List<Expression> expressions;
+
+        public Layout(List<Expression> expressions){
+            super("layout(" + expressions.stream().map(Expression::toString).collect(Collectors.joining(", ")) + ")");
+            this.expressions = expressions;
+        }
+
+        @Override
+        public List<Node> getChildren() {
+            return List.copyOf(expressions);
+        }
+    }
+
     public static class Arguments extends Node{
         public List<Expression> expressions = new ArrayList<>();
 
@@ -676,7 +713,7 @@ public class Parser {
     }
 
     public static class Modifiers extends Node{
-        public List<Identifier> modifiers = new ArrayList<>();
+        public List<Modifier> modifiers = new ArrayList<>();
 
         @Override
         public String toString() {
@@ -772,7 +809,7 @@ public class Parser {
     }
 
     public static class Interface extends Node{
-        Modifiers modifiers= new Modifiers();
+        public Modifiers modifiers= new Modifiers();
         public Identifier accessor = new Identifier("");
         public Identifier name = new Identifier("");
         public Body declarations = new Body();
@@ -806,9 +843,18 @@ public class Parser {
     }
 
     public static class BinaryOp extends Expression{
-        Expression left;
-        Expression right;
-        String op;
+        public Expression left;
+        public Expression right;
+        public String op;
+
+        public BinaryOp(Expression left, Expression right, String op) {
+            this.left = left;
+            this.right = right;
+            this.op = op;
+        }
+
+        public BinaryOp() {
+        }
 
         @Override
         public String toString(){
@@ -837,6 +883,14 @@ public class Parser {
         public String assigntype;
         Expression value = new EmptyExpression();
 
+        public Assignment() {
+        }
+
+        public Assignment(Identifier name, String assigntype, Expression value) {
+            this.name = name;
+            this.assigntype = assigntype;
+            this.value = value;
+        }
 
         @Override
         public List<Node> getChildren() {
@@ -845,7 +899,7 @@ public class Parser {
 
         @Override
         public String toString(){
-            return "Assigning " + assigntype + " to " + name;
+            return "=";
         }
     }
 

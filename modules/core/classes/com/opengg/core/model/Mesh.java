@@ -5,7 +5,7 @@ import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.render.Renderable;
 import com.opengg.core.render.drawn.DrawnObject;
-import com.opengg.core.render.drawn.MaterialRenderable;
+import com.opengg.core.render.objects.MaterialRenderable;
 import com.opengg.core.system.Allocator;
 
 import java.nio.FloatBuffer;
@@ -70,8 +70,8 @@ public class Mesh {
     }
 
     public Renderable getDrawable(){
-        DrawnObject temp = new DrawnObject(genAnim ?
-                RenderEngine.tangentAnimVAOFormat : RenderEngine.tangentVAOFormat,
+        DrawnObject temp = DrawnObject.create(genAnim ?
+                RenderEngine.getTangentAnimVAOFormat() : RenderEngine.getTangentVAOFormat(),
                 this.getIndexBuffer(), this.getVbo());
         return new MaterialRenderable(temp, this.getMaterial());
     }

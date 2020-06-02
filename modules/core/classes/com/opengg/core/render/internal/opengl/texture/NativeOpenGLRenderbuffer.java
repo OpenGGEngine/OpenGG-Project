@@ -6,6 +6,7 @@
 package com.opengg.core.render.internal.opengl.texture;
 
 import com.opengg.core.render.RenderEngine;
+import com.opengg.core.render.internal.opengl.OpenGLRenderer;
 import com.opengg.core.system.NativeResource;
 import com.opengg.core.system.NativeResourceManager;
 

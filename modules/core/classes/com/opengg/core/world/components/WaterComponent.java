@@ -14,8 +14,9 @@ import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.Renderable;
-import com.opengg.core.render.drawn.TextureRenderable;
+import com.opengg.core.render.objects.TextureRenderable;
 import com.opengg.core.render.objects.ObjectCreator;
+import com.opengg.core.render.shader.CommonUniforms;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.texture.TextureData;
@@ -61,15 +62,15 @@ public class WaterComponent extends RenderComponent{
     
     @Override
     public void render(){
-        ShaderController.setUVCoordinateMultiplierX(textureScale);
+        CommonUniforms.setUVCoordinateMultiplierX(textureScale);
         ShaderController.setUniform("uvoffsetx", FastMath.sin(current)/4);
         ShaderController.setUniform("uvoffsety", FastMath.sin(current)/4);
         if(RenderEngine.getSkybox() == null) return;
-        RenderEngine.getSkybox().getCubemap().use(2);
+        ShaderController.setUniform("Kd", RenderEngine.getCurrentEnvironment().getSkybox().getCubemap());
         super.render();
         ShaderController.setUniform("uvoffsetx", 0f);
         ShaderController.setUniform("uvoffsety", 0f);
-        ShaderController.setUVCoordinateMultiplierX(1);
+        CommonUniforms.setUVCoordinateMultiplierX(1);
     }
     
     public float getMovespeed() {

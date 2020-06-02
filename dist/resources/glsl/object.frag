@@ -19,8 +19,6 @@ void main() {
 
 	useMaterial(material);
 
-	//if(trans == 0.1f) discard;
-
 	vec3 col = ambient;
 	col += emmisive;
 

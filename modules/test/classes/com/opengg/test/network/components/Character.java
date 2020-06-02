@@ -9,7 +9,7 @@ import com.opengg.core.network.common.ChatMessage;
 import com.opengg.core.physics.RigidBody;
 import com.opengg.core.physics.collision.colliders.AABB;
 import com.opengg.core.physics.collision.colliders.ConvexHull;
-import com.opengg.core.render.drawn.TextureRenderable;
+import com.opengg.core.render.objects.TextureRenderable;
 import com.opengg.core.render.objects.ObjectCreator;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.util.GGInputStream;

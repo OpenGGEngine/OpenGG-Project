@@ -75,15 +75,22 @@ public class SystemInfo {
 
     }
 
-    public static void queryOpenGLInfo(){
-        String glVersion = GGInfo.getGlVersion();
-        glinfo.put("Window GL Version", glVersion);
-        glinfo.put("Internal GL Version", glGetString(GL_VERSION));
-        glinfo.put("GLSL Version", glGetString(GL_SHADING_LANGUAGE_VERSION));
-        glinfo.put("GL Initialization", !(glVersion == null || glVersion.isEmpty()) ? "Initialized successfully" : "Initialization failed");
+    public static void queryRendererInfo(String renderer){
+        glinfo.put("Renderer", renderer);
+        if(renderer.equals("OpenGL")){
+            String glVersion = GGInfo.getGlVersion();
+            glinfo.put("Window GL Version", glVersion);
+            glinfo.put("Internal GL Version", glGetString(GL_VERSION));
+            glinfo.put("GLSL Version", glGetString(GL_SHADING_LANGUAGE_VERSION));
+            glinfo.put("GL Initialization", !(glVersion == null || glVersion.isEmpty()) ? "Initialized successfully" : "Initialization failed");
 
-        sysinfo.put("Graphics Renderer", glGetString(GL_RENDERER));
-        sysinfo.put("Graphics Vendor", glGetString(GL_VENDOR));
+            sysinfo.put("Graphics Renderer", glGetString(GL_RENDERER));
+            sysinfo.put("Graphics Vendor", glGetString(GL_VENDOR));
+        }else if(renderer.equals("Vulkan")){
+
+        }else{
+
+        }
     }
 
     public static String get(String value){

@@ -2,6 +2,7 @@ package com.opengg.core.model.io;
 
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.math.*;
+import com.opengg.core.math.util.Tuple;
 import com.opengg.core.model.*;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.assimp.*;
@@ -142,7 +143,6 @@ public class AssimpModelLoader {
             formatConfig+="tangent_";
         }
         model.setVaoFormat(formatConfig);
-        System.out.println(model.getVaoFormat());
         if(scene.mNumMaterials() > 0) model.setExportConfig(model.getExportConfig() | BMFFile.MATERIAL);
 
         //Load animations
@@ -247,18 +247,18 @@ public class AssimpModelLoader {
             ArrayList<Tuple<Double,Vector3f>> positionKeys = new ArrayList<>();
             for(int i2 = 0;i2 < animnode.mNumPositionKeys();i2++){
                 AIVectorKey v5 =animnode.mPositionKeys().get(i2);
-                positionKeys.add(new Tuple<>(v5.mTime(),assimpToV3(v5.mValue())));
+                positionKeys.add(Tuple.of(v5.mTime(),assimpToV3(v5.mValue())));
             }
             ArrayList<Tuple<Double,Quaternionf>> rotationKeys = new ArrayList<>();
             for(int i2 = 0;i2 < animnode.mNumRotationKeys();i2++){
                 AIQuatKey v5 =animnode.mRotationKeys().get(i2);
-                rotationKeys.add(new Tuple<>(v5.mTime(),
+                rotationKeys.add(Tuple.of(v5.mTime(),
                         new Quaternionf(v5.mValue().w(),v5.mValue().x(),v5.mValue().y(),v5.mValue().z())));
             }
             ArrayList<Tuple<Double,Vector3f>> scalingKeys = new ArrayList<>();
             for(int i2 = 0;i2 < animnode.mNumScalingKeys();i2++){
                 AIVectorKey v5 =animnode.mScalingKeys().get(i2);
-                scalingKeys.add(new Tuple<>(v5.mTime(),assimpToV3(v5.mValue())));
+                scalingKeys.add(Tuple.of(v5.mTime(),assimpToV3(v5.mValue())));
             }
             GGAnimation.AnimNode node = new GGAnimation.AnimNode(positionKeys,rotationKeys,scalingKeys,animnode.mNodeName().dataString());
             anim.animdata.put(node.name,node);

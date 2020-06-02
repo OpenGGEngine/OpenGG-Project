@@ -11,11 +11,13 @@ package com.opengg.core.render;
  * @author Javier
  */
 public class RenderOperation {
-    String name = "default";
-    Runnable command;
-    int priority = 5;
-    boolean enabled = true;
-    boolean reset;
+    private String name = "default";
+    private Runnable command;
+    private int priority = 5;
+
+    private boolean enabled = true;
+    private boolean reset;
+
     public RenderOperation(String name, Runnable e){
         this.name = name;
         this.command = e;
@@ -44,7 +46,15 @@ public class RenderOperation {
     public boolean isEnabled(){
         return enabled;
     }
-    
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public void shouldResetGL(boolean reset){
         this.reset = reset;
     }

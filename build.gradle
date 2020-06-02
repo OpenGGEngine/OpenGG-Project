@@ -9,14 +9,15 @@
 plugins {
   id "rgoldberg.experimental-jigsaw" version "0.5-SNAPSHOT" apply false
 }
+
 configure(subprojects.findAll {it.name != 'modules'}) {
     apply plugin: 'java'
     apply plugin: 'rgoldberg.experimental-jigsaw'
 
-    sourceCompatibility = 1.13
-    targetCompatibility = 1.13
+    sourceCompatibility = 1.14
+    targetCompatibility = 1.14
 
-    project.ext.lwjglVersion = "3.2.4-SNAPSHOT"
+    project.ext.lwjglVersion = "3.2.3"
     project.ext.steamworks4jVersion = "1.8.0"
     project.ext.lwjglNatives = "natives-windows"
 

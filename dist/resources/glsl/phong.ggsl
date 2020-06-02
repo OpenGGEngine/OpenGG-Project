@@ -2,9 +2,6 @@
 @include light.ggsl
 @include stdfrag.ggsl
 
-uniform float uvmultx;
-uniform float uvmulty;
-
 float bloomMin = 0.9;
 float vis = 1;
 vec3 eyedir;
@@ -35,9 +32,9 @@ vec3 getPhongFrom(Light light){
 	vec3 fspec = specular * pow(cosAlpha, specpow);
 
 	float shadowcover = 0;
-    if(light.shadow != 0){
-        shadowcover = getShadowCoverage(light);
-   }
+    //if(light.shadow != 0){
+      //  shadowcover = getShadowCoverage(light);
+  // }
 
     vec3 fragColor = (fdif + fspec) * attenuation * (1 - shadowcover) * light.color.rgb;
 

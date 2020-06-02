@@ -6,9 +6,7 @@
 package com.opengg.core.world;
 
 import com.opengg.core.console.GGConsole;
-import com.opengg.core.math.Tuple;
 import com.opengg.core.world.components.Component;
-import com.opengg.core.world.components.RenderComponent;
 
 import java.util.*;
 import java.util.function.BiConsumer;

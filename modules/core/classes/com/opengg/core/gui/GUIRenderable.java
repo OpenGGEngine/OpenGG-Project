@@ -6,11 +6,10 @@
 package com.opengg.core.gui;
 
 import com.opengg.core.math.Matrix4f;
-import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.Renderable;
-import com.opengg.core.render.shader.ShaderController;
+import com.opengg.core.render.shader.CommonUniforms;
 
 /**
  *
@@ -36,7 +35,7 @@ public class GUIRenderable extends GUIItem{
     
     public void render(){
         if(enabled && d != null){
-            ShaderController.setModel(new Matrix4f().translate(new Vector3f(getPosition().x, getPosition().y, layer)));
+            CommonUniforms.setModel(new Matrix4f().translate(new Vector3f(getPosition().x, getPosition().y, layer)));
             d.render();
         }
     }

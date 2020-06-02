@@ -9,6 +9,9 @@ package com.opengg.core.render.shader;
 import com.opengg.core.GGInfo;
 import com.opengg.core.render.GraphicsBuffer;
 import com.opengg.core.render.RenderEngine;
+import com.opengg.core.render.internal.opengl.OpenGLRenderer;
+import com.opengg.core.render.internal.opengl.shader.OpenGLVertexArrayObject;
+import com.opengg.core.render.internal.vulkan.shader.VulkanVertexFormat;
 
 import java.util.List;
 
@@ -20,55 +23,17 @@ import static org.lwjgl.opengl.GL43.*;
  *
  * @author Javier
  */
-public class VertexArrayObject {
-    VertexArrayFormat format;
-    PureVertexArrayObject vao;
+public interface VertexArrayObject {
+    static VertexArrayObject create(VertexArrayFormat format){
+        return switch (RenderEngine.getRendererType()){
+            case OPENGL -> new OpenGLVertexArrayObject(format);
+            case VULKAN -> new VulkanVertexFormat(format);
 
-    public VertexArrayObject(VertexArrayFormat format){
-        if(GGInfo.isServer()) return;
-        vao = PureVertexArrayObject.create();
-        vao.bind();
-        this.format = format;
-        generateFormatBindingPoints();
-        vao.unbind();
+        };
     }
 
-    public VertexArrayFormat getFormat(){
-        return format;
-    }
+    VertexArrayFormat getFormat();
 
-    private void generateFormatBindingPoints(){
-        for(var binding : format.getBindings()){
-            for(var attrib : binding.getAttributes()){
-                int bytes = 1;
-                if(attrib.type == GL_FLOAT) bytes = Float.BYTES;
-                if(attrib.type == GL_INT) bytes = Integer.BYTES;
-                if(attrib.type == GL_BYTE) bytes = 1;
-                glEnableVertexAttribArray(ShaderController.getVertexAttributeIndex(attrib.name));
-                glVertexAttribFormat(ShaderController.getVertexAttributeIndex(attrib.name), attrib.size, attrib.type, false, attrib.offset * bytes);
-                glVertexAttribBinding(ShaderController.getVertexAttributeIndex(attrib.name), binding.getBindingIndex());
-            }
-            glVertexBindingDivisor(binding.getBindingIndex(), binding.getDivisor());
-        }
-    }
+    void applyFormat(List<GraphicsBuffer> buffers);
 
-    public void applyFormat(List<GraphicsBuffer> buffers){
-       for(var binding : getFormat().getBindings()){
-           buffers.get(binding.getBindingIndex()).bindToAttribute(binding.getBindingIndex(), binding.getVertexSize());
-       }
-    }
-    
-    public void bind(){
-        RenderEngine.setVAO(this);
-        vao.bind();
-    }
-    
-    public void unbind(){
-        vao.unbind();
-        RenderEngine.setVAO(null);
-    }
-    
-    public void delete(){
-        vao.delete();
-    }
 }

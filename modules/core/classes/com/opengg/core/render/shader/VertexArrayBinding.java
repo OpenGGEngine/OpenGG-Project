@@ -7,9 +7,9 @@ public class VertexArrayBinding {
     private int bindingIndex;
     private int vertexSize;
     private int divisor;
-    private List<VertexArrayAttribute> attributes;
+    private List<VertexArrayFormat.VertexArrayAttribute> attributes;
 
-    public VertexArrayBinding(int bindingIndex, int vertexSize, int divisor, List<VertexArrayAttribute> attributes) {
+    public VertexArrayBinding(int bindingIndex, int vertexSize, int divisor, List<VertexArrayFormat.VertexArrayAttribute> attributes) {
         this.bindingIndex = bindingIndex;
         this.vertexSize = vertexSize;
         this.attributes = attributes;
@@ -28,7 +28,7 @@ public class VertexArrayBinding {
         return divisor;
     }
 
-    public List<VertexArrayAttribute> getAttributes() {
+    public List<VertexArrayFormat.VertexArrayAttribute> getAttributes() {
         return attributes;
     }
 

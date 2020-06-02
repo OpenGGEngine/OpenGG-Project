@@ -11,19 +11,24 @@ import com.opengg.core.io.input.mouse.*;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.render.RenderEngine;
+import com.opengg.core.render.internal.opengl.OpenGLRenderer;
 import com.opengg.core.render.Renderable;
-import com.opengg.core.render.drawn.TextureRenderable;
+import com.opengg.core.render.objects.TextureRenderable;
 import com.opengg.core.render.objects.ObjectCreator;
+import com.opengg.core.render.shader.CommonUniforms;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.text.Font;
 import com.opengg.core.render.text.Text;
 import com.opengg.core.render.texture.Texture;
+import com.opengg.core.render.window.WindowInfo;
 
 import java.awt.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import static org.lwjgl.opengl.GL11.glGetError;
 
 public class GGGameConsole implements KeyboardListener, KeyboardCharacterListener ,MouseScrollListener {
     private static String currentText = "";
@@ -81,28 +86,28 @@ public class GGGameConsole implements KeyboardListener, KeyboardCharacterListene
                 .mapToObj(i -> reversedList.get(LINE_AMOUNT-1-i))
                 .collect(Collectors.joining());
 
-
         //Fixes the Input Field not Rendering
-        ShaderController.setModel(new Matrix4f());
+        CommonUniforms.setModel(new Matrix4f());
         ShaderController.useConfiguration("texture");
-        RenderEngine.setDepthCheck(false);
+        if(RenderEngine.getRendererType() == WindowInfo.RendererType.OPENGL) ((OpenGLRenderer) RenderEngine.renderer).setDepthCheck(false);
         background.render();
 
         var consoledrawable = font.createFromText(Text.from(consoleValue)
                 .maxLineSize(1f)
                 .kerning(true)
                 .size(FONT_SCALE));
-        ShaderController.setModel(Matrix4f.translate(0,1f,0));
+        CommonUniforms.setModel(Matrix4f.translate(0,1f,0));
         consoledrawable.render();
 
         var userdrawable = font.createFromText(Text.from(currentText)
                 .maxLineSize(1f)
                 .kerning(true)
                 .size(FONT_SCALE));
-        ShaderController.setModel(Matrix4f.translate(0,0.5f,0f));
+
+        CommonUniforms.setModel(Matrix4f.translate(0,0.5f,0f));
         userdrawable.render();
 
-        RenderEngine.setDepthCheck(true);
+        if(RenderEngine.getRendererType() == WindowInfo.RendererType.OPENGL) ((OpenGLRenderer) RenderEngine.renderer).setDepthCheck(true);
     }
 
     @Override

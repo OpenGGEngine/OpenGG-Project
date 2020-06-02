@@ -8,6 +8,7 @@ package com.opengg.core.render.internal.opengl;
 
 import com.opengg.core.render.GraphicsBuffer;
 
+import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
@@ -41,7 +42,12 @@ public class OpenGLBuffer implements GraphicsBuffer{
         this(type, usage);
         alloc(size);
     }
-    
+
+    public OpenGLBuffer(BufferType type, ByteBuffer buffer, UsageType usage){
+        this(type, usage);
+        uploadData(buffer);
+    }
+
     public OpenGLBuffer(BufferType type, FloatBuffer buffer, UsageType usage){
         this(type, usage);
         uploadData(buffer);
@@ -63,10 +69,16 @@ public class OpenGLBuffer implements GraphicsBuffer{
         buffer.unbind(fromBufferType(target));
     }
 
-    @Override
     public void alloc(int size) {
         bind();
         buffer.uploadData(fromBufferType(target), size, fromUsageType(usage));
+        unbind();
+    }
+
+    @Override
+    public void uploadData(ByteBuffer data) {
+        bind();
+        buffer.uploadData(fromBufferType(target), data, fromUsageType(usage));
         unbind();
     }
 

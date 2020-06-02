@@ -2,7 +2,7 @@ package com.opengg.core.model;
 
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Quaternionf;
-import com.opengg.core.math.Tuple;
+import com.opengg.core.math.util.Tuple;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.system.Allocator;
 
@@ -50,15 +50,15 @@ public class GGAnimation {
             MLoaderUtils.writeString(node.name,b);
             b.putInt(node.positionKeys.size());
             for(Tuple<Double,Vector3f> s:node.positionKeys){
-                b.putDouble(s.x).putFloat(s.y.x).putFloat(s.y.y).putFloat(s.y.z);
+                b.putDouble(s.x()).putFloat(s.y().x()).putFloat(s.y().y()).putFloat(s.y().z);
             }
             b.putInt(node.rotationKeys.size());
             for(Tuple<Double,Quaternionf> s:node.rotationKeys){
-                b.putDouble(s.x).putFloat(s.y.w).putFloat(s.y.x).putFloat(s.y.y).putFloat(s.y.z);
+                b.putDouble(s.x()).putFloat(s.y().w).putFloat(s.y().x()).putFloat(s.y().y()).putFloat(s.y().z);
             }
             b.putInt(node.scalingKeys.size());
             for(Tuple<Double,Vector3f> s:node.scalingKeys){
-                b.putDouble(s.x).putFloat(s.y.x).putFloat(s.y.y).putFloat(s.y.z);
+                b.putDouble(s.x()).putFloat(s.y().x()).putFloat(s.y().y()).putFloat(s.y().z);
             }
         }
         return b.flip();
@@ -81,17 +81,17 @@ public class GGAnimation {
             int numPos = b.getInt();
             positionKeys = new ArrayList<>(numPos);
             for(int i=0;i<numPos;i++)
-                positionKeys.add(new Tuple(b.getDouble(),
+                positionKeys.add(Tuple.of(b.getDouble(),
                         new Vector3f(b.getFloat(),b.getFloat(),b.getFloat())));
             numPos = b.getInt();
             rotationKeys = new ArrayList<>(numPos);
             for(int i=0;i<numPos;i++)
-                rotationKeys.add(new Tuple(b.getDouble(),
+                rotationKeys.add(Tuple.of(b.getDouble(),
                         new Quaternionf(b.getFloat(),b.getFloat(),b.getFloat(),b.getFloat())));
             numPos = b.getInt();
             scalingKeys = new ArrayList<>(numPos);
             for(int i=0;i<numPos;i++)
-                scalingKeys.add(new Tuple(b.getDouble(),
+                scalingKeys.add(Tuple.of(b.getDouble(),
                         new Vector3f(b.getFloat(),b.getFloat(),b.getFloat())));
 
 
@@ -104,7 +104,7 @@ public class GGAnimation {
         public int getCurrPositionIndex(double time){
             if(positionKeys.size() > 0){
                 for (int i = 0 ; i < positionKeys.size()-1 ; i++) {
-                    if (time < (positionKeys.get(i + 1).x) ){
+                    if (time < (positionKeys.get(i + 1).x()) ){
                         return i;
                     }
                 }
@@ -114,7 +114,7 @@ public class GGAnimation {
         public int getCurrRotationIndex(double time){
             if(rotationKeys.size() > 0){
                 for (int i = 0 ; i < rotationKeys.size()-1 ; i++) {
-                    if (time < (rotationKeys.get(i + 1).x) ){
+                    if (time < (rotationKeys.get(i + 1).x()) ){
                         return i;
                     }
                 }
@@ -124,7 +124,7 @@ public class GGAnimation {
         public int getCurrScalingIndex(double time){
             if(scalingKeys.size() > 0){
                 for (int i = 0 ; i < scalingKeys.size()-1 ; i++) {
-                    if (time < (scalingKeys.get(i + 1).x) ){
+                    if (time < (scalingKeys.get(i + 1).x()) ){
                         return i;
                     }
                 }
@@ -134,41 +134,41 @@ public class GGAnimation {
     }
     public Vector3f calcInterpolatedPosition(AnimNode node){
         if(node.positionKeys.size() == 1){
-            return node.positionKeys.get(0).y;
+            return node.positionKeys.get(0).y();
         }
         int index = node.getCurrPositionIndex(current);
         int nextInd = index++;
 
-        double delta = node.positionKeys.get(nextInd).x - node.positionKeys.get(index).x;
-        double interpFactor = (current - node.positionKeys.get(index).x)/delta;
-        Vector3f startPos = node.positionKeys.get(index).y;
-        Vector3f endPos = node.positionKeys.get(nextInd).y;
+        double delta = node.positionKeys.get(nextInd).x() - node.positionKeys.get(index).x();
+        double interpFactor = (current - node.positionKeys.get(index).x())/delta;
+        Vector3f startPos = node.positionKeys.get(index).y();
+        Vector3f endPos = node.positionKeys.get(nextInd).y();
         return Vector3f.lerp(startPos,endPos,(float)interpFactor);
     }
     public Quaternionf calcInterpolatedRotation(AnimNode node){
         if(node.rotationKeys.size() == 1){
-            return node.rotationKeys.get(0).y;
+            return node.rotationKeys.get(0).y();
         }
         int index = node.getCurrRotationIndex(current);
         int nextInd = index++;
 
-        double delta = node.rotationKeys.get(nextInd).x - node.rotationKeys.get(index).x;
-        double interpFactor = (current - node.rotationKeys.get(index).x)/delta;
-        Quaternionf startRot = node.rotationKeys.get(index).y;
-        Quaternionf endRot = node.rotationKeys.get(nextInd).y;
+        double delta = node.rotationKeys.get(nextInd).x() - node.rotationKeys.get(index).x();
+        double interpFactor = (current - node.rotationKeys.get(index).x())/delta;
+        Quaternionf startRot = node.rotationKeys.get(index).y();
+        Quaternionf endRot = node.rotationKeys.get(nextInd).y();
         return Quaternionf.slerp(startRot,endRot,(float)interpFactor);
     }
     public Vector3f calcInterpolatedScaling(AnimNode node){
         if(node.scalingKeys.size() == 1){
-            return node.scalingKeys.get(0).y;
+            return node.scalingKeys.get(0).y();
         }
         int index = node.getCurrScalingIndex(current);
         int nextInd = index++;
 
-        double delta = node.scalingKeys.get(nextInd).x - node.scalingKeys.get(index).x;
-        double interpFactor = (current - node.scalingKeys.get(index).x)/delta;
-        Vector3f startS = node.scalingKeys.get(index).y;
-        Vector3f endS = node.scalingKeys.get(nextInd).y;
+        double delta = node.scalingKeys.get(nextInd).x() - node.scalingKeys.get(index).x();
+        double interpFactor = (current - node.scalingKeys.get(index).x())/delta;
+        Vector3f startS = node.scalingKeys.get(index).y();
+        Vector3f endS = node.scalingKeys.get(nextInd).y();
         return Vector3f.lerp(startS,endS,(float)interpFactor);
     }
     public void animateUniforms(GGNode node,GGBone[] bones){

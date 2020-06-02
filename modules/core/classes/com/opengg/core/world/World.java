@@ -13,6 +13,7 @@ import com.opengg.core.engine.Resource;
 import com.opengg.core.physics.PhysicsEngine;
 import com.opengg.core.physics.PhysicsSystem;
 import com.opengg.core.render.RenderEngine;
+import com.opengg.core.render.internal.opengl.OpenGLRenderer;
 import com.opengg.core.render.RenderEnvironment;
 import com.opengg.core.render.RenderGroup;
 import com.opengg.core.exceptions.InvalidParentException;
@@ -21,7 +22,6 @@ import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.Renderable;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.texture.TextureData;
-import com.opengg.core.render.texture.TextureManager;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
 import com.opengg.core.world.components.Component;
@@ -29,9 +29,6 @@ import com.opengg.core.world.components.RenderComponent;
 import com.opengg.core.world.structure.WorldStructure;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
 
 /**
  * <h1>Represents a world, the highest level object in the component/world system</h1>
@@ -86,15 +83,12 @@ public class World extends Component implements Resource {
         if(GGInfo.isServer()) return;
         boolean found = false;
         for(RenderGroup rg : environment.getGroups()){
-            if(rg.isTransparent() == renderable.isTransparent()){
-                if(rg.getPipeline().equals(renderable.getShader())){
-                    if(rg.getFormat().equals(renderable.getFormat())){
-                        if(!rg.getList().contains(renderable)){
-                            rg.add(renderable);
-                        }
-                        found = true;
-                        break;
-                    }
+            if (rg.isTransparent() == renderable.isTransparent() && rg.getPipeline().equals(renderable.getShader()) && rg.getFormat().equals(renderable.getFormat())) {
+                if (!rg.getList().contains(renderable)) {
+                    rg.add(renderable);
+                }else{
+                    found = true;
+                    break;
                 }
             }
         }

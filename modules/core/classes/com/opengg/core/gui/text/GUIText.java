@@ -7,13 +7,9 @@ package com.opengg.core.gui.text;
 
 import com.opengg.core.gui.GUIRenderable;
 import com.opengg.core.math.Vector2f;
-import com.opengg.core.render.RenderEngine;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.text.Font;
 import com.opengg.core.render.text.Text;
-import com.opengg.core.render.texture.Texture;
-
-import java.awt.*;
 
 /**
  *

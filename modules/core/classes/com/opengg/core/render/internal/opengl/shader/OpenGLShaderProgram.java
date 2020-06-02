@@ -47,26 +47,14 @@ public class OpenGLShaderProgram implements ShaderProgram{
     }
 
     private static int getInternalType(ShaderType type){
-        int internaltype = 0;
-        switch(type){
-            case VERTEX:
-                internaltype = GL_VERTEX_SHADER;
-                break;
-            case TESS_CONTROL:
-                internaltype = GL_TESS_CONTROL_SHADER;
-                break;
-            case TESS_EVAL:
-                internaltype = GL_TESS_EVALUATION_SHADER;
-                break;
-            case GEOMETRY:
-                internaltype = GL_GEOMETRY_SHADER;
-                break;
-            case FRAGMENT:
-                internaltype = GL_FRAGMENT_SHADER;
-                break;
-        }
-
-        return internaltype;
+        return switch (type) {
+            case VERTEX -> GL_VERTEX_SHADER;
+            case TESS_CONTROL -> GL_TESS_CONTROL_SHADER;
+            case TESS_EVAL -> GL_TESS_EVALUATION_SHADER;
+            case GEOMETRY -> GL_GEOMETRY_SHADER;
+            case FRAGMENT -> GL_FRAGMENT_SHADER;
+            default -> 0;
+        };
     }
     
     @Override
@@ -211,7 +199,6 @@ public class OpenGLShaderProgram implements ShaderProgram{
         return type;
     }
 
-    @Override
     public int getId(){
         return program.getId();
     }

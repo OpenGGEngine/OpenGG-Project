@@ -1,6 +1,6 @@
 package com.opengg.core.engine;
 
-import com.opengg.core.math.Tuple;
+import com.opengg.core.math.util.Tuple;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -33,16 +33,16 @@ public class PerformanceManager {
             lastFrames.poll();
         }
 
-        bytesOut.removeIf(t -> t.x < System.currentTimeMillis() - 1000);
-        bytesIn.removeIf(t -> t.x < System.currentTimeMillis() - 1000);
+        bytesOut.removeIf(t -> t.x() < System.currentTimeMillis() - 1000);
+        bytesIn.removeIf(t -> t.x() < System.currentTimeMillis() - 1000);
 
         packetsOut.removeIf(t -> t < System.currentTimeMillis() - 1000);
         ackPacketsOut.removeIf(t -> t < System.currentTimeMillis() - 1000);
         packetsIn.removeIf(t -> t < System.currentTimeMillis() - 1000);
         packetsDropped.removeIf(t -> t < System.currentTimeMillis() - 1000);
 
-        networkBytesInSec = bytesIn.stream().mapToLong(t -> t.y).sum();
-        networkBytesOutSec = bytesOut.stream().mapToLong(t -> t.y).sum();
+        networkBytesInSec = bytesIn.stream().mapToLong(Tuple::y).sum();
+        networkBytesOutSec = bytesOut.stream().mapToLong(Tuple::y).sum();
 
         packetsInSec = packetsIn.size();
         packetsOutSec = packetsOut.size();

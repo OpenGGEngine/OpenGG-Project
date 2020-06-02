@@ -1,18 +1,10 @@
 @version 4.2
-layout(location = 0) out vec4 fcolor;
-
-in vertexData{
-    
-    vec2 textureCoord;
-    vec4 pos;
-    vec3 norm;
-};
+@include stdfrag.ggsl
 
 float width = 0.5f;
 float edge = 0.1f;
-uniform sampler2D Kd;
 
-vec4 getTex(sampler2D tname){
+vec4 getTextTex(sampler2D tname){
         vec4 col = texture(tname, textureCoord);
        
         float dist = 1-col.a;
@@ -21,7 +13,7 @@ vec4 getTex(sampler2D tname){
         return vec4(colr, alpha);
 }
 void main() {
-    fcolor = getTex(Kd);
+    fcolor = getTextTex(Kd);
 	//fcolor = texture(Kd,textureCoord);
 	//if(fcolor.a < 0.1f)
 		//discard;

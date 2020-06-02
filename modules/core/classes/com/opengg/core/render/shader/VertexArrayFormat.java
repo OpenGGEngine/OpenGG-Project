@@ -61,4 +61,20 @@ public class VertexArrayFormat {
     public int hashCode() {
         return bindingSites != null ? bindingSites.hashCode() : 0;
     }
+
+    /**
+     *
+     * @author Javier
+     */
+    public static record VertexArrayAttribute(String name, int size, Type type, int offset){
+        public enum Type{
+            FLOAT,
+            FLOAT2,
+            FLOAT3,
+            FLOAT4,
+            BYTE,
+            INT
+        }
+    }
+
 }

@@ -24,6 +24,7 @@ public class WindowInfo {
             glminor = 3;
     public String name= "An OpenGG Application";
     public String type = "GLFW";
+    public RendererType renderer = RendererType.OPENGL;
     public boolean resizable = false,
             vsync = false;
 
@@ -91,5 +92,9 @@ public class WindowInfo {
     public WindowInfo setVsync(boolean vsync) {
         this.vsync = vsync;
         return this;
+    }
+
+    public enum RendererType{
+        OPENGL, VULKAN
     }
 }

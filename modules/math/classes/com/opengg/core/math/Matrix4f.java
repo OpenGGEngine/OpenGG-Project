@@ -6,6 +6,8 @@
 package com.opengg.core.math;
 
 import com.opengg.core.system.Allocator;
+
+import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 
 /**
@@ -392,6 +394,13 @@ public class Matrix4f {
         buffer.put(m30).put(m31).put(m32).put(m33);
         buffer.flip();
         return buffer;
+    }
+
+    public void putInByteBuffer(ByteBuffer buffer) {
+        buffer.putFloat(m00).putFloat(m01).putFloat(m02).putFloat(m03);
+        buffer.putFloat(m10).putFloat(m11).putFloat(m12).putFloat(m13);
+        buffer.putFloat(m20).putFloat(m21).putFloat(m22).putFloat(m23);
+        buffer.putFloat(m30).putFloat(m31).putFloat(m32).putFloat(m33);
     }
 
     public FloatBuffer getTransposedBuffer() {

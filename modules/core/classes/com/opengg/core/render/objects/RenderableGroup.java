@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.opengg.core.render.drawn;
+package com.opengg.core.render.objects;
 
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.render.Renderable;

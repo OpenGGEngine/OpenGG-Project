@@ -2,9 +2,8 @@
 @include phong.ggsl
 @include stdfrag.ggsl
 
-in tangentData{
-    vec3 tan;
-};
+layout(location = 4) in vec3 tan;
+
 
 uniform Material material;
 
@@ -15,7 +14,7 @@ vec3 calculateNormal(){
 
 	mat3 TBN = mat3(T, B, N);
 
-	vec3 normal = texture(bump, textureCoord).rgb * material.hasnormmap + norm * (1-material.hasnormmap);
+	vec3 normal = texture(bump, textureCoord).rgb;// * material.hasnormmap + norm * (1-material.hasnormmap); //todo 
 	normal = normalize(normal * 2.0 - 1.0);
 	return normalize(TBN * normal);
 }

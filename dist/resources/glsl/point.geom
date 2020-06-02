@@ -7,11 +7,9 @@ in gl_PerVertex{
   vec4 gl_Position;
 } gl_in[];
 
-in vertexData{
-	vec2 textureCoord;
-	vec3 pos;
-	vec3 norm;
-} invals[];
+layout(location = 0) in vec2 textureCoord[];
+layout(location = 1) in vec3 pos[];
+layout(location = 2) in vec3 norm[];
 
 out gl_PerVertex
 {
@@ -20,7 +18,7 @@ out gl_PerVertex
   float gl_ClipDistance[];
 };
 
-out vec4 FragPos;
+layout(location = 5) out vec4 FragPos;
 
 uniform mat4 shadowMatrices[6];
 
