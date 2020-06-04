@@ -37,20 +37,10 @@ import static org.lwjgl.vulkan.VK10.VK_IMAGE_USAGE_TRANSFER_DST_BIT;
  */
 public interface Texture{
     /**
-     * Binds the texture to the current texture unit
-     */
-    void bind();
-
-    /**
-     * Unbinds the texture from the current texture unit
-     */
-    void unbind();
-
-    /**
      * Sets the current texture unit
      * @param loc Texture unit
      */
-    void setActiveTexture(int loc);
+    void setAsUniform(String uniform);
 
     /**
      * Uploads the given {@link TextureData} object to the texture<br><br>
@@ -82,7 +72,7 @@ public interface Texture{
      * Returns the texture ID for the underlying OpenGL texture
      * @return
      */
-    int getID();
+    long getID();
 
     static Texture get2DTexture(String path){
         return get2DTexture(Resource.getTextureData(path));
@@ -109,7 +99,6 @@ public interface Texture{
 
         Texture texture = new OpenGLTexture(Texture.config().samplerFormat(format).internalFormat(intformat).inputFormat(input)
                 .wrapType(WrapType.CLAMP_BORDER).minimumFilter(FilterType.LINEAR).maxFilter(FilterType.LINEAR), new Vector3i(x,y,1));
-        texture.bind();
         texture.set2DData(data);
         return texture;
     }
@@ -118,7 +107,6 @@ public interface Texture{
         TextureData data = new TextureData(x, y, 4, null, "framebuffer");
         Texture texture = new OpenGLTexture(Texture.cubemapConfig().samplerFormat(format).internalFormat(intformat).inputFormat(input)
                 .wrapType(WrapType.CLAMP_BORDER).minimumFilter(FilterType.LINEAR).maxFilter(FilterType.NEAREST), new Vector3i(x,y,1));
-        texture.bind();
         texture.setCubemapData(data, data, data, data, data, data);
         return texture;
     }
@@ -202,8 +190,6 @@ public interface Texture{
                 texture.setCubemapData(data[0], data[1], data[2], data[3], data[4], data[5]);
             }
         }
-
-        if(RenderEngine.getRendererType() == WindowInfo.RendererType.OPENGL) texture.unbind();
 
         return texture;
     }

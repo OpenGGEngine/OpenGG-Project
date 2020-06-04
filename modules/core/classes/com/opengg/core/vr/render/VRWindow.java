@@ -158,13 +158,14 @@ public class VRWindow implements Window {
             RenderEngine.addRenderPath(new RenderOperation("vr", () -> {
                 data.use();
 
-                var fb = ((OpenGLRenderer) RenderEngine.renderer).getCurrentFramebuffer();
+                var hmdFramebuffer = ((OpenGLRenderer) RenderEngine.renderer).getCurrentFramebuffer();
 
                 VRView view = new VRView(RenderEngine.getCurrentView());
                 view.setEyeMatrix(VRSystem.VRSystem_GetEyeToHeadTransform(EVREye_Eye_Left, HmdMatrix34.create()));
                 RenderEngine.useView(view);
 
-                fb.enableRendering(0,0,recx/2, recy, true);
+                hmdFramebuffer.clearFramebuffer();
+                hmdFramebuffer.enableRendering(0,0,recx/2, recy);
                 paths.forEach(RenderOperation::render);
 
                 RenderEngine.useView(new Camera(RenderEngine.getCurrentView().getPosition(), RenderEngine.getCurrentView().getRotation()));
@@ -175,7 +176,7 @@ public class VRWindow implements Window {
                 view.setEyeMatrix(VRSystem.VRSystem_GetEyeToHeadTransform(EVREye_Eye_Right, HmdMatrix34.create()));
                 RenderEngine.useView(view);
 
-                fb.enableRendering(recx/2,0, recx/2, recy, false);
+                hmdFramebuffer.enableRendering(recx/2,0, recx/2, recy);
                 paths.forEach(RenderOperation::render);
 
                 RenderEngine.useView(new Camera(RenderEngine.getCurrentView().getPosition(), RenderEngine.getCurrentView().getRotation()));

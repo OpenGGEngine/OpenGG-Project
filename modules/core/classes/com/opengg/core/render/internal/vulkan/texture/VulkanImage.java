@@ -8,6 +8,7 @@ import com.opengg.core.render.internal.vulkan.VkUtil;
 import com.opengg.core.render.internal.vulkan.VulkanBuffer;
 import com.opengg.core.render.internal.vulkan.VulkanCommandBuffer;
 import com.opengg.core.render.internal.vulkan.VulkanRenderer;
+import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.texture.TextureData;
 import com.opengg.core.system.NativeResource;
@@ -173,11 +174,6 @@ public class VulkanImage implements Texture, NativeResource {
         return new VulkanSampler(config);
     }
 
-
-    public long getImage() {
-        return image;
-    }
-
     public long getMemoryPointer() {
         return memoryPointer;
     }
@@ -220,18 +216,8 @@ public class VulkanImage implements Texture, NativeResource {
     }
 
     @Override
-    public void bind() {
-
-    }
-
-    @Override
-    public void unbind() {
-
-    }
-
-    @Override
-    public void setActiveTexture(int loc) {
-
+    public void setAsUniform(String uniform) {
+        ShaderController.setUniform(uniform, this);
     }
 
     @Override
@@ -273,8 +259,8 @@ public class VulkanImage implements Texture, NativeResource {
     }
 
     @Override
-    public int getID() {
-        return 0;
+    public long getID() {
+        return image;
     }
 
     @Override

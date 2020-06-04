@@ -19,7 +19,7 @@ import java.util.List;
 public class Stage {
     private String shader = "";
     private List<Tuple<Integer, String>> colorbinds = new ArrayList<>();
-    private Framebuffer buffer;
+    private Framebuffer stageBuffer;
 
     public Stage(String shader){
         this(shader, Tuple.of(0,"Kd"));
@@ -28,7 +28,7 @@ public class Stage {
     public Stage(String shader, Tuple<Integer,String>... binds){
         this.shader = shader;
         colorbinds.addAll(List.of(binds));
-        buffer = WindowFramebuffer.getFloatingPointWindowFramebuffer(binds.length);
+        stageBuffer = WindowFramebuffer.getFloatingPointWindowFramebuffer(binds.length);
     }
 
     public String getShader() {
@@ -36,15 +36,15 @@ public class Stage {
     }
 
     public void render(){
-        PostProcessController.currentBuffer = buffer;
+        PostProcessController.currentBuffer = stageBuffer;
         ShaderController.useConfiguration(shader);
 
-        buffer.enableRendering();
-        buffer.useEnabledAttachments();
+        stageBuffer.clearFramebuffer();
+        stageBuffer.enableRendering(0,0, stageBuffer.getWidth(), stageBuffer.getHeight());
         PostProcessController.renderable.render();
-        buffer.disableRendering();
+        stageBuffer.disableRendering();
         for (Tuple<Integer, String> bind : colorbinds) {
-            buffer.useTexture(bind.x(), bind.y());
+            stageBuffer.getTexture(bind.x()).setAsUniform(bind.y());
         }
 
     }

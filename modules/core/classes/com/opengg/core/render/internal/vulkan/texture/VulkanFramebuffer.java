@@ -5,6 +5,7 @@ import com.opengg.core.render.internal.vulkan.VkUtil;
 import com.opengg.core.render.internal.vulkan.VulkanAttachment;
 import com.opengg.core.render.internal.vulkan.VulkanRenderPass;
 import com.opengg.core.render.internal.vulkan.VulkanRenderer;
+import com.opengg.core.render.texture.Framebuffer;
 import org.lwjgl.vulkan.VkFramebufferCreateInfo;
 
 import java.nio.LongBuffer;
@@ -14,7 +15,7 @@ import static org.lwjgl.system.MemoryUtil.memAllocLong;
 import static org.lwjgl.system.MemoryUtil.memFree;
 import static org.lwjgl.vulkan.VK10.*;
 
-public class VulkanFramebuffer {
+public class VulkanFramebuffer{
     private final long framebuffer;
 
     public VulkanFramebuffer(List<VulkanImage.View> attachments, Vector2i size, VulkanRenderPass renderPass) {

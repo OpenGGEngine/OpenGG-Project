@@ -11,6 +11,7 @@ import com.opengg.core.math.util.Tuple;
 import com.opengg.core.math.Vector3i;
 import com.opengg.core.math.Vector4f;
 import com.opengg.core.render.RenderEngine;
+import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.texture.TextureData;
 import com.opengg.core.system.Allocator;
@@ -62,25 +63,28 @@ public class OpenGLTexture implements Texture {
         setTextureWrapType(getOpenGlWrapType(config.getWrapType()));
     }
 
+
+    public void setActiveTexture(int loc){
+        tex.setActiveTexture(GL_TEXTURE0 + loc);
+    }
+
+    public void use(int loc){
+        tex.setActiveTexture(GL_TEXTURE0 + loc);
+        tex.bind(type);
+    }
+
     @Override
+    public void setAsUniform(String uniform) {
+        ShaderController.setUniform(uniform, this);
+    }
+
     public void bind(){
         tex.bind(type);
     }
     
-    @Override
     public void unbind(){
         if(RenderEngine.validateInitialization()) return;
         glBindTexture(type, 0);
-    }
-    
-    @Override
-    public void setActiveTexture(int loc){
-        tex.setActiveTexture(GL_TEXTURE0 + loc);
-    }
-    
-    public void use(int loc){
-        tex.setActiveTexture(GL_TEXTURE0 + loc);
-        tex.bind(type);
     }
 
     @Override
@@ -212,7 +216,7 @@ public class OpenGLTexture implements Texture {
     }
     
     @Override
-    public int getID(){
+    public long getID(){
         return tex.getID();
     }
 

@@ -98,7 +98,6 @@ public class Light {
         lightBuffer = Framebuffer.generateFramebuffer();
         lightBuffer.attachRenderbuffer(xres, yres, GL_RGBA, GL_COLOR_ATTACHMENT0);
         lightBuffer.attachDepthTexture(xres, yres);
-        lightBuffer.checkForCompletion();
         this.xres = xres;
         this.yres = yres;
         shadow = true;
@@ -164,18 +163,16 @@ public class Light {
             ShaderController.setUniform("lightPos", pos);
             ShaderController.setUniform("farplane", distance);
         }
-
-        lightBuffer.bind();
-        lightBuffer.useEnabledAttachments();
-        lightBuffer.enableRendering();
+        lightBuffer.clearFramebuffer();
+        lightBuffer.enableRendering(0,0,lightBuffer.getWidth(), lightBuffer.getHeight());
     }
 
     public void finalizeRender(int pos){
         lightBuffer.disableRendering();
         if(this.type == POINT)
-            lightBuffer.useTexture(Framebuffer.DEPTH, "shadowcube");
+            lightBuffer.getTexture(Framebuffer.DEPTH).setAsUniform("shadowcube");
         else
-            lightBuffer.useTexture(Framebuffer.DEPTH, "shadowmap" + pos);
+            lightBuffer.getTexture(Framebuffer.DEPTH).setAsUniform("shadowmap" + pos);
     }
     
     public Vector3f getPosition() {

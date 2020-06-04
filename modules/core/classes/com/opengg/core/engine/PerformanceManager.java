@@ -12,6 +12,12 @@ public class PerformanceManager {
     private static long networkBytesInSec = 0;
     private static long networkBytesOutSec = 0;
 
+    private static long bufferAllocsThisFrame = 0;
+    private static long bufferAllocSizeThisFrame = 0;
+
+    private static long descriptorSetAllocations = 0;
+    private static long descriptorCacheHits = 0;
+
     private static int packetsInSec = 0;
     private static int packetsOutSec = 0;
     private static int packetsDroppedSec = 0;
@@ -25,6 +31,10 @@ public class PerformanceManager {
     private static List<Long> packetsOut = new ArrayList<>();
     private static List<Long> ackPacketsOut = new ArrayList<>();
     private static List<Long> packetsDropped = new ArrayList<>();
+
+    private static List<Long> gpuBuffers = new ArrayList<>();
+    private static List<Long> descriptorSets = new ArrayList<>();
+
 
     public static void update(float delta){
         lastFrames.offer(delta);
@@ -44,11 +54,18 @@ public class PerformanceManager {
         networkBytesInSec = bytesIn.stream().mapToLong(Tuple::y).sum();
         networkBytesOutSec = bytesOut.stream().mapToLong(Tuple::y).sum();
 
+        bufferAllocsThisFrame = gpuBuffers.size();
+        bufferAllocSizeThisFrame = gpuBuffers.stream().mapToLong(i -> i).sum();
+
+        descriptorSetAllocations = descriptorSets.size();
+
         packetsInSec = packetsIn.size();
         packetsOutSec = packetsOut.size();
         ackPacketsOutSec = ackPacketsOut.size();
         packetsDroppedSec = packetsDropped.size();
 
+        gpuBuffers = new ArrayList<>();
+        descriptorSets = new ArrayList<>();
     }
 
     public static void registerPacketOut(int size){
@@ -66,15 +83,19 @@ public class PerformanceManager {
     }
 
     public static void registerGuaranteedPacketSent(){
-        OpenGG.asyncExec(() -> {
-            ackPacketsOut.add(System.currentTimeMillis());
-        });
+        OpenGG.asyncExec(() -> ackPacketsOut.add(System.currentTimeMillis()));
     }
 
     public static void registerPacketResent(){
-        OpenGG.asyncExec(() -> {
-            packetsDropped.add(System.currentTimeMillis());
-        });
+        OpenGG.asyncExec(() -> packetsDropped.add(System.currentTimeMillis()));
+    }
+
+    public static void registerBufferAllocation(long size){
+        gpuBuffers.add(size);
+    }
+
+    public static void registerDescriptorSet(){
+        descriptorSets.add(0L);
     }
 
     public static double getComputedFramerate() {
@@ -99,6 +120,18 @@ public class PerformanceManager {
 
     public static int getPacketsDroppedSec() {
         return packetsDroppedSec;
+    }
+
+    public static long getBufferAllocsThisFrame() {
+        return bufferAllocsThisFrame;
+    }
+
+    public static long getBufferAllocSizeThisFrame() {
+        return bufferAllocSizeThisFrame;
+    }
+
+    public static long getDescriptorSetAllocations() {
+        return descriptorSetAllocations;
     }
 
     public static int getAckPacketsOutSec() {

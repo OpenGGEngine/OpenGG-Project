@@ -1,5 +1,6 @@
 package com.opengg.core.render.internal.vulkan;
 
+import com.opengg.core.engine.PerformanceManager;
 import com.opengg.core.render.internal.vulkan.texture.VulkanImage;
 import com.opengg.core.render.internal.vulkan.texture.VulkanSampler;
 import com.opengg.core.render.texture.TextureData;
@@ -33,6 +34,8 @@ public class VulkanDescriptorSet{
     private VulkanDescriptorSet(VulkanDescriptorSetLayout layout, VulkanDescriptorPool pool){
         this.pool = pool;
         this.layout = layout;
+
+        PerformanceManager.registerDescriptorSet();
 
         LongBuffer pDescriptorSetLayout = memAllocLong(1);
         pDescriptorSetLayout.put(0, layout.generateStruct());

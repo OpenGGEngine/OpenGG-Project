@@ -28,7 +28,7 @@ public class VulkanDrawnObject extends DrawnObject{
 
     @Override
     public void render(){
-        ShaderController.uploadNeededSetsForCurrent();
+        ShaderController.uploadModifiedDescriptorSets();
         VulkanRenderer.getRenderer().getCurrentCommandBuffer().bindVertexBuffers(vertexBufferObjects);
         VulkanRenderer.getRenderer().getCurrentCommandBuffer().bindIndexBuffer(indexBuffer);
         VulkanRenderer.getRenderer().getCurrentCommandBuffer().drawVertexIndexed(this.elementCount, this.instanceCount, 0, this.baseVertex, 0);

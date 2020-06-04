@@ -52,11 +52,9 @@ public class WindowFramebuffer implements WindowResizeListener, Framebuffer{
     
     private void regen(){
         this.underlyingBuffer = Framebuffer.generateFramebuffer();
-        refresh();
         Vector2i size = new Vector2i(WindowController.getWidth(),
                 WindowController.getHeight());
-        
-        bind();
+
         for(int i = 0; i < targets; i++){
             if(fp)
                 attachFloatingPointTexture(size.x, size.y, i);
@@ -64,7 +62,6 @@ public class WindowFramebuffer implements WindowResizeListener, Framebuffer{
                 attachColorTexture(size.x, size.y, i);
         }
         attachDepthTexture(size.x, size.y);
-        checkForCompletion();
     }
 
     @Override
@@ -72,30 +69,9 @@ public class WindowFramebuffer implements WindowResizeListener, Framebuffer{
         regen();
     }
 
-
     @Override
-    public void bind(){
-        underlyingBuffer.bind();
-    }
-
-    @Override
-    public void bindToRead(){
-        underlyingBuffer.bindToRead();
-    }
-
-    @Override
-    public void bindToWrite(){
-        underlyingBuffer.bindToWrite();
-    }
-
-    @Override
-    public void useEnabledAttachments(){
-        underlyingBuffer.useEnabledAttachments();
-    }
-
-    @Override
-    public void useTexture(int attachment, String loc){
-        underlyingBuffer.useTexture(attachment, loc);
+    public Texture getTexture(int attachment){
+        return underlyingBuffer.getTexture(attachment);
     }
 
     @Override
@@ -144,18 +120,8 @@ public class WindowFramebuffer implements WindowResizeListener, Framebuffer{
     }
 
     @Override
-    public void attachTexture(Texture.TextureType type, int width, int height, Texture.SamplerFormat format, Texture.TextureFormat intformat, Texture.InputFormat input, int attachment){
-        underlyingBuffer.attachTexture(type, width, height, format, intformat, input, attachment);
-    }
-
-    @Override
     public void blitTo(Framebuffer target){
         underlyingBuffer.blitTo(target);
-    }
-
-    @Override
-    public void blitToWithDepth(Framebuffer target){
-        underlyingBuffer.blitToWithDepth(target);
     }
 
     @Override
@@ -164,23 +130,13 @@ public class WindowFramebuffer implements WindowResizeListener, Framebuffer{
     }
 
     @Override
-    public void refresh(){
-        underlyingBuffer.refresh();
+    public void clearFramebuffer() {
+        underlyingBuffer.clearFramebuffer();
     }
 
     @Override
-    public void enableRendering(){
-        underlyingBuffer.enableRendering();
-    }
-
-    @Override
-    public void enableRendering(int x1, int y1, int x2, int y2, boolean clear) {
-        underlyingBuffer.enableRendering(x1,y1,x2,y2, clear);
-    }
-
-    @Override
-    public void restartRendering(){
-        underlyingBuffer.restartRendering();
+    public void enableRendering(int x1, int y1, int x2, int y2) {
+        underlyingBuffer.enableRendering(x1,y1,x2,y2);
     }
 
     @Override
@@ -189,17 +145,12 @@ public class WindowFramebuffer implements WindowResizeListener, Framebuffer{
     }
 
     @Override
-    public void checkForCompletion(){
-        underlyingBuffer.checkForCompletion();
-    }
-
-    @Override
     public int getWidth(){
-        return 0;
+        return underlyingBuffer.getWidth();
     }
 
     @Override
     public int getHeight(){
-        return 0;
+        return underlyingBuffer.getHeight();
     }
 }

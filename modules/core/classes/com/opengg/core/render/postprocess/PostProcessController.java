@@ -38,7 +38,7 @@ public class PostProcessController {
 
         Stage ssao = new Stage("ssao");
         PostProcessingPass ssaopass = new PostProcessingPass(PostProcessingPass.SET, ssao);
-        //passes.put("ssao", ssaopass);
+        //addPass("ssao", ssaopass);
 
         int blurpasses = 4;
         Stage[] blurs = new Stage[blurpasses*2+2];
@@ -55,15 +55,15 @@ public class PostProcessController {
 
         PostProcessingPass bloom = new PostProcessingPass(PostProcessingPass.SET,
                 blurs);
-        //passes.put("bloom", bloom);
+        //addPass("bloom", bloom);
 
         Stage hdr = new Stage("hdr");
         PostProcessingPass hdrpass = new PostProcessingPass(PostProcessingPass.SET, hdr);
-        passes.put("hdr", hdrpass);
+        addPass("hdr", hdrpass);
 
         Stage fxaa = new Stage("fxaa");
         PostProcessingPass fxaapass = new PostProcessingPass(PostProcessingPass.SET, fxaa);
-        passes.put("fxaa", fxaapass);
+        addPass("fxaa", fxaapass);
 
         GGConsole.log("Initialized post processing controller with " + passes.size() + " passes");
     }
@@ -76,35 +76,34 @@ public class PostProcessController {
         return passes.get(name);
     }
     
-    public static void process(Framebuffer initial){
+    public static void process(Framebuffer initialBuffer){
         ((OpenGLRenderer) RenderEngine.renderer).setCulling(false);
         CommonUniforms.setModel(new Matrix4f());
         
-        currentBuffer = initial;
-        initial.useTexture(0, "Kd");
-        initial.useTexture(Framebuffer.DEPTH, "Ka");
+        currentBuffer = initialBuffer;
+        initialBuffer.getTexture(0).setAsUniform("Kd");
+        initialBuffer.getTexture(Framebuffer.DEPTH).setAsUniform("Ka");
         for(PostProcessingPass pass : passes.values()){
             if(!pass.isEnabled()) continue;
             pass.render();
             switch (pass.op) {
-                case PostProcessingPass.SET -> currentBuffer.useTexture(0, "Kd");
+                case PostProcessingPass.SET -> currentBuffer.getTexture(0).setAsUniform("Kd");
                 case PostProcessingPass.ADD -> {
-                    utility.enableRendering();
-                    utility.useEnabledAttachments();
+                    utility.clearFramebuffer();
+                    utility.enableRendering(0,0,utility.getWidth(),utility.getHeight());
                     ShaderController.useConfiguration("add");
                     renderable.render();
                     utility.disableRendering();
-                    utility.useTexture(0, "Kd");
+                    utility.getTexture(0).setAsUniform("Kd");
                     currentBuffer = utility;
                 }
             }
         }
-
-        initial.enableRendering();
-        initial.useEnabledAttachments();
+        initialBuffer.clearFramebuffer();
+        initialBuffer.enableRendering(0,0,initialBuffer.getWidth(),initialBuffer.getHeight());
         ShaderController.useConfiguration("texture");
         renderable.render();
-        initial.disableRendering();
+        initialBuffer.disableRendering();
     }
 
     private PostProcessController() {

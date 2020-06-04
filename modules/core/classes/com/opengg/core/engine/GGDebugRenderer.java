@@ -11,6 +11,7 @@ import com.opengg.core.render.Renderable;
 import com.opengg.core.render.shader.CommonUniforms;
 import com.opengg.core.render.text.Font;
 import com.opengg.core.render.text.Text;
+import com.opengg.core.render.window.WindowInfo;
 import com.opengg.core.world.WorldEngine;
 
 import java.text.NumberFormat;
@@ -32,19 +33,23 @@ public class GGDebugRenderer implements KeyboardListener {
 
     public static void render(){
         if(render){
-            //((OpenGLRenderer) RenderEngine.renderer).setDepthCheck(false);
-
             counter++;
 
             if(counter > 15){
                 counter = 0;
 
-                var debugString = "Frame time: " + String.format("%.2f", PerformanceManager.getComputedFramerate()) + "\n" +
+                var debugString = "Frame time: " + String.format("%.2f", PerformanceManager.getComputedFramerate()*1000) + "\n" +
                         "Frame rate: " + String.format("%.2f", 1/(PerformanceManager.getComputedFramerate())) + "\n\n" +
                         "Camera position: (" + String.format("%.2f", RenderEngine.getCurrentView().getPosition().x) + ", " +  String.format("%.2f",     RenderEngine.getCurrentView().getPosition().y) + ", " +  String.format("%.2f", RenderEngine.getCurrentView().getPosition().z) + ") \n\n" +
                         "Current world: " + WorldEngine.getCurrent().getName() + " \n" +
                         "Component count: " + WorldEngine.getCurrent().getAllDescendants().size() + "\n\n" +
-                        "Render group count: " + RenderEngine.getActiveRenderGroups().size() + "  Rendered object count: " + RenderEngine.getActiveRenderGroups().stream().mapToInt(r -> r.getList().size()).sum();
+                        "Render group count: " + RenderEngine.getActiveRenderGroups().size() + "  Rendered object count: " + RenderEngine.getActiveRenderGroups().stream().mapToInt(r -> r.getList().size()).sum() + "\n\n" +
+                        "GPU Buffer allocations: " + PerformanceManager.getBufferAllocsThisFrame() + "\n" +
+                        "GPU Buffer allocations size: " + PerformanceManager.getBufferAllocSizeThisFrame();
+
+                if(RenderEngine.getRendererType() == WindowInfo.RendererType.VULKAN){
+                    debugString += "\nDescriptor set allocations: " + PerformanceManager.getDescriptorSetAllocations();
+                }
 
                 if(NetworkEngine.isRunning()){
                     debugString += "\n\n" + "Packets received / sec: " + PerformanceManager.getPacketsInSec() + "\n" +
@@ -65,8 +70,6 @@ public class GGDebugRenderer implements KeyboardListener {
 
             CommonUniforms.setModel(Matrix4f.translate(0.02f,0.975f,0));
             display.render();
-            //((OpenGLRenderer) RenderEngine.renderer).setDepthCheck(true);
-
         }
     }
 

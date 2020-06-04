@@ -85,7 +85,7 @@ public class OpenGLRenderer implements Renderer {
         GGConsole.log("Enabling rendering submanagers");
 
         PostProcessController.initialize();
-        RenderEngine.addRenderPass(new RenderPass(true, false, () -> {}, f -> {}));
+        RenderEngine.addRenderPass(new RenderPass(true, true, () -> {}, f -> {}));
 
         GGConsole.log("Render engine initialized");
     }
@@ -128,8 +128,7 @@ public class OpenGLRenderer implements Renderer {
                     used++;
                 }
             }
-            fb.restartRendering();
-            fb.useEnabledAttachments();
+            fb.enableRendering(0,0,fb.getWidth(),fb.getHeight());
             useLights();
             CommonUniforms.setView(RenderEngine.getCurrentView().getMatrix());
             RenderEngine.getProjectionData().use();
@@ -150,8 +149,8 @@ public class OpenGLRenderer implements Renderer {
             RenderEngine.getProjectionData().ratio = WindowController.getWindow().getRatio();
             RenderEngine.getProjectionData().use();
 
-            pass.getSceneBuffer().enableRendering();
-            pass.getSceneBuffer().useEnabledAttachments();
+            pass.getSceneBuffer().clearFramebuffer();
+            pass.getSceneBuffer().enableRendering(0,0,pass.getSceneBuffer().getWidth(),pass.getSceneBuffer().getHeight());
             useLights();
             resetConfig();
             ((OpenGLVertexArrayObject)defaultvao).bind();
@@ -167,7 +166,6 @@ public class OpenGLRenderer implements Renderer {
 
             if(pass.isPostProcessEnabled())
                 PostProcessController.process(pass.getSceneBuffer());
-
 
             if(pass.shouldBlitToBack())
                 pass.getSceneBuffer().blitToBack();

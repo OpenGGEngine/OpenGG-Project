@@ -17,7 +17,7 @@ public class GUIFramebufferTexture extends GUIRenderable{
     }
 
     public void render(){
-        fb.useTexture(attachment, "Kd");
+        fb.getTexture(attachment).setAsUniform("Kd");
         super.render();
     }
 }

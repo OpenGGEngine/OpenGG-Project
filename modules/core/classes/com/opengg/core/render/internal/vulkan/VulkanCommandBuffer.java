@@ -3,7 +3,6 @@ package com.opengg.core.render.internal.vulkan;
 import com.opengg.core.math.Vector2i;
 import com.opengg.core.render.GraphicsBuffer;
 import com.opengg.core.render.internal.vulkan.shader.VulkanPipeline;
-import com.opengg.core.render.internal.vulkan.shader.VulkanPipelineFormat;
 import com.opengg.core.render.internal.vulkan.texture.VulkanImage;
 import com.opengg.core.system.Allocator;
 import org.lwjgl.PointerBuffer;
@@ -131,7 +130,7 @@ public class VulkanCommandBuffer {
     }
 
     public void copyBufferToImage(VulkanBuffer src, VulkanImage target, VkBufferImageCopy.Buffer copyData){
-        vkCmdCopyBufferToImage(buffer, src.getBuffer(), target.getImage(), VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, copyData);
+        vkCmdCopyBufferToImage(buffer, src.getBuffer(), target.getID(), VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, copyData);
     }
 
     public void end(){

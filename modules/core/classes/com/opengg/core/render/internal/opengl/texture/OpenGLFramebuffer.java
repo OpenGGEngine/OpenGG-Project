@@ -8,7 +8,6 @@ package com.opengg.core.render.internal.opengl.texture;
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.render.internal.opengl.OpenGLRenderer;
-import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.window.WindowController;
 import com.opengg.core.render.texture.Framebuffer;
 import com.opengg.core.render.texture.Renderbuffer;
@@ -27,55 +26,37 @@ import static org.lwjgl.opengl.GL30.*;
 public class OpenGLFramebuffer implements Framebuffer{
 
     NativeOpenGLFramebuffer fb;
-    List<Integer> usedAttachments;
+    List<Integer> enabledFragmentAttachments;
     Map<Integer, Texture> textures;
     List<Renderbuffer> renderbuffers;
     int lx, ly;
     
     public OpenGLFramebuffer(){
         fb = new NativeOpenGLFramebuffer();
-        refresh();
+        enabledFragmentAttachments = new ArrayList<>();
+        textures = new HashMap<>();
+        renderbuffers = new ArrayList<>();
     }
-    
-    @Override
+
     public void bind(){
         fb.bind(GL_FRAMEBUFFER);
     }
     
-    @Override
     public void bindToRead(){
         fb.bind(GL_READ_FRAMEBUFFER);
     }
     
-    @Override
     public void bindToWrite(){
         fb.bind(GL_DRAW_FRAMEBUFFER);
     }
-    
-    @Override
-    public void useEnabledAttachments(){
-        if(RenderEngine.validateInitialization()) return;
-        fb.bind(GL_FRAMEBUFFER);
-       
-        int[] attachments = new int[usedAttachments.size()-1];
-        for(int i = 0; i < attachments.length; i++){
-            if(usedAttachments.get(i) == DEPTH) continue;
-            attachments[i] = usedAttachments.get(i);
-        }
-        glDrawBuffers(attachments);
-    }
-    
-    @Override
-    public void useTexture(int attachment, String loc){
-        Texture tex;
-        if(attachment != DEPTH)
-            tex = textures.get(GL_COLOR_ATTACHMENT0 + attachment);
-        else
-            tex = textures.get(attachment);
 
-        if(tex != null){
-            ShaderController.setUniform(loc, tex);
-        }
+    public Texture getTexture(int attachment){
+        Texture tex;
+        if(attachment == -1)
+            tex = textures.get(GL_DEPTH_ATTACHMENT);
+        else
+            tex = textures.get(GL_COLOR_ATTACHMENT0 + attachment);
+        return tex;
     }
 
     @Override
@@ -113,7 +94,6 @@ public class OpenGLFramebuffer implements Framebuffer{
         attachTexture(Texture.TextureType.TEXTURE_CUBEMAP, width, height, Texture.SamplerFormat.RGBA, Texture.TextureFormat.RGBA8, Texture.InputFormat.UNSIGNED_BYTE, GL_COLOR_ATTACHMENT0 + attachment);
     }
 
-    @Override
     public void attachTexture(Texture.TextureType type, int width, int height, Texture.SamplerFormat format, Texture.TextureFormat intformat, Texture.InputFormat input, int attachment){
         Texture tex;
         if(type.equals(Texture.TextureType.TEXTURE_CUBEMAP))
@@ -122,11 +102,11 @@ public class OpenGLFramebuffer implements Framebuffer{
             tex = Texture.get2DFramebufferTexture(width, height, format, intformat, input);
 
         fb.bind(GL_FRAMEBUFFER);
-        fb.attachTexture(attachment, tex.getID(), 0);
+        fb.attachTexture(attachment, (int) tex.getID(), 0);
         checkForCompletion();
         fb.unbind(GL_FRAMEBUFFER);
         textures.put(attachment, tex);
-        usedAttachments.add(attachment);
+        enabledFragmentAttachments.add(attachment);
 
         if(lx < width) lx = width;
         if(ly < height) ly = height;
@@ -145,7 +125,7 @@ public class OpenGLFramebuffer implements Framebuffer{
         checkForCompletion();
         
         renderbuffers.add(rb);
-        usedAttachments.add(attachment);
+        enabledFragmentAttachments.add(attachment);
 
         if(lx < width) lx = width;
         if(ly < height) ly = height;
@@ -153,16 +133,10 @@ public class OpenGLFramebuffer implements Framebuffer{
 
     @Override
     public void blitTo(Framebuffer target){
+        var glTarget = (OpenGLFramebuffer) target;
         bindToRead();
-        target.bindToWrite();
+        glTarget.bindToWrite();
         fb.blit(0, 0, getWidth(), getHeight(), 0, 0, target.getWidth(), target.getHeight(), GL_COLOR_BUFFER_BIT, GL_NEAREST);
-    }
-    
-    @Override
-    public void blitToWithDepth(Framebuffer target){
-        bindToRead();
-        target.bindToWrite();  
-        fb.blit(0, 0, getWidth(), getHeight(), 0, 0, target.getWidth(), target.getHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT, GL_NEAREST);
     }
     
     @Override
@@ -171,35 +145,20 @@ public class OpenGLFramebuffer implements Framebuffer{
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
         fb.blit(0, 0, getWidth(), getHeight(), 0, 0, WindowController.getWidth(), WindowController.getHeight(), GL_COLOR_BUFFER_BIT , GL_NEAREST);
     }
-    
+
+
     @Override
-    public void refresh(){
-        textures = new HashMap<>();
-        renderbuffers = new ArrayList<>();
-        usedAttachments = new ArrayList<>();
-        lx = 0;
-        ly = 0;
-    }
-    
-    @Override
-    public void enableRendering(){
-        enableRendering(0,0,lx,ly, true);
+    public void clearFramebuffer() {
+        fb.bind(GL_FRAMEBUFFER);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     }
 
     @Override
-    public void enableRendering(int x1, int y1, int x2, int y2, boolean clear) {
+    public void enableRendering(int x1, int y1, int x2, int y2) {
         ((OpenGLRenderer) RenderEngine.renderer).setCurrentFramebuffer(this);
         fb.bind(GL_FRAMEBUFFER);
-        if(clear)
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        glDrawBuffers(enabledFragmentAttachments.stream().mapToInt(i -> i).filter(i -> i != GL_DEPTH_ATTACHMENT).toArray());
         glViewport(x1, y1, x2, y2);
-    }
-    
-    @Override
-    public void restartRendering(){
-        ((OpenGLRenderer) RenderEngine.renderer).setCurrentFramebuffer(this);
-        fb.bind(GL_FRAMEBUFFER);
-        glViewport(0, 0, lx, ly);
     }
     
     @Override
@@ -208,7 +167,6 @@ public class OpenGLFramebuffer implements Framebuffer{
         glViewport(0, 0, WindowController.getWindow().getWidth(), WindowController.getWindow().getHeight());
     }
     
-    @Override
     public void checkForCompletion(){
         int comp;
         if((comp = fb.checkCompleteness()) != GL_FRAMEBUFFER_COMPLETE){

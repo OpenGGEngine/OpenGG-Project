@@ -581,7 +581,7 @@ public class ShaderController {
 
         var descriptorSet = new VulkanDescriptorSet(pipeline.getUsedLayouts()[set]);
         for(var image : imageDescriptors){
-            var vkImage = (VulkanImage)currentDescriptorBindingImageValue.get(new DescriptorPosition(set, image.binding()));
+            var vkImage = (VulkanImage) currentDescriptorBindingImageValue.get(new DescriptorPosition(set, image.binding()));
             descriptorSet.setDescriptorSetContents(vkImage.getImageView(VK_IMAGE_ASPECT_COLOR_BIT), vkImage.getSampler(), image.binding());
         }
 
@@ -594,10 +594,10 @@ public class ShaderController {
         return descriptorSet;
     }
 
-    public static void uploadNeededSetsForCurrent(){
+    public static void uploadModifiedDescriptorSets(){
         if(RenderEngine.getRendererType() != WindowInfo.RendererType.VULKAN) throw new IllegalStateException("Cannot upload sets in OpenGL");
         for(int i = 0; i < ((VulkanShaderPipeline)currentPipeline).getUsedLayouts().length; i++){
-            if(editedSets.contains(i)){
+            if(editedSets.contains(i) && !((VulkanShaderPipeline)currentPipeline).getUsedLayouts()[i].bindingList().isEmpty()){
                 var newSet = generateSetFromCurrentValues(i, (VulkanShaderPipeline) currentPipeline);
                 VulkanRenderer.getRenderer().getCurrentCommandBuffer().bindDescriptorSets(VulkanRenderer.getRenderer().getCurrentPipeline(), i, newSet);
             }

@@ -174,20 +174,20 @@ public class VulkanWindow {
         memFree(pDevice);
 
 
-        VkPhysicalDeviceMemoryProperties memoryProperties = VkPhysicalDeviceMemoryProperties.calloc();
+        var memoryProperties = VkPhysicalDeviceMemoryProperties.calloc();
         vkGetPhysicalDeviceMemoryProperties(physicalDevice, memoryProperties);
 
-        DeviceAndGraphicsQueueFamily ret = new DeviceAndGraphicsQueueFamily();
-        ret.device = new VkDevice(device, physicalDevice, deviceCreateInfo);
-        ret.queueFamilyIndex = graphicsQueueFamilyIndex;
-        ret.memoryProperties = memoryProperties;
+        var deviceGraphicsQueueFamily = new DeviceAndGraphicsQueueFamily();
+        deviceGraphicsQueueFamily.device = new VkDevice(device, physicalDevice, deviceCreateInfo);
+        deviceGraphicsQueueFamily.queueFamilyIndex = graphicsQueueFamilyIndex;
+        deviceGraphicsQueueFamily.memoryProperties = memoryProperties;
 
         deviceCreateInfo.free();
         memFree(ppEnabledLayerNames);
         memFree(VK_KHR_SWAPCHAIN_EXTENSION);
         memFree(extensions);
         memFree(pQueuePriorities);
-        return ret;
+        return deviceGraphicsQueueFamily;
     }
 
     private boolean getSupportedDepthFormat(VkPhysicalDevice physicalDevice, IntBuffer depthFormat) {

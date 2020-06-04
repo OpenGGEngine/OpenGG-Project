@@ -18,21 +18,13 @@ import static org.lwjgl.opengl.GL30.GL_DEPTH_ATTACHMENT;
  * @author Javier
  */
 public interface Framebuffer{
-    int DEPTH = GL_DEPTH_ATTACHMENT;
+    int DEPTH = -1;
 
     static Framebuffer generateFramebuffer(){
         return new OpenGLFramebuffer();
     }
 
-    void bind();
-
-    void bindToRead();
-
-    void bindToWrite();
-
-    void useEnabledAttachments();
-
-    void useTexture(int attachment, String loc);
+    Texture getTexture(int attachment);
 
     List<Texture> getTextures();
 
@@ -52,25 +44,15 @@ public interface Framebuffer{
 
     void attachColorCubemap(int width, int height, int attachment);
 
-    void attachTexture(Texture.TextureType type, int width, int height, Texture.SamplerFormat format, Texture.TextureFormat intformat, Texture.InputFormat input, int attachment);
-
     void blitTo(Framebuffer target);
-
-    void blitToWithDepth(Framebuffer target);
 
     void blitToBack();
 
-    void refresh();
+    void clearFramebuffer();
 
-    void enableRendering();
-
-    void enableRendering(int x1, int y1, int x2, int y2, boolean clear);
-
-    void restartRendering();
+    void enableRendering(int x1, int y1, int x2, int y2);
 
     void disableRendering();
-
-    void checkForCompletion();
 
     int getWidth();
 

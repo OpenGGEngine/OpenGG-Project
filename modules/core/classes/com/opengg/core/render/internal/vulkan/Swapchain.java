@@ -29,7 +29,7 @@ class Swapchain {
     public Swapchain(VkDevice device, VkPhysicalDevice physicalDevice, long surface, long oldSwapChain, Vector2i defaultSize, VulkanWindow.ColorDepthData colorFormat) {
         // Get physical device surface properties and formats
         VkSurfaceCapabilitiesKHR surfCaps = getCapabilities(physicalDevice, surface);
-        int swapchainPresentMode = getSwapchainPresentMode(physicalDevice, surface, VK_PRESENT_MODE_FIFO_KHR);
+        int swapchainPresentMode = getSwapchainPresentMode(physicalDevice, surface, VK_PRESENT_MODE_MAILBOX_KHR);
         extents = calculateExtents(defaultSize, surfCaps);
 
         // Determine the number of images
@@ -135,9 +135,6 @@ class Swapchain {
             if (pPresentModes.get(i) == preferredMode) {
                 swapchainPresentMode = preferredMode;
                 break;
-            }
-            if ((swapchainPresentMode != preferredMode) && (pPresentModes.get(i) == VK_PRESENT_MODE_IMMEDIATE_KHR)) {
-                swapchainPresentMode = preferredMode;
             }
         }
         memFree(pPresentModes);
