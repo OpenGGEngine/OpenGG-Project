@@ -404,8 +404,4 @@ public class VulkanRenderer implements Renderer {
         return queue;
     }
 
-    private static class UboDescriptor {
-        VulkanBuffer buffer;
-        long offset;
-    }
 }

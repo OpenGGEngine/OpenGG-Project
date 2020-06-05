@@ -23,7 +23,7 @@ public class WindowController {
     
     public static List<WindowResizeListener> listeners = new ArrayList<>();
     
-    public static void setup(WindowInfo windowinfo){
+    public static void setup(WindowOptions windowinfo){
         WindowTypeRegister.registerWindowType("GLFW", new GLFWWindow());
         WindowTypeRegister.registerWindowType("OpenVR", new VRWindow());
         

@@ -15,7 +15,7 @@ import com.opengg.core.render.RenderPass;
 import com.opengg.core.vr.VRUtil;
 import com.opengg.core.render.window.GLFWWindow;
 import com.opengg.core.render.window.Window;
-import com.opengg.core.render.window.WindowInfo;
+import com.opengg.core.render.window.WindowOptions;
 import com.opengg.core.system.Allocator;
 import com.opengg.core.world.Camera;
 import com.opengg.core.world.WorldEngine;
@@ -38,7 +38,7 @@ public class VRWindow implements Window {
     private int rightController;
 
     @Override
-    public void setup(WindowInfo info) {
+    public void setup(WindowOptions info) {
         IntBuffer errHandle =  Allocator.allocInt(1);
         int vrHandle = VR.VR_InitInternal(errHandle, VR.EVRApplicationType_VRApplication_Scene);
 

@@ -10,11 +10,9 @@ package com.opengg.core.render.texture;
 import com.opengg.core.engine.Resource;
 import com.opengg.core.math.Vector2i;
 import com.opengg.core.math.Vector3i;
-import com.opengg.core.math.Vector4f;
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.render.internal.opengl.texture.OpenGLTexture;
 import com.opengg.core.render.internal.vulkan.texture.VulkanImage;
-import com.opengg.core.render.window.WindowInfo;
 import com.opengg.core.system.Allocator;
 import com.opengg.core.util.GGOutputStream;
 
@@ -26,8 +24,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL13.GL_CLAMP_TO_BORDER;
 import static org.lwjgl.vulkan.VK10.*;
 import static org.lwjgl.vulkan.VK10.VK_IMAGE_USAGE_TRANSFER_DST_BIT;
 

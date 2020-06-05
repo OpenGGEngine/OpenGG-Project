@@ -21,12 +21,10 @@ import com.opengg.core.io.input.mouse.MouseController;
 import com.opengg.core.network.NetworkEngine;
 import com.opengg.core.physics.PhysicsEngine;
 import com.opengg.core.render.RenderEngine;
-import com.opengg.core.render.internal.opengl.OpenGLRenderer;
 import com.opengg.core.render.window.WindowController;
 import com.opengg.core.render.window.Window;
-import com.opengg.core.render.window.WindowInfo;
+import com.opengg.core.render.window.WindowOptions;
 import com.opengg.core.script.ScriptLoader;
-import com.opengg.core.security.OpenGGSecurityPolicy;
 import com.opengg.core.system.Allocator;
 import com.opengg.core.system.NativeResourceManager;
 import com.opengg.core.system.SystemInfo;
@@ -34,10 +32,8 @@ import com.opengg.core.thread.ThreadManager;
 import com.opengg.core.util.Time;
 import com.opengg.core.world.WorldEngine;
 
-import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
-import java.security.Policy;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -83,14 +79,14 @@ public final class OpenGG{
         }
     }
 
-    private static void initializeClient(WindowInfo windowInfo){
-        WindowController.setup(windowInfo);
+    private static void initializeClient(WindowOptions windowOptions){
+        WindowController.setup(windowOptions);
 
         //SystemInfo.queryRendererInfo("OpenGL");
         GGConsole.log("OpenGL instantiation confirmed");
         GGConsole.log("Running renderer on " + SystemInfo.get("Graphics Renderer") + " provided by " + SystemInfo.get("Graphics Vendor"));
 
-        RenderEngine.initialize(windowInfo);
+        RenderEngine.initialize(windowOptions);
         //GGConsole.log("Using OpenGL context version " + ((OpenGLRenderer) RenderEngine.renderer).getGLVersion());
 
         GGGameConsole.initialize();
@@ -149,7 +145,7 @@ public final class OpenGG{
         ExtensionManager.loadStep(Extension.CONFIG);
 
         if(client)
-            initializeClient(options.getWindowInfo());
+            initializeClient(options.getWindowOptions());
         else
             initializeServer();
 

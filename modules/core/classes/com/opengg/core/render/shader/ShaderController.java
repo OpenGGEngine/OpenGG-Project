@@ -16,14 +16,13 @@ import com.opengg.core.render.internal.opengl.texture.OpenGLTexture;
 import com.opengg.core.render.internal.vulkan.VulkanBuffer;
 import com.opengg.core.render.internal.vulkan.VulkanDescriptorSet;
 import com.opengg.core.render.internal.vulkan.VulkanRenderer;
-import com.opengg.core.render.internal.vulkan.shader.VulkanPipeline;
 import com.opengg.core.render.internal.vulkan.shader.VulkanPipelineCache;
 import com.opengg.core.render.internal.vulkan.shader.VulkanShaderPipeline;
 import com.opengg.core.render.internal.vulkan.texture.VulkanImage;
 import com.opengg.core.render.shader.ggsl.Parser;
 import com.opengg.core.render.shader.ggsl.ShaderFile;
 import com.opengg.core.render.texture.Texture;
-import com.opengg.core.render.window.WindowInfo;
+import com.opengg.core.render.window.WindowOptions;
 import com.opengg.core.system.Allocator;
 
 import java.nio.ByteBuffer;
@@ -100,7 +99,7 @@ public class ShaderController {
 
         generateCommonPipelines();
 
-        if(RenderEngine.getRendererType() == WindowInfo.RendererType.OPENGL) setUniforms();
+        if(RenderEngine.getRendererType() == WindowOptions.RendererType.OPENGL) setUniforms();
         System.out.println(attributeLocations);
         checkError();
         
@@ -595,7 +594,7 @@ public class ShaderController {
     }
 
     public static void uploadModifiedDescriptorSets(){
-        if(RenderEngine.getRendererType() != WindowInfo.RendererType.VULKAN) throw new IllegalStateException("Cannot upload sets in OpenGL");
+        if(RenderEngine.getRendererType() != WindowOptions.RendererType.VULKAN) throw new IllegalStateException("Cannot upload sets in OpenGL");
         for(int i = 0; i < ((VulkanShaderPipeline)currentPipeline).getUsedLayouts().length; i++){
             if(editedSets.contains(i) && !((VulkanShaderPipeline)currentPipeline).getUsedLayouts()[i].bindingList().isEmpty()){
                 var newSet = generateSetFromCurrentValues(i, (VulkanShaderPipeline) currentPipeline);
@@ -781,11 +780,11 @@ public class ShaderController {
         //add existing interface buffer bindings to list
         generateMissingInterfaceBindings(interfaceUniforms);
 
-        if(RenderEngine.getRendererType().equals(WindowInfo.RendererType.VULKAN)){
+        if(RenderEngine.getRendererType().equals(WindowOptions.RendererType.VULKAN)){
             preprocessVulkanShader(file, declarationUniforms, interfaceUniforms);
         }
 
-        if(RenderEngine.getRendererType().equals(WindowInfo.RendererType.OPENGL)){
+        if(RenderEngine.getRendererType().equals(WindowOptions.RendererType.OPENGL)){
             preprocessOpenGLShader(file, declarationUniforms, interfaceUniforms);
         }
     }

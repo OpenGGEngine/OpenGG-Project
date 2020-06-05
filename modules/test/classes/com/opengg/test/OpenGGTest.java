@@ -51,10 +51,10 @@ public class  OpenGGTest extends GGApplication{
         w.height = 960;
         w.resizable = true;
         w.type = "GLFW";
-        w.vsync = false;
+        w.vsync = true;
         w.glmajor = 4;
         w.glminor = 3;
-        w.renderer = WindowInfo.RendererType.VULKAN;
+        w.renderer = WindowInfo.RendererType.OPENGL;
         OpenGG.initialize(new OpenGGTest(), new InitializationOptions()
                                                 .setApplicationName("OpenGG Test")
                                                 .setWindowInfo(w));
@@ -105,7 +105,7 @@ public class  OpenGGTest extends GGApplication{
         //WorldEngine.getCurrent().attach(new ModelComponent(Resource.getModel("pear"), true).setPositionOffset(new Vector3f(5,0,0)));
 
         //WorldEngine.getCurrent().attach(new ModelComponent(Resource.getModel("pear"), true).setPositionOffset(new Vector3f(35,0,-32)));
-        /WorldEngine.getCurrent().attach(new ModelComponent(Resource.getModel("pear"), true).setPositionOffset(new Vector3f(30,0,-28)));
+        //WorldEngine.getCurrent().attach(new ModelComponent(Resource.getModel("pear"), true).setPositionOffset(new Vector3f(30,0,-28)));
 
         WorldEngine.getCurrent().getStructure().addGeometry(
                 WorldGeometryBuilder.fromCuboid(new Vector3f(45,0,-30), new Quaternionf(), new Vector3f(2,10,30), TextureGenerator.ofColor(Color.RED, 1), true));

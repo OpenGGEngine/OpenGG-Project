@@ -1,7 +1,7 @@
 package com.opengg.core.engine;
 
 import com.opengg.core.GGInfo;
-import com.opengg.core.render.window.WindowInfo;
+import com.opengg.core.render.window.WindowOptions;
 
 public class InitializationOptions {
     private String applicationName = "default";
@@ -9,7 +9,7 @@ public class InitializationOptions {
     private boolean headless = false;
     private GGInfo.UserDataOption localDataLocation = GGInfo.UserDataOption.DOCUMENTS;
 
-    private WindowInfo windowInfo = new WindowInfo();
+    private WindowOptions windowOptions = new WindowOptions();
 
     public String getApplicationName() {
         return applicationName;
@@ -47,12 +47,12 @@ public class InitializationOptions {
         return this;
     }
 
-    public WindowInfo getWindowInfo() {
-        return windowInfo;
+    public WindowOptions getWindowOptions() {
+        return windowOptions;
     }
 
-    public InitializationOptions setWindowInfo(WindowInfo windowInfo) {
-        this.windowInfo = windowInfo;
+    public InitializationOptions setWindowOptions(WindowOptions windowOptions) {
+        this.windowOptions = windowOptions;
         return this;
     }
 }

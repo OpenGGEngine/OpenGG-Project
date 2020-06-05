@@ -12,7 +12,7 @@ package com.opengg.core.render.window;
  * @author Javier
  */
 public interface Window {
-    void setup(WindowInfo info);
+    void setup(WindowOptions info);
     void endFrame();
     float getRatio();
     boolean shouldClose();

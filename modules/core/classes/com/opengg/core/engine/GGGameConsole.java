@@ -20,15 +20,13 @@ import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.text.Font;
 import com.opengg.core.render.text.Text;
 import com.opengg.core.render.texture.Texture;
-import com.opengg.core.render.window.WindowInfo;
+import com.opengg.core.render.window.WindowOptions;
 
 import java.awt.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
-import static org.lwjgl.opengl.GL11.glGetError;
 
 public class GGGameConsole implements KeyboardListener, KeyboardCharacterListener ,MouseScrollListener {
     private static String currentText = "";
@@ -89,7 +87,7 @@ public class GGGameConsole implements KeyboardListener, KeyboardCharacterListene
         //Fixes the Input Field not Rendering
         CommonUniforms.setModel(new Matrix4f());
         ShaderController.useConfiguration("texture");
-        if(RenderEngine.getRendererType() == WindowInfo.RendererType.OPENGL) ((OpenGLRenderer) RenderEngine.renderer).setDepthCheck(false);
+        if(RenderEngine.getRendererType() == WindowOptions.RendererType.OPENGL) ((OpenGLRenderer) RenderEngine.renderer).setDepthCheck(false);
         background.render();
 
         var consoledrawable = font.createFromText(Text.from(consoleValue)
@@ -107,7 +105,7 @@ public class GGGameConsole implements KeyboardListener, KeyboardCharacterListene
         CommonUniforms.setModel(Matrix4f.translate(0,0.5f,0f));
         userdrawable.render();
 
-        if(RenderEngine.getRendererType() == WindowInfo.RendererType.OPENGL) ((OpenGLRenderer) RenderEngine.renderer).setDepthCheck(true);
+        if(RenderEngine.getRendererType() == WindowOptions.RendererType.OPENGL) ((OpenGLRenderer) RenderEngine.renderer).setDepthCheck(true);
     }
 
     @Override

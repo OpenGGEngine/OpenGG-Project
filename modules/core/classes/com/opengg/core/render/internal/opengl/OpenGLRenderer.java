@@ -13,8 +13,6 @@ import com.opengg.core.engine.OpenGG;
 import com.opengg.core.gui.GUIController;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Vector3f;
-import com.opengg.core.model.ModelManager;
-import com.opengg.core.physics.PhysicsRenderer;
 import com.opengg.core.render.*;
 import com.opengg.core.render.internal.opengl.shader.OpenGLVertexArrayObject;
 import com.opengg.core.render.light.Light;
@@ -23,21 +21,15 @@ import com.opengg.core.render.shader.*;
 import com.opengg.core.render.texture.Framebuffer;
 import com.opengg.core.render.texture.TextureManager;
 import com.opengg.core.render.window.WindowController;
-import com.opengg.core.render.window.WindowInfo;
+import com.opengg.core.render.window.WindowOptions;
 import com.opengg.core.system.Allocator;
 import com.opengg.core.world.Camera;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL14.GL_FUNC_ADD;
 import static org.lwjgl.opengl.GL14.glBlendEquation;
 import static org.lwjgl.opengl.GL30.*;
-import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER;
 import static org.lwjgl.opengl.GL32.GL_TEXTURE_CUBE_MAP_SEAMLESS;
-import static org.lwjgl.opengl.GL43.GL_DEBUG_OUTPUT;
-import static org.lwjgl.opengl.GL43.glDebugMessageCallback;
 
 /**
  * 
@@ -227,7 +219,7 @@ public class OpenGLRenderer implements Renderer {
      * @return The current OpenGL version in a major . minor format
      */
     public String getGLVersion(){
-        return OpenGG.getInitOptions().getWindowInfo().renderer == WindowInfo.RendererType.OPENGL ?
+        return OpenGG.getInitOptions().getWindowOptions().renderer == WindowOptions.RendererType.OPENGL ?
                 glGetInteger(GL_MAJOR_VERSION) + "." + glGetInteger(GL_MINOR_VERSION):
                 "unknown";
     }

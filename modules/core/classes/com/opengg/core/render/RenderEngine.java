@@ -13,15 +13,13 @@ import com.opengg.core.render.shader.VertexArrayBinding;
 import com.opengg.core.render.shader.VertexArrayFormat;
 import com.opengg.core.render.texture.TextureManager;
 import com.opengg.core.render.window.WindowController;
-import com.opengg.core.render.window.WindowInfo;
+import com.opengg.core.render.window.WindowOptions;
 import com.opengg.core.world.Camera;
 import com.opengg.core.world.Skybox;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-
-import static org.lwjgl.opengl.GL11.GL_FLOAT;
 
 
 public class RenderEngine {
@@ -51,7 +49,7 @@ public class RenderEngine {
     private static View camera = new Camera();
     private static ProjectionData projectionData;
 
-    public static void initialize(WindowInfo opts){
+    public static void initialize(WindowOptions opts){
         initializeForHeadless();
         initialized = true;
 
@@ -276,8 +274,8 @@ public class RenderEngine {
         this.bindSkyboxToCamera = bindSkyboxToCamera;
     }
 
-    public static WindowInfo.RendererType getRendererType(){
-        return OpenGG.getInitOptions().getWindowInfo().renderer;
+    public static WindowOptions.RendererType getRendererType(){
+        return OpenGG.getInitOptions().getWindowOptions().renderer;
     }
 
     public static Renderer getRenderer(){

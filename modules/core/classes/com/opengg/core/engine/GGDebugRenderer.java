@@ -6,12 +6,11 @@ import com.opengg.core.io.input.keyboard.KeyboardListener;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.network.NetworkEngine;
 import com.opengg.core.render.RenderEngine;
-import com.opengg.core.render.internal.opengl.OpenGLRenderer;
 import com.opengg.core.render.Renderable;
 import com.opengg.core.render.shader.CommonUniforms;
 import com.opengg.core.render.text.Font;
 import com.opengg.core.render.text.Text;
-import com.opengg.core.render.window.WindowInfo;
+import com.opengg.core.render.window.WindowOptions;
 import com.opengg.core.world.WorldEngine;
 
 import java.text.NumberFormat;
@@ -47,7 +46,7 @@ public class GGDebugRenderer implements KeyboardListener {
                         "GPU Buffer allocations: " + PerformanceManager.getBufferAllocsThisFrame() + "\n" +
                         "GPU Buffer allocations size: " + PerformanceManager.getBufferAllocSizeThisFrame();
 
-                if(RenderEngine.getRendererType() == WindowInfo.RendererType.VULKAN){
+                if(RenderEngine.getRendererType() == WindowOptions.RendererType.VULKAN){
                     debugString += "\nDescriptor set allocations: " + PerformanceManager.getDescriptorSetAllocations();
                 }
 

@@ -1,18 +1,12 @@
 package com.opengg.core.render.window;
 
-import com.opengg.core.GGInfo;
-import com.opengg.core.console.GGConsole;
-import com.opengg.core.engine.OpenGG;
 import com.opengg.core.exceptions.WindowCreationException;
 import com.opengg.core.io.input.keyboard.GLFWKeyboardHandler;
 import com.opengg.core.io.input.keyboard.IKeyboardHandler;
 import com.opengg.core.io.input.keyboard.KeyboardController;
 import com.opengg.core.io.input.mouse.*;
 
-import static com.opengg.core.render.window.WindowOptions.*;
-
 import com.opengg.core.render.RenderEngine;
-import com.opengg.core.render.internal.vulkan.VkInitPackage;
 import com.opengg.core.render.internal.vulkan.VkUtil;
 import com.opengg.core.render.internal.vulkan.VulkanRenderer;
 import com.opengg.core.render.internal.vulkan.VulkanWindow;
@@ -31,13 +25,8 @@ import static org.lwjgl.glfw.GLFWVulkan.glfwCreateWindowSurface;
 import static org.lwjgl.glfw.GLFWVulkan.glfwGetRequiredInstanceExtensions;
 import static org.lwjgl.opengl.GL11.*;
 import org.lwjgl.stb.STBImage;
-import org.lwjgl.system.Callback;
-import org.lwjgl.system.MemoryUtil;
-import org.lwjgl.vulkan.*;
 
 import static org.lwjgl.system.MemoryUtil.*;
-import static org.lwjgl.vulkan.EXTDebugReport.VK_EXT_DEBUG_REPORT_EXTENSION_NAME;
-import static org.lwjgl.vulkan.VK10.*;
 
 public class GLFWWindow implements Window {
 
@@ -57,10 +46,10 @@ public class GLFWWindow implements Window {
     GLFWScrollCallback mouseScrollCallback;
 
     @Override
-    public void setup(WindowInfo windowInfo) {
+    public void setup(WindowOptions windowOptions) {
         glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
-        HEIGHT = windowInfo.height;
-        WIDTH = windowInfo.width;
+        HEIGHT = windowOptions.height;
+        WIDTH = windowOptions.width;
 
         if (!glfwInit()) {
             throw new WindowCreationException("Unable to initialize GLFW");
@@ -68,16 +57,16 @@ public class GLFWWindow implements Window {
 
         glfwDefaultWindowHints(); // optional, the current window hints are already the default
         glfwWindowHint(GLFW_VISIBLE, GL_FALSE); // the window will stay hidden after creation
-        glfwWindowHint(GLFW_RESIZABLE, windowInfo.resizable ? GL_TRUE : GL_FALSE);
-        glfwWindowHint(GLFW_SAMPLES, windowInfo.samples);
+        glfwWindowHint(GLFW_RESIZABLE, windowOptions.resizable ? GL_TRUE : GL_FALSE);
+        glfwWindowHint(GLFW_SAMPLES, windowOptions.samples);
 
         //glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 
-        switch (windowInfo.renderer){
+        switch (windowOptions.renderer){
             case OPENGL -> {
                 //OpenGL setup
-                glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, windowInfo.glmajor);
-                glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, windowInfo.glminor);
+                glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, windowOptions.glmajor);
+                glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, windowOptions.glminor);
                 glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
                 glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
             }
@@ -85,13 +74,13 @@ public class GLFWWindow implements Window {
         }
 
         mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-        if (windowInfo.displaymode == BORDERLESS) {
+        if (windowOptions.displayMode == WindowOptions.DisplayMode.FULLSCREEN_WINDOWED) {
             glfwWindowHint(GLFW_RED_BITS, mode.redBits());
             glfwWindowHint(GLFW_GREEN_BITS, mode.greenBits());
             glfwWindowHint(GLFW_BLUE_BITS, mode.blueBits());
             glfwWindowHint(GLFW_REFRESH_RATE, mode.refreshRate());
 
-            window = glfwCreateWindow(mode.width(), mode.height(), windowInfo.name, NULL, NULL);
+            window = glfwCreateWindow(mode.width(), mode.height(), windowOptions.name, NULL, NULL);
 
             HEIGHT = mode.height();
             WIDTH = mode.width();
@@ -101,10 +90,10 @@ public class GLFWWindow implements Window {
                     0,
                     0
             );
-        } else if (windowInfo.displaymode == FULLSCREEN) {
-            window = glfwCreateWindow(WIDTH, HEIGHT, windowInfo.name, glfwGetPrimaryMonitor(), NULL);
+        } else if (windowOptions.displayMode == WindowOptions.DisplayMode.FULLSCREEN) {
+            window = glfwCreateWindow(WIDTH, HEIGHT, windowOptions.name, glfwGetPrimaryMonitor(), NULL);
         } else {
-            window = glfwCreateWindow(WIDTH, HEIGHT, windowInfo.name, NULL, NULL);
+            window = glfwCreateWindow(WIDTH, HEIGHT, windowOptions.name, NULL, NULL);
             glfwSetWindowPos(
                     window,
                     (mode.width() - WIDTH) / 2,
@@ -125,10 +114,10 @@ public class GLFWWindow implements Window {
         MouseController.setPosHandler((MousePositionHandler) mouseCallback);
         MouseController.setScrollHandler((MouseScrollHandler)mouseScrollCallback);
 
-        switch (windowInfo.renderer){
+        switch (windowOptions.renderer){
             case OPENGL -> {
                 glfwMakeContextCurrent(window);
-                glfwSwapInterval(windowInfo.vsync ? 1 : 0);
+                glfwSwapInterval(windowOptions.vsync ? 1 : 0);
 
                 GL.createCapabilities();
                 if (glGetError() == GL_NO_ERROR) {
@@ -275,7 +264,7 @@ public class GLFWWindow implements Window {
 
     @Override
     public void endFrame() {
-        if(RenderEngine.getRendererType() == WindowInfo.RendererType.OPENGL) {
+        if(RenderEngine.getRendererType() == WindowOptions.RendererType.OPENGL) {
             glfwSwapBuffers(getID());
         }
         glfwPollEvents();

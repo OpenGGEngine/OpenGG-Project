@@ -7,6 +7,7 @@
 package com.opengg.core.render;
 
 import com.opengg.core.math.Matrix4f;
+import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.shader.CommonUniforms;
 import com.opengg.core.render.window.WindowController;
 
@@ -48,6 +49,15 @@ public class ProjectionData {
         return data;
     }
 
+    public static ProjectionData getOrthographic(Vector3f p1, Vector3f p2){
+        ProjectionData data = new ProjectionData();
+
+        data.type = ORTHO;
+        data.custom = Matrix4f.orthographic(p1.x, p2.x, p1.y, p2.y, p1.z, p2.z);
+
+        return data;
+    }
+
     public static ProjectionData getCustom(Matrix4f projection){
         ProjectionData data = new ProjectionData();
 
@@ -60,7 +70,7 @@ public class ProjectionData {
     public void use(){
         if(type == PERSPECTIVE)
             CommonUniforms.setPerspective(fov, ratio, minz, maxz);
-        else if(type == CUSTOM)
+        else if(type == CUSTOM || type == ORTHO)
             CommonUniforms.setProjection(custom);
     }
 

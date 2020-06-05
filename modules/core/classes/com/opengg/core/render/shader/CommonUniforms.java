@@ -5,7 +5,7 @@ import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.model.Material;
 import com.opengg.core.render.RenderEngine;
-import com.opengg.core.render.window.WindowInfo;
+import com.opengg.core.render.window.WindowOptions;
 import com.opengg.core.system.Allocator;
 
 public class CommonUniforms {
@@ -70,7 +70,7 @@ public class CommonUniforms {
     }
 
     public static void passMaterial(Material m){
-        if(RenderEngine.getRendererType() == WindowInfo.RendererType.OPENGL){
+        if(RenderEngine.getRendererType() == WindowOptions.RendererType.OPENGL){
             ShaderController.setUniform("material.ns", (float) m.nsExponent);
             ShaderController.setUniform("material.ka",m.ka);
             ShaderController.setUniform("material.kd", m.kd);
