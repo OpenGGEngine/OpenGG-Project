@@ -264,7 +264,7 @@ public class TTF implements Font{
 
         FloatBuffer data = Allocator.allocFloat(poss.size()*8);
 
-        for(int i = 0; i < poss.size(); i++){
+        for(int i = poss.size()-1; i >= 0; i--){
             var uv = uvs.get(i);
             var pos = poss.get(i);
 
