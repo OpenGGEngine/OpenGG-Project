@@ -9,6 +9,7 @@ package com.opengg.core.render.objects;
 import com.opengg.core.math.util.Tuple;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
+import com.opengg.core.render.RenderEngine;
 import com.opengg.core.render.Renderable;
 import com.opengg.core.render.drawn.DrawnObject;
 import com.opengg.core.system.Allocator;
@@ -29,7 +30,7 @@ public class ObjectCreator {
     
     public static Renderable createInstancedQuadPrism(Vector3f c1, Vector3f c2){
         Buffer[] b = createQuadPrismBuffers(c1,c2);
-        return DrawnObject.create((IntBuffer)b[1], (FloatBuffer)b[0], Allocator.allocFloat(3));
+        return DrawnObject.create(RenderEngine.getParticleFormat(), (IntBuffer)b[1], (FloatBuffer)b[0], Allocator.allocFloat(3));
     }
     
     public static Buffer[] createQuadPrismBuffers(Vector3f c1, Vector3f c2){

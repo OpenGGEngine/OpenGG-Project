@@ -27,8 +27,8 @@ public class WorldEngine{
     private static List<Consumer<Component>> componentAdditionListeners = new ArrayList<>();
     private static List<BiConsumer<Component, Component>> componentMoveListeners = new ArrayList<>();
 
-
     private static Map<String, World> worlds = new HashMap<>();
+    private static Map<Long, Component> guidMap = new HashMap<>();
 
     public static void initialize(){
         WorldEngine.setOnlyActiveWorld(new World());
@@ -59,6 +59,7 @@ public class WorldEngine{
     }
 
     public static void onComponentAdded(Component comp){
+        guidMap.put(comp.getGUID(), comp);
         componentAdditionListeners.forEach(c -> c.accept(comp));
     }
 
@@ -67,6 +68,8 @@ public class WorldEngine{
     }
 
     public static void onComponentRemoved(Component comp){
+        guidMap.remove(comp.getGUID());
+
         componentRemovalListeners.forEach(c -> c.accept(comp));
     }
 
@@ -76,9 +79,7 @@ public class WorldEngine{
      * @return List containing all found components
      */
     public static List<Component> findEverywhereByName(String name){
-        return worlds.values().stream()
-                .flatMap(w -> w.findByName(name).stream())
-                .collect(Collectors.toList());
+        return guidMap.values().stream().filter(c -> c.getName().equals(name)).collect(Collectors.toList());
     }
 
     /**
@@ -87,12 +88,7 @@ public class WorldEngine{
      * @return Optional containing the component with the given GUID, or an empty Optional
      */
     public static Optional<Component> findEverywhereByGUID(long guid){
-        return worlds.values().stream()
-                .flatMap(w -> w.findByGUID(guid).stream())
-                .findFirst()
-                .or(() -> worlds.values().stream()
-                        .filter(w -> w.getGUID() == guid)
-                        .findFirst());
+        return Optional.ofNullable(guidMap.get(guid));
     }
 
     /**

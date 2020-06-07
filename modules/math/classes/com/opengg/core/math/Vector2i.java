@@ -84,12 +84,12 @@ public class Vector2i implements Serializable{
         return new Vector2i(x - f, y - f);
     }
     
-    public int getDistance(Vector2i v) {
-        return (int) Math.sqrt(this.getDistanceSquared(v));
+    public float getDistance(Vector2i v) {
+        return (float) Math.sqrt(this.getDistanceSquared(v));
     }
     
-    public int getDistanceSquared(Vector2i v){
-        return (int) (Math.pow((this.x - v.x), 2) + Math.pow((this.y - v.y), 2));
+    public float getDistanceSquared(Vector2i v){
+        return (float) (Math.pow((this.x - v.x), 2) + Math.pow((this.y - v.y), 2));
     }
     
     public static int getDistance(Vector2i v1, Vector2i v2){
@@ -201,7 +201,15 @@ public class Vector2i implements Serializable{
         ByteBuffer b = Allocator.alloc(8);
         return b.putFloat(x).putFloat(y).array();
     }
-    
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 23 * hash + Float.floatToIntBits(this.x);
+        hash = 23 * hash + Float.floatToIntBits(this.y);
+        return hash;
+    }
+
     @Override
     public boolean equals(Object ot){
         if(ot instanceof Vector2i){
@@ -213,6 +221,6 @@ public class Vector2i implements Serializable{
     
     @Override
     public String toString(){
-        return x + ", " + y;
+        return "(" + x + ", " + y + ")";
     }
 }

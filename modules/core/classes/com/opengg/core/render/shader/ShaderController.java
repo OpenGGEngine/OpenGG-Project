@@ -114,9 +114,6 @@ public class ShaderController {
         use("object.vert", "texture.frag");
         saveCurrentConfiguration("texture");
 
-        use("object.vert", "texturecolor.frag");
-        saveCurrentConfiguration("texture2test");
-
         use("object.vert", "material.frag");
         saveCurrentConfiguration("material");
 
@@ -125,6 +122,9 @@ public class ShaderController {
 
         use("tangent.vert", "tangent.frag");
         saveCurrentConfiguration("tangent");
+
+        use("instance.vert", "object.frag");
+        saveCurrentConfiguration("instance");
 
         use("object.vert", "terrainmulti.frag");
         saveCurrentConfiguration("terrain");

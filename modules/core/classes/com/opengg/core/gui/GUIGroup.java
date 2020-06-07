@@ -6,7 +6,10 @@
 package com.opengg.core.gui;
 
 import com.opengg.core.math.Vector2f;
+
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -14,28 +17,44 @@ import java.util.Map;
  * @author Warren
  */
 public class GUIGroup extends GUIItem {
+    private int autoGenInt = 0;
+    private final Map<String, GUIItem> items = new HashMap<>();
 
-    Map<String, GUIItem> items = new HashMap<>();
+    public GUIGroup(){}
 
-    public GUIGroup(){
-        this(new Vector2f(0,0));
+    public GUIGroup(List<GUIItem> items){
+        addItems(items);
     }
 
-    public GUIGroup(Vector2f pos) {
-        this.setPositionOffset(pos);
+    public GUIGroup addItems(GUIItem... items) {
+        addItems(Arrays.asList(items));
+        return this;
     }
 
-    public void addItem(String name, GUIItem item) {
+    public GUIGroup addItems(List<GUIItem> items) {
+        items.forEach(this::addItem);
+        return this;
+    }
+
+    public GUIGroup addItem(GUIItem item) {
+        addItem(Integer.toString(autoGenInt++), item);
+        return this;
+    }
+
+    public GUIGroup addItem(String name, GUIItem item) {
         item.setParent(this);
         item.setName(name);
         items.put(name, item);
+        return this;
     }
 
     public GUIItem getItem(String name) {
         return items.get(name);
     }
 
-    public void clear(){items.clear();}
+    public void clear(){
+        items.clear();
+    }
 
     @Override
     public void update(float delta) {

@@ -13,7 +13,7 @@ public class GUIFramebufferTexture extends GUIRenderable{
         Renderable drawn = ObjectCreator.createSquare(new Vector2f(0,0), size, 0.2f);
         this.fb = buffer;
         this.attachment = attachment;
-        this.setDrawable(drawn);
+        this.setRenderable(drawn);
     }
 
     public void render(){

@@ -13,7 +13,7 @@ import com.opengg.core.math.Vector2f;
  * @author Javier
  */
 public class GUI{
-    private GUIGroup root = new GUIGroup(new Vector2f(0,0));
+    private GUIGroup root = new GUIGroup();
     private boolean menu = false;
     private String name = "";
     

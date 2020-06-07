@@ -17,19 +17,18 @@ import com.opengg.core.render.texture.Texture;
  */
 public class GUITexture extends GUIRenderable {
     Texture tex;
-    public GUITexture(Texture tex, Vector2f screenpos, Vector2f size) {
+    public GUITexture(Texture tex, Vector2f size) {
         Renderable drawn = ObjectCreator.createSquare(new Vector2f(0,0), size, 0f);
         this.tex = tex;
-        this.setDrawable(new TextureRenderable(drawn, tex));
-        this.setPositionOffset(screenpos);
+        this.setRenderable(new TextureRenderable(drawn, tex));
     }
 
-    public void setTexture(Texture t){
-        ((TextureRenderable)this.d).tex = t;
+    public void setTexture(Texture texture){
+        ((TextureRenderable)this.getRenderable()).setTexture(texture);
     }
 
     public void setSize(Vector2f size){
         Renderable drawn = ObjectCreator.createSquare(new Vector2f(0,0), size, 0f);
-        this.setDrawable(new TextureRenderable(drawn, tex));
+        this.setRenderable(new TextureRenderable(drawn, tex));
     }
 }

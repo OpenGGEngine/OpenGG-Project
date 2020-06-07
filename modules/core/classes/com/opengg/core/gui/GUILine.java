@@ -9,8 +9,6 @@ import com.opengg.core.system.Allocator;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import static org.lwjgl.opengl.GL11.GL_LINES;
-
 public class GUILine extends GUIRenderable{
     Texture tex;
     public GUILine() {
@@ -48,7 +46,7 @@ public class GUILine extends GUIRenderable{
         instancebuffer.flip();
         var drawable = DrawnObject.create(instancebuffer,buffer);
         drawable.setRenderType(DrawnObject.DrawType.LINES);
-        this.setDrawable(drawable);
+        this.setRenderable(drawable);
     }
 
     @Override

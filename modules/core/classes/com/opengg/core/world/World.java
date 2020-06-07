@@ -63,18 +63,6 @@ public class World extends Component implements Resource {
     }
 
     /**
-     * Regenerates the render groups for this world and sends them to {@link RenderEngine},
-     * should only be used if adding many renderables. Otherwise, use {@link #addRenderable(com.opengg.core.world.components.RenderComponent) }
-     */
-    public void rescanRenderables(){
-        for(Component c : getAllDescendants()){
-            if(c instanceof RenderComponent){
-                addRenderable((RenderComponent)c);
-            }
-        }
-    }
-
-    /**
      * Adds a {@link com.opengg.core.world.components.RenderComponent} to the World's {@link RenderGroup} depending on certain values,
      * and creates a new group if none that fit the components traits are found
      * @param renderable

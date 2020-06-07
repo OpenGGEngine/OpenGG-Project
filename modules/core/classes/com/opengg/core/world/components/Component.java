@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -75,6 +76,7 @@ public abstract class Component{
      */
     public Component(){
         guid = UUID.randomUUID().getLeastSignificantBits();
+
         if(OpenGG.getDebugOptions().logOnComponentCreation()){
             GGConsole.debug("Created component of type " + this.getClass().getName() + " with ID "  + this.guid);
         }
@@ -342,9 +344,8 @@ public abstract class Component{
                 &&
                 (!isEnabled()
                         ||
-                        (getUpdateDistance()*getUpdateDistance() < getPosition().distanceToSquared(RenderEngine.getCurrentView().getPosition())
-                                &&
-                                getUpdateDistance() != 0))
+                        (getUpdateDistance() != 0 && getUpdateDistance()*getUpdateDistance() < getPosition().distanceToSquared(RenderEngine.getCurrentView().getPosition())
+                        ))
         )
             return;
         update(delta);
@@ -594,6 +595,7 @@ public abstract class Component{
 
     private void changeParent(Component parent){
         if(parent == null){
+            this.delete();
             return;
         }
 
@@ -832,7 +834,9 @@ public abstract class Component{
      */
     public void remove(Component child){
         if(child == null) return;
-        if(!children.contains(child)) return;
+        if(!children.contains(child)) {
+            return;
+        }
         children.remove(child);
         child.changeParent(null);
     }

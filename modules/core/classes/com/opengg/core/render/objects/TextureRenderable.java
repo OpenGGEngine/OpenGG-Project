@@ -15,8 +15,8 @@ import com.opengg.core.render.texture.Texture;
  * @author Warren
  */
 public class TextureRenderable implements Renderable {
-    public Texture tex;
-    Renderable object;
+    private Texture tex;
+    private Renderable object;
     
     public TextureRenderable(Renderable renderable, Texture t){
         object = renderable;
@@ -33,4 +33,7 @@ public class TextureRenderable implements Renderable {
         this.tex = tex;
     }
 
+    public Renderable getWrappedRenderable() {
+        return object;
+    }
 }

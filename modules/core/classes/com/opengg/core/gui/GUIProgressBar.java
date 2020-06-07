@@ -13,19 +13,18 @@ public class GUIProgressBar extends GUIRenderable{
     Vector3f back;
     float percent;
 
-    public GUIProgressBar(Vector2f pos, Vector2f size, Vector3f fill, Vector3f back){
+    public GUIProgressBar(Vector2f size, Vector3f fill, Vector3f back){
         percent = 0;
         this.fill = fill;
         this.back = back;
 
         Renderable drawn = ObjectCreator.createSquare(new Vector2f(0,0), size, 0.2f);
 
-        this.setDrawable(drawn);
-        this.setPositionOffset(pos);
+        this.setRenderable(drawn);
     }
 
-    public GUIProgressBar(Vector2f pos, Vector2f size, Color fill, Color back){
-        this(pos, size, new Vector3f(fill.getRed(), fill.getGreen(), fill.getBlue()).divide(255f), new Vector3f(back.getRed(), back.getGreen(), back.getBlue()).divide(255f));
+    public GUIProgressBar(Vector2f size, Color fill, Color back){
+        this(size, new Vector3f(fill.getRed(), fill.getGreen(), fill.getBlue()).divide(255f), new Vector3f(back.getRed(), back.getGreen(), back.getBlue()).divide(255f));
     }
 
     public GUIProgressBar setPercent(float percent){

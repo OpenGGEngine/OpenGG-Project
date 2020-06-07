@@ -2,7 +2,7 @@ package com.opengg.core.gui;
 
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.engine.Resource;
-import com.opengg.core.gui.text.GUIText;
+import com.opengg.core.gui.text.GUITextLine;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.render.text.Font;
 import com.opengg.core.render.text.Text;
@@ -72,29 +72,33 @@ public class GUILoader {
                     }
                     switch (event.asStartElement().getName().toString()) {
                         case "group":
-                            GUIGroup group = new GUIGroup(position);
+                            GUIGroup group = new GUIGroup();
                             group.setLayer(layer);
+                            group.setPositionOffset(position);
                             group.setName(groupName);
                             groups.peek().addItem(groupName, group);
                             groups.push(group);
                             break;
                         case "ggbutton":
-                            GUIButton button = new GUIButton(position, size, tex);
+                            GUIButton button = new GUIButton(new Vector2f(1,1));
                             button.setLayer(layer);
+                            button.setPositionOffset(position);
                             button.setName(groupName);
                             groups.peek().addItem(groupName, button);
                             break;
                         case "ggtext":
                             String textData = reader.nextEvent().asCharacters().getData();
                             Text text1 = Text.from(textData).size(size.x).maxLineSize(size.y);
-                            GUIText text = new GUIText(text1,font,position);
+                            GUITextLine text = new GUITextLine(text1, font);
                             text.setLayer(layer);
+                            text.setPositionOffset(position);
                             text.setName(groupName);
                             groups.peek().addItem(groupName, text);
                             break;
                         case "gtex":
-                            GUITexture texture = new GUITexture(tex,position,size);
+                            GUITexture texture = new GUITexture(tex, size);
                             texture.setLayer(layer);
+                            texture.setPositionOffset(position);
                             texture.setName(groupName);
                             groups.peek().addItem(groupName, texture);
                             break;

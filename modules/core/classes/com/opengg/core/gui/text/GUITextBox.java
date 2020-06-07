@@ -14,7 +14,7 @@ import java.awt.*;
 
 public class GUITextBox extends GUIGroup {
     private String value = "";
-    private GUIText text;
+    private GUITextLine text;
     private GUITexture background;
     private float textSize;
     private float speed;
@@ -29,12 +29,12 @@ public class GUITextBox extends GUIGroup {
     private boolean complete;
     private boolean running = false;
 
-    public GUITextBox(Vector2f pos, Vector2f size){
-        super(pos);
+    public GUITextBox(Vector2f size){
+        super();
         this.size = size;
 
-        this.addItem("background", background = (GUITexture) new GUITexture(Texture.ofColor(Color.BLACK, 0), new Vector2f(), size).setLayer(-0.5f));
-        this.addItem("text", text = new GUIText(Resource.getTruetypeFont("consolas.ttf"), new Vector2f(0, size.y - (0.01f + 0))));
+        this.addItem("background", background = (GUITexture) new GUITexture(Texture.ofColor(Color.BLACK, 0), size).setLayer(-0.5f));
+        this.addItem("text", text = new GUITextLine(Resource.getTruetypeFont("consolas.ttf"))).setPositionOffset(new Vector2f(0, size.y - (0.01f + 0)));
 
         Animation animation = new Animation(0.1f, false);
         animation.addStaticEvent(Animation.AnimationStage.createStaticStage(0,0.1f, d -> Texture.ofColor(Color.BLACK, d.floatValue()*10), t -> background.setTexture(t)));
@@ -43,8 +43,8 @@ public class GUITextBox extends GUIGroup {
         AnimationManager.register(animation);
     }
 
-    public GUITextBox(Vector2f pos, Vector2f size, String value, float textSize, float speed, float margin, Font font, Texture backgroundTex, ScrollMode scroll){
-        this(pos, size);
+    public GUITextBox(Vector2f size, String value, float textSize, float speed, float margin, Font font, Texture backgroundTex, ScrollMode scroll){
+        this(size);
 
         this.value = value;
         this.speed = speed;

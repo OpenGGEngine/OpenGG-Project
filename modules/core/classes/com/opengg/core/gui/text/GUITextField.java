@@ -2,7 +2,6 @@ package com.opengg.core.gui.text;
 
 import com.opengg.core.GGInfo;
 import com.opengg.core.io.input.keyboard.*;
-import com.opengg.core.math.Vector2f;
 import com.opengg.core.render.text.Font;
 import com.opengg.core.render.text.Text;
 import com.opengg.core.world.Action;
@@ -10,7 +9,7 @@ import com.opengg.core.world.Actionable;
 
 import java.util.function.Consumer;
 
-public class GUITextField extends GUIText implements KeyboardCharacterListener, KeyboardListener, Actionable {
+public class GUITextField extends GUITextLine implements KeyboardCharacterListener, KeyboardListener, Actionable {
     private boolean inFocus = false;
     private boolean clearOnFocus = true;
     private int focusKey = -1;
@@ -20,12 +19,12 @@ public class GUITextField extends GUIText implements KeyboardCharacterListener, 
     private Consumer<String> onEdit = t -> {};
     private Consumer<String> onSubmit = t -> {};
 
-    public GUITextField(Font font, Vector2f pos) {
-        this(Text.from("").size(0.08f), font, pos);
+    public GUITextField(Font font) {
+        this(Text.from("").size(0.08f), font);
     }
 
-    public GUITextField(Text text, Font font, Vector2f pos) {
-        super(text, font, pos);
+    public GUITextField(Text text, Font font) {
+        super(text, font);
         KeyboardController.addKeyboardListener(this);
         KeyboardController.addKeyboardCharacterListener(this);
     }

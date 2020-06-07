@@ -16,27 +16,27 @@ import com.opengg.core.render.shader.CommonUniforms;
  * @author Warren
  */
 public class GUIRenderable extends GUIItem{ 
-    Renderable d;
+    private Renderable renderable;
     
-    public GUIRenderable(Renderable d, Vector2f screenpos){
-        this.d = d;
+    public GUIRenderable(Renderable renderable, Vector2f screenpos){
+        this.renderable = renderable;
         this.setPositionOffset(screenpos);
     }
   
     public GUIRenderable(){}
     
-    public void setDrawable(Renderable d){
-        this.d = d;
+    public void setRenderable(Renderable renderable){
+        this.renderable = renderable;
     }
 
-    public Renderable getDrawable(){
-        return d;
+    public Renderable getRenderable(){
+        return renderable;
     }
     
     public void render(){
-        if(enabled && d != null){
+        if(enabled && renderable != null){
             CommonUniforms.setModel(new Matrix4f().translate(new Vector3f(getPosition().x, getPosition().y, layer)));
-            d.render();
+            renderable.render();
         }
     }
 }

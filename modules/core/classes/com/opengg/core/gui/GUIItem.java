@@ -54,8 +54,9 @@ public abstract class GUIItem {
         return position.add(parent.getPosition());
     }
 
-    public void setPositionOffset(Vector2f position) {
+    public GUIItem setPositionOffset(Vector2f position) {
         this.position = position;
+        return this;
     }
     
     public Vector2f getPositionOffset(){
