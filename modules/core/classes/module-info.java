@@ -82,4 +82,5 @@ module com.opengg.core {
     exports com.opengg.core.world.structure.viewmodel;
     exports com.opengg.core.physics.collision.colliders;
     exports com.opengg.core.physics.mechanics;
+    exports com.opengg.core.gui.layout;
 }

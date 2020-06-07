@@ -1,5 +1,6 @@
 package com.opengg.core.render.text;
 
+import com.opengg.core.math.Vector3fm;
 import com.opengg.core.render.Renderable;
 
 public interface Font {
@@ -12,4 +13,5 @@ public interface Font {
 
     Renderable createFromText(String text);
     Renderable createFromText(Text text);
+    Renderable createFromTextWithSize(Text wholetext, Vector3fm endSize);
 }

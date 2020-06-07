@@ -7,6 +7,7 @@
 package com.opengg.core.gui;
 
 import com.opengg.core.math.Vector2f;
+import com.opengg.core.math.Vector2i;
 
 /**
  *
@@ -45,6 +46,10 @@ public abstract class GUIItem {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Vector2f getSize(){
+        return new Vector2f();
     }
 
     public Vector2f getPosition() {

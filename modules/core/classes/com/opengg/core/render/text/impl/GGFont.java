@@ -5,6 +5,7 @@
  */
 package com.opengg.core.render.text.impl;
 
+import com.opengg.core.math.Vector3fm;
 import com.opengg.core.render.Renderable;
 import com.opengg.core.render.text.Font;
 import com.opengg.core.render.text.Text;
@@ -38,6 +39,11 @@ public class GGFont implements Font {
     @Override
     public Renderable createFromText(Text text) {
         return badname.createTextData(text, this);
+    }
+
+    @Override
+    public Renderable createFromTextWithSize(Text wholetext, Vector3fm endSize) {
+        return null;
     }
 
     @Override

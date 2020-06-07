@@ -6,6 +6,8 @@
 package com.opengg.core.gui.text;
 
 import com.opengg.core.gui.GUIRenderable;
+import com.opengg.core.math.Vector2f;
+import com.opengg.core.math.Vector3fm;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.text.Font;
 import com.opengg.core.render.text.Text;
@@ -15,14 +17,17 @@ import com.opengg.core.render.text.Text;
  * @author Javier
  */
 public class GUITextLine extends GUIRenderable {
-    public Text text;
-    Font font;
+    protected Text text;
+    protected Font font;
+
+    private Vector3fm size;
 
     public GUITextLine(Text text, Font font) {
         this.text = text;
         this.font = font;
+        this.size = new Vector3fm();
 
-        this.setRenderable(font.createFromText(text));
+        this.setRenderable(font.createFromTextWithSize(text, size));
     }
 
     public GUITextLine(Font font) {
@@ -31,12 +36,12 @@ public class GUITextLine extends GUIRenderable {
 
     public void setText(String ntext) {
         this.text.setText(ntext);
-        this.setRenderable(font.createFromText(text));
+        this.setRenderable(font.createFromTextWithSize(text, size));
     }
 
     public void setText(Text text) {
         this.text = text;
-        this.setRenderable(font.createFromText(text));
+        this.setRenderable(font.createFromTextWithSize(text, size));
     }
 
     public String getContents(){
@@ -46,6 +51,11 @@ public class GUITextLine extends GUIRenderable {
     public void setFont(Font font) {
         this.font = font;
         this.setRenderable(font.createFromText(text));
+    }
+
+    @Override
+    public Vector2f getSize() {
+        return new Vector2f(size.x, -size.y);
     }
 
     @Override

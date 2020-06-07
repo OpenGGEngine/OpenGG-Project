@@ -7,10 +7,7 @@ package com.opengg.core.gui;
 
 import com.opengg.core.math.Vector2f;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -18,7 +15,7 @@ import java.util.Map;
  */
 public class GUIGroup extends GUIItem {
     private int autoGenInt = 0;
-    private final Map<String, GUIItem> items = new HashMap<>();
+    private final Map<String, GUIItem> items = new LinkedHashMap<>();
 
     public GUIGroup(){}
 
@@ -52,8 +49,23 @@ public class GUIGroup extends GUIItem {
         return items.get(name);
     }
 
+    public List<GUIItem> getItems() {
+        return List.copyOf(items.values());
+    }
+
     public void clear(){
         items.clear();
+    }
+
+    @Override
+    public Vector2f getSize() {
+        float topX = 0, topY = 0;
+        for(var child : this.getItems()){
+            var movedSize = child.getSize().add(child.getPositionOffset());
+            if(movedSize.x > topX) topX = movedSize.x;
+            if(movedSize.y > topY) topY = movedSize.y;
+        }
+        return new Vector2f(topX, topY);
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.opengg.core.render.text;
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
+import com.opengg.core.math.Vector3fm;
 import com.opengg.core.render.Renderable;
 import com.opengg.core.render.drawn.DrawnObject;
 import com.opengg.core.render.objects.ObjectCreator;
@@ -188,7 +189,11 @@ public class TTF implements Font{
 
     @Override
     public Renderable createFromText(Text wholetext) {
+        return createFromTextWithSize(wholetext, new Vector3fm());
+    }
 
+    @Override
+    public Renderable createFromTextWithSize(Text wholetext, Vector3fm endSize) {
         String text = wholetext.getText();
         if(text.length() == 0){
             return ObjectCreator.createQuadPrism(new Vector3f(), new Vector3f());
@@ -256,6 +261,9 @@ public class TTF implements Font{
             poss.add(new Vector2f(x1, y1));
             poss.add(new Vector2f(x0, y1));
             poss.add(new Vector2f(x0, y0));
+
+            if(x1 > endSize.x) endSize.x = x1;
+            if(y1 > endSize.y) endSize.y = y1+wholetext.getSize()*0.2f;
         }
 
         Allocator.popStack();

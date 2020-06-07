@@ -14,4 +14,13 @@ public class Vector3fm {
     public float x = 0;
     public float y = 0;
     public float z = 0;
+
+    @Override
+    public String toString() {
+        return "Vector3fm{" +
+                "x=" + x +
+                ", y=" + y +
+                ", z=" + z +
+                '}';
+    }
 }

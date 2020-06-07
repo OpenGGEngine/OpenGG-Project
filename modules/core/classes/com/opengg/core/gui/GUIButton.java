@@ -1,6 +1,7 @@
 package com.opengg.core.gui;
 
 import com.opengg.core.engine.OpenGG;
+import com.opengg.core.gui.layout.DirectionalLayout;
 import com.opengg.core.io.input.mouse.MouseButton;
 import com.opengg.core.io.input.mouse.MouseButtonListener;
 import com.opengg.core.io.input.mouse.MouseController;
@@ -8,7 +9,7 @@ import com.opengg.core.math.Vector2f;
 import com.opengg.core.render.objects.TextureRenderable;
 import com.opengg.core.render.objects.ObjectCreator;
 
-public class GUIButton extends GUIGroup implements MouseButtonListener{
+public class GUIButton extends GUILayoutGroup implements MouseButtonListener{
     private Runnable onClick = () -> {};
     private Runnable onRelease = () -> {};
     private Runnable onClickOutside = () -> {};
@@ -21,6 +22,7 @@ public class GUIButton extends GUIGroup implements MouseButtonListener{
 
 
     public GUIButton(Vector2f size, Runnable onClick){
+        super(new DirectionalLayout(DirectionalLayout.Direction.VERTICAL));
         this.buttonSize = size;
         MouseController.onButtonPress(this);
         setOnClick(onClick);
@@ -32,7 +34,13 @@ public class GUIButton extends GUIGroup implements MouseButtonListener{
 
     public GUIButton setBackground(GUIItem background){
         this.addItem("backOn", background);
+        this.repack();
         return this;
+    }
+
+    @Override
+    public Vector2f getSize() {
+        return buttonSize;
     }
 
     @Override
