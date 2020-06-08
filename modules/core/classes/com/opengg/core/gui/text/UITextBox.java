@@ -3,8 +3,8 @@ package com.opengg.core.gui.text;
 import com.opengg.core.animation.Animation;
 import com.opengg.core.animation.AnimationManager;
 import com.opengg.core.engine.Resource;
-import com.opengg.core.gui.GUIGroup;
-import com.opengg.core.gui.GUITexture;
+import com.opengg.core.gui.UIGroup;
+import com.opengg.core.gui.UITexture;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.render.text.Font;
 import com.opengg.core.render.text.Text;
@@ -12,10 +12,10 @@ import com.opengg.core.render.texture.Texture;
 
 import java.awt.*;
 
-public class GUITextBox extends GUIGroup {
+public class UITextBox extends UIGroup {
     private String value = "";
-    private GUITextLine text;
-    private GUITexture background;
+    private UITextLine text;
+    private UITexture background;
     private float textSize;
     private float speed;
 
@@ -29,12 +29,12 @@ public class GUITextBox extends GUIGroup {
     private boolean complete;
     private boolean running = false;
 
-    public GUITextBox(Vector2f size){
+    public UITextBox(Vector2f size){
         super();
         this.size = size;
 
-        this.addItem("background", background = (GUITexture) new GUITexture(Texture.ofColor(Color.BLACK, 0), size).setLayer(-0.5f));
-        this.addItem("text", text = new GUITextLine(Resource.getTruetypeFont("consolas.ttf"))).setPositionOffset(new Vector2f(0, size.y - (0.01f + 0)));
+        this.addItem("background", background = (UITexture) new UITexture(Texture.ofColor(Color.BLACK, 0), size).setLayer(-0.5f));
+        this.addItem("text", text = new UITextLine(Resource.getTruetypeFont("consolas.ttf"))).setPositionOffset(new Vector2f(0, size.y - (0.01f + 0)));
 
         Animation animation = new Animation(0.1f, false);
         animation.addStaticEvent(Animation.AnimationStage.createStaticStage(0,0.1f, d -> Texture.ofColor(Color.BLACK, d.floatValue()*10), t -> background.setTexture(t)));
@@ -43,7 +43,7 @@ public class GUITextBox extends GUIGroup {
         AnimationManager.register(animation);
     }
 
-    public GUITextBox(Vector2f size, String value, float textSize, float speed, float margin, Font font, Texture backgroundTex, ScrollMode scroll){
+    public UITextBox(Vector2f size, String value, float textSize, float speed, float margin, Font font, Texture backgroundTex, ScrollMode scroll){
         this(size);
 
         this.value = value;
@@ -64,38 +64,38 @@ public class GUITextBox extends GUIGroup {
         return scroll;
     }
 
-    public GUITextBox setScrollMode(ScrollMode mode){
+    public UITextBox setScrollMode(ScrollMode mode){
         this.scroll = mode;
         return this;
     }
 
-    public GUITextBox setText(String value) {
+    public UITextBox setText(String value) {
         this.value = value;
         if(textLength > value.length()) textLength = value.length();
         return this;
     }
 
-    public GUITextBox setTextSize(float textSize) {
+    public UITextBox setTextSize(float textSize) {
         this.textSize = textSize;
         return this;
     }
 
-    public GUITextBox setSpeed(float speed) {
+    public UITextBox setSpeed(float speed) {
         this.speed = speed;
         return this;
     }
 
-    public GUITextBox setMargin(float margin) {
+    public UITextBox setMargin(float margin) {
         text.setPositionOffset(new Vector2f(margin, size.y - (0.01f + margin)));
         return this;
     }
 
-    public GUITextBox setFont(Font font) {
+    public UITextBox setFont(Font font) {
         text.setFont(font);
         return this;
     }
 
-    public GUITextBox setBackground(Texture background){
+    public UITextBox setBackground(Texture background){
         this.background.setTexture(background);
         return this;
     }
@@ -110,7 +110,7 @@ public class GUITextBox extends GUIGroup {
         complete = false;
     }
 
-    public GUITextBox setRunning(boolean running) {
+    public UITextBox setRunning(boolean running) {
         this.running = running;
         return this;
     }

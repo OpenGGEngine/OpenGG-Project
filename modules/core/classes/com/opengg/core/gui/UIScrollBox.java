@@ -4,7 +4,7 @@ import com.opengg.core.io.input.mouse.MouseScrollListener;
 import com.opengg.core.math.FastMath;
 import com.opengg.core.math.Vector2f;
 
-public class GUIScrollBox extends GUIGroup implements MouseScrollListener {
+public class UIScrollBox extends UIGroup implements MouseScrollListener {
     Vector2f dampen = new Vector2f(1);
 
     public void setXBounds(Vector2f xBounds) {
@@ -18,7 +18,7 @@ public class GUIScrollBox extends GUIGroup implements MouseScrollListener {
     Vector2f xBounds = new Vector2f(Float.NEGATIVE_INFINITY,Float.POSITIVE_INFINITY);
     Vector2f yBounds = new Vector2f(Float.NEGATIVE_INFINITY,Float.POSITIVE_INFINITY);
 
-    public GUIScrollBox setDampen(Vector2f dampen){
+    public UIScrollBox setDampen(Vector2f dampen){
         this.dampen = dampen;
         return this;
     }

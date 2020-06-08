@@ -5,8 +5,8 @@ import com.opengg.core.engine.OpenGG;
 import com.opengg.core.engine.Resource;
 import com.opengg.core.gui.GUI;
 import com.opengg.core.gui.GUIController;
-import com.opengg.core.gui.text.GUITextLine;
-import com.opengg.core.gui.text.GUITextField;
+import com.opengg.core.gui.text.UITextLine;
+import com.opengg.core.gui.text.UITextField;
 import com.opengg.core.io.input.keyboard.Key;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.network.common.ChatMessage;
@@ -70,18 +70,18 @@ public class ChatManager {
     }
 
     private static class DefaultRenderer{
-        private final GUITextLine text;
-        private final GUITextField entry;
+        private final UITextLine text;
+        private final UITextField entry;
         private final List<ChatMessage> messages = new ArrayList<>();
         private final int amountToShow = 20;
         private final int currentShowIndex = 0;
 
         public DefaultRenderer() {
             var gui = new GUI();
-            text = new GUITextLine(Text.from("").size(0.08f), Resource.getTruetypeFont("consolas.ttf"));
+            text = new UITextLine(Text.from("").size(0.08f), Resource.getTruetypeFont("consolas.ttf"));
             text.setPositionOffset(new Vector2f(0,0.33f));
 
-            entry = new GUITextField(Resource.getTruetypeFont("consolas.ttf"));
+            entry = new UITextField(Resource.getTruetypeFont("consolas.ttf"));
             entry.setPositionOffset(new Vector2f(0,0.05f));
 
             entry.setFocusKey(Key.KEY_T);

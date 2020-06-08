@@ -5,7 +5,7 @@
  */
 package com.opengg.core.gui.text;
 
-import com.opengg.core.gui.GUIRenderable;
+import com.opengg.core.gui.UIRenderable;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3fm;
 import com.opengg.core.render.shader.ShaderController;
@@ -16,13 +16,13 @@ import com.opengg.core.render.text.Text;
  *
  * @author Javier
  */
-public class GUITextLine extends GUIRenderable {
+public class UITextLine extends UIRenderable {
     protected Text text;
     protected Font font;
 
     private Vector3fm size;
 
-    public GUITextLine(Text text, Font font) {
+    public UITextLine(Text text, Font font) {
         this.text = text;
         this.font = font;
         this.size = new Vector3fm();
@@ -30,7 +30,7 @@ public class GUITextLine extends GUIRenderable {
         this.setRenderable(font.createFromTextWithSize(text, size));
     }
 
-    public GUITextLine(Font font) {
+    public UITextLine(Font font) {
         this(Text.from(""), font);
     }
 

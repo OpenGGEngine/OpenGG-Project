@@ -7,24 +7,23 @@
 package com.opengg.core.gui;
 
 import com.opengg.core.math.Vector2f;
-import com.opengg.core.math.Vector2i;
 
 /**
  *
  * @author Javier
  */
-public abstract class GUIItem {
+public abstract class UIItem {
     public boolean enabled = true;
     String name = "";
     Vector2f position = new Vector2f();
     float layer = 0f;
-    GUIGroup parent; 
+    UIGroup parent;
 
     public float getLayer() {
         return layer;
     }
 
-    public GUIItem setLayer(float layer) {
+    public UIItem setLayer(float layer) {
         this.layer = layer;
         return this;
     }  
@@ -59,7 +58,7 @@ public abstract class GUIItem {
         return position.add(parent.getPosition());
     }
 
-    public GUIItem setPositionOffset(Vector2f position) {
+    public UIItem setPositionOffset(Vector2f position) {
         this.position = position;
         return this;
     }
@@ -68,7 +67,7 @@ public abstract class GUIItem {
         return position;
     }
 
-    public void setParent(GUIGroup parent){
+    public void setParent(UIGroup parent){
         this.parent = parent;
     }
 

@@ -36,7 +36,33 @@ public class DirectionalLayout extends Layout{
     }
 
     @Override
-    public void reposition() {
+    public Vector2f getPreferredSize() {
+        float positionCounter = 0;
+        float otherDirectionCounter = 0;
+        for(var child : this.parent.getItems()){
+            var offsetInDir = switch (direction){
+                case VERTICAL -> Math.abs(child.getSize().y) + padding;
+                case HORIZONTAL -> Math.abs(child.getSize().x) + padding;
+            };
+            var offsetInOther = switch (direction){
+                case VERTICAL -> Math.abs(child.getSize().x);
+                case HORIZONTAL -> Math.abs(child.getSize().y);
+            };
+            positionCounter += offsetInDir;
+            otherDirectionCounter = Math.max(offsetInOther, otherDirectionCounter);
+        }
+
+        positionCounter -= padding;
+        positionCounter += border * 2;
+        otherDirectionCounter += border * 2;
+        return switch (direction){
+            case VERTICAL -> new Vector2f(otherDirectionCounter, positionCounter);
+            case HORIZONTAL -> new Vector2f(positionCounter, otherDirectionCounter);
+        };
+    }
+
+    @Override
+    public void pack() {
         float positionCounter = border;
         var list = invert ? IntStream.range(0, this.parent.getItems().size())
                 .map(i -> (this.parent.getItems().size() - 1 - i))	// IntStream

@@ -15,15 +15,15 @@ import com.opengg.core.render.shader.CommonUniforms;
  *
  * @author Warren
  */
-public class GUIRenderable extends GUIItem{ 
+public class UIRenderable extends UIItem {
     private Renderable renderable;
     
-    public GUIRenderable(Renderable renderable, Vector2f screenpos){
+    public UIRenderable(Renderable renderable, Vector2f screenpos){
         this.renderable = renderable;
         this.setPositionOffset(screenpos);
     }
   
-    public GUIRenderable(){}
+    public UIRenderable(){}
     
     public void setRenderable(Renderable renderable){
         this.renderable = renderable;

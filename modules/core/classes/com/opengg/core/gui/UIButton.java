@@ -6,68 +6,67 @@ import com.opengg.core.io.input.mouse.MouseButton;
 import com.opengg.core.io.input.mouse.MouseButtonListener;
 import com.opengg.core.io.input.mouse.MouseController;
 import com.opengg.core.math.Vector2f;
-import com.opengg.core.render.objects.TextureRenderable;
-import com.opengg.core.render.objects.ObjectCreator;
 
-public class GUIButton extends GUILayoutGroup implements MouseButtonListener{
+public class UIButton extends UIPane implements MouseButtonListener{
     private Runnable onClick = () -> {};
     private Runnable onRelease = () -> {};
     private Runnable onClickOutside = () -> {};
     private Vector2f buttonSize;
+    private boolean fixedButtonSize = false;
 
-    public GUIButton(Vector2f size , GUIItem background, Runnable onClick){
-        this(size, onClick);
+    public UIButton(UIItem background, Runnable onClick){
+        this(onClick);
         setBackground(background);
     }
 
 
-    public GUIButton(Vector2f size, Runnable onClick){
+    public UIButton(Runnable onClick){
         super(new DirectionalLayout(DirectionalLayout.Direction.VERTICAL));
-        this.buttonSize = size;
         MouseController.onButtonPress(this);
         setOnClick(onClick);
     }
 
-    public GUIButton(Vector2f size){
-        this(size, () -> {});
+    public UIButton(){
+        this(() -> {});
     }
 
-    public GUIButton setBackground(GUIItem background){
+    public UIButton setBackground(UIItem background){
         this.addItem("backOn", background);
         this.repack();
         return this;
     }
 
-    @Override
-    public Vector2f getSize() {
-        return buttonSize;
-    }
-
-    @Override
-    public void render() {
-        super.render();
-    }
-
-    public GUIButton setOnClick(Runnable runnable){
+    public UIButton setOnClick(Runnable runnable){
         this.onClick = runnable;
         return this;
     }
 
-    public GUIButton setOnClickOutside(Runnable runnable){
+    public UIButton setOnClickOutside(Runnable runnable){
         this.onClickOutside = runnable;
         return this;
     }
 
-    public GUIButton setOnRelease(Runnable runnable){
+    public UIButton setOnRelease(Runnable runnable){
         this.onRelease = runnable;
         return this;
     }
 
+    public UIButton setOverrideSize(Vector2f size){
+        this.buttonSize = size;
+        this.fixedButtonSize = true;
+        return this;
+    }
+
+    private Vector2f getActiveButtonSize(){
+        return fixedButtonSize ? buttonSize : getSize();
+    }
+
     private boolean checkIn(Vector2f pos){
+        var size = getActiveButtonSize();
         float left   = this.getPosition().x * OpenGG.getWindow().getWidth();
-        float right  = (this.getPosition().x + this.buttonSize.x) * OpenGG.getWindow().getWidth();
+        float right  = (this.getPosition().x + size.x) * OpenGG.getWindow().getWidth();
         float top    = (1-this.getPosition().y) * OpenGG.getWindow().getHeight();
-        float bottom = (1-this.getPosition().y - this.buttonSize.y) * OpenGG.getWindow().getHeight();
+        float bottom = (1-this.getPosition().y - size.y) * OpenGG.getWindow().getHeight();
 
         return pos.x > left && pos.x < right && pos.y < top && pos.y > bottom;
     }

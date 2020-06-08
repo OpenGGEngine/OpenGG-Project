@@ -2,7 +2,7 @@ package com.opengg.core.gui;
 
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.engine.Resource;
-import com.opengg.core.gui.text.GUITextLine;
+import com.opengg.core.gui.text.UITextLine;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.render.text.Font;
 import com.opengg.core.render.text.Text;
@@ -31,7 +31,7 @@ public class GUILoader {
             XMLEvent rootGUI = reader.nextEvent();
             String name = rootGUI.asStartElement().getAttributes().next().getValue();
             GGConsole.log("Loading GUI " + name);
-            Stack<GUIGroup> groups = new Stack<>();
+            Stack<UIGroup> groups = new Stack<>();
             gui.getRoot().setName("root");
             groups.push(gui.getRoot());
             while (reader.hasNext()) {
@@ -72,7 +72,7 @@ public class GUILoader {
                     }
                     switch (event.asStartElement().getName().toString()) {
                         case "group":
-                            GUIGroup group = new GUIGroup();
+                            UIGroup group = new UIGroup();
                             group.setLayer(layer);
                             group.setPositionOffset(position);
                             group.setName(groupName);
@@ -80,7 +80,7 @@ public class GUILoader {
                             groups.push(group);
                             break;
                         case "ggbutton":
-                            GUIButton button = new GUIButton(new Vector2f(1,1));
+                            UIButton button = new UIButton();
                             button.setLayer(layer);
                             button.setPositionOffset(position);
                             button.setName(groupName);
@@ -89,14 +89,14 @@ public class GUILoader {
                         case "ggtext":
                             String textData = reader.nextEvent().asCharacters().getData();
                             Text text1 = Text.from(textData).size(size.x).maxLineSize(size.y);
-                            GUITextLine text = new GUITextLine(text1, font);
+                            UITextLine text = new UITextLine(text1, font);
                             text.setLayer(layer);
                             text.setPositionOffset(position);
                             text.setName(groupName);
                             groups.peek().addItem(groupName, text);
                             break;
                         case "gtex":
-                            GUITexture texture = new GUITexture(tex, size);
+                            UITexture texture = new UITexture(tex, size);
                             texture.setLayer(layer);
                             texture.setPositionOffset(position);
                             texture.setName(groupName);

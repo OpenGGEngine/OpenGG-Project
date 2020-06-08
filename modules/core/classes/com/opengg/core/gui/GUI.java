@@ -6,14 +6,12 @@
 
 package com.opengg.core.gui;
 
-import com.opengg.core.math.Vector2f;
-
 /**
  *
  * @author Javier
  */
 public class GUI{
-    private GUIGroup root = new GUIGroup();
+    private UIGroup root = new UIGroup();
     private boolean menu = false;
     private String name = "";
     
@@ -27,11 +25,11 @@ public class GUI{
         root.update(delta);
     }
     
-    public void addItem(String name, GUIItem item){
+    public void addItem(String name, UIItem item){
         root.addItem(name, item);
     }
 
-    public GUIGroup getRoot() {
+    public UIGroup getRoot() {
         return root;
     }
 

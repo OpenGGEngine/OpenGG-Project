@@ -15,10 +15,14 @@ import com.opengg.core.render.texture.Texture;
  *
  * @author Warren
  */
-public class GUITexture extends GUIRenderable {
+public class UITexture extends UIRenderable implements ResizableElement{
     private Texture tex;
     private Vector2f size;
-    public GUITexture(Texture tex, Vector2f size) {
+    public UITexture(Texture tex) {
+        this(tex, new Vector2f(0,0));
+    }
+
+    public UITexture(Texture tex, Vector2f size) {
         Renderable drawn = ObjectCreator.createSquare(new Vector2f(0,0), size, 0f);
         this.tex = tex;
         this.setRenderable(new TextureRenderable(drawn, tex));
@@ -38,5 +42,10 @@ public class GUITexture extends GUIRenderable {
     @Override
     public Vector2f getSize() {
         return size;
+    }
+
+    @Override
+    public void setTargetSize(Vector2f targetSize) {
+        setSize(targetSize);
     }
 }

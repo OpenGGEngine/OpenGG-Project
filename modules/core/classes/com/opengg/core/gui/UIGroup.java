@@ -13,43 +13,54 @@ import java.util.*;
  *
  * @author Warren
  */
-public class GUIGroup extends GUIItem {
+public class UIGroup extends UIItem {
     private int autoGenInt = 0;
-    private final Map<String, GUIItem> items = new LinkedHashMap<>();
+    private final Map<String, UIItem> items = new LinkedHashMap<>();
 
-    public GUIGroup(){}
+    public UIGroup(){}
 
-    public GUIGroup(List<GUIItem> items){
+    public UIGroup(List<UIItem> items){
         addItems(items);
     }
 
-    public GUIGroup addItems(GUIItem... items) {
+    public UIGroup addItems(UIItem... items) {
         addItems(Arrays.asList(items));
         return this;
     }
 
-    public GUIGroup addItems(List<GUIItem> items) {
+    public UIGroup addItems(List<UIItem> items) {
         items.forEach(this::addItem);
         return this;
     }
 
-    public GUIGroup addItem(GUIItem item) {
+    public UIGroup addItem(UIItem item) {
         addItem(Integer.toString(autoGenInt++), item);
         return this;
     }
 
-    public GUIGroup addItem(String name, GUIItem item) {
+    public void removeItem(UIItem item) {
+        item.setParent(null);
+        items.remove(item.getName());
+    }
+
+    public void removeItem(String item){
+        var found = items.get(item);
+        found.setParent(null);
+        items.remove(item);
+    }
+
+    public UIGroup addItem(String name, UIItem item) {
         item.setParent(this);
         item.setName(name);
         items.put(name, item);
         return this;
     }
 
-    public GUIItem getItem(String name) {
+    public UIItem getItem(String name) {
         return items.get(name);
     }
 
-    public List<GUIItem> getItems() {
+    public List<UIItem> getItems() {
         return List.copyOf(items.values());
     }
 
@@ -61,7 +72,8 @@ public class GUIGroup extends GUIItem {
     public Vector2f getSize() {
         float topX = 0, topY = 0;
         for(var child : this.getItems()){
-            var movedSize = child.getSize().add(child.getPositionOffset());
+            var realSize = child.getSize().abs();
+            var movedSize = realSize.add(child.getPositionOffset());
             if(movedSize.x > topX) topX = movedSize.x;
             if(movedSize.y > topY) topY = movedSize.y;
         }
@@ -71,7 +83,7 @@ public class GUIGroup extends GUIItem {
     @Override
     public void update(float delta) {
         if (enabled) {
-            for (GUIItem item : items.values()) {
+            for (UIItem item : items.values()) {
                 item.update(delta);
             }
         }
@@ -80,7 +92,7 @@ public class GUIGroup extends GUIItem {
     @Override
     public void render() {
         if (enabled) {
-            for (GUIItem item : items.values()) {
+            for (UIItem item : items.values()) {
                 item.render();
             }
         }

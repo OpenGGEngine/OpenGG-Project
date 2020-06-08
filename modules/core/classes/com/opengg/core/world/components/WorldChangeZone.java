@@ -4,7 +4,7 @@ import com.opengg.core.animation.Animation;
 import com.opengg.core.animation.AnimationManager;
 import com.opengg.core.engine.Executor;
 import com.opengg.core.gui.GUIController;
-import com.opengg.core.gui.GUITexture;
+import com.opengg.core.gui.UITexture;
 import com.opengg.core.physics.collision.colliders.AABB;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.util.GGInputStream;
@@ -39,7 +39,7 @@ public class WorldChangeZone extends Zone {
             Animation sceneSwitch = new Animation(2.4f, false);
             sceneSwitch.addStaticEvent(Animation.AnimationStage.createStaticStage(0, 1f,
                     (d) -> Texture.ofColor(Color.BLACK, d.floatValue()),
-                    (t) -> ((GUITexture) GUIController.get("black").getRoot().getItem("tex")).setTexture(t))
+                    (t) -> ((UITexture) GUIController.get("black").getRoot().getItem("tex")).setTexture(t))
                         .setOnComplete(() -> {
                             World newWorld = WorldEngine.getWorld(world);
                             Executor.async(() -> {
@@ -50,7 +50,7 @@ public class WorldChangeZone extends Zone {
 
             sceneSwitch.addStaticEvent(Animation.AnimationStage.createStaticStage(1.4, 2.4f,
                     (d) -> Texture.ofColor(Color.BLACK, 1 - d.floatValue()),
-                    (t) -> ((GUITexture) GUIController.get("black").getRoot().getItem("tex")).setTexture(t))
+                    (t) -> ((UITexture) GUIController.get("black").getRoot().getItem("tex")).setTexture(t))
                     .setUseLocalTimeReference(true));
 
             sceneSwitch.setToRun();

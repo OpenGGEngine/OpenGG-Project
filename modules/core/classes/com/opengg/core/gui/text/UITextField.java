@@ -9,7 +9,7 @@ import com.opengg.core.world.Actionable;
 
 import java.util.function.Consumer;
 
-public class GUITextField extends GUITextLine implements KeyboardCharacterListener, KeyboardListener, Actionable {
+public class UITextField extends UITextLine implements KeyboardCharacterListener, KeyboardListener, Actionable {
     private boolean inFocus = false;
     private boolean clearOnFocus = true;
     private int focusKey = -1;
@@ -19,11 +19,11 @@ public class GUITextField extends GUITextLine implements KeyboardCharacterListen
     private Consumer<String> onEdit = t -> {};
     private Consumer<String> onSubmit = t -> {};
 
-    public GUITextField(Font font) {
+    public UITextField(Font font) {
         this(Text.from("").size(0.08f), font);
     }
 
-    public GUITextField(Text text, Font font) {
+    public UITextField(Text text, Font font) {
         super(text, font);
         KeyboardController.addKeyboardListener(this);
         KeyboardController.addKeyboardCharacterListener(this);

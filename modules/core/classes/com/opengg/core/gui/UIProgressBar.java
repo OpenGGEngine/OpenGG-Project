@@ -8,12 +8,12 @@ import com.opengg.core.render.shader.ShaderController;
 
 import java.awt.*;
 
-public class GUIProgressBar extends GUIRenderable{
+public class UIProgressBar extends UIRenderable {
     Vector3f fill;
     Vector3f back;
     float percent;
 
-    public GUIProgressBar(Vector2f size, Vector3f fill, Vector3f back){
+    public UIProgressBar(Vector2f size, Vector3f fill, Vector3f back){
         percent = 0;
         this.fill = fill;
         this.back = back;
@@ -23,11 +23,11 @@ public class GUIProgressBar extends GUIRenderable{
         this.setRenderable(drawn);
     }
 
-    public GUIProgressBar(Vector2f size, Color fill, Color back){
+    public UIProgressBar(Vector2f size, Color fill, Color back){
         this(size, new Vector3f(fill.getRed(), fill.getGreen(), fill.getBlue()).divide(255f), new Vector3f(back.getRed(), back.getGreen(), back.getBlue()).divide(255f));
     }
 
-    public GUIProgressBar setPercent(float percent){
+    public UIProgressBar setPercent(float percent){
         this.percent = percent;
         return this;
     }

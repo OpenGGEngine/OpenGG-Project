@@ -110,6 +110,10 @@ public class Vector3f implements Serializable{
         return new Vector2f(x,z);
     }
 
+    public Vector2f xy() {
+        return new Vector2f(x,y);
+    }
+
     
     /**
      * Returns the value requested<br>

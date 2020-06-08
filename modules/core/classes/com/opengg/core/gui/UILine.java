@@ -9,25 +9,25 @@ import com.opengg.core.system.Allocator;
 import java.util.List;
 import java.util.stream.IntStream;
 
-public class GUILine extends GUIRenderable{
+public class UILine extends UIRenderable {
     Texture tex;
-    public GUILine() {
+    public UILine() {
     }
 
-    public GUILine(Vector2f pos){
+    public UILine(Vector2f pos){
         this.setPositionOffset(pos);
     }
 
-    public GUILine(Texture tex) {
+    public UILine(Texture tex) {
         this.tex = tex;
     }
 
-    public GUILine(Vector2f pos, List<Vector2f> points){
+    public UILine(Vector2f pos, List<Vector2f> points){
         this.setPositionOffset(pos);
         setPoints(points);
     }
 
-    public GUILine(Vector2f pos, List<Vector2f> points, Texture texture){
+    public UILine(Vector2f pos, List<Vector2f> points, Texture texture){
         this.setPositionOffset(pos);
         setPoints(points);
         this.tex = texture;

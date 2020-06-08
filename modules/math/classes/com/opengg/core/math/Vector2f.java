@@ -91,7 +91,7 @@ public class Vector2f implements Serializable{
         return new Vector2f(x - f, y - f);
     }
     
-    public float getDistance(Vector2f v) {
+    public float distanceTo(Vector2f v) {
         return (float) Math.sqrt(this.getDistanceSquared(v));
     }
     
@@ -99,7 +99,7 @@ public class Vector2f implements Serializable{
         return (float) (Math.pow((this.x - v.x), 2) + Math.pow((this.y - v.y), 2));
     }
     
-    public static float getDistance(Vector2f v1, Vector2f v2){
+    public static float distanceTo(Vector2f v1, Vector2f v2){
         return (float) Math.sqrt(Math.pow((v2.x - v1.x), 2)+Math.pow((v2.y - v1.y), 2));  
     }
     
