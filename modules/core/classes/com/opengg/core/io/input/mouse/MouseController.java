@@ -58,7 +58,11 @@ public class MouseController {
     public static void setScrollHandler(MouseScrollHandler handle){scrollHandler = handle;}
     
     public static void onButtonPress(MouseButtonListener button){
-        buttonlisteners.add(button);
+        OpenGG.asyncExec(() -> buttonlisteners.add(button));
+    }
+
+    public static void removeButtonListener(MouseButtonListener button){
+        OpenGG.asyncExec(() -> buttonlisteners.remove(button));
     }
 
     public static void onMouseMove(MouseMoveListener move){
@@ -142,7 +146,12 @@ public class MouseController {
     }
 
     public static Vector2f get(){
-        return poshandler.getPos().multiply(1f);
+        return poshandler.getPos();
+    }
+
+    public static Vector2f getInScreenspace(){
+        var invertedPos = poshandler.getPos().divide(new Vector2f(OpenGG.getWindow().getWidth(), OpenGG.getWindow().getHeight()));
+        return new Vector2f(invertedPos.x, 1-invertedPos.y);
     }
 
     public static Vector2f getRaw(){

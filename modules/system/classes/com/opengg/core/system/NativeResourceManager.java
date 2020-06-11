@@ -29,8 +29,7 @@ public class NativeResourceManager {
         synchronized (block) {
             var tempClean = new ArrayList<Runnable>();
             for(int i = 0; i < cleanEvents.size() * 1.5; i++) {
-                tempClean.add(() -> {
-                });
+                tempClean.add(() -> {});
             }
             Collections.copy(tempClean, cleanEvents);
             cleanEvents.clear();

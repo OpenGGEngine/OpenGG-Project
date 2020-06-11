@@ -10,27 +10,19 @@ package com.opengg.core.gui;
  *
  * @author Javier
  */
-public class GUI{
-    private UIGroup root = new UIGroup();
+public class GUI extends UIGroup{
     private boolean menu = false;
-    private String name = "";
-    
+
     public GUI() {}
 
-    public void render(){
-        root.render();
+    @Override
+    public boolean isEnabled() {
+        return enabled && GUIController.isEnabled();
     }
 
-    public void update(float delta){
-        root.update(delta);
-    }
-    
-    public void addItem(String name, UIItem item){
-        root.addItem(name, item);
-    }
-
-    public UIGroup getRoot() {
-        return root;
+    @Override
+    public void setParent(UIGroup parent) {
+        throw new UnsupportedOperationException("Cannot add a root panel to another group");
     }
 
     public boolean isMenu() {
@@ -39,13 +31,5 @@ public class GUI{
 
     public void setMenu(boolean menu) {
         this.menu = menu;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 }

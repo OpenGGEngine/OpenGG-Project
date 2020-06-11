@@ -214,14 +214,14 @@ public final class OpenGG{
         var gameDelta = overrideUpdate > 0f ? overrideUpdate : realDelta;
         Allocator.update();
         PerformanceManager.update(realDelta);
-        Executor.getExecutor().update(gameDelta);
-        ExtensionManager.update(gameDelta);
+        Executor.getExecutor().update(realDelta);
+        ExtensionManager.update(realDelta);
         WorldEngine.update(gameDelta);
-        GUIController.update(realDelta);
         AnimationManager.update(gameDelta);
         PhysicsEngine.updatePhysics(gameDelta);
         getApp().update(gameDelta);
         SoundtrackHandler.update();
+        GUIController.update(realDelta);
         NetworkEngine.update(realDelta);
     }
 

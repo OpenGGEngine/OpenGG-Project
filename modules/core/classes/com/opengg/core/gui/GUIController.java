@@ -30,13 +30,13 @@ public class GUIController {
     public static void activateGUI(String name){
         current.add(name);
         var currentGUI = guis.get(name);
-        currentGUI.getRoot().setEnabled(true);
+        currentGUI.setEnabled(true);
         if(currentGUI.isMenu()) GGInfo.setMenu(true);
         else GGInfo.setMenu(false);
     }
 
     public static void deactivateGUI(String name){
-        guis.get(name).getRoot().setEnabled(false);
+        guis.get(name).setEnabled(false);
 
         current.remove(name);
     }

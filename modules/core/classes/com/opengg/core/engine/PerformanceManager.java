@@ -1,5 +1,6 @@
 package com.opengg.core.engine;
 
+import com.opengg.core.math.FastInt;
 import com.opengg.core.math.util.Tuple;
 
 import java.util.ArrayList;
@@ -9,6 +10,7 @@ import java.util.Queue;
 
 public class PerformanceManager {
     private static double computedFramerate = 0.1f;
+    private static double computedDrawCalls = 0.1f;
     private static long networkBytesInSec = 0;
     private static long networkBytesOutSec = 0;
 
@@ -24,6 +26,7 @@ public class PerformanceManager {
     private static int ackPacketsOutSec;
 
     private static Queue<Float> lastFrames = new LinkedList<>();
+    private static LinkedList<FastInt> lastDrawCalls = new LinkedList<>(List.of(new FastInt()));
     private static List<Tuple<Long, Integer>> bytesOut = new ArrayList<>();
     private static List<Tuple<Long, Integer>> bytesIn = new ArrayList<>();
 
@@ -43,6 +46,11 @@ public class PerformanceManager {
             lastFrames.poll();
         }
 
+        lastDrawCalls.offer(new FastInt());
+        if (lastDrawCalls.size() > 15){
+            computedDrawCalls = lastDrawCalls.stream().mapToLong(FastInt::get).average().getAsDouble();
+            lastDrawCalls.poll();
+        }
         bytesOut.removeIf(t -> t.x() < System.currentTimeMillis() - 1000);
         bytesIn.removeIf(t -> t.x() < System.currentTimeMillis() - 1000);
 
@@ -94,12 +102,20 @@ public class PerformanceManager {
         gpuBuffers.add(size);
     }
 
+    public static void registerDrawCall(){
+        lastDrawCalls.get(lastDrawCalls.size()-1).set(lastDrawCalls.get(lastDrawCalls.size()-1).get()+1);
+    }
+
     public static void registerDescriptorSet(){
         descriptorSets.add(0L);
     }
 
     public static double getComputedFramerate() {
         return computedFramerate;
+    }
+
+    public static double getComputedDrawCalls() {
+        return computedDrawCalls;
     }
 
     public static long getNetworkBytesInSec() {

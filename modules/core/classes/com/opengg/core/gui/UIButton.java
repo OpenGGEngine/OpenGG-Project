@@ -11,8 +11,12 @@ public class UIButton extends UIPane implements MouseButtonListener{
     private Runnable onClick = () -> {};
     private Runnable onRelease = () -> {};
     private Runnable onClickOutside = () -> {};
+    private Runnable  onHoverStart = () -> {};
+    private Runnable onHoverStop = () -> {};
+
     private Vector2f buttonSize;
     private boolean fixedButtonSize = false;
+    private boolean hovering = false;
 
     public UIButton(UIItem background, Runnable onClick){
         this(onClick);
@@ -22,7 +26,6 @@ public class UIButton extends UIPane implements MouseButtonListener{
 
     public UIButton(Runnable onClick){
         super(new DirectionalLayout(DirectionalLayout.Direction.VERTICAL));
-        MouseController.onButtonPress(this);
         setOnClick(onClick);
     }
 
@@ -46,6 +49,16 @@ public class UIButton extends UIPane implements MouseButtonListener{
         return this;
     }
 
+    public UIButton setOnHoverStart(Runnable runnable) {
+        this.onHoverStart = runnable;
+        return this;
+    }
+
+    public UIButton setOnHoverStop(Runnable runnable) {
+        this.onHoverStop = runnable;
+        return this;
+    }
+
     public UIButton setOnRelease(Runnable runnable){
         this.onRelease = runnable;
         return this;
@@ -59,6 +72,33 @@ public class UIButton extends UIPane implements MouseButtonListener{
 
     private Vector2f getActiveButtonSize(){
         return fixedButtonSize ? buttonSize : getSize();
+    }
+
+    @Override
+    public void onDisable() {
+        if(hovering){
+            hovering = false;
+            onHoverStop.run();
+        }
+    }
+
+    @Override
+    public void update(float delta) {
+        super.update(delta);
+        if(hovering && (!checkIn(MouseController.get()) || !isEnabled())) {
+            hovering = false;
+            onHoverStop.run();
+        }else if(!hovering && (checkIn(MouseController.get()) && isEnabled())){
+            hovering = true;
+            onHoverStart.run();
+        }
+    }
+
+    @Override
+    public void setParent(UIGroup parent) {
+        super.setParent(parent);
+        if(parent == null) MouseController.removeButtonListener(this);
+        else MouseController.onButtonPress(this);
     }
 
     private boolean checkIn(Vector2f pos){

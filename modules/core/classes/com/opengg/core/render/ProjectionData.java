@@ -68,6 +68,7 @@ public class ProjectionData {
     }
     
     public void use(){
+        ratio = WindowController.getWindow().getRatio();
         if(type == PERSPECTIVE)
             CommonUniforms.setPerspective(fov, ratio, minz, maxz);
         else if(type == CUSTOM || type == ORTHO)
@@ -77,6 +78,5 @@ public class ProjectionData {
     public Matrix4f getMatrix(){
         return Matrix4f.perspective(fov, ratio, minz, maxz);
     }
-
 
 }

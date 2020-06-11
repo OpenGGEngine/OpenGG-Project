@@ -15,6 +15,7 @@ import com.opengg.core.console.GGConsole;
 import com.opengg.core.console.UserCommand;
 import static com.opengg.core.engine.OpenGG.*;
 
+import com.opengg.core.gui.GUIController;
 import com.opengg.core.model.ModelManager;
 import com.opengg.core.network.NetworkEngine;
 import com.opengg.core.network.common.ChatMessage;
@@ -23,9 +24,13 @@ import com.opengg.core.network.common.Packet;
 import com.opengg.core.network.common.PacketType;
 import com.opengg.core.physics.PhysicsRenderer;
 import com.opengg.core.physics.collision.CollisionManager;
+import com.opengg.core.render.RenderEngine;
+import com.opengg.core.render.RenderGroup;
 import com.opengg.core.render.postprocess.PostProcessController;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.world.WorldEngine;
+
+import java.util.stream.Collectors;
 
 /**
  *
@@ -153,6 +158,25 @@ public class OpenGGCommandExtender implements ConsoleListener{
                         var success = Configuration.set(config, newval);
                         if (success) GGConsole.log("Changed value in " + config + " to " + newval);
                         else GGConsole.warning("Failed to find value named " + config);
+                    }
+                }
+            }
+
+            case "ui" -> {
+                if (command.argCount == 1) {
+                    if (command.args[0].equalsIgnoreCase("enable")) {
+                        GUIController.setEnabled(true);
+                    }
+                    if (command.args[0].equalsIgnoreCase("disable")) {
+                        GUIController.setEnabled(false);
+                    }
+                }
+            }
+
+            case "render" -> {
+                if (command.argCount == 1) {
+                    if (command.args[0].equalsIgnoreCase("dump-groups")) {
+                        RenderEngine.getActiveRenderGroups().stream().map(RenderGroup::getName).forEach(GGConsole::log);
                     }
                 }
             }

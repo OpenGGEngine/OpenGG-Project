@@ -38,6 +38,18 @@ public class UIGroup extends UIItem {
         return this;
     }
 
+
+    public UIGroup addItem(String name, UIItem item) {
+        if (items.containsKey(name) && items.get(name) != item) {
+            var last = items.get(name);
+            last.setParent(null);
+        }
+        item.setParent(this);
+        item.setName(name);
+        items.put(name, item);
+        return this;
+    }
+
     public void removeItem(UIItem item) {
         item.setParent(null);
         items.remove(item.getName());
@@ -45,15 +57,9 @@ public class UIGroup extends UIItem {
 
     public void removeItem(String item){
         var found = items.get(item);
+        if(found == null) return;
         found.setParent(null);
         items.remove(item);
-    }
-
-    public UIGroup addItem(String name, UIItem item) {
-        item.setParent(this);
-        item.setName(name);
-        items.put(name, item);
-        return this;
     }
 
     public UIItem getItem(String name) {
@@ -64,8 +70,16 @@ public class UIGroup extends UIItem {
         return List.copyOf(items.values());
     }
 
-    public void clear(){
-        items.clear();
+    @Override
+    public void onEnable() {
+        super.onEnable();
+        this.getItems().forEach(UIItem::onEnable);
+    }
+
+    @Override
+    public void onDisable() {
+        super.onDisable();
+        this.getItems().forEach(UIItem::onDisable);
     }
 
     @Override
@@ -84,7 +98,8 @@ public class UIGroup extends UIItem {
     public void update(float delta) {
         if (enabled) {
             for (UIItem item : items.values()) {
-                item.update(delta);
+                if(item.isEnabled())
+                    item.update(delta);
             }
         }
     }

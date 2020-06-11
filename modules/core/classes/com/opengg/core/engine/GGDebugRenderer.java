@@ -43,6 +43,7 @@ public class GGDebugRenderer implements KeyboardListener {
                         "Current world: " + WorldEngine.getCurrent().getName() + " \n" +
                         "Component count: " + WorldEngine.getCurrent().getAllDescendants().size() + "\n\n" +
                         "Render group count: " + RenderEngine.getActiveRenderGroups().size() + "  Rendered object count: " + RenderEngine.getActiveRenderGroups().stream().mapToInt(r -> r.getList().size()).sum() + "\n\n" +
+                        "Average render calls: " + PerformanceManager.getComputedDrawCalls() + "\n" +
                         "GPU Buffer allocations: " + PerformanceManager.getBufferAllocsThisFrame() + "\n" +
                         "GPU Buffer allocations size: " + PerformanceManager.getBufferAllocSizeThisFrame();
 

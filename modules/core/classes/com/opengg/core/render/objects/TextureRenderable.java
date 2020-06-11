@@ -36,4 +36,8 @@ public class TextureRenderable implements Renderable {
     public Renderable getWrappedRenderable() {
         return object;
     }
+
+    public void setWrappedRenderable(Renderable renderable) {
+        this.object = renderable;
+    }
 }

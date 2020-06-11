@@ -17,20 +17,21 @@ public class DirectionalFillLayout extends DirectionalLayout{
 
     @Override
     public void pack() {
-        setPadding((size-getTotalOccupiedSize())/this.parent.getItems().size());
+        setPadding((size-getTotalOccupiedSize())/(this.parent.getItems().size()-1));
         super.pack();;
     }
 
     @Override
     public Vector2f getPreferredSize() {
-        setPadding((size-getTotalOccupiedSize())/this.parent.getItems().size());
+        setPadding((size-getTotalOccupiedSize())/(this.parent.getItems().size()-1));
         return super.getPreferredSize();
     }
 
     private float getTotalOccupiedSize(){
         return (float) this.parent.getItems().stream()
+                .filter(UIItem::isLocallyEnabled)
                 .map(UIItem::getSize)
                 .mapToDouble(c -> this.getDirection() == Direction.HORIZONTAL ? c.x : c.y)
-                .map(Math::abs).sum();
+                .map(Math::abs).sum() + getBorder() * 2;
     }
 }

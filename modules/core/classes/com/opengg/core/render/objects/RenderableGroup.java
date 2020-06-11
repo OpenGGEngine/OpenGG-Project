@@ -16,14 +16,18 @@ import java.util.List;
  * @author Javier
  */
 public class RenderableGroup implements Renderable {
-    public List<Renderable> objs = new ArrayList<>();
-    
+    public List<Renderable> objs;
+
+    public static RenderableGroup of(Renderable... obs){
+        return new RenderableGroup(List.of(obs));
+    }
+
     public RenderableGroup(List<Renderable> objs) {
         this.objs = List.copyOf(objs);
     }
     
-    public void add(Renderable d){
-        objs.add(d);
+    public void add(Renderable renderable){
+        objs.add(renderable);
     }
 
     public void remove(Renderable d){
@@ -32,8 +36,8 @@ public class RenderableGroup implements Renderable {
 
     @Override
     public void render() {
-        for(Renderable d : objs){
-            d.render();
+        for(var renderable : objs){
+            renderable.render();
         }
     }
 }

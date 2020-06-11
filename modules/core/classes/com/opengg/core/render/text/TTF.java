@@ -286,6 +286,8 @@ public class TTF implements Font{
             ShaderController.setUniform("color", wholetext.getColor());
             ShaderController.setUniform("Kd", texture);
             object.render();
+            ShaderController.useConfiguration("object");
+
         };
     }
 }

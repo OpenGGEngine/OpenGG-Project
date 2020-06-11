@@ -32,8 +32,8 @@ public class GUILoader {
             String name = rootGUI.asStartElement().getAttributes().next().getValue();
             GGConsole.log("Loading GUI " + name);
             Stack<UIGroup> groups = new Stack<>();
-            gui.getRoot().setName("root");
-            groups.push(gui.getRoot());
+            gui.setName("root");
+            groups.push(gui);
             while (reader.hasNext()) {
                 XMLEvent event = reader.nextEvent();
                 String groupName = "";

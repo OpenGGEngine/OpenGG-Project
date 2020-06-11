@@ -14,13 +14,14 @@ import com.opengg.core.math.Vector2f;
  */
 public abstract class UIItem {
     public boolean enabled = true;
-    String name = "";
-    Vector2f position = new Vector2f();
-    float layer = 0f;
-    UIGroup parent;
+    private float layer = 0f;
+    private String name = "";
+    private Vector2f position = new Vector2f();
+    private UIGroup parent;
 
     public float getLayer() {
-        return layer;
+        if(parent == null) return layer;
+        return layer + parent.getLayer();
     }
 
     public UIItem setLayer(float layer) {
@@ -29,14 +30,25 @@ public abstract class UIItem {
     }  
 
     public boolean isEnabled() {
-        if(parent == null)
-            return enabled && GUIController.isEnabled();
-        else
-            return enabled && parent.isEnabled() && GUIController.isEnabled();
+        return parent != null && enabled && parent.isEnabled();
+    }
+
+    public boolean isLocallyEnabled(){
+        return enabled;
     }
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+        if(enabled) onEnable();
+        if(!enabled) onDisable();
+    }
+
+    public void onEnable(){
+
+    }
+
+    public void onDisable(){
+
     }
 
     public String getName() {
@@ -69,6 +81,14 @@ public abstract class UIItem {
 
     public void setParent(UIGroup parent){
         this.parent = parent;
+
+        if(parent != null && enabled){
+            this.onEnable();
+        }
+
+        if(parent == null){
+            this.onDisable();
+        }
     }
 
     public abstract void render();

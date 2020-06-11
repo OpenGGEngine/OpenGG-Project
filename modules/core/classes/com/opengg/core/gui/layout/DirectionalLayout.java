@@ -1,5 +1,6 @@
 package com.opengg.core.gui.layout;
 
+import com.opengg.core.gui.UIItem;
 import com.opengg.core.math.Vector2f;
 
 import java.util.ArrayList;
@@ -25,6 +26,10 @@ public class DirectionalLayout extends Layout{
         return this;
     }
 
+    public float getBorder() {
+        return border;
+    }
+
     public DirectionalLayout setBorder(float border){
         this.border = border;
         return this;
@@ -39,7 +44,7 @@ public class DirectionalLayout extends Layout{
     public Vector2f getPreferredSize() {
         float positionCounter = 0;
         float otherDirectionCounter = 0;
-        for(var child : this.parent.getItems()){
+        for(var child : this.parent.getItems().stream().filter(UIItem::isLocallyEnabled).collect(Collectors.toList())){
             var offsetInDir = switch (direction){
                 case VERTICAL -> Math.abs(child.getSize().y) + padding;
                 case HORIZONTAL -> Math.abs(child.getSize().x) + padding;
@@ -66,8 +71,10 @@ public class DirectionalLayout extends Layout{
         float positionCounter = border;
         var list = invert ? IntStream.range(0, this.parent.getItems().size())
                 .map(i -> (this.parent.getItems().size() - 1 - i))	// IntStream
-                .mapToObj(this.parent.getItems()::get)				// Stream<T>
-                .collect(Collectors.toCollection(ArrayList::new)) : this.parent.getItems();
+                .mapToObj(this.parent.getItems()::get)
+                .filter(UIItem::isLocallyEnabled)// Stream<T>
+                .collect(Collectors.toCollection(ArrayList::new))
+                : this.parent.getItems().stream().filter(UIItem::isLocallyEnabled).collect(Collectors.toList());
         for(var child : list){
             var size = child.getSize();
             var negativeXComp = size.x < 0 ? -size.x : 0;

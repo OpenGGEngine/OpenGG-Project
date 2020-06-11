@@ -101,7 +101,7 @@ public class RenderComponent extends Component implements com.opengg.core.render
     @Override
     public void finalizeComponent(){
         if(this.getWorld() != null)
-            this.getWorld().removeRenderable((RenderComponent)this);
+            this.getWorld().removeRenderable(this);
     }
 
     @Override

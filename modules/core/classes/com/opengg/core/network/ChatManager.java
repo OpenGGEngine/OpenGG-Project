@@ -88,7 +88,7 @@ public class ChatManager {
             entry.setExitFocusKey(Key.KEY_ESCAPE);
             entry.setSubmitKey(Key.KEY_ENTER);
 
-            gui.getRoot().setPositionOffset(new Vector2f(0, 0.3f));
+            gui.setPositionOffset(new Vector2f(0, 0.3f));
             entry.setOnSubmit(c -> {
                 entry.setInFocus(false);
                 entry.setText("");

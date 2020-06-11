@@ -70,28 +70,25 @@ public class World extends Component implements Resource {
     public void addRenderable(RenderComponent renderable){
         if(GGInfo.isServer()) return;
         boolean found = false;
-        for(RenderGroup rg : environment.getGroups()){
-            if (rg.isTransparent() == renderable.isTransparent() && rg.getPipeline().equals(renderable.getShader()) && rg.getFormat().equals(renderable.getFormat())) {
-                if (!rg.getList().contains(renderable)) {
-                    rg.add(renderable);
-                }else{
+        for(RenderGroup group : environment.getGroups()){
+            if (group.isTransparent() == renderable.isTransparent() && group.getPipeline().equals(renderable.getShader()) && group.getFormat().equals(renderable.getFormat())) {
+                if (!group.getList().contains(renderable)) {
+                    group.add(renderable);
                     found = true;
                     break;
                 }
             }
         }
 
-        if(!found){
-            OpenGG.asyncExec(() -> {
-                RenderGroup group = new RenderGroup("world " + getGUID() + " " + renderable.getShader() + " "
-                            + renderable.getFormat().toString() + " group: " + (environment.getGroups().size() + 1),
-                        renderable.getFormat());
-                group.add(renderable);
-                group.setTransparent(renderable.isTransparent());
-                group.setPipeline(renderable.getShader());
-                group.setEnabled(true);
-                environment.addGroup(group);
-            });
+        if (!found) {
+            RenderGroup group = new RenderGroup("world " + getGUID() + " " + renderable.getShader() + " "
+                    + renderable.getFormat().toString() + " group: " + (environment.getGroups().size() + 1),
+                    renderable.getFormat());
+            group.add(renderable);
+            group.setTransparent(renderable.isTransparent());
+            group.setPipeline(renderable.getShader());
+            group.setEnabled(true);
+            environment.addGroup(group);
         }
     }
 

@@ -67,6 +67,7 @@ public class OpenGLRenderer implements Renderer {
 
         GLOptions.set(GL_BLEND, true);
         glBlendEquation(GL_FUNC_ADD);
+        //glLineWidth(2f);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         glEnable(GL_DEPTH_TEST);

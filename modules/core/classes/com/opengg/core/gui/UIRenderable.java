@@ -35,7 +35,7 @@ public class UIRenderable extends UIItem {
     
     public void render(){
         if(enabled && renderable != null){
-            CommonUniforms.setModel(new Matrix4f().translate(new Vector3f(getPosition().x, getPosition().y, layer)));
+            CommonUniforms.setModel(new Matrix4f().translate(new Vector3f(getPosition().x, getPosition().y, getLayer())));
             renderable.render();
         }
     }

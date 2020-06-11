@@ -1,5 +1,6 @@
 package com.opengg.core.render.internal.opengl;
 
+import com.opengg.core.engine.PerformanceManager;
 import com.opengg.core.exceptions.RenderException;
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.render.drawn.DrawnObject;
@@ -35,7 +36,9 @@ public class OpenGLDrawnObject extends DrawnObject {
         if(!((OpenGLRenderer) RenderEngine.renderer).getCurrentVAO().getFormat().equals(format))
             throw new RenderException("Invalid VAO bound during render");
         ((OpenGLRenderer) RenderEngine.renderer).getCurrentVAO().applyFormat(vertexBufferObjects);
+        PerformanceManager.registerDrawCall();
         glDrawElementsInstancedBaseVertexBaseInstance(getOpenGLDrawType(drawType), elementCount, GL_UNSIGNED_INT, 0, instanceCount, baseVertex, 0);
+
     }
 
     private static int getOpenGLDrawType(DrawType type){
@@ -44,7 +47,7 @@ public class OpenGLDrawnObject extends DrawnObject {
             case TRIANGLE_STRIP -> GL_TRIANGLE_STRIP;
             case TRIANGLE_FAN -> GL_TRIANGLE_FAN;
             case POINTS -> GL_POINT;
-            case LINES -> GL_LINE;
+            case LINES -> GL_LINES;
             case LINE_STRIP -> GL_LINE_STRIP;
         };
     }
