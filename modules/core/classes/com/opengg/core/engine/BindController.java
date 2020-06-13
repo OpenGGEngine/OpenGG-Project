@@ -7,6 +7,7 @@
 package com.opengg.core.engine;
 
 import com.opengg.core.GGInfo;
+import com.opengg.core.console.GGConsole;
 import com.opengg.core.io.Bind;
 import com.opengg.core.io.ControlType;
 import com.opengg.core.io.input.keyboard.KeyboardController;
@@ -15,6 +16,11 @@ import com.opengg.core.io.input.mouse.*;
 import com.opengg.core.world.Action;
 import com.opengg.core.world.ActionTransmitter;
 import com.opengg.core.world.ActionType;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -42,6 +48,18 @@ public class BindController implements KeyboardListener, MouseButtonListener, Mo
     
     public static void initialize(){
         bc = new BindController();
+        try {
+            var newline = System.getProperty("line.separator");
+            Files.lines(Path.of(Resource.getAbsoluteFromLocal("config/controls.cfg")))
+                    .forEach(s -> {
+                        if(!s.equals(newline)) {
+                            var arr = s.split(" ");
+                            addBind(ControlType.valueOf(arr[0]), arr[1], Integer.parseInt(arr[2]));
+                        }
+                    });
+        } catch (IOException e) {
+            GGConsole.error("Failed to load controls from file");
+        }
     }
     
     /**
@@ -70,7 +88,6 @@ public class BindController implements KeyboardListener, MouseButtonListener, Mo
         if(controllers.contains(controller)) return;
         startAllActionsFor(controller);
         controllers.add(controller);
-
     }
 
     /**
@@ -132,6 +149,24 @@ public class BindController implements KeyboardListener, MouseButtonListener, Mo
      */
     public static void printBinds(){
 
+    }
+
+    public static void saveBinds(){
+        var path = Path.of(Resource.getAbsoluteFromLocal("config/controls.cfg"));
+        try (var writer = Files.newBufferedWriter(path)){
+            binds.stream()
+                    .forEach(bind -> {
+                        try {
+                            writer.write(bind.type.name() + " " + bind.action + " " + bind.button);
+                            writer.newLine();
+                        } catch (IOException e) {
+                            GGConsole.error("Failed to write to controls file");
+                        }
+                    });
+
+        } catch (IOException e) {
+            GGConsole.error("Failed to open writer for controls file");
+        }
     }
 
     public static boolean isEnabled() {
