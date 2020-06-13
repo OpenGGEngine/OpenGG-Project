@@ -402,9 +402,13 @@ public class Vector3f implements Serializable{
         return new Vector3f(xx, xy, xz);
     }
 
+    public static FloatBuffer listToBuffer(List<Vector3f> list){
+        return listToBuffer(list.toArray(new Vector3f[0]));
+    }
+
     /**
-     * Converts the given list of Vector3fs into a {@link FloatBuffer} of size {@code list.size * 3}
-     * @param list Vector3f list to convert
+     * Converts the given array of Vector3fs into a {@link FloatBuffer} of size {@code list.size * 3}
+     * @param list Vector3f array to convert
      * @return FloatBuffer containing vectors
      */
     public static FloatBuffer listToBuffer(Vector3f... list){

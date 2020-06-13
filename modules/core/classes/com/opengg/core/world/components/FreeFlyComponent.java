@@ -55,7 +55,6 @@ public class FreeFlyComponent extends ControlledComponent implements Actionable{
         }else{
             this.setPositionOffset(this.getPositionOffset().add(vel));
         }
-
     }
     
     @Override

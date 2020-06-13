@@ -95,7 +95,7 @@ public class ShaderController {
 
         /* Set shader variables */
 
-        programs = new ShaderLoader("\\resources\\glsl\\").loadShaders();
+        programs = new ShaderLoader("/resources/glsl/").loadShaders();
 
         generateCommonPipelines();
 
