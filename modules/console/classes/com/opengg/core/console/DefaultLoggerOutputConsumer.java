@@ -3,8 +3,8 @@ package com.opengg.core.console;
 import java.util.function.Consumer;
 
 public class DefaultLoggerOutputConsumer implements LoggerOutputConsumer {
-    private Level level;
-    private Consumer<GGMessage> consumer;
+    private final Level level;
+    private final Consumer<GGMessage> consumer;
 
     public DefaultLoggerOutputConsumer(Level level, Consumer<GGMessage> consumer){
         this.level = level;

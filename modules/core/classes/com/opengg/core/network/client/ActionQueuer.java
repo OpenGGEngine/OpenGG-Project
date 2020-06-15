@@ -26,7 +26,7 @@ import java.util.List;
  */
 public class ActionQueuer implements ActionTransmitter{
     private int currentpacket;
-    private List<ActionContainer> actions = Collections.synchronizedList(new ArrayList<>());
+    private final List<ActionContainer> actions = Collections.synchronizedList(new ArrayList<>());
     
     private ActionQueuer(){
         BindController.addTransmitter(this);

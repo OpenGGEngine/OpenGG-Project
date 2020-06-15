@@ -11,10 +11,10 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class Executor {
-    private List<ExecutorContainer> containers;
-    private List<ExecutorContainer> tempcontainers;
+    private final List<ExecutorContainer> containers;
+    private final List<ExecutorContainer> tempcontainers;
 
-    private Thread current;
+    private final Thread current;
     private static Executor executor;
 
     public static void initialize() {
@@ -134,10 +134,10 @@ public class Executor {
     }
 
     private static class ExecutorContainer {
-        private Runnable runnable;
-        private Sleeper sleeper;
+        private final Runnable runnable;
+        private final Sleeper sleeper;
         private float time;
-        private StackTraceElement[] source;
+        private final StackTraceElement[] source;
 
         private ExecutorContainer(Runnable runnable, float time, StackTraceElement[] source) {
             this.runnable = runnable;

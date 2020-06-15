@@ -27,7 +27,7 @@ public class PhysicsSystem {
     private final RigidBody floor = new RigidBody();
 
     private final PhysicsConstants constants = new PhysicsConstants();
-    private List<PhysicsObject> objects = new ArrayList<>();
+    private final List<PhysicsObject> objects = new ArrayList<>();
 
     private long tick;
 

@@ -4,7 +4,7 @@ import com.opengg.core.gui.layout.Layout;
 import com.opengg.core.math.Vector2f;
 
 public class UIPane extends UIGroup {
-    private Layout layout;
+    private final Layout layout;
     private ResizableElement background;
 
     public UIPane(Layout layout){

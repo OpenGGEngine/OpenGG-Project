@@ -37,15 +37,15 @@ import static org.lwjgl.opengl.KHRTextureCompressionASTCLDR.*;
  * @author Javier
  */
 public class OpenGLTexture implements Texture {
-    private NativeOpenGLTexture tex;
-    private List<TextureData> tdata = new ArrayList<>();
+    private final NativeOpenGLTexture tex;
+    private final List<TextureData> tdata = new ArrayList<>();
 
-    private int type;
-    private int samplerFormat;
-    private int internalFormat;
-    private int inputFormat;
+    private final int type;
+    private final int samplerFormat;
+    private final int internalFormat;
+    private final int inputFormat;
 
-    private Vector3i size;
+    private final Vector3i size;
     private int layers;
 
     public OpenGLTexture(TextureConfig config, Vector3i size) {
@@ -220,7 +220,7 @@ public class OpenGLTexture implements Texture {
         return tex.getID();
     }
 
-    private Map<Tuple<Short,Short>,Integer> ASTCLookup =Map.ofEntries(entry(Tuple.of((short)10,(short)10),GL_COMPRESSED_RGBA_ASTC_10x10_KHR)
+    private final Map<Tuple<Short,Short>,Integer> ASTCLookup =Map.ofEntries(entry(Tuple.of((short)10,(short)10),GL_COMPRESSED_RGBA_ASTC_10x10_KHR)
             ,entry(Tuple.of((short)10,(short)5),GL_COMPRESSED_RGBA_ASTC_10x5_KHR),entry(Tuple.of((short)10,(short)6),GL_COMPRESSED_RGBA_ASTC_10x6_KHR),
             entry(Tuple.of((short)10,(short)8),GL_COMPRESSED_RGBA_ASTC_10x8_KHR),entry(Tuple.of((short)12,(short)10),GL_COMPRESSED_RGBA_ASTC_12x10_KHR),
             entry(Tuple.of((short)12,(short)12),GL_COMPRESSED_RGBA_ASTC_12x12_KHR),entry(Tuple.of((short)4,(short)4),GL_COMPRESSED_RGBA_ASTC_4x4_KHR),
@@ -228,7 +228,7 @@ public class OpenGLTexture implements Texture {
                             entry(Tuple.of((short)6,(short)5),GL_COMPRESSED_RGBA_ASTC_6x5_KHR),entry(Tuple.of((short)6,(short)6),GL_COMPRESSED_RGBA_ASTC_6x6_KHR),
                                     entry(Tuple.of((short)8,(short)5),GL_COMPRESSED_RGBA_ASTC_8x5_KHR),entry(Tuple.of((short)8,(short)6),GL_COMPRESSED_RGBA_ASTC_8x6_KHR),
                                             entry(Tuple.of((short)8,(short)8),GL_COMPRESSED_RGBA_ASTC_8x8_KHR));
-    private Map<Tuple<Short,Short>,Integer> SRGBASTCLookup =Map.ofEntries(entry(Tuple.of((short)10,(short)10),GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x10_KHR)
+    private final Map<Tuple<Short,Short>,Integer> SRGBASTCLookup =Map.ofEntries(entry(Tuple.of((short)10,(short)10),GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x10_KHR)
             ,entry(Tuple.of((short)10,(short)5),GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x5_KHR),entry(Tuple.of((short)10,(short)6),GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x6_KHR),
             entry(Tuple.of((short)10,(short)8),GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x8_KHR),entry(Tuple.of((short)12,(short)10),GL_COMPRESSED_SRGB8_ALPHA8_ASTC_12x10_KHR),
             entry(Tuple.of((short)12,(short)12),GL_COMPRESSED_SRGB8_ALPHA8_ASTC_12x12_KHR),entry(Tuple.of((short)4,(short)4),GL_COMPRESSED_SRGB8_ALPHA8_ASTC_4x4_KHR),

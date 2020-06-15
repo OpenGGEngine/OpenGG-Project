@@ -18,8 +18,8 @@ import java.util.List;
  */
 public class Stage {
     private String shader = "";
-    private List<Tuple<Integer, String>> colorbinds = new ArrayList<>();
-    private Framebuffer stageBuffer;
+    private final List<Tuple<Integer, String>> colorbinds = new ArrayList<>();
+    private final Framebuffer stageBuffer;
 
     public Stage(String shader){
         this(shader, Tuple.of(0,"Kd"));

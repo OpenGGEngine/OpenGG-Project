@@ -60,7 +60,7 @@ public abstract class Component{
     private boolean serialize = true;
     private boolean updateSerialize = true;
     private Runnable whenAttachedToWorld = null;
-    private Function<Component, Boolean> parentValidator = (c) -> true;
+    private final Function<Component, Boolean> parentValidator = (c) -> true;
     protected List<Component> children = Collections.synchronizedList(new ArrayList<>());
 
     private boolean firstAttachment = true;
@@ -76,6 +76,8 @@ public abstract class Component{
      */
     public Component(){
         guid = UUID.randomUUID().getLeastSignificantBits();
+
+        name = String.valueOf(guid);
 
         if(OpenGG.getDebugOptions().logOnComponentCreation()){
             GGConsole.debug("Created component of type " + this.getClass().getName() + " with ID "  + this.guid);

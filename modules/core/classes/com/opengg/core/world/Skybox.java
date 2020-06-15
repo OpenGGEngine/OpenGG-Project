@@ -16,8 +16,8 @@ import com.opengg.core.render.texture.Texture;
  * @author Javier
  */
 public class Skybox {
-    private Renderable d;
-    private Texture cube;
+    private final Renderable d;
+    private final Texture cube;
 
     public Skybox(Texture tex, float size){
         d = ObjectCreator.createCube(size);

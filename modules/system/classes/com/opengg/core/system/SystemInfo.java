@@ -25,7 +25,7 @@ public class SystemInfo {
     static Map<String, String> sysinfo = new LinkedHashMap<>();
     static Map<String, String> engineinfo = new LinkedHashMap<>();
     
-    private static boolean dxdiag = false;
+    private static final boolean dxdiag = false;
     
     public static void querySystemInfo(){
         javainfo.put("Java Version", "" +System.getProperty("java.version"));

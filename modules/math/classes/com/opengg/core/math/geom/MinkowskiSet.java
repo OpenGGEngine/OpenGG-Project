@@ -46,9 +46,7 @@ public class MinkowskiSet {
         MinkowskiSet that = (MinkowskiSet) o;
 
         if (!a.equals(that.a)) return false;
-        if (!b.equals(that.b)) return false;
-
-        return true;
+        return b.equals(that.b);
     }
 
     @Override

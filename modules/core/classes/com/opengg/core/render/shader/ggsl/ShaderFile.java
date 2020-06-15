@@ -29,10 +29,10 @@ public class ShaderFile{
 
     private static final Pattern multilineReplacer = Pattern.compile("/\\*.*?\\*/", Pattern.DOTALL);
 
-    private static Pattern[] modPatterns;
+    private static final Pattern[] modPatterns;
 
-    private static String[] modifiers = new String[]{"in", "out", "inout", "uniform", "const"};
-    private static String[] types = new String[]{"float", "int", "uint", "bool", "double",
+    private static final String[] modifiers = new String[]{"in", "out", "inout", "uniform", "const"};
+    private static final String[] types = new String[]{"float", "int", "uint", "bool", "double",
             "bvec2", "ivec2", "uvec2", "dvec2", "vec2",
             "bvec3", "ivec3", "uvec3", "dvec3", "vec3",
             "bvec4", "ivec4", "uvec4", "dvec4", "vec4",
@@ -45,7 +45,7 @@ public class ShaderFile{
                 .toArray(Pattern[]::new);
     }
 
-    private List<String> alltypes = new ArrayList<>();
+    private final List<String> alltypes = new ArrayList<>();
 
     public ShaderFile(String name){
         try{

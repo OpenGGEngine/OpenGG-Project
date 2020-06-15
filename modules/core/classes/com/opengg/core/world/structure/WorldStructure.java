@@ -24,9 +24,9 @@ import java.util.Optional;
  * @author Javier
  */
 public class WorldStructure {
-    private List<WorldGeometry> allGeometry = new ArrayList();
-    private List<RenderGroup> renderGroups = new ArrayList<>();
-    private World parent;
+    private final List<WorldGeometry> allGeometry = new ArrayList();
+    private final List<RenderGroup> renderGroups = new ArrayList<>();
+    private final World parent;
 
     public WorldStructure(World parent){
         this.parent = parent;

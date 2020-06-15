@@ -14,8 +14,8 @@ import com.opengg.core.render.texture.Texture;
  * @author Javier
  */
 public class DirectionalExplosionParticleEmitter extends ExplosionParticleEmitter{
-    private Vector3f direction;
-    private float deviation;
+    private final Vector3f direction;
+    private final float deviation;
     
     public DirectionalExplosionParticleEmitter(float velocity, float life, Texture t) {
         this(velocity, life, new Vector3f(), 10, t);

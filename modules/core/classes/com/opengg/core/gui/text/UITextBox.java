@@ -14,12 +14,12 @@ import java.awt.*;
 
 public class UITextBox extends UIGroup {
     private String value = "";
-    private UITextLine text;
-    private UITexture background;
+    private final UITextLine text;
+    private final UITexture background;
     private float textSize;
     private float speed;
 
-    private Vector2f size;
+    private final Vector2f size;
 
     private ScrollMode scroll;
 

@@ -23,7 +23,7 @@ import java.io.IOException;
  */
 public class RigidBodyComponent extends Component{
     RigidBody entity;
-    private long id;
+    private final long id;
 
     public RigidBodyComponent(){
         this(new RigidBody(), false);

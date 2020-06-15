@@ -16,7 +16,7 @@ import com.opengg.core.render.texture.Texture;
  * @author Warren
  */
 public class UITexture extends UIRenderable implements ResizableElement{
-    private Texture tex;
+    private final Texture tex;
     private Vector2f size;
     public UITexture(Texture tex) {
         this(tex, new Vector2f(0,0));

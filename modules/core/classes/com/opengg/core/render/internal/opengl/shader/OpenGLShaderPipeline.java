@@ -17,7 +17,11 @@ import static org.lwjgl.opengl.GL41.*;
  */
 public class OpenGLShaderPipeline implements com.opengg.core.render.shader.ShaderPipeline{
     final private NativeOpenGLShaderPipeline nativepipeline;
-    private ShaderProgram vert, frag, tesc, tese, geom;
+    private final ShaderProgram vert;
+    private final ShaderProgram frag;
+    private ShaderProgram tesc;
+    private ShaderProgram tese;
+    private ShaderProgram geom;
     
     public OpenGLShaderPipeline(ShaderProgram vert, ShaderProgram tesc, ShaderProgram tese, ShaderProgram geom, ShaderProgram frag){
         this.vert = vert;

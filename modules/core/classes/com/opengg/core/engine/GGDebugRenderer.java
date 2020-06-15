@@ -18,7 +18,7 @@ import java.text.NumberFormat;
 public class GGDebugRenderer implements KeyboardListener {
     private static boolean render = false;
 
-    private static Font font = Resource.getTruetypeFont("consolas.ttf");
+    private static final Font font = Resource.getTruetypeFont("consolas.ttf");
     private static Text displaytext = Text.from("");
     private static Renderable display;
 

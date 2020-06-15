@@ -25,7 +25,7 @@ public class MaterialLibrary {
     public MaterialLibrary(){
         
     }
-    public MaterialLibrary(String file) throws FileNotFoundException, IOException {
+    public MaterialLibrary(String file) throws IOException {
         FileInputStream in = new FileInputStream(file);
        
         
@@ -60,7 +60,7 @@ public class MaterialLibrary {
         
     }
 
-    public void toFile(String file) throws FileNotFoundException, IOException {
+    public void toFile(String file) throws IOException {
         FileOutputStream out = new FileOutputStream(file);
 
         GatheringByteChannel gather = out.getChannel();

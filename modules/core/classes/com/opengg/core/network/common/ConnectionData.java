@@ -38,9 +38,7 @@ public class ConnectionData {
         ConnectionData that = (ConnectionData) o;
 
         if (port != that.port) return false;
-        if (!Objects.equals(address, that.address)) return false;
-
-        return true;
+        return Objects.equals(address, that.address);
     }
 
     @Override

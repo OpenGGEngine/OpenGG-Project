@@ -15,7 +15,7 @@ import java.util.List;
  * @author Javier
  */
 public class BindingAggregate {
-    private List<DataBinding> dataBindings = new ArrayList<>();
+    private final List<DataBinding> dataBindings = new ArrayList<>();
     
     public void addElement(DataBinding e){
         dataBindings.add(e);

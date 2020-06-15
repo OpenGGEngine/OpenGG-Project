@@ -5,7 +5,7 @@ import java.util.List;
 
 public class VulkanDescriptorPoolPool {
     private final int POOL_IMAGE_CAPACITY = 100, POOL_UNIFORM_CAPACITY = 100, SET_CAPACITY = 200;
-    private List<VulkanDescriptorPool> pools = new ArrayList<>();
+    private final List<VulkanDescriptorPool> pools = new ArrayList<>();
 
     public VulkanDescriptorPool findWithCapacity(int buffers, int textures){
         for(var pool : pools){

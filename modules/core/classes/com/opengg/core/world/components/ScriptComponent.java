@@ -20,7 +20,7 @@ public class ScriptComponent extends Component implements Triggerable {
     private Script script;
     private RunMode runMode = RunMode.CONTINUOUS;
 
-    private Map<String, Object> scriptValues = new HashMap<>();
+    private final Map<String, Object> scriptValues = new HashMap<>();
 
     public ScriptComponent setScript(String script){
         this.scriptName = script;

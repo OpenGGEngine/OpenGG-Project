@@ -4,7 +4,7 @@ import com.opengg.core.world.components.CameraComponent;
 import com.opengg.core.world.components.Component;
 
 public class VRHMDComponent extends Component {
-    private CameraComponent camera;
+    private final CameraComponent camera;
 
     public VRHMDComponent(){
         this.attach(camera = new CameraComponent());

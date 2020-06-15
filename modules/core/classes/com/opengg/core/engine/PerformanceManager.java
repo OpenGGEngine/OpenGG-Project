@@ -18,22 +18,22 @@ public class PerformanceManager {
     private static long bufferAllocSizeThisFrame = 0;
 
     private static long descriptorSetAllocations = 0;
-    private static long descriptorCacheHits = 0;
+    private static final long descriptorCacheHits = 0;
 
     private static int packetsInSec = 0;
     private static int packetsOutSec = 0;
     private static int packetsDroppedSec = 0;
     private static int ackPacketsOutSec;
 
-    private static Queue<Float> lastFrames = new LinkedList<>();
-    private static LinkedList<FastInt> lastDrawCalls = new LinkedList<>(List.of(new FastInt()));
-    private static List<Tuple<Long, Integer>> bytesOut = new ArrayList<>();
-    private static List<Tuple<Long, Integer>> bytesIn = new ArrayList<>();
+    private static final Queue<Float> lastFrames = new LinkedList<>();
+    private static final LinkedList<FastInt> lastDrawCalls = new LinkedList<>(List.of(new FastInt()));
+    private static final List<Tuple<Long, Integer>> bytesOut = new ArrayList<>();
+    private static final List<Tuple<Long, Integer>> bytesIn = new ArrayList<>();
 
-    private static List<Long> packetsIn = new ArrayList<>();
-    private static List<Long> packetsOut = new ArrayList<>();
-    private static List<Long> ackPacketsOut = new ArrayList<>();
-    private static List<Long> packetsDropped = new ArrayList<>();
+    private static final List<Long> packetsIn = new ArrayList<>();
+    private static final List<Long> packetsOut = new ArrayList<>();
+    private static final List<Long> ackPacketsOut = new ArrayList<>();
+    private static final List<Long> packetsDropped = new ArrayList<>();
 
     private static List<Long> gpuBuffers = new ArrayList<>();
     private static List<Long> descriptorSets = new ArrayList<>();

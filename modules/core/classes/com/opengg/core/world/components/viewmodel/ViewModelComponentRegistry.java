@@ -179,8 +179,8 @@ public class ViewModelComponentRegistry {
      * @author Javier
      */
     public static class ViewModelComponentRegisterInfoContainer {
-        private Class component;
-        private Class viewmodel;
+        private final Class component;
+        private final Class viewmodel;
 
         public ViewModelComponentRegisterInfoContainer(Class c, Class v){
             this.component = c;

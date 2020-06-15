@@ -26,11 +26,11 @@ import static org.lwjgl.system.MemoryUtil.*;
 import static org.lwjgl.vulkan.VK10.*;
 
 public class VulkanShaderStage implements ShaderProgram {
-    private String name;
+    private final String name;
     private ShaderType type;
-    private VkPipelineShaderStageCreateInfo shaderStageInfo;
+    private final VkPipelineShaderStageCreateInfo shaderStageInfo;
     private List<Tuple<Integer, VulkanDescriptorSetLayout>> descriptorSets;
-    private ByteBuffer spirv;
+    private final ByteBuffer spirv;
 
     public VulkanShaderStage(ShaderType type, String source, String name, List<ShaderController.Uniform> uniforms) {
         this.name = name;

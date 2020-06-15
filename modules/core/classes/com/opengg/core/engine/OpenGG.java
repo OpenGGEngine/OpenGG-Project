@@ -50,7 +50,7 @@ public final class OpenGG{
     private static boolean test = false;
     private static Time time;
     private static Thread mainThread;
-    private static DebugOptions options = new DebugOptions();
+    private static final DebugOptions options = new DebugOptions();
     private static float targetUpdate = 0f;
     private static float overrideUpdate = -1f;
 
@@ -64,11 +64,7 @@ public final class OpenGG{
      */
     public static void initialize(GGApplication app, InitializationOptions options){
         try{
-            if(options.isHeadless()){
-                initializeLocal(app, options, false);
-            }else{
-                initializeLocal(app, options, true);
-            }
+            initializeLocal(app, options, !options.isHeadless());
         }catch(Exception e){
             GGConsole.error("Uncaught exception: " + e.getMessage());
             e.printStackTrace();

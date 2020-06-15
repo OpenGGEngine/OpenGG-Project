@@ -21,7 +21,7 @@ import java.util.UUID;
  * @author Javier
  */
 public abstract class WorldGeometry implements Renderable{
-    private long guid;
+    private final long guid;
     private Vector3f pos;
     private Quaternionf rot;
     private Vector3f scale;

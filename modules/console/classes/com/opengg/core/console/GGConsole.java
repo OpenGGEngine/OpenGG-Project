@@ -27,7 +27,7 @@ public class GGConsole{
     private static final List<GGMessage> messages = new LinkedList<>();
     private static final List<ConsoleListener> listeners = new ArrayList<>();
     private static final List<LoggerOutputConsumer> consumers = new ArrayList<>();
-    private static boolean running = true;
+    private static final boolean running = true;
 
     public static void initialize(){
         ThreadManager.setDefaultUncaughtExceptionHandler(new GGThreadExceptionHandler());

@@ -16,7 +16,7 @@ import java.util.List;
  */
 public class ThreadManager {
     private static final List<Thread> running = new ArrayList<>();
-    private static int closeDelay = 3000;
+    private static final int closeDelay = 3000;
     private static Thread.UncaughtExceptionHandler handler;
     
     public static void initialize(){

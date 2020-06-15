@@ -31,15 +31,15 @@ import java.util.stream.Stream;
  */
 public class Server {
     private final NetworkEngine.ServerOptions options;
-    private List<ServerClient> clients;
+    private final List<ServerClient> clients;
     private boolean running;
 
-    private List<ConnectionListener> listeners;
-    private List<Component> newComponents;
-    private List<Component> removedComponents;
-    private List<Tuple<Component, Component>> movedComponents;
+    private final List<ConnectionListener> listeners;
+    private final List<Component> newComponents;
+    private final List<Component> removedComponents;
+    private final List<Tuple<Component, Component>> movedComponents;
 
-    private Map<Long, byte[]> lastUpdate = new HashMap<>();
+    private final Map<Long, byte[]> lastUpdate = new HashMap<>();
 
     public Server(NetworkEngine.ServerOptions options){
         this.options = options;

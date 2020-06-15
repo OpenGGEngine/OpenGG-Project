@@ -16,9 +16,9 @@ import com.opengg.core.math.Vector3f;
 public class Particle {
     private Vector3f position;
     private Vector3f velocity;
-    private Vector3f gravity;
+    private final Vector3f gravity;
     private float lifelength = 0;
-    private float lifespan;
+    private final float lifespan;
     private float scale;
 
     public Particle(Vector3f position, Vector3f velocity, float lifeLength, float scale) {

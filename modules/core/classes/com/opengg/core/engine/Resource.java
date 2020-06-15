@@ -95,8 +95,7 @@ public interface Resource {
     private static boolean validate(String name){
         if(isAbsolute(name)) return true;
         if(exists(Resource.getApplicationPath() + File.separator + name)) return true;
-        if(exists(Resource.getUserDataPath()    + File.separator + name)) return true;
-        return false;
+        return exists(Resource.getUserDataPath() + File.separator + name);
     }
     
     /**

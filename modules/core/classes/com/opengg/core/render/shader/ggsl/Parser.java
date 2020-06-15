@@ -10,7 +10,7 @@ import static com.opengg.core.render.shader.ggsl.TokenType.*;
 
 public class Parser {
 
-    private Lexer lexer;
+    private final Lexer lexer;
     private int current;
 
     public Parser(Lexer lexer){

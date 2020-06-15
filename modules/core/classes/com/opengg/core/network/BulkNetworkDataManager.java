@@ -29,9 +29,9 @@ public class BulkNetworkDataManager {
     public final int maxAllowedBandwidth = 1_048_576;
     public final int maxPacketSize = 32_768;
     public final float perPacketTime = (float)maxPacketSize/(float)maxAllowedBandwidth;
-    private Map<Tuple<ConnectionData, Long>, ReceivingBulkMessage> currentReceivedMessages = new HashMap<>();
-    private List<Tuple<SendingBulkMessage, CompletableFuture<Boolean>>> currentSendingMessages = new ArrayList<>();
-    private List<Consumer<ReceivingBulkMessage>> messageListeners = new ArrayList<>();
+    private final Map<Tuple<ConnectionData, Long>, ReceivingBulkMessage> currentReceivedMessages = new HashMap<>();
+    private final List<Tuple<SendingBulkMessage, CompletableFuture<Boolean>>> currentSendingMessages = new ArrayList<>();
+    private final List<Consumer<ReceivingBulkMessage>> messageListeners = new ArrayList<>();
 
     private float counter = 0;
 

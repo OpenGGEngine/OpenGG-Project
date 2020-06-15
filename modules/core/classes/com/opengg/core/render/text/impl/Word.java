@@ -14,7 +14,7 @@ import java.util.List;
  * @author Warren
  */
 public class Word {
-    private List<GGCharacter> characters = new ArrayList<>();
+    private final List<GGCharacter> characters = new ArrayList<>();
 
         public List<GGCharacter> getCharacters() {
             return List.copyOf(characters);

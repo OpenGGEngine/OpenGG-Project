@@ -4,6 +4,7 @@ import com.opengg.core.math.Matrix4f;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 public class MLoaderUtils {
     public static void storeMat4(Matrix4f mat, ByteBuffer buf){
@@ -19,7 +20,7 @@ public class MLoaderUtils {
         ,buf.getFloat(),buf.getFloat(),buf.getFloat());
     }
     public static void writeString(String s, ByteBuffer b) {
-        ByteBuffer temp = ByteBuffer.wrap(s.getBytes(Charset.forName("UTF-8")));
+        ByteBuffer temp = ByteBuffer.wrap(s.getBytes(StandardCharsets.UTF_8));
         b.putInt(temp.capacity());
         b.put(temp);
     }
@@ -31,6 +32,6 @@ public class MLoaderUtils {
         }
         byte[] name = new byte[namelength];
         b.get(name);
-        return new String(name, Charset.forName("UTF-8"));
+        return new String(name, StandardCharsets.UTF_8);
     }
 }

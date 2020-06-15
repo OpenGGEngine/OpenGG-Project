@@ -25,10 +25,10 @@ public class MouseController {
     private static Vector2f old = new Vector2f();
     private static double oldSX=0,oldSY=0;
     private static int counter;
-    private static List<MouseButtonListener> buttonlisteners = new ArrayList<>();
-    private static List<MouseMoveListener> poslisteners = new ArrayList<>();
-    private static List<MouseScrollListener> scrollListeners = new ArrayList<>();
-    private static List<MouseScrollChangeListener> scrollChangeListeners = new ArrayList<>();
+    private static final List<MouseButtonListener> buttonlisteners = new ArrayList<>();
+    private static final List<MouseMoveListener> poslisteners = new ArrayList<>();
+    private static final List<MouseScrollListener> scrollListeners = new ArrayList<>();
+    private static final List<MouseScrollChangeListener> scrollChangeListeners = new ArrayList<>();
     private static MousePositionHandler poshandler;
     private static MouseButtonHandler buttonhandler;
     private static MouseScrollHandler scrollHandler;

@@ -92,8 +92,8 @@ public class VRWindow implements Window {
 
         VRSystem.VRSystem_GetRecommendedRenderTargetSize(w, h);
 
-        recx = (int) (w.get(0) * 1);
-        recy = (int) (h.get(0) * 1);
+        recx = w.get(0) * 1;
+        recy = h.get(0) * 1;
 
         GGConsole.log("Rendering at " + recx + " x " + recy);
 

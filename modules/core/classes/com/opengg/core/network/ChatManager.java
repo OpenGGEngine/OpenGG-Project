@@ -26,7 +26,7 @@ public class ChatManager {
 
     private static boolean logToConsole = true;
 
-    private List<Consumer<ChatMessage>> chatConsumers = new ArrayList<>(); //server
+    private final List<Consumer<ChatMessage>> chatConsumers = new ArrayList<>(); //server
 
     public ChatManager(){
         defaultRenderer = new DefaultRenderer();

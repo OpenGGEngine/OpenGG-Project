@@ -43,9 +43,9 @@ import java.io.IOException;
  * @author Javier
  */
 public class World extends Component implements Resource {
-    private PhysicsSystem physics = new PhysicsSystem();
-    private RenderEnvironment environment = new RenderEnvironment();
-    private WorldStructure structure;
+    private final PhysicsSystem physics = new PhysicsSystem();
+    private final RenderEnvironment environment = new RenderEnvironment();
+    private final WorldStructure structure;
     private boolean forceUpdate = false;
     private boolean active = false;
     private boolean shouldMultipleInstancesExist = false;

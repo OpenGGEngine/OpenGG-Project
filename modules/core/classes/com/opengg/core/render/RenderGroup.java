@@ -19,9 +19,9 @@ import java.util.List;
  * @author Javier
  */
 public class RenderGroup {
-    private List<Renderable> items = new ArrayList<>();
-    private VertexArrayObject vao;
-    private VertexArrayFormat format;
+    private final List<Renderable> items = new ArrayList<>();
+    private final VertexArrayObject vao;
+    private final VertexArrayFormat format;
     private String pipeline = "object";
     private String name = "default";
     private boolean transparency = false;

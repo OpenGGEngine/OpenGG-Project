@@ -20,7 +20,7 @@ public class ScriptLoader {
             e.printStackTrace();
         }
     }
-    private static Map<String, Script> scripts = new HashMap<>();
+    private static final Map<String, Script> scripts = new HashMap<>();
 
     public static Script getScriptByName(String name){
         if(scripts.containsKey(name)) return scripts.get(name);

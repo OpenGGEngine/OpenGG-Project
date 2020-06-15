@@ -1,7 +1,7 @@
 package com.opengg.core.model;
 
 public class VertexWeight {
-    private int boneId;
+    private final int boneId;
 
     private int vertexId;
 

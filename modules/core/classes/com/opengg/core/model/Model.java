@@ -20,12 +20,12 @@ import java.util.stream.Collectors;
  *     Additionally, each model can contain a set of animations and a set of skeletal transformation nodes.
  */
 public class Model implements Resource {
-    private ArrayList<Mesh> meshes;
+    private final ArrayList<Mesh> meshes;
     private ArrayList<Material> materials = new ArrayList<>();
-    private HashMap<String,GGAnimation> animations = new HashMap<>();
+    private final HashMap<String,GGAnimation> animations = new HashMap<>();
     private boolean isAnim = false;
     private String fileLocation;
-    private String name;
+    private final String name;
     private GGNode rootAnimationNode;
     private long exportConfig;
     private String vaoFormat;

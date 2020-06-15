@@ -14,6 +14,7 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 
 import static org.lwjgl.util.lz4.LZ4.*;

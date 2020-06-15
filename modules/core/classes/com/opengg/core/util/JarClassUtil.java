@@ -21,7 +21,7 @@ import java.util.jar.JarFile;
  * @author Javier
  */
 public class JarClassUtil {
-    private static EditableURLClassLoader loader = new EditableURLClassLoader(new URL[0]);
+    private static final EditableURLClassLoader loader = new EditableURLClassLoader(new URL[0]);
 
     private JarClassUtil() {
     }

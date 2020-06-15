@@ -11,5 +11,5 @@ package com.opengg.core.console;
  * @author Javier
  */
 public interface ConsoleListener {
-    public void onConsoleInput(UserCommand s);
+    void onConsoleInput(UserCommand s);
 }

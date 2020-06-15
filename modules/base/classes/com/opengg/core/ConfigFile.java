@@ -14,8 +14,8 @@ import java.util.Map;
  * @author Javier
  */
 public class ConfigFile {
-    private String name;
-    private HashMap<String, String> contents;
+    private final String name;
+    private final HashMap<String, String> contents;
     
     public ConfigFile(String name, HashMap<String, String> contents){
         this.name = name;

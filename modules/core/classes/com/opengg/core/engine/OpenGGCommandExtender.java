@@ -28,7 +28,9 @@ import com.opengg.core.render.RenderEngine;
 import com.opengg.core.render.RenderGroup;
 import com.opengg.core.render.postprocess.PostProcessController;
 import com.opengg.core.render.shader.ShaderController;
+import com.opengg.core.render.window.WindowController;
 import com.opengg.core.world.WorldEngine;
+import com.opengg.core.world.components.FreeFlyComponent;
 
 import java.util.stream.Collectors;
 
@@ -139,6 +141,11 @@ public class OpenGGCommandExtender implements ConsoleListener{
                         }
                     }
                 }
+            }
+
+            case "noclip" -> {
+                WorldEngine.getCurrent().attach(new FreeFlyComponent().setPositionOffset(RenderEngine.getCurrentView().getPosition()));
+                WindowController.getWindow().setCursorLock(true);
             }
 
             case "config" -> {

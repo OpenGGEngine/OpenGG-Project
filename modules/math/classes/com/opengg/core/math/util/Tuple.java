@@ -9,7 +9,7 @@ public interface Tuple<X, Y> {
     X x();
     Y y();
 
-    static <X,Y> OrderedTuple<X,Y> of(X x, Y y){
+    static <X,Y> Tuple<X,Y> of(X x, Y y){
         return new OrderedTuple<>(x,y);
     }
 
@@ -22,7 +22,7 @@ public interface Tuple<X, Y> {
      * @param <X>
      * @return
      */
-    static <X> UnorderedTuple<X> ofUnordered(X x, X x2){
+    static <X> Tuple<X, X> ofUnordered(X x, X x2){
         return new UnorderedTuple<>(x,x2);
     }
 

@@ -20,7 +20,7 @@ public class UITextLine extends UIRenderable {
     protected Text text;
     protected Font font;
 
-    private Vector3fm size;
+    private final Vector3fm size;
 
     public UITextLine(Text text, Font font) {
         this.text = text;

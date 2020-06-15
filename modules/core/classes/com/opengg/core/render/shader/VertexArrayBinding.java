@@ -4,10 +4,10 @@ import java.util.List;
 import java.util.Objects;
 
 public class VertexArrayBinding {
-    private int bindingIndex;
-    private int vertexSize;
-    private int divisor;
-    private List<VertexArrayFormat.VertexArrayAttribute> attributes;
+    private final int bindingIndex;
+    private final int vertexSize;
+    private final int divisor;
+    private final List<VertexArrayFormat.VertexArrayAttribute> attributes;
 
     public VertexArrayBinding(int bindingIndex, int vertexSize, int divisor, List<VertexArrayFormat.VertexArrayAttribute> attributes) {
         this.bindingIndex = bindingIndex;

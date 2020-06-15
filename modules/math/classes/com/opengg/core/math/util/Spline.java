@@ -120,11 +120,7 @@ import java.util.Arrays;
    * Used to check the correctness of this spline
    */
   public boolean checkValues() {
-    if (xx.length < 2) {
-      return false;
-    } else {
-      return true;
-    }
+      return xx.length >= 2;
   }
 
   /**

@@ -29,7 +29,7 @@ public final class NativeSound {
         if(GGInfo.isServer()) {
             audioid = -1;
             return;
-        };
+        }
 
         audioid = alGenSources();
 

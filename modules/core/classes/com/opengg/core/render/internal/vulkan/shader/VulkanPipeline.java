@@ -12,10 +12,10 @@ import static org.lwjgl.system.MemoryUtil.*;
 import static org.lwjgl.vulkan.VK10.*;
 
 public class VulkanPipeline {
-    private VkGraphicsPipelineCreateInfo.Buffer pipelineCreateInfo;
-    private VulkanPipelineFormat format;
-    private long layout;
-    private long pipeline;
+    private final VkGraphicsPipelineCreateInfo.Buffer pipelineCreateInfo;
+    private final VulkanPipelineFormat format;
+    private final long layout;
+    private final long pipeline;
 
 
     public VulkanPipeline(VulkanPipelineFormat format) {

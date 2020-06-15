@@ -18,7 +18,7 @@ public class Mesh {
     private IntBuffer indexBuffer;
     private Material material = Material.defaultmaterial; public int matIndex = -1;
     public boolean genAnim = false;
-    private boolean genTangents = true;
+    private final boolean genTangents = true;
 
     private static final int VBO_NOANIM = 8,VBO_ANIM = 16;
 

@@ -174,21 +174,21 @@ public class QuickHull3D {
 
     protected int[] vertexPointIndices = new int[0];
 
-    private Face[] discardedFaces = new Face[3];
+    private final Face[] discardedFaces = new Face[3];
 
-    private Vertex[] maxVtxs = new Vertex[3];
+    private final Vertex[] maxVtxs = new Vertex[3];
 
-    private Vertex[] minVtxs = new Vertex[3];
+    private final Vertex[] minVtxs = new Vertex[3];
 
     protected Vector faces = new Vector(16);
 
     protected Vector horizon = new Vector(16);
 
-    private FaceList newFaces = new FaceList();
+    private final FaceList newFaces = new FaceList();
 
-    private VertexList unclaimed = new VertexList();
+    private final VertexList unclaimed = new VertexList();
 
-    private VertexList claimed = new VertexList();
+    private final VertexList claimed = new VertexList();
 
     protected int numVertices;
 
@@ -911,7 +911,7 @@ public class QuickHull3D {
             for (int index : indices) {
                 ps.print(" " + index);
             }
-            ps.println("");
+            ps.println();
         }
     }
 

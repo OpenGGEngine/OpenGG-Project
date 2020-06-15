@@ -17,10 +17,10 @@ import static org.lwjgl.vulkan.VK10.*;
 import static org.lwjgl.vulkan.VK10.VK_SUCCESS;
 
 class Swapchain {
-    private long swapchainHandle;
-    private VulkanImage.View[] imageViews;
+    private final long swapchainHandle;
+    private final VulkanImage.View[] imageViews;
 
-    private Vector2i extents;
+    private final Vector2i extents;
 
     public Swapchain(VkDevice device, VkPhysicalDevice physicalDevice, long surface, Vector2i defaultSize, VulkanWindow.ColorDepthData colorFormat){
         this(device, physicalDevice, surface, VK_NULL_HANDLE, defaultSize, colorFormat);

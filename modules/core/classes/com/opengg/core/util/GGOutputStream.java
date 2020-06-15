@@ -22,7 +22,7 @@ import java.nio.IntBuffer;
  * @author Javier
  */
 public class GGOutputStream extends OutputStream{
-    private OutputStream out;
+    private final OutputStream out;
     
     public GGOutputStream(){
         this.out = new ByteArrayOutputStream();

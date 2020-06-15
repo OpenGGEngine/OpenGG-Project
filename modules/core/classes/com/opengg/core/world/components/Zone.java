@@ -22,8 +22,8 @@ import java.util.function.Consumer;
  */
 public class Zone extends TriggerComponent {
     private AABB box;
-    private boolean repeat = false;
-    private List<Component> lastFrames = new ArrayList<>();
+    private final boolean repeat = false;
+    private final List<Component> lastFrames = new ArrayList<>();
 
     public Zone(){
         box = new AABB(0,0,0);

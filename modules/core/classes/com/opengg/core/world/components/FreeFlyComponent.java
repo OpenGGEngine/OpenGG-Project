@@ -22,10 +22,10 @@ import java.io.IOException;
  * @author Javier
  */
 public class FreeFlyComponent extends ControlledComponent implements Actionable{
-    private ActionTransmitterComponent actionTransmitter;
-    private CameraComponent camera;
+    private final ActionTransmitterComponent actionTransmitter;
+    private final CameraComponent camera;
 
-    private Vector3fm control = new Vector3fm();
+    private final Vector3fm control = new Vector3fm();
     private Vector3f currot = new Vector3f();
     private Vector3f vel = new Vector3f();
 

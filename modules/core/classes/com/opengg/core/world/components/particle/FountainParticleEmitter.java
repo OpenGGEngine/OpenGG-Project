@@ -15,11 +15,11 @@ import com.opengg.core.render.texture.Texture;
  * @author Javier
  */
 public class FountainParticleEmitter extends ParticleEmitter{
-    private float pps;
-    private float speed;
+    private final float pps;
+    private final float speed;
     private float timeSinceLast = 0f;
-    private float deviation;
-    private Vector3f angle;
+    private final float deviation;
+    private final Vector3f angle;
     private boolean paused;
     
     public FountainParticleEmitter(float pps, float speed, float lifeLength, float deviation, Vector3f angle, Texture t) {

@@ -12,9 +12,9 @@ import static org.lwjgl.util.tootle.Tootle.*;
 
 public class GGTootle extends ModelProcess {
     public static String name = "AMD Tootle Mesh Optimization";
-    private static int vcacheMethod = Platform.get() == Platform.WINDOWS ? 2 : 0;
-    private static int vcacheSize = TOOTLE_DEFAULT_VCACHE_SIZE;
-    private static boolean optimizeVertexMemory = true;
+    private static final int vcacheMethod = Platform.get() == Platform.WINDOWS ? 2 : 0;
+    private static final int vcacheSize = TOOTLE_DEFAULT_VCACHE_SIZE;
+    private static final boolean optimizeVertexMemory = true;
     private static boolean init =false;
     public static void init(){
         TootleInit();

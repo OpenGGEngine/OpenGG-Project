@@ -61,9 +61,9 @@ class Face {
 
     protected double planeOffset;
 
-    private Point3d centroid;
+    private final Point3d centroid;
 
-    private Vector3d normal;
+    private final Vector3d normal;
 
     public Face() {
         normal = new Vector3d();

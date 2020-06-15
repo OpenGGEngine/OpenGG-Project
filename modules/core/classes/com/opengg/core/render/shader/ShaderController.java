@@ -72,7 +72,7 @@ public class ShaderController {
 
     private static Texture defaultVulkanTexture;
 
-    private static Map<String, Integer> glslTypeSizes = Map.ofEntries(
+    private static final Map<String, Integer> glslTypeSizes = Map.ofEntries(
            Map.entry("double", 8),
             Map.entry("float", 4),
             Map.entry("vec2", 4*2),
@@ -1021,6 +1021,6 @@ public class ShaderController {
     public record Uniform(String name, UniformPosition position, DescriptorType type){}
 
     public enum DescriptorType {
-        UNIFORM_BUFFER, COMBINED_TEXTURE_SAMPLER;
+        UNIFORM_BUFFER, COMBINED_TEXTURE_SAMPLER
     }
 }

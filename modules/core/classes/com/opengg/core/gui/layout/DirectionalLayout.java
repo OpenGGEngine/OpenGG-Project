@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class DirectionalLayout extends Layout{
-    private Direction direction;
+    private final Direction direction;
     private float padding;
     private float border;
     private boolean invert;

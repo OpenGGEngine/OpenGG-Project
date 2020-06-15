@@ -461,13 +461,10 @@ public class CollisionMath {
                 else simplex.searchDir = n.inverse();
             }
         }
-        if (simplex.searchDir.lengthSquared() < 0.000001f) {
-            return true;
-        }
-        return false;
+        return simplex.searchDir.lengthSquared() < 0.000001f;
     }
 
-    public static Tuple.OrderedTuple<Vector3f, Vector3f> getClosestPoints(Simplex s){
+    public static Tuple<Vector3f, Vector3f> getClosestPoints(Simplex s){
         Vector3f p1 = new Vector3f(), p2 = new Vector3f();
         
         /* calculate normalization denominator */
@@ -587,7 +584,7 @@ public class CollisionMath {
         }
     }
 
-    private static Tuple.OrderedTuple<Float, MinkowskiTriangle> findClosestFace(List<MinkowskiTriangle> simplexFaces){
+    private static Tuple<Float, MinkowskiTriangle> findClosestFace(List<MinkowskiTriangle> simplexFaces){
         float closest = Float.MAX_VALUE;
         MinkowskiTriangle closestTri = new MinkowskiTriangle(new MinkowskiSet(), new MinkowskiSet(), new MinkowskiSet());
 

@@ -16,7 +16,7 @@ public class TriggerInfo {
     public String info;
     public TriggerType type;
 
-    public static enum TriggerType{
+    public enum TriggerType{
         SINGLE, TOGGLE
     }
 

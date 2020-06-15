@@ -19,9 +19,9 @@ import java.util.Map;
  * @author Javier
  */
 public class ModelManager{
-    private static boolean CACHE = true;
+    private static final boolean CACHE = true;
 
-    private static Map<String, Model> modellist = new HashMap<>();
+    private static final Map<String, Model> modellist = new HashMap<>();
     private static Model defaultModel;
     
     public static void initialize(){

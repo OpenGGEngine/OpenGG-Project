@@ -31,8 +31,7 @@ public class GUIController {
         current.add(name);
         var currentGUI = guis.get(name);
         currentGUI.setEnabled(true);
-        if(currentGUI.isMenu()) GGInfo.setMenu(true);
-        else GGInfo.setMenu(false);
+        GGInfo.setMenu(currentGUI.isMenu());
     }
 
     public static void deactivateGUI(String name){

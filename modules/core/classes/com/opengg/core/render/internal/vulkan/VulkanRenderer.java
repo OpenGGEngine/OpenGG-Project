@@ -50,7 +50,7 @@ public class VulkanRenderer implements Renderer {
     /**
      * This is just -1L, but it is nicer as a symbolic constant.
      */
-    private long UINT64_MAX = 0xFFFFFFFFFFFFFFFFL;
+    private final long UINT64_MAX = 0xFFFFFFFFFFFFFFFFL;
     private VkSemaphoreCreateInfo semaphoreCreateInfo;
     private VkSubmitInfo submitInfo;
     private VkPresentInfoKHR presentInfo;
@@ -71,7 +71,7 @@ public class VulkanRenderer implements Renderer {
     private ByteBuffer lightBuffer;
     private int lightOffset;
 
-    private Time t = new Time();
+    private final Time t = new Time();
 
     public VulkanRenderer() {
     }

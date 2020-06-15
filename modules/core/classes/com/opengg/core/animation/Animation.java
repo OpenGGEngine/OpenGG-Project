@@ -10,16 +10,16 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class Animation {
-    private double duration;
+    private final double duration;
     private double current;
-    private boolean loops;
+    private final boolean loops;
     private boolean running=false;
     private boolean reverse = false;
-    private double loopbackpoint = 0;
-    private double timeScale = 1;
+    private final double loopbackpoint = 0;
+    private final double timeScale = 1;
 
-    private HashMap<String, ArrayList<AnimationStage>> stages = new HashMap<>();
-    private HashMap<String, Object> boundObjects = new HashMap<>();
+    private final HashMap<String, ArrayList<AnimationStage>> stages = new HashMap<>();
+    private final HashMap<String, Object> boundObjects = new HashMap<>();
 
     private Runnable onComplete = () -> {};
 
@@ -184,7 +184,7 @@ public class Animation {
         public Function<Double, T> curveFunction;
         private BiConsumer<Object, T> acceptor;
 
-        private AccessType accessType;
+        private final AccessType accessType;
 
         private Runnable onComplete = () -> {};
 

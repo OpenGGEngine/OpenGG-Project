@@ -29,7 +29,7 @@ import java.util.List;
  * This represents a group of particles
  */
 public abstract class ParticleEmitter extends RenderComponent{
-    private List<Particle> particles = new LinkedList<>();
+    private final List<Particle> particles = new LinkedList<>();
     private Texture texture;
     private boolean bindParticlesToEmitter = false;
     private float lifeLength = 1f;

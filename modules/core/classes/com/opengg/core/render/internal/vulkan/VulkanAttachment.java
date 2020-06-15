@@ -10,7 +10,7 @@ import static org.lwjgl.vulkan.VK10.*;
 import static org.lwjgl.vulkan.VK10.VK_IMAGE_LAYOUT_UNDEFINED;
 
 public class VulkanAttachment {
-    private VkAttachmentDescription description;
+    private final VkAttachmentDescription description;
     public VulkanAttachment(int format, int samples, int loadOp, int storeOp, int usage){
         description = VkAttachmentDescription.calloc()
                 .format(format)

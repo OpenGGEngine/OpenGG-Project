@@ -26,7 +26,7 @@ import static org.lwjgl.vulkan.VK11.VK_API_VERSION_1_1;
 public class VulkanWindow {
     private long surface;
 
-    private VkInstance instance;
+    private final VkInstance instance;
     private VkPhysicalDevice physicalDevice;
     private VkDevice device;
     private VkPhysicalDeviceMemoryProperties memoryProperties;
@@ -34,7 +34,7 @@ public class VulkanWindow {
     private ColorDepthData colorFormatAndSpace;
     private int queueFamilyIndex;
 
-    private static ByteBuffer[] layers = {
+    private static final ByteBuffer[] layers = {
             memUTF8("VK_LAYER_KHRONOS_validation")
     };
     private VkDebugReportCallbackEXT debugCallback;

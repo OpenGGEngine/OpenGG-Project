@@ -25,16 +25,16 @@ import java.util.List;
 public class ServerClient {
     private static int idcounter = 0;
 
-    private ConnectionData connectionData;
-    private String name;
-    private Instant timeConnected;
+    private final ConnectionData connectionData;
+    private final String name;
+    private final Instant timeConnected;
     private Instant lastMessage;
     private int latency;
-    private int id;
+    private final int id;
     private boolean success;
     private Vector2f mousepos = new Vector2f();
 
-    private List<ActionTransmitterComponent> transmitters;
+    private final List<ActionTransmitterComponent> transmitters;
 
     public ServerClient(String name, ConnectionData data, Instant timeConnected){
         this.name = name;

@@ -41,11 +41,11 @@ public class GGFontFile {
     private int paddingWidth;
     private int paddingHeight;
 
-    private Map<Integer, GGCharacter> metaData = new HashMap<>();
+    private final Map<Integer, GGCharacter> metaData = new HashMap<>();
     public Map<Tuple<Integer,Integer>,Double> kernings = new HashMap<>();
 
     private BufferedReader reader;
-    private Map<String, String> values = new HashMap<>();
+    private final Map<String, String> values = new HashMap<>();
 
     /**
      * Opens a font file in preparation for reading.

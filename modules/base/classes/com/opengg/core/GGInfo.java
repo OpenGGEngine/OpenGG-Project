@@ -18,7 +18,7 @@ public class GGInfo {
     private static String appname = "default";
     private static String memallocator = "system";
     private static String basepath = "";
-    private static boolean initialized = false;
+    private static final boolean initialized = false;
     private static boolean verbose = false;
     private static boolean agressiveMemory = false;
     private static boolean server = false;

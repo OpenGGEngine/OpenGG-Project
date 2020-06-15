@@ -9,9 +9,9 @@ import java.util.stream.IntStream;
 
 public class NativeResourceManager {
     private static final Object block = new Object();
-    private static Cleaner cleaner = Cleaner.create();
+    private static final Cleaner cleaner = Cleaner.create();
 
-    private static List<Runnable> cleanEvents = new ArrayList<>();
+    private static final List<Runnable> cleanEvents = new ArrayList<>();
 
     public static void registerNativeResource(NativeResource resource){
         var runnable = resource.onDestroy();

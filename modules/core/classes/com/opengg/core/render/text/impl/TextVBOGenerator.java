@@ -24,7 +24,7 @@ public class TextVBOGenerator {
     protected static final double LINE_HEIGHT = 0.03f;
     protected static final int SPACE_ASCII = 32;
     public static boolean kerning=true;
-    private GGFontFile metaData;
+    private final GGFontFile metaData;
 
     public TextVBOGenerator(File metaFile) {
         metaData = new GGFontFile(metaFile);
@@ -51,7 +51,7 @@ public class TextVBOGenerator {
                 continue;
             }
 
-            int ascii = (int) c;
+            int ascii = c;
             if (ascii == SPACE_ASCII) {
                 boolean added = currentLine.addWord(currentWord);
                 if (!added) {

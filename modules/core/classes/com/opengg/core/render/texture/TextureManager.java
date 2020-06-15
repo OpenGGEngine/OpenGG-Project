@@ -19,7 +19,7 @@ import java.util.Map;
 public class TextureManager {
     private static final Map<String, TextureData> texturelist = new HashMap<>();
     private static TextureData defaultdata;
-    private static boolean cache = true;
+    private static final boolean cache = true;
     
     public static void initialize(){
         try {

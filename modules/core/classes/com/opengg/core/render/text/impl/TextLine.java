@@ -16,7 +16,7 @@ public class TextLine {
         public double maxLength;
 	public double spaceSize;
 
-	private List<Word> words = new ArrayList<>();
+	private final List<Word> words = new ArrayList<>();
 
     public List<Word> getWords() {
         return List.copyOf(words);

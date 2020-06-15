@@ -23,7 +23,7 @@ import java.nio.IntBuffer;
  * @author Javier
  */
 public class GGInputStream extends InputStream{
-    private InputStream in;
+    private final InputStream in;
     private boolean littleEndian = false;
 
 

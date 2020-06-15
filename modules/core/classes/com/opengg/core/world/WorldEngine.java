@@ -22,13 +22,13 @@ public class WorldEngine{
     private static final List<Component> removal = new LinkedList<>();
     private static boolean enabled = true;
 
-    private static List<Consumer<World>> worldActivationListeners = new ArrayList<>();
-    private static List<Consumer<Component>> componentRemovalListeners = new ArrayList<>();
-    private static List<Consumer<Component>> componentAdditionListeners = new ArrayList<>();
-    private static List<BiConsumer<Component, Component>> componentMoveListeners = new ArrayList<>();
+    private static final List<Consumer<World>> worldActivationListeners = new ArrayList<>();
+    private static final List<Consumer<Component>> componentRemovalListeners = new ArrayList<>();
+    private static final List<Consumer<Component>> componentAdditionListeners = new ArrayList<>();
+    private static final List<BiConsumer<Component, Component>> componentMoveListeners = new ArrayList<>();
 
-    private static Map<String, World> worlds = new HashMap<>();
-    private static Map<Long, Component> guidMap = new HashMap<>();
+    private static final Map<String, World> worlds = new HashMap<>();
+    private static final Map<Long, Component> guidMap = new HashMap<>();
 
     public static void initialize(){
         WorldEngine.setOnlyActiveWorld(new World());

@@ -43,14 +43,14 @@ public class Client {
     private String servName;
     private String username = "Testo";
 
-    private ConnectionData connectionData;
-    private Instant timeConnected;
+    private final ConnectionData connectionData;
+    private final Instant timeConnected;
     private int packetsize;
     private boolean running;
     private float currentDelay;
-    private float delayRecountTime = 0.25f;
+    private final float delayRecountTime = 0.25f;
 
-    private List<Runnable> onDisconnectListeners = new ArrayList<>();
+    private final List<Runnable> onDisconnectListeners = new ArrayList<>();
 
     private ActionQueuer queuer;
     

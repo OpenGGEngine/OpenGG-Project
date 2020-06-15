@@ -30,8 +30,8 @@ import java.util.stream.Collectors;
  * @author Javier
  */
 public class RigidBody extends PhysicsObject implements Trigger {
-    private ArrayList<Triggerable> subscribers = new ArrayList<>();
-    private List<Collider> colliders = new ArrayList<>();
+    private final ArrayList<Triggerable> subscribers = new ArrayList<>();
+    private final List<Collider> colliders = new ArrayList<>();
     private PhysicsProvider physicsProvider;
     private AABB aabb;
 

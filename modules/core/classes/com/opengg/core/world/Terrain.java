@@ -43,7 +43,7 @@ public class Terrain {
     private int sizex, sizez;
     private float xsquarewidth, zsquarewidth;
 
-    private float maxHeight = 10;
+    private final float maxHeight = 10;
 
     private String source;
 

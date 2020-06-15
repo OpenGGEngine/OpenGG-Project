@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
  * @author Javier
  */
 public class CollisionManager {
-    private static Map<Tuple.UnorderedTuple<RigidBody>, Collision> contactCache = new HashMap<>();
+    private static final Map<Tuple<RigidBody, RigidBody>, Collision> contactCache = new HashMap<>();
     private static final List<RigidBody> test = new LinkedList<>();
     public static boolean parallelProcessing = false;
     public static boolean enableResponse = true;
@@ -83,7 +83,7 @@ public class CollisionManager {
 
         for(RigidBody next : test){
             if(next.hasPhysicsProvider())
-                processResponse((PhysicsProvider) next.getPhysicsProvider().get());
+                processResponse(next.getPhysicsProvider().get());
         }
     }
 

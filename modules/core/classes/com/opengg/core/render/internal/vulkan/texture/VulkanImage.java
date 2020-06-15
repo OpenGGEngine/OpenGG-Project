@@ -275,7 +275,7 @@ public class VulkanImage implements Texture, NativeResource {
 
     public static class View{
         private final long view;
-        private VulkanImage viewedImage;
+        private final VulkanImage viewedImage;
 
         View(VulkanImage image, int viewType, int format, int aspectMask){
             this.viewedImage = image;

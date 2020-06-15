@@ -3,7 +3,7 @@ package com.opengg.core.vr;
 import com.opengg.core.world.components.Component;
 
 public class VRControllerComponent extends Component {
-    private VR.Controller side;
+    private final VR.Controller side;
 
     private int id;
 

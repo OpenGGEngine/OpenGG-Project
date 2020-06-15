@@ -21,7 +21,7 @@ import java.util.List;
  * @author Javier
  */
 public class MaterialRenderable implements Renderable {
-    private Renderable d;
+    private final Renderable d;
     private Material material = Material.defaultmaterial;
 
     public MaterialRenderable(Renderable d){

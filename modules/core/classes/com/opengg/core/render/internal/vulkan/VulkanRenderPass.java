@@ -69,7 +69,7 @@ public class VulkanRenderPass {
     }
 
     public static class BeginInfo{
-        private VkRenderPassBeginInfo info;
+        private final VkRenderPassBeginInfo info;
 
         BeginInfo(VkRenderPassBeginInfo info){
             this.info = info;

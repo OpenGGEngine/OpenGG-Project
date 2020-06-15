@@ -19,9 +19,9 @@ public class ShaderLoader {
 
     private final Map<String, ShaderProgram> shaders = new HashMap<>();
 
-    private boolean loadFromCache = false;
+    private final boolean loadFromCache = false;
 
-    private String path;
+    private final String path;
 
     public ShaderLoader(String shaderPath){
         this.path = shaderPath;
@@ -224,7 +224,7 @@ public class ShaderLoader {
 
     private class ShaderFileHolder{
         public ShaderFile.ShaderFileType type;
-        private List<ShaderFile> dependencies = new ArrayList<>();
+        private final List<ShaderFile> dependencies = new ArrayList<>();
         public List<ShaderController.Uniform> uniforms = new ArrayList<>();
         public String name;
         public ShaderFile source;

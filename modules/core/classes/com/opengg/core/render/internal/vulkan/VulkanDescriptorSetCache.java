@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class VulkanDescriptorSetCache {
-    private int frames;
-    private List<List<VulkanDescriptorSet>> sets;
+    private final int frames;
+    private final List<List<VulkanDescriptorSet>> sets;
 
     public VulkanDescriptorSetCache(int frames){
         this.frames = frames;

@@ -18,7 +18,7 @@ public class DirectionalFillLayout extends DirectionalLayout{
     @Override
     public void pack() {
         setPadding((size-getTotalOccupiedSize())/(this.parent.getItems().size()-1));
-        super.pack();;
+        super.pack();
     }
 
     @Override

@@ -6,12 +6,12 @@ import com.opengg.core.render.texture.WindowFramebuffer;
 import java.util.function.Consumer;
 
 public class RenderPass {
-    private Framebuffer sceneBuffer;
+    private final Framebuffer sceneBuffer;
     private boolean shouldBlitToBack;
     private boolean isPostProcessEnabled;
 
-    private Runnable enableOp;
-    private Consumer<Framebuffer> disableOp;
+    private final Runnable enableOp;
+    private final Consumer<Framebuffer> disableOp;
 
     public RenderPass(boolean shouldBlitToBack, boolean isPostProcessEnabled, Runnable enableOp, Consumer<Framebuffer> disableOp) {
         this.sceneBuffer = WindowFramebuffer.getWindowFramebuffer(2);
