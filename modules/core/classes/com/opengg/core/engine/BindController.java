@@ -53,7 +53,7 @@ public class BindController implements KeyboardListener, MouseButtonListener, Mo
             Files.lines(Path.of(Resource.getAbsoluteFromLocal("config/controls.cfg")))
                     .forEach(s -> {
                         if(!s.equals(newline)) {
-                            var arr = s.split(" ");
+                            var arr = s.split("|");
                             addBind(ControlType.valueOf(arr[0]), arr[1], Integer.parseInt(arr[2]));
                         }
                     });
@@ -73,10 +73,17 @@ public class BindController implements KeyboardListener, MouseButtonListener, Mo
     }
     
     /**
-     * Adds the given {@link com.opengg.core.io.Bind} to the system
+     * Adds the given {@link com.opengg.core.io.Bind} to the system or updates the existing bind if action already exists
      * @param b Premate Bind to be added
      */
     public static void addBind(Bind b){
+        for (Bind bind: binds) {
+            if (bind.action.equals(b.action)) {
+                bind.button = b.button;
+                bind.type = b.type;
+                return;
+            }
+        }
         binds.add(b);
     }
     
@@ -157,7 +164,7 @@ public class BindController implements KeyboardListener, MouseButtonListener, Mo
             binds.stream()
                     .forEach(bind -> {
                         try {
-                            writer.write(bind.type.name() + " " + bind.action + " " + bind.button);
+                            writer.write(bind.type.name() + "|" + bind.action + "|" + bind.button);
                             writer.newLine();
                         } catch (IOException e) {
                             GGConsole.error("Failed to write to controls file");
