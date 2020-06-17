@@ -141,6 +141,9 @@ public class ShaderController {
         use("object.vert", "bright.frag");
         saveCurrentConfiguration("bright");
 
+        use("object.vert", "arraytex.frag");
+        saveCurrentConfiguration("array");
+
         use("object.vert", "passthrough.frag");
         saveCurrentConfiguration("passthrough");
 
@@ -255,6 +258,9 @@ public class ShaderController {
 
         findUniform("numLights");
         setUniform("numLights", 1);
+
+        findUniform("invertMultiplier");
+        setUniform("invertMultiplier", 1);
 
         findUniform("time");
         setUniform("time", 0f);

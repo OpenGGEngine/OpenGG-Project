@@ -59,7 +59,7 @@ public interface Resource {
         } catch (IOException ex) {
             GGConsole.warning("Failed to load " + name + "!");
         }
-        return null;
+        throw new RuntimeException("Unable to find given file");
     }
 
     static String getApplicationPath(){

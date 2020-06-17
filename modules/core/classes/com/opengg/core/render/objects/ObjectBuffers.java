@@ -29,8 +29,8 @@ public class ObjectBuffers {
         sq.flip();
         
         IntBuffer indices = Allocator.allocInt(6, type);
-        indices.put(new int[]{0,1,2,
-            2,3,0});
+        indices.put(new int[]{2,1,0,
+            0,3,2});
         indices.flip();
         return new VertexIndexPair(sq, indices);
     }

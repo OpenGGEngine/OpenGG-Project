@@ -202,6 +202,14 @@ public class Vector2i implements Serializable{
         return b.putFloat(x).putFloat(y).array();
     }
 
+    public static Vector2i parseVector2i(String value){
+        String fixed = value.replace('(', ' ');
+        fixed = fixed.replace(')', ' ');
+        fixed = fixed.trim();
+        var split = fixed.split(",");
+        return new Vector2i(Integer.parseInt(split[0].trim()), Integer.parseInt(split[1].trim()));
+    }
+
     @Override
     public int hashCode() {
         int hash = 7;
