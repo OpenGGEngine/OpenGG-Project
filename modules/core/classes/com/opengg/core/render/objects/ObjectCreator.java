@@ -51,7 +51,6 @@ public class ObjectCreator {
 
     public static VertexIndexPair createSquareBuffers(Vector2f c1, Vector2f c2, float z, Allocator.AllocType type){
         return ObjectBuffers.getSquare(c1, c2, z, 1, false, type);
-
     }
     
     public static Renderable createCube(float size){

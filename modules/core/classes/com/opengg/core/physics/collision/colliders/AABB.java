@@ -22,20 +22,27 @@ import java.util.List;
  */
 public class AABB extends PhysicsObject{
     Vector3f lwh = new Vector3f();
+    Vector3f offset = new Vector3f();
     
     Vector3f min = new Vector3f(1,1,1);
     Vector3f max = new Vector3f(-1,-1,-1);
 
-    public AABB(){
-
-    }
-
     public AABB(List<Vector3f> points){
+        float maxX = Float.MIN_VALUE, maxY = Float.MIN_VALUE, maxZ = Float.MIN_VALUE,
+                minX = Float.MAX_VALUE, minY = Float.MAX_VALUE, minZ = Float.MAX_VALUE;
         for(Vector3f p : points){
-            if(abs(p.x) > lwh.x) lwh = lwh.setX(abs(p.x));
-            if(abs(p.y) > lwh.y) lwh = lwh.setY(abs(p.y));
-            if(abs(p.z) > lwh.z) lwh = lwh.setZ(abs(p.z));
+            if(p.x > maxX) maxX = p.x;
+            if(p.y > maxY) maxY = p.y;
+            if(p.z > maxZ) maxZ = p.z;
+
+            if(p.x < minX) minX = p.x;
+            if(p.y < minY) minY = p.y;
+            if(p.z < minZ) minZ = p.z;
         }
+
+        lwh = new Vector3f(maxX-minX, maxY-minY, maxZ - minZ).divide(2);
+        offset = new Vector3f((maxX+minX)/2,(maxY+minY)/2,(maxZ+minZ)/2);
+
         recalculate();
     }
     
@@ -44,7 +51,8 @@ public class AABB extends PhysicsObject{
     }
     
     public AABB(Vector3f lwh) {
-        this.lwh = lwh; 
+        this.lwh = lwh;
+        this.offset = new Vector3f();
         recalculate();
     }
     
@@ -65,8 +73,8 @@ public class AABB extends PhysicsObject{
     }
 
     public void recalculate(){
-        min = new Vector3f(-1,-1,-1).multiply(lwh).multiply(getScale()).add(getPosition());
-        max = new Vector3f(1,1,1).multiply(lwh).multiply(getScale()).add(getPosition());
+        min = new Vector3f(-1,-1,-1).multiply(lwh).add(offset).multiply(getScale()).add(getPosition());
+        max = new Vector3f(1,1,1).multiply(lwh).add(offset).multiply(getScale()).add(getPosition());
     }
     
     public boolean isColliding(AABB x) {
@@ -134,12 +142,14 @@ public class AABB extends PhysicsObject{
     public void serialize(GGOutputStream out) throws IOException {
         super.serialize(out);
         out.write(lwh);
+        out.write(offset);
     }
 
     @Override
     public void deserialize(GGInputStream in) throws IOException{
         super.deserialize(in);
         lwh = in.readVector3f();
+        offset = in.readVector3f();
         recalculate();
     }
 }

@@ -568,9 +568,11 @@ public abstract class Component{
     }
 
     public final void delete(){
-        this.localFinalizeComponent();
-        this.getParent().remove(this);
-        WorldEngine.onComponentRemoved(this);
+        OpenGG.asyncExec(() -> {
+            this.localFinalizeComponent();
+            this.getParent().remove(this);
+            WorldEngine.onComponentRemoved(this);
+        });
     }
     /**
      * Attaches a component to this component<br>

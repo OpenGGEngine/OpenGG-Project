@@ -262,6 +262,9 @@ public class ShaderController {
         findUniform("invertMultiplier");
         setUniform("invertMultiplier", 1);
 
+        findUniform("layer");
+        setUniform("layer", 0);
+
         findUniform("time");
         setUniform("time", 0f);
 
