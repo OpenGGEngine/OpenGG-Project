@@ -17,6 +17,7 @@ import com.opengg.core.system.Allocator;
 import java.nio.Buffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.List;
 
 /**
  *
@@ -26,6 +27,11 @@ public class ObjectCreator {
     public static Renderable createQuadPrism(Vector3f c1, Vector3f c2){
         Buffer[] b = createQuadPrismBuffers(c1,c2);
         return DrawnObject.create((IntBuffer)b[1], (FloatBuffer)b[0]);
+    }
+
+    public static Renderable create3DRectangle(Vector3f p1, Vector3f p2, Vector3f p3, Vector3f p4){
+        var b = ObjectBuffers.get3DRectangle(p1,p2,p3,p4);
+        return DrawnObject.create(b.indices(), b.vertices());
     }
     
     public static Renderable createInstancedQuadPrism(Vector3f c1, Vector3f c2){
@@ -56,6 +62,12 @@ public class ObjectCreator {
     public static Renderable createCube(float size){
         Buffer[] b = ObjectBuffers.genQuadPrism(new Vector3f(-size/2), new Vector3f(size/2));
         return DrawnObject.create((IntBuffer)b[1], (FloatBuffer)b[0]);
+    }
+
+    public static Renderable createPointList(List<Vector3f> points){
+        var renderable = DrawnObject.create(ObjectBuffers.createPointFloatBuffer(points));
+        renderable.setRenderType(DrawnObject.DrawType.POINTS);
+        return renderable;
     }
 
     private ObjectCreator() {

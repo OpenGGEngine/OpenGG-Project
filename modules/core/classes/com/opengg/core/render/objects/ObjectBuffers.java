@@ -20,6 +20,22 @@ import java.util.List;
  * @author Javier
  */
 public class ObjectBuffers {
+    public static VertexIndexPair get3DRectangle(Vector3f p1, Vector3f p2, Vector3f p3, Vector3f p4){
+        FloatBuffer sq = Allocator.allocFloat(4*8);
+
+        sq.put(p1.x).put(p1.y).put(p1.z).put(1f).put(1f).put(1f).put(0).put(0);
+        sq.put(p2.x).put(p2.y).put(p2.z).put(1f).put(1f).put(1f).put(1).put(0);
+        sq.put(p3.x).put(p3.y).put(p3.z).put(1f).put(1f).put(1f).put(1).put(1);
+        sq.put(p4.x).put(p4.y).put(p4.z).put(1f).put(1f).put(1f).put(0).put(1);
+        sq.flip();
+
+        IntBuffer indices = Allocator.allocInt(6);
+        indices.put(new int[]{2,1,0,
+                0,3,2});
+        indices.flip();
+        return new VertexIndexPair(sq, indices);
+    }
+
     public static VertexIndexPair getSquare(Vector2f v1, Vector2f v2, float z1 , float transparency, boolean flippedTex, Allocator.AllocType type){
         FloatBuffer sq = Allocator.allocFloat(4*8, type);
         sq.put(v1.x).put(v1.y).put(z1).put(1f).put(1f).put(1f).put(0).put(0);
@@ -111,6 +127,16 @@ public class ObjectBuffers {
         d2.flip();
         return new Buffer[]{d,d2};
     }
+
+    static FloatBuffer createPointFloatBuffer(List<Vector3f> points){
+        FloatBuffer f = Allocator.allocFloat(points.size()*8);
+        for(var p : points){
+            f.put(p.x).put(p.y).put(p.z).put(0).put(1).put(0).put(0).put(0);
+        }
+        f.flip();
+        return f;
+    }
+
 
     public static List<Triangle> getFromPointCloud(List<Vector3f> points){
         return null;

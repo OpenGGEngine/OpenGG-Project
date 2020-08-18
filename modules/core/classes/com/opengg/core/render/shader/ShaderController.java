@@ -145,10 +145,10 @@ public class ShaderController {
         saveCurrentConfiguration("array");
 
         use("object.vert", "passthrough.frag");
-        saveCurrentConfiguration("passthrough");
+        saveCurrentConfiguration("no_fragment");
 
         use("noprocess.vert", "passthrough.frag");
-        saveCurrentConfiguration("passthrough2");
+        saveCurrentConfiguration("no_process");
 
         use("modeltransform.vert", "point.geom", "point.frag");
         saveCurrentConfiguration("pointshadow");
@@ -158,9 +158,6 @@ public class ShaderController {
 
         use("object.vert", "fxaa.frag");
         saveCurrentConfiguration("fxaa");
-
-        use("object.vert", "passthrough.frag");
-        saveCurrentConfiguration("volume");
 
         use("object.vert", "text.frag");
         saveCurrentConfiguration("sdf");

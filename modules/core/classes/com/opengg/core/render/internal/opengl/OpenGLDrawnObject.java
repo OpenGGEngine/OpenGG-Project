@@ -46,7 +46,7 @@ public class OpenGLDrawnObject extends DrawnObject {
             case TRIANGLES -> GL_TRIANGLES;
             case TRIANGLE_STRIP -> GL_TRIANGLE_STRIP;
             case TRIANGLE_FAN -> GL_TRIANGLE_FAN;
-            case POINTS -> GL_POINT;
+            case POINTS -> GL_POINTS;
             case LINES -> GL_LINES;
             case LINE_STRIP -> GL_LINE_STRIP;
         };

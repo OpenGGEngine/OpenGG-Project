@@ -29,6 +29,7 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL14.GL_FUNC_ADD;
 import static org.lwjgl.opengl.GL14.glBlendEquation;
 import static org.lwjgl.opengl.GL30.*;
+import static org.lwjgl.opengl.GL32.GL_PROGRAM_POINT_SIZE;
 import static org.lwjgl.opengl.GL32.GL_TEXTURE_CUBE_MAP_SEAMLESS;
 
 /**
@@ -71,6 +72,7 @@ public class OpenGLRenderer implements Renderer {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         glEnable(GL_DEPTH_TEST);
+        glEnable(GL_PROGRAM_POINT_SIZE);
         glDepthFunc(GL_LEQUAL);
         GLOptions.set(GL_TEXTURE_CUBE_MAP_SEAMLESS, true);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -198,7 +200,7 @@ public class OpenGLRenderer implements Renderer {
         glEnable(GL_BLEND);
         glBlendEquation(GL_FUNC_ADD);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
+        cull = false;
         if(cull)
             glEnable(GL_CULL_FACE);
         else

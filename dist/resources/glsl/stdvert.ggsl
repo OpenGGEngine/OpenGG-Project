@@ -4,6 +4,7 @@ layout(location = 2) out vec3 norm;
 
 out gl_PerVertex{
     vec4 gl_Position;
+    float gl_PointSize;
 };
 
 layout(binding = 0, set = 0) unwrap uniform VP{

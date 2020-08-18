@@ -123,9 +123,9 @@ public class  OpenGGTest extends GGApplication{
                 //Light.createDirectionalShadow(Quaternionf.createYXZ(new Vector3f(45,0,0)), new Vector3f(1, 1, 1),
                 //        new Vector3f(0, 0, 0), Matrix4f.orthographic(-100, 100, -100, 100, -100, 100), 4096, 4096));
                 Light.createDirectional(Quaternionf.createYXZ(new Vector3f(45,30,0)), new Vector3f(1, 1, 1)));
-        WorldEngine.getCurrent().attach(light);
-        player = new FreeFlyComponent();
-        WorldEngine.getCurrent().attach(player);
+        WorldEngine.getCurrent().attach(light)player = new FreeFlyComponent();
+        WorldEngine.getCurrent().attach(player);;
+
 
         var cube = List.of(
                 new Vector3f(-1,-1,-1),
