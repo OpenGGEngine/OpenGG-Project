@@ -26,4 +26,5 @@ void main() {
 		col += getPhongFrom(lights[i]);
 	}
 	fcolor = vec4(col, trans);
+	if(trans < 0.05f) discard;
 }

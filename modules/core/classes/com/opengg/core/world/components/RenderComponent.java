@@ -62,8 +62,9 @@ public class RenderComponent extends Component implements com.opengg.core.render
         return shader;
     }
 
-    public void setShader(String shader) {
+    public RenderComponent setShader(String shader) {
         this.shader = shader;
+        return this;
     }
 
     public VertexArrayFormat getFormat() {
