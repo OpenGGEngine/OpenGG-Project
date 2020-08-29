@@ -24,36 +24,29 @@ import java.util.List;
 
 public class RenderEngine {
     private static final boolean debug = true;
-
-    private static boolean initialized;
-
-    private static RenderEnvironment currentEnvironment;
-
-    public static Renderer renderer;
-
-    private static VertexArrayFormat defaultVAOFormat;
-    private static  VertexArrayFormat particleVAOFormat;
-    private static  VertexArrayFormat animationVAOFormat;
-    private static  VertexArrayFormat animation2VAOFormat;
-    private static  VertexArrayFormat tangentVAOFormat;
-    private static  VertexArrayFormat tangentAnimVAOFormat;
-
     private static final List<RenderGroup> groups = new ArrayList<>();
     private static final List<RenderOperation> paths = new ArrayList<>();
     private static final List<RenderPass> passes = new ArrayList<>();
     private static final List<Light> lights = new ArrayList<>();
-
+    public static Renderer renderer;
+    private static boolean initialized;
+    private static RenderEnvironment currentEnvironment;
+    private static VertexArrayFormat defaultVAOFormat;
+    private static VertexArrayFormat particleVAOFormat;
+    private static VertexArrayFormat animationVAOFormat;
+    private static VertexArrayFormat animation2VAOFormat;
+    private static VertexArrayFormat tangentVAOFormat;
+    private static VertexArrayFormat tangentAnimVAOFormat;
     private static RenderGroup defaultList;
-    private boolean bindSkyboxToCamera = false;
-
     private static View camera = new Camera();
     private static ProjectionData projectionData;
+    private boolean bindSkyboxToCamera = false;
 
-    public static void initialize(WindowOptions opts){
+    public static void initialize(WindowOptions opts) {
         initializeForHeadless();
         initialized = true;
 
-        renderer = switch (opts.renderer){
+        renderer = switch (opts.renderer) {
             case OPENGL -> new OpenGLRenderer();
             case VULKAN -> new VulkanRenderer();
         };
@@ -77,74 +70,73 @@ public class RenderEngine {
 
     public static void initializeForHeadless() {
 
-        defaultVAOFormat = new VertexArrayFormat();
-        defaultVAOFormat.addBinding(new VertexArrayBinding(0,8*4, 0, List.of(
-                new VertexArrayFormat.VertexArrayAttribute("position", 3*4, VertexArrayFormat.VertexArrayAttribute.Type.FLOAT3, 0),
-                new VertexArrayFormat.VertexArrayAttribute("normal", 3*4, VertexArrayFormat.VertexArrayAttribute.Type.FLOAT3, 3*4),
-                new VertexArrayFormat.VertexArrayAttribute("texcoord", 2*4, VertexArrayFormat.VertexArrayAttribute.Type.FLOAT2, 6*4)
-        )));
+        defaultVAOFormat = new VertexArrayFormat(List.of(
+                new VertexArrayBinding(0, 8 * 4, 0, List.of(
+                        new VertexArrayBinding.VertexArrayAttribute("position", 3 * 4, VertexArrayBinding.VertexArrayAttribute.Type.FLOAT3, 0),
+                        new VertexArrayBinding.VertexArrayAttribute("normal", 3 * 4, VertexArrayBinding.VertexArrayAttribute.Type.FLOAT3, 3 * 4),
+                        new VertexArrayBinding.VertexArrayAttribute("texcoord", 2 * 4, VertexArrayBinding.VertexArrayAttribute.Type.FLOAT2, 6 * 4)
+                ))
+        ));
 
-        tangentVAOFormat = new VertexArrayFormat();
-        tangentVAOFormat.addBinding(new VertexArrayBinding(0,11*4, 0, List.of(
-                new VertexArrayFormat.VertexArrayAttribute("position", 3*4, VertexArrayFormat.VertexArrayAttribute.Type.FLOAT3, 0),
-                new VertexArrayFormat.VertexArrayAttribute("normal", 3*4, VertexArrayFormat.VertexArrayAttribute.Type.FLOAT3, 3*4),
-                new VertexArrayFormat.VertexArrayAttribute("tangent", 3*4, VertexArrayFormat.VertexArrayAttribute.Type.FLOAT3, 6*4),
-                new VertexArrayFormat.VertexArrayAttribute("texcoord", 2*4, VertexArrayFormat.VertexArrayAttribute.Type.FLOAT2, 9*4)
-        )));
+        tangentVAOFormat = new VertexArrayFormat(List.of(new VertexArrayBinding(0, 11 * 4, 0, List.of(
+                new VertexArrayBinding.VertexArrayAttribute("position", 3 * 4, VertexArrayBinding.VertexArrayAttribute.Type.FLOAT3, 0),
+                new VertexArrayBinding.VertexArrayAttribute("normal", 3 * 4, VertexArrayBinding.VertexArrayAttribute.Type.FLOAT3, 3 * 4),
+                new VertexArrayBinding.VertexArrayAttribute("tangent", 3 * 4, VertexArrayBinding.VertexArrayAttribute.Type.FLOAT3, 6 * 4),
+                new VertexArrayBinding.VertexArrayAttribute("texcoord", 2 * 4, VertexArrayBinding.VertexArrayAttribute.Type.FLOAT2, 9 * 4)
+        ))));
 
-        tangentAnimVAOFormat = new VertexArrayFormat();
-        tangentAnimVAOFormat.addBinding(new VertexArrayBinding(0,19*4, 0, List.of(
-                new VertexArrayFormat.VertexArrayAttribute("position", 3*4, VertexArrayFormat.VertexArrayAttribute.Type.FLOAT3, 0),
-                new VertexArrayFormat.VertexArrayAttribute("normal", 3*4, VertexArrayFormat.VertexArrayAttribute.Type.FLOAT3, 3*4),
-                new VertexArrayFormat.VertexArrayAttribute("tangent", 3*4, VertexArrayFormat.VertexArrayAttribute.Type.FLOAT3, 6*4),
-                new VertexArrayFormat.VertexArrayAttribute("texcoord", 2*4, VertexArrayFormat.VertexArrayAttribute.Type.FLOAT2, 9*4),
-                new VertexArrayFormat.VertexArrayAttribute("jointindex", 4*4, VertexArrayFormat.VertexArrayAttribute.Type.FLOAT4, 11*4),
-                new VertexArrayFormat.VertexArrayAttribute("weights", 4*4, VertexArrayFormat.VertexArrayAttribute.Type.FLOAT4, 15*4)
-        )));
+        tangentAnimVAOFormat = new VertexArrayFormat(List.of(new VertexArrayBinding(0, 19 * 4, 0, List.of(
+                new VertexArrayBinding.VertexArrayAttribute("position", 3 * 4, VertexArrayBinding.VertexArrayAttribute.Type.FLOAT3, 0),
+                new VertexArrayBinding.VertexArrayAttribute("normal", 3 * 4, VertexArrayBinding.VertexArrayAttribute.Type.FLOAT3, 3 * 4),
+                new VertexArrayBinding.VertexArrayAttribute("tangent", 3 * 4, VertexArrayBinding.VertexArrayAttribute.Type.FLOAT3, 6 * 4),
+                new VertexArrayBinding.VertexArrayAttribute("texcoord", 2 * 4, VertexArrayBinding.VertexArrayAttribute.Type.FLOAT2, 9 * 4),
+                new VertexArrayBinding.VertexArrayAttribute("jointindex", 4 * 4, VertexArrayBinding.VertexArrayAttribute.Type.FLOAT4, 11 * 4),
+                new VertexArrayBinding.VertexArrayAttribute("weights", 4 * 4, VertexArrayBinding.VertexArrayAttribute.Type.FLOAT4, 15 * 4)
+        ))));
 
-        particleVAOFormat = new VertexArrayFormat();
-        particleVAOFormat.addBinding(new VertexArrayBinding(0,8*4, 0, List.of(
-                new VertexArrayFormat.VertexArrayAttribute("position", 3*4, VertexArrayFormat.VertexArrayAttribute.Type.FLOAT3, 0),
-                new VertexArrayFormat.VertexArrayAttribute("normal", 3*4, VertexArrayFormat.VertexArrayAttribute.Type.FLOAT3, 3*4),
-                new VertexArrayFormat.VertexArrayAttribute("texcoord", 2*4, VertexArrayFormat.VertexArrayAttribute.Type.FLOAT2, 6*4)
-        )));
-        particleVAOFormat.addBinding(new VertexArrayBinding(1,3*4, 1, List.of(
-                new VertexArrayFormat.VertexArrayAttribute("offset", 3*4, VertexArrayFormat.VertexArrayAttribute.Type.FLOAT3, 0)
-        )));
+        particleVAOFormat = new VertexArrayFormat(List.of(new VertexArrayBinding(0, 8 * 4, 0, List.of(
+                new VertexArrayBinding.VertexArrayAttribute("position", 3 * 4, VertexArrayBinding.VertexArrayAttribute.Type.FLOAT3, 0),
+                new VertexArrayBinding.VertexArrayAttribute("normal", 3 * 4, VertexArrayBinding.VertexArrayAttribute.Type.FLOAT3, 3 * 4),
+                new VertexArrayBinding.VertexArrayAttribute("texcoord", 2 * 4, VertexArrayBinding.VertexArrayAttribute.Type.FLOAT2, 6 * 4)
+                )),
+                new VertexArrayBinding(1, 3 * 4, 1, List.of(
+                        new VertexArrayBinding.VertexArrayAttribute("offset", 3 * 4, VertexArrayBinding.VertexArrayAttribute.Type.FLOAT3, 0)
+                ))
+        ));
 
     }
 
-    public static void render(){
+    public static void render() {
         renderer.render();
     }
 
-    public static void sortOrders(){
+    public static void sortOrders() {
         groups.sort(Comparator.comparingInt(RenderGroup::getOrder));
     }
 
-    public static void endFrame(){
+    public static void endFrame() {
         WindowController.getWindow().endFrame();
         renderer.endFrame();
     }
 
-    public static void startFrame(){
+    public static void startFrame() {
         WindowController.getWindow().startFrame();
         renderer.startFrame();
     }
 
-    public static void addRenderGroup(RenderGroup r){
-        if(!groups.contains(r))
+    public static void addRenderGroup(RenderGroup r) {
+        if (!groups.contains(r))
             groups.add(r);
     }
 
-    public static RenderGroup getRenderGroup(String name){
-        for(RenderGroup r : groups)
-            if(r.getName().equals(name)) return r;
+    public static RenderGroup getRenderGroup(String name) {
+        for (RenderGroup r : groups)
+            if (r.getName().equals(name)) return r;
 
         return null;
     }
 
-    public static List<RenderGroup> getRenderGroups(){
+    public static List<RenderGroup> getRenderGroups() {
         return groups;
     }
 
@@ -152,133 +144,129 @@ public class RenderEngine {
         passes.add(pass);
     }
 
-    public static List<RenderPass> getRenderPasses(){
+    public static List<RenderPass> getRenderPasses() {
         return passes;
     }
 
-    public static List<RenderGroup> getActiveRenderGroups(){
+    public static List<RenderGroup> getActiveRenderGroups() {
         ArrayList<RenderGroup> list = new ArrayList<>(groups.size());
 
-        for(RenderGroup r : groups)
-            if(r.isEnabled())
+        for (RenderGroup r : groups)
+            if (r.isEnabled())
                 list.add(r);
 
-        for(RenderGroup r : currentEnvironment.getGroups())
-            if(r.isEnabled())
+        for (RenderGroup r : currentEnvironment.getGroups())
+            if (r.isEnabled())
                 list.add(r);
 
         return list;
     }
 
-    public static void removeRenderGroup(RenderGroup r){
+    public static void removeRenderGroup(RenderGroup r) {
         groups.remove(r);
     }
 
-    public static void addRenderPath(RenderOperation r){
+    public static void addRenderPath(RenderOperation r) {
         paths.add(r);
     }
 
-    public static RenderOperation getRenderPath(String name){
-        for(RenderOperation r : paths)
-            if(r.getName().equals(name)) return r;
+    public static RenderOperation getRenderPath(String name) {
+        for (RenderOperation r : paths)
+            if (r.getName().equals(name)) return r;
 
         return null;
     }
 
-    public static List<RenderOperation> getRenderPaths(){
+    public static List<RenderOperation> getRenderPaths() {
         return paths;
     }
 
-    public static List<RenderOperation> getActiveRenderPaths(){
+    public static List<RenderOperation> getActiveRenderPaths() {
         ArrayList<RenderOperation> list = new ArrayList<>();
 
-        for(RenderOperation r : paths)
-            if(r.isEnabled())
+        for (RenderOperation r : paths)
+            if (r.isEnabled())
                 list.add(r);
 
         return list;
     }
 
 
-    public static List<Light> getActiveLights(){
+    public static List<Light> getActiveLights() {
         var lights = new ArrayList<Light>();
 
-        for(var light : RenderEngine.lights)
-            if(light.isActive())
+        for (var light : RenderEngine.lights)
+            if (light.isActive())
                 lights.add(light);
 
-        for(var light : RenderEngine.getCurrentEnvironment().getLights())
-            if(light.isActive())
+        for (var light : RenderEngine.getCurrentEnvironment().getLights())
+            if (light.isActive())
                 lights.add(light);
 
         return lights;
     }
 
-    public static void removeRenderPath(RenderOperation r){
+    public static void removeRenderPath(RenderOperation r) {
         paths.remove(r);
     }
 
-    public static void addRenderable(Renderable r){
+    public static void addRenderable(Renderable r) {
         defaultList.add(r);
     }
 
-    public static Skybox getSkybox(){
+    public static Skybox getSkybox() {
         return currentEnvironment.getSkybox();
     }
 
-    public static RenderEnvironment getCurrentEnvironment(){
+    public static RenderEnvironment getCurrentEnvironment() {
         return currentEnvironment;
     }
 
-    public static void setCurrentEnvironment(RenderEnvironment currentEnvironment){
+    public static void setCurrentEnvironment(RenderEnvironment currentEnvironment) {
         RenderEngine.currentEnvironment = currentEnvironment;
     }
 
-    public static void useView(View c){
+    public static void useView(View c) {
         camera = c;
     }
 
-    public static View getCurrentView(){
+    public static View getCurrentView() {
         return camera;
-    }
-
-    public static void setProjectionData(ProjectionData data){
-        projectionData = data;
     }
 
     public static ProjectionData getProjectionData() {
         return projectionData;
     }
 
-    public static VertexArrayFormat getDefaultFormat(){
+    public static void setProjectionData(ProjectionData data) {
+        projectionData = data;
+    }
+
+    public static VertexArrayFormat getDefaultFormat() {
         return defaultVAOFormat;
     }
 
-    public static  VertexArrayFormat getParticleFormat(){
+    public static VertexArrayFormat getParticleFormat() {
         return particleVAOFormat;
     }
 
-    public static  VertexArrayFormat getAnimationFormat(){
+    public static VertexArrayFormat getAnimationFormat() {
         return animationVAOFormat;
     }
 
-    public static  VertexArrayFormat getTangentVAOFormat(){
+    public static VertexArrayFormat getTangentVAOFormat() {
         return tangentVAOFormat;
     }
 
-    public static  VertexArrayFormat getTangentAnimVAOFormat(){
+    public static VertexArrayFormat getTangentAnimVAOFormat() {
         return tangentAnimVAOFormat;
     }
 
-    public void setBindSkyboxToCamera(boolean bindSkyboxToCamera) {
-        this.bindSkyboxToCamera = bindSkyboxToCamera;
-    }
-
-    public static WindowOptions.RendererType getRendererType(){
+    public static WindowOptions.RendererType getRendererType() {
         return OpenGG.getInitOptions().getWindowOptions().renderer;
     }
 
-    public static Renderer getRenderer(){
+    public static Renderer getRenderer() {
         return renderer;
     }
 
@@ -287,12 +275,16 @@ public class RenderEngine {
     }
 
     public static boolean validateInitialization() {
-        if(!GGInfo.isServer() && !initialized) throw new RenderException("OpenGL is not initialized!");
+        if (!GGInfo.isServer() && !initialized) throw new RenderException("OpenGL is not initialized!");
         return !initialized;
     }
 
     public static void destroy() {
         renderer.destroy();
+    }
+
+    public void setBindSkyboxToCamera(boolean bindSkyboxToCamera) {
+        this.bindSkyboxToCamera = bindSkyboxToCamera;
     }
 
 

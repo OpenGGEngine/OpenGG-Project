@@ -1,5 +1,6 @@
 package com.opengg.core.render.internal.vulkan;
 
+import com.opengg.core.render.GraphicsBuffer;
 import com.opengg.core.render.drawn.DrawnObject;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.shader.VertexArrayFormat;
@@ -10,20 +11,12 @@ import java.nio.IntBuffer;
 import static org.lwjgl.vulkan.VK10.*;
 
 public class VulkanDrawnObject extends DrawnObject{
-    public VulkanDrawnObject(FloatBuffer... vertices) {
-        super(vertices);
-    }
-
-    public VulkanDrawnObject(VertexArrayFormat format, FloatBuffer... vertices) {
-        super(format, vertices);
-    }
-
-    public VulkanDrawnObject(IntBuffer index, FloatBuffer... vertices) {
-        super(index, vertices);
-    }
-
     public VulkanDrawnObject(VertexArrayFormat format, IntBuffer index, FloatBuffer... vertices) {
         super(format, index, vertices);
+    }
+
+    public VulkanDrawnObject(VertexArrayFormat format, GraphicsBuffer indexBuffer, int indexCount, GraphicsBuffer... vertices) {
+        super(format, indexBuffer, indexCount, vertices);
     }
 
     @Override
@@ -31,7 +24,7 @@ public class VulkanDrawnObject extends DrawnObject{
         ShaderController.uploadModifiedDescriptorSets();
         VulkanRenderer.getRenderer().getCurrentCommandBuffer().bindVertexBuffers(vertexBufferObjects);
         VulkanRenderer.getRenderer().getCurrentCommandBuffer().bindIndexBuffer(indexBuffer);
-        VulkanRenderer.getRenderer().getCurrentCommandBuffer().drawVertexIndexed(this.elementCount, this.instanceCount, 0, this.baseVertex, 0);
+        VulkanRenderer.getRenderer().getCurrentCommandBuffer().drawVertexIndexed(this.elementCount, this.instanceCount, this.baseElement, this.baseVertex, 0);
     }
 
     public static int getVulkanInputAssembly(DrawnObject.DrawType type){

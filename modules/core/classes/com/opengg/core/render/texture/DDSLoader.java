@@ -15,7 +15,7 @@ public class DDSLoader {
     private static final int DXT3 = (0x44585433);
     private static final int DXT4 = (0x44585434);
     private static final int DXT5 = (0x44585435);
-    public static TextureData load(String path){
+    public static TextureData load(String path) throws IOException {
         File f = new File(path);
         try(FileInputStream fc = new FileInputStream(f)){
             //Verify Header
@@ -46,11 +46,6 @@ public class DDSLoader {
             });
             data.setMipMapCount(mipMapCount);
             return data;
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
-        return null;
     }
 }

@@ -5,7 +5,6 @@
  */
 package com.opengg.core.render.drawn;
 
-import com.opengg.core.math.util.Tuple;
 import com.opengg.core.render.GraphicsBuffer;
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.render.Renderable;
@@ -14,6 +13,8 @@ import com.opengg.core.render.internal.vulkan.VulkanDrawnObject;
 import com.opengg.core.render.shader.VertexArrayFormat;
 import com.opengg.core.system.Allocator;
 
+import java.nio.Buffer;
+import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
@@ -28,60 +29,18 @@ public abstract class DrawnObject implements Renderable {
     protected GraphicsBuffer indexBuffer;
     protected VertexArrayFormat format;
 
+    protected IndexType indexType = IndexType.INT;
     protected DrawType drawType = DrawType.TRIANGLES;
     protected int elementCount;
     protected int instanceCount = 1;
     protected int baseVertex = 0;
+    protected int baseElement = 0;
 
-    /**
-     * Creates a drawn object containing the given {@link FloatBuffer FloatBuffers}
-     * <br>
-     * The given buffers are bound to the default {@link com.opengg.core.render.shader.VertexArrayObject} in order of appearance
-     * @param vertices Buffers to add
-     */
-    protected DrawnObject(FloatBuffer... vertices){
-        this(RenderEngine.getDefaultFormat(), vertices);
-    }
-
-    /**
-     * Creates a drawn object containing the given {@link FloatBuffer FloatBuffers}
-     * <br>
-     * The given buffers are bound to the given {@link com.opengg.core.render.shader.VertexArrayObject} in order of appearance
-     * @param vertices Buffers to add
-     * @param format VertexArrayFormat to use for rendering this object
-     */
-    protected DrawnObject(VertexArrayFormat format, FloatBuffer... vertices){
-        this(format, null, vertices);
-    }
-
-    /**
-     * Creates a drawn object containing the given {@link FloatBuffer FloatBuffers}, indexed by the given {@link IntBuffer}
-     * <br>
-     * The given buffers are bound to the default {@link com.opengg.core.render.shader.VertexArrayObject} in order of appearance
-     * @param vertices Buffers to add
-     * @param index Buffer containing the indices to use for the vertices of the object
-     */
-    protected DrawnObject(IntBuffer index, FloatBuffer... vertices){
-        this(RenderEngine.getDefaultFormat(), index, vertices);
-    }
-
-    /**
-     * Creates a drawn object containing the given {@link FloatBuffer FloatBuffers}, indexed by the given {@link IntBuffer}
-     * <br>
-     * The given buffers are bound to the default {@link com.opengg.core.render.shader.VertexArrayObject} in order of appearance
-     * @param vertices Buffers to add
-     * @param index Buffer containing the indices to use for the vertices of the object
-     * @param format VertexArrayFormat to add
-     */
-    protected DrawnObject(VertexArrayFormat format, IntBuffer index, FloatBuffer... vertices){
-        this.format = format;
-        defBuffers(vertices, index);
-    }
 
     public static DrawnObject create(FloatBuffer... vertices) {
         return switch (RenderEngine.getRendererType()){
-            case OPENGL -> new OpenGLDrawnObject(vertices);
-            case VULKAN -> new VulkanDrawnObject(vertices);
+            case OPENGL -> new OpenGLDrawnObject(RenderEngine.getDefaultFormat(), null, vertices);
+            case VULKAN -> new VulkanDrawnObject(RenderEngine.getDefaultFormat(), null,vertices);
         };
     }
 
@@ -94,59 +53,98 @@ public abstract class DrawnObject implements Renderable {
 
     public static DrawnObject create(IntBuffer index, FloatBuffer... vertices) {
         return switch (RenderEngine.getRendererType()){
-            case OPENGL -> new OpenGLDrawnObject(index, vertices);
-            case VULKAN -> new VulkanDrawnObject(index, vertices);
+            case OPENGL -> new OpenGLDrawnObject(RenderEngine.getDefaultFormat(), index, vertices);
+            case VULKAN -> new VulkanDrawnObject(RenderEngine.getDefaultFormat(), index, vertices);
         };
     }
 
     public static DrawnObject create(VertexArrayFormat format, FloatBuffer... vertices) {
         return switch (RenderEngine.getRendererType()){
-            case OPENGL -> new OpenGLDrawnObject(format, vertices);
-            case VULKAN -> new VulkanDrawnObject(format, vertices);
+            case OPENGL -> new OpenGLDrawnObject(format, null, vertices);
+            case VULKAN -> new VulkanDrawnObject(format, null, vertices);
+        };
+    }
+
+    public static DrawnObject createFromGPUMemory(VertexArrayFormat format, GraphicsBuffer index, int indexCount, GraphicsBuffer... vertices) {
+        return switch (RenderEngine.getRendererType()){
+            case OPENGL -> new OpenGLDrawnObject(format, index, indexCount, vertices);
+            case VULKAN -> new VulkanDrawnObject(format, index, indexCount, vertices);
         };
     }
 
     /**
-     * Sets the buffer with the given ID to the given {@link FloatBuffer}
+     * Creates a drawn object containing the given {@link FloatBuffer FloatBuffers}, indexed by the given {@link IntBuffer}
      * <br>
-     * This sets the buffer to the default buffer type of GL_STATIC_DRAW, optimizing for reading operations
-     * @param bufferid Buffer to replace
-     * @param buffer Buffer to update
+     * The given buffers are bound to the default {@link com.opengg.core.render.shader.VertexArrayObject} in order of appearance
+     * @param vertices Buffers to add
+     * @param indexBuffer Buffer containing the indices to use for the vertices of the object
+     * @param format VertexArrayFormat to add
      */
-    public void updateBuffer(int bufferid, FloatBuffer buffer){
-        this.updateBuffer(bufferid, buffer, GraphicsBuffer.UsageType.STATIC_DRAW);
+    protected DrawnObject(VertexArrayFormat format, IntBuffer indexBuffer, Buffer... vertices){
+        this.format = format;
+        generateGPUMemory(vertices, indexBuffer);
+    }
+
+    protected DrawnObject(VertexArrayFormat format, GraphicsBuffer indexBuffer, int indexCount, GraphicsBuffer... vertices){
+        this.format = format;
+        this.indexBuffer = indexBuffer;
+        this.elementCount = indexCount;
+        this.vertexBufferObjects = new ArrayList<>(List.of(vertices));
     }
 
     /**
      * Sets the buffer with the given ID to the given {@link FloatBuffer}
      * <br>
      * This sets the buffer to the given buffer type, optimizing for reading operations
-     * @param bufferid Buffer to replace
+     * @param bufferIndex Buffer to replace
      * @param buffer Buffer to update
-     * @param buffertype Type of buffer to upload, of types GL_STATIC_DRAW, GL_DYNAMIC_DRAW, and GL_STREAM_DRAW
      */
-    public void updateBuffer(int bufferid, FloatBuffer buffer, GraphicsBuffer.UsageType buffertype){
-        GraphicsBuffer vbo = GraphicsBuffer.allocate(GraphicsBuffer.BufferType.VERTEX_ARRAY_BUFFER, buffer, buffertype);
-        vertexBufferObjects.set(bufferid, vbo);
+    public void updateBuffer(int bufferIndex, Buffer buffer){
+        vertexBufferObjects.set(bufferIndex, generateVertexBuffer(buffer));
     }
 
-    private void defBuffers(FloatBuffer[] buffers, IntBuffer ind){
+    private void generateGPUMemory(Buffer[] buffers, IntBuffer indexBuffer){
         vertexBufferObjects.clear();
 
         for(var buffer : buffers){
-            GraphicsBuffer vbo = GraphicsBuffer.allocate(GraphicsBuffer.BufferType.VERTEX_ARRAY_BUFFER, buffer, GraphicsBuffer.UsageType.STATIC_DRAW);
-            vertexBufferObjects.add(vbo);
+            vertexBufferObjects.add(generateVertexBuffer(buffer));
         }
 
-        var indices = validateIndexBuffer(format, ind, buffers);
-        indexBuffer = GraphicsBuffer.allocate(GraphicsBuffer.BufferType.ELEMENT_ARRAY_BUFFER, indices.x(), GraphicsBuffer.UsageType.STATIC_DRAW);
-        if(indices.y()) Allocator.popStack();
+        int bufferSize = 0;
+        var mainBuffer = buffers[0];
+        if(mainBuffer instanceof ByteBuffer bbuf){
+            bufferSize = bbuf.limit();
+        }else if(mainBuffer instanceof FloatBuffer fbuf){
+            bufferSize = fbuf.limit()*Float.BYTES;
+        }else if(mainBuffer instanceof IntBuffer ibuf){
+            bufferSize = ibuf.limit()*Integer.BYTES;
+        }
+
+        if(indexBuffer == null){
+            this.indexBuffer = generateIndexBuffer(format, bufferSize);
+        }else{
+            this.indexBuffer = GraphicsBuffer.allocate(GraphicsBuffer.BufferType.ELEMENT_ARRAY_BUFFER, indexBuffer, GraphicsBuffer.UsageType.STATIC_DRAW);
+            this.elementCount = indexBuffer.limit();
+        }
     }
 
-    private Tuple<IntBuffer, Boolean> validateIndexBuffer(VertexArrayFormat format, IntBuffer index, FloatBuffer[] vertices){
-        if(index == null){
-            int size = format.getVertexLength();
-            elementCount = vertices[0].limit()/(size/Float.BYTES);
+    private GraphicsBuffer generateVertexBuffer(Buffer buffer){
+        GraphicsBuffer vbo;
+        if(buffer instanceof ByteBuffer bbuf){
+            vbo = GraphicsBuffer.allocate(GraphicsBuffer.BufferType.VERTEX_ARRAY_BUFFER, bbuf, GraphicsBuffer.UsageType.STATIC_DRAW);
+        }else if(buffer instanceof FloatBuffer fbuf){
+            vbo = GraphicsBuffer.allocate(GraphicsBuffer.BufferType.VERTEX_ARRAY_BUFFER, fbuf, GraphicsBuffer.UsageType.STATIC_DRAW);
+        }else if(buffer instanceof IntBuffer ibuf){
+            vbo = GraphicsBuffer.allocate(GraphicsBuffer.BufferType.VERTEX_ARRAY_BUFFER, ibuf, GraphicsBuffer.UsageType.STATIC_DRAW);
+        }else{
+            throw new IllegalArgumentException(buffer.getClass().getSimpleName() + " is not a useable buffer type");
+        }
+        return vbo;
+    }
+
+    private GraphicsBuffer generateIndexBuffer(VertexArrayFormat format, int primaryBufferSize){
+            int vertexSize = format.getPrimaryVertexLength();
+            elementCount = primaryBufferSize/vertexSize;
             IntBuffer finalIndex;
             if(elementCount < 1024)
                 finalIndex = Allocator.stackAllocInt(elementCount);
@@ -158,18 +156,28 @@ public abstract class DrawnObject implements Renderable {
             }
             finalIndex.flip();
 
+            var gpuIndices = GraphicsBuffer.allocate(GraphicsBuffer.BufferType.ELEMENT_ARRAY_BUFFER, finalIndex, GraphicsBuffer.UsageType.STATIC_DRAW);
+
             if(elementCount < 1024)
-                return Tuple.of(finalIndex, true);
-            else
-                return Tuple.of(finalIndex, false);
-        }else{
-            elementCount = index.limit();
-            return Tuple.of(index, false);
-        }
+                Allocator.popStack();
+
+            return gpuIndices;
     }
 
     public void setRenderType(DrawType type){
         this.drawType = type;
+    }
+
+    public void setIndexType(IndexType type){
+        this.indexType = type;
+    }
+
+    public void setBaseVertex(int baseVertex) {
+        this.baseVertex = baseVertex;
+    }
+
+    public void setBaseElement(int baseElement) {
+        this.baseElement = baseElement;
     }
 
     public void setInstanceCount(int instanceCount) {
@@ -179,5 +187,9 @@ public abstract class DrawnObject implements Renderable {
 
     public enum DrawType {
         TRIANGLES, TRIANGLE_STRIP, TRIANGLE_FAN, POINTS, LINES, LINE_STRIP
+    }
+
+    public enum IndexType{
+        INT, SHORT
     }
 }

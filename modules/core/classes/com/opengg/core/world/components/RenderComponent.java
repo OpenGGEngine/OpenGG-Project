@@ -71,8 +71,9 @@ public class RenderComponent extends Component implements com.opengg.core.render
         return format;
     }
 
-    public void setFormat(VertexArrayFormat format) {
+    public RenderComponent setFormat(VertexArrayFormat format) {
         this.format = format;
+        return this;
     }
     
     public boolean isTransparent() {
@@ -118,11 +119,11 @@ public class RenderComponent extends Component implements com.opengg.core.render
         out.write(renderDistance);
         out.write(format.getBindings().size());
         for(var binding : format.getBindings()){
-            out.write(binding.getBindingIndex());
-            out.write(binding.getVertexSize());
-            out.write(binding.getDivisor());
-            out.write(binding.getAttributes().size());
-            for(var attrib : binding.getAttributes()){
+            out.write(binding.bindingIndex());
+            out.write(binding.vertexSize());
+            out.write(binding.divisor());
+            out.write(binding.attributes().size());
+            for(var attrib : binding.attributes()){
                 out.write(attrib.name());
                 out.write(attrib.size());
                 out.write(attrib.type().name());
@@ -138,10 +139,10 @@ public class RenderComponent extends Component implements com.opengg.core.render
         transparent = in.readBoolean();
         renderDistance = in.readFloat();
 
-        format = new VertexArrayFormat();
+        format = new VertexArrayFormat(new ArrayList<>());
         int bindingCount = in.readInt();
         for(int i = 0; i < bindingCount; i++){
-            var list = new ArrayList<VertexArrayFormat.VertexArrayAttribute>();
+            var list = new ArrayList<VertexArrayBinding.VertexArrayAttribute>();
             var index = in.readInt();
             var vertexSize = in.readInt();
             var divisor = in.readInt();
@@ -151,7 +152,7 @@ public class RenderComponent extends Component implements com.opengg.core.render
                 var size = in.readInt();
                 var type = in.readString();
                 var offset = in.readInt();
-                var attrib = new VertexArrayFormat.VertexArrayAttribute(name, size, VertexArrayFormat.VertexArrayAttribute.Type.valueOf(type), offset);
+                var attrib = new VertexArrayBinding.VertexArrayAttribute(name, size, VertexArrayBinding.VertexArrayAttribute.Type.valueOf(type), offset);
                 list.add(attrib);
             }
             var binding = new VertexArrayBinding(index, vertexSize, divisor, list);

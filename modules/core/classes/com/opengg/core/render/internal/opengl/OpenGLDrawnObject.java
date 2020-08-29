@@ -2,6 +2,7 @@ package com.opengg.core.render.internal.opengl;
 
 import com.opengg.core.engine.PerformanceManager;
 import com.opengg.core.exceptions.RenderException;
+import com.opengg.core.render.GraphicsBuffer;
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.render.drawn.DrawnObject;
 import com.opengg.core.render.shader.VertexArrayFormat;
@@ -13,20 +14,13 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL42.glDrawElementsInstancedBaseVertexBaseInstance;
 
 public class OpenGLDrawnObject extends DrawnObject {
-    public OpenGLDrawnObject(FloatBuffer... vertices) {
-        super(vertices);
-    }
-
-    public OpenGLDrawnObject(VertexArrayFormat format, FloatBuffer... vertices) {
-        super(format, vertices);
-    }
-
-    public OpenGLDrawnObject(IntBuffer index, FloatBuffer... vertices) {
-        super(index, vertices);
-    }
 
     public OpenGLDrawnObject(VertexArrayFormat format, IntBuffer index, FloatBuffer... vertices) {
         super(format, index, vertices);
+    }
+
+    public OpenGLDrawnObject(VertexArrayFormat format, GraphicsBuffer indexBuffer, int indexCount, GraphicsBuffer... vertices) {
+        super(format, indexBuffer, indexCount, vertices);
     }
 
     @Override
@@ -37,8 +31,15 @@ public class OpenGLDrawnObject extends DrawnObject {
             throw new RenderException("Invalid VAO bound during render");
         ((OpenGLRenderer) RenderEngine.renderer).getCurrentVAO().applyFormat(vertexBufferObjects);
         PerformanceManager.registerDrawCall();
-        glDrawElementsInstancedBaseVertexBaseInstance(getOpenGLDrawType(drawType), elementCount, GL_UNSIGNED_INT, 0, instanceCount, baseVertex, 0);
+        glDrawElementsInstancedBaseVertexBaseInstance(getOpenGLDrawType(drawType), elementCount, getOpenGlIndexType(indexType), baseElement*2, instanceCount, baseVertex, 0);
 
+    }
+
+    private static int getOpenGlIndexType(IndexType type){
+        return switch (type){
+            case INT -> GL_UNSIGNED_INT;
+            case SHORT -> GL_UNSIGNED_SHORT;
+        };
     }
 
     private static int getOpenGLDrawType(DrawType type){

@@ -2,6 +2,7 @@ package com.opengg.core.render.internal.vulkan.shader;
 
 import com.opengg.core.render.GraphicsBuffer;
 import com.opengg.core.render.shader.ShaderController;
+import com.opengg.core.render.shader.VertexArrayBinding;
 import com.opengg.core.render.shader.VertexArrayFormat;
 import com.opengg.core.render.shader.VertexArrayObject;
 import org.lwjgl.vulkan.VkVertexInputAttributeDescription;
@@ -25,21 +26,21 @@ public class VulkanVertexFormat implements VertexArrayObject {
         for(int i = 0; i < format.getBindings().size(); i++){
             var binding = format.getBindings().get(i);
             bindingDescriptors.get(i)
-                    .binding(binding.getBindingIndex())
-                    .inputRate(binding.getDivisor() == 0 ? VK_VERTEX_INPUT_RATE_VERTEX : VK_VERTEX_INPUT_RATE_INSTANCE)
-                    .stride(binding.getVertexSize());
+                    .binding(binding.bindingIndex())
+                    .inputRate(binding.divisor() == 0 ? VK_VERTEX_INPUT_RATE_VERTEX : VK_VERTEX_INPUT_RATE_INSTANCE)
+                    .stride(binding.vertexSize());
         }
 
 
-        int attribCount = (int) format.getBindings().stream().mapToLong(f -> f.getAttributes().size()).sum();
+        int attribCount = (int) format.getBindings().stream().mapToLong(f -> f.attributes().size()).sum();
 
         var attributeDescriptions = VkVertexInputAttributeDescription.calloc(attribCount);
 
         int index = 0;
         for(var binding : format.getBindings()){
-            for(var attrib : binding.getAttributes()){
+            for(var attrib : binding.attributes()){
                 attributeDescriptions.get(index)
-                        .binding(binding.getBindingIndex())
+                        .binding(binding.bindingIndex())
                         .location(ShaderController.getVertexAttributeIndex(attrib.name()))
                         .format(getVulkanFormatFromType(attrib.type()))
                         .offset(attrib.offset());
@@ -69,7 +70,7 @@ public class VulkanVertexFormat implements VertexArrayObject {
 
     }
 
-    private int getVulkanFormatFromType(VertexArrayFormat.VertexArrayAttribute.Type type){
+    private int getVulkanFormatFromType(VertexArrayBinding.VertexArrayAttribute.Type type){
         return switch (type) {
             case BYTE -> VK_FORMAT_R8_UINT;
             case INT -> VK_FORMAT_R32_UINT;
