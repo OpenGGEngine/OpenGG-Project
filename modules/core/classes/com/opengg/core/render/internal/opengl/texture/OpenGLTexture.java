@@ -100,10 +100,13 @@ public class OpenGLTexture implements Texture {
                     case DXT1 -> GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
                     case DXT3 -> GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
                     case DXT5 -> GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
-                    default -> GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
+                    default -> -1;
                 };
+                if(internalFormat == -1){
+                    System.out.println("Invalid");
+                }
                 for (int level = 0; level < data.getMipMapCount(); level++) {
-                    int size = ((data.width + 3) / 4) * ((data.height + 3) / 4) * blockSize;
+                    int size = ((width + 3) / 4) * ((height + 3) / 4) * blockSize;
                     byte[] sub = new byte[size];
                     ((ByteBuffer) data.buffer).get(sub);
                     ByteBuffer subBuffer = Allocator.alloc(size).put(sub).flip();
