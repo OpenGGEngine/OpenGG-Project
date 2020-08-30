@@ -30,11 +30,8 @@ public class DDSLoader {
             ByteBuffer tempBuf = Allocator.stackAlloc(124).put(header);
             int height = tempBuf.position(8).getInt();
             int width = tempBuf.position(12).getInt();
-            System.out.println(width + "," + height);
             int linearSize = tempBuf.position(16).getInt();
-            System.out.println("Size s: " + linearSize);
             int mipMapCount = tempBuf.position(24).getInt();
-            System.out.println("MipMap: " + mipMapCount);
             int fourCC = tempBuf.position(80).getInt();
             Allocator.popStack();
             //GGConsole.debug(width+","+height+","+linearSize+","+mipMapCount);
@@ -44,7 +41,6 @@ public class DDSLoader {
             ByteBuffer b = ByteBuffer.wrap(fc.readNBytes(bufferSize));
             //fc.getChannel().read(b);
             int numComponents = (fourCC == DXT1)?3:4;
-            System.out.println("Done Reading texture");
             //System.out.println(fourCC+","+DXT1+","+DXT3+","+DXT5);
             TextureData data = new TextureData(width,height,numComponents,b,path,switch(fourCC){
                 case DXT1 -> TextureData.TextureDataType.DXT1; case DXT3 -> TextureData.TextureDataType.DXT3;case DXT5 -> TextureData.TextureDataType.DXT5;default-> TextureData.TextureDataType.DXT1;
