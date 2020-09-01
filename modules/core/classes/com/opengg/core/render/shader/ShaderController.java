@@ -111,7 +111,7 @@ public class ShaderController {
         use("object.vert", "object.frag");
         saveCurrentConfiguration("object");
 
-        use("reverse.vert", "object.frag");
+        use("wiiobject.vert", "wiiobject.frag");
         saveCurrentConfiguration("wiiObject");
 
         use("object.vert", "texture.frag");
