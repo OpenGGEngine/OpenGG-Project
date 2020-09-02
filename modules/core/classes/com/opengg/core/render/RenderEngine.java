@@ -79,15 +79,6 @@ public class RenderEngine {
                 ))
         ));
 
-        superCSCFormat = new VertexArrayFormat(List.of(
-                new VertexArrayBinding(0, 10 * 4, 0, List.of(
-                        new VertexArrayBinding.VertexArrayAttribute("position", 3 * 4, VertexArrayBinding.VertexArrayAttribute.Type.FLOAT3, 0),
-                        new VertexArrayBinding.VertexArrayAttribute("normal", 3 * 4, VertexArrayBinding.VertexArrayAttribute.Type.FLOAT3, 3 * 4),
-                        new VertexArrayBinding.VertexArrayAttribute("texcoord", 2 * 4, VertexArrayBinding.VertexArrayAttribute.Type.FLOAT2, 6 * 4),
-                        new VertexArrayBinding.VertexArrayAttribute("lightmapcoord", 2 * 4, VertexArrayBinding.VertexArrayAttribute.Type.FLOAT2, 8 * 4)
-                ))
-        ));
-
         tangentVAOFormat = new VertexArrayFormat(List.of(new VertexArrayBinding(0, 11 * 4, 0, List.of(
                 new VertexArrayBinding.VertexArrayAttribute("position", 3 * 4, VertexArrayBinding.VertexArrayAttribute.Type.FLOAT3, 0),
                 new VertexArrayBinding.VertexArrayAttribute("normal", 3 * 4, VertexArrayBinding.VertexArrayAttribute.Type.FLOAT3, 3 * 4),
