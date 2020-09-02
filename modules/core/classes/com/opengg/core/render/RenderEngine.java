@@ -35,6 +35,7 @@ public class RenderEngine {
     private static VertexArrayFormat particleVAOFormat;
     private static VertexArrayFormat animationVAOFormat;
     private static VertexArrayFormat animation2VAOFormat;
+    public static VertexArrayFormat superCSCFormat;
     private static VertexArrayFormat tangentVAOFormat;
     private static VertexArrayFormat tangentAnimVAOFormat;
     private static RenderGroup defaultList;
@@ -75,6 +76,15 @@ public class RenderEngine {
                         new VertexArrayBinding.VertexArrayAttribute("position", 3 * 4, VertexArrayBinding.VertexArrayAttribute.Type.FLOAT3, 0),
                         new VertexArrayBinding.VertexArrayAttribute("normal", 3 * 4, VertexArrayBinding.VertexArrayAttribute.Type.FLOAT3, 3 * 4),
                         new VertexArrayBinding.VertexArrayAttribute("texcoord", 2 * 4, VertexArrayBinding.VertexArrayAttribute.Type.FLOAT2, 6 * 4)
+                ))
+        ));
+
+        superCSCFormat = new VertexArrayFormat(List.of(
+                new VertexArrayBinding(0, 10 * 4, 0, List.of(
+                        new VertexArrayBinding.VertexArrayAttribute("position", 3 * 4, VertexArrayBinding.VertexArrayAttribute.Type.FLOAT3, 0),
+                        new VertexArrayBinding.VertexArrayAttribute("normal", 3 * 4, VertexArrayBinding.VertexArrayAttribute.Type.FLOAT3, 3 * 4),
+                        new VertexArrayBinding.VertexArrayAttribute("texcoord", 2 * 4, VertexArrayBinding.VertexArrayAttribute.Type.FLOAT2, 6 * 4),
+                        new VertexArrayBinding.VertexArrayAttribute("lightmapcoord", 2 * 4, VertexArrayBinding.VertexArrayAttribute.Type.FLOAT2, 8 * 4)
                 ))
         ));
 
