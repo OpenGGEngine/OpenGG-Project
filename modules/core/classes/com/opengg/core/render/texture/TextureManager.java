@@ -60,7 +60,7 @@ public class TextureManager {
         if(texturelist.get(path) != null){
             TextureData data = texturelist.get(path);
             data.buffer.rewind();
-            return data;
+            //return data;
         }
 
         try{
