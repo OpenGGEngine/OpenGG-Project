@@ -20,6 +20,7 @@ public class TextureManager {
     private static final Map<String, TextureData> texturelist = new HashMap<>();
     private static TextureData defaultdata;
     private static final boolean cache = true;
+    private static final boolean cacheMissedTextures = true;
     
     public static void initialize(){
         try {
@@ -30,9 +31,14 @@ public class TextureManager {
         }
     }
     
-    public static void addTexture(TextureData data){
+    private static void cacheTexture(TextureData data){
         if(!cache) return;
         texturelist.put(data.source, data);
+    }
+
+    private static void cacheTexture(String source, TextureData data){
+        if(!cache) return;
+        texturelist.put(source, data);
     }
 
     public static TextureData getTextureData(String name){
@@ -60,15 +66,20 @@ public class TextureManager {
         if(texturelist.get(path) != null){
             TextureData data = texturelist.get(path);
             data.buffer.rewind();
-            //return data;
+            return data;
         }
 
         try{
             TextureData data = TextureLoader.loadTexture(path, flip);
-            addTexture(data);
+            cacheTexture(data);
             return data;
         }catch(IOException e){
-            GGConsole.warn("Failed to load texture at " + path + ", using default instead");
+            if(cacheMissedTextures){
+                GGConsole.warn("Failed to load texture at " + path + ", using and caching default instead");
+                cacheTexture(path, defaultdata);
+            }else{
+                GGConsole.warn("Failed to load texture at " + path + ", using default instead");
+            }
             return defaultdata;
         }catch(Exception e){
             throw new RuntimeException("Exception while loading texture " + path, e);

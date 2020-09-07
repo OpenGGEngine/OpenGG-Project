@@ -32,7 +32,7 @@ void main() {
 	//col += emmisive;
 
 	for(int i = 0; i < numLights; i++){
-		//col += getPhongFrom(lights[i]);
+		col += getPhongFrom(lights[i]);
 	}
 	fcolor = vec4(col, trans);
 	if(trans < 0.05f) discard;
