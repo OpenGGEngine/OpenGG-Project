@@ -1,6 +1,4 @@
-COMPILED GGSL ERROR SOURCE: From shader wiiobject.frag with error code 0: 0(187) : error C0000: syntax error, unexpected reserved word "uniform", expecting ',' or ';' at token "uniform"
-0(204) : error C1503: undefined variable "vcolor"
-0(205) : error C1503: undefined variable "vcolor"
+COMPILED GGSL ERROR SOURCE: From shader wiiobject.frag with error code 0: 0(209) : error C7011: implicit cast from "int" to "bool"
 #version 420
 uniform mat4 model;
 uniform vec3 camera;
@@ -187,8 +185,10 @@ vec3 getPhongFrom(Light light) {
     return fragColor;
 } 
 
-in vec2 lmcoord uniform vec3 vcolor;
+layout(location = 3) in vec2 lmcoord;
+uniform vec3 vcolor;
 uniform layout(binding = 13) sampler2D lightmap;
+uniform int useLm;
 void main() {
     generatePhongData();
     Material material;
@@ -207,7 +207,9 @@ void main() {
     if((vcolor.x != -1)){
         col = vcolor;
     };
-    col = texture(lightmap, lmcoord).xyz;
+    if(useLm){
+        col = (col * texture(lightmap, lmcoord).xyz);
+    };
     for(int i = 0; (i < numLights); i++){
     };
     fcolor = vec4(col, trans);

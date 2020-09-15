@@ -6,6 +6,7 @@ layout(location = 3) in vec2 lmcoord;
 
 uniform vec3 vcolor;
 uniform sampler2D lightmap;
+uniform int useLm;
 
 void main() {
 	generatePhongData();
@@ -27,12 +28,14 @@ void main() {
     if(vcolor.x != -1){
         col = vcolor;
     }
-    //col = texture(lightmap,lmcoord).xyz;
+    if(useLm == 1)
+        col = col * texture(lightmap,lmcoord).xyz;
+     //col = vec3(lmcoord*0.01,0.5);
 
 	//col += emmisive;
 
 	for(int i = 0; i < numLights; i++){
-		//col += getPhongFrom(lights[i]);
+		col += getPhongFrom(lights[i]);
 	}
 	fcolor = vec4(col, trans);
 	if(trans < 0.05f) discard;
