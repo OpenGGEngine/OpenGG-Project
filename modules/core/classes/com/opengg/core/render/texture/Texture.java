@@ -252,21 +252,25 @@ public interface Texture{
         final TextureType type;
         final FilterType minFilter;
         final FilterType maxFilter;
-        final WrapType wrapType;
+        final WrapType wrapTypeS;
+        final WrapType wrapTypeT;
+        final WrapType wrapTypeR;
         final SamplerFormat samplerFormat;
         final TextureFormat internalFormat;
         final InputFormat inputFormat;
         final boolean anisotropic;
 
         public TextureConfig(){
-            this(TextureType.TEXTURE_2D, FilterType.NEAREST, FilterType.NEAREST, WrapType.REPEAT, SamplerFormat.RGBA, TextureFormat.SRGBA8, InputFormat.UNSIGNED_BYTE, true);
+            this(TextureType.TEXTURE_2D, FilterType.NEAREST, FilterType.NEAREST, WrapType.REPEAT,WrapType.REPEAT,WrapType.REPEAT, SamplerFormat.RGBA, TextureFormat.SRGBA8, InputFormat.UNSIGNED_BYTE, true);
         }
 
-        public TextureConfig(TextureType type, FilterType minFilter, FilterType maxFilter, WrapType wrapType, SamplerFormat samplerFormat, TextureFormat internalFormat, InputFormat inputFormat, boolean anisotropic) {
+        public TextureConfig(TextureType type, FilterType minFilter, FilterType maxFilter, WrapType wrapTypeS,WrapType wrapTypeT,WrapType wrapTypeR ,SamplerFormat samplerFormat, TextureFormat internalFormat, InputFormat inputFormat, boolean anisotropic) {
             this.type = type;
             this.minFilter = minFilter;
             this.maxFilter = maxFilter;
-            this.wrapType = wrapType;
+            this.wrapTypeS = wrapTypeS;
+            this.wrapTypeT = wrapTypeT;
+            this.wrapTypeR = wrapTypeR;
             this.samplerFormat = samplerFormat;
             this.internalFormat = internalFormat;
             this.inputFormat = inputFormat;
@@ -274,31 +278,34 @@ public interface Texture{
         }
 
         public TextureConfig type(TextureType type) {
-            return new TextureConfig(type, minFilter, maxFilter, wrapType, samplerFormat, internalFormat, inputFormat, anisotropic);
+            return new TextureConfig(type, minFilter, maxFilter, wrapTypeS,wrapTypeT,wrapTypeR, samplerFormat, internalFormat, inputFormat, anisotropic);
         }
 
         public TextureConfig minimumFilter(FilterType minfilter) {
-            return new TextureConfig(type, minfilter, maxFilter, wrapType, samplerFormat, internalFormat, inputFormat, anisotropic);
+            return new TextureConfig(type, minfilter, maxFilter, wrapTypeS,wrapTypeT,wrapTypeR, samplerFormat, internalFormat, inputFormat, anisotropic);
         }
 
         public TextureConfig maxFilter(FilterType maxfilter) {
-            return new TextureConfig(type, minFilter, maxfilter, wrapType, samplerFormat, internalFormat, inputFormat, anisotropic);
+            return new TextureConfig(type, minFilter, maxfilter, wrapTypeS,wrapTypeT,wrapTypeR, samplerFormat, internalFormat, inputFormat, anisotropic);
         }
 
         public TextureConfig wrapType(WrapType wraptype) {
-            return new TextureConfig(type, minFilter, maxFilter, wraptype, samplerFormat, internalFormat, inputFormat, anisotropic);
+            return new TextureConfig(type, minFilter, maxFilter, wraptype,wraptype,wraptype, samplerFormat, internalFormat, inputFormat, anisotropic);
+        }
+        public TextureConfig wrapType(WrapType wraptypeS,WrapType wraptypeT,WrapType wraptypeR) {
+            return new TextureConfig(type, minFilter, maxFilter, wraptypeS,wraptypeT,wraptypeR, samplerFormat, internalFormat, inputFormat, anisotropic);
         }
 
         public TextureConfig samplerFormat(SamplerFormat format) {
-            return new TextureConfig(type, minFilter, maxFilter, wrapType, format, internalFormat, inputFormat, anisotropic);
+            return new TextureConfig(type, minFilter, maxFilter, wrapTypeS,wrapTypeT,wrapTypeR, format, internalFormat, inputFormat, anisotropic);
         }
 
         public TextureConfig internalFormat(TextureFormat intformat) {
-            return new TextureConfig(type, minFilter, maxFilter, wrapType, samplerFormat, intformat, inputFormat, anisotropic);
+            return new TextureConfig(type, minFilter, maxFilter, wrapTypeS,wrapTypeT,wrapTypeR, samplerFormat, intformat, inputFormat, anisotropic);
         }
 
         public TextureConfig inputFormat(InputFormat input) {
-            return new TextureConfig(type, minFilter, maxFilter, wrapType, samplerFormat, internalFormat, input, anisotropic);
+            return new TextureConfig(type, minFilter, maxFilter, wrapTypeS,wrapTypeT,wrapTypeR, samplerFormat, internalFormat, input, anisotropic);
         }
 
         public TextureType getType() {
@@ -314,7 +321,16 @@ public interface Texture{
         }
 
         public WrapType getWrapType() {
-            return wrapType;
+            return wrapTypeT;
+        }
+        public WrapType getWrapTypeS() {
+            return wrapTypeS;
+        }
+        public WrapType getWrapTypeT() {
+            return wrapTypeT;
+        }
+        public WrapType getWrapTypeR() {
+            return wrapTypeR;
         }
 
         public SamplerFormat getSamplerFormat() {

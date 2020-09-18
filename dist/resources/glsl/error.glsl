@@ -1,4 +1,7 @@
-COMPILED GGSL ERROR SOURCE: From shader wiiobject.frag with error code 0: 0(209) : error C7011: implicit cast from "int" to "bool"
+COMPILED GGSL ERROR SOURCE: From shader wiiobject.frag with error code 0: 0(211) : error C1503: undefined variable "lmCoord"
+0(211) : error C1503: undefined variable "lmCoord"
+0(211) : error C1503: undefined variable "lmCoord"
+0(211) : error C1503: undefined variable "lmCoord"
 #version 420
 uniform mat4 model;
 uniform vec3 camera;
@@ -207,8 +210,13 @@ void main() {
     if((vcolor.x != -1)){
         col = vcolor;
     };
-    if(useLm){
-        col = (col * texture(lightmap, lmcoord).xyz);
+    if((useLm == 1)){
+        vec3 lm = texture(lightmap, lmcoord).xyz;
+        if(((((lmCoord.x > 1) || (lmCoord.x < 0)) || (lmCoord.y > 1)) || (lmCoord.y < 0))){
+            lm *= vec3(1, 0.2f, 0.2f);
+        };
+        col *= lm;
+        col = lm;
     };
     for(int i = 0; (i < numLights); i++){
     };

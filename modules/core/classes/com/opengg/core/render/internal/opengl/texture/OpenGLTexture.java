@@ -60,7 +60,7 @@ public class OpenGLTexture implements Texture {
         bind();
         setMinimumFilterType(getOpenGlFilter(config.getMinFilter()));
         setMaximumFilterType(getOpenGlFilter(config.getMaxFilter()));
-        setTextureWrapType(getOpenGlWrapType(config.getWrapType()));
+        setTextureWrapType(getOpenGlWrapType(config.getWrapTypeS()),getOpenGlWrapType(config.getWrapTypeT()),getOpenGlWrapType(config.getWrapTypeR()));
     }
 
 
@@ -203,10 +203,10 @@ public class OpenGLTexture implements Texture {
         tex.setParameteri(type, GL_TEXTURE_LOD_BIAS, bias);
     }
 
-    private void setTextureWrapType(int wtype){
-        tex.setParameteri(type, GL_TEXTURE_WRAP_S, wtype);
-        tex.setParameteri(type, GL_TEXTURE_WRAP_T, wtype);
-        tex.setParameteri(type, GL_TEXTURE_WRAP_R, wtype);
+    private void setTextureWrapType(int wtypeS,int wtypeT,int wtypeR){
+        tex.setParameteri(type, GL_TEXTURE_WRAP_S, wtypeS);
+        tex.setParameteri(type, GL_TEXTURE_WRAP_T, wtypeT);
+        tex.setParameteri(type, GL_TEXTURE_WRAP_R, wtypeR);
     }
 
     private void setBorderColor(Vector4f borderColor) {

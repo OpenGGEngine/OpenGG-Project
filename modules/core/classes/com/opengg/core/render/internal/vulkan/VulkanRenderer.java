@@ -203,7 +203,7 @@ public class VulkanRenderer implements Renderer {
     }
 
     private VulkanImage.View createDepthStencil() {
-        var image = new VulkanImage(new Texture.TextureConfig(Texture.TextureType.TEXTURE_2D, Texture.FilterType.LINEAR, Texture.FilterType.LINEAR, Texture.WrapType.CLAMP_BORDER,
+        var image = new VulkanImage(new Texture.TextureConfig(Texture.TextureType.TEXTURE_2D, Texture.FilterType.LINEAR, Texture.FilterType.LINEAR, Texture.WrapType.CLAMP_BORDER,Texture.WrapType.CLAMP_BORDER,Texture.WrapType.CLAMP_BORDER,
                 Texture.SamplerFormat.DEPTH, Texture.TextureFormat.DEPTH32_STENCIL8, Texture.InputFormat.FLOAT, false),
                 VK_SAMPLE_COUNT_1_BIT, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT,
                 new Vector3i(swapchain.getExtents().x, swapchain.getExtents().y, 1), 1);

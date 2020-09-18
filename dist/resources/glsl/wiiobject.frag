@@ -28,14 +28,17 @@ void main() {
     if(vcolor.x != -1){
         col = vcolor;
     }
-    if(useLm == 1)
-        col = col * texture(lightmap,lmcoord).xyz;
-     //col = vec3(lmcoord*0.01,0.5);
+    if(useLm == 1){
+        vec2 realCoord = lmcoord;
+        vec3 lm = texture(lightmap,realCoord).xyz;
+        col *= lm;
+        //col = lm;
+    }
 
-	//col += emmisive;
+
 
 	for(int i = 0; i < numLights; i++){
-		col += getPhongFrom(lights[i]);
+		//col += getPhongFrom(lights[i]);
 	}
 	fcolor = vec4(col, trans);
 	if(trans < 0.05f) discard;
