@@ -282,11 +282,12 @@ public class TTF implements Font{
 
         var object = DrawnObject.create(data);
         return () -> {
+            String lastShader = ShaderController.getCurrentConfigurationName();
             ShaderController.useConfiguration("ttf");
             ShaderController.setUniform("color", wholetext.getColor());
             ShaderController.setUniform("Kd", texture);
             object.render();
-            ShaderController.useConfiguration("object");
+            ShaderController.useConfiguration(lastShader);
 
         };
     }

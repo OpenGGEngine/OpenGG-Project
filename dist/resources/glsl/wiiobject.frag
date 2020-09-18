@@ -24,22 +24,16 @@ void main() {
     material.ns = 128;
 
 	useMaterial(material);
-    vec3 col = ambient;
+    vec3 col = diffuse;
     if(vcolor.x != -1){
         col = vcolor;
     }
     if(useLm == 1){
         vec2 realCoord = lmcoord;
         vec3 lm = texture(lightmap,realCoord).xyz;
-        col *= lm;
+        //col *= lm;
         //col = lm;
     }
-
-
-
-	for(int i = 0; i < numLights; i++){
-		//col += getPhongFrom(lights[i]);
-	}
 	fcolor = vec4(col, trans);
 	if(trans < 0.05f) discard;
 }
