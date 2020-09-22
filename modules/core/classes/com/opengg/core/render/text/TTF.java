@@ -30,7 +30,6 @@ public class TTF implements Font{
 
     private final ByteBuffer ttf;
     private final STBTTFontinfo fontinfo;
-    private FloatBuffer data;
     //For Oversampled Option
     private static final float[] scale = {
             32f
@@ -47,7 +46,6 @@ public class TTF implements Font{
     private STBTTPackedchar.Buffer altCData;
 
     private boolean isOversampled = false;
-    private String shader;
 
     public static TTF getTruetypeFont(String path){ return getTruetypeFont(path,false); }
     public static TTF getTruetypeFont(String path, boolean oversample){
@@ -189,11 +187,6 @@ public class TTF implements Font{
         return createFromText(Text.from(text));
     }
 
-    public Renderable createFromTextCShader(String text,String shader) {
-        this.shader = shader;
-        return createFromText(Text.from(text));
-    }
-
     @Override
     public Renderable createFromText(Text wholetext) {
         return createFromTextWithSize(wholetext, new Vector3fm());
@@ -286,22 +279,16 @@ public class TTF implements Font{
             data.put(pos.x).put(-pos.y-wholetext.getSize()*0.2f).put(0).put(1f).put(0f).put(0f).put(uv.x).put(uv.y);
         }
         data.flip();
-        this.data = data;
 
         var object = DrawnObject.create(data);
         return () -> {
-            if(shader==null)
-                ShaderController.useConfiguration("ttf");
-            else
-                ShaderController.useConfiguration(shader);
+            String lastShader = ShaderController.getCurrentConfigurationName();
+            ShaderController.useConfiguration("ttf");
             ShaderController.setUniform("color", wholetext.getColor());
             ShaderController.setUniform("Kd", texture);
             object.render();
-            ShaderController.useConfiguration("object");
+            ShaderController.useConfiguration(lastShader);
 
         };
-    }
-    public FloatBuffer getRecentVBO(){
-        return data;
     }
 }
