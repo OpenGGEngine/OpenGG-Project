@@ -172,6 +172,9 @@ public class ShaderController {
         use("object.vert", "color_alpha.frag");
         saveCurrentConfiguration("ttf");
 
+        use("particle.vert", "color_alpha.frag");
+        saveCurrentConfiguration("ttf2");
+
         use("object.vert", "cuboid_scaling.frag");
         saveCurrentConfiguration("cuboid");
 
