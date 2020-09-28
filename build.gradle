@@ -9,10 +9,10 @@
 configure(subprojects.findAll {it.name != 'modules'}) {
     apply plugin: 'java'
 
-    sourceCompatibility = 1.14
-    targetCompatibility = 1.14
+    sourceCompatibility = 1.15
+    targetCompatibility = 1.15
 
-    project.ext.lwjglVersion = "3.2.3"
+    project.ext.lwjglVersion = "3.2.4-SNAPSHOT"
     project.ext.steamworks4jVersion = "1.8.0"
     project.ext.lwjglNatives = "natives-windows"
 

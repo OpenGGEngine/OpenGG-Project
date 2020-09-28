@@ -12,7 +12,6 @@ import com.opengg.core.render.RenderEngine;
 import com.opengg.core.render.objects.TextureRenderable;
 import com.opengg.core.render.objects.ObjectCreator;
 import com.opengg.core.render.texture.Texture;
-import com.opengg.core.render.window.WindowInfo;
 import com.opengg.core.render.window.WindowOptions;
 import com.opengg.core.world.Skybox;
 import com.opengg.core.world.WorldEngine;
@@ -34,8 +33,8 @@ public class OpenGGNetworkTest extends GGApplication {
     public static void main(String[] args){
         OpenGG.initialize(new OpenGGNetworkTest(), new InitializationOptions()
                 .setApplicationName("OpenGG Network Test")
-                .setWindowInfo(new WindowInfo()
-                        .setDisplayMode(WindowOptions.WINDOWED)
+                .setWindowOptions(new WindowOptions()
+                        .setDisplayMode(WindowOptions.DisplayMode.WINDOWED)
                         .setWidth(1280)
                         .setHeight(960)
                         .setVsync(true)

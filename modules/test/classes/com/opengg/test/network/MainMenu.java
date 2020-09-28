@@ -6,8 +6,8 @@ import com.opengg.core.audio.SoundtrackHandler;
 import com.opengg.core.engine.OpenGG;
 import com.opengg.core.engine.Resource;
 import com.opengg.core.gui.*;
-import com.opengg.core.gui.text.GUIText;
-import com.opengg.core.gui.text.GUITextField;
+import com.opengg.core.gui.text.UITextLine;
+import com.opengg.core.gui.text.UITextField;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.network.NetworkEngine;
@@ -34,7 +34,7 @@ public class MainMenu {
         menuMusic.addSong("beevillage.ogg");
         menuMusic.setVolume(0.0f);
         SoundtrackHandler.setSoundtrack(menuMusic);
-
+/*
         var mainScreen = new GUIGroup();
         var connectScreen = new GUIGroup();
         connectScreen.setEnabled(false);
@@ -173,7 +173,7 @@ public class MainMenu {
         playGroup.addItem("button", playButton);
         playGroup.setPositionOffset(new Vector2f(0.425f, 0.15f));
         serverScreen.addItem("play", playGroup);
-        return serverScreen;
+        return serverScreen;*/
     }
 
 }

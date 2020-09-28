@@ -3,7 +3,7 @@ package com.opengg.test;
 import com.opengg.core.engine.*;
 import com.opengg.core.gui.GUI;
 import com.opengg.core.gui.GUIController;
-import com.opengg.core.gui.text.GUIText;
+import com.opengg.core.gui.text.UITextLine;
 import com.opengg.core.math.*;
 import com.opengg.core.physics.RigidBody;
 import com.opengg.core.physics.collision.colliders.AABB;
@@ -21,7 +21,6 @@ import com.opengg.core.io.ControlType;
 import static com.opengg.core.io.input.keyboard.Key.*;
 
 import com.opengg.core.render.texture.Texture;
-import com.opengg.core.render.window.WindowInfo;
 import com.opengg.core.render.window.WindowOptions;
 import com.opengg.core.world.ActionType;
 import com.opengg.core.world.Skybox;
@@ -37,7 +36,6 @@ import java.util.List;
 public class  OpenGGTest extends GGApplication{
     private Font font;
     private Text text;
-    private GUIText gtext;
     private Texture worldterrain;
     float i = 0;
     Light l;
@@ -45,8 +43,8 @@ public class  OpenGGTest extends GGApplication{
     private FreeFlyComponent player;
 
     public static void main(String[] args){
-        WindowInfo w = new WindowInfo();
-        w.displaymode = WindowOptions.WINDOWED;
+        WindowOptions w = new WindowOptions();
+        w.displayMode = WindowOptions.DisplayMode.WINDOWED;
         w.width = 1280;
         w.height = 960;
         w.resizable = true;
@@ -54,10 +52,10 @@ public class  OpenGGTest extends GGApplication{
         w.vsync = true;
         w.glmajor = 4;
         w.glminor = 3;
-        w.renderer = WindowInfo.RendererType.OPENGL;
+        w.renderer = WindowOptions.RendererType.OPENGL;
         OpenGG.initialize(new OpenGGTest(), new InitializationOptions()
                                                 .setApplicationName("OpenGG Test")
-                                                .setWindowInfo(w));
+                                                .setWindowOptions(w));
     }
 
     @Override
@@ -94,7 +92,7 @@ public class  OpenGGTest extends GGApplication{
 
         GUI mainview = new GUI();
 
-        mainview.getRoot().addItem("aids", gtext = new GUIText(text, font, new Vector2f(0,1)));
+        //mainview.addItem(new UITextLine(text, font, new Vector2f(0,1)));
         //GUIController.addAndUse(mainview, "mainview");
 
         //NetworkEngine.connect("localhost", 25565);
@@ -123,7 +121,8 @@ public class  OpenGGTest extends GGApplication{
                 //Light.createDirectionalShadow(Quaternionf.createYXZ(new Vector3f(45,0,0)), new Vector3f(1, 1, 1),
                 //        new Vector3f(0, 0, 0), Matrix4f.orthographic(-100, 100, -100, 100, -100, 100), 4096, 4096));
                 Light.createDirectional(Quaternionf.createYXZ(new Vector3f(45,30,0)), new Vector3f(1, 1, 1)));
-        WorldEngine.getCurrent().attach(light)player = new FreeFlyComponent();
+        WorldEngine.getCurrent().attach(light);
+        player = new FreeFlyComponent();
         WorldEngine.getCurrent().attach(player);;
 
 
