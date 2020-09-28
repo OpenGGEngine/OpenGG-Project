@@ -21,6 +21,10 @@ public class UIPane extends UIGroup {
     }
 
     public UIPane repack(){
+        for(var child : this.getItems()){
+            if(child instanceof UIPane pane) pane.repack();
+        }
+
         if(background != null){
             var resizable = (UIItem & ResizableElement) background;
             this.removeItem(resizable);
