@@ -16,7 +16,7 @@ void main() {
 	vec3 up = vec3(view[0][1], view[1][1], view[2][1]);
 	
 	pos = 
-		rot +
+		offset +
 		right * position.x +
 		up * position.y;
 	
