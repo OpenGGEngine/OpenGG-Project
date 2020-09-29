@@ -40,16 +40,15 @@ public class RenderComponent extends Component implements com.opengg.core.render
 
     @Override
     public void render() {
-        if(override == null)
-            CommonUniforms.setPosRotScale(this.getPosition(), this.getRotation(), this.getScale());
-        else
-            CommonUniforms.setModel(this.override);
+        if(isAllEnabled() && renderable != null){
+            if(override == null)
+                CommonUniforms.setPosRotScale(this.getPosition(), this.getRotation(), this.getScale());
+            else
+                CommonUniforms.setModel(this.override);
 
-        if((renderDistance > 0) && (getPosition().subtract(RenderEngine.getCurrentView().getPosition()).length() > renderDistance)) {
-            return;
-        }
+            if((renderDistance > 0) && (getPosition().subtract(RenderEngine.getCurrentView().getPosition()).length() > renderDistance))
+                return;
 
-        if(isEnabled() && renderable != null){
             renderable.render();
         }
     }
