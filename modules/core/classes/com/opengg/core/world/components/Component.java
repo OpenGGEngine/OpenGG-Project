@@ -43,6 +43,7 @@ public abstract class Component{
     private String name = "default";
 
     private boolean enabled = true;
+    private boolean canUpdate = true;
     private float updatedistance = 0;
 
     private Component parent;
@@ -344,6 +345,8 @@ public abstract class Component{
     public final void localUpdate(float delta){
         if(!getWorld().isForcedUpdate()
                 &&
+                canUpdate
+                &&
                 (!isEnabled()
                         ||
                         (getUpdateDistance() != 0 && getUpdateDistance()*getUpdateDistance() < getPosition().distanceToSquared(RenderEngine.getCurrentView().getPosition())
@@ -525,6 +528,11 @@ public abstract class Component{
         else
             localOnDisable();
         this.enabled = enabled;
+        return this;
+    }
+
+    public Component setUpateEnabled(boolean update){
+        this.canUpdate = update;
         return this;
     }
 

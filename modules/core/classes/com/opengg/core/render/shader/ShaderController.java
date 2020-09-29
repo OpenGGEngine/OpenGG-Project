@@ -111,13 +111,6 @@ public class ShaderController {
         use("object.vert", "object.frag");
         saveCurrentConfiguration("object");
 
-        use("wiiobject.vert", "wiiobject.frag");
-        saveCurrentConfiguration("wiiNormal");
-
-        use("wiiobject.vert", "wiiobject.frag");
-        saveCurrentConfiguration("wiiObject");
-
-
         use("object.vert", "texture.frag");
         saveCurrentConfiguration("texture");
 
@@ -171,9 +164,6 @@ public class ShaderController {
 
         use("object.vert", "color_alpha.frag");
         saveCurrentConfiguration("ttf");
-
-        use("particle.vert", "color_alpha.frag");
-        saveCurrentConfiguration("ttf2");
 
         use("object.vert", "cuboid_scaling.frag");
         saveCurrentConfiguration("cuboid");
