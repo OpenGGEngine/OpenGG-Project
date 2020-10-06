@@ -479,10 +479,7 @@ public class Vector3f implements Serializable{
      * @return FloatBuffer containing the vector
      */
     public FloatBuffer getBuffer() {
-        FloatBuffer buffer = Allocator.allocFloat(3);
-        buffer.put(x).put(y).put(z);
-        buffer.flip();
-        return buffer;
+        return getByteBuffer().asFloatBuffer();
     }
     
     /**
@@ -494,10 +491,7 @@ public class Vector3f implements Serializable{
      * @return FloatBuffer containing the vector
      */
     public FloatBuffer getStackBuffer() {
-        FloatBuffer buffer = Allocator.stackAllocFloat(3);
-        buffer.put(x).put(y).put(z);
-        buffer.flip();
-        return buffer;
+        return getStackByteBuffer().asFloatBuffer();
     }
     
     /**
@@ -509,6 +503,13 @@ public class Vector3f implements Serializable{
      */
     public ByteBuffer getByteBuffer() {
         ByteBuffer buffer = Allocator.alloc(12);
+        buffer.putFloat(x).putFloat(y).putFloat(z);
+        buffer.flip();
+        return buffer;
+    }
+
+    public ByteBuffer getStackByteBuffer() {
+        ByteBuffer buffer = Allocator.stackAlloc(12);
         buffer.putFloat(x).putFloat(y).putFloat(z);
         buffer.flip();
         return buffer;

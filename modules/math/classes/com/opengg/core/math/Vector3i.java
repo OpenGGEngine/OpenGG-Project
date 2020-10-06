@@ -10,6 +10,7 @@ import com.opengg.core.system.Allocator;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.util.List;
 
 /**
@@ -277,6 +278,28 @@ public class Vector3i implements Serializable{
         int yy = (y < 0) ? -y : y;
         int zz = (z < 0) ? -z : z;
         return new Vector3i(xx,yy,zz);
+    }
+
+    public ByteBuffer getByteBuffer(){
+        ByteBuffer buffer = Allocator.alloc(3*Integer.BYTES);
+        buffer.putInt(x).putInt(y).putInt(z);
+        buffer.flip();
+        return buffer;
+    }
+
+    public ByteBuffer getStackByteBuffer(){
+        ByteBuffer buffer = Allocator.stackAlloc(3*Integer.BYTES);
+        buffer.putInt(x).putInt(y).putInt(z);
+        buffer.flip();
+        return buffer;
+    }
+
+    public IntBuffer getStackBuffer() {
+        return getStackByteBuffer().asIntBuffer();
+    }
+
+    public IntBuffer getBuffer() {
+        return getByteBuffer().asIntBuffer();
     }
 
     @Override

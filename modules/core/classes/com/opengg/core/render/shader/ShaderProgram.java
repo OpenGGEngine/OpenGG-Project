@@ -51,7 +51,7 @@ public interface ShaderProgram{
 
     static ShaderProgram create(ShaderType type, String source, String name, List<Uniform> uniforms){
         return switch (OpenGG.getInitOptions().getWindowOptions().renderer){
-            case OPENGL -> new OpenGLShaderProgram(type, source, name);
+            case OPENGL -> new OpenGLShaderProgram(type, source, name, uniforms);
             case VULKAN -> new VulkanShaderStage(type, source, name, uniforms);
         };
     }
@@ -59,10 +59,6 @@ public interface ShaderProgram{
     static ShaderProgram createFromBinary(ShaderType type, ByteBuffer data, String name){
         return new OpenGLShaderProgram(type, data, name);
     }
-
-    void findUniformLocation(String pos);
-
-    int getUniformLocation(String pos);
 
     void bindFragmentDataLocation(int number, CharSequence name);
     
@@ -85,6 +81,8 @@ public interface ShaderProgram{
     void setUniform(int location, Matrix4f[] matrices);
 
     void setUniformBlockIndex(int bind, String name);
+
+    List<Uniform> getUniforms();
 
     ByteBuffer getProgramBinary();
 

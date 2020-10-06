@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
+import java.util.function.DoubleToIntFunction;
 import java.util.stream.Collectors;
 
 import static java.util.function.Predicate.not;
@@ -85,7 +86,7 @@ public class ShaderLoader {
     }
 
     private void dumpShader(ShaderFileHolder holder){
-        //if(holder.name.contains("object.frag")) System.out.println(holder.compiledShader);
+        //if(holder.name.contains("wii")) System.out.println(holder.compiledShader);
         /*System.out.println(holder.name.toUpperCase() + "============================");
         System.out.println(holder.compiledShader);*/
     }
@@ -247,7 +248,12 @@ public class ShaderLoader {
                 uniforms.addAll(file.getUniforms());
             }
 
-            compiledShader = "#version " + source.getVersion().replace(".", "").concat("0\n")  + compiledShader;
+            compiledShader = """
+            #version %s
+            #extension GL_ARB_explicit_uniform_location : require
+            
+            %s;
+            """.formatted(source.getVersion().replace(".", "").concat("0"), compiledShader);
         }
 
         private void addDependency(ShaderFile file){

@@ -63,7 +63,7 @@ public class PostProcessController {
 
         Stage fxaa = new Stage("fxaa");
         PostProcessingPass fxaapass = new PostProcessingPass(PostProcessingPass.SET, fxaa);
-        addPass("fxaa", fxaapass);
+        //addPass("fxaa", fxaapass);
 
         GGConsole.log("Initialized post processing controller with " + passes.size() + " passes");
     }

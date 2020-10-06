@@ -5,6 +5,11 @@
  */
 package com.opengg.core.math;
 
+import com.opengg.core.system.Allocator;
+
+import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
+
 /**
  *
  * @author ethachu19
@@ -209,5 +214,31 @@ public class Matrix3f {
     
     public float access(int x, int y) {
         return getArr()[x][y];
+    }
+
+    public ByteBuffer getByteBuffer(){
+        ByteBuffer buffer = Allocator.alloc(9*Float.BYTES);
+        buffer.putFloat(m00).putFloat(m01).putFloat(m02);
+        buffer.putFloat(m10).putFloat(m11).putFloat(m12);
+        buffer.putFloat(m20).putFloat(m21).putFloat(m22);
+        buffer.flip();
+        return buffer;
+    }
+
+    public ByteBuffer getStackByteBuffer(){
+        ByteBuffer buffer = Allocator.stackAlloc(9*Float.BYTES);
+        buffer.putFloat(m00).putFloat(m01).putFloat(m02);
+        buffer.putFloat(m10).putFloat(m11).putFloat(m12);
+        buffer.putFloat(m20).putFloat(m21).putFloat(m22);
+        buffer.flip();
+        return buffer;
+    }
+
+    public FloatBuffer getStackBuffer() {
+        return getStackByteBuffer().asFloatBuffer();
+    }
+
+    public FloatBuffer getBuffer() {
+        return getByteBuffer().asFloatBuffer();
     }
 }

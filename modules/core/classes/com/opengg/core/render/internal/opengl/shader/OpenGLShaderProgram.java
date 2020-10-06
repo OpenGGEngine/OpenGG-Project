@@ -11,10 +11,13 @@ import com.opengg.core.exceptions.ShaderException;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
+import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.shader.ShaderProgram;
 
 import java.nio.ByteBuffer;
 import java.util.HashMap;
+import java.util.List;
+
 import static org.lwjgl.opengl.GL11.GL_TRUE;
 import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
 import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
@@ -30,13 +33,16 @@ public class OpenGLShaderProgram implements ShaderProgram{
     private final String name;
     private final NativeOpenGLShaderProgram program;
     private final ShaderType type;
+    private List<ShaderController.Uniform> uniforms;
+    private String source;
     
     private final HashMap<String, Integer> ulocs = new HashMap<>();
-    private final HashMap<Integer, Object> uniformVals = new HashMap<>();
 
-    public OpenGLShaderProgram(ShaderType type, CharSequence source, String name){
+    public OpenGLShaderProgram(ShaderType type, String source, String name, List<ShaderController.Uniform> uniforms){
         this.name = name;
         this.type = type;
+        this.source = source;
+        this.uniforms = uniforms;
         program = new NativeOpenGLShaderProgram(getInternalType(type), source);
     }
 
@@ -56,23 +62,7 @@ public class OpenGLShaderProgram implements ShaderProgram{
             default -> 0;
         };
     }
-    
-    @Override
-    public void findUniformLocation(String pos){
-        int nid = program.findUniformLocation(pos);
 
-        ulocs.put(pos, nid);
-
-        if(nid == -1) return;
-
-
-    }
-    
-    @Override
-    public int getUniformLocation(String pos){
-        return ulocs.get(pos);
-    }
-    
     @Override
     public void bindFragmentDataLocation(int number, CharSequence name) {
         program.bindFragmentDataLocation(number, name);
@@ -106,7 +96,6 @@ public class OpenGLShaderProgram implements ShaderProgram{
      */
     @Override
     public void setUniform(int location, int value) {
-        uniformVals.put(location, value);
         program.setUniform(location, value);
     }
     
@@ -118,7 +107,6 @@ public class OpenGLShaderProgram implements ShaderProgram{
      */
     @Override
     public void setUniform(int location, boolean value) {
-        uniformVals.put(location, value);
         program.setUniform(location, value);
     }
 
@@ -130,8 +118,6 @@ public class OpenGLShaderProgram implements ShaderProgram{
      */
     @Override
     public void setUniform(int location, float value) {
-
-        uniformVals.put(location, value);
         program.setUniform(location, value);
     }
     
@@ -143,7 +129,6 @@ public class OpenGLShaderProgram implements ShaderProgram{
      */
     @Override
     public void setUniform(int location, Vector2f value) {
-        uniformVals.put(location, value);
         program.setUniform(location, value);
     }
 
@@ -155,26 +140,28 @@ public class OpenGLShaderProgram implements ShaderProgram{
      */
     @Override
     public void setUniform(int location, Vector3f value) {
-        uniformVals.put(location, value);
         program.setUniform(location, value);
     }
 
     @Override
     public void setUniform(int location, Matrix4f value) {
-        uniformVals.put(location, value);
         program.setUniform(location, value);
     }
     
     @Override
     public void setUniform(int location, Matrix4f[] matrices) {
-        uniformVals.put(location, matrices);
         program.setUniform(location, matrices);
     }
     @Override
     public void setUniformBlockIndex(int bind, String name){
         program.setUniformBlockIndex(bind, name);
     }
-    
+
+    @Override
+    public List<ShaderController.Uniform> getUniforms() {
+        return uniforms;
+    }
+
     @Override
     public ByteBuffer getProgramBinary(){
         return program.getProgramBinary();
@@ -185,6 +172,7 @@ public class OpenGLShaderProgram implements ShaderProgram{
         int i;
         if((i = program.checkStatus()) != GL_TRUE){
             GGConsole.error("Shader " + name + " threw an error on status check: "  + i);
+           // System.out.println(source);
             throw new ShaderException(("From shader " + name + " with error code " + i + ": " + program.getProgramInfoLog()));
         }
     }

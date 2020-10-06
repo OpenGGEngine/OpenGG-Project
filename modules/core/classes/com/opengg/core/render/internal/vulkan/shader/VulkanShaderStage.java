@@ -30,6 +30,7 @@ public class VulkanShaderStage implements ShaderProgram {
     private ShaderType type;
     private final VkPipelineShaderStageCreateInfo shaderStageInfo;
     private List<Tuple<Integer, VulkanDescriptorSetLayout>> descriptorSets;
+    private List<ShaderController.Uniform> uniforms;
     private final ByteBuffer spirv;
 
     public VulkanShaderStage(ShaderType type, String source, String name, List<ShaderController.Uniform> uniforms) {
@@ -41,6 +42,7 @@ public class VulkanShaderStage implements ShaderProgram {
                 .module(getShaderModule(spirv = VkUtil.glslToSpirv(name, source, getVulkanStageFromShaderType(type))))
                 .pName(memUTF8("main"));
 
+        this.uniforms = uniforms;
         descriptorSets = generateSetsFromUniforms(uniforms);
     }
 
@@ -103,16 +105,6 @@ public class VulkanShaderStage implements ShaderProgram {
     }
 
     @Override
-    public void findUniformLocation(String pos) {
-
-    }
-
-    @Override
-    public int getUniformLocation(String pos) {
-        return 0;
-    }
-
-    @Override
     public void bindFragmentDataLocation(int number, CharSequence name) {
 
     }
@@ -165,6 +157,11 @@ public class VulkanShaderStage implements ShaderProgram {
     @Override
     public void setUniformBlockIndex(int bind, String name) {
 
+    }
+
+    @Override
+    public List<ShaderController.Uniform> getUniforms() {
+        return uniforms;
     }
 
     @Override

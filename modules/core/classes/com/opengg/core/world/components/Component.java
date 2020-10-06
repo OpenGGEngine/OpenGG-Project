@@ -531,7 +531,7 @@ public abstract class Component{
         return this;
     }
 
-    public Component setUpateEnabled(boolean update){
+    public Component setUpdateEnabled(boolean update){
         this.canUpdate = update;
         return this;
     }

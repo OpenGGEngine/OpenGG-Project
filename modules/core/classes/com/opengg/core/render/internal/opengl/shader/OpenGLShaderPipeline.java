@@ -9,6 +9,10 @@ package com.opengg.core.render.internal.opengl.shader;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.shader.ShaderProgram;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import static org.lwjgl.opengl.GL41.*;
 
 /**
@@ -55,6 +59,17 @@ public class OpenGLShaderPipeline implements com.opengg.core.render.shader.Shade
         nativepipeline.useProgramStages((OpenGLShaderProgram) frag, GL_FRAGMENT_SHADER_BIT);
         validate();
         unbind();
+    }
+
+    public List<ShaderController.Uniform> getAllUsedUniforms(){
+        var allUniforms = new ArrayList<ShaderController.Uniform>();
+        allUniforms.addAll(vert.getUniforms());
+        if(geom != null) allUniforms.addAll(geom.getUniforms());
+        if(tesc != null) allUniforms.addAll(tesc.getUniforms());
+        if(tese != null) allUniforms.addAll(tese.getUniforms());
+        allUniforms.addAll(frag.getUniforms());
+
+        return allUniforms.stream().distinct().collect(Collectors.toList());
     }
 
     @Override

@@ -7,6 +7,8 @@
 package com.opengg.core.math;
 
 import com.opengg.core.system.Allocator;
+
+import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 
 /**
@@ -290,19 +292,27 @@ public class Vector4f {
             mat.m02 * x + mat.m12 * y + mat.m22 * z + mat.m32 * w,
             mat.m03 * x + mat.m13 * y + mat.m23 * z + mat.m33 * w);
     }
-    
-    public FloatBuffer getStackBuffer() {
-        FloatBuffer buffer = Allocator.stackAllocFloat(4);
-        buffer.put(x).put(y).put(z).put(w);
+
+    public ByteBuffer getByteBuffer(){
+        ByteBuffer buffer = Allocator.alloc(4*Float.BYTES);
+        buffer.putFloat(x).putFloat(y).putFloat(z).putFloat(w);
         buffer.flip();
         return buffer;
     }
-    
-    public FloatBuffer getBuffer() {
-        FloatBuffer buffer = Allocator.allocFloat(4);
-        buffer.put(x).put(y).put(z).put(w);
+
+    public ByteBuffer getStackByteBuffer(){
+        ByteBuffer buffer = Allocator.stackAlloc(4*Float.BYTES);
+        buffer.putFloat(x).putFloat(y).putFloat(z).putFloat(w);
         buffer.flip();
         return buffer;
+    }
+
+    public FloatBuffer getStackBuffer() {
+        return getStackByteBuffer().asFloatBuffer();
+    }
+
+    public FloatBuffer getBuffer() {
+        return getByteBuffer().asFloatBuffer();
     }
     
     public Vector3f truncate(){
