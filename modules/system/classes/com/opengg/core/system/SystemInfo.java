@@ -6,9 +6,8 @@
 
 package com.opengg.core.system;
 
-import com.opengg.core.console.GGConsole;
 import com.opengg.core.GGInfo;
-import java.io.IOException;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 

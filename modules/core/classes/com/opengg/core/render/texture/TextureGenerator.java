@@ -5,7 +5,6 @@ import com.opengg.core.system.Allocator;
 
 import java.awt.*;
 import java.util.Arrays;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 public class TextureGenerator {

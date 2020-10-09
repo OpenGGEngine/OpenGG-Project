@@ -26,14 +26,12 @@ import com.opengg.core.world.WorldEngine;
 import com.opengg.core.world.components.Component;
 
 import java.io.*;
-import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeoutException;
 
 /**
  *
@@ -225,9 +223,7 @@ public class Client {
                 var compID = in.readLong();
                 var newC = in.readLong();
 
-                WorldEngine.findEverywhereByGUID(compID).ifPresent(cc -> {
-                    WorldEngine.findEverywhereByGUID(newC).ifPresent(nc -> nc.attach(cc));
-                });
+                WorldEngine.findEverywhereByGUID(compID).ifPresent(cc -> WorldEngine.findEverywhereByGUID(newC).ifPresent(nc -> nc.attach(cc)));
             }
         }catch (IOException e){
             e.printStackTrace();

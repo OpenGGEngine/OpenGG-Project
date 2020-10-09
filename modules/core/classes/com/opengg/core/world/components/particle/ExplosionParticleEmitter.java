@@ -7,7 +7,6 @@ package com.opengg.core.world.components.particle;
 
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.texture.Texture;
-import com.opengg.core.world.components.TriggerComponent;
 import com.opengg.core.world.components.triggers.Trigger;
 import com.opengg.core.world.components.triggers.TriggerInfo;
 import com.opengg.core.world.components.triggers.Triggerable;

@@ -47,46 +47,32 @@ public class GUILoader {
                     while (attributes.hasNext()) {
                         Attribute a = attributes.next();
                         switch (a.getName().toString()) {
-                            case "name":
-                                groupName = a.getValue();
-                                break;
-                            case "pos":
-                                position = getVector2f(a);
-                                break;
-                            case "size":
-                                size = getVector2f(a);
-                                break;
-                            case "tex":
-                                tex = Resource.getTexture(a.getValue());
-                                break;
-                            case "font":
-                                font = Resource.getTruetypeFont(a.getValue());
-                                break;
-                            case "layer":
-                                layer = Float.parseFloat(a.getValue());
-                                break;
-                            default:
-                                GGConsole.warning("Unknown parameter: " + a.getName().toString());
-                                break;
+                            case "name" -> groupName = a.getValue();
+                            case "pos" -> position = getVector2f(a);
+                            case "size" -> size = getVector2f(a);
+                            case "tex" -> tex = Resource.getTexture(a.getValue());
+                            case "font" -> font = Resource.getTruetypeFont(a.getValue());
+                            case "layer" -> layer = Float.parseFloat(a.getValue());
+                            default -> GGConsole.warning("Unknown parameter: " + a.getName().toString());
                         }
                     }
                     switch (event.asStartElement().getName().toString()) {
-                        case "group":
+                        case "group" -> {
                             UIGroup group = new UIGroup();
                             group.setLayer(layer);
                             group.setPositionOffset(position);
                             group.setName(groupName);
                             groups.peek().addItem(groupName, group);
                             groups.push(group);
-                            break;
-                        case "ggbutton":
+                        }
+                        case "ggbutton" -> {
                             UIButton button = new UIButton();
                             button.setLayer(layer);
                             button.setPositionOffset(position);
                             button.setName(groupName);
                             groups.peek().addItem(groupName, button);
-                            break;
-                        case "ggtext":
+                        }
+                        case "ggtext" -> {
                             String textData = reader.nextEvent().asCharacters().getData();
                             Text text1 = Text.from(textData).size(size.x).maxLineSize(size.y);
                             UITextLine text = new UITextLine(text1, font);
@@ -94,17 +80,15 @@ public class GUILoader {
                             text.setPositionOffset(position);
                             text.setName(groupName);
                             groups.peek().addItem(groupName, text);
-                            break;
-                        case "gtex":
+                        }
+                        case "gtex" -> {
                             UITexture texture = new UITexture(tex, size);
                             texture.setLayer(layer);
                             texture.setPositionOffset(position);
                             texture.setName(groupName);
                             groups.peek().addItem(groupName, texture);
-                            break;
-                            default:
-                                GGConsole.warning("Unknown token: " + event.asStartElement().getName().toString());
-                                break;
+                        }
+                        default -> GGConsole.warning("Unknown token: " + event.asStartElement().getName().toString());
                     }
                 } else if (event.isCharacters()) {
 

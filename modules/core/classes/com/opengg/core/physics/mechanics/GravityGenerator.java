@@ -1,9 +1,7 @@
 package com.opengg.core.physics.mechanics;
 
-import com.opengg.core.engine.OpenGG;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.physics.PhysicsProvider;
-import com.opengg.core.physics.RigidBody;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
 

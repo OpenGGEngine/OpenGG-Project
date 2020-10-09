@@ -2,7 +2,6 @@ package com.opengg.core.network;
 
 import com.opengg.core.engine.OpenGG;
 import com.opengg.core.engine.PerformanceManager;
-import com.opengg.core.math.util.Tuple;
 import com.opengg.core.network.common.ConnectionData;
 import com.opengg.core.network.common.Packet;
 import com.opengg.core.network.common.PacketType;

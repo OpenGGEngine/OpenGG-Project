@@ -114,9 +114,7 @@ public class ChatManager {
                     .map(s -> s + "\n")
                     .collect(Collectors.joining());
 
-            OpenGG.asyncExec(() -> {
-                text.setText(chatContents);
-            });
+            OpenGG.asyncExec(() -> text.setText(chatContents));
         }
     }
 }

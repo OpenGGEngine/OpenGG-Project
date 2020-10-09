@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import static com.opengg.core.util.FileUtil.ioResourceToByteBuffer;
-import static org.lwjgl.opengl.GL11.glGetError;
 import static org.lwjgl.stb.STBTruetype.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 

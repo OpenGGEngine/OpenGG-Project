@@ -12,7 +12,6 @@ import com.opengg.core.math.Vector3f;
 import com.opengg.core.math.Vector4f;
 import com.opengg.core.physics.collision.PhysicsRay;
 import com.opengg.core.render.RenderEngine;
-import com.opengg.core.render.internal.opengl.OpenGLRenderer;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -122,12 +122,12 @@ public class Vector3f implements Serializable{
      * @return Value requested
      */
     public float get(int val){
-        switch(val){
-            case 0: return x;
-            case 1: return y;
-            case 2: return z;
-            default: return 0;
-        }
+        return switch (val) {
+            case 0 -> x;
+            case 1 -> y;
+            case 2 -> z;
+            default -> 0;
+        };
     }
     
     /**
@@ -531,8 +531,7 @@ public class Vector3f implements Serializable{
     
     @Override
     public boolean equals(Object ot){
-        if(ot instanceof Vector3f){
-            Vector3f v = (Vector3f)ot;
+        if(ot instanceof Vector3f v){
             return FastMath.isEqual(v.x, x) && FastMath.isEqual(v.y, y)  && FastMath.isEqual(v.z, z);
         }   
         return false;

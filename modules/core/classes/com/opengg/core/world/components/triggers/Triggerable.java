@@ -6,8 +6,6 @@
 
 package com.opengg.core.world.components.triggers;
 
-import com.opengg.core.world.components.TriggerComponent;
-
 /**
  *
  * @author Javier

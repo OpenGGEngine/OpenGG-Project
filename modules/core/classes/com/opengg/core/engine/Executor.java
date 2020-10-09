@@ -5,7 +5,6 @@ import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAmount;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -192,7 +191,7 @@ public class Executor {
         }
     }
 
-    public class UselessSleeper extends Sleeper {
+    public static class UselessSleeper extends Sleeper {
         @Override
         public void waitUntilComplete() {
         }

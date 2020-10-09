@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.lwjgl.system.MemoryUtil.*;
-import static org.lwjgl.system.MemoryUtil.memFree;
 import static org.lwjgl.vulkan.VK10.*;
 
 public class VulkanImage implements Texture, NativeResource {
@@ -41,15 +40,15 @@ public class VulkanImage implements Texture, NativeResource {
 
         VkImageCreateInfo imageCreateInfo = VkImageCreateInfo.calloc()
                 .sType(VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO)
-                .imageType(getVulkanImageType(config.getType()))
-                .format(getVulkanImageFormat(config.getInternalFormat()))
+                .imageType(getVulkanImageType(config.type()))
+                .format(getVulkanImageFormat(config.internalFormat()))
                 .mipLevels(1)
                 .arrayLayers(layers)
                 .samples(samples)
                 .tiling(tiling)
                 .usage(usage)
                 .initialLayout(VK_IMAGE_LAYOUT_UNDEFINED);
-        if(config.getType() == TextureType.TEXTURE_CUBEMAP) imageCreateInfo.flags(VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT);
+        if(config.type() == TextureType.TEXTURE_CUBEMAP) imageCreateInfo.flags(VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT);
 
         imageCreateInfo.extent().width(size.x).height(size.y).depth(size.z);
 
@@ -161,7 +160,7 @@ public class VulkanImage implements Texture, NativeResource {
     }
 
     public View getImageView(int aspectMask){
-        var view = new VulkanImage.View(this, getVulkanImageViewType(config.getType()), getVulkanImageFormat(config.getInternalFormat()), aspectMask);
+        var view = new VulkanImage.View(this, getVulkanImageViewType(config.type()), getVulkanImageFormat(config.internalFormat()), aspectMask);
         return view;
     }
 

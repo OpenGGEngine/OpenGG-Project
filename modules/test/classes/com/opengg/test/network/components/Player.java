@@ -16,8 +16,6 @@ import com.opengg.core.world.Action;
 import com.opengg.core.world.ActionType;
 import com.opengg.core.world.Actionable;
 import com.opengg.core.world.components.*;
-import com.opengg.core.world.components.physics.RigidBodyComponent;
-import com.opengg.test.network.OpenGGNetworkTest;
 import com.opengg.test.network.OpenGGTestServer;
 
 import java.io.IOException;

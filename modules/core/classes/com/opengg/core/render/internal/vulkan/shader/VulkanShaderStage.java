@@ -6,7 +6,6 @@ import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.math.util.Tuple;
 import com.opengg.core.render.internal.vulkan.VkUtil;
-import com.opengg.core.render.internal.vulkan.VulkanDescriptorSet;
 import com.opengg.core.render.internal.vulkan.VulkanDescriptorSetLayout;
 import com.opengg.core.render.internal.vulkan.VulkanRenderer;
 import com.opengg.core.render.shader.ShaderController;
@@ -19,7 +18,6 @@ import java.nio.LongBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.lwjgl.system.MemoryUtil.*;

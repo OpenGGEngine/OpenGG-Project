@@ -13,9 +13,7 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 import static org.lwjgl.system.MemoryUtil.*;
-import static org.lwjgl.system.MemoryUtil.memAllocLong;
 import static org.lwjgl.vulkan.VK10.*;
-import static org.lwjgl.vulkan.VK10.VK_SUCCESS;
 
 public class VulkanCommandBuffer {
     private final VkCommandBuffer buffer;

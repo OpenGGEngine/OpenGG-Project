@@ -6,7 +6,6 @@
 
 package com.opengg.core.world;
 
-import com.opengg.core.math.Matrix4f;
 import com.opengg.core.render.Renderable;
 import com.opengg.core.render.objects.ObjectCreator;
 import com.opengg.core.render.texture.Texture;

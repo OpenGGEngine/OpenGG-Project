@@ -3,15 +3,11 @@ package com.opengg.core.render.internal.vulkan;
 import com.opengg.core.engine.PerformanceManager;
 import com.opengg.core.render.internal.vulkan.texture.VulkanImage;
 import com.opengg.core.render.internal.vulkan.texture.VulkanSampler;
-import com.opengg.core.render.texture.TextureData;
-import com.opengg.core.system.NativeResource;
-import com.opengg.core.system.NativeResourceManager;
 import org.lwjgl.vulkan.VkDescriptorBufferInfo;
 import org.lwjgl.vulkan.VkDescriptorImageInfo;
 import org.lwjgl.vulkan.VkDescriptorSetAllocateInfo;
 import org.lwjgl.vulkan.VkWriteDescriptorSet;
 
-import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +15,6 @@ import java.util.List;
 import static org.lwjgl.system.MemoryUtil.memAllocLong;
 import static org.lwjgl.system.MemoryUtil.memFree;
 import static org.lwjgl.vulkan.VK10.*;
-import static org.lwjgl.vulkan.VK10.VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 
 public class VulkanDescriptorSet{
     private final long descriptorSet;

@@ -24,30 +24,33 @@ public class ScriptCompiler {
         PrintWriter out = new PrintWriter(writer);
         //out.println("package com.opengg.ext.scripts;");
         out.println(imports);
-        out.println("import java.util.function.BiConsumer;");
-        out.println("import com.opengg.core.script.Script;");
-        out.println("import com.opengg.core.world.components.*;");
-        out.println("public class " + name + " extends Script{");
-        out.println("public " + name + "(){");
-        out.println(" super(\"" + GGInfo.getVersion() + "\", \"" + GGInfo.getApplicationName() + "\");");
-        out.println("}");
-        out.println("@Override");
-        out.println("public void accept(ScriptComponent c, Float delta){");
-        out.println(script);
-        out.println("}");
-        out.println("}");
+        out.println("""
+                        import java.util.function.BiConsumer;
+                        import com.opengg.core.script.Script;
+                        import com.opengg.core.world.components.*;
+                        public class %s extends Script{
+                            public %s(){
+                                super(%s, %s);
+                            }
+                            @Override
+                            public void accept(ScriptComponent c, Float delta){
+                                %s
+                            }
+                        }"""
+                .formatted(name, name, GGInfo.getVersion(), GGInfo.getApplicationName(), script));
         out.close();
         var fileObject = new JavaSourceFromString(name, writer.toString());
 
         writer = new StringWriter();
         out = new PrintWriter(writer);
-        out.println("module com.opengg.scripts {\n" +
-                "    requires com.opengg.core;\n" +
-                "    requires com.opengg.console;\n" +
-                "    requires com.opengg.math;\n" +
-                "    requires com.opengg.base;\n" +
-                "    requires java.desktop;\n" +
-                "}");
+        out.println("""
+                module com.opengg.scripts {
+                    requires com.opengg.core;
+                    requires com.opengg.console;
+                    requires com.opengg.math;
+                    requires com.opengg.base;
+                    requires java.desktop;
+                }""");
 
         out.close();
         var moduleObject = new JavaSourceFromString("module-info", writer.toString());

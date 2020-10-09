@@ -6,9 +6,6 @@
 
 package com.opengg.core.world.components.triggers;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  *
  * @author Javier

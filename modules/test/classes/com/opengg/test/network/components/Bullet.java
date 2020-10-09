@@ -52,7 +52,7 @@ public class Bullet extends Projectile{
     public void update(float delta){
         timeSinceFire += delta;
         if(timeSinceFire > 1f){
-            OpenGG.asyncExec(() -> this.delete());
+            OpenGG.asyncExec(this::delete);
         }
     }
 

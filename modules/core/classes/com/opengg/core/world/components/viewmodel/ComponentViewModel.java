@@ -9,7 +9,6 @@ import com.opengg.core.editor.DataBinding;
 import com.opengg.core.editor.ForComponent;
 import com.opengg.core.editor.ViewModel;
 import com.opengg.core.math.Vector3f;
-import com.opengg.core.world.WorldEngine;
 import com.opengg.core.world.components.Component;
 
 /**

@@ -30,20 +30,14 @@ public interface ShaderProgram{
         public static ShaderType fromFileType(ShaderFile.ShaderFileType type){
             ShaderType ntype;
 
-            switch(type) {
-                case FRAG:
-                    return ShaderType.FRAGMENT;
-                case VERT:
-                    return ShaderType.VERTEX;
-                case TESSCONTROL:
-                    return ShaderType.TESS_CONTROL;
-                case TESSEVAL:
-                    return ShaderType.TESS_EVAL;
-                case GEOM:
-                    return ShaderType.GEOMETRY;
-                default:
-                    throw new ShaderException("Attempted to load utility shader as GLSL");
-            }
+            return switch (type) {
+                case FRAG -> ShaderType.FRAGMENT;
+                case VERT -> ShaderType.VERTEX;
+                case TESSCONTROL -> ShaderType.TESS_CONTROL;
+                case TESSEVAL -> ShaderType.TESS_EVAL;
+                case GEOM -> ShaderType.GEOMETRY;
+                default -> throw new ShaderException("Attempted to load utility shader as GLSL");
+            };
         }
 
 

@@ -62,8 +62,7 @@ public class OpenGLShaderPipeline implements com.opengg.core.render.shader.Shade
     }
 
     public List<ShaderController.Uniform> getAllUsedUniforms(){
-        var allUniforms = new ArrayList<ShaderController.Uniform>();
-        allUniforms.addAll(vert.getUniforms());
+        var allUniforms = new ArrayList<ShaderController.Uniform>(vert.getUniforms());
         if(geom != null) allUniforms.addAll(geom.getUniforms());
         if(tesc != null) allUniforms.addAll(tesc.getUniforms());
         if(tese != null) allUniforms.addAll(tese.getUniforms());

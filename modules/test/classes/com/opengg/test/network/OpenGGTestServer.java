@@ -9,20 +9,14 @@ import com.opengg.core.network.server.ConnectionListener;
 import com.opengg.core.network.server.Server;
 import com.opengg.core.engine.Resource;
 import com.opengg.core.network.server.ServerClient;
-import com.opengg.core.world.World;
 import com.opengg.core.world.WorldEngine;
-import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
-import com.opengg.core.render.light.Light;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.world.Skybox;
 import com.opengg.core.world.WorldLoader;
-import com.opengg.core.world.components.*;
 import com.opengg.test.network.components.GrenadeItem;
 import com.opengg.test.network.components.Player;
 import com.opengg.test.network.components.WorldItemContainer;
-
-import java.util.*;
 
 
 public class OpenGGTestServer extends GGApplication{

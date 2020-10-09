@@ -7,7 +7,6 @@
 package com.opengg.core.engine;
 
 import com.opengg.core.Configuration;
-import com.opengg.core.GGInfo;
 import com.opengg.core.audio.SoundEngine;
 import com.opengg.core.audio.SoundtrackHandler;
 import com.opengg.core.console.ConsoleListener;
@@ -20,8 +19,6 @@ import com.opengg.core.model.ModelManager;
 import com.opengg.core.network.NetworkEngine;
 import com.opengg.core.network.common.ChatMessage;
 import com.opengg.core.network.common.ConnectionData;
-import com.opengg.core.network.common.Packet;
-import com.opengg.core.network.common.PacketType;
 import com.opengg.core.physics.PhysicsRenderer;
 import com.opengg.core.physics.collision.CollisionManager;
 import com.opengg.core.render.RenderEngine;
@@ -31,8 +28,6 @@ import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.window.WindowController;
 import com.opengg.core.world.WorldEngine;
 import com.opengg.core.world.components.FreeFlyComponent;
-
-import java.util.stream.Collectors;
 
 /**
  *
@@ -216,9 +211,7 @@ public class OpenGGCommandExtender implements ConsoleListener{
             case "server-info" -> {
                 if(command.argCount == 2){
                     var future = NetworkEngine.pollServer(new ConnectionData(command.args[0], command.args[1]));
-                    future.thenAccept(c ->{
-                        GGConsole.log("Name: " + c.name + ", MOTD: " + c.motd + ",\nUsers: " + c.users + ", Max Users: " + c.maxUsers);
-                    });
+                    future.thenAccept(c -> GGConsole.log("Name: " + c.name + ", MOTD: " + c.motd + ",\nUsers: " + c.users + ", Max Users: " + c.maxUsers));
                 }else{
                     GGConsole.log("Usage: server-info {ip} {port}");
                 }

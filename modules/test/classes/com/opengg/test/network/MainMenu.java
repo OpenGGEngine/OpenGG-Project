@@ -3,22 +3,10 @@ package com.opengg.test.network;
 
 import com.opengg.core.audio.Soundtrack;
 import com.opengg.core.audio.SoundtrackHandler;
-import com.opengg.core.engine.OpenGG;
 import com.opengg.core.engine.Resource;
 import com.opengg.core.gui.*;
-import com.opengg.core.gui.text.UITextLine;
-import com.opengg.core.gui.text.UITextField;
-import com.opengg.core.math.Vector2f;
-import com.opengg.core.math.Vector3f;
-import com.opengg.core.network.NetworkEngine;
-import com.opengg.core.network.common.ConnectionData;
-import com.opengg.core.network.common.ServerInfo;
 import com.opengg.core.render.text.Font;
-import com.opengg.core.render.text.Text;
-import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.window.WindowController;
-
-import java.awt.*;
 
 public class MainMenu {
     public static GUI menu = new GUI();

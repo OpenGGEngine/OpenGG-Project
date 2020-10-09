@@ -62,9 +62,9 @@ public class Mesh extends Collider {
 
     @Override
     public Optional<ContactManifold> collide(Collider c) {
-        if(c instanceof ConvexHull){
-            return CollisionSolver.HullMesh((ConvexHull)c, this).map(ContactManifold::reverse);
+        if(c instanceof ConvexHull ch){
+            return CollisionSolver.HullMesh(ch, this).map(ContactManifold::reverse);
         }
-        return null;
+        return Optional.empty();
     }
 }

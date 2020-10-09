@@ -8,8 +8,6 @@ package com.opengg.core.render.internal.opengl.shader;
 
 import com.opengg.core.exceptions.ShaderException;
 import com.opengg.core.render.RenderEngine;
-import com.opengg.core.render.internal.opengl.OpenGLRenderer;
-import com.opengg.core.render.shader.ShaderProgram;
 
 import static org.lwjgl.opengl.GL41.*;
 

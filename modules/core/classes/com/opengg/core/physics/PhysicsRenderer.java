@@ -60,8 +60,7 @@ public class PhysicsRenderer {
         if(c instanceof SphereCollider){
             CommonUniforms.setPosRotScale(c.getPosition(), new Quaternionf(), new Vector3f(((SphereCollider)c).getRadius()));
             sphereobj.render();
-        }else if(c instanceof CapsuleCollider){
-            CapsuleCollider nc = (CapsuleCollider)c;
+        }else if(c instanceof CapsuleCollider nc){
             CommonUniforms.setPosRotScale(nc.getP1(), new Quaternionf(), new Vector3f(nc.getRadius()));
             sphereobj.render();
             

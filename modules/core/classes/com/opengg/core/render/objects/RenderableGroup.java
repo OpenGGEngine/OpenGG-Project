@@ -5,10 +5,8 @@
  */
 package com.opengg.core.render.objects;
 
-import com.opengg.core.math.Matrix4f;
 import com.opengg.core.render.Renderable;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

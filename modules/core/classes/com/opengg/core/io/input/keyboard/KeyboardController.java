@@ -7,10 +7,8 @@ package com.opengg.core.io.input.keyboard;
 
 import com.opengg.core.console.GGConsole;
 
-import javax.sound.sampled.Clip;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;

@@ -6,18 +6,12 @@
 
 package com.opengg.core.render.shader;
 
-import com.opengg.core.GGInfo;
 import com.opengg.core.render.GraphicsBuffer;
 import com.opengg.core.render.RenderEngine;
-import com.opengg.core.render.internal.opengl.OpenGLRenderer;
 import com.opengg.core.render.internal.opengl.shader.OpenGLVertexArrayObject;
 import com.opengg.core.render.internal.vulkan.shader.VulkanVertexFormat;
 
 import java.util.List;
-
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
-import static org.lwjgl.opengl.GL43.*;
 
 /**
  *

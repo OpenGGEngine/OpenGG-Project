@@ -65,13 +65,9 @@ public class ActionQueuer implements ActionTransmitter{
 
                 action.name = name;
 
-                switch(type){
-                    case "PRESS":
-                        action.type = ActionType.PRESS;
-                        break;
-                    case "RELEASE":
-                        action.type = ActionType.RELEASE;
-                        break;
+                switch (type) {
+                    case "PRESS" -> action.type = ActionType.PRESS;
+                    case "RELEASE" -> action.type = ActionType.RELEASE;
                 }
 
                 actions.add(action);

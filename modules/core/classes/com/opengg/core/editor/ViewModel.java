@@ -1,7 +1,5 @@
 package com.opengg.core.editor;
 
-import java.util.List;
-
 public abstract class ViewModel<T> extends BindingAggregate{
     protected T model;
 

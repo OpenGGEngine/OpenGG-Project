@@ -33,11 +33,11 @@ public class TerrainCollider extends Collider {
     
     @Override
     public Optional<ContactManifold> collide(Collider c) {
-        if(c instanceof ConvexHull){
-            return CollisionSolver.HullTerrain((ConvexHull) c, this).map(ContactManifold::reverse);
+        if(c instanceof ConvexHull ch){
+            return CollisionSolver.HullTerrain(ch, this).map(ContactManifold::reverse);
         }
             
-        return null;
+        return Optional.empty();
     }
     
 }

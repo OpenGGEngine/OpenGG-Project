@@ -11,8 +11,6 @@ import com.opengg.core.physics.PhysicsObject;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
 
-import static java.lang.Math.abs;
-
 import java.io.IOException;
 import java.util.List;
 

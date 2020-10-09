@@ -101,19 +101,13 @@ public class Animation {
         if (event.start < current && event.end >= current) {
             event.complete = false;
             double actualTime = event.useLocalTimeReference ? current - event.start : current;
-            switch(event.accessType){
-                    //No Override
-                case FIELD:
-                    ComponentVarAccessor.setVar(event.field, target, event.curveFunction.apply(actualTime));
-                    break;
-                    //Instance Override
-                case INSTANCE:
-                    event.acceptor.accept(target, event.curveFunction.apply(actualTime));
-                    break;
-                    //Static Overrides
-                case STATIC:
-                    event.acceptor.accept(null, event.curveFunction.apply(actualTime));
-                    break;
+            //No Override
+            //Instance Override
+            //Static Overrides
+            switch (event.accessType) {
+                case FIELD -> ComponentVarAccessor.setVar(event.field, target, event.curveFunction.apply(actualTime));
+                case INSTANCE -> event.acceptor.accept(target, event.curveFunction.apply(actualTime));
+                case STATIC -> event.acceptor.accept(null, event.curveFunction.apply(actualTime));
             }
         }else if (!event.complete){
             event.onComplete.run();

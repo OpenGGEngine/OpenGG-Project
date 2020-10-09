@@ -6,10 +6,9 @@
 
 package com.opengg.core.world;
 
-import com.opengg.core.console.GGConsole;
 import com.opengg.core.util.GGOutputStream;
 import com.opengg.core.world.components.Component;
-import java.io.ByteArrayOutputStream;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;

@@ -183,7 +183,7 @@ public class GGAnimation {
             Vector3f scaling = calcInterpolatedScaling(n);
             Matrix4f real = new Matrix4f().scale(scaling).rotate(rot).translate(position).multiply(globalTransform);
             for(GGBone bone:bones){
-               if(bone.name == node.name){
+               if(bone.name.equals(node.name)){
                    bone.finalTransform = real.multiply(bone.offset);
                }
             }

@@ -11,8 +11,6 @@ import com.opengg.core.render.shader.VertexArrayObject;
 
 import java.util.List;
 
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL43.*;
 
 public class OpenGLVertexArrayObject implements VertexArrayObject {

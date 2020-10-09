@@ -10,8 +10,7 @@ package com.opengg.core.math.util;
  * @author Warren
  */
 import com.opengg.core.math.Vector2f;
-import java.util.ArrayList;
-import java.util.Arrays;
+
 import java.util.List;
 
 /**

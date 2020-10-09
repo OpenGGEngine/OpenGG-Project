@@ -3,11 +3,7 @@ package com.opengg.core.render.internal.vulkan;
 import org.lwjgl.vulkan.VkAttachmentDescription;
 import org.lwjgl.vulkan.VkAttachmentReference;
 
-import java.lang.ref.Reference;
-
-import static org.lwjgl.vulkan.KHRSwapchain.VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 import static org.lwjgl.vulkan.VK10.*;
-import static org.lwjgl.vulkan.VK10.VK_IMAGE_LAYOUT_UNDEFINED;
 
 public class VulkanAttachment {
     private final VkAttachmentDescription description;

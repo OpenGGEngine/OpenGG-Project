@@ -9,9 +9,7 @@ import com.opengg.core.system.Allocator;
 
 import java.io.Serializable;
 import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.List;
 
 /**
  * 3 component integer immutable vector with linear algebra functions
@@ -100,12 +98,12 @@ public class Vector3i implements Serializable{
      * @return Value requested
      */
     public float get(int val){
-        switch(val){
-            case 0: return x;
-            case 1: return y;
-            case 2: return z;
-            default: return 0;
-        }
+        return switch (val) {
+            case 0 -> x;
+            case 1 -> y;
+            case 2 -> z;
+            default -> 0;
+        };
     }
 
     /**
@@ -304,8 +302,7 @@ public class Vector3i implements Serializable{
 
     @Override
     public boolean equals(Object ot){
-        if(ot instanceof Vector3i){
-            Vector3i v = (Vector3i)ot;
+        if(ot instanceof Vector3i v){
             return FastMath.isEqual(v.x, x) && FastMath.isEqual(v.y, y)  && FastMath.isEqual(v.z, z);
         }   
         return false;

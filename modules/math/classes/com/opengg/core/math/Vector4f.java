@@ -77,12 +77,12 @@ public class Vector4f {
      * @return Value requested
      */
     public float get(int val){
-        switch(val){
-            case 0: return x;
-            case 1: return y;
-            case 2: return z;
-            default: return 0;
-        }
+        return switch (val) {
+            case 0 -> x;
+            case 1 -> y;
+            case 2 -> z;
+            default -> 0;
+        };
     }
     
     /**

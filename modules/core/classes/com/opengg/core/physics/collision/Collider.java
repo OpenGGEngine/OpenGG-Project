@@ -10,7 +10,6 @@ import com.opengg.core.physics.PhysicsObject;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
 import java.io.IOException;
-import java.util.List;
 import java.util.Optional;
 
 /**

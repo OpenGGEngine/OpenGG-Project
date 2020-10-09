@@ -487,9 +487,9 @@ public class Parser {
         }
 
         private void recursivePrint(int level, Node node){
-            String value = "";
-            for(int i = 0; i < level; i++) value += "   ";
-            value += node.toString();
+            StringBuilder value = new StringBuilder();
+            for(int i = 0; i < level; i++) value.append("   ");
+            value.append(node.toString());
 
             System.out.println(value + " (" + node.getClass().getSimpleName() + ")");
             for(Node node2 : node.getChildren()){

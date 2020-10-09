@@ -8,7 +8,6 @@ import org.lwjgl.system.MemoryStack;
 import org.lwjgl.util.shaderc.ShadercIncludeResolve;
 import org.lwjgl.util.shaderc.ShadercIncludeResultRelease;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 
 import static org.lwjgl.util.shaderc.Shaderc.*;

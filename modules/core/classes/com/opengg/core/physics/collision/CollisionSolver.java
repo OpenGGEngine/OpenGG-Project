@@ -197,7 +197,7 @@ public class CollisionSolver {
             }
         }
 */
-        return null;
+        return Optional.empty();
     }
 
     public static Optional<ContactManifold> HullGround(ConvexHull h1){
@@ -237,7 +237,7 @@ public class CollisionSolver {
             contacts.add(HullHull(hull,h2).get());
         }
 */
-        return null;// Optional.of(ContactManifold.combineManifolds(contacts));
+        return Optional.empty();// Optional.of(ContactManifold.combineManifolds(contacts));
     }
 
     private CollisionSolver() {

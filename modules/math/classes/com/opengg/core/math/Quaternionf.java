@@ -213,7 +213,7 @@ public class Quaternionf implements Serializable{
         return new Quaternionf(rotAngle, rotAxis);
     }
 
-    public static final Quaternionf slerp(final Quaternionf a, final Quaternionf b, float t) {
+    public static Quaternionf slerp(final Quaternionf a, final Quaternionf b, float t) {
         if (!(t >= 0 && t <= 1)) {
             throw new ArithmeticException("t not in range");
         }

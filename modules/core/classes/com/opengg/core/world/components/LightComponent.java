@@ -7,7 +7,6 @@
 package com.opengg.core.world.components;
 
 import com.opengg.core.engine.OpenGG;
-import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.light.Light;

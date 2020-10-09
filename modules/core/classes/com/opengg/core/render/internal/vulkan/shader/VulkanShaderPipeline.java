@@ -2,7 +2,6 @@ package com.opengg.core.render.internal.vulkan.shader;
 
 import com.opengg.core.math.util.Tuple;
 import com.opengg.core.render.internal.vulkan.VulkanDescriptorSetLayout;
-import com.opengg.core.render.internal.vulkan.VulkanRenderer;
 import com.opengg.core.render.shader.ShaderPipeline;
 import com.opengg.core.render.shader.ShaderProgram;
 import org.lwjgl.vulkan.VK10;
@@ -60,11 +59,7 @@ public class VulkanShaderPipeline implements ShaderPipeline {
         var finalLayouts = new VulkanDescriptorSetLayout[highestSet+1];
         for(int i = 0; i <= highestSet; i++){
             var existing = layouts.get(i);
-            if(existing != null){
-                finalLayouts[i] = new VulkanDescriptorSetLayout(existing);
-            }else{
-                finalLayouts[i] = new VulkanDescriptorSetLayout(List.of());
-            }
+            finalLayouts[i] = new VulkanDescriptorSetLayout(Objects.requireNonNullElseGet(existing, List::of));
         }
         return finalLayouts;
     }

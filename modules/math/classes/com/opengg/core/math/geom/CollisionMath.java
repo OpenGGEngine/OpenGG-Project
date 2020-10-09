@@ -441,17 +441,17 @@ public class CollisionMath {
 
         /* VII.) New search direction */
         switch (simplex.count) {
-            case 1: {
+            case 1 -> {
                 /* --------- Point -------- */
                 simplex.searchDir = simplex.a.vec.inverse();
-            } break;
-            case 2: {
+            }
+            case 2 -> {
                 /* ------ Line segment ---- */
                 var ba = simplex.b.vec.subtract(simplex.a.vec);
                 var b0 = simplex.b.vec.inverse();
                 simplex.searchDir = ba.cross(b0).cross(ba);
-            } break;
-            case 3: {
+            }
+            case 3 -> {
                 /* ------- Triangle ------- */
                 var ab = simplex.b.vec.subtract(simplex.a.vec);
                 var ac = simplex.c.vec.subtract(simplex.a.vec);
@@ -475,12 +475,12 @@ public class CollisionMath {
 
         /* compute closest points */
         switch (s.count) {
-            case 1: {
+            case 1 -> {
                 /* Point */
                 p1 = s.a.a;
                 p2 = s.a.b;
-            } break;
-            case 2: {
+            }
+            case 2 -> {
                 /* Line */
                 float as = denom * s.bary[0];
                 float bs = denom * s.bary[1];
@@ -492,8 +492,8 @@ public class CollisionMath {
 
                 p1 = a.add(b);
                 p2 = c.add(d);
-            } break;
-            case 3: {
+            }
+            case 3 -> {
                 /* Triangle */
                 float as = denom * s.bary[0];
                 float bs = denom * s.bary[1];
@@ -509,8 +509,8 @@ public class CollisionMath {
 
                 p1 = a.add(b).add(c);
                 p2 = d.add(e).add(f);
-            } break;
-            case 4: {
+            }
+            case 4 -> {
                 /* Tetrahedron */
                 var a = s.a.a.multiply(denom * s.bary[0]);
                 var b = s.b.a.multiply(denom * s.bary[1]);
@@ -519,7 +519,7 @@ public class CollisionMath {
 
                 p1 = a.add(b).add(c).add(d);
                 p2 = p1;
-            } break;
+            }
         }
         return Tuple.of(p1,p2);
     }

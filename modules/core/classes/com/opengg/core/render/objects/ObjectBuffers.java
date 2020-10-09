@@ -5,7 +5,6 @@
  */
 package com.opengg.core.render.objects;
 
-import com.opengg.core.math.util.Tuple;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.math.geom.Triangle;

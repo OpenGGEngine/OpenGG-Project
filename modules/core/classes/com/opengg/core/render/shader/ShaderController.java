@@ -25,7 +25,6 @@ import com.opengg.core.render.shader.ggsl.ShaderFile;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.window.WindowOptions;
 import com.opengg.core.system.Allocator;
-import org.lwjgl.opengl.GL11;
 
 import java.nio.ByteBuffer;
 import java.util.*;

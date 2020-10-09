@@ -4,8 +4,6 @@ import java.lang.ref.Cleaner;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.stream.IntStream;
 
 public class NativeResourceManager {
     private static final Object block = new Object();

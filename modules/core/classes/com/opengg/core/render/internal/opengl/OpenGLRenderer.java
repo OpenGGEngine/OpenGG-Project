@@ -25,9 +25,6 @@ import com.opengg.core.render.window.WindowOptions;
 import com.opengg.core.system.Allocator;
 import com.opengg.core.world.Camera;
 
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL14.GL_FUNC_ADD;
-import static org.lwjgl.opengl.GL14.glBlendEquation;
 import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.opengl.GL32.GL_PROGRAM_POINT_SIZE;
 import static org.lwjgl.opengl.GL32.GL_TEXTURE_CUBE_MAP_SEAMLESS;

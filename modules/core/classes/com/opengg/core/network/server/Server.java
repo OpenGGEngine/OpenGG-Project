@@ -63,9 +63,7 @@ public class Server {
         NetworkEngine.getChatManager().addServerChatConsumer(m -> {
             GGConsole.log("(Chat) " + m.toString());
             if(m.getContents().charAt(0) != '/'){
-                getClients().forEach(c -> {
-                    m.send(c.getConnection());
-                });
+                getClients().forEach(c -> m.send(c.getConnection()));
             }
         });
         NetworkEngine.getBulkNetworkDataManager().onMessageArrival(m -> {

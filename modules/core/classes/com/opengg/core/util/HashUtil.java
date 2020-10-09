@@ -1,7 +1,6 @@
 package com.opengg.core.util;
 
 import com.opengg.core.console.GGConsole;
-import com.opengg.core.engine.Resource;
 import com.opengg.core.system.Allocator;
 import org.lwjgl.util.meow.Meow;
 import org.lwjgl.util.meow.MeowHash;

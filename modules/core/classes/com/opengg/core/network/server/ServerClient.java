@@ -13,7 +13,6 @@ import com.opengg.core.util.GGInputStream;
 import com.opengg.core.world.components.ActionTransmitterComponent;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
