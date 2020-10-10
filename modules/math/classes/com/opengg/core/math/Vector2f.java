@@ -190,18 +190,26 @@ public class Vector2f implements Serializable{
         return new Vector2f(xx, xy);
     }
 
-    public FloatBuffer getStackBuffer() {
-        FloatBuffer buffer = Allocator.stackAllocFloat(2);
-        buffer.put(x).put(y);
+    public ByteBuffer getByteBuffer(){
+        ByteBuffer buffer = Allocator.alloc(2*Float.BYTES);
+        buffer.putFloat(x).putFloat(y);
         buffer.flip();
         return buffer;
     }
-    
-    public FloatBuffer getBuffer() {
-        FloatBuffer buffer = Allocator.allocFloat(2);
-        buffer.put(x).put(y);
+
+    public ByteBuffer getStackByteBuffer(){
+        ByteBuffer buffer = Allocator.stackAlloc(2*Float.BYTES);
+        buffer.putFloat(x).putFloat(y);
         buffer.flip();
         return buffer;
+    }
+
+    public FloatBuffer getStackBuffer() {
+        return getStackByteBuffer().asFloatBuffer();
+    }
+
+    public FloatBuffer getBuffer() {
+        return getByteBuffer().asFloatBuffer();
     }
     
     public byte[] toByteArray(){   

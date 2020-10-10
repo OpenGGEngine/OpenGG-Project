@@ -6,7 +6,6 @@
 package com.opengg.core.util;
 
 import com.opengg.core.exceptions.ClassInstantiationException;
-import com.opengg.core.world.Deserializer;
 
 import java.util.ArrayList;
 import java.util.List;

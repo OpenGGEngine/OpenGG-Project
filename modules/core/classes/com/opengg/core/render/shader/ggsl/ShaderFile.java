@@ -136,14 +136,12 @@ public class ShaderFile{
 
     public String process(Parser.Node node){
         var builder = new StringBuilder();
-        if(node instanceof Parser.Body){
-            var body = (Parser.Body) node;
+        if(node instanceof Parser.Body body){
             for(var node2 : body.expressions){
                 builder.append(process(node2).indent(4)).append(";\n");
             }
         }
-        else if(node instanceof Parser.Function){
-            var func = (Parser.Function) node;
+        else if(node instanceof Parser.Function func){
 
             for(var modifier : func.modifiers.modifiers){
                 builder.append(modifier.value).append(" ");
@@ -170,8 +168,7 @@ public class ShaderFile{
             builder.append(process(func.body));
             builder.append("} \n");
         }
-        else if(node instanceof Parser.Struct){
-            var struct = (Parser.Struct) node;
+        else if(node instanceof Parser.Struct struct){
 
             for(var modifier : struct.modifiers.modifiers){
                 builder.append(process(modifier)).append(" ");
@@ -184,8 +181,7 @@ public class ShaderFile{
 
             builder.append("} ").append(struct.variable).append(";\n");
         }
-        else if(node instanceof Parser.Interface){
-            var interfacee = (Parser.Interface) node;
+        else if(node instanceof Parser.Interface interfacee){
 
             for(var modifier : interfacee.modifiers.modifiers){
                 builder.append(process(modifier)).append(" ");
@@ -199,22 +195,19 @@ public class ShaderFile{
 
             builder.append("} ").append(interfacee.variable).append(";\n");
         }
-        else if(node instanceof Parser.If){
-            var iff = (Parser.If) node;
+        else if(node instanceof Parser.If iff){
             builder.append("if(");
             builder.append(process(iff.conditional)).append("){\n");
             builder.append(process(iff.then)).append("}");
             if(!iff.els.expressions.isEmpty())
                 builder.append("else{\n").append(process(iff.els)).append("}\n");
         }
-        else if(node instanceof Parser.While){
-            var whil = (Parser.While) node;
+        else if(node instanceof Parser.While whil){
             builder.append("while(");
             builder.append(process(whil.conditional)).append("){\n");
             builder.append(process(whil.contents)).append("}\n");
         }
-        else if(node instanceof Parser.For){
-            var forr = (Parser.For) node;
+        else if(node instanceof Parser.For forr){
             builder.append("for(");
             builder.append(process(forr.assignment));
             if(!builder.toString().endsWith(";")){
@@ -227,9 +220,8 @@ public class ShaderFile{
             builder.append(process(forr.contents)).append("}\n");
         }
         else if(node instanceof Parser.Expression){
-            if(node instanceof Parser.Assignment){
-                if(node instanceof Parser.Declaration){
-                    var dec = (Parser.Declaration) node;
+            if(node instanceof Parser.Assignment assign){
+                if(node instanceof Parser.Declaration dec){
 
                     for(var mod : dec.modifiers.modifiers){
                         builder.append(process(mod)).append(" ");
@@ -237,8 +229,6 @@ public class ShaderFile{
 
                     builder.append(dec.type).append(" ");
                 }
-
-                var assign = (Parser.Assignment) node;
 
                 builder.append(assign.name);
                 if(assign.assigntype != null){
@@ -249,24 +239,23 @@ public class ShaderFile{
 
                 builder.append(";");
             }
-            else if(node instanceof Parser.Identifier){
-                builder.append(((Parser.Identifier)node).value);
+            else if(node instanceof Parser.Identifier identifier){
+                builder.append(identifier.value);
             }
-            else if(node instanceof Parser.Modifier){
-                if(node instanceof Parser.Layout){
-                    builder.append("layout(" + ((Parser.Layout)node).expressions.stream().map(this::process).collect(Collectors.joining(", ")) + ")");
+            else if(node instanceof Parser.Modifier modifier){
+                if(node instanceof Parser.Layout layout){
+                    builder.append("layout(" + layout.expressions.stream().map(this::process).collect(Collectors.joining(", ")) + ")");
                 }else {
-                    builder.append(((Parser.Modifier)node).value);
+                    builder.append(modifier.value);
                 }
             }
-            else if(node instanceof Parser.FloatLiteral){
-                builder.append(Float.valueOf(((Parser.FloatLiteral)node).value)).append("f");
+            else if(node instanceof Parser.FloatLiteral floatLiteral){
+                builder.append(Float.valueOf(floatLiteral.value)).append("f");
             }
-            else if(node instanceof Parser.IntegerLiteral){
-                builder.append(Integer.valueOf(((Parser.IntegerLiteral)node).value));
+            else if(node instanceof Parser.IntegerLiteral integerLiteral){
+                builder.append(Integer.valueOf(integerLiteral.value));
             }
-            else if(node instanceof Parser.BinaryOp){
-                var binop = (Parser.BinaryOp) node;
+            else if(node instanceof Parser.BinaryOp binop){
 
                 if(!binop.op.equals("=")) builder.append("(");
                 builder.append(process(binop.left)).append(" ");
@@ -274,8 +263,7 @@ public class ShaderFile{
                 builder.append(" ").append(process(binop.right));
                 if(!binop.op.equals("=")) builder.append(")");
             }
-            else if(node instanceof Parser.UnaryOp){
-                var unop = (Parser.UnaryOp) node;
+            else if(node instanceof Parser.UnaryOp unop){
 
                 if (unop.after) {
                     builder.append(process(unop.exp));
@@ -285,12 +273,10 @@ public class ShaderFile{
                     builder.append(process(unop.exp));
                 }
             }
-            else if(node instanceof Parser.FieldAccessor){
-                var access = (Parser.FieldAccessor)node;
+            else if(node instanceof Parser.FieldAccessor access){
                 builder.append(process(access.value)).append(access.accessor.value);
             }
-            else if(node instanceof Parser.TernaryOp){
-                var ternary = (Parser.TernaryOp) node;
+            else if(node instanceof Parser.TernaryOp ternary){
 
                 builder.append("(");
                 builder.append(process(ternary.conditional)).append(" ? ");
@@ -298,11 +284,10 @@ public class ShaderFile{
                 builder.append(process(ternary.els));
                 builder.append(")");
             }
-            else if(node instanceof Parser.Return){
-                builder.append("return ").append(process(((Parser.Return)node).returnValue));
+            else if(node instanceof Parser.Return returnn){
+                builder.append("return ").append(process(returnn.returnValue));
             }
-            else if(node instanceof Parser.FunctionCall){
-                var fcall = (Parser.FunctionCall) node;
+            else if(node instanceof Parser.FunctionCall fcall){
 
                 builder.append(fcall.name).append("(");
                 for(var arg : fcall.args.expressions){
@@ -367,20 +352,14 @@ public class ShaderFile{
 
     public static ShaderFileType getType(String path){
         String ending = path.substring(path.lastIndexOf(".") + 1);
-        switch(ending){
-            case "vert":
-                return ShaderFile.ShaderFileType.VERT;
-            case "tesc":
-                return ShaderFile.ShaderFileType.TESSCONTROL;
-            case "tese":
-                return ShaderFile.ShaderFileType.TESSEVAL;
-            case "geom":
-                return ShaderFile.ShaderFileType.GEOM;
-            case "frag":
-                return ShaderFile.ShaderFileType.FRAG;
-            default:
-                return ShaderFile.ShaderFileType.UTIL;
-        }
+        return switch (ending) {
+            case "vert" -> ShaderFileType.VERT;
+            case "tesc" -> ShaderFileType.TESSCONTROL;
+            case "tese" -> ShaderFileType.TESSEVAL;
+            case "geom" -> ShaderFileType.GEOM;
+            case "frag" -> ShaderFileType.FRAG;
+            default -> ShaderFileType.UTIL;
+        };
     }
 
     public enum ShaderFileType{

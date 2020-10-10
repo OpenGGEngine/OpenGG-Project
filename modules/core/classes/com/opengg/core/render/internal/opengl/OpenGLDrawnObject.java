@@ -5,6 +5,7 @@ import com.opengg.core.exceptions.RenderException;
 import com.opengg.core.render.GraphicsBuffer;
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.render.drawn.DrawnObject;
+import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.shader.VertexArrayFormat;
 
 import java.nio.FloatBuffer;
@@ -13,7 +14,7 @@ import java.nio.IntBuffer;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL42.glDrawElementsInstancedBaseVertexBaseInstance;
 
-public class OpenGLDrawnObject extends DrawnObject {
+public final class OpenGLDrawnObject extends DrawnObject {
 
     public OpenGLDrawnObject(VertexArrayFormat format, IntBuffer index, FloatBuffer... vertices) {
         super(format, index, vertices);
@@ -27,6 +28,7 @@ public class OpenGLDrawnObject extends DrawnObject {
     public void render(){
         if(RenderEngine.validateInitialization()) return;
         indexBuffer.bind();
+        ShaderController.uploadModifiedDescriptorSets();
         if(!((OpenGLRenderer) RenderEngine.renderer).getCurrentVAO().getFormat().equals(format))
             throw new RenderException("Invalid VAO bound during render");
         ((OpenGLRenderer) RenderEngine.renderer).getCurrentVAO().applyFormat(vertexBufferObjects);

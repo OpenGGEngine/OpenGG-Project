@@ -23,11 +23,6 @@ import org.lwjgl.opengl.GL;
 
 import static java.util.Map.entry;
 import static org.lwjgl.opengl.EXTTextureCompressionS3TC.*;
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL12.*;
-import static org.lwjgl.opengl.GL13.*;
-import static org.lwjgl.opengl.GL14.GL_TEXTURE_LOD_BIAS;
-import static org.lwjgl.opengl.GL21.*;
 import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.opengl.KHRTextureCompressionASTCLDR.*;
 
@@ -52,15 +47,15 @@ public class OpenGLTexture implements Texture {
         this.size = size;
 
         tex = new NativeOpenGLTexture();
-        this.type = getOpenGLTextureType(config.getType());
-        this.samplerFormat = getOpenGLSamplerFormat(config.getSamplerFormat());
-        this.internalFormat = getOpenGLTextureFormat(config.getInternalFormat());
-        this.inputFormat = getOpenGLInputFormat(config.getInputFormat());
+        this.type = getOpenGLTextureType(config.type());
+        this.samplerFormat = getOpenGLSamplerFormat(config.samplerFormat());
+        this.internalFormat = getOpenGLTextureFormat(config.internalFormat());
+        this.inputFormat = getOpenGLInputFormat(config.inputFormat());
         setActiveTexture(0);
         bind();
-        setMinimumFilterType(getOpenGlFilter(config.getMinFilter()));
-        setMaximumFilterType(getOpenGlFilter(config.getMaxFilter()));
-        setTextureWrapType(getOpenGlWrapType(config.getWrapTypeS()),getOpenGlWrapType(config.getWrapTypeT()),getOpenGlWrapType(config.getWrapTypeR()));
+        setMinimumFilterType(getOpenGlFilter(config.minFilter()));
+        setMaximumFilterType(getOpenGlFilter(config.maxFilter()));
+        setTextureWrapType(getOpenGlWrapType(config.wrapTypeS()),getOpenGlWrapType(config.wrapTypeT()),getOpenGlWrapType(config.wrapTypeR()));
     }
 
 

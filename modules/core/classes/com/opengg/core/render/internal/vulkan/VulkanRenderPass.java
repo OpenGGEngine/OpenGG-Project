@@ -3,7 +3,6 @@ package com.opengg.core.render.internal.vulkan;
 import com.opengg.core.math.Vector2i;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.internal.vulkan.texture.VulkanFramebuffer;
-import com.opengg.core.render.texture.Framebuffer;
 import org.lwjgl.vulkan.*;
 
 import java.nio.LongBuffer;

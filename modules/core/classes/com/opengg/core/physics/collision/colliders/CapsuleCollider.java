@@ -51,15 +51,15 @@ public class CapsuleCollider extends Collider {
     
     @Override
     public Optional<ContactManifold> collide(Collider c) {
-        if(c instanceof SphereCollider){
-            return CollisionSolver.SphereCapsule((SphereCollider)c, this).map(ContactManifold::reverse);
+        if(c instanceof SphereCollider sh){
+            return CollisionSolver.SphereCapsule(sh, this).map(ContactManifold::reverse);
 
-        }else if(c instanceof CapsuleCollider)
-            return CollisionSolver.CapsuleCapsule(this, (CapsuleCollider)c);
+        }else if(c instanceof CapsuleCollider cc)
+            return CollisionSolver.CapsuleCapsule(this, cc);
         else if(c == null)
             return CollisionSolver.CapsuleGround(this);
         
-        return null;
+        return Optional.empty();
     }
     
     @Override

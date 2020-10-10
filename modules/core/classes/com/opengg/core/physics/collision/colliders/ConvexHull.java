@@ -42,17 +42,17 @@ public class ConvexHull extends Collider {
 
     @Override
     public Optional<ContactManifold> collide(Collider c) {
-        if(c instanceof ConvexHull)
-            return CollisionSolver.HullHull(this, (ConvexHull)c);
-        else if(c instanceof Mesh)
-            return CollisionSolver.HullMesh(this, (Mesh)c);
-        else if(c instanceof TerrainCollider)
-            return CollisionSolver.HullTerrain(this, (TerrainCollider) c);
-        else if(c instanceof SphereCollider)
-            return CollisionSolver.HullSphere(this, (SphereCollider) c);
+        if(c instanceof ConvexHull ch)
+            return CollisionSolver.HullHull(this, ch);
+        else if(c instanceof Mesh m)
+            return CollisionSolver.HullMesh(this, m);
+        else if(c instanceof TerrainCollider tc)
+            return CollisionSolver.HullTerrain(this, tc);
+        else if(c instanceof SphereCollider sc )
+            return CollisionSolver.HullSphere(this, sc);
         else if(c instanceof Floor)
             return CollisionSolver.HullGround(this);
-        return null;
+        return Optional.empty();
     }
 
     @Override
@@ -74,9 +74,9 @@ public class ConvexHull extends Collider {
 
     @Override
     public String toString(){
-        String s = "{";
+        StringBuilder s = new StringBuilder("{");
         for(Vector3f v: vertices){
-            s+=v.toString();
+            s.append(v.toString());
         }
         return s+"}";
     }

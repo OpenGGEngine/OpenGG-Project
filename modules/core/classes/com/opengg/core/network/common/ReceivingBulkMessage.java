@@ -1,18 +1,9 @@
 package com.opengg.core.network.common;
 
 import com.opengg.core.console.GGConsole;
-import com.opengg.core.engine.Resource;
 import com.opengg.core.util.GGInputStream;
-import com.opengg.core.util.GGOutputStream;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.OpenOption;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 
 public class ReceivingBulkMessage {

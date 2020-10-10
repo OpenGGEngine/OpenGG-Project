@@ -35,13 +35,13 @@ public class SphereCollider extends Collider {
     
     @Override
     public Optional<ContactManifold> collide(Collider c) {
-        if(c instanceof SphereCollider)
-            return CollisionSolver.SphereSphere(this, (SphereCollider)c);
-        if(c instanceof CapsuleCollider)
-            return CollisionSolver.SphereCapsule(this, (CapsuleCollider)c);
-        if(c instanceof ConvexHull)
-            return CollisionSolver.HullSphere((ConvexHull)c, this).map(ContactManifold::reverse);
-        return null;
+        if(c instanceof SphereCollider sh)
+            return CollisionSolver.SphereSphere(this, sh);
+        if(c instanceof CapsuleCollider cc)
+            return CollisionSolver.SphereCapsule(this, cc);
+        if(c instanceof ConvexHull ch)
+            return CollisionSolver.HullSphere(ch, this).map(ContactManifold::reverse);
+        return Optional.empty();
     }
     
     @Override

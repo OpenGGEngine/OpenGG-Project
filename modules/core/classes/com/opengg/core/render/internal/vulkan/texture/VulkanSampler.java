@@ -3,7 +3,6 @@ package com.opengg.core.render.internal.vulkan.texture;
 import com.opengg.core.render.internal.vulkan.VkUtil;
 import com.opengg.core.render.internal.vulkan.VulkanRenderer;
 import com.opengg.core.render.texture.Texture;
-import org.lwjgl.vulkan.VK10;
 import org.lwjgl.vulkan.VkSamplerCreateInfo;
 
 import static org.lwjgl.vulkan.VK10.*;
@@ -14,11 +13,11 @@ public class VulkanSampler {
     public VulkanSampler(Texture.TextureConfig config){
         VkSamplerCreateInfo info = VkSamplerCreateInfo.calloc()
                 .sType(VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO)
-                .minFilter(getVulkanFilterType(config.getMinFilter()))
-                .magFilter(getVulkanFilterType(config.getMaxFilter()))
-                .addressModeU(getVulkanWrapType(config.getWrapType()))
-                .addressModeV(getVulkanWrapType(config.getWrapType()))
-                .addressModeW(getVulkanWrapType(config.getWrapType()))
+                .minFilter(getVulkanFilterType(config.minFilter()))
+                .magFilter(getVulkanFilterType(config.maxFilter()))
+                .addressModeU(getVulkanWrapType(config.wrapTypeR()))
+                .addressModeV(getVulkanWrapType(config.wrapTypeS()))
+                .addressModeW(getVulkanWrapType(config.wrapTypeT()))
                 .anisotropyEnable(false)//config.isAnisotropic())
                 .borderColor(VK_BORDER_COLOR_INT_OPAQUE_BLACK)
                 .maxAnisotropy(1)//config.isAnisotropic() ? 16 : 1)

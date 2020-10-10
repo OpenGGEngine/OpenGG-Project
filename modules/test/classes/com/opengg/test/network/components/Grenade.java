@@ -46,16 +46,14 @@ public class Grenade extends Projectile{
     public void update(float delta){
         timeSinceFire += delta;
         if(timeSinceFire > 3.5f){
-            OpenGG.asyncExec(() -> {
-                /*var exp = new ExplosionParticleEmitter(10, 1f, Texture.ofColor(Color.ORANGE));
+            /*var exp = new ExplosionParticleEmitter(10, 1f, Texture.ofColor(Color.ORANGE));
                 exp.setPositionOffset(this.getPosition());
                 WorldEngine.getCurrent().attach(exp);
                 exp.fire(50);
                 OpenGG.asyncExec(3, () -> {
                     //exp.delete();
                 });*/
-                this.delete();
-            });
+            OpenGG.asyncExec(this::delete);
         }
     }
 

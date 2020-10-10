@@ -93,12 +93,12 @@ public class Vector3big {
      * @return Value requested
      */
     public BigDecimal get(int val){
-        switch(val){
-            case 0: return x;
-            case 1: return y;
-            case 2: return z;
-            default: return new BigDecimal(0);
-        }
+        return switch (val) {
+            case 0 -> x;
+            case 1 -> y;
+            case 2 -> z;
+            default -> new BigDecimal(0);
+        };
     }
 
     /**

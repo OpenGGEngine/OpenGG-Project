@@ -37,15 +37,9 @@ public class GGTootle extends ModelProcess {
                     null,
                     TOOTLE_VCACHE_AUTO,
                     TOOTLE_OVERDRAW_AUTO)) {
-                case TOOTLE_OK:
-                    mesh.setIndexBuffer(revised);
-                    break;
-                case TOOTLE_OUT_OF_MEMORY:
-                    GGConsole.error("Tootle Out of Memory: Mesh "+index);
-                    break;
-                case TOOTLE_INVALID_ARGS:
-                    GGConsole.error("Tootle Invalid Arguments: Mesh "+index);
-                    break;
+                case TOOTLE_OK -> mesh.setIndexBuffer(revised);
+                case TOOTLE_OUT_OF_MEMORY -> GGConsole.error("Tootle Out of Memory: Mesh " + index);
+                case TOOTLE_INVALID_ARGS -> GGConsole.error("Tootle Invalid Arguments: Mesh " + index);
             }
             index++;
             numcompleted+=1;

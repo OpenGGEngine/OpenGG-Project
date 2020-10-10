@@ -6,8 +6,6 @@
 
 package com.opengg.core.world.components.physics;
 
-import com.opengg.core.GGInfo;
-import com.opengg.core.engine.OpenGG;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.physics.RigidBody;

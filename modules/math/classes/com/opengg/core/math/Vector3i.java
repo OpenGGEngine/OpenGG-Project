@@ -9,8 +9,7 @@ import com.opengg.core.system.Allocator;
 
 import java.io.Serializable;
 import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
-import java.util.List;
+import java.nio.IntBuffer;
 
 /**
  * 3 component integer immutable vector with linear algebra functions
@@ -99,12 +98,12 @@ public class Vector3i implements Serializable{
      * @return Value requested
      */
     public float get(int val){
-        switch(val){
-            case 0: return x;
-            case 1: return y;
-            case 2: return z;
-            default: return 0;
-        }
+        return switch (val) {
+            case 0 -> x;
+            case 1 -> y;
+            case 2 -> z;
+            default -> 0;
+        };
     }
 
     /**
@@ -279,10 +278,31 @@ public class Vector3i implements Serializable{
         return new Vector3i(xx,yy,zz);
     }
 
+    public ByteBuffer getByteBuffer(){
+        ByteBuffer buffer = Allocator.alloc(3*Integer.BYTES);
+        buffer.putInt(x).putInt(y).putInt(z);
+        buffer.flip();
+        return buffer;
+    }
+
+    public ByteBuffer getStackByteBuffer(){
+        ByteBuffer buffer = Allocator.stackAlloc(3*Integer.BYTES);
+        buffer.putInt(x).putInt(y).putInt(z);
+        buffer.flip();
+        return buffer;
+    }
+
+    public IntBuffer getStackBuffer() {
+        return getStackByteBuffer().asIntBuffer();
+    }
+
+    public IntBuffer getBuffer() {
+        return getByteBuffer().asIntBuffer();
+    }
+
     @Override
     public boolean equals(Object ot){
-        if(ot instanceof Vector3i){
-            Vector3i v = (Vector3i)ot;
+        if(ot instanceof Vector3i v){
             return FastMath.isEqual(v.x, x) && FastMath.isEqual(v.y, y)  && FastMath.isEqual(v.z, z);
         }   
         return false;

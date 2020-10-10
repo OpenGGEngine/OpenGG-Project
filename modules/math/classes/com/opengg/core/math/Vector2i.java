@@ -9,6 +9,7 @@ import com.opengg.core.system.Allocator;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 
 
 /**
@@ -183,18 +184,26 @@ public class Vector2i implements Serializable{
         return new Vector2i(xx, xy);
     }
 
-    public FloatBuffer getStackBuffer() {
-        FloatBuffer buffer = Allocator.stackAllocFloat(2);
-        buffer.put(x).put(y);
+    public ByteBuffer getByteBuffer(){
+        ByteBuffer buffer = Allocator.alloc(2*Integer.BYTES);
+        buffer.putInt(x).putInt(y);
         buffer.flip();
         return buffer;
     }
-    
-    public FloatBuffer getBuffer() {
-        FloatBuffer buffer = Allocator.allocFloat(2);
-        buffer.put(x).put(y);
+
+    public ByteBuffer getStackByteBuffer(){
+        ByteBuffer buffer = Allocator.stackAlloc(2*Integer.BYTES);
+        buffer.putInt(x).putInt(y);
         buffer.flip();
         return buffer;
+    }
+
+    public IntBuffer getStackBuffer() {
+        return getStackByteBuffer().asIntBuffer();
+    }
+
+    public IntBuffer getBuffer() {
+        return getByteBuffer().asIntBuffer();
     }
     
     public byte[] toByteArray(){   
@@ -220,8 +229,7 @@ public class Vector2i implements Serializable{
 
     @Override
     public boolean equals(Object ot){
-        if(ot instanceof Vector2i){
-            Vector2i v = (Vector2i)ot;
+        if(ot instanceof Vector2i v){
             return FastMath.isEqual(v.x, x) && FastMath.isEqual(v.y, y);
         }   
         return false;

@@ -13,7 +13,6 @@ import com.opengg.core.engine.Resource;
 import com.opengg.core.physics.PhysicsEngine;
 import com.opengg.core.physics.PhysicsSystem;
 import com.opengg.core.render.RenderEngine;
-import com.opengg.core.render.internal.opengl.OpenGLRenderer;
 import com.opengg.core.render.RenderEnvironment;
 import com.opengg.core.render.RenderGroup;
 import com.opengg.core.exceptions.InvalidParentException;
@@ -110,11 +109,11 @@ public class World extends Component implements Resource {
     }
 
     private String printLayout(Component comp, int tabCount){
-        var string = comp.getClass().getSimpleName() + ": " + comp.getName() + " (" + comp.getGUID() + ")\n";
+        StringBuilder string = new StringBuilder(comp.getClass().getSimpleName() + ": " + comp.getName() + " (" + comp.getGUID() + ")\n");
         for(var child : comp.getChildren()){
-            string += " ".repeat(tabCount*3) + printLayout(child, tabCount + 1) + "";
+            string.append(" ".repeat(tabCount * 3)).append(printLayout(child, tabCount + 1));
         }
-        return  string;
+        return string.toString();
     }
 
     /**
@@ -318,7 +317,7 @@ public class World extends Component implements Resource {
         var data2 = in.readByteArray(size2);
 
         structure.deserialize(data2);
-        OpenGG.onMainThread(() -> structure.remakeRenderGroups());
+        OpenGG.onMainThread(structure::remakeRenderGroups);
         if(in.available() <= 0) return;
 
         var size = in.readInt();

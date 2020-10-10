@@ -30,20 +30,14 @@ public interface ShaderProgram{
         public static ShaderType fromFileType(ShaderFile.ShaderFileType type){
             ShaderType ntype;
 
-            switch(type) {
-                case FRAG:
-                    return ShaderType.FRAGMENT;
-                case VERT:
-                    return ShaderType.VERTEX;
-                case TESSCONTROL:
-                    return ShaderType.TESS_CONTROL;
-                case TESSEVAL:
-                    return ShaderType.TESS_EVAL;
-                case GEOM:
-                    return ShaderType.GEOMETRY;
-                default:
-                    throw new ShaderException("Attempted to load utility shader as GLSL");
-            }
+            return switch (type) {
+                case FRAG -> ShaderType.FRAGMENT;
+                case VERT -> ShaderType.VERTEX;
+                case TESSCONTROL -> ShaderType.TESS_CONTROL;
+                case TESSEVAL -> ShaderType.TESS_EVAL;
+                case GEOM -> ShaderType.GEOMETRY;
+                default -> throw new ShaderException("Attempted to load utility shader as GLSL");
+            };
         }
 
 
@@ -51,7 +45,7 @@ public interface ShaderProgram{
 
     static ShaderProgram create(ShaderType type, String source, String name, List<Uniform> uniforms){
         return switch (OpenGG.getInitOptions().getWindowOptions().renderer){
-            case OPENGL -> new OpenGLShaderProgram(type, source, name);
+            case OPENGL -> new OpenGLShaderProgram(type, source, name, uniforms);
             case VULKAN -> new VulkanShaderStage(type, source, name, uniforms);
         };
     }
@@ -59,10 +53,6 @@ public interface ShaderProgram{
     static ShaderProgram createFromBinary(ShaderType type, ByteBuffer data, String name){
         return new OpenGLShaderProgram(type, data, name);
     }
-
-    void findUniformLocation(String pos);
-
-    int getUniformLocation(String pos);
 
     void bindFragmentDataLocation(int number, CharSequence name);
     
@@ -85,6 +75,8 @@ public interface ShaderProgram{
     void setUniform(int location, Matrix4f[] matrices);
 
     void setUniformBlockIndex(int bind, String name);
+
+    List<Uniform> getUniforms();
 
     ByteBuffer getProgramBinary();
 

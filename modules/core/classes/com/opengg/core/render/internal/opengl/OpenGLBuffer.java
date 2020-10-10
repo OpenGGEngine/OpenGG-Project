@@ -142,52 +142,36 @@ public class OpenGLBuffer implements GraphicsBuffer{
     }
 
     public static int fromUsageType(UsageType type){
-        switch(type){
-            case STATIC_DRAW: return GL_STATIC_DRAW;
-            case DYNAMIC_DRAW: return GL_DYNAMIC_DRAW;
-            case STREAM_DRAW: return GL_STREAM_DRAW;
-            case STATIC_READ: return GL_STATIC_READ;
-            case DYNAMIC_READ: return GL_DYNAMIC_READ;
-            case STREAM_READ: return GL_STREAM_READ;
-            case STATIC_COPY: return GL_STATIC_COPY;
-            case DYNAMIC_COPY: return GL_DYNAMIC_COPY;
-            case STREAM_COPY: return GL_STREAM_COPY;
-        }
+        return switch (type) {
+            case STATIC_DRAW -> GL_STATIC_DRAW;
+            case DYNAMIC_DRAW -> GL_DYNAMIC_DRAW;
+            case STREAM_DRAW -> GL_STREAM_DRAW;
+            case STATIC_READ -> GL_STATIC_READ;
+            case DYNAMIC_READ -> GL_DYNAMIC_READ;
+            case STREAM_READ -> GL_STREAM_READ;
+            case STATIC_COPY -> GL_STATIC_COPY;
+            case DYNAMIC_COPY -> GL_DYNAMIC_COPY;
+            case STREAM_COPY -> GL_STREAM_COPY;
+        };
 
-        return 0;
     }
 
     public static int fromBufferType(BufferType type){
-        switch(type) {
-            case VERTEX_ARRAY_BUFFER:
-                return GL_ARRAY_BUFFER;
-            case ELEMENT_ARRAY_BUFFER:
-                return GL_ELEMENT_ARRAY_BUFFER;
-            case COPY_READ_BUFFER:
-                return GL_COPY_READ_BUFFER;
-            case COPY_WRITE_BUFFER:
-                return GL_COPY_WRITE_BUFFER;
-            case PIXEL_UNPACK_BUFFER:
-                return GL_PIXEL_UNPACK_BUFFER;
-            case PIXEL_PACK_BUFFER:
-                return GL_PIXEL_PACK_BUFFER;
-            case QUERY_BUFFER:
-                return GL_QUERY_BUFFER;
-            case TEXTURE_BUFFER:
-                return GL_TEXTURE_BUFFER;
-            case TRANSFORM_FEEDBACK_BUFFER:
-                return GL_TRANSFORM_FEEDBACK_BUFFER;
-            case UNIFORM_BUFFER:
-                return GL_UNIFORM_BUFFER;
-            case DRAW_INDIRECT_BUFFER:
-                return GL_DRAW_INDIRECT_BUFFER;
-            case ATOMIC_COUNTER_BUFFER:
-                return GL_ATOMIC_COUNTER_BUFFER;
-            case DISPATCH_INDIRECT_BUFFER:
-                return GL_DISPATCH_INDIRECT_BUFFER;
-            case SHADER_STORAGE_BUFFER:
-                return GL_SHADER_STORAGE_BUFFER;
-        }
-        return 0;
+        return switch (type) {
+            case VERTEX_ARRAY_BUFFER -> GL_ARRAY_BUFFER;
+            case ELEMENT_ARRAY_BUFFER -> GL_ELEMENT_ARRAY_BUFFER;
+            case COPY_READ_BUFFER -> GL_COPY_READ_BUFFER;
+            case COPY_WRITE_BUFFER -> GL_COPY_WRITE_BUFFER;
+            case PIXEL_UNPACK_BUFFER -> GL_PIXEL_UNPACK_BUFFER;
+            case PIXEL_PACK_BUFFER -> GL_PIXEL_PACK_BUFFER;
+            case QUERY_BUFFER -> GL_QUERY_BUFFER;
+            case TEXTURE_BUFFER -> GL_TEXTURE_BUFFER;
+            case TRANSFORM_FEEDBACK_BUFFER -> GL_TRANSFORM_FEEDBACK_BUFFER;
+            case UNIFORM_BUFFER -> GL_UNIFORM_BUFFER;
+            case DRAW_INDIRECT_BUFFER -> GL_DRAW_INDIRECT_BUFFER;
+            case ATOMIC_COUNTER_BUFFER -> GL_ATOMIC_COUNTER_BUFFER;
+            case DISPATCH_INDIRECT_BUFFER -> GL_DISPATCH_INDIRECT_BUFFER;
+            case SHADER_STORAGE_BUFFER -> GL_SHADER_STORAGE_BUFFER;
+        };
     }
 }

@@ -37,7 +37,7 @@ public class UITextBox extends UIGroup {
         this.addItem("text", text = new UITextLine(Resource.getTruetypeFont("consolas.ttf"))).setPositionOffset(new Vector2f(0, size.y - (0.01f + 0)));
 
         Animation animation = new Animation(0.1f, false);
-        animation.addStaticEvent(Animation.AnimationStage.createStaticStage(0,0.1f, d -> Texture.ofColor(Color.BLACK, d.floatValue()*10), t -> background.setTexture(t)));
+        animation.addStaticEvent(Animation.AnimationStage.createStaticStage(0,0.1f, d -> Texture.ofColor(Color.BLACK, d.floatValue()*10), background::setTexture));
         animation.setOnCompleteAction(() -> setRunning(true));
         animation.setToRun();
         AnimationManager.register(animation);

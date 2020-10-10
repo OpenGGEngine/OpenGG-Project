@@ -13,8 +13,6 @@ import com.opengg.core.render.texture.Texture;
 
 import java.io.File;
 
-import static org.lwjgl.opengl.GL11.GL_LINEAR;
-
 /**
  * @author Warren
  */

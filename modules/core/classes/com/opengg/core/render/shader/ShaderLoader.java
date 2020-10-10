@@ -35,6 +35,7 @@ public class ShaderLoader {
         loadShaderFiles();
         linkShaders();
         createGLShaderFromFile();
+
         long finaltime = System.currentTimeMillis() - time;
 
         GGConsole.log("Loaded shaders in " + finaltime + " milliseconds");
@@ -85,7 +86,6 @@ public class ShaderLoader {
     }
 
     private void dumpShader(ShaderFileHolder holder){
-        //if(holder.name.contains("object.frag")) System.out.println(holder.compiledShader);
         /*System.out.println(holder.name.toUpperCase() + "============================");
         System.out.println(holder.compiledShader);*/
     }
@@ -247,7 +247,12 @@ public class ShaderLoader {
                 uniforms.addAll(file.getUniforms());
             }
 
-            compiledShader = "#version " + source.getVersion().replace(".", "").concat("0\n")  + compiledShader;
+            compiledShader = """
+            #version %s
+            #extension GL_ARB_explicit_uniform_location : require
+            
+            %s;
+            """.formatted(source.getVersion().replace(".", "").concat("0"), compiledShader);
         }
 
         private void addDependency(ShaderFile file){

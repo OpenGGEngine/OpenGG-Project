@@ -13,9 +13,7 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 import static org.lwjgl.system.MemoryUtil.*;
-import static org.lwjgl.system.MemoryUtil.memAllocLong;
 import static org.lwjgl.vulkan.VK10.*;
-import static org.lwjgl.vulkan.VK10.VK_SUCCESS;
 
 public class VulkanCommandBuffer {
     private final VkCommandBuffer buffer;
@@ -78,6 +76,7 @@ public class VulkanCommandBuffer {
     }
 
     public void bindPipeline(VulkanPipeline pipeline){
+        if(VulkanRenderer.getRenderer().pipeline != null && pipeline.getFormat().equals(VulkanRenderer.getRenderer().pipeline.getFormat())) return;
         VulkanRenderer.getRenderer().pipeline = pipeline;
         vkCmdBindPipeline(buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.getPipeline());
     }

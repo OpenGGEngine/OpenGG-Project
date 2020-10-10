@@ -383,24 +383,32 @@ public class Matrix4f {
                             nm30, nm31, nm32, nm33);
     }
 
-    public FloatBuffer getStackBuffer() {
-        FloatBuffer buffer = Allocator.stackAllocFloat(16);
-        buffer.put(m00).put(m01).put(m02).put(m03);
-        buffer.put(m10).put(m11).put(m12).put(m13);
-        buffer.put(m20).put(m21).put(m22).put(m23);
-        buffer.put(m30).put(m31).put(m32).put(m33);
+    public ByteBuffer getByteBuffer(){
+        ByteBuffer buffer = Allocator.alloc(16*Float.BYTES);
+        buffer.putFloat(m00).putFloat(m01).putFloat(m02).putFloat(m03);
+        buffer.putFloat(m10).putFloat(m11).putFloat(m12).putFloat(m13);
+        buffer.putFloat(m20).putFloat(m21).putFloat(m22).putFloat(m23);
+        buffer.putFloat(m30).putFloat(m31).putFloat(m32).putFloat(m33);
         buffer.flip();
         return buffer;
     }
 
-    public FloatBuffer getBuffer() {
-        FloatBuffer buffer = Allocator.allocFloat(16);
-        buffer.put(m00).put(m01).put(m02).put(m03);
-        buffer.put(m10).put(m11).put(m12).put(m13);
-        buffer.put(m20).put(m21).put(m22).put(m23);
-        buffer.put(m30).put(m31).put(m32).put(m33);
+    public ByteBuffer getStackByteBuffer(){
+        ByteBuffer buffer = Allocator.stackAlloc(16*Float.BYTES);
+        buffer.putFloat(m00).putFloat(m01).putFloat(m02).putFloat(m03);
+        buffer.putFloat(m10).putFloat(m11).putFloat(m12).putFloat(m13);
+        buffer.putFloat(m20).putFloat(m21).putFloat(m22).putFloat(m23);
+        buffer.putFloat(m30).putFloat(m31).putFloat(m32).putFloat(m33);
         buffer.flip();
         return buffer;
+    }
+
+    public FloatBuffer getStackBuffer() {
+        return getStackByteBuffer().asFloatBuffer();
+    }
+
+    public FloatBuffer getBuffer() {
+        return getByteBuffer().asFloatBuffer();
     }
 
     public void putInByteBuffer(ByteBuffer buffer) {

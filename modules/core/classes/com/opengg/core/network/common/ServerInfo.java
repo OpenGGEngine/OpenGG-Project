@@ -1,6 +1,5 @@
 package com.opengg.core.network.common;
 
-import com.opengg.core.GGInfo;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
 

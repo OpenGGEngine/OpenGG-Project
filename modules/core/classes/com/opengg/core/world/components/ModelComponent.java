@@ -7,7 +7,6 @@ package com.opengg.core.world.components;
 
 import com.opengg.core.engine.OpenGG;
 import com.opengg.core.render.RenderEngine;
-import com.opengg.core.render.internal.opengl.OpenGLRenderer;
 import com.opengg.core.engine.Resource;
 import com.opengg.core.model.Model;
 import com.opengg.core.util.GGInputStream;

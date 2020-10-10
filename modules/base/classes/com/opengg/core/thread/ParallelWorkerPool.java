@@ -10,7 +10,6 @@ import com.opengg.core.GGInfo;
 import java.util.*;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -23,7 +22,7 @@ import java.util.stream.Collectors;
  */
 public final class ParallelWorkerPool<T, V> {
     private static final Object monitor = new Object();
-    private final Queue<PriorityEncapsulator<T>> queued = new PriorityBlockingQueue<>(100, (v1, v2) -> {return v2.priority - v1.priority;});
+    private final Queue<PriorityEncapsulator<T>> queued = new PriorityBlockingQueue<>(100, (v1, v2) -> v2.priority - v1.priority);
     private final List<WorkerThread> workers = new ArrayList<>();
     private final ArrayList<Thread> threads = new ArrayList<>();
 
@@ -99,7 +98,7 @@ public final class ParallelWorkerPool<T, V> {
         return postop;
     }
 
-    private class PriorityEncapsulator<T>{
+    private static class PriorityEncapsulator<T>{
         T t;
         int priority;
         

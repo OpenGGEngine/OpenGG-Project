@@ -7,7 +7,6 @@ package com.opengg.core.world.structure;
 
 import com.opengg.core.exceptions.ClassInstantiationException;
 import com.opengg.core.render.RenderEngine;
-import com.opengg.core.render.internal.opengl.OpenGLRenderer;
 import com.opengg.core.render.RenderGroup;
 import com.opengg.core.util.ClassUtil;
 import com.opengg.core.util.GGInputStream;

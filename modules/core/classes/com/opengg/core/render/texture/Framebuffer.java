@@ -11,8 +11,6 @@ import com.opengg.core.render.internal.opengl.texture.OpenGLFramebuffer;
 
 import java.util.List;
 
-import static org.lwjgl.opengl.GL30.GL_DEPTH_ATTACHMENT;
-
 /**
  *
  * @author Javier

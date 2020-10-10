@@ -2,10 +2,8 @@ package com.opengg.core.render.internal.vulkan.texture;
 
 import com.opengg.core.math.Vector2i;
 import com.opengg.core.render.internal.vulkan.VkUtil;
-import com.opengg.core.render.internal.vulkan.VulkanAttachment;
 import com.opengg.core.render.internal.vulkan.VulkanRenderPass;
 import com.opengg.core.render.internal.vulkan.VulkanRenderer;
-import com.opengg.core.render.texture.Framebuffer;
 import org.lwjgl.vulkan.VkFramebufferCreateInfo;
 
 import java.nio.LongBuffer;

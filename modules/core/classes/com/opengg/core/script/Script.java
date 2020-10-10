@@ -1,6 +1,5 @@
 package com.opengg.core.script;
 
-import com.opengg.core.world.components.Component;
 import com.opengg.core.world.components.ScriptComponent;
 
 import java.util.function.BiConsumer;

@@ -5,6 +5,7 @@ import com.opengg.core.GGInfo;
 import com.opengg.core.io.input.mouse.MouseController;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.network.NetworkEngine;
+import com.opengg.core.network.server.ServerClient;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
 
@@ -27,7 +28,7 @@ public class ControlledComponent extends Component{
             return MouseController.get().multiply(Configuration.getFloat("sensitivity"));
         }else{
             if(GGInfo.isServer()){
-                return NetworkEngine.getServer().getClientByID(userid).map(c -> c.getMousePosition()).orElse(new Vector2f());
+                return NetworkEngine.getServer().getClientByID(userid).map(ServerClient::getMousePosition).orElse(new Vector2f());
             }
         }
 

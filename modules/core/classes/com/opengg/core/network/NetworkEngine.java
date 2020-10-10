@@ -21,7 +21,6 @@
  import java.net.SocketException;
  import java.net.UnknownHostException;
  import java.util.concurrent.CompletableFuture;
- import java.util.concurrent.Future;
  import java.util.concurrent.TimeUnit;
 
  /**
@@ -57,7 +56,6 @@
       */
      public static boolean isRunning() {
          if (server != null) return true;
-         if (client != null) return true;
          return true;
      }
 
@@ -133,9 +131,7 @@
 
              GGConsole.log("Requesting server info from " + server.toString());
              var infoFuture = new CompletableFuture<ServerInfo>();
-             manager.addProcessor(PacketType.SERVER_INFO, p -> {
-                 infoFuture.complete(new ServerInfo(new GGInputStream(p.getData())));
-             });
+             manager.addProcessor(PacketType.SERVER_INFO, p -> infoFuture.complete(new ServerInfo(new GGInputStream(p.getData()))));
 
              infoFuture.orTimeout(10, TimeUnit.SECONDS);
              Packet.send(PacketType.SERVER_INFO, new byte[]{}, server);

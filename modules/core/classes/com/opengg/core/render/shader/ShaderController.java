@@ -12,6 +12,7 @@ import com.opengg.core.exceptions.ShaderException;
 import com.opengg.core.math.*;
 import com.opengg.core.render.GraphicsBuffer;
 import com.opengg.core.render.RenderEngine;
+import com.opengg.core.render.internal.opengl.shader.OpenGLShaderPipeline;
 import com.opengg.core.render.internal.opengl.texture.OpenGLTexture;
 import com.opengg.core.render.internal.vulkan.VulkanBuffer;
 import com.opengg.core.render.internal.vulkan.VulkanDescriptorSet;
@@ -42,9 +43,7 @@ import static org.lwjgl.vulkan.VK10.VK_IMAGE_ASPECT_COLOR_BIT;
 public class ShaderController {
     private static int attributeCounter = 0;
     private static int uniformCounter = 0;
-    private static int setCounter = 5; // no conflict with preset sets
-    private static int textureUnitCounter = 0;
-    private static int bufferObjectCounter = 0;
+    private static int setCounter = 8; // no conflict with preset sets
 
     private static Map<String, ShaderProgram> programs = new HashMap<>();
     private static final Map<String, ShaderPipeline> pipelines = new HashMap<>();
@@ -52,18 +51,19 @@ public class ShaderController {
 
     private static final Map<String, Integer> attributeLocations = new HashMap<>();
 
-    private static final Map<String, Integer> bufferObjectMapping = new HashMap<>();
-    private static final Map<String, Integer> textureUnitMapping = new HashMap<>();
+    private static final Map<String, UniformPosition> uniformDescriptorPositions = new HashMap<>();
+    private static final Map<UniformPosition, UniformContainer> currentUniforms = new HashMap<>();
+    private static final List<Integer> editedSets = new ArrayList<>();
+
+    private static final Map<String, Integer> openGlUniformMapping = new HashMap<>();
 
     private static final Map<String, Integer> setMappings = new HashMap<>();
     private static final Map<String, Integer> bindingMappings = new HashMap<>();
     private static final Map<DescriptorPosition, ByteBuffer> currentDescriptorBindingValue = new HashMap<>();
     private static final Map<DescriptorPosition, Texture> currentDescriptorBindingImageValue = new HashMap<>();
-    private static final Map<String, UniformPosition> uniformDescriptorPositions = new HashMap<>();
-    private static final List<Integer> editedSets = new ArrayList<>();
+
 
     private static final Set<String> searchedUniforms = new HashSet<>();
-    private static final Map<String, Object> currentUniforms = new HashMap<>();
 
     private static String currentPipelineName = "";
     private static ShaderPipeline currentPipeline;
@@ -96,13 +96,11 @@ public class ShaderController {
         /* Set shader variables */
 
         programs = new ShaderLoader("resources/glsl/").loadShaders();
-
         generateCommonPipelines();
+        setUniforms();
 
-        if(RenderEngine.getRendererType() == WindowOptions.RendererType.OPENGL) setUniforms();
-        System.out.println(attributeLocations);
         checkError();
-        
+
         GGConsole.log("Shader Controller initialized, loaded " + programs.size() + " shader programs");
     }
 
@@ -114,14 +112,14 @@ public class ShaderController {
         use("object.vert", "texture.frag");
         saveCurrentConfiguration("texture");
 
-        use("object.vert", "material.frag");
-        saveCurrentConfiguration("material");
+        //use("object.vert", "material.frag");
+        //saveCurrentConfiguration("material");
 
         use("anim2.vert", "object.frag");
         saveCurrentConfiguration("animation2");
 
-        use("tangent.vert", "tangent.frag");
-        saveCurrentConfiguration("tangent");
+        //use("tangent.vert", "tangent.frag");
+        //saveCurrentConfiguration("tangent");
 
         use("instance.vert", "object.frag");
         saveCurrentConfiguration("instance");
@@ -190,363 +188,139 @@ public class ShaderController {
     }
 
     private static void setUniforms(){
-        findUniform("inst");
-        setUniform("inst", 0);
-
-        findUniform("impl");
-        setUniform("impl", 0);
-
-        findUniform("model");
-        setUniform("model", new Matrix4f());
-
-        findUniform("view");
-        setUniform("view", new Matrix4f());
-
-        findUniform("jointsMatrix");
-        setUniform("jointsMatrix", new Matrix4f[200]);
-
-        findUniform("projection");
+        /*//setUniform("jointsMatrix", new Matrix4f[200]);
         setUniform("projection", new Matrix4f());
-
-        findUniform("divAmount");
         setUniform("divAmount", 1f);
-
-        findUniform("percent");
-        setUniform("percent", 1f);
-
-        findUniform("shadow");
+        setUniform("percent", 1f);*/
         setUniform("shadow", 1);
-
-        findUniform("uvmultx");
-        setUniform("uvmultx", 1f);
-
-        findUniform("uvmulty");
-        setUniform("uvmulty", 1f);
-
-        findUniform("uvoffsetx");
-        setUniform("uvoffsetx", 0f);
-
-        findUniform("uvoffsety");
-        setUniform("uvoffsety", 0f);
-
-        findUniform("cuboidscale");
-        setUniform("cuboidscale", new Vector3f(1,1,1));
-
-        findUniform("cuboidscaling");
-        setUniform("cuboidscaling", 0f);
-
-        findUniform("fill");
-        setUniform("fill", new Vector3f());
-
-        findUniform("back");
+        /*setUniform("fill", new Vector3f());
         setUniform("back", new Vector3f());
-
-        findUniform("rot");
         setUniform("rot", new Vector3f(0,0,0));
-
-        findUniform("scale");
         setUniform("scale", new Vector3f(1,1,1));
-
-        findUniform("camera");
         setUniform("camera", new Vector3f(0,0,0));
-
-        findUniform("color");
         setUniform("color", new Vector3f(1,1,1));
-
-        findUniform("numLights");
         setUniform("numLights", 1);
-
-        findUniform("invertMultiplier");
         setUniform("invertMultiplier", 1);
-
-        findUniform("layer");
-        setUniform("layer", 0);
-
-        findUniform("time");
-        setUniform("time", 0f);
-
-        findUniform("billboard");
-        setUniform("billboard", false);
-
-        findUniform("exposure");
+        setUniform("layer", 0);*/
+        //setUniform("billboard", false);
         setUniform("exposure", 1f);
-
-        findUniform("gamma");
         setUniform("gamma", 2.2f);
 
-        findUniform("shadowMatrices");
-
-        findUniform("lightPos");
-        findUniform("farplane");
-
-        setMatLinks();
+       // setMatLinks();
     }
 
-    private static void setMatLinks(){
-        findUniform("material.ka");
-        setUniform("material.ka", new Vector3f());
-        
-        findUniform("material.kd");
-        setUniform("material.kd", new Vector3f());
-        
-        findUniform("material.ks");
-        setUniform("material.ks", new Vector3f());
-        
-        findUniform("material.ns");
-        setUniform("material.ns", 32.0f);
-        
-        findUniform("material.hasspec");
-        setUniform("material.hasspec", false);
-
-        findUniform("material.hasspecpow");
-        setUniform("material.hasspecpow", false);
-        
-        findUniform("material.hasnormmap");
-        setUniform("material.hasnormmap", false);
-        
-        findUniform("material.hasambmap");
-        setUniform("material.hasambmap", false);
-        
-        findUniform("material.hascolormap");
-        setUniform("material.hascolormap", false);
-
-        findUniform("material.hasem");
-        setUniform("material.hasem", false);
-    }
 
     public static int getVertexAttributeIndex(String loc){
         return attributeLocations.get(loc);
     }
-    
-    /**
-     * Finds and saves the location of the uniform with name {@code loc} in every attached shader
-     * @param loc Name of uniform
-     */
-    public static void findUniform(String loc){
-        for(ShaderProgram p : programs.values()){
-            p.findUniformLocation(loc);
-        }
-        searchedUniforms.add(loc);
-    }
 
-    public static boolean isAlready(String name, Object val){
-        if(currentUniforms.get(name) != null && currentUniforms.get(name).equals(val)) return true;
-        currentUniforms.put(name, val);
+    public static boolean isAlready(UniformPosition position, UniformContainer val){
+        if(currentUniforms.get(position) != null && currentUniforms.get(position).equals(val)) return true;
+        currentUniforms.put(position, val);
         return false;
     }
 
     /**
      * Sets the value in the uniform named {@code name} to {@code val} in every shader<br><br>
-     * Note, this will only work if the uniform named {@code name} has already been searched for using {@link #findUniform(String)},
-     * otherwise no change will occur in any shader
      */
-    public static void setUniform(String name, ByteBuffer buf){
-        switch (RenderEngine.getRendererType()){
-            case OPENGL -> {
-                throw new UnsupportedOperationException();
-            }
-            case VULKAN -> {
-                var pos = uniformDescriptorPositions.get(name);
-                currentDescriptorBindingValue.put(pos.descriptor, buf);
-                if(!editedSets.contains(pos.descriptor.set)) editedSets.add(pos.descriptor.set);
-            }
-        }
+    public static void setUniform(String name, ByteBuffer val){
+        setUniform(name, new UniformContainer.ByteBufferContainer(val));
     }
 
     /**
      * Sets the value in the uniform named {@code name} to {@code val} in every shader<br><br>
-     * Note, this will only work if the uniform named {@code name} has already been searched for using {@link #findUniform(String)},
-     * otherwise no change will occur in any shader
      * @param name Name of uniform
      * @param val New value of uniform
      */
     public static void setUniform(String name, Vector3f val){
-        if(isAlready(name, val)) return;
-        switch (RenderEngine.getRendererType()){
-            case OPENGL -> {
-                for(ShaderProgram p : programs.values()){
-                    int loc = p.getUniformLocation(name);
-                    if(loc >= 0)
-                        p.setUniform(loc, val);
-                }
-            }
-            case VULKAN -> {
-                var pos = uniformDescriptorPositions.get(name);
-                var buffer = currentDescriptorBindingValue.get(pos.descriptor);
-                buffer.asFloatBuffer().put(pos.offset/Float.BYTES, val.toFloatArray());
-                currentDescriptorBindingValue.put(pos.descriptor, buffer);
-                if(!editedSets.contains(pos.descriptor.set)) editedSets.add(pos.descriptor.set);
-            }
-        }
+        setUniform(name, new UniformContainer.Vector3fContainer(val));
     }
     
     /**
      * Sets the value in the uniform named {@code name} to {@code val} in every shader<br><br>
-     * Note, this will only work if the uniform named {@code name} has already been searched for using {@link #findUniform(String)},
-     * otherwise no change will occur in any shader
      * @param name Name of uniform
      * @param val New value of uniform
      */
     public static void setUniform(String name, Vector2f val){
-        if(isAlready(name, val)) return;
-        switch (RenderEngine.getRendererType()){
-            case OPENGL -> {
-                for(ShaderProgram p : programs.values()){
-                    int loc = p.getUniformLocation(name);
-                    if(loc >= 0)
-                        p.setUniform(loc, val);
-                }
-            }
-            case VULKAN -> {
-                var pos = uniformDescriptorPositions.get(name);
-                var buffer = currentDescriptorBindingValue.get(pos.descriptor);
-                buffer.asFloatBuffer().put(pos.offset/Float.BYTES, val.toFloatArray());
-                currentDescriptorBindingValue.put(pos.descriptor, buffer);
-                if(!editedSets.contains(pos.descriptor.set)) editedSets.add(pos.descriptor.set);
-            }
-        }
+        setUniform(name, new UniformContainer.Vector2fContainer(val));
     }
     
     /**
      * Sets the value in the uniform named {@code name} to {@code val} in every shader<br><br>
-     * Note, this will only work if the uniform named {@code name} has already been searched for using {@link #findUniform(String)},
-     * otherwise no change will occur in any shader
      * @param name Name of uniform
      * @param val New value of uniform
      */
     public static void setUniform(String name, Matrix4f val){
-        if(isAlready(name, val)) return;
-        switch (RenderEngine.getRendererType()){
-            case OPENGL -> {
-                for(ShaderProgram p : programs.values()){
-                    int loc = p.getUniformLocation(name);
-                    if(loc >= 0)
-                        p.setUniform(loc, val);
-                }
-            }
-            case VULKAN -> {
-                var pos = uniformDescriptorPositions.get(name);
-                var buffer = currentDescriptorBindingValue.get(pos.descriptor);
-                buffer.asFloatBuffer().put(pos.offset/Float.BYTES, val.getLinearArray());
-                currentDescriptorBindingValue.put(pos.descriptor, buffer);
-                if(!editedSets.contains(pos.descriptor.set)) editedSets.add(pos.descriptor.set);
-            }
-        }
+        setUniform(name, new UniformContainer.Matrix4fContainer(val));
     }
     
     /**
      * Sets the value in the uniform named {@code name} to {@code val} in every shader<br><br>
-     * Note, this will only work if the uniform named {@code name} has already been searched for using {@link #findUniform(String)},
-     * otherwise no change will occur in any shader
      * @param name Name of uniform
      * @param val New value of uniform
      */
     public static void setUniform(String name, Matrix4f[] val){
-        if(isAlready(name, val)) return;
-        switch (RenderEngine.getRendererType()){
-            case OPENGL -> {
-                for(ShaderProgram p : programs.values()){
-                    int loc = p.getUniformLocation(name);
-                    if(loc >= 0)
-                        p.setUniform(loc, val);
-                }
-            }
-            case VULKAN -> {
-                throw new UnsupportedOperationException(); //todo
-            }
-        }
+        throw new UnsupportedOperationException();
     }
     
     /**
      * Sets the value in the uniform named {@code name} to {@code val} in every shader<br><br>
-     * Note, this will only work if the uniform named {@code name} has already been searched for using {@link #findUniform(String)},
-     * otherwise no change will occur in any shader
      * @param name Name of uniform
      * @param val New value of uniform
      */
     public static void setUniform(String name, int val){
-        if(isAlready(name, val)) return;
-        switch (RenderEngine.getRendererType()){
-            case OPENGL -> {
-                for(ShaderProgram p : programs.values()){
-                    int loc = p.getUniformLocation(name);
-                    if(loc >= 0)
-                        p.setUniform(loc, val);
-                }
-            }
-            case VULKAN -> {
-                var pos = uniformDescriptorPositions.get(name);
-                var buffer = currentDescriptorBindingValue.get(pos.descriptor);
-                buffer.asIntBuffer().put(pos.offset/Integer.BYTES, val);
-                currentDescriptorBindingValue.put(pos.descriptor, buffer);
-                if(!editedSets.contains(pos.descriptor.set)) editedSets.add(pos.descriptor.set);
-            }
-        }
+        setUniform(name, new UniformContainer.IntContainer(val));
     }
     
     /**
      * Sets the value in the uniform named {@code name} to {@code val} in every shader<br><br>
-     * Note, this will only work if the uniform named {@code name} has already been searched for using {@link #findUniform(String)},
-     * otherwise no change will occur in any shader
      * @param name Name of uniform
      * @param val New value of uniform
      */
     public static void setUniform(String name, float val){
-        if(isAlready(name, val)) return;
-        switch (RenderEngine.getRendererType()){
-            case OPENGL -> {
-                for(ShaderProgram p : programs.values()){
-                    int loc = p.getUniformLocation(name);
-                    if(loc >= 0)
-                        p.setUniform(loc, val);
-                }
-            }
-            case VULKAN -> {
-                var pos = uniformDescriptorPositions.get(name);
-                var buffer = currentDescriptorBindingValue.get(pos.descriptor);
-                buffer.asFloatBuffer().put(pos.offset/Float.BYTES, val);
-                currentDescriptorBindingValue.put(pos.descriptor, buffer);
-                if(!editedSets.contains(pos.descriptor.set)) editedSets.add(pos.descriptor.set);
-            }
-        }
+        setUniform(name, new UniformContainer.FloatContainer(val));
     }
     
     /**
      * Sets the value in the uniform named {@code name} to {@code val} in every shader<br><br>
-     * Note, this will only work if the uniform named {@code name} has already been searched for using {@link #findUniform(String)},
-     * otherwise no change will occur in any shader
      * @param name Name of uniform
      * @param val New value of uniform
      */
     public static void setUniform(String name, boolean val){
-        if(isAlready(name, val)) return;
-        for(ShaderProgram p : programs.values()){
-            int loc = p.getUniformLocation(name);
-            if(loc >= 0)
-                p.setUniform(loc, val);
-        }
+        setUniform(name, new UniformContainer.IntContainer(val ? 1 : 0));
     }
 
 
     public static void setUniform(String name, Texture texture){
-        if(isAlready(name, texture)) return;
-        switch (RenderEngine.getRendererType()){
-            case OPENGL -> ((OpenGLTexture)texture).use(textureUnitMapping.get(name));
-            case VULKAN -> {
-                var pos = uniformDescriptorPositions.get(name);
-                currentDescriptorBindingImageValue.put(pos.descriptor, texture);
-                if(!editedSets.contains(pos.descriptor.set)) editedSets.add(pos.descriptor.set);
-            }
-        }
+        setUniform(name, new UniformContainer.TextureContainer(texture));
     }
 
-    /**
-     * Binds the sampler named {@code name} to texture location {@code loc} in every fragment shader
-     * @param name Name of sampler in shader
-     * @param loc New location of sampler
-     */
-    public static void setTextureLocation(String name, int loc){
-        programs.values().stream().filter((p) -> (p.getType() == ShaderProgram.ShaderType.FRAGMENT)).forEach((p) -> p.setUniform(p.getUniformLocation(name), loc));
+    public static void setUniform(String name, UniformContainer val){
+        var pos = uniformDescriptorPositions.get(name);
+
+        if(isAlready(pos, val)) return;
+        switch (RenderEngine.getRendererType()){
+            case OPENGL -> currentUniforms.put(pos, val);
+            case VULKAN -> {
+                if(val instanceof UniformContainer.TextureContainer textureContainer){
+                    currentDescriptorBindingImageValue.put(pos.descriptor, textureContainer.contents());
+                }else{
+                    var buffer = currentDescriptorBindingValue.get(pos.descriptor);
+                    if(buffer.capacity() < val.getBuffer().capacity()){
+                        currentDescriptorBindingValue.put(pos.descriptor, val.getBuffer());
+                    }else if(buffer == val.getBuffer()) {
+                        currentDescriptorBindingValue.put(pos.descriptor, val.getBuffer());
+                    }else{
+                        buffer.position(pos.offset).put(val.getBuffer());
+                        buffer.rewind();
+                        currentDescriptorBindingValue.put(pos.descriptor, buffer);
+
+                    }
+                }
+            }
+        }
+
+        if(!editedSets.contains(pos.descriptor.set)) editedSets.add(pos.descriptor.set);
     }
     
     /**
@@ -592,6 +366,7 @@ public class ShaderController {
 
         for(var buffer : bufferDescriptors){
             var buffContents = currentDescriptorBindingValue.get(new DescriptorPosition(set, buffer.binding()));
+            if(buffContents.capacity() == 0) continue;
             var buf = (VulkanBuffer) GraphicsBuffer.allocate(GraphicsBuffer.BufferType.UNIFORM_BUFFER, buffContents, GraphicsBuffer.UsageType.DYNAMIC_READ);
             descriptorSet.setDescriptorSetContents(buf, 0, buffer.binding());
         }
@@ -600,13 +375,53 @@ public class ShaderController {
     }
 
     public static void uploadModifiedDescriptorSets(){
-        if(RenderEngine.getRendererType() != WindowOptions.RendererType.VULKAN) throw new IllegalStateException("Cannot upload sets in OpenGL");
-        for(int i = 0; i < ((VulkanShaderPipeline)currentPipeline).getUsedLayouts().length; i++){
-            if(editedSets.contains(i) && !((VulkanShaderPipeline)currentPipeline).getUsedLayouts()[i].bindingList().isEmpty()){
-                var newSet = generateSetFromCurrentValues(i, (VulkanShaderPipeline) currentPipeline);
-                VulkanRenderer.getRenderer().getCurrentCommandBuffer().bindDescriptorSets(VulkanRenderer.getRenderer().getCurrentPipeline(), i, newSet);
+        switch (RenderEngine.getRendererType()){
+            case OPENGL -> {
+                for(var currentUniform : currentUniforms.entrySet()){
+                    if(editedSets.contains(currentUniform.getKey().descriptor.set)){
+                        var uniform = currentUniform.getValue();
+                        var shaderList = new ArrayList<>(List.of(currentPipeline.getShader(ShaderType.VERTEX), currentPipeline.getShader(ShaderType.FRAGMENT)));
+                        if(currentPipeline.getShader(ShaderType.GEOMETRY) != null) shaderList.add(currentPipeline.getShader(ShaderType.GEOMETRY));
+                        for(var shader : shaderList){
+                            if(shader.getUniforms().stream().map(Uniform::position).anyMatch(u -> u.equals(currentUniform.getKey()))) {
+                                if(uniform instanceof UniformContainer.IntContainer container){
+                                    shader.setUniform(currentUniform.getKey().descriptor.set, container.contents());
+                                }else if(uniform instanceof UniformContainer.FloatContainer container){
+                                    shader.setUniform(currentUniform.getKey().descriptor.set, container.contents());
+                                }else if(uniform instanceof UniformContainer.DoubleContainer container){
+                                    //currentPipeline.getShader(ShaderType.VERTEX).setUniform(currentUniform.getKey().descriptor.set, container.contents());
+                                }else if(uniform instanceof UniformContainer.Vector2fContainer container){
+                                    shader.setUniform(currentUniform.getKey().descriptor.set, container.contents());
+                                }else if(uniform instanceof UniformContainer.Vector3fContainer container){
+                                    shader.setUniform(currentUniform.getKey().descriptor.set, container.contents());
+                                }else if(uniform instanceof UniformContainer.Vector4fContainer container){
+                                    //currentPipeline.getShader(ShaderType.VERTEX).setUniform(currentUniform.getKey().descriptor.set, container.contents());
+                                }else if(uniform instanceof UniformContainer.Vector2iContainer container){
+                                    //currentPipeline.getShader(ShaderType.VERTEX).setUniform(currentUniform.getKey().descriptor.set, container.contents());
+                                }else if(uniform instanceof UniformContainer.Vector3iContainer container){
+                                    //currentPipeline.getShader(ShaderType.VERTEX).setUniform(currentUniform.getKey().descriptor.set, container.contents());
+                                }else if(uniform instanceof UniformContainer.Matrix3fContainer container){
+                                    //currentPipeline.getShader(ShaderType.VERTEX).setUniform(currentUniform.getKey().descriptor.set, container.contents());
+                                }else if(uniform instanceof UniformContainer.Matrix4fContainer container){
+                                    shader.setUniform(currentUniform.getKey().descriptor.set, container.contents());
+                                }else if(uniform instanceof UniformContainer.TextureContainer container){
+                                    ((OpenGLTexture) container.contents()).use(currentUniform.getKey().descriptor.set);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            case VULKAN -> {
+                for(int i = 0; i < ((VulkanShaderPipeline)currentPipeline).getUsedLayouts().length; i++){
+                    if(editedSets.contains(i) && !((VulkanShaderPipeline)currentPipeline).getUsedLayouts()[i].bindingList().isEmpty()){
+                        var newSet = generateSetFromCurrentValues(i, (VulkanShaderPipeline) currentPipeline);
+                        VulkanRenderer.getRenderer().getCurrentCommandBuffer().bindDescriptorSets(VulkanRenderer.getRenderer().getCurrentPipeline(), i, newSet);
+                    }
+                }
             }
         }
+        //System.out.println(GL11.glGetError());
         editedSets.clear();
     }
 
@@ -711,14 +526,20 @@ public class ShaderController {
             throw new ShaderException("Failed to find pipeline named " + name);
         }
 
+        editedSets.clear();
         switch (RenderEngine.getRendererType()){
-            case OPENGL -> pipeline.use();
+            case OPENGL -> {
+                pipeline.use();
+                editedSets.addAll(((OpenGLShaderPipeline) pipeline).getAllUsedUniforms().stream().map(u -> u.position.descriptor().set).collect(Collectors.toList()));
+            }
             case VULKAN -> {
                 var fullPipeline = VulkanPipelineCache.getPipeline(
                         VulkanRenderer.getRenderer().getCurrentPipeline().getFormat().setShaders((VulkanShaderPipeline) pipeline));
                 VulkanRenderer.getRenderer().getCurrentCommandBuffer().bindPipeline(fullPipeline);
-                editedSets.clear();
-                editedSets.addAll(IntStream.range(0, ((VulkanShaderPipeline) pipeline).getUsedLayouts().length).boxed().collect(Collectors.toList()));
+                var usedLayouts = ((VulkanShaderPipeline) pipeline).getUsedLayouts();
+                for(int i = 0; i < usedLayouts.length; i++){
+                    if(!usedLayouts[i].bindingList().isEmpty()) editedSets.add(i);
+                }
             }
         }
         currentPipelineName = name;
@@ -822,12 +643,16 @@ public class ShaderController {
     }
 
     private static void preprocessOpenGLShader(ShaderFile file, List<Parser.Declaration> declarationUniforms, List<Parser.Interface> interfaceUniforms) {
+        List<Parser.Declaration> allNewUniforms = new ArrayList<>();
+        List<Uniform> processedUniforms = new ArrayList<>();
         for(var interfacee : interfaceUniforms){
             if(interfacee.modifiers.modifiers.stream().anyMatch(m -> m.value.equals("unwrap"))){
                 var newUniforms = interfacee.declarations.expressions.stream()
                         .map(d -> (Parser.Declaration)d)
                         .peek(d -> d.modifiers.modifiers.add(0, new Parser.Modifier("uniform")))
                         .collect(Collectors.toList());
+
+                allNewUniforms.addAll(newUniforms);
 
                 for(var newUniform : newUniforms){
                     file.getTree().nodes.add(0, newUniform);
@@ -840,14 +665,13 @@ public class ShaderController {
                        .expressions.removeIf(mod -> mod instanceof Parser.BinaryOp op &&
                             (op.left instanceof Parser.Identifier id && (id.value.equals("set") || id.value.equals("binding"))));
 
-                if (!bufferObjectMapping.containsKey(interfacee.name.value))
-                    bufferObjectMapping.put(interfacee.name.value, bufferObjectCounter++);
+                if (!openGlUniformMapping.containsKey(interfacee.name.value))
+                    openGlUniformMapping.put(interfacee.name.value, uniformCounter++);
 
-                var newUnit = bufferObjectMapping.get(interfacee.name.value);
+                var newUnit = openGlUniformMapping.get(interfacee.name.value);
 
                 var bindingOp = new Parser.BinaryOp(new Parser.Identifier("binding"), new Parser.IntegerLiteral(newUnit), "=");
-
-                //Assign texture unit
+                //Assign buffer unit
                 interfacee.modifiers.modifiers.stream()
                         .filter(m -> m instanceof Parser.Layout)
                         .map(m -> (Parser.Layout)m)
@@ -857,27 +681,33 @@ public class ShaderController {
             }
         }
 
-        for(var uniform : declarationUniforms){
+        List<Parser.Declaration> allUniforms = new ArrayList<>(allNewUniforms);
+        allUniforms.addAll(declarationUniforms);
+
+        for(var uniform : allUniforms){
             uniform.modifiers.modifiers.stream().filter(i -> i instanceof Parser.Layout).map(i -> (Parser.Layout)i).findFirst()
                     .ifPresent(l -> uniform.modifiers.modifiers.remove(l));
+
+            if (!openGlUniformMapping.containsKey(uniform.name.value))
+                openGlUniformMapping.put(uniform.name.value, uniformCounter++);
+
+            var newUnit = openGlUniformMapping.get(uniform.name.value);
+
+            Parser.BinaryOp bindingOp;
+
             if(uniform.type.value.contains("sampler")) {
-                if (!textureUnitMapping.containsKey(uniform.name.value))
-                    textureUnitMapping.put(uniform.name.value, textureUnitCounter++);
-
-                var newUnit = textureUnitMapping.get(uniform.name.value);
-
-                var bindingOp = new Parser.BinaryOp(new Parser.Identifier("binding"), new Parser.IntegerLiteral(newUnit), "=");
-
-                //Assign texture unit
-                uniform.modifiers.modifiers.stream()
-                        .filter(m -> m instanceof Parser.Layout)
-                        .map(m -> (Parser.Layout)m)
-                        .findFirst().ifPresentOrElse(
-                        l -> l.expressions.add(bindingOp),
-                        () -> uniform.modifiers.modifiers.add(new Parser.Layout(List.of(bindingOp))));
-
+                bindingOp = new Parser.BinaryOp(new Parser.Identifier("binding"), new Parser.IntegerLiteral(newUnit), "=");
+            }else{
+                bindingOp = new Parser.BinaryOp(new Parser.Identifier("location"), new Parser.IntegerLiteral(newUnit), "=");
             }
+                //Assign location
+            uniform.modifiers.modifiers.add(new Parser.Layout(List.of(bindingOp)));
+            uniformDescriptorPositions.put(uniform.name.value, new UniformPosition(new DescriptorPosition(newUnit, 0), 0));
+            processedUniforms.add(new Uniform(uniform.name.value, new UniformPosition(new DescriptorPosition(newUnit, 0), 0),
+                    uniform.type.value.contains("sampler") ? COMBINED_TEXTURE_SAMPLER : UNIFORM_BUFFER));
         }
+
+        file.setUniforms(processedUniforms);
     }
 
     private static void preprocessVulkanShader(ShaderFile file, List<Parser.Declaration> declarationUniforms, List<Parser.Interface> interfaceUniforms) {
@@ -1004,11 +834,6 @@ public class ShaderController {
 
     public static ShaderProgram createShader(String name, ShaderProgram.ShaderType type, String source, List<Uniform> uniforms){
         var program = ShaderProgram.create(type, source, name, uniforms);
-
-        for(String s : searchedUniforms){
-            program.findUniformLocation(s);
-        }
-
         program.checkStatus();
         return program;
     }
@@ -1029,4 +854,5 @@ public class ShaderController {
     public enum DescriptorType {
         UNIFORM_BUFFER, COMBINED_TEXTURE_SAMPLER
     }
+
 }

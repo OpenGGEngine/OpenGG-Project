@@ -12,7 +12,6 @@ import com.opengg.core.engine.OpenGG;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.RenderEngine;
-import com.opengg.core.render.internal.opengl.OpenGLRenderer;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
 import com.opengg.core.world.World;
@@ -22,7 +21,6 @@ import java.io.IOException;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -531,7 +529,7 @@ public abstract class Component{
         return this;
     }
 
-    public Component setUpateEnabled(boolean update){
+    public Component setUpdateEnabled(boolean update){
         this.canUpdate = update;
         return this;
     }

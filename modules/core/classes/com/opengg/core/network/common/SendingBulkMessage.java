@@ -1,6 +1,5 @@
 package com.opengg.core.network.common;
 
-import com.opengg.core.math.util.Tuple;
 import com.opengg.core.network.NetworkEngine;
 import com.opengg.core.util.GGOutputStream;
 import com.opengg.core.util.HashUtil;
@@ -10,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class SendingBulkMessage {
     private final ConnectionData target;

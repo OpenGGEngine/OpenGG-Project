@@ -17,7 +17,6 @@ import com.opengg.core.world.Action;
 import com.opengg.core.world.ActionTransmitter;
 import com.opengg.core.world.ActionType;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -53,7 +52,7 @@ public class BindController implements KeyboardListener, MouseButtonListener, Mo
             Files.lines(Path.of(Resource.getAbsoluteFromLocal("config/controls.cfg")))
                     .forEach(s -> {
                         if(!s.equals(newline)) {
-                            var arr = s.split("|");
+                            var arr = s.split("\\|");
                             addBind(ControlType.valueOf(arr[0]), arr[1], Integer.parseInt(arr[2]));
                         }
                     });

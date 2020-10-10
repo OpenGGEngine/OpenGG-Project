@@ -6,7 +6,6 @@ import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.math.util.Tuple;
 import com.opengg.core.render.internal.vulkan.VkUtil;
-import com.opengg.core.render.internal.vulkan.VulkanDescriptorSet;
 import com.opengg.core.render.internal.vulkan.VulkanDescriptorSetLayout;
 import com.opengg.core.render.internal.vulkan.VulkanRenderer;
 import com.opengg.core.render.shader.ShaderController;
@@ -19,7 +18,6 @@ import java.nio.LongBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.lwjgl.system.MemoryUtil.*;
@@ -30,6 +28,7 @@ public class VulkanShaderStage implements ShaderProgram {
     private ShaderType type;
     private final VkPipelineShaderStageCreateInfo shaderStageInfo;
     private List<Tuple<Integer, VulkanDescriptorSetLayout>> descriptorSets;
+    private List<ShaderController.Uniform> uniforms;
     private final ByteBuffer spirv;
 
     public VulkanShaderStage(ShaderType type, String source, String name, List<ShaderController.Uniform> uniforms) {
@@ -40,7 +39,7 @@ public class VulkanShaderStage implements ShaderProgram {
                 .stage(getVulkanStageFromShaderType(type))
                 .module(getShaderModule(spirv = VkUtil.glslToSpirv(name, source, getVulkanStageFromShaderType(type))))
                 .pName(memUTF8("main"));
-
+        this.uniforms = uniforms;
         descriptorSets = generateSetsFromUniforms(uniforms);
     }
 
@@ -103,16 +102,6 @@ public class VulkanShaderStage implements ShaderProgram {
     }
 
     @Override
-    public void findUniformLocation(String pos) {
-
-    }
-
-    @Override
-    public int getUniformLocation(String pos) {
-        return 0;
-    }
-
-    @Override
     public void bindFragmentDataLocation(int number, CharSequence name) {
 
     }
@@ -165,6 +154,11 @@ public class VulkanShaderStage implements ShaderProgram {
     @Override
     public void setUniformBlockIndex(int bind, String name) {
 
+    }
+
+    @Override
+    public List<ShaderController.Uniform> getUniforms() {
+        return uniforms;
     }
 
     @Override

@@ -51,20 +51,14 @@ public class Allocator {
     
     public static FloatBuffer allocFloat(int size, AllocType allocator){
         FloatBuffer buffer = null;
-        switch(allocator){
-            case JAVA:
-                buffer = FloatBuffer.allocate(size);
-                break;
-            case DIRECT:
-                buffer = BufferUtils.createFloatBuffer(size);
-                break;
-            case NATIVE_HEAP:
-                buffer = MemoryUtil.memAllocFloat(size);
-                break;
-            case NATIVE_STACK:
+        switch (allocator) {
+            case JAVA -> buffer = FloatBuffer.allocate(size);
+            case DIRECT -> buffer = BufferUtils.createFloatBuffer(size);
+            case NATIVE_HEAP -> buffer = MemoryUtil.memAllocFloat(size);
+            case NATIVE_STACK -> {
                 MemoryStack stack = MemoryStack.stackPush();
                 buffer = stack.callocFloat(size);
-                break;
+            }
         }
         register(buffer, allocator);
         return buffer;
@@ -80,21 +74,14 @@ public class Allocator {
     
     public static IntBuffer allocInt(int size, AllocType allocator){
         IntBuffer buffer = null;
-        switch(allocator){
-            case JAVA:
-                buffer = IntBuffer.allocate(size);
-                break;
-            case DIRECT:
-                buffer = BufferUtils.createIntBuffer(size);
-                break;
-            case NATIVE_HEAP:
-                buffer = MemoryUtil.memAllocInt(size);
-                break;
-            case NATIVE_STACK:
+        switch (allocator) {
+            case JAVA -> buffer = IntBuffer.allocate(size);
+            case DIRECT -> buffer = BufferUtils.createIntBuffer(size);
+            case NATIVE_HEAP -> buffer = MemoryUtil.memAllocInt(size);
+            case NATIVE_STACK -> {
                 MemoryStack stack = MemoryStack.stackPush();
                 buffer = stack.callocInt(size);
-                
-                break;
+            }
         }
         register(buffer, allocator);
         return buffer;
@@ -110,21 +97,14 @@ public class Allocator {
     
     public static ByteBuffer alloc(int size, AllocType allocator){
         ByteBuffer buffer = null;
-        switch(allocator){
-            case JAVA:
-                buffer = ByteBuffer.allocate(size);
-                break;
-            case DIRECT:
-                buffer = BufferUtils.createByteBuffer(size);
-                break;
-            case NATIVE_HEAP:
-                buffer = MemoryUtil.memAlloc(size);
-                break;
-            case NATIVE_STACK:
+        switch (allocator) {
+            case JAVA -> buffer = ByteBuffer.allocate(size);
+            case DIRECT -> buffer = BufferUtils.createByteBuffer(size);
+            case NATIVE_HEAP -> buffer = MemoryUtil.memAlloc(size);
+            case NATIVE_STACK -> {
                 MemoryStack stack = MemoryStack.stackPush();
                 buffer = stack.calloc(size);
-                
-                break;
+            }
         }
         register(buffer, allocator);
         return buffer;
@@ -140,21 +120,14 @@ public class Allocator {
 
     public static ShortBuffer allocShort(int size, AllocType allocator){
         ShortBuffer buffer = null;
-        switch(allocator){
-            case JAVA:
-                buffer = ShortBuffer.allocate(size);
-                break;
-            case DIRECT:
-                buffer = BufferUtils.createShortBuffer(size);
-                break;
-            case NATIVE_HEAP:
-                buffer = MemoryUtil.memAllocShort(size);
-                break;
-            case NATIVE_STACK:
+        switch (allocator) {
+            case JAVA -> buffer = ShortBuffer.allocate(size);
+            case DIRECT -> buffer = BufferUtils.createShortBuffer(size);
+            case NATIVE_HEAP -> buffer = MemoryUtil.memAllocShort(size);
+            case NATIVE_STACK -> {
                 MemoryStack stack = MemoryStack.stackPush();
                 buffer = stack.mallocShort(size);
-
-                break;
+            }
         }
         register(buffer, allocator);
         return buffer;

@@ -7,7 +7,6 @@
 package com.opengg.core.model;
 
 import com.opengg.core.console.GGConsole;
-import com.opengg.core.engine.Resource;
 import com.opengg.core.model.io.BMFFile;
 
 import java.io.IOException;

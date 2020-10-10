@@ -6,8 +6,6 @@
 
 package com.opengg.core.render;
 
-import com.opengg.core.render.internal.opengl.OpenGLRenderer;
-import com.opengg.core.render.internal.opengl.shader.OpenGLVertexArrayObject;
 import com.opengg.core.render.shader.VertexArrayFormat;
 import com.opengg.core.render.shader.VertexArrayObject;
 import java.util.ArrayList;

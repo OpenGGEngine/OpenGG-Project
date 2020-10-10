@@ -1,6 +1,5 @@
 package com.opengg.core.render.internal.vulkan;
 
-import com.opengg.core.render.RenderEngine;
 import org.lwjgl.vulkan.VkDescriptorPoolCreateInfo;
 import org.lwjgl.vulkan.VkDescriptorPoolSize;
 

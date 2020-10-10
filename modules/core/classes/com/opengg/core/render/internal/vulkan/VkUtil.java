@@ -8,7 +8,6 @@ import org.lwjgl.system.MemoryStack;
 import org.lwjgl.util.shaderc.ShadercIncludeResolve;
 import org.lwjgl.util.shaderc.ShadercIncludeResultRelease;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 
 import static org.lwjgl.util.shaderc.Shaderc.*;
@@ -26,6 +25,7 @@ public class VkUtil {
     public static int VK_FLAGS_NONE = 0;
 
     public static ByteBuffer glslToSpirv(String name, String source, int vulkanStage) {
+        source = source.substring(0, source.lastIndexOf(";"));
         ByteBuffer src = Allocator.alloc(source.length()*Character.BYTES).put(source.getBytes()).flip();
         long compiler = shaderc_compiler_initialize();
         long options = shaderc_compile_options_initialize();
@@ -65,9 +65,8 @@ public class VkUtil {
         ByteBuffer resultBytes = Allocator.alloc(size);
         resultBytes.put(shaderc_result_get_bytes(res));
         resultBytes.flip();
-        shaderc_compiler_release(res);
+        //shaderc_compiler_release(res); //todo FIGURE THIS ONE OUT
         shaderc_compiler_release(compiler);
-
         return resultBytes;
     }
 

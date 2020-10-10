@@ -8,6 +8,6 @@ import java.util.Optional;
 public class Floor extends Collider {
     @Override
     public Optional<ContactManifold> collide(Collider c) {
-        return null;
+        return Optional.empty();
     }
 }
