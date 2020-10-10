@@ -14,7 +14,7 @@ import java.nio.IntBuffer;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL42.glDrawElementsInstancedBaseVertexBaseInstance;
 
-public class OpenGLDrawnObject extends DrawnObject {
+public final class OpenGLDrawnObject extends DrawnObject {
 
     public OpenGLDrawnObject(VertexArrayFormat format, IntBuffer index, FloatBuffer... vertices) {
         super(format, index, vertices);

@@ -24,7 +24,7 @@ import java.util.List;
  *
  * @author Javier
  */
-public abstract class DrawnObject implements Renderable {
+public abstract sealed class DrawnObject implements Renderable permits OpenGLDrawnObject, VulkanDrawnObject {
     protected List<GraphicsBuffer> vertexBufferObjects = new ArrayList<>();
     protected GraphicsBuffer indexBuffer;
     protected VertexArrayFormat format;
@@ -72,14 +72,8 @@ public abstract class DrawnObject implements Renderable {
         };
     }
 
-    /**
-     * Creates a drawn object containing the given {@link FloatBuffer FloatBuffers}, indexed by the given {@link IntBuffer}
-     * <br>
-     * The given buffers are bound to the default {@link com.opengg.core.render.shader.VertexArrayObject} in order of appearance
-     * @param vertices Buffers to add
-     * @param indexBuffer Buffer containing the indices to use for the vertices of the object
-     * @param format VertexArrayFormat to add
-     */
+    protected DrawnObject(){}
+
     protected DrawnObject(VertexArrayFormat format, IntBuffer indexBuffer, Buffer... vertices){
         this.format = format;
         generateGPUMemory(vertices, indexBuffer);
@@ -103,7 +97,7 @@ public abstract class DrawnObject implements Renderable {
         vertexBufferObjects.set(bufferIndex, generateVertexBuffer(buffer));
     }
 
-    private void generateGPUMemory(Buffer[] buffers, IntBuffer indexBuffer){
+    protected void generateGPUMemory(Buffer[] buffers, IntBuffer indexBuffer){
         vertexBufferObjects.clear();
 
         for(var buffer : buffers){

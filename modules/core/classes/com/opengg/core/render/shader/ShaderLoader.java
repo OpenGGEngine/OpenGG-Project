@@ -35,6 +35,7 @@ public class ShaderLoader {
         loadShaderFiles();
         linkShaders();
         createGLShaderFromFile();
+
         long finaltime = System.currentTimeMillis() - time;
 
         GGConsole.log("Loaded shaders in " + finaltime + " milliseconds");
@@ -85,7 +86,6 @@ public class ShaderLoader {
     }
 
     private void dumpShader(ShaderFileHolder holder){
-        //if(holder.name.contains("wii")) System.out.println(holder.compiledShader);
         /*System.out.println(holder.name.toUpperCase() + "============================");
         System.out.println(holder.compiledShader);*/
     }

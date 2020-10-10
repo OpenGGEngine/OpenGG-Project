@@ -33,6 +33,8 @@ public class VulkanImage implements Texture, NativeResource {
     private Vector3i size;
     private int layers;
 
+    private VulkanSampler sampler;
+
     public VulkanImage(Texture.TextureConfig config, int samples, int tiling, int usage, Vector3i size, int layers){
         this.layout = VK_IMAGE_LAYOUT_UNDEFINED;
         this.config = config;
@@ -59,6 +61,8 @@ public class VulkanImage implements Texture, NativeResource {
         imageCreateInfo.free();
 
         generateImageMemoryBacking();
+
+        sampler = new VulkanSampler(config);
 
         NativeResourceManager.registerNativeResource(this);
     }
@@ -170,7 +174,7 @@ public class VulkanImage implements Texture, NativeResource {
     }
 
     public VulkanSampler getSampler(){
-        return new VulkanSampler(config);
+        return sampler;
     }
 
     public long getMemoryPointer() {

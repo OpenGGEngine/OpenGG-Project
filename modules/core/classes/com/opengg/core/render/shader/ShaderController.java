@@ -43,7 +43,7 @@ import static org.lwjgl.vulkan.VK10.VK_IMAGE_ASPECT_COLOR_BIT;
 public class ShaderController {
     private static int attributeCounter = 0;
     private static int uniformCounter = 0;
-    private static int setCounter = 5; // no conflict with preset sets
+    private static int setCounter = 8; // no conflict with preset sets
 
     private static Map<String, ShaderProgram> programs = new HashMap<>();
     private static final Map<String, ShaderPipeline> pipelines = new HashMap<>();
@@ -96,13 +96,11 @@ public class ShaderController {
         /* Set shader variables */
 
         programs = new ShaderLoader("resources/glsl/").loadShaders();
-
         generateCommonPipelines();
-
         setUniforms();
 
         checkError();
-        
+
         GGConsole.log("Shader Controller initialized, loaded " + programs.size() + " shader programs");
     }
 
@@ -193,9 +191,9 @@ public class ShaderController {
         /*//setUniform("jointsMatrix", new Matrix4f[200]);
         setUniform("projection", new Matrix4f());
         setUniform("divAmount", 1f);
-        setUniform("percent", 1f);
+        setUniform("percent", 1f);*/
         setUniform("shadow", 1);
-        setUniform("fill", new Vector3f());
+        /*setUniform("fill", new Vector3f());
         setUniform("back", new Vector3f());
         setUniform("rot", new Vector3f(0,0,0));
         setUniform("scale", new Vector3f(1,1,1));
@@ -203,8 +201,8 @@ public class ShaderController {
         setUniform("color", new Vector3f(1,1,1));
         setUniform("numLights", 1);
         setUniform("invertMultiplier", 1);
-        setUniform("layer", 0);
-        //setUniform("billboard", false);*/
+        setUniform("layer", 0);*/
+        //setUniform("billboard", false);
         setUniform("exposure", 1f);
         setUniform("gamma", 2.2f);
 
@@ -300,7 +298,7 @@ public class ShaderController {
     public static void setUniform(String name, UniformContainer val){
         var pos = uniformDescriptorPositions.get(name);
 
-        //if(isAlready(pos, val)) return;
+        if(isAlready(pos, val)) return;
         switch (RenderEngine.getRendererType()){
             case OPENGL -> currentUniforms.put(pos, val);
             case VULKAN -> {
@@ -308,9 +306,16 @@ public class ShaderController {
                     currentDescriptorBindingImageValue.put(pos.descriptor, textureContainer.contents());
                 }else{
                     var buffer = currentDescriptorBindingValue.get(pos.descriptor);
-                    buffer.position(pos.offset).put(val.getBuffer());
-                    buffer.rewind();
-                    currentDescriptorBindingValue.put(pos.descriptor, buffer);
+                    if(buffer.capacity() < val.getBuffer().capacity()){
+                        currentDescriptorBindingValue.put(pos.descriptor, val.getBuffer());
+                    }else if(buffer == val.getBuffer()) {
+                        currentDescriptorBindingValue.put(pos.descriptor, val.getBuffer());
+                    }else{
+                        buffer.position(pos.offset).put(val.getBuffer());
+                        buffer.rewind();
+                        currentDescriptorBindingValue.put(pos.descriptor, buffer);
+
+                    }
                 }
             }
         }
@@ -361,6 +366,7 @@ public class ShaderController {
 
         for(var buffer : bufferDescriptors){
             var buffContents = currentDescriptorBindingValue.get(new DescriptorPosition(set, buffer.binding()));
+            if(buffContents.capacity() == 0) continue;
             var buf = (VulkanBuffer) GraphicsBuffer.allocate(GraphicsBuffer.BufferType.UNIFORM_BUFFER, buffContents, GraphicsBuffer.UsageType.DYNAMIC_READ);
             descriptorSet.setDescriptorSetContents(buf, 0, buffer.binding());
         }
@@ -530,7 +536,10 @@ public class ShaderController {
                 var fullPipeline = VulkanPipelineCache.getPipeline(
                         VulkanRenderer.getRenderer().getCurrentPipeline().getFormat().setShaders((VulkanShaderPipeline) pipeline));
                 VulkanRenderer.getRenderer().getCurrentCommandBuffer().bindPipeline(fullPipeline);
-                editedSets.addAll(IntStream.range(0, ((VulkanShaderPipeline) pipeline).getUsedLayouts().length).boxed().collect(Collectors.toList()));
+                var usedLayouts = ((VulkanShaderPipeline) pipeline).getUsedLayouts();
+                for(int i = 0; i < usedLayouts.length; i++){
+                    if(!usedLayouts[i].bindingList().isEmpty()) editedSets.add(i);
+                }
             }
         }
         currentPipelineName = name;
@@ -596,7 +605,7 @@ public class ShaderController {
        /* uniforms.stream()
                 .filter(d -> d.modifiers.modifiers.contains())*/
         //add existing interface buffer bindings to list
-        //generateMissingInterfaceBindings(interfaceUniforms);
+        generateMissingInterfaceBindings(interfaceUniforms);
 
         if(RenderEngine.getRendererType().equals(WindowOptions.RendererType.VULKAN)){
             preprocessVulkanShader(file, declarationUniforms, interfaceUniforms);
