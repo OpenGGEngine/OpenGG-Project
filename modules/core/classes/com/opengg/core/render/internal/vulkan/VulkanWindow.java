@@ -90,7 +90,7 @@ public class VulkanWindow {
                 return 0;
             }
         };
-        long debugCallbackHandle = setupDebugging(VK_DEBUG_REPORT_ERROR_BIT_EXT | VK_DEBUG_REPORT_WARNING_BIT_EXT | VK_DEBUG_REPORT_DEBUG_BIT_EXT | VK_DEBUG_REPORT_INFORMATION_BIT_EXT | VK_DEBUG_REPORT_OBJECT_TYPE_VALIDATION_CACHE_EXT, debugCallback);
+        long debugCallbackHandle = setupDebugging(VK_DEBUG_REPORT_ERROR_BIT_EXT | VK_DEBUG_REPORT_WARNING_BIT_EXT | VK_DEBUG_REPORT_DEBUG_BIT_EXT | VK_DEBUG_REPORT_INFORMATION_BIT_EXT, debugCallback);
         physicalDevice = getFirstPhysicalDevice();
         deviceAndGraphicsQueueFamily = createDeviceAndGetGraphicsQueueFamily(physicalDevice);
         device = deviceAndGraphicsQueueFamily.device;

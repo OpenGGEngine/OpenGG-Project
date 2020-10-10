@@ -236,7 +236,7 @@ public class VulkanRenderer implements Renderer {
         return new VulkanPipelineFormat(
                 new VulkanPipeline.VertexInputState(RenderEngine.getDefaultFormat()),
                 new VulkanPipeline.InputAssemblyState(DrawnObject.DrawType.TRIANGLES),
-                new VulkanPipeline.RasterizationState(VK_POLYGON_MODE_FILL, VK_CULL_MODE_BACK_BIT, VK_FRONT_FACE_COUNTER_CLOCKWISE),
+                new VulkanPipeline.RasterizationState(VK_POLYGON_MODE_FILL, VK_CULL_MODE_NONE, VK_FRONT_FACE_COUNTER_CLOCKWISE),
                 new VulkanPipeline.MultisampleState(VK_SAMPLE_COUNT_1_BIT),
                 new VulkanPipeline.ColorBlendState(0xF),
                 new VulkanPipeline.DepthStencilState(true, true, VK_COMPARE_OP_LESS_OR_EQUAL),
@@ -255,7 +255,7 @@ public class VulkanRenderer implements Renderer {
         var pipeline = VulkanPipelineCache.getPipeline(format);
         // Select the command buffer for the current framebuffer image/attachment
         // Submit to the graphics queue
-        var renderPassBeginInfo = renderPass.generateInfo(new Vector3f(100f/255f, 149f/255f, 237f/255f), currentFramebuffer, new Vector2i(), swapchain.getExtents());
+        var renderPassBeginInfo = renderPass.generateInfo(new Vector3f(), currentFramebuffer, new Vector2i(), swapchain.getExtents());
         currentBuffer.begin();
         currentBuffer.startRenderPass(renderPassBeginInfo);
         currentBuffer.setViewportScissor(swapchain.getExtents());

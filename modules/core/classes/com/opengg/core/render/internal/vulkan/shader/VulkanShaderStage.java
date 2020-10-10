@@ -39,7 +39,6 @@ public class VulkanShaderStage implements ShaderProgram {
                 .stage(getVulkanStageFromShaderType(type))
                 .module(getShaderModule(spirv = VkUtil.glslToSpirv(name, source, getVulkanStageFromShaderType(type))))
                 .pName(memUTF8("main"));
-
         this.uniforms = uniforms;
         descriptorSets = generateSetsFromUniforms(uniforms);
     }

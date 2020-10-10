@@ -2,6 +2,9 @@ package com.opengg.core.render.internal.vulkan;
 
 import com.opengg.core.render.GraphicsBuffer;
 import com.opengg.core.render.drawn.DrawnObject;
+import com.opengg.core.render.internal.vulkan.shader.VulkanPipeline;
+import com.opengg.core.render.internal.vulkan.shader.VulkanPipelineCache;
+import com.opengg.core.render.internal.vulkan.shader.VulkanShaderPipeline;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.shader.VertexArrayFormat;
 
@@ -10,9 +13,15 @@ import java.nio.IntBuffer;
 
 import static org.lwjgl.vulkan.VK10.*;
 
-public class VulkanDrawnObject extends DrawnObject{
+public final class VulkanDrawnObject extends DrawnObject{
+    private boolean hasNonEmptyBuffer = true;
+
     public VulkanDrawnObject(VertexArrayFormat format, IntBuffer index, FloatBuffer... vertices) {
-        super(format, index, vertices);
+        this.format = format;
+        if(vertices[0].capacity() != 0)
+            generateGPUMemory(vertices, index);
+        else
+            hasNonEmptyBuffer = false;
     }
 
     public VulkanDrawnObject(VertexArrayFormat format, GraphicsBuffer indexBuffer, int indexCount, GraphicsBuffer... vertices) {
@@ -21,7 +30,10 @@ public class VulkanDrawnObject extends DrawnObject{
 
     @Override
     public void render(){
+        if(!hasNonEmptyBuffer) return;
         ShaderController.uploadModifiedDescriptorSets();
+        VulkanRenderer.getRenderer().getCurrentCommandBuffer().bindPipeline(VulkanPipelineCache.getPipeline(
+                VulkanRenderer.getRenderer().getCurrentPipeline().getFormat().setVertexAssembly(new VulkanPipeline.InputAssemblyState(drawType))));
         VulkanRenderer.getRenderer().getCurrentCommandBuffer().bindVertexBuffers(vertexBufferObjects);
         VulkanRenderer.getRenderer().getCurrentCommandBuffer().bindIndexBuffer(indexBuffer);
         VulkanRenderer.getRenderer().getCurrentCommandBuffer().drawVertexIndexed(this.elementCount, this.instanceCount, this.baseElement, this.baseVertex, 0);

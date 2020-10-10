@@ -76,6 +76,7 @@ public class VulkanCommandBuffer {
     }
 
     public void bindPipeline(VulkanPipeline pipeline){
+        if(VulkanRenderer.getRenderer().pipeline != null && pipeline.getFormat().equals(VulkanRenderer.getRenderer().pipeline.getFormat())) return;
         VulkanRenderer.getRenderer().pipeline = pipeline;
         vkCmdBindPipeline(buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.getPipeline());
     }
