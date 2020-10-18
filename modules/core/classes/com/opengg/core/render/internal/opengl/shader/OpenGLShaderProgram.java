@@ -172,7 +172,6 @@ public class OpenGLShaderProgram implements ShaderProgram{
         int i;
         if((i = program.checkStatus()) != GL_TRUE){
             GGConsole.error("Shader " + name + " threw an error on status check: "  + i);
-           // System.out.println(source);
             throw new ShaderException(("From shader " + name + " with error code " + i + ": " + program.getProgramInfoLog()));
         }
     }
