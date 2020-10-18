@@ -1,8 +1,10 @@
-package com.opengg.core.io.input.mouse;
+package com.opengg.core.render.window.glfw;
 
+import com.opengg.core.io.input.mouse.MouseController;
+import com.opengg.core.io.input.mouse.MouseScrollHandler;
 import org.lwjgl.glfw.GLFWScrollCallback;
 
-public class GLFWMouseScrollHandler extends GLFWScrollCallback implements MouseScrollHandler{
+public class GLFWMouseScrollHandler extends GLFWScrollCallback implements MouseScrollHandler {
     double wheelX,wheelY;
     @Override
     public double getWheelX() {

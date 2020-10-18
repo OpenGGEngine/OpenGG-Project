@@ -4,17 +4,20 @@
  * and open the template in the editor.
  */
 
-package com.opengg.core.io.input.mouse;
+package com.opengg.core.render.window.glfw;
 
 import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
+
+import com.opengg.core.io.input.mouse.MouseButtonHandler;
+import com.opengg.core.io.input.mouse.MouseController;
 import org.lwjgl.glfw.GLFWMouseButtonCallback;
 
 /**
  *
  * @author Javier
  */
-public class GLFWMouseButtonHandler extends GLFWMouseButtonCallback implements MouseButtonHandler{
+public class GLFWMouseButtonHandler extends GLFWMouseButtonCallback implements MouseButtonHandler {
     
     static boolean[] buttons = new boolean[65536];
     

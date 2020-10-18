@@ -5,7 +5,7 @@
  */
 package com.opengg.core.states;
 
-import com.opengg.core.render.window.GLFWWindow;
+import com.opengg.core.render.window.glfw.GLFWWindow;
 import java.io.IOException;
 
 /**

@@ -38,6 +38,7 @@ dependencies {
 	implementation "org.lwjgl:lwjgl-tootle"
 	implementation "org.lwjgl:lwjgl-vulkan"
 	implementation "org.lwjgl:lwjgl-zstd"
+	implementation "org.lwjgl:lwjgl-jawt"
 	implementation "org.lwjgl:lwjgl::$lwjglNatives"
 	implementation "org.lwjgl:lwjgl-assimp::$lwjglNatives"
 	implementation "org.lwjgl:lwjgl-glfw::$lwjglNatives"

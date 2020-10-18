@@ -16,6 +16,7 @@ module com.opengg.core {
     requires org.lwjgl.tootle;
     requires org.lwjgl.meow;
     requires org.lwjgl.shaderc;
+    requires org.lwjgl.jawt;
 
     requires org.lwjgl.natives;
     requires org.lwjgl.glfw.natives;
@@ -28,6 +29,7 @@ module com.opengg.core {
     requires org.lwjgl.tootle.natives;
     requires org.lwjgl.meow.natives;
     requires org.lwjgl.shaderc.natives;
+
 
     requires java.compiler;
     requires java.logging;
@@ -83,4 +85,5 @@ module com.opengg.core {
     exports com.opengg.core.physics.collision.colliders;
     exports com.opengg.core.physics.mechanics;
     exports com.opengg.core.gui.layout;
+    exports com.opengg.core.render.window.awt.window;
 }

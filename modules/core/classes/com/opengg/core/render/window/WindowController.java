@@ -8,6 +8,8 @@ package com.opengg.core.render.window;
 import com.opengg.core.GGInfo;
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.math.Vector2i;
+import com.opengg.core.render.window.awt.window.GGCanvas;
+import com.opengg.core.render.window.glfw.GLFWWindow;
 import com.opengg.core.vr.render.VRWindow;
 
 import java.util.ArrayList;
@@ -26,7 +28,8 @@ public class WindowController {
     public static void setup(WindowOptions windowinfo){
         WindowTypeRegister.registerWindowType("GLFW", new GLFWWindow());
         WindowTypeRegister.registerWindowType("OpenVR", new VRWindow());
-        
+        WindowTypeRegister.registerWindowType("AWT", new GGCanvas());
+
         window = WindowTypeRegister.getRegisteredWindow(windowinfo.type);
         GGConsole.log("Window registered under the name " + windowinfo.type + " requested and found, creating instance...");
         window.setup(windowinfo);

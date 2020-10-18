@@ -35,6 +35,7 @@ import static org.lwjgl.opengl.GL32.GL_TEXTURE_CUBE_MAP_SEAMLESS;
  */
 public class OpenGLRenderer implements Renderer {
     private boolean cull = true;
+    private boolean suppressErrors = true;
     private int lightoffset;
 
     private VertexArrayObject currentvao;
@@ -210,6 +211,7 @@ public class OpenGLRenderer implements Renderer {
      */
     public void checkForGLErrors(){
         int i;
+        if(suppressErrors) return;
         while((i = glGetError()) != GL_NO_ERROR){
             GGConsole.warning("OpenGL Error code : " + i);
         }
