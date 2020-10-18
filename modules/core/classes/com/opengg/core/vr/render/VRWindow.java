@@ -13,7 +13,7 @@ import com.opengg.core.render.internal.opengl.OpenGLRenderer;
 import com.opengg.core.render.RenderOperation;
 import com.opengg.core.render.RenderPass;
 import com.opengg.core.vr.VRUtil;
-import com.opengg.core.render.window.GLFWWindow;
+import com.opengg.core.render.window.glfw.GLFWWindow;
 import com.opengg.core.render.window.Window;
 import com.opengg.core.render.window.WindowOptions;
 import com.opengg.core.system.Allocator;

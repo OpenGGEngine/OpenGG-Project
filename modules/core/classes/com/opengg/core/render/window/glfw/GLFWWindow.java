@@ -1,7 +1,6 @@
-package com.opengg.core.render.window;
+package com.opengg.core.render.window.glfw;
 
 import com.opengg.core.exceptions.WindowCreationException;
-import com.opengg.core.io.input.keyboard.GLFWKeyboardHandler;
 import com.opengg.core.io.input.keyboard.IKeyboardHandler;
 import com.opengg.core.io.input.keyboard.KeyboardController;
 import com.opengg.core.io.input.mouse.*;
@@ -10,6 +9,8 @@ import com.opengg.core.render.RenderEngine;
 import com.opengg.core.render.internal.vulkan.VkUtil;
 import com.opengg.core.render.internal.vulkan.VulkanRenderer;
 import com.opengg.core.render.internal.vulkan.VulkanWindow;
+import com.opengg.core.render.window.Window;
+import com.opengg.core.render.window.WindowOptions;
 import com.opengg.core.system.Allocator;
 import com.opengg.core.util.FileUtil;
 import java.nio.ByteBuffer;

@@ -3,12 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.opengg.core.io.input.keyboard;
+package com.opengg.core.render.window.glfw;
 
+import com.opengg.core.io.input.keyboard.IKeyboardHandler;
+import com.opengg.core.io.input.keyboard.KeyboardController;
 import org.lwjgl.glfw.GLFWKeyCallback;
 import static org.lwjgl.glfw.GLFW.*;
 
-public class GLFWKeyboardHandler extends GLFWKeyCallback implements IKeyboardHandler{
+public class GLFWKeyboardHandler extends GLFWKeyCallback implements IKeyboardHandler {
 
 	boolean[] keys = new boolean[1024];
         

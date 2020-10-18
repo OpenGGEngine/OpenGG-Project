@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.opengg.core.io.input.mouse;
+package com.opengg.core.render.window.glfw;
 
+import com.opengg.core.io.input.mouse.MousePositionHandler;
 import com.opengg.core.math.Vector2f;
 import org.lwjgl.glfw.GLFWCursorPosCallback;
 
@@ -12,7 +13,7 @@ import org.lwjgl.glfw.GLFWCursorPosCallback;
  *
  * @author Javier
  */
-public class GLFWMousePositionHandler extends GLFWCursorPosCallback implements MousePositionHandler{
+public class GLFWMousePositionHandler extends GLFWCursorPosCallback implements MousePositionHandler {
     private double x=0;
     private double y=0;
 
