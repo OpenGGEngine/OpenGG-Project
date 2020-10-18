@@ -39,6 +39,10 @@ public class UIButton extends UIPane implements MouseButtonListener{
         return this;
     }
 
+    public void click(){
+        OpenGG.asyncExec(() -> onClick.run());
+    }
+
     public UIButton setOnClick(Runnable runnable){
         this.onClick = runnable;
         return this;
