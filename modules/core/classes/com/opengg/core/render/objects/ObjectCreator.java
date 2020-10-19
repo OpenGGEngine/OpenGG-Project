@@ -69,6 +69,12 @@ public class ObjectCreator {
         return renderable;
     }
 
+    public static Renderable createLineList(List<Vector3f> points){
+        var renderable = DrawnObject.create(ObjectBuffers.createPointFloatBuffer(points));
+        renderable.setRenderType(DrawnObject.DrawType.LINE_STRIP);
+        return renderable;
+    }
+
     private ObjectCreator() {
     }
 }
