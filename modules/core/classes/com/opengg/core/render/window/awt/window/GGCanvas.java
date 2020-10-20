@@ -45,12 +45,12 @@ public class GGCanvas extends JPanel implements Window {
             }
         };
 
-
         this.setLayout(new BorderLayout());
         this.add(canvas);
 
-        this.setMinimumSize(new Dimension(info.width, info.height));
-        canvas.setPreferredSize(new Dimension(info.width, info.height));
+        canvas.setMinimumSize(new Dimension(info.width, info.height));
+        canvas.setMaximumSize(new Dimension(info.width, info.height));
+
         container.add(this);
 
         canvas.setFocusable(true);
@@ -93,6 +93,7 @@ public class GGCanvas extends JPanel implements Window {
     @Override
     public void endFrame() {
         canvas.afterRender();
+        mousePosCallback.updateLockMouse();
     }
 
     @Override
@@ -116,12 +117,12 @@ public class GGCanvas extends JPanel implements Window {
 
     @Override
     public int getWidth() {
-        return (int) (canvas.getWidth()*1.25);
+        return canvas.getWidth();
     }
 
     @Override
     public int getHeight() {
-        return (int) (canvas.getHeight()*1.25);
+        return canvas.getHeight();
     }
 
     @Override
@@ -151,7 +152,7 @@ public class GGCanvas extends JPanel implements Window {
 
     @Override
     public void setCursorLock(boolean lock) {
-
+        mousePosCallback.setMouseLock(lock);
     }
 
     public boolean hasFocus(){
