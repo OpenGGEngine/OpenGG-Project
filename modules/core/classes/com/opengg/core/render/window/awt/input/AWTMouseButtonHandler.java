@@ -6,8 +6,12 @@
 
 package com.opengg.core.render.window.awt.input;
 
+import com.opengg.core.io.input.keyboard.Key;
+import com.opengg.core.io.input.mouse.MouseButton;
 import com.opengg.core.io.input.mouse.MouseButtonHandler;
+import com.opengg.core.io.input.mouse.MouseController;
 
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -25,17 +29,23 @@ public class AWTMouseButtonHandler implements MouseListener, MouseButtonHandler 
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        buttons[e.getButton()] = true;
+
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
+        if(buttons[e.getButton()] == true) return;
 
+        buttons[e.getButton()] = true;
+        MouseController.buttonPressed(getEngineButtonCode(e.getButton()));
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
+        if(buttons[e.getButton()] == false) return;
+
         buttons[e.getButton()] = false;
+        MouseController.buttonReleased(getEngineButtonCode(e.getButton()));
     }
 
     @Override
@@ -46,5 +56,13 @@ public class AWTMouseButtonHandler implements MouseListener, MouseButtonHandler 
     @Override
     public void mouseExited(MouseEvent e) {
 
+    }
+
+    private static int getEngineButtonCode(int awtButton){
+        return switch (awtButton){
+            case MouseEvent.BUTTON1 -> MouseButton.LEFT;
+            case MouseEvent.BUTTON2 -> MouseButton.RIGHT;
+            default -> awtButton;
+        };
     }
 }
