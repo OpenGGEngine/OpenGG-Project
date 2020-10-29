@@ -764,13 +764,13 @@ public class PlatformWin32GLCanvas implements PlatformGLCanvas {
     }
 
     public void lock() throws AWTException {
-        int lock = JAWT_DrawingSurface_Lock(ds, ds.Lock());
-        if ((lock & JAWT_LOCK_ERROR) != 0)
-            throw new AWTException("JAWT_DrawingSurface_Lock() failed");
+        //int lock = JAWT_DrawingSurface_Lock(ds, ds.Lock());
+       // if ((lock & JAWT_LOCK_ERROR) != 0)
+       //     throw new AWTException("JAWT_DrawingSurface_Lock() failed");
     }
 
     public void unlock() throws AWTException {
-        JAWT_DrawingSurface_Unlock(ds, ds.Unlock());
+       // JAWT_DrawingSurface_Unlock(ds, ds.Unlock());
     }
 
     @Override

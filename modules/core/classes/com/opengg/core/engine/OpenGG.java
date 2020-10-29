@@ -226,8 +226,8 @@ public final class OpenGG{
     }
 
     private static void runRender() {
-        WindowController.update();
         RenderEngine.startFrame();
+        WindowController.update();
         getApp().render();
         ExtensionManager.render();
         RenderEngine.render();

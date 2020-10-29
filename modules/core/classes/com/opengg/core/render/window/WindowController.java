@@ -21,7 +21,7 @@ import java.util.List;
  */
 public class WindowController {
     static Window window;
-    static Vector2i oldsize = new Vector2i(1,1);
+    static Vector2i oldSize = new Vector2i(1,1);
     
     public static List<WindowResizeListener> listeners = new ArrayList<>();
     
@@ -34,7 +34,7 @@ public class WindowController {
         GGConsole.log("Window registered under the name " + windowinfo.type + " requested and found, creating instance...");
         window.setup(windowinfo);
         GGInfo.setGlVersion(windowinfo.glmajor + "." + windowinfo.glminor);
-        oldsize = new Vector2i(windowinfo.width, windowinfo.height);
+        oldSize = new Vector2i(windowinfo.width, windowinfo.height);
     }
     
     public static void addResizeListener(WindowResizeListener listener){
@@ -53,12 +53,12 @@ public class WindowController {
     
     public static void update(){
 
-        Vector2i newsize = new Vector2i(Math.abs(window.getWidth()), Math.abs(window.getHeight()));
-        if(!newsize.equals(oldsize)){
-            oldsize = newsize;
-            resize(newsize);
+        Vector2i newSize = new Vector2i(Math.abs(window.getWidth()), Math.abs(window.getHeight()));
+        if(!newSize.equals(oldSize)){
+            oldSize = newSize;
+            resize(newSize);
         }
-        oldsize = newsize;
+        oldSize = newSize;
     }
             
     public static void destroy(){
@@ -67,19 +67,19 @@ public class WindowController {
     }
     
     public static Vector2i getSize(){
-        return oldsize;
+        return oldSize;
     }
     
     public static int getWidth(){
-        return oldsize.x;
+        return oldSize.x;
     }
     
     public static int getHeight(){
-        return oldsize.y;
+        return oldSize.y;
     }
     
     public static float getRatio(){
-        return oldsize.x/(float)oldsize.y;
+        return oldSize.x/(float) oldSize.y;
     }
 
     private WindowController() {

@@ -49,8 +49,6 @@ public class GGCanvas extends JPanel implements Window {
         this.add(canvas);
 
         canvas.setMinimumSize(new Dimension(info.width, info.height));
-        canvas.setMaximumSize(new Dimension(info.width, info.height));
-
         container.add(this);
 
         canvas.setFocusable(true);
@@ -87,12 +85,13 @@ public class GGCanvas extends JPanel implements Window {
     @Override
     public void startFrame(){
         canvas.beforeRender();
-        canvas.swapBuffers();
     }
 
     @Override
     public void endFrame() {
         canvas.afterRender();
+        canvas.swapBuffers();
+        canvas.makeContextCurrent();
         mousePosCallback.updateLockMouse();
     }
 

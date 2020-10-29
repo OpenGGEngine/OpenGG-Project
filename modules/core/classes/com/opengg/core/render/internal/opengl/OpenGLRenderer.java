@@ -66,7 +66,6 @@ public class OpenGLRenderer implements Renderer {
 
         GLOptions.set(GL_BLEND, true);
         glBlendEquation(GL_FUNC_ADD);
-        //glLineWidth(2f);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         glEnable(GL_DEPTH_TEST);
@@ -162,7 +161,6 @@ public class OpenGLRenderer implements Renderer {
 
             if(pass.shouldBlitToBack())
                 pass.getSceneBuffer().blitToBack();
-
 
             pass.runDisableOp();
         }
@@ -278,7 +276,7 @@ public class OpenGLRenderer implements Renderer {
     }
 
     public void destroy(){
-        TextureManager.destroy();
+        TextureManager.clearCache();
         GGConsole.log("Render engine has released all OpenGL Resource and has finalized");
     }
 }
