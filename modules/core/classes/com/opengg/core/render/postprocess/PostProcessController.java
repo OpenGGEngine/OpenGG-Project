@@ -35,7 +35,7 @@ public class PostProcessController {
     public static void initialize(){
         utility = WindowFramebuffer.getFloatingPointWindowFramebuffer(1);
         renderable = ObjectCreator.createSquare(new Vector2f(0f,0f), new Vector2f(1f,1f), -0.9f);
-
+/*
         Stage ssao = new Stage("ssao");
         PostProcessingPass ssaopass = new PostProcessingPass(PostProcessingPass.SET, ssao);
         //addPass("ssao", ssaopass);
@@ -56,13 +56,13 @@ public class PostProcessController {
         PostProcessingPass bloom = new PostProcessingPass(PostProcessingPass.SET,
                 blurs);
         //addPass("bloom", bloom);
-
+*/
         Stage hdr = new Stage("hdr");
         PostProcessingPass hdrpass = new PostProcessingPass(PostProcessingPass.SET, hdr);
         addPass("hdr", hdrpass);
 
-        Stage fxaa = new Stage("fxaa");
-        PostProcessingPass fxaapass = new PostProcessingPass(PostProcessingPass.SET, fxaa);
+//        Stage fxaa = new Stage("fxaa");
+  //      PostProcessingPass fxaapass = new PostProcessingPass(PostProcessingPass.SET, fxaa);
         //addPass("fxaa", fxaapass);
 
         GGConsole.log("Initialized post processing controller with " + passes.size() + " passes");

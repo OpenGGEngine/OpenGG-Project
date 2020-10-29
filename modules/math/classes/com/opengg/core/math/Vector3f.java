@@ -219,6 +219,10 @@ public class Vector3f implements Serializable{
     public Vector3f multiply(float scalar) {
         return new Vector3f(x * scalar, y * scalar, z * scalar);
     }
+
+    public Vector3f multiply(float nx, float ny, float nz) {
+        return new Vector3f(x * nx, y * ny, z * nz);
+    }
     
     public Vector3f multiply(Vector3f v) {
         return new Vector3f(x * v.x, y * v.y, z * v.z);

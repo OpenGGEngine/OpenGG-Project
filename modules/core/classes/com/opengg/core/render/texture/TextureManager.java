@@ -86,8 +86,8 @@ public class TextureManager {
         }
     }
     
-    public static void destroy(){
-
+    public static void clearCache(){
+        texturelist.clear();
     }
 
     private TextureManager() {
