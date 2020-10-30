@@ -21,6 +21,8 @@ import com.opengg.core.render.texture.WindowFramebuffer;
 
 import java.util.*;
 
+import static org.lwjgl.opengl.GL11.glGetError;
+
 /**
  *
  * @author Javier

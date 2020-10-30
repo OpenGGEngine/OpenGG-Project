@@ -52,13 +52,11 @@ public class OpenGLVertexArrayObject implements VertexArrayObject {
     }
 
     public void bind(){
-        ((OpenGLRenderer) RenderEngine.renderer).setVAO(this);
         vao.bind();
     }
 
     public void unbind(){
         vao.unbind();
-        ((OpenGLRenderer)RenderEngine.renderer).setVAO(null);
     }
 
     public void delete(){
