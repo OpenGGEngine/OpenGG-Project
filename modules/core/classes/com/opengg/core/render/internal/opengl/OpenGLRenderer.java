@@ -38,8 +38,7 @@ public class OpenGLRenderer implements Renderer {
     private boolean suppressErrors = true;
     private int lightoffset;
 
-    private VertexArrayObject currentvao;
-    private VertexArrayObject defaultvao;
+    private OpenGLVertexArrayObject currentVAO;
     private GraphicsBuffer lightBuffer;
     private Framebuffer currentFramebuffer;
 
@@ -48,13 +47,15 @@ public class OpenGLRenderer implements Renderer {
      */
     @Override
     public void initialize() {
+        OpenGLVAOManager.initialize();
         ShaderController.initialize();
 
         this.checkForGLErrors();
 
         GGConsole.log("Created default vertex array formats");
 
-        defaultvao = VertexArrayObject.create(RenderEngine.getDefaultFormat());
+        currentVAO = OpenGLVAOManager.getVAO(RenderEngine.getDefaultFormat());
+        currentVAO.bind();
 
         enableDefaultGroups();
 
@@ -99,10 +100,7 @@ public class OpenGLRenderer implements Renderer {
         RenderOperation path = new RenderOperation("mainpath", () -> {
             for(var group : RenderEngine.getActiveRenderGroups()){
                 ShaderController.useConfiguration(group.getPipeline());
-                ((OpenGLVertexArrayObject)group.getVertexArrayObject()).bind();
                 group.render();
-                ((OpenGLVertexArrayObject)group.getVertexArrayObject()).unbind();
-
             }
         });
 
@@ -140,18 +138,19 @@ public class OpenGLRenderer implements Renderer {
             ShaderController.useConfiguration("texture");
             RenderEngine.getProjectionData().ratio = WindowController.getWindow().getRatio();
             RenderEngine.getProjectionData().use();
+            setCurrentVAOFormat(RenderEngine.getDefaultFormat());
 
             pass.getSceneBuffer().clearFramebuffer();
             pass.getSceneBuffer().enableRendering(0,0,pass.getSceneBuffer().getWidth(),pass.getSceneBuffer().getHeight());
             useLights();
             resetConfig();
-            ((OpenGLVertexArrayObject)defaultvao).bind();
 
             for(RenderOperation path : RenderEngine.getActiveRenderPaths()){
                 path.render();
                 resetConfig();
             }
-            ((OpenGLVertexArrayObject)defaultvao).bind();
+
+            setCurrentVAOFormat(RenderEngine.getDefaultFormat());
 
             pass.getSceneBuffer().disableRendering();
             enableDefaultVP();
@@ -173,6 +172,7 @@ public class OpenGLRenderer implements Renderer {
         this.setCulling(true);
 
         this.checkForGLErrors();
+
     }
 
     @Override
@@ -224,18 +224,15 @@ public class OpenGLRenderer implements Renderer {
                 "unknown";
     }
 
-    public VertexArrayObject getCurrentVAO(){
-        return currentvao;
+    public void setCurrentVAOFormat(VertexArrayFormat format){
+        if(this.currentVAO.getFormat().equals(format)) return;
+
+        currentVAO = OpenGLVAOManager.getVAO(format);
+        currentVAO.bind();
     }
 
-    public void setVAO(VertexArrayObject vao){
-        currentvao = vao;
-        if(vao == null)
-            currentvao = defaultvao;
-    }
-
-    public VertexArrayObject getDefaultVAO(){
-        return defaultvao;
+    public OpenGLVertexArrayObject getCurrentVAO(){
+        return currentVAO;
     }
 
     public void setWireframe(boolean wf){
@@ -278,5 +275,9 @@ public class OpenGLRenderer implements Renderer {
     public void destroy(){
         TextureManager.clearCache();
         GGConsole.log("Render engine has released all OpenGL Resource and has finalized");
+    }
+
+    public static OpenGLRenderer getOpenGLRenderer(){
+        return (OpenGLRenderer) RenderEngine.getRenderer();
     }
 }

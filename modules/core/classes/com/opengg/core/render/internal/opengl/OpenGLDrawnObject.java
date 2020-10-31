@@ -27,14 +27,12 @@ public final class OpenGLDrawnObject extends DrawnObject {
     @Override
     public void render(){
         if(RenderEngine.validateInitialization()) return;
-        indexBuffer.bind();
         ShaderController.uploadModifiedDescriptorSets();
-        if(!((OpenGLRenderer) RenderEngine.renderer).getCurrentVAO().getFormat().equals(format))
-            throw new RenderException("Invalid VAO bound during render");
-        ((OpenGLRenderer) RenderEngine.renderer).getCurrentVAO().applyFormat(vertexBufferObjects);
+        OpenGLRenderer.getOpenGLRenderer().setCurrentVAOFormat(format);
+        OpenGLRenderer.getOpenGLRenderer().getCurrentVAO().applyFormat(vertexBufferObjects);
+        indexBuffer.bind();
         PerformanceManager.registerDrawCall();
         glDrawElementsInstancedBaseVertexBaseInstance(getOpenGLDrawType(drawType), elementCount, getOpenGlIndexType(indexType), baseElement*2, instanceCount, baseVertex, 0);
-
     }
 
     private static int getOpenGlIndexType(IndexType type){

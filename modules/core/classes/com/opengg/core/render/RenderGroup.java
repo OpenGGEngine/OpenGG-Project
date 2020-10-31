@@ -5,9 +5,8 @@
  */
 
 package com.opengg.core.render;
-
 import com.opengg.core.render.shader.VertexArrayFormat;
-import com.opengg.core.render.shader.VertexArrayObject;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -18,7 +17,6 @@ import java.util.List;
  */
 public class RenderGroup {
     private final List<Renderable> items = new ArrayList<>();
-    private final VertexArrayObject vao;
     private final VertexArrayFormat format;
     private String pipeline = "object";
     private String name = "default";
@@ -28,20 +26,17 @@ public class RenderGroup {
 
     public RenderGroup(String name){
         this.name = name;
-        vao = VertexArrayObject.create(RenderEngine.getDefaultFormat());
         format = RenderEngine.getDefaultFormat();
     }
     
     public RenderGroup(String name, VertexArrayFormat format){
         this.name = name;
-        vao = VertexArrayObject.create(format);
         this.format = format;
     }
 
     public RenderGroup(String name, VertexArrayFormat format, String pipeline) {
         this.pipeline = pipeline;
         this.name = name;
-        vao = VertexArrayObject.create(format);
         this.format = format;
     }
 
@@ -80,10 +75,6 @@ public class RenderGroup {
 
     public boolean isEnabled() {
         return enabled;
-    }
-
-    public VertexArrayObject getVertexArrayObject() {
-        return vao;
     }
 
     public String getName() {
