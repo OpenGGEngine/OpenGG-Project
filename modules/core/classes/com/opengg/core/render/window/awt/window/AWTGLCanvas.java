@@ -82,24 +82,6 @@ public abstract class AWTGLCanvas extends Canvas {
         }
     }
 
-    public <T> T executeInContext(Callable<T> callable) throws Exception {
-        beforeRender();
-        try {
-            return callable.call();
-        } finally {
-            afterRender();
-        }
-    }
-
-    public void runInContext(Runnable runnable) {
-        beforeRender();
-        try {
-            runnable.run();
-        } finally {
-            afterRender();
-        }
-    }
-
     public void render() {
         beforeRender();
         try {

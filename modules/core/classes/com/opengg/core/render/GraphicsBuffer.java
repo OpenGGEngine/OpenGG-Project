@@ -16,19 +16,6 @@ import java.nio.IntBuffer;
 public interface GraphicsBuffer{
 
     /**
-     * Allocates empty memory of the given type and access type
-     * @param type Memory usage type
-     * @param access Memory usage (can be GL_STATIC_DRAW, GL_DYNAMIC_DRAW, or GL_STREAM_DRAW)
-     * @return
-     */
-    static GraphicsBuffer allocate(BufferType type, UsageType access){
-        return switch (RenderEngine.getRendererType()){
-            case OPENGL -> new OpenGLBuffer(type, access);
-            case VULKAN -> throw new RenderException("Cannot instantiate empty buffer in Vulkan");
-        };
-    }
-
-    /**
      * Allocates empty memory of the given buffer type, size, and access type
      * @param type Memory usage type
      * @param size Amount of bytes to allocate

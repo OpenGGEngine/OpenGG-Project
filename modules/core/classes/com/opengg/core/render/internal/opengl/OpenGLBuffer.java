@@ -6,6 +6,7 @@
 
 package com.opengg.core.render.internal.opengl;
 
+import com.opengg.core.engine.PerformanceManager;
 import com.opengg.core.render.GraphicsBuffer;
 
 import java.nio.ByteBuffer;
@@ -31,7 +32,7 @@ public class OpenGLBuffer implements GraphicsBuffer{
     int index;
     boolean bound = false;
 
-    public OpenGLBuffer(BufferType type, UsageType usage){
+    private OpenGLBuffer(BufferType type, UsageType usage){
         this.buffer = new NativeOpenGLBuffer();
         this.target = type;
         this.size = 0;
@@ -41,21 +42,25 @@ public class OpenGLBuffer implements GraphicsBuffer{
     public OpenGLBuffer(BufferType type, int size, UsageType usage){
         this(type, usage);
         alloc(size);
+        PerformanceManager.registerBufferAllocation(size);
     }
 
     public OpenGLBuffer(BufferType type, ByteBuffer buffer, UsageType usage){
         this(type, usage);
         uploadData(buffer);
+        PerformanceManager.registerBufferAllocation(buffer.limit());
     }
 
     public OpenGLBuffer(BufferType type, FloatBuffer buffer, UsageType usage){
         this(type, usage);
         uploadData(buffer);
+        PerformanceManager.registerBufferAllocation(buffer.limit() * Float.BYTES);
     }
     
     public OpenGLBuffer(BufferType type, IntBuffer buffer, UsageType usage){
         this(type, usage);
         uploadData(buffer);
+        PerformanceManager.registerBufferAllocation(buffer.limit() * Integer.BYTES);
     }
     
     @Override

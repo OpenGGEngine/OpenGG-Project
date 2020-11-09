@@ -3,6 +3,7 @@ package com.opengg.core.render.window.awt.window;
 import com.opengg.core.exceptions.WindowCreationException;
 import com.opengg.core.io.input.keyboard.KeyboardController;
 import com.opengg.core.io.input.mouse.MouseController;
+import com.opengg.core.math.Vector2f;
 import com.opengg.core.render.window.Window;
 import com.opengg.core.render.window.WindowOptions;
 import com.opengg.core.render.window.awt.input.AWTKeyboardHandler;
@@ -10,18 +11,20 @@ import com.opengg.core.render.window.awt.input.AWTMouseButtonHandler;
 import com.opengg.core.render.window.awt.input.AWTMousePosHandler;
 import org.lwjgl.opengl.GL;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.AffineTransform;
 
 import static org.lwjgl.opengl.GL11.*;
 
-public class GGCanvas extends JPanel implements Window {
+public class GGCanvas implements Window {
     private AWTGLCanvas canvas;
     private AWTMousePosHandler mousePosCallback;
     private AWTMouseButtonHandler mouseCallback;
     private AWTKeyboardHandler keyCallback;
     public static Container container;
+
+    private Vector2f osScaleFactor = new Vector2f(1,1);
 
     @Override
     public void setup(WindowOptions info) {
@@ -45,11 +48,16 @@ public class GGCanvas extends JPanel implements Window {
             }
         };
 
-        this.setLayout(new BorderLayout());
-        this.add(canvas);
+        var graphicsEnv = GraphicsEnvironment.getLocalGraphicsEnvironment()
+                .getDefaultScreenDevice().getDefaultConfiguration();
 
-        canvas.setMinimumSize(new Dimension(info.width, info.height));
-        container.add(this);
+        AffineTransform transform = graphicsEnv.getDefaultTransform();
+
+        osScaleFactor = new Vector2f((float)transform.getScaleX(), (float)transform.getScaleY());
+
+        container.setMinimumSize(new Dimension(info.width, info.height));
+        container.setMaximumSize(new Dimension(info.width, info.height));
+        container.add(canvas);
 
         canvas.setFocusable(true);
         canvas.requestFocusInWindow();
@@ -57,13 +65,11 @@ public class GGCanvas extends JPanel implements Window {
         canvas.addKeyListener(keyCallback = new AWTKeyboardHandler());
         canvas.addMouseMotionListener(mousePosCallback = new AWTMousePosHandler());
 
-        var panel = this;
-
         canvas.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
                 if(e.getKeyCode() == KeyEvent.VK_ESCAPE){
-                    panel.getParent().requestFocusInWindow();
+                    canvas.getParent().requestFocusInWindow();
                 }
             }
         });
@@ -102,7 +108,7 @@ public class GGCanvas extends JPanel implements Window {
 
     @Override
     public boolean shouldClose() {
-        return !this.isEnabled();
+        return !canvas.isEnabled();
     }
 
     @Override
@@ -116,12 +122,12 @@ public class GGCanvas extends JPanel implements Window {
 
     @Override
     public int getWidth() {
-        return canvas.getWidth();
+        return (int) (canvas.getWidth() * osScaleFactor.x);
     }
 
     @Override
     public int getHeight() {
-        return canvas.getHeight();
+        return (int) (canvas.getHeight() * osScaleFactor.y);
     }
 
     @Override
@@ -135,7 +141,7 @@ public class GGCanvas extends JPanel implements Window {
     }
 
     @Override
-    public void setIcon(String path) throws Exception {
+    public void setIcon(String path) {
 
     }
 
