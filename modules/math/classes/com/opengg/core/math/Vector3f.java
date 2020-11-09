@@ -549,7 +549,11 @@ public class Vector3f implements Serializable{
         hash = 23 * hash + Float.floatToIntBits(this.z);
         return hash;
     }
-    
+
+    public String toFormattedString(int decimalCount){
+        return String.format("%."+decimalCount+"f, %."+decimalCount+"f, %."+decimalCount+"f", x,y,z);
+    }
+
     @Override
     public String toString(){
         return x + ", " + y + ", " + z;
