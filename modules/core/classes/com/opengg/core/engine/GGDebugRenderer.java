@@ -10,6 +10,7 @@ import com.opengg.core.render.Renderable;
 import com.opengg.core.render.shader.CommonUniforms;
 import com.opengg.core.render.text.Font;
 import com.opengg.core.render.text.Text;
+import com.opengg.core.render.window.WindowController;
 import com.opengg.core.render.window.WindowOptions;
 import com.opengg.core.world.WorldEngine;
 
@@ -37,7 +38,9 @@ public class GGDebugRenderer implements KeyboardListener {
             if(counter > 15){
                 counter = 0;
 
-                var debugString = "Frame time: " + String.format("%.2f", PerformanceManager.getComputedFramerate()*1000) + "\n" +
+                var debugString =
+                        "Framebuffer resolution: " + WindowController.getWidth() + "/" + WindowController.getHeight() + "\n" +
+                        "Frame time: " + String.format("%.2f", PerformanceManager.getComputedFramerate()*1000) + "\n" +
                         "Frame rate: " + String.format("%.2f", 1/(PerformanceManager.getComputedFramerate())) + "\n\n" +
                         "Camera position: (" + String.format("%.2f", RenderEngine.getCurrentView().getPosition().x) + ", " +  String.format("%.2f",     RenderEngine.getCurrentView().getPosition().y) + ", " +  String.format("%.2f", RenderEngine.getCurrentView().getPosition().z) + ") \n\n" +
                         "Current world: " + WorldEngine.getCurrent().getName() + " \n" +
