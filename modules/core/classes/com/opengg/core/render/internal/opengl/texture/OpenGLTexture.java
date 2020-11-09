@@ -23,6 +23,8 @@ import org.lwjgl.opengl.GL;
 
 import static java.util.Map.entry;
 import static org.lwjgl.opengl.EXTTextureCompressionS3TC.*;
+import static org.lwjgl.opengl.EXTTextureSRGB.*;
+import static org.lwjgl.opengl.EXTTextureSRGB.GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT;
 import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.opengl.KHRTextureCompressionASTCLDR.*;
 
@@ -92,9 +94,9 @@ public class OpenGLTexture implements Texture {
                 int width = data.width;
                 int height = data.height;
                 int internalFormat = switch (data.getTextureType()) {
-                    case DXT1 -> GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
-                    case DXT3 -> GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
-                    case DXT5 -> GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+                    case DXT1 -> GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT;
+                    case DXT3 -> GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT;
+                    case DXT5 -> GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT;
                     default -> -1;
                 };
                 if(internalFormat == -1){
@@ -106,8 +108,8 @@ public class OpenGLTexture implements Texture {
                     ((ByteBuffer) data.buffer).get(sub);
                     ByteBuffer subBuffer = Allocator.alloc(size).put(sub).flip();
                     tex.setImageDataCompressed(type, level, internalFormat, width, height, 0, subBuffer);
-                    width /= 2;
-                    height /= 2;
+                    width = Math.max(1, width/2);
+                    height = Math.max(1, height/2);
                 }
             }
         }

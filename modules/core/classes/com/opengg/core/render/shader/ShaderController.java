@@ -296,7 +296,7 @@ public class ShaderController {
     }
 
     public static void setUniform(String name, UniformContainer val){
-        if(val.toString().contains("null")) throw new NullPointerException("Shader parameter is null.");
+        //if(val.toString().contains("null")) throw new NullPointerException("Shader parameter is null.");
         var pos = uniformDescriptorPositions.get(name);
 
         if(isAlready(pos, val)) return;

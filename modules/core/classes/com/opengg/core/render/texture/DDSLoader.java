@@ -7,13 +7,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 public class DDSLoader {
-    private static final int DXT1 = (0x44585431);
-    private static final int DXT2 = (0x44585432);
-    private static final int DXT3 = (0x44585433);
-    private static final int DXT4 = (0x44585434);
-    private static final int DXT5 = (0x44585435);
+    private static final int DXT1 = 0x31545844;//(0x44585431);
+    private static final int DXT2 = 0x32545844;//(0x44585432);
+    private static final int DXT3 = 0x33545844;//(0x44585433);
+    private static final int DXT4 = 0x34545844;//(0x44585434);
+    private static final int DXT5 = 0x35545844;//(0x44585435);
     public static TextureData load(String path) throws IOException {
         File f = new File(path);
         try(FileInputStream fc = new FileInputStream(f)){
@@ -33,7 +34,6 @@ public class DDSLoader {
             int mipMapCount = tempBuf.position(24).getInt();
             int fourCC = tempBuf.position(80).getInt();
             Allocator.popStack();
-            //GGConsole.debug(width+","+height+","+linearSize+","+mipMapCount);
             int bufferSize = mipMapCount > 1 ? linearSize * 2:linearSize;
             //ByteBuffer b = Allocator.alloc(bufferSize);
             //while(b.hasRemaining())fc.getChannel().read(b);

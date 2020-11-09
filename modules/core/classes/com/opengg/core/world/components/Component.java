@@ -724,7 +724,7 @@ public abstract class Component{
      * @return
      */
     public List<Component> getChildren(){
-        return Collections.unmodifiableList(children);
+        return children;//Collections.unmodifiableList(children);
     }
 
     /**

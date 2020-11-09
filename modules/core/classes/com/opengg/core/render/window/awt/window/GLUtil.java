@@ -1,7 +1,8 @@
 package com.opengg.core.render.window.awt.window;
 
 
-class GLUtil {
+class
+GLUtil {
     
     static boolean atLeast32(int major, int minor) {
         return major == 3 && minor >= 2 || major > 3;
