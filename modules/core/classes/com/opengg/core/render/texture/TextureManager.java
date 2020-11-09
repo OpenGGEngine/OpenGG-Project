@@ -8,6 +8,7 @@ package com.opengg.core.render.texture;
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.engine.Resource;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,7 +32,7 @@ public class TextureManager {
         }
     }
     
-    private static void cacheTexture(TextureData data){
+    public static void cacheTexture(TextureData data){
         if(!cache) return;
         texturelist.put(data.source, data);
     }
