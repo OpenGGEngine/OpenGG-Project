@@ -8,6 +8,7 @@ package com.opengg.core.render.texture;
 
 import com.opengg.core.engine.Resource;
 import java.nio.Buffer;
+import java.util.Optional;
 
 /**
  * Container for data required to create a {@link Texture}. This class contains only client side representations, and is therefore thread safe
@@ -42,9 +43,9 @@ public class TextureData implements Resource{
      * Source of texture (If texture comes from a file, this contains the file path)
      */
     public final String source;
-    public boolean complete = false;
+    public Texture gpuTextureCache;
 
-    public int mipMapCount;
+    public int mipMapCount = 1;
     
     public TextureData(int width, int height, int channels, Buffer buffer, String source, TextureDataType type) {
         this.width = width;
@@ -63,8 +64,12 @@ public class TextureData implements Resource{
         this.type = TextureDataType.NORMAL;
     }
     
-    public void setComplete(){
-        complete = true;
+    public Optional<Texture> getGPUTexture(){
+        return Optional.ofNullable(gpuTextureCache);
+    }
+
+    public void setGPUTexture(Texture texture){
+        gpuTextureCache = texture;
     }
 
     @Override
@@ -72,7 +77,9 @@ public class TextureData implements Resource{
         return Type.TEXTURE;
     }
 
-    public TextureDataType getTextureType(){return type;}
+    public TextureDataType getTextureType(){
+        return type;
+    }
 
     @Override
     public String getSource() {

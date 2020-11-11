@@ -20,9 +20,9 @@ import java.util.*;
 
 import org.lwjgl.opengl.EXTTextureFilterAnisotropic;
 import org.lwjgl.opengl.GL;
+import org.lwjgl.system.MemoryUtil;
 
 import static java.util.Map.entry;
-import static org.lwjgl.opengl.EXTTextureCompressionS3TC.*;
 import static org.lwjgl.opengl.EXTTextureSRGB.*;
 import static org.lwjgl.opengl.EXTTextureSRGB.GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT;
 import static org.lwjgl.opengl.GL30.*;
@@ -42,11 +42,12 @@ public class OpenGLTexture implements Texture {
     private final int internalFormat;
     private final int inputFormat;
 
-    private final Vector3i size;
+    private final TextureStorageProperties storageProperties;
     private int layers;
+    private boolean isSet = false;
 
-    public OpenGLTexture(TextureConfig config, Vector3i size) {
-        this.size = size;
+    public OpenGLTexture(TextureConfig config, TextureStorageProperties properties) {
+        this.storageProperties = properties;
 
         tex = new NativeOpenGLTexture();
         this.type = getOpenGLTextureType(config.type());
@@ -58,8 +59,31 @@ public class OpenGLTexture implements Texture {
         setMinimumFilterType(getOpenGlFilter(config.minFilter()));
         setMaximumFilterType(getOpenGlFilter(config.maxFilter()));
         setTextureWrapType(getOpenGlWrapType(config.wrapTypeS()),getOpenGlWrapType(config.wrapTypeT()),getOpenGlWrapType(config.wrapTypeR()));
+        switch (config.type()){
+            case TEXTURE_2D -> tex.set2DImageStorage(type, properties.mipLevels(), internalFormat, properties.size().x, properties.size().y);
+            case TEXTURE_ARRAY -> tex.set3DImageStorage(type, properties.mipLevels(), internalFormat, properties.size().x, properties.size().y, properties.size().z);
+            case TEXTURE_3D -> tex.set3DImageStorage(type, properties.mipLevels(), internalFormat, properties.size().x, properties.size().y, properties.size().z);
+            case TEXTURE_CUBEMAP -> tex.set2DImageStorage(type, properties.mipLevels(), internalFormat, properties.size().x, properties.size().y);
+        }
     }
 
+    public OpenGLTexture(TextureConfig config, Vector3i size, OpenGLTexture viewSource){
+        this.storageProperties = viewSource.storageProperties;
+
+        tex = new NativeOpenGLTexture();
+        this.type = getOpenGLTextureType(config.type());
+        this.samplerFormat = getOpenGLSamplerFormat(config.samplerFormat());
+        this.internalFormat = getOpenGLTextureFormat(config.internalFormat());
+        this.inputFormat = getOpenGLInputFormat(config.inputFormat());
+        setActiveTexture(0);
+
+        tex.createView(type, viewSource.tex.getID(), internalFormat, 0, 100, 0, 1);
+
+        setMinimumFilterType(getOpenGlFilter(config.minFilter()));
+        setMaximumFilterType(getOpenGlFilter(config.maxFilter()));
+        setTextureWrapType(getOpenGlWrapType(config.wrapTypeS()),getOpenGlWrapType(config.wrapTypeT()),getOpenGlWrapType(config.wrapTypeR()));
+
+    }
 
     public void setActiveTexture(int loc){
         tex.setActiveTexture(GL_TEXTURE0 + loc);
@@ -87,32 +111,24 @@ public class OpenGLTexture implements Texture {
     @Override
     public void set2DData(TextureData data){
         switch (data.getTextureType()) {
-            case NORMAL -> tex.setImageData(type, 0, internalFormat, data.width, data.height, 0, samplerFormat, inputFormat, (ByteBuffer) data.buffer);
-            case ATSC -> tex.setImageDataCompressed(type, 0, selectASTCFormat(data.getXBlock(), data.getYBlock(), true), data.width, data.height, 0, (ByteBuffer) data.buffer);
+            case NORMAL -> tex.setImageData(type, 0, data.width, data.height, samplerFormat, inputFormat, (ByteBuffer) data.buffer);
+            case ATSC -> tex.setImageDataCompressed(type, 0, data.width, data.height, selectASTCFormat(data.getXBlock(), data.getYBlock(), true), (ByteBuffer) data.buffer);
             case DXT1, DXT3, DXT5 -> {
                 int blockSize = (data.getTextureType() == TextureData.TextureDataType.DXT1) ? 8 : 16;
                 int width = data.width;
                 int height = data.height;
-                int internalFormat = switch (data.getTextureType()) {
-                    case DXT1 -> GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT;
-                    case DXT3 -> GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT;
-                    case DXT5 -> GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT;
-                    default -> -1;
-                };
-                if(internalFormat == -1){
-                    System.out.println("Invalid");
-                }
+
                 for (int level = 0; level < data.getMipMapCount(); level++) {
                     int size = ((width + 3) / 4) * ((height + 3) / 4) * blockSize;
-                    byte[] sub = new byte[size];
-                    ((ByteBuffer) data.buffer).get(sub);
-                    ByteBuffer subBuffer = Allocator.alloc(size).put(sub).flip();
-                    tex.setImageDataCompressed(type, level, internalFormat, width, height, 0, subBuffer);
+                    var newBuffer = MemoryUtil.memSlice((ByteBuffer) data.buffer, 0, size);
+                    data.buffer.position(data.buffer.position() + size);
+                    tex.setImageDataCompressed(type, level, width, height, internalFormat, newBuffer);
                     width = Math.max(1, width/2);
                     height = Math.max(1, height/2);
                 }
             }
         }
+
         tdata.add(data);
     }
     
@@ -123,12 +139,12 @@ public class OpenGLTexture implements Texture {
     
     @Override
     public void setCubemapData(TextureData data1, TextureData data2, TextureData data3, TextureData data4, TextureData data5, TextureData data6){
-        tex.setImageData(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, internalFormat, data1.width, data1.height, 0, samplerFormat, inputFormat, (ByteBuffer)data1.buffer);
-        tex.setImageData(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, internalFormat, data2.width, data2.height, 0, samplerFormat, inputFormat, (ByteBuffer)data2.buffer);
-        tex.setImageData(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, internalFormat, data3.width, data3.height, 0, samplerFormat, inputFormat, (ByteBuffer)data4.buffer); //inverted to compensate for coordinate issues
-        tex.setImageData(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, internalFormat, data4.width, data4.height, 0, samplerFormat, inputFormat, (ByteBuffer)data3.buffer);
-        tex.setImageData(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, internalFormat, data5.width, data5.height, 0, samplerFormat, inputFormat, (ByteBuffer)data5.buffer);
-        tex.setImageData(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, internalFormat, data6.width, data6.height, 0, samplerFormat, inputFormat, (ByteBuffer)data6.buffer);
+        tex.setImageData(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, data1.width, data1.height, 0, samplerFormat, inputFormat, (ByteBuffer)data1.buffer);
+        tex.setImageData(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, data2.width, data2.height, 0, samplerFormat, inputFormat, (ByteBuffer)data2.buffer);
+        tex.setImageData(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, data3.width, data3.height, 0, samplerFormat, inputFormat, (ByteBuffer)data4.buffer); //inverted to compensate for coordinate issues
+        tex.setImageData(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, data4.width, data4.height, 0, samplerFormat, inputFormat, (ByteBuffer)data3.buffer);
+        tex.setImageData(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, data5.width, data5.height, 0, samplerFormat, inputFormat, (ByteBuffer)data5.buffer);
+        tex.setImageData(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, data6.width, data6.height, 0, samplerFormat, inputFormat, (ByteBuffer)data6.buffer);
         tdata.add(data1);
         tdata.add(data2);
         tdata.add(data3);
@@ -142,7 +158,7 @@ public class OpenGLTexture implements Texture {
         ByteBuffer full = get3DData(datums);
         full.flip();
 
-        tex.setImageData(type, 0, internalFormat, datums[0].width, datums[0].height, datums.length, 0, samplerFormat, inputFormat, full);
+        tex.setImageData(type, 0, datums[0].width, datums[0].height, datums.length, samplerFormat, inputFormat, full);
         tdata.addAll(Arrays.asList(datums));
     }
     
@@ -263,6 +279,10 @@ public class OpenGLTexture implements Texture {
             case DEPTH32 -> GL_DEPTH_COMPONENT32F;
             case DEPTH24_STENCIL8 -> GL_DEPTH24_STENCIL8;
             case DEPTH32_STENCIL8 -> GL_DEPTH32F_STENCIL8;
+            case DXT1 -> GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT;
+            case DXT3 -> GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT;
+            case DXT5 -> GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT;
+            case ATSC -> throw new UnsupportedOperationException("Do Later");
         };
     }
 

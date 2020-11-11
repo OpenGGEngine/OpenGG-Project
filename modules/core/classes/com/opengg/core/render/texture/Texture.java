@@ -90,16 +90,16 @@ public interface Texture{
         TextureData data = new TextureData(x, y, 4, null, "framebuffer");
 
         Texture texture = new OpenGLTexture(Texture.config().samplerFormat(format).internalFormat(intformat).inputFormat(input)
-                .wrapType(WrapType.CLAMP_BORDER).minimumFilter(FilterType.LINEAR).maxFilter(FilterType.LINEAR), new Vector3i(x,y,1));
-        texture.set2DData(data);
+                .wrapType(WrapType.CLAMP_BORDER).minimumFilter(FilterType.LINEAR).maxFilter(FilterType.LINEAR),
+                new TextureStorageProperties(new Vector3i(x,y,1), 1, 1));
         return texture;
     }
 
     static Texture getCubemapFramebufferTexture(int x, int y, SamplerFormat format, TextureFormat intformat, InputFormat input){
         TextureData data = new TextureData(x, y, 4, null, "framebuffer");
         Texture texture = new OpenGLTexture(Texture.cubemapConfig().samplerFormat(format).internalFormat(intformat).inputFormat(input)
-                .wrapType(WrapType.CLAMP_BORDER).minimumFilter(FilterType.LINEAR).maxFilter(FilterType.NEAREST), new Vector3i(x,y,1));
-        texture.setCubemapData(data, data, data, data, data, data);
+                .wrapType(WrapType.CLAMP_BORDER).minimumFilter(FilterType.LINEAR).maxFilter(FilterType.NEAREST),
+                new TextureStorageProperties(new Vector3i(x,y,1), 1, 1));
         return texture;
     }
 
@@ -147,8 +147,18 @@ public interface Texture{
         return create(config, data.toArray(new TextureData[0]));
     }
 
-    static Texture create(TextureConfig config, TextureData... data){
-        if(data.length == 0) return Texture.create(config, TextureManager.getDefault());
+    static Texture create(TextureConfig config, TextureData... data) {
+        if (data.length == 0) return Texture.create(config, TextureManager.getDefault());
+
+        config = config.internalFormat(
+                switch (data[0].getTextureType()) {
+                    case ATSC -> TextureFormat.ATSC;
+                    case DXT1 -> TextureFormat.DXT1;
+                    case DXT3 -> TextureFormat.DXT3;
+                    case DXT5 -> TextureFormat.DXT5;
+                    case NORMAL -> config.internalFormat;
+                }
+        );
 
         var size = switch (config.type()){
             case TEXTURE_ARRAY -> {
@@ -168,8 +178,17 @@ public interface Texture{
             }
         }
 
+        var storageProperties = new TextureStorageProperties(size, 1, data[0].getMipMapCount());
+
+        if(data.length == 1 && data[0].getGPUTexture().isPresent()){
+            return switch (RenderEngine.getRendererType()){
+                case OPENGL -> new OpenGLTexture(config, size, (OpenGLTexture) data[0].getGPUTexture().get());
+                case VULKAN -> throw new UnsupportedOperationException("Fix");
+            };
+        }
+
         var texture = switch (RenderEngine.getRendererType()){
-            case OPENGL -> new OpenGLTexture(config, size);
+            case OPENGL -> new OpenGLTexture(config, storageProperties);
             case VULKAN -> new VulkanImage(config, VK_SAMPLE_COUNT_1_BIT, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT, new Vector3i(size.x, size.y, 1), 6);
         };
 
@@ -181,6 +200,10 @@ public interface Texture{
                     throw new InvalidParameterException("Incorrect amount of textures passed to cubemap generation  (expected 6, got " + data.length + ")");
                 texture.setCubemapData(data[0], data[1], data[2], data[3], data[4], data[5]);
             }
+        }
+
+        if(data.length == 1){
+            data[0].setGPUTexture(texture);
         }
 
         return texture;
@@ -247,7 +270,7 @@ public interface Texture{
 
 
         public TextureConfig(){
-            this(TextureType.TEXTURE_2D, FilterType.NEAREST, FilterType.NEAREST, WrapType.REPEAT,WrapType.REPEAT,WrapType.REPEAT, SamplerFormat.RGBA, TextureFormat.SRGBA8, InputFormat.UNSIGNED_BYTE, true);
+            this(TextureType.TEXTURE_2D, FilterType.NEAREST, FilterType.NEAREST, WrapType.REPEAT,WrapType.REPEAT,WrapType.REPEAT, SamplerFormat.RGBA, TextureFormat.SRGBA8, InputFormat.UNSIGNED_BYTE,true);
         }
 
         public TextureConfig type(TextureType type) {
@@ -281,6 +304,8 @@ public interface Texture{
             return new TextureConfig(type, minFilter, maxFilter, wrapTypeS ,wrapTypeT, wrapTypeR, samplerFormat, internalFormat, input, anisotropic);
         }
     }
+
+    record TextureStorageProperties(Vector3i size, int layers, int mipLevels){}
 
     enum FilterType{
         LINEAR, NEAREST
@@ -325,6 +350,10 @@ public interface Texture{
         RGB32F,
         DEPTH32,
         DEPTH24_STENCIL8,
-        DEPTH32_STENCIL8
+        DEPTH32_STENCIL8,
+        DXT1,
+        DXT3,
+        DXT5,
+        ATSC
     }
 }

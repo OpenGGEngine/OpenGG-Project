@@ -115,8 +115,8 @@ public class ShaderController {
         //use("object.vert", "material.frag");
         //saveCurrentConfiguration("material");
 
-        use("anim2.vert", "object.frag");
-        saveCurrentConfiguration("animation2");
+       // use("anim2.vert", "object.frag");
+       // saveCurrentConfiguration("animation2");
 
         //use("tangent.vert", "tangent.frag");
         //saveCurrentConfiguration("tangent");
@@ -124,23 +124,23 @@ public class ShaderController {
         use("instance.vert", "object.frag");
         saveCurrentConfiguration("instance");
 
-        use("object.vert", "terrainmulti.frag");
-        saveCurrentConfiguration("terrain");
+      //  use("object.vert", "terrainmulti.frag");
+       // saveCurrentConfiguration("terrain");
 
-        use("object.vert", "water.frag");
-        saveCurrentConfiguration("water");
+     //   use("object.vert", "water.frag");
+     //   saveCurrentConfiguration("water");
 
-        use("object.vert", "ssao.frag");
-        saveCurrentConfiguration("ssao");
+     //   use("object.vert", "ssao.frag");
+     //   saveCurrentConfiguration("ssao");
 
         use("object.vert", "hdr.frag");
         saveCurrentConfiguration("hdr");
 
-        use("object.vert", "bright.frag");
-        saveCurrentConfiguration("bright");
+     //   use("object.vert", "bright.frag");
+      //  saveCurrentConfiguration("bright");
 
-        use("object.vert", "arraytex.frag");
-        saveCurrentConfiguration("array");
+      //  use("object.vert", "arraytex.frag");
+      //  saveCurrentConfiguration("array");
 
         use("object.vert", "passthrough.frag");
         saveCurrentConfiguration("no_fragment");
@@ -148,14 +148,14 @@ public class ShaderController {
         use("noprocess.vert", "passthrough.frag");
         saveCurrentConfiguration("no_process");
 
-        use("modeltransform.vert", "point.geom", "point.frag");
-        saveCurrentConfiguration("pointshadow");
+     //   use("modeltransform.vert", "point.geom", "point.frag");
+     //   saveCurrentConfiguration("pointshadow");
 
-        use("object.vert", "cubemap.frag");
-        saveCurrentConfiguration("sky");
+     //   use("object.vert", "cubemap.frag");
+     //   saveCurrentConfiguration("sky");
 
-        use("object.vert", "fxaa.frag");
-        saveCurrentConfiguration("fxaa");
+        //use("object.vert", "fxaa.frag");
+       // saveCurrentConfiguration("fxaa");
 
         use("object.vert", "text.frag");
         saveCurrentConfiguration("sdf");
@@ -163,23 +163,23 @@ public class ShaderController {
         use("object.vert", "color_alpha.frag");
         saveCurrentConfiguration("ttf");
 
-        use("object.vert", "cuboid_scaling.frag");
-        saveCurrentConfiguration("cuboid");
+    //    use("object.vert", "cuboid_scaling.frag");
+    //    saveCurrentConfiguration("cuboid");
 
         use("object.vert", "gui.frag");
         saveCurrentConfiguration("gui");
 
-        use("object.vert", "bar.frag");
-        saveCurrentConfiguration("bar");
+     //   use("object.vert", "bar.frag");
+    //    saveCurrentConfiguration("bar");
 
         use("object.vert", "add.frag");
         saveCurrentConfiguration("add");
 
-        use("object.vert", "gaussh.frag");
-        saveCurrentConfiguration("blurh");
+      //  use("object.vert", "gaussh.frag");
+      //  saveCurrentConfiguration("blurh");
 
-        use("object.vert", "gaussv.frag");
-        saveCurrentConfiguration("blurv");
+      //  use("object.vert", "gaussv.frag");
+     //   saveCurrentConfiguration("blurv");
 
         use("particle.vert", "texture.frag");
         saveCurrentConfiguration("particle");

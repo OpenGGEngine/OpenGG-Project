@@ -27,23 +27,28 @@ public class DDSLoader {
                 return null;
             }
             fc.read(header);
+
             ByteBuffer tempBuf = Allocator.stackAlloc(124).put(header);
             int height = tempBuf.position(8).getInt();
             int width = tempBuf.position(12).getInt();
             int linearSize = tempBuf.position(16).getInt();
             int mipMapCount = tempBuf.position(24).getInt();
             int fourCC = tempBuf.position(80).getInt();
-            Allocator.popStack();
-            int bufferSize = mipMapCount > 1 ? linearSize * 2:linearSize;
-            //ByteBuffer b = Allocator.alloc(bufferSize);
-            //while(b.hasRemaining())fc.getChannel().read(b);
-            ByteBuffer b = ByteBuffer.wrap(fc.readNBytes(bufferSize));
-            //fc.getChannel().read(b);
             int numComponents = (fourCC == DXT1)?3:4;
-            //System.out.println(fourCC+","+DXT1+","+DXT3+","+DXT5);
-            TextureData data = new TextureData(width,height,numComponents,b,path,switch(fourCC){
-                case DXT1 -> TextureData.TextureDataType.DXT1; case DXT3 -> TextureData.TextureDataType.DXT3;case DXT5 -> TextureData.TextureDataType.DXT5;default-> TextureData.TextureDataType.DXT1;
-            });
+            Allocator.popStack();
+
+            int bufferSize = mipMapCount > 1 ? linearSize * 2:linearSize;
+            var readBytes = fc.readNBytes(bufferSize);
+            ByteBuffer buffer = Allocator.alloc(readBytes.length).put(readBytes).rewind();
+
+            TextureData data = new TextureData(width, height, numComponents, buffer, path,
+                    switch(fourCC){
+                        case DXT1 -> TextureData.TextureDataType.DXT1;
+                        case DXT3 -> TextureData.TextureDataType.DXT3;
+                        case DXT5 -> TextureData.TextureDataType.DXT5;
+                        default-> TextureData.TextureDataType.DXT1;
+                    }
+            );
             data.setMipMapCount(mipMapCount);
             return data;
         }
