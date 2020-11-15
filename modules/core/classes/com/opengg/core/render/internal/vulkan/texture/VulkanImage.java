@@ -215,6 +215,7 @@ public class VulkanImage implements Texture, NativeResource {
             case DEPTH32 -> VK_FORMAT_D32_SFLOAT;
             case DEPTH24_STENCIL8 -> VK_FORMAT_D24_UNORM_S8_UINT;
             case DEPTH32_STENCIL8 -> VK_FORMAT_D32_SFLOAT_S8_UINT;
+            case DXT1, DXT3, ATSC, DXT5 -> throw new UnsupportedOperationException("Not yet");
         };
     }
 
