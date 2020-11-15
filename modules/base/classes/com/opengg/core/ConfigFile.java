@@ -15,22 +15,28 @@ import java.util.Map;
  */
 public class ConfigFile {
     private final String name;
-    private final HashMap<String, String> contents;
+    private final Map<String, String> contents;
     
-    public ConfigFile(String name, HashMap<String, String> contents){
+    public ConfigFile(String name, Map<String, String> contents){
         this.name = name;
         this.contents = contents;
     }
-    
+
+    public String getName(){
+        return name;
+    }
     public String getConfig(String name){
         return contents.get(name);
     }
     
     public Map<String,String> getAllSettings(){
+        /*
         Map copy = new HashMap<String, String>();
         for(String id : contents.keySet()){
             copy.put(id, contents.get(id));
         }
         return copy;
+         */
+        return contents;
     }
 }

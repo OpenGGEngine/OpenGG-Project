@@ -6,9 +6,7 @@
 
 package com.opengg.core;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -35,6 +33,9 @@ public final class Configuration{
 
         ConfigFile file = new ConfigFile(configfile.getName(), datamap);
         settings.put(configfile.getName(), file);
+    }
+    public static void addConfigFile(ConfigFile file){
+        settings.put(file.getName(),file);
     }
     
     public static ConfigFile getConfigFile(String name){
@@ -79,6 +80,16 @@ public final class Configuration{
         }catch (Exception e){
             return 0;
         }
+    }
+    
+    public static void writeConfig(ConfigFile file) throws IOException {
+        Properties prop = new Properties();
+        file.getAllSettings().forEach((key,value)->{
+            prop.put(key,value);
+        });
+        FileOutputStream fout = new FileOutputStream(new File("config"+File.separator+file.getName()));
+        prop.store(fout,"");
+        fout.close();
     }
 
     private Configuration() {
