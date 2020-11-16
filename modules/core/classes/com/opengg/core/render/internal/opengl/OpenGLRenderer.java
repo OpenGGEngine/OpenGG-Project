@@ -28,6 +28,7 @@ import com.opengg.core.world.Camera;
 import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.opengl.GL32.GL_PROGRAM_POINT_SIZE;
 import static org.lwjgl.opengl.GL32.GL_TEXTURE_CUBE_MAP_SEAMLESS;
+import static org.lwjgl.opengl.GL43.*;
 
 /**
  * 
@@ -35,22 +36,25 @@ import static org.lwjgl.opengl.GL32.GL_TEXTURE_CUBE_MAP_SEAMLESS;
  */
 public class OpenGLRenderer implements Renderer {
     private boolean cull = true;
-    private boolean suppressErrors = true;
+    private boolean suppressErrors = false;
     private int lightoffset;
 
     private OpenGLVertexArrayObject currentVAO;
     private GraphicsBuffer lightBuffer;
     private Framebuffer currentFramebuffer;
+    private DebugCallback callback;
 
     /**
      * Initializes the render engine, should rarely if ever be called
      */
     @Override
     public void initialize() {
+        glEnable(GL_DEBUG_OUTPUT);
+        glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+        glDebugMessageCallback(callback = new DebugCallback(), 0);
+
         OpenGLVAOManager.initialize();
         ShaderController.initialize();
-
-        this.checkForGLErrors();
 
         GGConsole.log("Created default vertex array formats");
 
@@ -59,7 +63,7 @@ public class OpenGLRenderer implements Renderer {
 
         enableDefaultGroups();
 
-        lightBuffer = GraphicsBuffer.allocate(GraphicsBuffer.BufferType.UNIFORM_BUFFER, 1600, GraphicsBuffer.UsageType.STREAM_DRAW);
+        lightBuffer = GraphicsBuffer.allocate(GraphicsBuffer.BufferType.UNIFORM_BUFFER, 1600, GraphicsBuffer.UsageType.HOST_MAPPABLE_UPDATABLE);
         lightBuffer.bindBase(ShaderController.getUniqueUniformBufferLocation());
         lightoffset = Allocator.allocFloat(Light.BUFFERSIZE).capacity();
 
@@ -131,6 +135,9 @@ public class OpenGLRenderer implements Renderer {
 
     @Override
     public void render(){
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glDrawBuffer(GL_BACK);
+        glViewport(0, 0, WindowController.getWidth(), WindowController.getHeight());
         for(RenderPass pass : RenderEngine.getRenderPasses()){
             pass.runEnableOp();
             CommonUniforms.setView(RenderEngine.getCurrentView().getMatrix());
@@ -140,8 +147,9 @@ public class OpenGLRenderer implements Renderer {
             RenderEngine.getProjectionData().use();
             setCurrentVAOFormat(RenderEngine.getDefaultFormat());
 
-            pass.getSceneBuffer().clearFramebuffer();
-            pass.getSceneBuffer().enableRendering(0,0,pass.getSceneBuffer().getWidth(),pass.getSceneBuffer().getHeight());
+           // pass.getSceneBuffer().enableRendering(0,0,pass.getSceneBuffer().getWidth(), pass.getSceneBuffer().getHeight());
+           // pass.getSceneBuffer().clearFramebuffer();
+
             useLights();
             resetConfig();
 
@@ -152,14 +160,15 @@ public class OpenGLRenderer implements Renderer {
 
             setCurrentVAOFormat(RenderEngine.getDefaultFormat());
 
-            pass.getSceneBuffer().disableRendering();
-            enableDefaultVP();
 
+            enableDefaultVP();
+            /*
+            pass.getSceneBuffer().disableRendering();
             if(pass.isPostProcessEnabled())
                 PostProcessController.process(pass.getSceneBuffer());
 
             if(pass.shouldBlitToBack())
-                pass.getSceneBuffer().blitToBack();
+                pass.getSceneBuffer().blitToBack();*/
 
             pass.runDisableOp();
         }
@@ -211,7 +220,7 @@ public class OpenGLRenderer implements Renderer {
         int i;
         if(suppressErrors) return;
         while((i = glGetError()) != GL_NO_ERROR){
-            GGConsole.warning("OpenGL Error code : " + i);
+           // GGConsole.warning("OpenGL Error code : " + i);
         }
     }
 
@@ -226,7 +235,6 @@ public class OpenGLRenderer implements Renderer {
 
     public void setCurrentVAOFormat(VertexArrayFormat format){
         if(this.currentVAO.getFormat().equals(format)) return;
-
         currentVAO = OpenGLVAOManager.getVAO(format);
         currentVAO.bind();
     }
@@ -240,10 +248,6 @@ public class OpenGLRenderer implements Renderer {
             glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
         else
             glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
-    }
-
-    public void setClearColor(Vector3f color){
-        glClearColor(color.x, color.y, color.z, 1);
     }
 
     public void endFrame(){
