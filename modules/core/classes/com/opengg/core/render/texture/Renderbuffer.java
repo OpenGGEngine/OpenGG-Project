@@ -18,8 +18,6 @@ public interface Renderbuffer{
         return new OpenGLRenderbuffer(x, y, storage);
     }
 
-    void bind();
-
     int getID();
 
     void delete();

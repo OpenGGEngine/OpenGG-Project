@@ -226,14 +226,14 @@ public class VulkanImage implements Texture, NativeResource {
 
     @Override
     public void set2DData(TextureData data) {
-        var buffer = (VulkanBuffer) GraphicsBuffer.allocate(GraphicsBuffer.BufferType.COPY_READ_BUFFER, (ByteBuffer) data.buffer, GraphicsBuffer.UsageType.DYNAMIC_COPY);
+        var buffer = (VulkanBuffer) GraphicsBuffer.allocate(GraphicsBuffer.BufferType.COPY_READ_BUFFER, (ByteBuffer) data.buffer, GraphicsBuffer.UsageType.HOST_MAPPABLE_UPDATABLE);
         uploadBuffers(new Vector3i(), size, 0, buffer);
         buffer.destroy();
     }
 
     @Override
     public void set2DSubData(TextureData data, Vector2i offset) {
-        var buffer = (VulkanBuffer) GraphicsBuffer.allocate(GraphicsBuffer.BufferType.COPY_READ_BUFFER, (ByteBuffer) data.buffer, GraphicsBuffer.UsageType.DYNAMIC_COPY);
+        var buffer = (VulkanBuffer) GraphicsBuffer.allocate(GraphicsBuffer.BufferType.COPY_READ_BUFFER, (ByteBuffer) data.buffer, GraphicsBuffer.UsageType.HOST_MAPPABLE_UPDATABLE);
         uploadBuffers(new Vector3i(offset.x, offset.y, 1), new Vector3i(data.width, data.height, 1), 0, buffer);
         buffer.destroy();
     }
@@ -241,7 +241,7 @@ public class VulkanImage implements Texture, NativeResource {
     @Override
     public void setCubemapData(TextureData data1, TextureData data2, TextureData data3, TextureData data4, TextureData data5, TextureData data6) {
         var datums = List.of(data1, data2, data4, data3, data5, data6);
-        var vkBufs = datums.stream().map(datum -> (VulkanBuffer) GraphicsBuffer.allocate(GraphicsBuffer.BufferType.COPY_READ_BUFFER, (ByteBuffer) datum.buffer, GraphicsBuffer.UsageType.DYNAMIC_COPY))
+        var vkBufs = datums.stream().map(datum -> (VulkanBuffer) GraphicsBuffer.allocate(GraphicsBuffer.BufferType.COPY_READ_BUFFER, (ByteBuffer) datum.buffer, GraphicsBuffer.UsageType.HOST_MAPPABLE_UPDATABLE))
                 .collect(Collectors.toList());
         uploadBuffers(new Vector3i(), new Vector3i(size.x, size.y, 1), 0, vkBufs.toArray(new VulkanBuffer[6]));
         vkBufs.forEach(VulkanBuffer::destroy);

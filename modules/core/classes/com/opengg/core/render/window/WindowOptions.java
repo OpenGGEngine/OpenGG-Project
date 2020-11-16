@@ -18,7 +18,7 @@ public class WindowOptions {
             bbit = 8, 
             samples = 4,
             glmajor = 4,
-            glminor = 3;
+            glminor = 5;
     public DisplayMode displayMode = DisplayMode.WINDOWED;
     public String name= "An OpenGG Application";
     public String type = "GLFW";

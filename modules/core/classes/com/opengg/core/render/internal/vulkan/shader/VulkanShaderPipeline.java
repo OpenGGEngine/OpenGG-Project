@@ -70,16 +70,8 @@ public class VulkanShaderPipeline implements ShaderPipeline {
     }
 
     @Override
-    public void validate() {
-
-    }
-
-    @Override
     public void use() {
     }
-
-    @Override
-    public void unbind() { }
 
     public VulkanDescriptorSetLayout[] getUsedLayouts() {
         return usedLayouts;

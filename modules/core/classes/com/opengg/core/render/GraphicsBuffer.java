@@ -75,16 +75,6 @@ public interface GraphicsBuffer{
     }
 
     /**
-     * Binds this buffer for use
-     */
-    void bind();
-
-    /**
-     * Unbinds this buffer
-     */
-    void unbind();
-
-    /**
      * Uploads the given {@code FloatBuffer} to the buffer
      * @param data
      */
@@ -121,13 +111,6 @@ public interface GraphicsBuffer{
      * @param base
      */
     void bindBase(int base);
-
-    /**
-     * Binds this buffer to the given attribute binding location
-     * @param attrib
-     * @param size
-     */
-    void bindToAttribute(int attrib, int size);
 
     /**
      * Gets the base index this buffer is bound to
@@ -186,15 +169,11 @@ public interface GraphicsBuffer{
      *     The above 3 parts are simply unenforced recommendations, and are used to optimize the underlying render system
      */
     enum UsageType{
-        STATIC_DRAW,
-        DYNAMIC_DRAW,
-        STREAM_DRAW,
-        STATIC_READ,
-        DYNAMIC_READ,
-        STREAM_READ,
-        STATIC_COPY,
-        DYNAMIC_COPY,
-        STREAM_COPY
+        HOST_MAPPABLE,
+        HOST_UPDATABLE,
+        HOST_MAPPABLE_UPDATABLE,
+        HOST_MEMORY,
+        NONE
     }
 
     /**

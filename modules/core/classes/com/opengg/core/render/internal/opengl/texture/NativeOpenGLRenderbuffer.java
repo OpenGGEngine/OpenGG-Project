@@ -14,6 +14,8 @@ import static org.lwjgl.opengl.GL30.glBindRenderbuffer;
 import static org.lwjgl.opengl.GL30.glDeleteRenderbuffers;
 import static org.lwjgl.opengl.GL30.glGenRenderbuffers;
 import static org.lwjgl.opengl.GL30.glRenderbufferStorage;
+import static org.lwjgl.opengl.GL45.glCreateRenderbuffers;
+import static org.lwjgl.opengl.GL45.glNamedRenderbufferStorage;
 
 /**
  *
@@ -24,18 +26,13 @@ public class NativeOpenGLRenderbuffer implements NativeResource {
     
     public NativeOpenGLRenderbuffer(){
         if(RenderEngine.validateInitialization()) id = -1;
-        else id = glGenRenderbuffers();
+        else id = glCreateRenderbuffers();
         NativeResourceManager.registerNativeResource(this);
     }
-    
-    public void bind(){
-        if(RenderEngine.validateInitialization()) return;
-        glBindRenderbuffer(GL_RENDERBUFFER, id);
-    }
-    
+
     public void createStorage(int internalformat, int width, int height){
         if(RenderEngine.validateInitialization()) return;
-        glRenderbufferStorage(GL_RENDERBUFFER, internalformat, width, height);
+        glNamedRenderbufferStorage(id, internalformat, width, height);
     }
 
     public int getId(){

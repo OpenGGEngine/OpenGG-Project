@@ -1,7 +1,6 @@
 package com.opengg.core.render.internal.opengl;
 
 import com.opengg.core.engine.PerformanceManager;
-import com.opengg.core.exceptions.RenderException;
 import com.opengg.core.render.GraphicsBuffer;
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.render.drawn.DrawnObject;
@@ -29,8 +28,8 @@ public final class OpenGLDrawnObject extends DrawnObject {
         if(RenderEngine.validateInitialization()) return;
         ShaderController.uploadModifiedDescriptorSets();
         OpenGLRenderer.getOpenGLRenderer().setCurrentVAOFormat(format);
-        OpenGLRenderer.getOpenGLRenderer().getCurrentVAO().applyFormat(vertexBufferObjects);
-        indexBuffer.bind();
+        OpenGLRenderer.getOpenGLRenderer().getCurrentVAO().applyVertexBuffers(vertexBufferObjects);
+        OpenGLRenderer.getOpenGLRenderer().getCurrentVAO().applyElementBuffer(indexBuffer);
         PerformanceManager.registerDrawCall();
         glDrawElementsInstancedBaseVertexBaseInstance(getOpenGLDrawType(drawType), elementCount, getOpenGlIndexType(indexType), baseElement*2, instanceCount, baseVertex, 0);
     }

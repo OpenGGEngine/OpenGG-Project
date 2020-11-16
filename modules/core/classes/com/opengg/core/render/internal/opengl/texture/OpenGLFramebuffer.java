@@ -16,21 +16,21 @@ import com.opengg.core.render.texture.Texture;
 import java.util.*;
 
 import static org.lwjgl.opengl.GL30.*;
+import static org.lwjgl.opengl.GL45.glNamedFramebufferDrawBuffer;
 
 /**
  *
  * @author Javier
  */
 public class OpenGLFramebuffer implements Framebuffer{
-
-    NativeOpenGLFramebuffer fb;
+    NativeOpenglFramebuffer fb;
     List<Integer> enabledFragmentAttachments;
     Map<Integer, Texture> textures;
     List<Renderbuffer> renderbuffers;
     int lx, ly;
     
     public OpenGLFramebuffer(){
-        fb = new NativeOpenGLFramebuffer();
+        fb = new NativeOpenglFramebuffer();
         enabledFragmentAttachments = new ArrayList<>();
         textures = new HashMap<>();
         renderbuffers = new ArrayList<>();
@@ -99,10 +99,8 @@ public class OpenGLFramebuffer implements Framebuffer{
         else
             tex = Texture.get2DFramebufferTexture(width, height, format, intformat, input);
 
-        fb.bind(GL_FRAMEBUFFER);
         fb.attachTexture(attachment, (int) tex.getID(), 0);
         checkForCompletion();
-        fb.unbind(GL_FRAMEBUFFER);
         textures.put(attachment, tex);
         enabledFragmentAttachments.add(attachment);
 
@@ -118,7 +116,6 @@ public class OpenGLFramebuffer implements Framebuffer{
     @Override
     public void attachRenderbuffer(int width, int height, int storage, int attachment){
         Renderbuffer rb = Renderbuffer.create(width, height, storage);
-        fb.bind(GL_FRAMEBUFFER);
         fb.attachRenderbuffer(attachment, rb.getID());
         checkForCompletion();
         
@@ -132,36 +129,34 @@ public class OpenGLFramebuffer implements Framebuffer{
     @Override
     public void blitTo(Framebuffer target){
         var glTarget = (OpenGLFramebuffer) target;
-        bindToRead();
-        glTarget.bindToWrite();
-        fb.blit(0, 0, getWidth(), getHeight(), 0, 0, target.getWidth(), target.getHeight(), GL_COLOR_BUFFER_BIT, GL_NEAREST);
+        fb.blit(glTarget.fb.getId(), 0, 0, getWidth(), getHeight(), 0, 0, target.getWidth(), target.getHeight(), GL_COLOR_BUFFER_BIT, GL_NEAREST);
     }
     
     @Override
     public void blitToBack(){
-        bindToRead();
-        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-        fb.blit(0, 0, getWidth(), getHeight(), 0, 0, WindowController.getWidth(), WindowController.getHeight(), GL_COLOR_BUFFER_BIT , GL_NEAREST);
+        fb.blit(0,0, 0, getWidth(), getHeight(), 0, 0, WindowController.getWidth(), WindowController.getHeight(), GL_COLOR_BUFFER_BIT , GL_NEAREST);
     }
 
 
     @Override
     public void clearFramebuffer() {
-        fb.bind(GL_FRAMEBUFFER);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        fb.clear();
     }
 
     @Override
     public void enableRendering(int x1, int y1, int x2, int y2) {
         ((OpenGLRenderer) RenderEngine.renderer).setCurrentFramebuffer(this);
-        fb.bind(GL_FRAMEBUFFER);
+       // fb.setDrawBuffers(enabledFragmentAttachments.stream().mapToInt(i -> i).filter(i -> i != GL_DEPTH_ATTACHMENT).toArray());
+        bind();
         glDrawBuffers(enabledFragmentAttachments.stream().mapToInt(i -> i).filter(i -> i != GL_DEPTH_ATTACHMENT).toArray());
+       // fb.setDrawBuffers(new int[]{0});
         glViewport(x1, y1, x2, y2);
     }
     
     @Override
     public void disableRendering(){
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glDrawBuffer(GL_BACK);
         glViewport(0, 0, WindowController.getWindow().getWidth(), WindowController.getWindow().getHeight());
     }
     

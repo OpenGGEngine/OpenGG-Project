@@ -34,6 +34,7 @@ public final class Configuration{
         ConfigFile file = new ConfigFile(configfile.getName(), datamap);
         settings.put(configfile.getName(), file);
     }
+
     public static void addConfigFile(ConfigFile file){
         settings.put(file.getName(),file);
     }

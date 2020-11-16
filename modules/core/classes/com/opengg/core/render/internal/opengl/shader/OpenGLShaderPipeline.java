@@ -46,7 +46,7 @@ public class OpenGLShaderPipeline implements com.opengg.core.render.shader.Shade
         nativepipeline = new NativeOpenGLShaderPipeline();
 
         nativepipeline.useProgramStages((OpenGLShaderProgram) vert, GL_VERTEX_SHADER_BIT);
-        
+
         if(tesc != null)
             nativepipeline.useProgramStages((OpenGLShaderProgram) tesc, GL_TESS_CONTROL_SHADER_BIT);
         
@@ -58,11 +58,10 @@ public class OpenGLShaderPipeline implements com.opengg.core.render.shader.Shade
 
         nativepipeline.useProgramStages((OpenGLShaderProgram) frag, GL_FRAGMENT_SHADER_BIT);
         validate();
-        unbind();
     }
 
     public List<ShaderController.Uniform> getAllUsedUniforms(){
-        var allUniforms = new ArrayList<ShaderController.Uniform>(vert.getUniforms());
+        var allUniforms = new ArrayList<>(vert.getUniforms());
         if(geom != null) allUniforms.addAll(geom.getUniforms());
         if(tesc != null) allUniforms.addAll(tesc.getUniforms());
         if(tese != null) allUniforms.addAll(tese.getUniforms());
@@ -76,7 +75,6 @@ public class OpenGLShaderPipeline implements com.opengg.core.render.shader.Shade
         nativepipeline.delete();
     }
 
-    @Override
     public void validate(){
         nativepipeline.validate();
     }
@@ -84,11 +82,6 @@ public class OpenGLShaderPipeline implements com.opengg.core.render.shader.Shade
     @Override
     public void use(){
         nativepipeline.bind();
-    }
-
-    @Override
-    public void unbind(){
-        nativepipeline.unbind();
     }
 
     @Override

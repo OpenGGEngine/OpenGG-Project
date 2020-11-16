@@ -19,6 +19,7 @@ import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 import static org.lwjgl.opengl.GL42.glTexStorage2D;
 import static org.lwjgl.opengl.GL42.glTexStorage3D;
 import static org.lwjgl.opengl.GL43.glTextureView;
+import static org.lwjgl.opengl.GL45.*;
 
 /**
  *
@@ -27,6 +28,12 @@ import static org.lwjgl.opengl.GL43.glTextureView;
 public class NativeOpenGLTexture implements NativeResource{
     private final int id;
     
+    public NativeOpenGLTexture(int target){
+        if(RenderEngine.validateInitialization()) id = -1;
+        else id = glCreateTextures(target);
+        NativeResourceManager.registerNativeResource(this);
+    }
+
     public NativeOpenGLTexture(){
         if(RenderEngine.validateInitialization()) id = -1;
         else id = glGenTextures();
@@ -38,69 +45,64 @@ public class NativeOpenGLTexture implements NativeResource{
         glTextureView(id, target, original, internalFormat, minLevels, levelCount, minLayer, numLayers);
     }
 
-    public void bind(int type){
+    public void bindToUnit(int loc){
         if(RenderEngine.validateInitialization()) return;
-        glBindTexture(type, id);
+        glBindTextureUnit(loc, id);
     }
     
-    public void setActiveTexture(int loc){
+    public void set2DImageStorage(int levels, int format, int width, int height){
         if(RenderEngine.validateInitialization()) return;
-        glActiveTexture(loc);
+        glTextureStorage2D(id, levels, format, width, height);
     }
     
-    public void set2DImageStorage(int target, int levels, int format, int width, int height){
+    public void set3DImageStorage(int levels, int format, int width, int height, int depth){
         if(RenderEngine.validateInitialization()) return;
-        glTexStorage2D(target, levels, format, width, height);
+        glTextureStorage3D(id, levels, format, width, height, depth);
     }
     
-    public void set3DImageStorage(int target, int levels, int format, int width, int height, int depth){
+    public void set2DImageData(int level, int width, int height, int format, int type, ByteBuffer data){
         if(RenderEngine.validateInitialization()) return;
-        glTexStorage3D(target, levels, format, width, height, depth);
-    }
-    
-    public void setImageData(int target, int level, int width, int height, int format, int type, ByteBuffer data){
-        if(RenderEngine.validateInitialization()) return;
-        glTexSubImage2D(target, level, 0, 0, width, height, format, type, data);
+        glTextureSubImage2D(id, level, 0, 0, width, height, format, type, data);
     }
 
-    public void setImageDataCompressed(int target, int level, int width, int height, int format, ByteBuffer data){
+    public void setImageDataCompressed(int level, int width, int height, int format, ByteBuffer data){
         if(RenderEngine.validateInitialization()) return;
-        glCompressedTexSubImage2D(target,level,0,0, width,height,format,data);
+        glCompressedTextureSubImage2D(id,level,0,0, width,height,format,data);
     }
     
-    public void setImageData(int target, int level, int width, int height, int depth, int format, int type, ByteBuffer data){
+    public void set3DImageData(int level, int width, int height, int depth, int format, int type, ByteBuffer data){
         if(RenderEngine.validateInitialization()) return;
-        glTexSubImage3D(target, level, 0,0,0, width, height, depth, format, type, data);
+        glTextureSubImage3D(id, level, 0,0,0, width, height, depth, format, type, data);
     }
     
-    public void setSubImageData(int target, int level, int xoffset, int yoffset, int width, int height, int format, int type, ByteBuffer data){
+    public void set2DSubImageData(int level, int xoffset, int yoffset, int width, int height, int format, int type, ByteBuffer data){
         if(RenderEngine.validateInitialization()) return;
-        glTexSubImage2D(target, level, xoffset, yoffset, width, height, format, type, data);
+        glTextureSubImage2D(id, level, xoffset, yoffset, width, height, format, type, data);
     }
     
-    public void setSubImageData(int target, int level, int xoffset, int yoffset, int zoffset, int width, int height, int depth, int format, int type, ByteBuffer data){
+    public void set3DSubImageData(int level, int xoffset, int yoffset, int zoffset, int width, int height, int depth, int format, int type, ByteBuffer data){
         if(RenderEngine.validateInitialization()) return;
-        glTexSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, type, data);
+        glTextureSubImage3D(id, level, xoffset, yoffset, zoffset, width, height, depth, format, type, data);
     }
     
-    public void setParameteri(int type, int param, int value){
+    public void setParameteri(int param, int value){
         if(RenderEngine.validateInitialization()) return;
-        glTexParameteri(type, param, value);
+        glTextureParameteri(id, param, value);
     }
     
-    public void setParameterf(int type, int param, float value){
+    public void setParameterf(int param, float value){
         if(RenderEngine.validateInitialization()) return;
-        glTexParameterf(type, param, value);
+        glTextureParameterf(id, param, value);
     }
 
-    public void setParameterfv(int type, int param, float[] value){
+    public void setParameterfv(int param, float[] value){
         if(RenderEngine.validateInitialization()) return;
-        glTexParameterfv(type, param, value);
+        glTextureParameterfv(id, param, value);
     }
     
-    public void generateMipmap(int type){
+    public void generateMipmap(){
         if(RenderEngine.validateInitialization()) return;
-        glGenerateMipmap(type);
+        glGenerateTextureMipmap(id);
     }
     
     public int getID(){

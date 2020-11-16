@@ -10,6 +10,7 @@ import com.opengg.core.exceptions.ShaderException;
 import com.opengg.core.render.RenderEngine;
 
 import static org.lwjgl.opengl.GL41.*;
+import static org.lwjgl.opengl.GL45.glCreateProgramPipelines;
 
 /**
  *
@@ -21,10 +22,9 @@ public class NativeOpenGLShaderPipeline{
     public NativeOpenGLShaderPipeline(){
         if(RenderEngine.validateInitialization()) id = -1;
 
-        else id = glGenProgramPipelines();
+        else id = glCreateProgramPipelines();
         glUseProgram(0);
 
-        bind();
         if(!glIsProgramPipeline(id)){
             throw new ShaderException("Failed to generate program pipeline ID!");
         }

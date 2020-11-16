@@ -22,6 +22,7 @@ import static org.lwjgl.opengl.GL15.glGenBuffers;
 import static org.lwjgl.opengl.GL15.glGetBufferParameteri;
 import static org.lwjgl.opengl.GL30.glBindBufferBase;
 import static org.lwjgl.opengl.GL43.glBindVertexBuffer;
+import static org.lwjgl.opengl.GL45.*;
 
 /**
  *
@@ -35,48 +36,43 @@ public class NativeOpenGLBuffer implements NativeResource {
      */
     public NativeOpenGLBuffer() {
         if(RenderEngine.validateInitialization()) id = -1;
-        else id = glGenBuffers();
+        else id = glCreateBuffers();
         NativeResourceManager.registerNativeResource(this);
     }
-    
-    public void bind(int target) {
+
+    public void setStorage(ByteBuffer data, int usage) {
         if(RenderEngine.validateInitialization()) return;
-        glBindBuffer(target, id);
-    }
-    
-    public void unbind(int target) {
-        if(RenderEngine.validateInitialization()) return;
-        glBindBuffer(target, 0);
+        glNamedBufferStorage(id, data, usage);
     }
 
-    public void uploadData(int target, ByteBuffer data, int usage) {
+    public void setStorage(FloatBuffer data, int usage) {
         if(RenderEngine.validateInitialization()) return;
-        glBufferData(target, data, usage);
+        glNamedBufferStorage(id, data, usage);
     }
 
-    public void uploadData(int target, FloatBuffer data, int usage) {
+    public void setStorage(IntBuffer data, int usage) {
         if(RenderEngine.validateInitialization()) return;
-        glBufferData(target, data, usage);
+        glNamedBufferStorage(id, data, usage);
     }
 
-    public void uploadData(int target, long size, int usage) {
+    public void createStorage(long size, int usage) {
         if(RenderEngine.validateInitialization()) return;
-        glBufferData(target, size, usage);
+        glNamedBufferStorage(id, size, usage);
     }
 
-    public void uploadSubData(int target, long offset, FloatBuffer data) {
+    public void uploadSubData(long offset, FloatBuffer data) {
         if(RenderEngine.validateInitialization()) return;
-        glBufferSubData(target, offset, data);
-    }
-    
-    public void uploadSubData(int target, long offset, IntBuffer data) {
-        if(RenderEngine.validateInitialization()) return;
-        glBufferSubData(target, offset, data);
+        glNamedBufferSubData(id, offset, data);
     }
 
-    public void uploadData(int target, IntBuffer data, int usage) {
+    public void uploadSubData(long offset, IntBuffer data) {
         if(RenderEngine.validateInitialization()) return;
-        glBufferData(target, data, usage);
+        glNamedBufferSubData(id, offset, data);
+    }
+
+    public void uploadSubData(long offset, ByteBuffer data) {
+        if(RenderEngine.validateInitialization()) return;
+        glNamedBufferSubData(id, offset, data);
     }
     
     public void bindBase(int target, int base){
@@ -89,9 +85,9 @@ public class NativeOpenGLBuffer implements NativeResource {
         glDeleteBuffers(id);
     }
 
-    public int getSize(int target){
+    public int getSize(){
         if(RenderEngine.validateInitialization()) return -1;
-        return glGetBufferParameteri(target, GL_BUFFER_SIZE);
+        return glGetNamedBufferParameteri(id, GL_BUFFER_SIZE);
     }
     
     public int getID() {
@@ -102,9 +98,5 @@ public class NativeOpenGLBuffer implements NativeResource {
     public Runnable onDestroy() {
         int id2 = id;
         return () -> glDeleteBuffers(id2);
-    }
-
-    public void bindAttribute(int attrib, int size) {
-        glBindVertexBuffer(attrib, this.id, 0, size);
     }
 }

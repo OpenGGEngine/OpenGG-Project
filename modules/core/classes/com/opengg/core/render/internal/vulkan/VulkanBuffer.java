@@ -80,17 +80,6 @@ public class VulkanBuffer implements GraphicsBuffer{
         uploadData(buffer);
     }
 
-
-    @Override
-    public void bind() {
-
-    }
-
-    @Override
-    public void unbind() {
-
-    }
-
     @Override
     public void uploadData(FloatBuffer data) {
         uploadSubData(data, 0);
@@ -148,11 +137,6 @@ public class VulkanBuffer implements GraphicsBuffer{
 
     @Override
     public void bindBase(int base) {
-
-    }
-
-    @Override
-    public void bindToAttribute(int attrib, int size) {
 
     }
 

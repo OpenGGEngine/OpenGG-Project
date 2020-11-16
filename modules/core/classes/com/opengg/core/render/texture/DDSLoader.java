@@ -28,7 +28,7 @@ public class DDSLoader {
         int fourCC = b.getInt();
         int numComponents = (fourCC == DXT1)?3:4;
         b.position(128);
-        System.out.println(width + ","+height+","+linearSize+","+mipMapCount);
+        //System.out.println(width + ","+height+","+linearSize+","+mipMapCount);
 
         int bufferSize = mipMapCount > 1 ? linearSize * 2:linearSize;
         TextureData data = new TextureData(width, height, numComponents, MemoryUtil.memSlice(b,0,b.remaining()), path,

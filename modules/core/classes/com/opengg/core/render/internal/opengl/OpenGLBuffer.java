@@ -18,7 +18,7 @@ import static org.lwjgl.opengl.GL40.GL_DRAW_INDIRECT_BUFFER;
 import static org.lwjgl.opengl.GL42.GL_ATOMIC_COUNTER_BUFFER;
 import static org.lwjgl.opengl.GL43.GL_DISPATCH_INDIRECT_BUFFER;
 import static org.lwjgl.opengl.GL43.GL_SHADER_STORAGE_BUFFER;
-import static org.lwjgl.opengl.GL44.GL_QUERY_BUFFER;
+import static org.lwjgl.opengl.GL44.*;
 
 /**
  *
@@ -62,57 +62,34 @@ public class OpenGLBuffer implements GraphicsBuffer{
         uploadData(buffer);
         PerformanceManager.registerBufferAllocation(buffer.limit() * Integer.BYTES);
     }
-    
-    @Override
-    public void bind() {
-        buffer.bind(fromBufferType(target));
-        bound = true;
-    }
-    
-    @Override
-    public void unbind() {
-        buffer.unbind(fromBufferType(target));
-    }
 
     public void alloc(int size) {
-        bind();
-        buffer.uploadData(fromBufferType(target), size, fromUsageType(usage));
-        unbind();
+        buffer.createStorage(size, fromUsageType(usage));
     }
 
     @Override
     public void uploadData(ByteBuffer data) {
-        bind();
-        buffer.uploadData(fromBufferType(target), data, fromUsageType(usage));
-        unbind();
+        buffer.setStorage(data, fromUsageType(usage));
     }
 
     @Override
     public void uploadData(FloatBuffer data) {
-        bind();
-        buffer.uploadData(fromBufferType(target), data, fromUsageType(usage));
-        unbind();
+        buffer.setStorage(data, fromUsageType(usage));
     }
     
     @Override
     public void uploadData(IntBuffer data) {
-        bind();
-        buffer.uploadData(fromBufferType(target), data, fromUsageType(usage));
-        unbind();
+        buffer.setStorage(data, fromUsageType(usage));
     }
 
     @Override
     public void uploadSubData(FloatBuffer data, long offset) {
-        bind();
-        buffer.uploadSubData(fromBufferType(target), offset, data);
-        unbind();
+        buffer.uploadSubData(offset, data);
     }
     
     @Override
     public void uploadSubData(IntBuffer data, long offset) {
-        bind();
-        buffer.uploadSubData(fromBufferType(target), offset, data);
-        unbind();
+        buffer.uploadSubData(offset, data);
     }
     
     @Override
@@ -122,18 +99,13 @@ public class OpenGLBuffer implements GraphicsBuffer{
     }
 
     @Override
-    public void bindToAttribute(int attrib, int size) {
-        buffer.bindAttribute(attrib, size);
-    }
-
-    @Override
     public int getBase(){
         return index;
     }
     
     @Override
     public int getSize(){
-        return buffer.getSize(fromBufferType(target));
+        return buffer.getSize();
     }
     
     @Override
@@ -146,17 +118,17 @@ public class OpenGLBuffer implements GraphicsBuffer{
         return usage;
     }
 
+    public int getID(){
+        return buffer.getID();
+    }
+
     public static int fromUsageType(UsageType type){
         return switch (type) {
-            case STATIC_DRAW -> GL_STATIC_DRAW;
-            case DYNAMIC_DRAW -> GL_DYNAMIC_DRAW;
-            case STREAM_DRAW -> GL_STREAM_DRAW;
-            case STATIC_READ -> GL_STATIC_READ;
-            case DYNAMIC_READ -> GL_DYNAMIC_READ;
-            case STREAM_READ -> GL_STREAM_READ;
-            case STATIC_COPY -> GL_STATIC_COPY;
-            case DYNAMIC_COPY -> GL_DYNAMIC_COPY;
-            case STREAM_COPY -> GL_STREAM_COPY;
+            case HOST_MAPPABLE -> GL_MAP_READ_BIT | GL_MAP_WRITE_BIT;
+            case HOST_UPDATABLE -> GL_DYNAMIC_STORAGE_BIT;
+            case HOST_MAPPABLE_UPDATABLE -> GL_MAP_READ_BIT | GL_MAP_WRITE_BIT | GL_DYNAMIC_STORAGE_BIT;
+            case HOST_MEMORY -> GL_CLIENT_STORAGE_BIT;
+            case NONE -> 0;
         };
 
     }

@@ -7,13 +7,7 @@ public class OpenGLRenderbuffer implements Renderbuffer{
 
     public OpenGLRenderbuffer(int x, int y, int internalformat){
         nativebuffer = new NativeOpenGLRenderbuffer();
-        nativebuffer.bind();
         nativebuffer.createStorage(internalformat, x, y);
-    }
-
-    @Override
-    public void bind(){
-        nativebuffer.bind();
     }
 
     @Override

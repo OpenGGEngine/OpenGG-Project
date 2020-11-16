@@ -66,7 +66,12 @@ public class VulkanVertexFormat implements VertexArrayObject {
     }
 
     @Override
-    public void applyFormat(List<GraphicsBuffer> buffers) {
+    public void applyVertexBuffers(List<GraphicsBuffer> buffers) {
+
+    }
+
+    @Override
+    public void bind() {
 
     }
 

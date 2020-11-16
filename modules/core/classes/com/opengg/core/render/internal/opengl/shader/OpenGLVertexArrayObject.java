@@ -2,8 +2,7 @@ package com.opengg.core.render.internal.opengl.shader;
 
 import com.opengg.core.GGInfo;
 import com.opengg.core.render.GraphicsBuffer;
-import com.opengg.core.render.RenderEngine;
-import com.opengg.core.render.internal.opengl.OpenGLRenderer;
+import com.opengg.core.render.internal.opengl.OpenGLBuffer;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.shader.VertexArrayBinding;
 import com.opengg.core.render.shader.VertexArrayFormat;
@@ -19,11 +18,10 @@ public class OpenGLVertexArrayObject implements VertexArrayObject {
 
     public OpenGLVertexArrayObject(VertexArrayFormat format){
         if(GGInfo.isServer()) return;
-        vao = new NativeOpenGLVertexArrayObject();
-        vao.bind();
         this.format = format;
+
+        vao = new NativeOpenGLVertexArrayObject();
         generateFormatBindingPoints();
-        vao.unbind();
     }
 
     public VertexArrayFormat getFormat(){
@@ -37,26 +35,31 @@ public class OpenGLVertexArrayObject implements VertexArrayObject {
                     case FLOAT, FLOAT4, FLOAT3, FLOAT2, INT -> 4;
                     case BYTE -> 1;
                 };
-                glEnableVertexAttribArray(ShaderController.getVertexAttributeIndex(attrib.name()));
-                glVertexAttribFormat(ShaderController.getVertexAttributeIndex(attrib.name()), attrib.size()/bytes, glFormatFromType(attrib.type()), false, attrib.offset());
-                glVertexAttribBinding(ShaderController.getVertexAttributeIndex(attrib.name()), binding.bindingIndex());
+                vao.enableAttribute(ShaderController.getVertexAttributeIndex(attrib.name()));
+                vao.setAttributeFormat(ShaderController.getVertexAttributeIndex(attrib.name()), attrib.size()/bytes, glFormatFromType(attrib.type()), false, attrib.offset());
+                vao.setAttributeBinding(ShaderController.getVertexAttributeIndex(attrib.name()), binding.bindingIndex());
             }
-            glVertexBindingDivisor(binding.bindingIndex(), binding.divisor());
+            vao.setBindingDivisor(binding.bindingIndex(), binding.divisor());
         }
     }
 
-    public void applyFormat(List<GraphicsBuffer> buffers){
+    public void applyVertexBuffers(List<GraphicsBuffer> buffers){
         for(var binding : getFormat().getBindings()){
-            buffers.get(binding.bindingIndex()).bindToAttribute(binding.bindingIndex(), binding.vertexSize());
+            applyVertexBuffer(buffers.get(binding.bindingIndex()), binding.bindingIndex(), binding.vertexSize());
         }
     }
 
-    public void bind(){
+    @Override
+    public void bind() {
         vao.bind();
     }
 
-    public void unbind(){
-        vao.unbind();
+    private void applyVertexBuffer(GraphicsBuffer buffer, int binding, int vertexSize){
+        vao.applyVertexBufferToBinding(((OpenGLBuffer)buffer).getID(), binding, vertexSize);
+    }
+
+    public void applyElementBuffer(GraphicsBuffer buffer){
+        vao.applyElementBufferToBinding(((OpenGLBuffer)buffer).getID());
     }
 
     public void delete(){

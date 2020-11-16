@@ -117,7 +117,7 @@ public abstract sealed class DrawnObject implements Renderable permits OpenGLDra
         if(indexBuffer == null){
             this.indexBuffer = generateIndexBuffer(format, bufferSize);
         }else{
-            this.indexBuffer = GraphicsBuffer.allocate(GraphicsBuffer.BufferType.ELEMENT_ARRAY_BUFFER, indexBuffer, GraphicsBuffer.UsageType.STATIC_DRAW);
+            this.indexBuffer = GraphicsBuffer.allocate(GraphicsBuffer.BufferType.ELEMENT_ARRAY_BUFFER, indexBuffer, GraphicsBuffer.UsageType.NONE);
             this.elementCount = indexBuffer.limit();
         }
     }
@@ -125,11 +125,11 @@ public abstract sealed class DrawnObject implements Renderable permits OpenGLDra
     private GraphicsBuffer generateVertexBuffer(Buffer buffer){
         GraphicsBuffer vbo;
         if(buffer instanceof ByteBuffer bbuf){
-            vbo = GraphicsBuffer.allocate(GraphicsBuffer.BufferType.VERTEX_ARRAY_BUFFER, bbuf, GraphicsBuffer.UsageType.STATIC_DRAW);
+            vbo = GraphicsBuffer.allocate(GraphicsBuffer.BufferType.VERTEX_ARRAY_BUFFER, bbuf, GraphicsBuffer.UsageType.NONE);
         }else if(buffer instanceof FloatBuffer fbuf){
-            vbo = GraphicsBuffer.allocate(GraphicsBuffer.BufferType.VERTEX_ARRAY_BUFFER, fbuf, GraphicsBuffer.UsageType.STATIC_DRAW);
+            vbo = GraphicsBuffer.allocate(GraphicsBuffer.BufferType.VERTEX_ARRAY_BUFFER, fbuf, GraphicsBuffer.UsageType.NONE);
         }else if(buffer instanceof IntBuffer ibuf){
-            vbo = GraphicsBuffer.allocate(GraphicsBuffer.BufferType.VERTEX_ARRAY_BUFFER, ibuf, GraphicsBuffer.UsageType.STATIC_DRAW);
+            vbo = GraphicsBuffer.allocate(GraphicsBuffer.BufferType.VERTEX_ARRAY_BUFFER, ibuf, GraphicsBuffer.UsageType.NONE);
         }else{
             throw new IllegalArgumentException(buffer.getClass().getSimpleName() + " is not a useable buffer type");
         }
@@ -150,7 +150,7 @@ public abstract sealed class DrawnObject implements Renderable permits OpenGLDra
             }
             finalIndex.flip();
 
-            var gpuIndices = GraphicsBuffer.allocate(GraphicsBuffer.BufferType.ELEMENT_ARRAY_BUFFER, finalIndex, GraphicsBuffer.UsageType.STATIC_DRAW);
+            var gpuIndices = GraphicsBuffer.allocate(GraphicsBuffer.BufferType.ELEMENT_ARRAY_BUFFER, finalIndex, GraphicsBuffer.UsageType.NONE);
 
             if(elementCount < 1024)
                 Allocator.popStack();
@@ -158,8 +158,9 @@ public abstract sealed class DrawnObject implements Renderable permits OpenGLDra
             return gpuIndices;
     }
 
-    public void setRenderType(DrawType type){
+    public DrawnObject setRenderType(DrawType type){
         this.drawType = type;
+        return this;
     }
 
     public void setIndexType(IndexType type){

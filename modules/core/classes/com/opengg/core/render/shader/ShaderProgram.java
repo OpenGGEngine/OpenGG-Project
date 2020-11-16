@@ -82,7 +82,5 @@ public interface ShaderProgram{
 
     String getName();
 
-    void checkStatus();
-
     ShaderType getType();
 }

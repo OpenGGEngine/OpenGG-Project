@@ -28,6 +28,7 @@ public interface VertexArrayObject {
 
     VertexArrayFormat getFormat();
 
-    void applyFormat(List<GraphicsBuffer> buffers);
+    void applyVertexBuffers(List<GraphicsBuffer> buffers);
 
+    void bind();
 }

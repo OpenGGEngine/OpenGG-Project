@@ -51,6 +51,7 @@ public class OpenGLShaderProgram implements ShaderProgram{
         for(ShaderController.Uniform u:uniforms){
             uniformSet.add(u.position());
         }
+        this.checkStatus();
     }
 
     public OpenGLShaderProgram(ShaderType type, ByteBuffer source, String name){
@@ -159,6 +160,7 @@ public class OpenGLShaderProgram implements ShaderProgram{
     public void setUniform(int location, Matrix4f[] matrices) {
         program.setUniform(location, matrices);
     }
+
     @Override
     public void setUniformBlockIndex(int bind, String name){
         program.setUniformBlockIndex(bind, name);
@@ -174,7 +176,6 @@ public class OpenGLShaderProgram implements ShaderProgram{
         return program.getProgramBinary();
     }
 
-    @Override
     public void checkStatus() {
         int i;
         if((i = program.checkStatus()) != GL_TRUE){

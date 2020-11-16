@@ -31,11 +31,7 @@ public interface ShaderPipeline{
 
     void delete();
 
-    void validate();
-
     void use();
-
-    void unbind();
 
     ShaderProgram getShader(ShaderProgram.ShaderType type);
 }

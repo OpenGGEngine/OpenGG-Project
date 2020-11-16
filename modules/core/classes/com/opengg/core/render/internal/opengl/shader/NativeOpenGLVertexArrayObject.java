@@ -8,6 +8,7 @@ package com.opengg.core.render.internal.opengl.shader;
 import com.opengg.core.render.RenderEngine;
 
 import static org.lwjgl.opengl.GL30.*;
+import static org.lwjgl.opengl.GL45.*;
 
 /**
  *
@@ -25,16 +26,35 @@ public class NativeOpenGLVertexArrayObject {
      */
     public NativeOpenGLVertexArrayObject() {
         if(RenderEngine.validateInitialization()) id = -1;
-        else id = glGenVertexArrays();
+        else id = glCreateVertexArrays();
     }
 
-    /**
-     * Binds the NativeOpenGLPureVertexArrayObject.
-     */
-
     public void bind() {
-        if(RenderEngine.validateInitialization()) return;
         glBindVertexArray(id);
+    }
+
+    public void enableAttribute(int attrib){
+        glEnableVertexArrayAttrib(id, attrib);
+    }
+
+    public void setAttributeFormat(int attrib, int size, int type, boolean normalized, int offset){
+        glVertexArrayAttribFormat(id, attrib, size, type, normalized, offset);
+    }
+
+    public void setAttributeBinding(int attrib,int bufferBinding){
+        glVertexArrayAttribBinding(id, attrib, bufferBinding);
+    }
+
+    public void setBindingDivisor(int binding, int divisor){
+        glVertexArrayBindingDivisor(id, binding, divisor);
+    }
+
+    public void applyVertexBufferToBinding(int bufferId, int binding, int vertexSize) {
+        glVertexArrayVertexBuffer(id, binding, bufferId, 0, vertexSize);
+    }
+
+    public void applyElementBufferToBinding(int bufferId) {
+        glVertexArrayElementBuffer(id, bufferId);
     }
 
     /**
@@ -55,13 +75,8 @@ public class NativeOpenGLVertexArrayObject {
     public int getID() {
         return id;
     }
-    /**
-     * Unbinds NativeOpenGLPureVertexArrayObject
-     */
 
-    public void unbind(){
-        if(RenderEngine.validateInitialization()) return;
-        glBindVertexArray(0);
-    }
+
+
 }
 

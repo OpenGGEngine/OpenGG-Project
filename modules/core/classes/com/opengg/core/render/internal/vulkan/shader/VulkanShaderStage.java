@@ -172,11 +172,6 @@ public class VulkanShaderStage implements ShaderProgram {
     }
 
     @Override
-    public void checkStatus() {
-
-    }
-
-    @Override
     public ShaderType getType() {
         return type;
     }
