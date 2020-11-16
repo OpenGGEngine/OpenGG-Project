@@ -92,7 +92,10 @@ public class OpenGLTexture implements Texture {
     @Override
     public void set2DData(TextureData data){
         switch (data.getTextureType()) {
-            case NORMAL -> tex.set2DImageData(0, data.width, data.height, samplerFormat, inputFormat, (ByteBuffer) data.buffer);
+            case NORMAL -> {
+                tex.set2DImageData(0, data.width, data.height, samplerFormat, inputFormat, (ByteBuffer) data.buffer);
+                tex.generateMipmap();
+            }
             case ATSC -> tex.setImageDataCompressed(0, data.width, data.height, selectASTCFormat(data.getXBlock(), data.getYBlock(), true), (ByteBuffer) data.buffer);
             case DXT1, DXT3, DXT5 -> {
                 int blockSize = (data.getTextureType() == TextureData.TextureDataType.DXT1) ? 8 : 16;
