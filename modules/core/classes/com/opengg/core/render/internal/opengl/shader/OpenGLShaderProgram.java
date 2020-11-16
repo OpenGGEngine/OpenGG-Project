@@ -16,7 +16,9 @@ import com.opengg.core.render.shader.ShaderProgram;
 
 import java.nio.ByteBuffer;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.lwjgl.opengl.GL11.GL_TRUE;
 import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
@@ -34,6 +36,7 @@ public class OpenGLShaderProgram implements ShaderProgram{
     private final NativeOpenGLShaderProgram program;
     private final ShaderType type;
     private List<ShaderController.Uniform> uniforms;
+    public Set<ShaderController.UniformPosition> uniformSet;
     private String source;
     
     private final HashMap<String, Integer> ulocs = new HashMap<>();
@@ -44,6 +47,10 @@ public class OpenGLShaderProgram implements ShaderProgram{
         this.source = source;
         this.uniforms = uniforms;
         program = new NativeOpenGLShaderProgram(getInternalType(type), source);
+        uniformSet = new HashSet<>();
+        for(ShaderController.Uniform u:uniforms){
+            uniformSet.add(u.position());
+        }
     }
 
     public OpenGLShaderProgram(ShaderType type, ByteBuffer source, String name){

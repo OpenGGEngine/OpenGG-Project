@@ -13,6 +13,7 @@ import com.opengg.core.math.*;
 import com.opengg.core.render.GraphicsBuffer;
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.render.internal.opengl.shader.OpenGLShaderPipeline;
+import com.opengg.core.render.internal.opengl.shader.OpenGLShaderProgram;
 import com.opengg.core.render.internal.opengl.texture.OpenGLTexture;
 import com.opengg.core.render.internal.vulkan.VulkanBuffer;
 import com.opengg.core.render.internal.vulkan.VulkanDescriptorSet;
@@ -384,7 +385,8 @@ public class ShaderController {
                         var shaderList = new ArrayList<>(List.of(currentPipeline.getShader(ShaderType.VERTEX), currentPipeline.getShader(ShaderType.FRAGMENT)));
                         if(currentPipeline.getShader(ShaderType.GEOMETRY) != null) shaderList.add(currentPipeline.getShader(ShaderType.GEOMETRY));
                         for(var shader : shaderList){
-                            if(shader.getUniforms().stream().map(Uniform::position).anyMatch(u -> u.equals(currentUniform.getKey()))) {
+                            //if(shader.getUniforms().stream().map(Uniform::position).anyMatch(u -> u.equals(currentUniform.getKey()))) {
+                              if(((OpenGLShaderProgram)shader).uniformSet.contains(currentUniform.getKey())){
                                 if(uniform instanceof UniformContainer.IntContainer container){
                                     shader.setUniform(currentUniform.getKey().descriptor.set, container.contents());
                                 }else if(uniform instanceof UniformContainer.FloatContainer container){

@@ -2,6 +2,7 @@ package com.opengg.core.render.texture;
 
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.system.Allocator;
+import org.lwjgl.system.MemoryUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,6 +16,31 @@ public class DDSLoader {
     private static final int DXT3 = 0x33545844;//(0x44585433);
     private static final int DXT4 = 0x34545844;//(0x44585434);
     private static final int DXT5 = 0x35545844;//(0x44585435);
+    public static TextureData loadFromBuffer(ByteBuffer b,String path){
+        b.order(ByteOrder.LITTLE_ENDIAN);
+        b.position(12);
+        int height = b.getInt();
+        int width = b.getInt();
+        int linearSize = b.getInt();
+        b.position(28);
+        int mipMapCount = b.getInt();
+        b.position(84);
+        int fourCC = b.getInt();
+        int numComponents = (fourCC == DXT1)?3:4;
+        b.position(128);
+        System.out.println(width + ","+height+","+linearSize+","+mipMapCount);
+
+        int bufferSize = mipMapCount > 1 ? linearSize * 2:linearSize;
+        TextureData data = new TextureData(width, height, numComponents, MemoryUtil.memSlice(b,0,b.remaining()), path,
+                switch(fourCC){
+                    case DXT3 -> TextureData.TextureDataType.DXT3;
+                    case DXT5 -> TextureData.TextureDataType.DXT5;
+                    default-> TextureData.TextureDataType.DXT1;
+                }
+        );
+        data.setMipMapCount(mipMapCount);
+        return data;
+    }
     public static TextureData load(String path) throws IOException {
         File f = new File(path);
         try(FileInputStream fc = new FileInputStream(f)){
@@ -43,7 +69,6 @@ public class DDSLoader {
 
             TextureData data = new TextureData(width, height, numComponents, buffer, path,
                     switch(fourCC){
-                        case DXT1 -> TextureData.TextureDataType.DXT1;
                         case DXT3 -> TextureData.TextureDataType.DXT3;
                         case DXT5 -> TextureData.TextureDataType.DXT5;
                         default-> TextureData.TextureDataType.DXT1;
