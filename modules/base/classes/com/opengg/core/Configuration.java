@@ -85,12 +85,11 @@ public final class Configuration{
     
     public static void writeConfig(ConfigFile file) throws IOException {
         Properties prop = new Properties();
-        file.getAllSettings().forEach((key,value)->{
-            prop.put(key,value);
-        });
-        FileOutputStream fout = new FileOutputStream(new File("config"+File.separator+file.getName()));
-        prop.store(fout,"");
-        fout.close();
+        file.getAllSettings().forEach(prop::put);
+        FileOutputStream fos = new FileOutputStream("config" + File.separator + file.getName());
+
+        prop.store(fos,"");
+        fos.close();
     }
 
     private Configuration() {

@@ -10,8 +10,8 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class Executor {
-    private final List<ExecutorContainer> containers;
-    private final List<ExecutorContainer> tempcontainers;
+    private final List<ExecutorContainer> containers= new ArrayList<>();
+    private static final List<ExecutorContainer> newContainers = new ArrayList<>();
 
     private final Thread current;
     private static Executor executor;
@@ -27,27 +27,24 @@ public class Executor {
     }
 
     private Executor() {
-        containers = new ArrayList<>();
-        tempcontainers = new ArrayList<>();
-
         current = Thread.currentThread();
     }
 
     public void update(float time) {
-        containers.addAll(tempcontainers);
-        tempcontainers.clear();
+        containers.addAll(newContainers);
+        newContainers.clear();
 
-        var tlist = containers.stream()
+        var doneList = containers.stream()
                 .filter(Objects::nonNull)
                 .peek(c -> c.time -= time)
                 .filter(ExecutorContainer::isComplete)
                 .collect(Collectors.toList());
 
-        containers.removeAll(tlist);
+        containers.removeAll(doneList);
 
-        tlist.forEach(ExecutorContainer::execute);
+        doneList.forEach(ExecutorContainer::execute);
         //if(!tempcontainers.isEmpty()) System.out.println(Arrays.toString(tempcontainers.get(0).source));
-        if(!tempcontainers.isEmpty()) update(0);
+        if(!newContainers.isEmpty()) update(0);
     }
 
     /**
@@ -128,7 +125,7 @@ public class Executor {
 
     private Sleeper queue(float secs, Runnable exec){
         var container = new ExecutorContainer(exec, secs, Thread.currentThread().getStackTrace());
-        tempcontainers.add(container);
+        newContainers.add(container);
         return container.sleeper;
     }
 

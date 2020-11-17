@@ -73,6 +73,10 @@ public class WorldEngine{
         componentRemovalListeners.forEach(c -> c.accept(comp));
     }
 
+    public static int getComponentCount(){
+        return guidMap.size();
+    }
+
     /**
      * Searches for any components in any registered world with the given name
      * @param name
@@ -140,7 +144,6 @@ public class WorldEngine{
      *     In most cases, this is unnecessary, as {@link WorldEngine#getWorld(String)} automatically registers the world
      *     as needed.
      * @param world
-     * @see World#shouldMultipleInstancesExist
      */
     public static void registerWorld(World world){
         worlds.put(world.getName(), world);

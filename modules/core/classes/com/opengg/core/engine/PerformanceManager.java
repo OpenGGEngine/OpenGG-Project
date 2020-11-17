@@ -110,7 +110,7 @@ public class PerformanceManager {
         descriptorSets.add(0L);
     }
 
-    public static double getComputedFramerate() {
+    public static double getComputedFrameTime() {
         return computedFramerate;
     }
 

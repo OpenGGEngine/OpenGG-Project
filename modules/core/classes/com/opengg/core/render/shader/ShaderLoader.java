@@ -69,7 +69,7 @@ public class ShaderLoader {
                 .peek(ShaderFile::compile)
                 .collect(Collectors.toMap(ShaderFile::getName, shader -> shader)));
 
-        GGConsole.log("Detected changes/additions to cached shaders: " + shaderFiles.keySet());
+        //GGConsole.log("Detected changes/additions to cached shaders: " + shaderFiles.keySet());
     }
 
     private void linkShaders(){

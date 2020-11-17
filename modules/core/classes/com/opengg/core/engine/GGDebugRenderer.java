@@ -40,11 +40,11 @@ public class GGDebugRenderer implements KeyboardListener {
 
                 var debugString =
                         "Framebuffer resolution: " + WindowController.getWidth() + "/" + WindowController.getHeight() + "\n" +
-                        "Frame time: " + String.format("%.2f", PerformanceManager.getComputedFramerate()*1000) + "\n" +
-                        "Frame rate: " + String.format("%.2f", 1/(PerformanceManager.getComputedFramerate())) + "\n\n" +
+                        "Frame time: " + String.format("%.2f", PerformanceManager.getComputedFrameTime()*1000) + "\n" +
+                        "Frame rate: " + String.format("%.2f", 1/(PerformanceManager.getComputedFrameTime())) + "\n\n" +
                         "Camera position: (" + String.format("%.2f", RenderEngine.getCurrentView().getPosition().x) + ", " +  String.format("%.2f",     RenderEngine.getCurrentView().getPosition().y) + ", " +  String.format("%.2f", RenderEngine.getCurrentView().getPosition().z) + ") \n\n" +
                         "Current world: " + WorldEngine.getCurrent().getName() + " \n" +
-                        "Component count: " + WorldEngine.getCurrent().getAllDescendants().size() + "\n\n" +
+                        "Component count: " + WorldEngine.getComponentCount() + "\n\n" +
                         "Render group count: " + RenderEngine.getActiveRenderGroups().size() + "  Rendered object count: " + RenderEngine.getActiveRenderGroups().stream().mapToInt(r -> r.getList().size()).sum() + "\n\n" +
                         "Average render calls: " + PerformanceManager.getComputedDrawCalls() + "\n" +
                         "GPU Buffer allocations: " + PerformanceManager.getBufferAllocsThisFrame() + "\n" +
