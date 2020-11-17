@@ -6,6 +6,7 @@
 package com.opengg.core.render.internal.opengl.texture;
 
 import com.opengg.core.console.GGConsole;
+import com.opengg.core.math.Vector3i;
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.render.internal.opengl.OpenGLRenderer;
 import com.opengg.core.render.window.WindowController;
@@ -16,36 +17,23 @@ import com.opengg.core.render.texture.Texture;
 import java.util.*;
 
 import static org.lwjgl.opengl.GL30.*;
-import static org.lwjgl.opengl.GL45.glNamedFramebufferDrawBuffer;
 
 /**
  *
  * @author Javier
  */
 public class OpenGLFramebuffer implements Framebuffer{
-    NativeOpenglFramebuffer fb;
+    NativeOpenGLFramebuffer fb;
     List<Integer> enabledFragmentAttachments;
     Map<Integer, Texture> textures;
     List<Renderbuffer> renderbuffers;
     int lx, ly;
     
     public OpenGLFramebuffer(){
-        fb = new NativeOpenglFramebuffer();
+        fb = new NativeOpenGLFramebuffer();
         enabledFragmentAttachments = new ArrayList<>();
         textures = new HashMap<>();
         renderbuffers = new ArrayList<>();
-    }
-
-    public void bind(){
-        fb.bind(GL_FRAMEBUFFER);
-    }
-    
-    public void bindToRead(){
-        fb.bind(GL_READ_FRAMEBUFFER);
-    }
-    
-    public void bindToWrite(){
-        fb.bind(GL_DRAW_FRAMEBUFFER);
     }
 
     public Texture getTexture(int attachment){
@@ -92,16 +80,29 @@ public class OpenGLFramebuffer implements Framebuffer{
         attachTexture(Texture.TextureType.TEXTURE_CUBEMAP, width, height, Texture.SamplerFormat.RGBA, Texture.TextureFormat.RGBA8, Texture.InputFormat.UNSIGNED_BYTE, GL_COLOR_ATTACHMENT0 + attachment);
     }
 
-    public void attachTexture(Texture.TextureType type, int width, int height, Texture.SamplerFormat format, Texture.TextureFormat intformat, Texture.InputFormat input, int attachment){
-        Texture tex;
-        if(type.equals(Texture.TextureType.TEXTURE_CUBEMAP))
-            tex = Texture.getCubemapFramebufferTexture(width, height, format, intformat, input);
-        else
-            tex = Texture.get2DFramebufferTexture(width, height, format, intformat, input);
+    public void attachTexture(Texture.TextureType type, int width, int height, Texture.SamplerFormat format, Texture.TextureFormat internalFormat, Texture.InputFormat input, int attachment){
+        var texture = !type.equals(Texture.TextureType.TEXTURE_CUBEMAP) ?
+                new OpenGLTexture(Texture.config()
+                    .samplerFormat(format)
+                    .internalFormat(internalFormat)
+                    .inputFormat(input)
+                    .wrapType(Texture.WrapType.REPEAT)
+                    .minimumFilter(Texture.FilterType.LINEAR)
+                    .maxFilter(Texture.FilterType.LINEAR),
+                    new Texture.TextureStorageProperties(new Vector3i(width, height,1), 1, 1)) :
+                new OpenGLTexture(Texture.cubemapConfig().
+                        samplerFormat(format).
+                        internalFormat(internalFormat).
+                        inputFormat(input)
+                        .wrapType(Texture.WrapType.CLAMP_BORDER)
+                        .minimumFilter(Texture.FilterType.LINEAR)
+                        .maxFilter(Texture.FilterType.NEAREST),
+                        new Texture.TextureStorageProperties(new Vector3i(width, height,1), 1, 1));
 
-        fb.attachTexture(attachment, (int) tex.getID(), 0);
+        fb.attachTexture(attachment, (int) texture.getID(), 0);
         checkForCompletion();
-        textures.put(attachment, tex);
+
+        textures.put(attachment, texture);
         enabledFragmentAttachments.add(attachment);
 
         if(lx < width) lx = width;
@@ -140,23 +141,21 @@ public class OpenGLFramebuffer implements Framebuffer{
 
     @Override
     public void clearFramebuffer() {
+        fb.bind(GL_FRAMEBUFFER);
         fb.clear();
     }
 
     @Override
     public void enableRendering(int x1, int y1, int x2, int y2) {
         ((OpenGLRenderer) RenderEngine.renderer).setCurrentFramebuffer(this);
-       // fb.setDrawBuffers(enabledFragmentAttachments.stream().mapToInt(i -> i).filter(i -> i != GL_DEPTH_ATTACHMENT).toArray());
-        bind();
-        glDrawBuffers(enabledFragmentAttachments.stream().mapToInt(i -> i).filter(i -> i != GL_DEPTH_ATTACHMENT).toArray());
-       // fb.setDrawBuffers(new int[]{0});
+        fb.setDrawBuffers(enabledFragmentAttachments.stream().mapToInt(i -> i).filter(i -> i != GL_DEPTH_ATTACHMENT).toArray());
+        fb.bind(GL_FRAMEBUFFER);
         glViewport(x1, y1, x2, y2);
     }
     
     @Override
     public void disableRendering(){
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        glDrawBuffer(GL_BACK);
         glViewport(0, 0, WindowController.getWindow().getWidth(), WindowController.getWindow().getHeight());
     }
     

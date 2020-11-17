@@ -86,28 +86,6 @@ public interface Texture{
         return create(Texture.config().samplerFormat(format).internalFormat(intformat).inputFormat(storage), data);
     }
 
-    static Texture get2DFramebufferTexture(int x, int y, SamplerFormat format, TextureFormat intformat, InputFormat input){
-        TextureData data = new TextureData(x, y, 4, null, "framebuffer");
-
-        Texture texture = new OpenGLTexture(Texture.config()
-                .samplerFormat(format)
-                .internalFormat(intformat)
-                .inputFormat(input)
-                .wrapType(WrapType.REPEAT)
-                .minimumFilter(FilterType.LINEAR)
-                .maxFilter(FilterType.LINEAR),
-                new TextureStorageProperties(new Vector3i(x, y,1), 1, 1));
-        return texture;
-    }
-
-    static Texture getCubemapFramebufferTexture(int x, int y, SamplerFormat format, TextureFormat intformat, InputFormat input){
-        TextureData data = new TextureData(x, y, 4, null, "framebuffer");
-        Texture texture = new OpenGLTexture(Texture.cubemapConfig().samplerFormat(format).internalFormat(intformat).inputFormat(input)
-                .wrapType(WrapType.CLAMP_BORDER).minimumFilter(FilterType.LINEAR).maxFilter(FilterType.NEAREST),
-                new TextureStorageProperties(new Vector3i(x,y,1), 1, 1));
-        return texture;
-    }
-
     static Texture getSRGBCubemap(String path1, String path2, String path3, String path4, String path5, String path6){
         TextureData data1 = Resource.getTextureData(path1);
         TextureData data2 = Resource.getTextureData(path2);
@@ -135,8 +113,7 @@ public interface Texture{
     }
 
     static Texture ofColor(byte r, byte g, byte b, byte a){
-        var tex = create(Texture.config(), TextureGenerator.ofColor(r,g,b,a));
-        return tex;
+        return create(Texture.config(), TextureGenerator.ofColor(r,g,b,a));
     }
 
     static Texture create(TextureConfig config, String... data){
@@ -275,7 +252,7 @@ public interface Texture{
 
 
         public TextureConfig(){
-            this(TextureType.TEXTURE_2D, FilterType.LINEAR, FilterType.LINEAR, WrapType.REPEAT,WrapType.REPEAT,WrapType.REPEAT, SamplerFormat.RGBA, TextureFormat.RGBA8, InputFormat.UNSIGNED_BYTE,true);
+            this(TextureType.TEXTURE_2D, FilterType.LINEAR, FilterType.LINEAR, WrapType.REPEAT,WrapType.REPEAT,WrapType.REPEAT, SamplerFormat.RGBA, TextureFormat.SRGBA8, InputFormat.UNSIGNED_BYTE,true);
         }
 
         public TextureConfig type(TextureType type) {

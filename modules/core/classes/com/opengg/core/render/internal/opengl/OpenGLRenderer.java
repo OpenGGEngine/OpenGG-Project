@@ -146,9 +146,8 @@ public class OpenGLRenderer implements Renderer {
             RenderEngine.getProjectionData().ratio = WindowController.getWindow().getRatio();
             RenderEngine.getProjectionData().use();
             setCurrentVAOFormat(RenderEngine.getDefaultFormat());
-
-           // pass.getSceneBuffer().enableRendering(0,0,pass.getSceneBuffer().getWidth(), pass.getSceneBuffer().getHeight());
-           // pass.getSceneBuffer().clearFramebuffer();
+            pass.getSceneBuffer().enableRendering(0,0, pass.getSceneBuffer().getWidth(), pass.getSceneBuffer().getHeight());
+            pass.getSceneBuffer().clearFramebuffer();
 
             useLights();
             resetConfig();
@@ -162,13 +161,13 @@ public class OpenGLRenderer implements Renderer {
 
 
             enableDefaultVP();
-            /*
+
             pass.getSceneBuffer().disableRendering();
             if(pass.isPostProcessEnabled())
                 PostProcessController.process(pass.getSceneBuffer());
 
             if(pass.shouldBlitToBack())
-                pass.getSceneBuffer().blitToBack();*/
+                pass.getSceneBuffer().blitToBack();
 
             pass.runDisableOp();
         }

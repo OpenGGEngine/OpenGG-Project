@@ -21,10 +21,11 @@ import static org.lwjgl.opengl.GL45.*;
  *
  * @author Javier
  */
-public class NativeOpenglFramebuffer implements NativeResource {
+public class NativeOpenGLFramebuffer implements NativeResource {
+
     private final int id;
     
-    public NativeOpenglFramebuffer(){
+    public NativeOpenGLFramebuffer(){
         if(RenderEngine.validateInitialization()) id = -1;
         else id = glCreateFramebuffers();
         NativeResourceManager.registerNativeResource(this);
@@ -65,14 +66,13 @@ public class NativeOpenglFramebuffer implements NativeResource {
         glBlitNamedFramebuffer(id, otherFramebuffer, xmin, ymin, xmax, ymax, xmin2, ymin2, xmax2, ymax2, attachments, filter);
     }
 
-
     public void setDrawBuffers(int[] buffers) {
         glNamedFramebufferDrawBuffers(id, buffers);
     }
 
     public void clear() {
         glClearNamedFramebufferfv(id, GL_COLOR, 0, new float[]{0,0,0,0});
-        glClearNamedFramebufferfv(id, GL_DEPTH, 0, new float[]{0});
+        glClearNamedFramebufferfv(id, GL_DEPTH, 0, new float[]{1});
     }
 
     public int checkCompleteness(){

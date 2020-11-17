@@ -93,7 +93,7 @@ public class OpenGLTexture implements Texture {
     public void set2DData(TextureData data){
         switch (data.getTextureType()) {
             case NORMAL -> {
-                tex.set2DImageData(0, data.width, data.height, samplerFormat, inputFormat, (ByteBuffer) data.buffer);
+                tex.set2DImageData(0, 0, 0, data.width, data.height, samplerFormat, inputFormat, (ByteBuffer) data.buffer);
                 tex.generateMipmap();
             }
             case ATSC -> tex.setImageDataCompressed(0, data.width, data.height, selectASTCFormat(data.getXBlock(), data.getYBlock(), true), (ByteBuffer) data.buffer);
@@ -118,17 +118,17 @@ public class OpenGLTexture implements Texture {
     
     @Override
     public void set2DSubData(TextureData data, Vector2i offset){
-        tex.set2DSubImageData(0, offset.x, offset.y, data.width, data.height, samplerFormat, inputFormat, (ByteBuffer)data.buffer);
+        tex.set2DImageData(0, offset.x, offset.y, data.width, data.height, samplerFormat, inputFormat, (ByteBuffer)data.buffer);
     }
     
     @Override
     public void setCubemapData(TextureData data1, TextureData data2, TextureData data3, TextureData data4, TextureData data5, TextureData data6){
-        tex.set3DSubImageData(0, 0, 0, 0, data1.width, data1.height, 0, samplerFormat, inputFormat, (ByteBuffer)data1.buffer);
-        tex.set3DSubImageData(0, 0, 0, 1, data2.width, data2.height, 0, samplerFormat, inputFormat, (ByteBuffer)data2.buffer);
-        tex.set3DSubImageData(0, 0, 0, 2, data3.width, data3.height, 0, samplerFormat, inputFormat, (ByteBuffer)data4.buffer); //inverted to compensate for coordinate issues
-        tex.set3DSubImageData(0, 0, 0, 3, data4.width, data4.height, 0, samplerFormat, inputFormat, (ByteBuffer)data3.buffer);
-        tex.set3DSubImageData(0, 0, 0, 4, data5.width, data5.height, 0, samplerFormat, inputFormat, (ByteBuffer)data5.buffer);
-        tex.set3DSubImageData(0, 0, 0, 5, data6.width, data6.height, 0, samplerFormat, inputFormat, (ByteBuffer)data6.buffer);
+        tex.set3DImageData(0, 0, 0, 0, data1.width, data1.height, 0, samplerFormat, inputFormat, (ByteBuffer)data1.buffer);
+        tex.set3DImageData(0, 0, 0, 1, data2.width, data2.height, 0, samplerFormat, inputFormat, (ByteBuffer)data2.buffer);
+        tex.set3DImageData(0, 0, 0, 2, data3.width, data3.height, 0, samplerFormat, inputFormat, (ByteBuffer)data4.buffer); //inverted to compensate for coordinate issues
+        tex.set3DImageData(0, 0, 0, 3, data4.width, data4.height, 0, samplerFormat, inputFormat, (ByteBuffer)data3.buffer);
+        tex.set3DImageData(0, 0, 0, 4, data5.width, data5.height, 0, samplerFormat, inputFormat, (ByteBuffer)data5.buffer);
+        tex.set3DImageData(0, 0, 0, 5, data6.width, data6.height, 0, samplerFormat, inputFormat, (ByteBuffer)data6.buffer);
         tdata.add(data1);
         tdata.add(data2);
         tdata.add(data3);
@@ -142,7 +142,7 @@ public class OpenGLTexture implements Texture {
         ByteBuffer full = get3DData(datums);
         full.flip();
 
-        tex.set3DImageData(0, datums[0].width, datums[0].height, datums.length, samplerFormat, inputFormat, full);
+        tex.set3DImageData(0, 0, 0, 0, datums[0].width, datums[0].height, datums.length, samplerFormat, inputFormat, full);
         tdata.addAll(Arrays.asList(datums));
     }
     
@@ -152,7 +152,7 @@ public class OpenGLTexture implements Texture {
         ByteBuffer full = get3DData(datums);
         full.flip();
         tdata.addAll(Arrays.asList(datums));
-        tex.set3DSubImageData(0, xoffset, yoffset, zoffset, datums[0].width, datums[0].height, datums.length, GL_RGBA, inputFormat, full);
+        tex.set3DImageData(0, xoffset, yoffset, zoffset, datums[0].width, datums[0].height, datums.length, GL_RGBA, inputFormat, full);
     }
 
     private ByteBuffer get3DData(TextureData[] datums) {
@@ -295,7 +295,7 @@ public class OpenGLTexture implements Texture {
     public static int getOpenGlFilter(FilterType type){
         return switch (type) {
             case LINEAR -> GL_LINEAR;
-            case NEAREST -> GL_NEAREST;
+            case NEAREST -> GL_LINEAR_MIPMAP_LINEAR;
         };
     }
 }

@@ -60,7 +60,7 @@ public class NativeOpenGLTexture implements NativeResource{
         glTextureStorage3D(id, levels, format, width, height, depth);
     }
     
-    public void set2DImageData(int level, int width, int height, int format, int type, ByteBuffer data){
+    public void set2DImageData(int level, int xoffset, int yoffset, int width, int height, int format, int type, ByteBuffer data){
         if(RenderEngine.validateInitialization()) return;
         glTextureSubImage2D(id, level, 0, 0, width, height, format, type, data);
     }
@@ -70,19 +70,9 @@ public class NativeOpenGLTexture implements NativeResource{
         glCompressedTextureSubImage2D(id,level,0,0, width,height,format,data);
     }
     
-    public void set3DImageData(int level, int width, int height, int depth, int format, int type, ByteBuffer data){
+    public void set3DImageData(int level, int xoffset, int yoffset, int zoffset, int width, int height, int depth, int format, int type, ByteBuffer data){
         if(RenderEngine.validateInitialization()) return;
         glTextureSubImage3D(id, level, 0,0,0, width, height, depth, format, type, data);
-    }
-    
-    public void set2DSubImageData(int level, int xoffset, int yoffset, int width, int height, int format, int type, ByteBuffer data){
-        if(RenderEngine.validateInitialization()) return;
-        glTextureSubImage2D(id, level, xoffset, yoffset, width, height, format, type, data);
-    }
-    
-    public void set3DSubImageData(int level, int xoffset, int yoffset, int zoffset, int width, int height, int depth, int format, int type, ByteBuffer data){
-        if(RenderEngine.validateInitialization()) return;
-        glTextureSubImage3D(id, level, xoffset, yoffset, zoffset, width, height, depth, format, type, data);
     }
     
     public void setParameteri(int param, int value){
