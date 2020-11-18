@@ -69,7 +69,7 @@ public final class OpenGG{
             GGConsole.error("Uncaught exception: " + e.getMessage());
             e.printStackTrace();
             try {Thread.sleep(10);} catch (InterruptedException ex) {}
-            writeErrorLog();
+            writeUserData();
             closeEngine();
             System.exit(0);
         }
@@ -345,7 +345,7 @@ public final class OpenGG{
         //GGConsole.writeLog(startTime);
     }
 
-    private static void writeErrorLog(){
+    private static void writeUserData(){
         String error = SystemInfo.getInfo();
         GGConsole.log(error);
     }

@@ -9,6 +9,8 @@ package com.opengg.core.console;
 import com.opengg.core.GGInfo;
 import com.opengg.core.thread.ThreadManager;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.*;
 
 /**
@@ -62,7 +64,10 @@ public class GGConsole{
     }
 
     public static void exception(Throwable message){
-        write(message.getMessage() + " at " + message.getStackTrace()[0].toString(), Level.ERROR);
+        var trace = new StringWriter();
+        var pw = new PrintWriter(trace);
+        message.printStackTrace(pw);
+        write(message.getMessage() + " at " + trace.toString(), Level.ERROR);
     }
     
     private static void write(String message, Level level){
