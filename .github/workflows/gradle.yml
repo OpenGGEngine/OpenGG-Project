@@ -22,11 +22,21 @@ jobs:
         java-version: 15
     - name: Deploy base to repository
       run: ./gradlew  :modules:base:publish
+      env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Deploy math to repository
       run: ./gradlew  :modules:math:publish
+      env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Deploy console to repository
       run: ./gradlew  :modules:console:publish
+      env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Deploy system to repository
       run: ./gradlew  :modules:system:publish
+      env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Deploy core to repository
       run: ./gradlew  :modules:core:publish
+      env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
