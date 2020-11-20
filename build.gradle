@@ -6,15 +6,20 @@
  * User Manual available at https://docs.gradle.org/6.0.1/userguide/java_library_plugin.html
  */
 
-plugins{
+plugins {
     id 'java-library'
+    id 'maven-publish'
 }
 
+
 group 'com.opengg'
-version '0.0.4'
+ext.engineVersion = '0.0.4'
 
 configure(subprojects.findAll {it.name != 'modules'}) {
     apply plugin: 'java'
+    apply plugin: 'maven-publish'
+
+    version = engineVersion
 
     sourceCompatibility = 1.15
     targetCompatibility = 1.15
@@ -22,6 +27,7 @@ configure(subprojects.findAll {it.name != 'modules'}) {
     project.ext.lwjglVersion = "3.2.3"
     project.ext.steamworks4jVersion = "1.8.0"
     project.ext.lwjglNatives = "natives-windows"
+
 
     java {
         modularity.inferModulePath = true
@@ -37,9 +43,56 @@ configure(subprojects.findAll {it.name != 'modules'}) {
         jcenter()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
     }
+
+    subprojects {
+        version = '1.0'
+    }
+
+    javadoc {
+        if(JavaVersion.current().isJava9Compatible()) {
+            options.addBooleanOption('html5', true)
+        }
+    }
 }
 
-subprojects {
-    version = '1.0'
+subprojects{
+    apply plugin: 'java'
+    apply plugin: 'maven-publish'
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                groupId = 'com.opengg'
+                artifactId = "opengg-engine-" + project.name
+                from components.java
+                pom {
+                    name = 'OpenGG Engine Module ' + project.name
+                    description = 'Fast Enough for an IBM Terminal'
+                    url = 'https://github.com/OpenGGEngine/OpenGG-Project'
+                    developers {
+                        developer {
+                            id = 'javster101'
+                        }
+                        developer {
+                            id = 'WarrenXiaGG'
+                        }
+                    }
+                }
+
+
+            }
+        }
+        repositories {
+            maven {
+                name = "GitHubPackages"
+                url = uri("https://maven.pkg.github.com/OpenGGEngine/OpenGG-Project/")
+                credentials {
+                    username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
+                    password = project.findProperty("gpr.key") ?: System.getenv("TOKEN")
+                }
+            }
+        }
+    }
 }
+
+
 
