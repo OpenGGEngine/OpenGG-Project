@@ -6,9 +6,12 @@
 
 package com.opengg.core;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  *
@@ -16,7 +19,16 @@ import java.util.Map;
  */
 public class ConfigFile {
     private final String name;
-    private final Map<String, String> contents;
+    private Map<String, String> contents;
+
+    public ConfigFile(File file) throws IOException {
+        var properties = new Properties();
+
+        properties.load(new FileInputStream(file));
+
+        this.name = file.getName();
+        contents = new HashMap<>(Map.ofEntries(properties.entrySet().toArray(new Map.Entry[1])));
+    }
 
     public ConfigFile(String name, Map<String, String> contents){
         this.name = name;

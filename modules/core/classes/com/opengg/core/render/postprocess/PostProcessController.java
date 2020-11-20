@@ -7,11 +7,10 @@ package com.opengg.core.render.postprocess;
 
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.math.Matrix4f;
-import com.opengg.core.math.util.Tuple;
-import com.opengg.core.render.RenderEngine;
-import com.opengg.core.render.internal.opengl.OpenGLRenderer;
 import com.opengg.core.math.Vector2f;
+import com.opengg.core.render.RenderEngine;
 import com.opengg.core.render.Renderable;
+import com.opengg.core.render.internal.opengl.OpenGLRenderer;
 import com.opengg.core.render.objects.ObjectCreator;
 import com.opengg.core.render.shader.CommonUniforms;
 import com.opengg.core.render.shader.ShaderController;
@@ -19,9 +18,8 @@ import com.opengg.core.render.texture.Framebuffer;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.texture.WindowFramebuffer;
 
-import java.util.*;
-
-import static org.lwjgl.opengl.GL11.glGetError;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *

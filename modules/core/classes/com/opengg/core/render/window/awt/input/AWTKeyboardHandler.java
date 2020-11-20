@@ -23,19 +23,19 @@ public class AWTKeyboardHandler extends KeyboardHandler implements KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         int nkey = e.getKeyCode();
-        if(keys[nkey] == true) return;
+        if(keys[getEngineKeyCode(nkey)] == true) return;
 
         KeyboardController.keyPressed(getEngineKeyCode(nkey));
-        keys[nkey] = true;
+        keys[getEngineKeyCode(nkey)] = true;
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
         int nkey = e.getKeyCode();
-        if(keys[nkey] == false) return;
+        if(keys[getEngineKeyCode(nkey)] == false) return;
 
         KeyboardController.keyReleased(getEngineKeyCode(nkey));
-        keys[nkey] = false;
+        keys[getEngineKeyCode(nkey)] = false;
     }
 
     @Override

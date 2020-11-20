@@ -16,8 +16,10 @@ include ':modules:math'
 include ':modules:core'
 include ':modules:test'
 
-buildCache {
+includeBuild ':modules:core'
+
+/*buildCache {
     local {
         enabled = true
     }
-}
+}*/

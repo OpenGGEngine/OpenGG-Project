@@ -111,9 +111,9 @@ public class MouseController {
 
     public static void update(){
         if(scrollHandler != null){
-            if(oldSX != scrollHandler.getWheelX()||oldSY != scrollHandler.getWheelY()){
+            if(oldSX != scrollHandler.getWheelX() || oldSY != scrollHandler.getWheelY()){
                 for(var scrolll:scrollListeners){
-                    scrolll.onScroll(scrollHandler.getWheelX(),scrollHandler.getWheelY());
+                    scrolll.onScroll(scrollHandler.getWheelX(), scrollHandler.getWheelY());
                 }
 
                 oldSX = scrollHandler.getWheelX();

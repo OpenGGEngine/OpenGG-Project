@@ -9,6 +9,7 @@ import com.opengg.core.render.window.WindowOptions;
 import com.opengg.core.render.window.awt.input.AWTKeyboardHandler;
 import com.opengg.core.render.window.awt.input.AWTMouseButtonHandler;
 import com.opengg.core.render.window.awt.input.AWTMousePosHandler;
+import com.opengg.core.render.window.awt.input.AWTMouseScrollHandler;
 import org.lwjgl.opengl.GL;
 
 import java.awt.*;
@@ -22,6 +23,7 @@ public class GGCanvas implements Window {
     private AWTMousePosHandler mousePosCallback;
     private AWTMouseButtonHandler mouseCallback;
     private AWTKeyboardHandler keyCallback;
+    private AWTMouseScrollHandler scrollCallback;
     public static Container container;
 
     private Vector2f osScaleFactor = new Vector2f(1,1);
@@ -64,6 +66,7 @@ public class GGCanvas implements Window {
         canvas.addMouseListener(mouseCallback = new AWTMouseButtonHandler());
         canvas.addKeyListener(keyCallback = new AWTKeyboardHandler());
         canvas.addMouseMotionListener(mousePosCallback = new AWTMousePosHandler());
+        canvas.addMouseWheelListener(scrollCallback = new AWTMouseScrollHandler());
 
         canvas.addKeyListener(new KeyAdapter() {
             @Override

@@ -14,9 +14,9 @@ public class DebugCallback implements GLDebugMessageCallbackI {
         var realSource = getFromGLSource(source);
         var realType = getFromCallbackType(type);
         switch (getFromGLSeverity(severity)){
-            case HIGH -> GGConsole.error("From OpenGL (Source: " + realSource + ", type: " + realType + "): " + msg);
-            case MEDIUM, LOW -> GGConsole.warn("From OpenGL (Source: " + realSource + ", type: " + realType + "): " + msg);
-            case OTHER -> GGConsole.log("From OpenGL (Source: " + realSource + ", type: " + realType + "): " + msg);
+            case HIGH -> GGConsole.error("From OpenGL: " + msg);
+            case MEDIUM, LOW -> GGConsole.warn("From OpenGL: " + msg);
+            case OTHER -> GGConsole.log("From OpenGL: " + msg);
         }
     }
 
