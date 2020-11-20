@@ -13,7 +13,7 @@ plugins {
 
 
 group 'com.opengg'
-ext.engineVersion = '0.0.4'
+ext.engineVersion = '0.0.4-SNAPSHOT'
 
 configure(subprojects.findAll {it.name != 'modules'}) {
     apply plugin: 'java'
