@@ -80,7 +80,7 @@ public class FreeFlyComponent extends ControlledComponent implements Actionable{
                     control.y -= 1;
                     break;
                 case "fast":
-                    speed = 12;
+                    speed = 50;
                     break;
                 case "lookleft":
                     //controlrot.y += 1;
