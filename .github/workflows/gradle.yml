@@ -20,5 +20,13 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 15
-    - name: Build with Gradle
-      run: ./gradlew build
+    - name: Deploy base to repository
+      run: ./gradlew  :modules:base:publish
+    - name: Deploy math to repository
+      run: ./gradlew  :modules:math:publish
+    - name: Deploy console to repository
+      run: ./gradlew  :modules:console:publish
+    - name: Deploy system to repository
+      run: ./gradlew  :modules:system:publish
+    - name: Deploy core to repository
+      run: ./gradlew  :modules:core:publish
