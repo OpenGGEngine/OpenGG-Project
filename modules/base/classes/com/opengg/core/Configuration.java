@@ -9,7 +9,6 @@ package com.opengg.core;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Properties;
 
 /**
@@ -17,22 +16,22 @@ import java.util.Properties;
  * @author Javier
  */
 public final class Configuration{
-    private static final Map<String,ConfigFile> settings = new HashMap<>();
+    private static final Map<String, ConfigFile> files = new HashMap<>();
 
     public static void load(File file) throws IOException{
-        settings.put(file.getName(), new ConfigFile(file));
+        files.put(file.getName(), new ConfigFile(file));
     }
 
     public static void addConfigFile(ConfigFile file){
-        settings.put(file.getName(),file);
+        files.put(file.getName(),file);
     }
     
     public static ConfigFile getConfigFile(String name){
-        return settings.get(name);
+        return files.get(name);
     }
     
     public static String get(String key){
-        return settings.values().stream()
+        return files.values().stream()
                 .filter(k -> k.getAllSettings().containsKey(key))
                 .map(k -> k.getConfig(key))
                 .findFirst()
@@ -40,7 +39,7 @@ public final class Configuration{
     }
 
     public static boolean set(String key, String val){
-        var count = settings.values().stream()
+        var count = files.values().stream()
                 .filter(maps -> maps.getAllSettings().containsKey(key))
                 .peek(maps -> maps.writeConfig(key, val))
                 .count();
