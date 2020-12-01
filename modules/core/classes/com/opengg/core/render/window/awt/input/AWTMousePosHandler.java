@@ -41,8 +41,8 @@ public class AWTMousePosHandler implements MousePositionHandler, MouseMotionList
     @Override
     public void mouseMoved(MouseEvent e) {
         if(!mouseLocked){
-            x = e.getX();
-            y = e.getY();
+         //   x = e.getX();
+         //   y = e.getY();
         }
     }
 

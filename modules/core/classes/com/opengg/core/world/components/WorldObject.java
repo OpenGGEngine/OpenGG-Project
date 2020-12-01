@@ -18,6 +18,11 @@ public class WorldObject extends Component{
         super();
     }
 
+    public WorldObject(String name) {
+        super();
+        this.setName(name);
+    }
+
     @Override
     public void serialize(GGOutputStream out) throws IOException{
         super.serialize(out);
