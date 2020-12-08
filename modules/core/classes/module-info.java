@@ -86,4 +86,5 @@ module com.opengg.core {
     exports com.opengg.core.physics.mechanics;
     exports com.opengg.core.gui.layout;
     exports com.opengg.core.render.window.awt.window;
+    exports com.opengg.core.render.internal.opengl;
 }

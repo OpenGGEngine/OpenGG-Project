@@ -33,10 +33,11 @@ public class OpenGLVertexArrayObject implements VertexArrayObject {
             for(var attrib : binding.attributes()){
                 int bytes = switch (attrib.type()){
                     case FLOAT, FLOAT4, FLOAT3, FLOAT2, INT -> 4;
-                    case BYTE -> 1;
+                    case BYTE, UNSIGNED_BYTE -> 1;
                 };
                 vao.enableAttribute(ShaderController.getVertexAttributeIndex(attrib.name()));
-                vao.setAttributeFormat(ShaderController.getVertexAttributeIndex(attrib.name()), attrib.size()/bytes, glFormatFromType(attrib.type()), false, attrib.offset());
+                vao.setAttributeFormat(ShaderController.getVertexAttributeIndex(attrib.name()), attrib.size()/bytes, glFormatFromType(attrib.type()),
+                        attrib.type() == VertexArrayBinding.VertexArrayAttribute.Type.BYTE, attrib.offset());
                 vao.setAttributeBinding(ShaderController.getVertexAttributeIndex(attrib.name()), binding.bindingIndex());
             }
             vao.setBindingDivisor(binding.bindingIndex(), binding.divisor());
@@ -69,6 +70,7 @@ public class OpenGLVertexArrayObject implements VertexArrayObject {
     private static int glFormatFromType(VertexArrayBinding.VertexArrayAttribute.Type type){
         return switch (type){
             case FLOAT, FLOAT4, FLOAT3, FLOAT2 -> GL_FLOAT;
+            case UNSIGNED_BYTE -> GL_UNSIGNED_BYTE;
             case INT -> GL_INT;
             case BYTE -> GL_BYTE;
         };
