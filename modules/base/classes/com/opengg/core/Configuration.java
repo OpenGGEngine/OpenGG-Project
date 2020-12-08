@@ -65,7 +65,7 @@ public final class Configuration{
         }
     }
     
-    public static void writeConfig(ConfigFile file) throws IOException {
+    public static void writeFile(ConfigFile file) throws IOException {
         Properties prop = new Properties();
         file.getAllSettings().forEach(prop::put);
         FileOutputStream fos = new FileOutputStream("config" + File.separator + file.getName());

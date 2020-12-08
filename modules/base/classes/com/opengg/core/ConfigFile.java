@@ -27,7 +27,7 @@ public class ConfigFile {
         properties.load(new FileInputStream(file));
 
         this.name = file.getName();
-        contents = new HashMap<>(Map.ofEntries(properties.entrySet().toArray(new Map.Entry[1])));
+        contents = properties.isEmpty() ? new HashMap<>() : new HashMap<>(Map.ofEntries(properties.entrySet().toArray(new Map.Entry[1])));
     }
 
     public ConfigFile(String name, Map<String, String> contents){
