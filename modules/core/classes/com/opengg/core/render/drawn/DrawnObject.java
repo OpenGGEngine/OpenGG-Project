@@ -35,6 +35,7 @@ public abstract sealed class DrawnObject implements Renderable permits OpenGLDra
     protected int instanceCount = 1;
     protected int baseVertex = 0;
     protected int baseElement = 0;
+    protected boolean enforce = true;
 
 
     public static DrawnObject create(FloatBuffer... vertices) {
@@ -179,6 +180,13 @@ public abstract sealed class DrawnObject implements Renderable permits OpenGLDra
         this.instanceCount = instanceCount;
     }
 
+    public void setFormat(VertexArrayFormat format) {
+        this.format = format;
+    }
+
+    public void shouldEnforceFormat(boolean enforce){
+        this.enforce = enforce;
+    }
 
     public enum DrawType {
         TRIANGLES, TRIANGLE_STRIP, TRIANGLE_FAN, POINTS, LINES, LINE_STRIP

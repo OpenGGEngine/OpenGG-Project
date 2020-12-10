@@ -210,7 +210,7 @@ public class ShaderController {
 
 
     public static int getVertexAttributeIndex(String loc) {
-        return attributeLocations.get(loc);
+        return attributeLocations.getOrDefault(loc, 15);
     }
 
     public static boolean isAlready(UniformPosition position, UniformContainer val) {
@@ -304,7 +304,6 @@ public class ShaderController {
     public static void setUniform(String name, UniformContainer val) {
         //if(val.toString().contains("null")) throw new NullPointerException("Shader parameter is null.");
         var pos = uniformDescriptorPositions.get(name);
-
         if (isAlready(pos, val)) return;
         switch (RenderEngine.getRendererType()) {
             case OPENGL -> currentUniforms.put(pos, val);
