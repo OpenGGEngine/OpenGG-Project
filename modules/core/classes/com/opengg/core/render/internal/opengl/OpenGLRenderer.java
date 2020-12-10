@@ -209,7 +209,6 @@ public class OpenGLRenderer implements Renderer {
             glEnable(GL_CULL_FACE);
         else
             glDisable(GL_CULL_FACE);
-
     }
 
     /**

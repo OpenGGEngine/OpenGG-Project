@@ -27,7 +27,7 @@ public final class OpenGLDrawnObject extends DrawnObject {
     public void render(){
         if(RenderEngine.validateInitialization()) return;
         ShaderController.uploadModifiedDescriptorSets();
-        OpenGLRenderer.getOpenGLRenderer().setCurrentVAOFormat(format);
+        if(enforce) OpenGLRenderer.getOpenGLRenderer().setCurrentVAOFormat(format);
         OpenGLRenderer.getOpenGLRenderer().getCurrentVAO().applyVertexBuffers(vertexBufferObjects);
         OpenGLRenderer.getOpenGLRenderer().getCurrentVAO().applyElementBuffer(indexBuffer);
         PerformanceManager.registerDrawCall();

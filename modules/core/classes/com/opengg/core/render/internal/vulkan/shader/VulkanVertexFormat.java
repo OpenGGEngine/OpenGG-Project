@@ -77,7 +77,11 @@ public class VulkanVertexFormat implements VertexArrayObject {
 
     private int getVulkanFormatFromType(VertexArrayBinding.VertexArrayAttribute.Type type){
         return switch (type) {
-            case BYTE -> VK_FORMAT_R8_UINT;
+            case HALF_FLOAT -> VK_FORMAT_R16_SFLOAT;
+            case HALF_FLOAT2 -> VK_FORMAT_R16G16_SFLOAT;
+            case HALF_FLOAT4 -> VK_FORMAT_R16G16B16A16_SFLOAT;
+            case BYTE -> VK_FORMAT_R8_SINT;
+            case UNSIGNED_BYTE -> VK_FORMAT_R8_UINT;
             case INT -> VK_FORMAT_R32_UINT;
             case FLOAT -> VK_FORMAT_R32_SFLOAT;
             case FLOAT2 -> VK_FORMAT_R32G32_SFLOAT;
