@@ -15,10 +15,7 @@ import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.shader.ShaderProgram;
 
 import java.nio.ByteBuffer;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.lwjgl.opengl.GL11.GL_TRUE;
 import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
@@ -35,22 +32,15 @@ public class OpenGLShaderProgram implements ShaderProgram{
     private final String name;
     private final NativeOpenGLShaderProgram program;
     private final ShaderType type;
-    private List<ShaderController.Uniform> uniforms;
-    public Set<ShaderController.UniformPosition> uniformSet;
+    public Map<String, Integer> uniformSet;
     private String source;
-    
-    private final HashMap<String, Integer> ulocs = new HashMap<>();
 
-    public OpenGLShaderProgram(ShaderType type, String source, String name, List<ShaderController.Uniform> uniforms){
+    public OpenGLShaderProgram(ShaderType type, String source, String name){
         this.name = name;
         this.type = type;
         this.source = source;
-        this.uniforms = uniforms;
         program = new NativeOpenGLShaderProgram(getInternalType(type), source);
-        uniformSet = new HashSet<>();
-        for(ShaderController.Uniform u:uniforms){
-            uniformSet.add(u.position());
-        }
+        uniformSet = program.getAllUniforms();
         this.checkStatus();
     }
 
@@ -71,7 +61,6 @@ public class OpenGLShaderProgram implements ShaderProgram{
         };
     }
 
-    @Override
     public void bindFragmentDataLocation(int number, CharSequence name) {
         program.bindFragmentDataLocation(number, name);
     }
@@ -81,7 +70,6 @@ public class OpenGLShaderProgram implements ShaderProgram{
      *
      * @param location Location of the vertex attribute
      */
-    @Override
     public void enableVertexAttribute(int location) {
         program.enableVertexAttribute(location);
     }
@@ -91,7 +79,6 @@ public class OpenGLShaderProgram implements ShaderProgram{
      *
      * @param location Location of the vertex attribute
      */
-    @Override
     public void disableVertexAttribute(int location) {
         program.disableVertexAttribute(location);
     }
@@ -102,9 +89,8 @@ public class OpenGLShaderProgram implements ShaderProgram{
      * @param location Uniform location
      * @param value Value to set
      */
-    @Override
-    public void setUniform(int location, int value) {
-        program.setUniform(location, value);
+    public void setUniform(String location, int value) {
+        program.setUniform(uniformSet.get(location), value);
     }
     
     /**
@@ -113,9 +99,8 @@ public class OpenGLShaderProgram implements ShaderProgram{
      * @param location Uniform location
      * @param value Value to set
      */
-    @Override
-    public void setUniform(int location, boolean value) {
-        program.setUniform(location, value);
+    public void setUniform(String location, boolean value) {
+        program.setUniform(uniformSet.get(location), value);
     }
 
     /**
@@ -124,9 +109,8 @@ public class OpenGLShaderProgram implements ShaderProgram{
      * @param location Uniform location
      * @param value Value to set
      */
-    @Override
-    public void setUniform(int location, float value) {
-        program.setUniform(location, value);
+    public void setUniform(String location, float value) {
+        program.setUniform(uniformSet.get(location), value);
     }
     
     /**
@@ -135,9 +119,8 @@ public class OpenGLShaderProgram implements ShaderProgram{
      * @param location Uniform location
      * @param value Value to set
      */
-    @Override
-    public void setUniform(int location, Vector2f value) {
-        program.setUniform(location, value);
+    public void setUniform(String location, Vector2f value) {
+        program.setUniform(uniformSet.get(location), value);
     }
 
     /**
@@ -146,29 +129,29 @@ public class OpenGLShaderProgram implements ShaderProgram{
      * @param location Uniform location
      * @param value Value to set
      */
-    @Override
-    public void setUniform(int location, Vector3f value) {
-        program.setUniform(location, value);
+    public void setUniform(String location, Vector3f value) {
+        program.setUniform(uniformSet.get(location), value);
     }
 
-    @Override
-    public void setUniform(int location, Matrix4f value) {
-        program.setUniform(location, value);
+    public void setUniform(String location, Matrix4f value) {
+        program.setUniform(uniformSet.get(location), value);
     }
     
-    @Override
-    public void setUniform(int location, Matrix4f[] matrices) {
-        program.setUniform(location, matrices);
+    public void setUniform(String location, Matrix4f[] matrices) {
+        program.setUniform(uniformSet.get(location), matrices);
     }
 
-    @Override
     public void setUniformBlockIndex(int bind, String name){
         program.setUniformBlockIndex(bind, name);
     }
 
+    public Map<String, Integer> getUniformSet() {
+        return uniformSet;
+    }
+
     @Override
     public List<ShaderController.Uniform> getUniforms() {
-        return uniforms;
+        return null;
     }
 
     @Override

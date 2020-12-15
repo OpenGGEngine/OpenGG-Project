@@ -23,7 +23,6 @@ public class NativeOpenGLShaderPipeline{
         if(RenderEngine.validateInitialization()) id = -1;
 
         else id = glCreateProgramPipelines();
-        glUseProgram(0);
 
         if(!glIsProgramPipeline(id)){
             throw new ShaderException("Failed to generate program pipeline ID!");
@@ -38,11 +37,6 @@ public class NativeOpenGLShaderPipeline{
     public void bind(){
         if(RenderEngine.validateInitialization()) return;
         glBindProgramPipeline(id);
-    }
-
-    public void unbind(){
-        if(RenderEngine.validateInitialization()) return;
-        glBindProgramPipeline(0);
     }
 
     public void validate(){

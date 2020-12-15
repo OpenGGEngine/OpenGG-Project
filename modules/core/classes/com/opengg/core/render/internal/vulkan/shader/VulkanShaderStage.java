@@ -102,61 +102,6 @@ public class VulkanShaderStage implements ShaderProgram {
     }
 
     @Override
-    public void bindFragmentDataLocation(int number, CharSequence name) {
-
-    }
-
-    @Override
-    public void enableVertexAttribute(int location) {
-
-    }
-
-    @Override
-    public void disableVertexAttribute(int location) {
-
-    }
-
-    @Override
-    public void setUniform(int location, int value) {
-
-    }
-
-    @Override
-    public void setUniform(int location, boolean value) {
-
-    }
-
-    @Override
-    public void setUniform(int location, float value) {
-
-    }
-
-    @Override
-    public void setUniform(int location, Vector2f value) {
-
-    }
-
-    @Override
-    public void setUniform(int location, Vector3f value) {
-
-    }
-
-    @Override
-    public void setUniform(int location, Matrix4f value) {
-
-    }
-
-    @Override
-    public void setUniform(int location, Matrix4f[] matrices) {
-
-    }
-
-    @Override
-    public void setUniformBlockIndex(int bind, String name) {
-
-    }
-
-    @Override
     public List<ShaderController.Uniform> getUniforms() {
         return uniforms;
     }

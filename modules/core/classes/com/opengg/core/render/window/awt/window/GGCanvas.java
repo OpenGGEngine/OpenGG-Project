@@ -98,8 +98,8 @@ public class GGCanvas implements Window {
 
     @Override
     public void endFrame() {
-        canvas.afterRender();
         canvas.swapBuffers();
+        canvas.afterRender();
         canvas.makeContextCurrent();
         mousePosCallback.updateLockMouse();
     }

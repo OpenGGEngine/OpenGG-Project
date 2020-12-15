@@ -78,12 +78,11 @@ public final class OpenGG{
     private static void initializeClient(WindowOptions windowOptions){
         WindowController.setup(windowOptions);
 
-        //SystemInfo.queryRendererInfo("OpenGL");
-        GGConsole.log("OpenGL instantiation confirmed");
+        SystemInfo.queryRendererInfo("OpenGL");
+        GGConsole.log("Graphics backend created");
         GGConsole.log("Running renderer on " + SystemInfo.get("Graphics Renderer") + " provided by " + SystemInfo.get("Graphics Vendor"));
 
         RenderEngine.initialize(windowOptions);
-        //GGConsole.log("Using OpenGL context version " + ((OpenGLRenderer) RenderEngine.renderer).getGLVersion());
 
         GGGameConsole.initialize();
         GGDebugRenderer.initialize();

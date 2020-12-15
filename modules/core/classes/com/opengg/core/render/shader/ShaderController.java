@@ -53,16 +53,17 @@ public class ShaderController {
     private static final Map<String, Integer> attributeLocations = new HashMap<>();
 
     private static final Map<String, UniformPosition> uniformDescriptorPositions = new HashMap<>();
-    private static final Map<UniformPosition, UniformContainer> currentUniforms = new HashMap<>();
-    private static final List<Integer> editedSets = new ArrayList<>();
+    private static final Map<String, UniformContainer> currentUniforms = new HashMap<>();
+    private static final List<String> editedUniforms = new ArrayList<>();
 
-    private static final Map<String, Integer> openGlUniformMapping = new HashMap<>();
+
+    private static final Map<String, Integer> openglTextureBindings = new HashMap<>();
 
     private static final Map<String, Integer> setMappings = new HashMap<>();
     private static final Map<String, Integer> bindingMappings = new HashMap<>();
     private static final Map<DescriptorPosition, ByteBuffer> currentDescriptorBindingValue = new HashMap<>();
     private static final Map<DescriptorPosition, Texture> currentDescriptorBindingImageValue = new HashMap<>();
-
+    private static final List<Integer> editedSets = new ArrayList<>();
 
     private static final Set<String> searchedUniforms = new HashSet<>();
 
@@ -117,8 +118,8 @@ public class ShaderController {
         // use("anim2.vert", "object.frag");
         // saveCurrentConfiguration("animation2");
 
-        //use("tangent.vert", "tangent.frag");
-        //saveCurrentConfiguration("tangent");
+        use("tangent.vert", "tangent.frag");
+        saveCurrentConfiguration("tangent");
 
         use("instance.vert", "object.frag");
         saveCurrentConfiguration("instance");
@@ -162,8 +163,8 @@ public class ShaderController {
         use("object.vert", "color_alpha.frag");
         saveCurrentConfiguration("ttf");
 
-        //    use("object.vert", "cuboid_scaling.frag");
-        //    saveCurrentConfiguration("cuboid");
+        //use("object.vert", "cuboid_scaling.frag");
+       // saveCurrentConfiguration("cuboid");
 
         use("object.vert", "gui.frag");
         saveCurrentConfiguration("gui");
@@ -213,7 +214,7 @@ public class ShaderController {
         return attributeLocations.getOrDefault(loc, 15);
     }
 
-    public static boolean isAlready(UniformPosition position, UniformContainer val) {
+    public static boolean isAlready(String position, UniformContainer val) {
         if (currentUniforms.get(position) != null && currentUniforms.get(position).equals(val)) return true;
         currentUniforms.put(position, val);
         return false;
@@ -302,12 +303,14 @@ public class ShaderController {
     }
 
     public static void setUniform(String name, UniformContainer val) {
-        //if(val.toString().contains("null")) throw new NullPointerException("Shader parameter is null.");
-        var pos = uniformDescriptorPositions.get(name);
-        if (isAlready(pos, val)) return;
+        if (isAlready(name, val)) return;
         switch (RenderEngine.getRendererType()) {
-            case OPENGL -> currentUniforms.put(pos, val);
+            case OPENGL -> {
+                currentUniforms.put(name, val);
+                if(!editedUniforms.contains(name)) editedUniforms.add(name);
+            }
             case VULKAN -> {
+                var pos = uniformDescriptorPositions.get(name);
                 if (val instanceof UniformContainer.TextureContainer textureContainer) {
                     currentDescriptorBindingImageValue.put(pos.descriptor, textureContainer.contents());
                 } else {
@@ -320,13 +323,12 @@ public class ShaderController {
                         buffer.position(pos.offset).put(val.getBuffer());
                         buffer.rewind();
                         currentDescriptorBindingValue.put(pos.descriptor, buffer);
-
                     }
                 }
+                if (!editedSets.contains(pos.descriptor.set)) editedSets.add(pos.descriptor.set);
             }
         }
 
-        if (!editedSets.contains(pos.descriptor.set)) editedSets.add(pos.descriptor.set);
     }
 
     /**
@@ -358,7 +360,7 @@ public class ShaderController {
      */
     public static void setUniformBlockLocation(int id, String name) {
         for (ShaderProgram p : programs.values()) {
-            p.setUniformBlockIndex(id, name);
+            ((OpenGLShaderProgram)p).setUniformBlockIndex(id, name);
         }
     }
 
@@ -386,37 +388,38 @@ public class ShaderController {
     public static void uploadModifiedDescriptorSets() {
         switch (RenderEngine.getRendererType()) {
             case OPENGL -> {
-                for (var currentUniform : currentUniforms.entrySet()) {
-                    if (editedSets.contains(currentUniform.getKey().descriptor.set)) {
-                        var uniform = currentUniform.getValue();
+                for (var editedUniform : editedUniforms) {
+                    if (currentUniforms.containsKey(editedUniform)) {
+                        var uniform = currentUniforms.get(editedUniform);
                         var shaderList = new ArrayList<>(List.of(currentPipeline.getShader(ShaderType.VERTEX), currentPipeline.getShader(ShaderType.FRAGMENT)));
                         if (currentPipeline.getShader(ShaderType.GEOMETRY) != null)
                             shaderList.add(currentPipeline.getShader(ShaderType.GEOMETRY));
 
                         for (var shader : shaderList) {
-                            if (((OpenGLShaderProgram) shader).uniformSet.contains(currentUniform.getKey())) {
+                            var glShader = (OpenGLShaderProgram) shader;
+                            if (glShader.uniformSet.containsKey(editedUniform)) {
                                 if (uniform instanceof UniformContainer.IntContainer container) {
-                                    shader.setUniform(currentUniform.getKey().descriptor.set, container.contents());
+                                    glShader.setUniform(editedUniform, container.contents());
                                 } else if (uniform instanceof UniformContainer.FloatContainer container) {
-                                    shader.setUniform(currentUniform.getKey().descriptor.set, container.contents());
+                                    glShader.setUniform(editedUniform, container.contents());
                                 } else if (uniform instanceof UniformContainer.DoubleContainer container) {
-                                    //currentPipeline.getShader(ShaderType.VERTEX).setUniform(currentUniform.getKey().descriptor.set, container.contents());
+                                    //currentPipeline.getShader(ShaderType.VERTEX).setUniform(editedUniform.descriptor.set, container.contents());
                                 } else if (uniform instanceof UniformContainer.Vector2fContainer container) {
-                                    shader.setUniform(currentUniform.getKey().descriptor.set, container.contents());
+                                    glShader.setUniform(editedUniform, container.contents());
                                 } else if (uniform instanceof UniformContainer.Vector3fContainer container) {
-                                    shader.setUniform(currentUniform.getKey().descriptor.set, container.contents());
+                                    glShader.setUniform(editedUniform, container.contents());
                                 } else if (uniform instanceof UniformContainer.Vector4fContainer container) {
-                                    //currentPipeline.getShader(ShaderType.VERTEX).setUniform(currentUniform.getKey().descriptor.set, container.contents());
+                                    //currentPipeline.getShader(ShaderType.VERTEX).setUniform(editedUniform.descriptor.set, container.contents());
                                 } else if (uniform instanceof UniformContainer.Vector2iContainer container) {
-                                    //currentPipeline.getShader(ShaderType.VERTEX).setUniform(currentUniform.getKey().descriptor.set, container.contents());
+                                    //currentPipeline.getShader(ShaderType.VERTEX).setUniform(editedUniform.descriptor.set, container.contents());
                                 } else if (uniform instanceof UniformContainer.Vector3iContainer container) {
-                                    //currentPipeline.getShader(ShaderType.VERTEX).setUniform(currentUniform.getKey().descriptor.set, container.contents());
+                                    //currentPipeline.getShader(ShaderType.VERTEX).setUniform(editedUniform.descriptor.set, container.contents());
                                 } else if (uniform instanceof UniformContainer.Matrix3fContainer container) {
-                                    //currentPipeline.getShader(ShaderType.VERTEX).setUniform(currentUniform.getKey().descriptor.set, container.contents());
+                                    //currentPipeline.getShader(ShaderType.VERTEX).setUniform(editedUniform.descriptor.set, container.contents());
                                 } else if (uniform instanceof UniformContainer.Matrix4fContainer container) {
-                                    shader.setUniform(currentUniform.getKey().descriptor.set, container.contents());
+                                    glShader.setUniform(editedUniform, container.contents());
                                 } else if (uniform instanceof UniformContainer.TextureContainer container) {
-                                    ((OpenGLTexture) container.contents()).useAtLocation(currentUniform.getKey().descriptor.set);
+                                    ((OpenGLTexture) container.contents()).useAtLocation(openglTextureBindings.get(editedUniform));
                                 }
                             }
                         }
@@ -432,8 +435,8 @@ public class ShaderController {
                 }
             }
         }
-        //System.out.println(GL11.glGetError());
         editedSets.clear();
+        editedUniforms.clear();
     }
 
     private static String getConfigurationID(ShaderProgram vert, ShaderProgram tesc, ShaderProgram tese, ShaderProgram geom, ShaderProgram frag) {
@@ -529,10 +532,11 @@ public class ShaderController {
         }
 
         editedSets.clear();
+        editedUniforms.clear();
         switch (RenderEngine.getRendererType()) {
             case OPENGL -> {
                 pipeline.use();
-                editedSets.addAll(((OpenGLShaderPipeline) pipeline).getAllUsedUniforms().stream().map(u -> u.position.descriptor().set).collect(Collectors.toList()));
+                editedUniforms.addAll(((OpenGLShaderPipeline) pipeline).getAllUsedUniforms());
             }
             case VULKAN -> {
                 var fullPipeline = VulkanPipelineCache.getPipeline(
@@ -644,7 +648,6 @@ public class ShaderController {
 
     private static void preprocessOpenGLShader(ShaderFile file, List<Parser.Declaration> declarationUniforms, List<Parser.Interface> interfaceUniforms) {
         List<Parser.Declaration> allNewUniforms = new ArrayList<>();
-        List<Uniform> processedUniforms = new ArrayList<>();
         for (var interfacee : interfaceUniforms) {
             if (interfacee.modifiers.modifiers.stream().anyMatch(m -> m.value.equals("unwrap"))) {
                 var newUniforms = interfacee.declarations.expressions.stream()
@@ -665,10 +668,10 @@ public class ShaderController {
                         .expressions.removeIf(mod -> mod instanceof Parser.BinaryOp op &&
                         (op.left instanceof Parser.Identifier id && (id.value.equals("set") || id.value.equals("binding"))));
 
-                if (!openGlUniformMapping.containsKey(interfacee.name.value))
-                    openGlUniformMapping.put(interfacee.name.value, uniformCounter++);
+                if (!openglTextureBindings.containsKey(interfacee.name.value))
+                    openglTextureBindings.put(interfacee.name.value, uniformCounter++);
 
-                var newUnit = openGlUniformMapping.get(interfacee.name.value);
+                var newUnit = openglTextureBindings.get(interfacee.name.value);
 
                 var bindingOp = new Parser.BinaryOp(new Parser.Identifier("binding"), new Parser.IntegerLiteral(newUnit), "=");
                 //Assign buffer unit
@@ -685,29 +688,19 @@ public class ShaderController {
         allUniforms.addAll(declarationUniforms);
 
         for (var uniform : allUniforms) {
+            if(!uniform.type.value.contains("sampler")) continue;
             uniform.modifiers.modifiers.stream().filter(i -> i instanceof Parser.Layout).map(i -> (Parser.Layout) i).findFirst()
                     .ifPresent(l -> uniform.modifiers.modifiers.remove(l));
 
-            if (!openGlUniformMapping.containsKey(uniform.name.value))
-                openGlUniformMapping.put(uniform.name.value, uniformCounter++);
+            if (!openglTextureBindings.containsKey(uniform.name.value))
+                openglTextureBindings.put(uniform.name.value, uniformCounter++);
 
-            var newUnit = openGlUniformMapping.get(uniform.name.value);
+            var newUnit = openglTextureBindings.get(uniform.name.value);
 
-            Parser.BinaryOp bindingOp;
-
-            if (uniform.type.value.contains("sampler")) {
-                bindingOp = new Parser.BinaryOp(new Parser.Identifier("binding"), new Parser.IntegerLiteral(newUnit), "=");
-            } else {
-                bindingOp = new Parser.BinaryOp(new Parser.Identifier("location"), new Parser.IntegerLiteral(newUnit), "=");
-            }
+            Parser.BinaryOp bindingOp = new Parser.BinaryOp(new Parser.Identifier("binding"), new Parser.IntegerLiteral(newUnit), "=");
             //Assign location
             uniform.modifiers.modifiers.add(new Parser.Layout(List.of(bindingOp)));
-            uniformDescriptorPositions.put(uniform.name.value, new UniformPosition(new DescriptorPosition(newUnit, 0), 0));
-            processedUniforms.add(new Uniform(uniform.name.value, new UniformPosition(new DescriptorPosition(newUnit, 0), 0),
-                    uniform.type.value.contains("sampler") ? COMBINED_TEXTURE_SAMPLER : UNIFORM_BUFFER));
         }
-
-        file.setUniforms(processedUniforms);
     }
 
     private static void preprocessVulkanShader(ShaderFile file, List<Parser.Declaration> declarationUniforms, List<Parser.Interface> interfaceUniforms) {

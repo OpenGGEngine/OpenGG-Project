@@ -1,4 +1,4 @@
-@version 4.2
+@version 4.5
 @glsl define MAX_JOINTS 100
 @include stdvert.ggsl
 
