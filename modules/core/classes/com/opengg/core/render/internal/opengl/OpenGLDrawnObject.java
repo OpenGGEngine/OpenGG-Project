@@ -3,7 +3,7 @@ package com.opengg.core.render.internal.opengl;
 import com.opengg.core.engine.PerformanceManager;
 import com.opengg.core.render.GraphicsBuffer;
 import com.opengg.core.render.RenderEngine;
-import com.opengg.core.render.drawn.DrawnObject;
+import com.opengg.core.render.objects.DrawnObject;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.shader.VertexArrayFormat;
 

@@ -14,6 +14,7 @@ import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.Renderable;
+import com.opengg.core.render.SceneRenderUnit;
 import com.opengg.core.render.objects.TextureRenderable;
 import com.opengg.core.render.objects.ObjectCreator;
 import com.opengg.core.render.shader.CommonUniforms;
@@ -34,14 +35,14 @@ public class WaterComponent extends RenderComponent{
     private float textureScale;
     private float size;
     private TextureData texture;
-    
-    public WaterComponent(){}
-    
+
     public WaterComponent(TextureData tex, float size){
         this(tex, 0.1f, 100, size);
     }
     
     public WaterComponent(TextureData texture, float movespeed, float textureScale, float size){
+        super(new SceneRenderUnit.UnitProperties().shaderPipeline("water"));
+
         OpenGG.asyncExec(() -> {
             Renderable drawn = ObjectCreator.createSquare(new Vector2f(-size,-size), new Vector2f(size,size), 0);
             setRenderable(new TextureRenderable(drawn, Texture.get2DSRGBTexture(texture)));
@@ -52,7 +53,6 @@ public class WaterComponent extends RenderComponent{
         this.textureScale = textureScale;
         this.movespeed = movespeed;
         this.setRotationOffset(Quaternionf.createXYZ(new Vector3f(90,0,0)));
-        this.setShader("water");
     }
     
     @Override

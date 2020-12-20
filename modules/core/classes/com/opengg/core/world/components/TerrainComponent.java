@@ -10,6 +10,7 @@ import com.opengg.core.engine.OpenGG;
 import com.opengg.core.engine.Resource;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.physics.RigidBody;
+import com.opengg.core.render.SceneRenderUnit;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.texture.TextureData;
@@ -36,7 +37,7 @@ public class TerrainComponent extends RenderComponent{
             //TextureManager.getDefault(),TextureManager.getDefault(),TextureManager.getDefault());
     
     public TerrainComponent(){
-        this.setShader("terrain");
+        super(new SceneRenderUnit.UnitProperties().shaderPipeline("shader"));
     }
     
     public TerrainComponent(Terrain terrain){

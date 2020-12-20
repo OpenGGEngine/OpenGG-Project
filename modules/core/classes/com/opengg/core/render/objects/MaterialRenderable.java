@@ -8,7 +8,6 @@ package com.opengg.core.render.objects;
 
 import com.opengg.core.model.Material;
 import com.opengg.core.render.Renderable;
-import com.opengg.core.render.drawn.DrawnObject;
 import com.opengg.core.render.shader.CommonUniforms;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.shader.VertexArrayFormat;

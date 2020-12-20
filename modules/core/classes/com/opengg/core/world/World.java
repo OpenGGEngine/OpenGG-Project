@@ -14,7 +14,6 @@ import com.opengg.core.physics.PhysicsEngine;
 import com.opengg.core.physics.PhysicsSystem;
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.render.RenderEnvironment;
-import com.opengg.core.render.RenderGroup;
 import com.opengg.core.exceptions.InvalidParentException;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
@@ -59,46 +58,6 @@ public class World extends Component implements Resource {
     public World(String name){
         this();
         setName(name);
-    }
-
-    /**
-     * Adds a {@link com.opengg.core.world.components.RenderComponent} to the World's {@link RenderGroup} depending on certain values,
-     * and creates a new group if none that fit the components traits are found
-     * @param renderable
-     */
-    public void addRenderable(RenderComponent renderable){
-        if(GGInfo.isServer()) return;
-        boolean found = false;
-        for(RenderGroup group : environment.getGroups()){
-            if (group.isTransparent() == renderable.isTransparent() && group.getPipeline().equals(renderable.getShader()) && group.getFormat().equals(renderable.getFormat())) {
-                if (!group.getList().contains(renderable)) {
-                    group.add(renderable);
-                    found = true;
-                    break;
-                }
-            }
-        }
-
-        if (!found) {
-            RenderGroup group = new RenderGroup("world " + getGUID() + " " + renderable.getShader() + " "
-                    + renderable.getFormat().toString() + " group: " + (environment.getGroups().size() + 1),
-                    renderable.getFormat());
-            group.add(renderable);
-            group.setTransparent(renderable.isTransparent());
-            group.setPipeline(renderable.getShader());
-            group.setEnabled(true);
-            environment.addGroup(group);
-        }
-    }
-
-    /**
-     * Removes a {@link com.opengg.core.world.components.RenderComponent} from the World's {@link RenderGroup}s
-     * @param r RenderComponent to be removed
-     */
-    public void removeRenderable(Renderable r){
-        for(RenderGroup rg : environment.getGroups()){
-            rg.remove(r);
-        }
     }
 
     /**

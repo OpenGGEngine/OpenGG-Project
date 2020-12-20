@@ -7,6 +7,7 @@ package com.opengg.core.world.components;
 
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.math.Matrix4f;
+import com.opengg.core.render.SceneRenderUnit;
 import com.opengg.core.render.Renderable;
 import com.opengg.core.render.shader.*;
 import com.opengg.core.util.GGInputStream;
@@ -19,28 +20,27 @@ import java.util.ArrayList;
  *
  * @author Javier
  */
-public class RenderComponent extends Component implements com.opengg.core.render.Renderable {
+public class RenderComponent extends RenderGroupComponent implements Renderable {
     private Renderable renderable;
-    private String shader;
-    private VertexArrayFormat format;
-    private boolean transparent;
+    SceneRenderUnit.UnitProperties unitProperties;
     private float renderDistance = 0f;
     private Matrix4f override;
-    
-    public RenderComponent(){
-        super();
-        format = RenderEngine.getDefaultFormat();
-        shader = "object";
+
+    public RenderComponent(SceneRenderUnit.UnitProperties unitProperties){
+        this(null, unitProperties);
     }
 
-    public RenderComponent(Renderable renderable){
-        this();
+    public RenderComponent(Renderable renderable, SceneRenderUnit.UnitProperties unitProperties){
+        this.attachRenderUnit(this, unitProperties);
         this.renderable = renderable;
+        this.unitProperties = unitProperties;
     }
 
     @Override
     public void render() {
         if(isAllEnabled() && renderable != null){
+            ShaderController.useConfiguration(unitProperties.shaderPipeline());
+
             if(override == null)
                 CommonUniforms.setPosRotScale(this.getPosition(), this.getRotation(), this.getScale());
             else
@@ -57,30 +57,19 @@ public class RenderComponent extends Component implements com.opengg.core.render
         this.override = mat;
     }
 
-    public String getShader() {
-        return shader;
-    }
-
     public RenderComponent setShader(String shader) {
-        this.shader = shader;
+        this.unitProperties = unitProperties.shaderPipeline(shader);
         return this;
-    }
-
-    public VertexArrayFormat getFormat() {
-        return format;
     }
 
     public RenderComponent setFormat(VertexArrayFormat format) {
-        this.format = format;
+        this.unitProperties = unitProperties.format(format);
         return this;
     }
-    
-    public boolean isTransparent() {
-        return transparent;
-    }
 
-    public void setTransparency(boolean trans) {
-        this.transparent = trans;
+    public RenderComponent setTransparency(boolean trans) {
+        this.unitProperties = unitProperties.transparency(trans);
+        return this;
     }
 
     public float getRenderDistance() {
@@ -91,8 +80,8 @@ public class RenderComponent extends Component implements com.opengg.core.render
         this.renderDistance = renderDistance;
     }
 
-    public void setRenderable(Renderable d){
-        this.renderable = d;
+    public void setRenderable(Renderable renderable){
+        this.renderable = renderable;
     }
     
     public Renderable getRenderable(){
@@ -100,24 +89,13 @@ public class RenderComponent extends Component implements com.opengg.core.render
     }
 
     @Override
-    public void finalizeComponent(){
-        if(this.getWorld() != null)
-            this.getWorld().removeRenderable(this);
-    }
-
-    @Override
-    public void onWorldChange(){
-        this.getWorld().addRenderable(this);
-    }
-
-    @Override
     public void serialize(GGOutputStream out) throws IOException{
         super.serialize(out);
-        out.write(shader);
-        out.write(transparent);
+        out.write(unitProperties.shaderPipeline());
+        out.write(unitProperties.transparency());
         out.write(renderDistance);
-        out.write(format.getBindings().size());
-        for(var binding : format.getBindings()){
+        out.write(unitProperties.format().getBindings().size());
+        for(var binding : unitProperties.format().getBindings()){
             out.write(binding.bindingIndex());
             out.write(binding.vertexSize());
             out.write(binding.divisor());
@@ -134,11 +112,11 @@ public class RenderComponent extends Component implements com.opengg.core.render
     @Override
     public void deserialize(GGInputStream in) throws IOException{
         super.deserialize(in);
-        shader = in.readString();
-        transparent = in.readBoolean();
+        unitProperties = unitProperties.shaderPipeline(in.readString());
+        unitProperties = unitProperties.transparency(in.readBoolean());
         renderDistance = in.readFloat();
 
-        format = new VertexArrayFormat(new ArrayList<>());
+        unitProperties = unitProperties.format(new VertexArrayFormat(new ArrayList<>()));
         int bindingCount = in.readInt();
         for(int i = 0; i < bindingCount; i++){
             var list = new ArrayList<VertexArrayBinding.VertexArrayAttribute>();
@@ -155,7 +133,7 @@ public class RenderComponent extends Component implements com.opengg.core.render
                 list.add(attrib);
             }
             var binding = new VertexArrayBinding(index, vertexSize, divisor, list);
-            format.addBinding(binding);
+            unitProperties.format().addBinding(binding);
         }
     }
 }

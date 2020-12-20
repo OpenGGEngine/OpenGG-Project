@@ -7,7 +7,7 @@ package com.opengg.core.world.structure;
 
 import com.opengg.core.exceptions.ClassInstantiationException;
 import com.opengg.core.render.RenderEngine;
-import com.opengg.core.render.RenderGroup;
+import com.opengg.core.render.SceneRenderUnit;
 import com.opengg.core.util.ClassUtil;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
@@ -24,7 +24,7 @@ import java.util.Optional;
  */
 public class WorldStructure {
     private final List<WorldGeometry> allGeometry = new ArrayList();
-    private final List<RenderGroup> renderGroups = new ArrayList<>();
+    private final List<SceneRenderUnit> renderGroups = new ArrayList<>();
     private final World parent;
 
     public WorldStructure(World parent){
@@ -51,24 +51,14 @@ public class WorldStructure {
     }
 
     public void remakeRenderGroups(){
-        if(renderGroups.isEmpty()){
-            renderGroups.add(new RenderGroup("world structure models", RenderEngine.getTangentVAOFormat(), "tangent"));
-            renderGroups.add(new RenderGroup("world structure cuboids", RenderEngine.getDefaultFormat(), "cuboid"));
-            renderGroups.forEach(r -> r.setEnabled(true));
-            renderGroups.forEach(parent.getRenderEnvironment()::addGroup);
-        }
-
-        for(var geom : allGeometry){
+        throw  new UnsupportedOperationException("Fix later");
+     /*   for(var geom : allGeometry){
             if(geom.getRenderable() == null) continue;
             switch (geom.getClass().getSimpleName()){
                 case "CuboidWorldGeometry" -> renderGroups.get(1).add(geom);
                 case "ModelWorldGeometry" -> renderGroups.get(0).add(geom);
             }
-        }
-    }
-
-    public List<RenderGroup> getRenderGroups() {
-        return renderGroups;
+        }*/
     }
 
     public World getParent() {

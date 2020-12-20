@@ -20,6 +20,8 @@ import static org.lwjgl.opengl.GL41.*;
  * @author Javier
  */
 public class OpenGLShaderPipeline implements com.opengg.core.render.shader.ShaderPipeline{
+    private List<String> usedUniforms;
+
     final private NativeOpenGLShaderPipeline nativepipeline;
     private final OpenGLShaderProgram vert;
     private final OpenGLShaderProgram frag;
@@ -49,9 +51,11 @@ public class OpenGLShaderPipeline implements com.opengg.core.render.shader.Shade
 
         nativepipeline.useProgramStages((OpenGLShaderProgram) frag, GL_FRAGMENT_SHADER_BIT);
         validate();
+
+        usedUniforms = findUsedUniforms();
     }
 
-    public List<String> getAllUsedUniforms(){
+    private List<String> findUsedUniforms(){
         var allUniforms = new ArrayList<>(vert.getUniformSet().keySet());
         if(geom != null) allUniforms.addAll(geom.getUniformSet().keySet());
         if(tesc != null) allUniforms.addAll(tesc.getUniformSet().keySet());
@@ -60,6 +64,11 @@ public class OpenGLShaderPipeline implements com.opengg.core.render.shader.Shade
 
         return allUniforms.stream().distinct().collect(Collectors.toList());
     }
+
+    public List<String> getAllUsedUniforms(){
+        return usedUniforms;
+    }
+
 
     @Override
     public void delete(){

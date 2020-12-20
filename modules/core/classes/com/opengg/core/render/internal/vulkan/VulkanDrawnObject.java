@@ -1,10 +1,9 @@
 package com.opengg.core.render.internal.vulkan;
 
 import com.opengg.core.render.GraphicsBuffer;
-import com.opengg.core.render.drawn.DrawnObject;
+import com.opengg.core.render.objects.DrawnObject;
 import com.opengg.core.render.internal.vulkan.shader.VulkanPipeline;
 import com.opengg.core.render.internal.vulkan.shader.VulkanPipelineCache;
-import com.opengg.core.render.internal.vulkan.shader.VulkanShaderPipeline;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.shader.VertexArrayFormat;
 

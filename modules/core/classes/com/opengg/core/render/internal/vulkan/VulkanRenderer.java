@@ -7,7 +7,7 @@ import com.opengg.core.math.*;
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.render.RenderOperation;
 import com.opengg.core.render.Renderer;
-import com.opengg.core.render.drawn.DrawnObject;
+import com.opengg.core.render.objects.DrawnObject;
 import com.opengg.core.render.internal.vulkan.shader.VulkanPipeline;
 import com.opengg.core.render.internal.vulkan.shader.VulkanPipelineCache;
 import com.opengg.core.render.internal.vulkan.shader.VulkanPipelineFormat;
@@ -136,11 +136,9 @@ public class VulkanRenderer implements Renderer {
 
     private void enableDefaultRenderPaths(){
         RenderOperation path = new RenderOperation("mainpath", () -> {
-            for(var group : RenderEngine.getActiveRenderGroups()){
-                if(group.getList().isEmpty()) continue;
-                ShaderController.useConfiguration(group.getPipeline());
-                setInputFormat(group.getFormat());
-                group.render();
+            for(var group : RenderEngine.getActiveRenderUnits()){
+                setInputFormat(group.renderableUnitProperties().format());
+                group.renderable().render();
             }
         });
 
