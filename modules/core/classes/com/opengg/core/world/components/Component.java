@@ -341,9 +341,7 @@ public abstract class Component{
     }
 
     public final void localUpdate(float delta){
-        if(!getWorld().isForcedUpdate()
-                &&
-                canUpdate
+        if(canUpdate
                 &&
                 (!isEnabled()
                         ||

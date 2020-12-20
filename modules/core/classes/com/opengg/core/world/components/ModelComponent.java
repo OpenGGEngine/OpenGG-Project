@@ -9,6 +9,7 @@ import com.opengg.core.engine.OpenGG;
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.engine.Resource;
 import com.opengg.core.model.Model;
+import com.opengg.core.render.SceneRenderUnit;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
 import com.opengg.core.world.components.physics.RigidBodyComponent;
@@ -25,14 +26,14 @@ public class ModelComponent extends RenderComponent implements ResourceUser{
     private Model model;
     private boolean collider;
     
-    public ModelComponent(){}
+    public ModelComponent(){super(new SceneRenderUnit.UnitProperties().shaderPipeline("tangent"));}
 
     public ModelComponent(Model model){
         this(model,false);
     }
 
     public ModelComponent(Model model, boolean collider){
-        super();
+        super(new SceneRenderUnit.UnitProperties().shaderPipeline("tangent"));
         setModel(model);
         this.setFormat(model.isAnimated() ? RenderEngine.getTangentAnimVAOFormat(): RenderEngine.getTangentVAOFormat());
         this.setTransparency(true);

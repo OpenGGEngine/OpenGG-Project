@@ -60,7 +60,6 @@ module com.opengg.core {
     exports com.opengg.core.physics;
     exports com.opengg.core.physics.collision;
     exports com.opengg.core.render;
-    exports com.opengg.core.render.drawn;
     exports com.opengg.core.render.light;
     exports com.opengg.core.render.objects;
     exports com.opengg.core.render.postprocess;

@@ -5,7 +5,7 @@ import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.math.Vector3fm;
 import com.opengg.core.render.Renderable;
-import com.opengg.core.render.drawn.DrawnObject;
+import com.opengg.core.render.objects.DrawnObject;
 import com.opengg.core.render.objects.ObjectCreator;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.texture.Texture;

@@ -1,4 +1,4 @@
-@version 4.20
+@version 4.50
 @include stdvert.ggsl
 
 in vec3 position;

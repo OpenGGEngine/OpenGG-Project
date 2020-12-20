@@ -8,7 +8,8 @@ package com.opengg.core.world.components.particle;
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
-import com.opengg.core.render.drawn.DrawnObject;
+import com.opengg.core.render.SceneRenderUnit;
+import com.opengg.core.render.objects.DrawnObject;
 import com.opengg.core.render.objects.ObjectCreator;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.texture.Texture;
@@ -39,9 +40,8 @@ public abstract class ParticleEmitter extends RenderComponent{
     }
 
     public ParticleEmitter(Texture texture){
+        super(new SceneRenderUnit.UnitProperties().shaderPipeline("particle").format(RenderEngine.getParticleFormat()));
         createDrawable();
-        this.setFormat(RenderEngine.getParticleFormat());
-        this.setShader("particle");
         this.texture = texture;
     }
 

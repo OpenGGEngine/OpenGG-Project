@@ -10,7 +10,6 @@ import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.render.Renderable;
-import com.opengg.core.render.drawn.DrawnObject;
 import com.opengg.core.system.Allocator;
 
 import java.nio.Buffer;

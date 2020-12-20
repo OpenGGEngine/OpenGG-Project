@@ -1,6 +1,6 @@
 package com.opengg.core.render.internal.vulkan.shader;
 
-import com.opengg.core.render.drawn.DrawnObject;
+import com.opengg.core.render.objects.DrawnObject;
 import com.opengg.core.render.internal.vulkan.*;
 import com.opengg.core.render.shader.VertexArrayFormat;
 import org.lwjgl.vulkan.*;

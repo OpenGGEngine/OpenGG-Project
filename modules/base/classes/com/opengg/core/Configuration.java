@@ -56,6 +56,15 @@ public final class Configuration{
         }
     }
 
+    public static boolean getBoolean(String key){
+        var result = get(key);
+        try{
+            return Boolean.parseBoolean(result);
+        }catch (Exception e){
+            return false;
+        }
+    }
+
     public static int getInt(String key){
         var result = get(key);
         try{

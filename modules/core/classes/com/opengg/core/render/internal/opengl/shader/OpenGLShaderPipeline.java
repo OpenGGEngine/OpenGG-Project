@@ -20,28 +20,21 @@ import static org.lwjgl.opengl.GL41.*;
  * @author Javier
  */
 public class OpenGLShaderPipeline implements com.opengg.core.render.shader.ShaderPipeline{
+    private List<String> usedUniforms;
+
     final private NativeOpenGLShaderPipeline nativepipeline;
-    private final ShaderProgram vert;
-    private final ShaderProgram frag;
-    private ShaderProgram tesc;
-    private ShaderProgram tese;
-    private ShaderProgram geom;
+    private final OpenGLShaderProgram vert;
+    private final OpenGLShaderProgram frag;
+    private OpenGLShaderProgram tesc;
+    private OpenGLShaderProgram tese;
+    private OpenGLShaderProgram geom;
     
     public OpenGLShaderPipeline(ShaderProgram vert, ShaderProgram tesc, ShaderProgram tese, ShaderProgram geom, ShaderProgram frag){
-        this.vert = vert;
-        
-        if(tesc != null)
-            this.tesc = tesc;
-
-        
-        if(tese != null)
-            this.tese = tese;
-        
-        if(geom != null)
-            this.geom = geom;
-
-
-        this.frag = frag;
+        this.vert = (OpenGLShaderProgram) vert;
+        this.tesc = (OpenGLShaderProgram) tesc;
+        this.tese = (OpenGLShaderProgram) tese;
+        this.geom = (OpenGLShaderProgram) geom;
+        this.frag = (OpenGLShaderProgram) frag;
         
         nativepipeline = new NativeOpenGLShaderPipeline();
 
@@ -58,17 +51,24 @@ public class OpenGLShaderPipeline implements com.opengg.core.render.shader.Shade
 
         nativepipeline.useProgramStages((OpenGLShaderProgram) frag, GL_FRAGMENT_SHADER_BIT);
         validate();
+
+        usedUniforms = findUsedUniforms();
     }
 
-    public List<ShaderController.Uniform> getAllUsedUniforms(){
-        var allUniforms = new ArrayList<>(vert.getUniforms());
-        if(geom != null) allUniforms.addAll(geom.getUniforms());
-        if(tesc != null) allUniforms.addAll(tesc.getUniforms());
-        if(tese != null) allUniforms.addAll(tese.getUniforms());
-        allUniforms.addAll(frag.getUniforms());
+    private List<String> findUsedUniforms(){
+        var allUniforms = new ArrayList<>(vert.getUniformSet().keySet());
+        if(geom != null) allUniforms.addAll(geom.getUniformSet().keySet());
+        if(tesc != null) allUniforms.addAll(tesc.getUniformSet().keySet());
+        if(tese != null) allUniforms.addAll(tese.getUniformSet().keySet());
+        allUniforms.addAll(frag.getUniformSet().keySet());
 
         return allUniforms.stream().distinct().collect(Collectors.toList());
     }
+
+    public List<String> getAllUsedUniforms(){
+        return usedUniforms;
+    }
+
 
     @Override
     public void delete(){

@@ -9,6 +9,7 @@ package com.opengg.core.render.internal.opengl.shader;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
+import com.opengg.core.math.util.Tuple;
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.system.Allocator;
 import com.opengg.core.system.SystemInfo;
@@ -16,8 +17,14 @@ import com.opengg.core.system.SystemInfo;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import static org.lwjgl.opengl.ARBSeparateShaderObjects.glProgramUniformMatrix4fv;
 import static org.lwjgl.opengl.GL41.*;
+import static org.lwjgl.opengl.GL43.*;
 
 /**
  *
@@ -40,9 +47,9 @@ public class NativeOpenGLShaderProgram{
         }
     }
     
-    public int findUniformLocation(String pos){
+    public int findUniformLocation(String name){
         if(RenderEngine.validateInitialization()) return -1;
-        return glGetUniformLocation(id, pos);
+        return glGetUniformLocation(id, name);
     }
     
     public void bindFragmentDataLocation(int number, CharSequence name) {
@@ -124,14 +131,8 @@ public class NativeOpenGLShaderProgram{
 
     public void setUniform(int location, Matrix4f value) {
         if(RenderEngine.validateInitialization()) return;
-        if(SystemInfo.get("Graphics Vendor").equals("Intel")){
-            bind();
-            glUniformMatrix4fv(location, false, value.getStackBuffer());
-            unbind();
-        }else{
-            glProgramUniformMatrix4fv(id, location, false, value.getStackBuffer());
-        }
 
+        glProgramUniformMatrix4fv(id, location, false, value.getStackBuffer());
         Allocator.popStack();
     }
     
@@ -160,6 +161,20 @@ public class NativeOpenGLShaderProgram{
         int index = glGetUniformBlockIndex(id, name);
         if(index == -1) return;
         glUniformBlockBinding(id, index, bind);
+    }
+
+    public Map<String, Integer> getAllUniforms() {
+        int[] numActiveUniforms = new int[]{0};
+        glGetProgramInterfaceiv(id, GL_UNIFORM, GL_ACTIVE_RESOURCES, numActiveUniforms);
+
+        var uniforms = new HashMap<String, Integer>();
+        for(int uniform = 0; uniform < numActiveUniforms[0]; ++uniform)
+        {
+            var name = glGetProgramResourceName(id, GL_UNIFORM, uniform);
+            var index = glGetUniformLocation(id, name);
+            uniforms.put(name, index);
+        }
+        return uniforms;
     }
 
     public void bind(){
@@ -201,4 +216,6 @@ public class NativeOpenGLShaderProgram{
         if(RenderEngine.validateInitialization()) return "OpenGL not initialized";
         return glGetProgramInfoLog(id);
     }
+
+
 }

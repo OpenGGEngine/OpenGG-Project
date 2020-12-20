@@ -9,6 +9,7 @@ import com.opengg.core.engine.OpenGG;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.Renderable;
+import com.opengg.core.render.SceneRenderUnit;
 import com.opengg.core.render.objects.TextureRenderable;
 import com.opengg.core.render.light.Light;
 import com.opengg.core.render.objects.ObjectCreator;
@@ -41,7 +42,7 @@ public class SunComponent extends RenderComponent{
     }
     
     public SunComponent(TextureData texture, float rotspeed){
-        super();
+        super(new SceneRenderUnit.UnitProperties().shaderPipeline("texture"));
         OpenGG.asyncExec(() -> {
             Renderable drawn = ObjectCreator.createSquare(new Vector2f(0,0), new Vector2f(1,1), 0f);
             setRenderable(new TextureRenderable(drawn, Texture.get2DSRGBTexture(texture)));
@@ -50,7 +51,6 @@ public class SunComponent extends RenderComponent{
         this.rotspeed = rotspeed;
         light = new LightComponent(Light.createPoint(new Vector3f(), new Vector3f(1,0.3f,0.3f),100000));
         this.attach(light);
-        this.setShader("texture");
     }
     
     @Override

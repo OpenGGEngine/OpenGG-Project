@@ -1,7 +1,7 @@
 package com.opengg.core.gui;
 
 import com.opengg.core.math.Vector2f;
-import com.opengg.core.render.drawn.DrawnObject;
+import com.opengg.core.render.objects.DrawnObject;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.system.Allocator;

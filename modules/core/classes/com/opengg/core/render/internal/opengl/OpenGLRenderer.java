@@ -102,9 +102,8 @@ public class OpenGLRenderer implements Renderer {
         });
 
         RenderOperation path = new RenderOperation("mainpath", () -> {
-            for(var group : RenderEngine.getActiveRenderGroups()){
-                ShaderController.useConfiguration(group.getPipeline());
-                group.render();
+            for(var group : RenderEngine.getActiveRenderUnits()){
+                group.renderable().render();
             }
         });
 
@@ -115,11 +114,13 @@ public class OpenGLRenderer implements Renderer {
             for(int i = 0; i < lights.size() && used < 2; i++){
                 if(lights.get(i).hasShadow()){
                     lights.get(i).initializeRender();
-                    for(var group : RenderEngine.getActiveRenderGroups()){
+                    /*for(var group : RenderEngine.getActiveRenderGroups()){
                         group.render();
                     }
                     lights.get(i).finalizeRender(used);
-                    used++;
+                    used++;*/
+
+                    throw new UnsupportedOperationException("Fix later");
                 }
             }
             fb.enableRendering(0,0,fb.getWidth(),fb.getHeight());

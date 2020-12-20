@@ -39,13 +39,11 @@ public interface ShaderProgram{
                 default -> throw new ShaderException("Attempted to load utility shader as GLSL");
             };
         }
-
-
     }
 
     static ShaderProgram create(ShaderType type, String source, String name, List<Uniform> uniforms){
         return switch (OpenGG.getInitOptions().getWindowOptions().renderer){
-            case OPENGL -> new OpenGLShaderProgram(type, source, name, uniforms);
+            case OPENGL -> new OpenGLShaderProgram(type, source, name);
             case VULKAN -> new VulkanShaderStage(type, source, name, uniforms);
         };
     }
@@ -53,28 +51,6 @@ public interface ShaderProgram{
     static ShaderProgram createFromBinary(ShaderType type, ByteBuffer data, String name){
         return new OpenGLShaderProgram(type, data, name);
     }
-
-    void bindFragmentDataLocation(int number, CharSequence name);
-    
-    void enableVertexAttribute(int location);
-
-    void disableVertexAttribute(int location);
-
-    void setUniform(int location, int value);
-
-    void setUniform(int location, boolean value);
-
-    void setUniform(int location, float value);
-
-    void setUniform(int location, Vector2f value);
-
-    void setUniform(int location, Vector3f value);
-
-    void setUniform(int location, Matrix4f value);
-
-    void setUniform(int location, Matrix4f[] matrices);
-
-    void setUniformBlockIndex(int bind, String name);
 
     List<Uniform> getUniforms();
 

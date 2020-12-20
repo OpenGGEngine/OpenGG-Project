@@ -18,15 +18,11 @@ import com.opengg.core.world.Camera;
 import com.opengg.core.world.Skybox;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-
-import static org.lwjgl.opengl.GL11.*;
 
 
 public class RenderEngine {
     private static final boolean debug = true;
-    private static final List<RenderGroup> groups = new ArrayList<>();
     private static final List<RenderOperation> paths = new ArrayList<>();
     private static final List<RenderPass> passes = new ArrayList<>();
     private static final List<Light> lights = new ArrayList<>();
@@ -40,7 +36,6 @@ public class RenderEngine {
     public static VertexArrayFormat superCSCFormat;
     private static VertexArrayFormat tangentVAOFormat;
     private static VertexArrayFormat tangentAnimVAOFormat;
-    private static RenderGroup defaultList;
     private static View camera = new Camera();
     private static ProjectionData projectionData;
     private boolean bindSkyboxToCamera = false;
@@ -64,10 +59,6 @@ public class RenderEngine {
         View c = new Camera();
         useView(c);
         setProjectionData(ProjectionData.getPerspective(90, 0.2f, 3000f));
-        defaultList = new RenderGroup("defaultgroup");
-        defaultList.setPipeline("object");
-
-        groups.add(defaultList);
     }
 
 
@@ -113,9 +104,6 @@ public class RenderEngine {
         renderer.render();
     }
 
-    public static void sortOrders() {
-        groups.sort(Comparator.comparingInt(RenderGroup::getOrder));
-    }
 
     public static void endFrame() {
         WindowController.getWindow().endFrame();
@@ -127,22 +115,6 @@ public class RenderEngine {
         renderer.startFrame();
     }
 
-    public static void addRenderGroup(RenderGroup r) {
-        if (!groups.contains(r))
-            groups.add(r);
-    }
-
-    public static RenderGroup getRenderGroup(String name) {
-        for (RenderGroup r : groups)
-            if (r.getName().equals(name)) return r;
-
-        return null;
-    }
-
-    public static List<RenderGroup> getRenderGroups() {
-        return groups;
-    }
-
     public static void addRenderPass(RenderPass pass) {
         passes.add(pass);
     }
@@ -151,22 +123,8 @@ public class RenderEngine {
         return passes;
     }
 
-    public static List<RenderGroup> getActiveRenderGroups() {
-        ArrayList<RenderGroup> list = new ArrayList<>(groups.size());
-
-        for (RenderGroup r : groups)
-            if (r.isEnabled())
-                list.add(r);
-
-        for (RenderGroup r : currentEnvironment.getGroups())
-            if (r.isEnabled())
-                list.add(r);
-
-        return list;
-    }
-
-    public static void removeRenderGroup(RenderGroup r) {
-        groups.remove(r);
+    public static List<SceneRenderUnit> getActiveRenderUnits() {
+        return getCurrentEnvironment().getRenderUnits();
     }
 
     public static void addRenderPath(RenderOperation r) {
@@ -211,10 +169,6 @@ public class RenderEngine {
 
     public static void removeRenderPath(RenderOperation r) {
         paths.remove(r);
-    }
-
-    public static void addRenderable(Renderable r) {
-        defaultList.add(r);
     }
 
     public static Skybox getSkybox() {

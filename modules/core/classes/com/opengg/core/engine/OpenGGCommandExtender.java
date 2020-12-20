@@ -22,7 +22,6 @@ import com.opengg.core.network.common.ConnectionData;
 import com.opengg.core.physics.PhysicsRenderer;
 import com.opengg.core.physics.collision.CollisionManager;
 import com.opengg.core.render.RenderEngine;
-import com.opengg.core.render.RenderGroup;
 import com.opengg.core.render.postprocess.PostProcessController;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.window.WindowController;
@@ -171,14 +170,6 @@ public class OpenGGCommandExtender implements ConsoleListener{
                     }
                     if (command.args[0].equalsIgnoreCase("disable")) {
                         GUIController.setEnabled(false);
-                    }
-                }
-            }
-
-            case "render" -> {
-                if (command.argCount == 1) {
-                    if (command.args[0].equalsIgnoreCase("dump-groups")) {
-                        RenderEngine.getActiveRenderGroups().stream().map(RenderGroup::getName).forEach(GGConsole::log);
                     }
                 }
             }

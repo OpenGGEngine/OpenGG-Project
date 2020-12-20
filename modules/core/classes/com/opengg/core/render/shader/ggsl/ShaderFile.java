@@ -93,7 +93,7 @@ public class ShaderFile{
             }
         }
 
-        version = preprocessor.getOrDefault("@version", "4.2");
+        version = preprocessor.getOrDefault("@version", "4.5");
 
         if(!version.matches("^\\d[.]\\d")){
             if(version.matches("^\\d[.]\\d\\d")){
@@ -104,7 +104,7 @@ public class ShaderFile{
         }
 
         if(!version.matches("^\\d[.]\\d"))
-            throw new ShaderException("Encountered malformed version: " + preprocessor.getOrDefault("@version", "4.2"));
+            throw new ShaderException("Encountered malformed version: " + preprocessor.getOrDefault("@version", "4.5"));
 
         glvals = valuesFromPreprocessor("@glsl");
 

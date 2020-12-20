@@ -45,7 +45,7 @@ public class GGDebugRenderer implements KeyboardListener {
                         "Camera position: (" + String.format("%.2f", RenderEngine.getCurrentView().getPosition().x) + ", " +  String.format("%.2f",     RenderEngine.getCurrentView().getPosition().y) + ", " +  String.format("%.2f", RenderEngine.getCurrentView().getPosition().z) + ") \n\n" +
                         "Current world: " + WorldEngine.getCurrent().getName() + " \n" +
                         "Component count: " + WorldEngine.getComponentCount() + "\n\n" +
-                        "Render group count: " + RenderEngine.getActiveRenderGroups().size() + "  Rendered object count: " + RenderEngine.getActiveRenderGroups().stream().mapToInt(r -> r.getList().size()).sum() + "\n\n" +
+                        "Render unit count: " + RenderEngine.getActiveRenderUnits().size() + "\n\n" +
                         "Average render calls: " + PerformanceManager.getComputedDrawCalls() + "\n" +
                         "GPU Buffer allocations: " + PerformanceManager.getBufferAllocsThisFrame() + "\n" +
                         "GPU Buffer allocations size: " + PerformanceManager.getBufferAllocSizeThisFrame();
@@ -78,6 +78,10 @@ public class GGDebugRenderer implements KeyboardListener {
 
     public static void setEnabled(boolean enabled){
         render = enabled;
+    }
+
+    public static boolean isEnabled() {
+        return render;
     }
 
     @Override

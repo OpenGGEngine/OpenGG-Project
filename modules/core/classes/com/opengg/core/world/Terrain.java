@@ -11,7 +11,7 @@ import com.opengg.core.math.geom.Triangle;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.Renderable;
-import com.opengg.core.render.drawn.DrawnObject;
+import com.opengg.core.render.objects.DrawnObject;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.texture.TextureData;
 import com.opengg.core.system.Allocator;

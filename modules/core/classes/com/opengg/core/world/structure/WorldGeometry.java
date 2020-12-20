@@ -126,8 +126,6 @@ public abstract class WorldGeometry implements Renderable{
     }
 
     public final void deleteParts(){
-        if(this.renderable != null)
-            this.getParent().getParent().removeRenderable(this);
         if(this.collider != null)
             this.getParent().getParent().getSystem().removeObject(this.collider);
     }

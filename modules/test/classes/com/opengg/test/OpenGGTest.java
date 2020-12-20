@@ -46,10 +46,6 @@ public class  OpenGGTest extends GGApplication{
         w.width = 1280;
         w.height = 960;
         w.resizable = true;
-        w.type = "GLFW";
-        w.vsync = true;
-        w.glmajor = 4;
-        w.glminor = 3;
         w.renderer = WindowOptions.RendererType.OPENGL;
         OpenGG.initialize(new OpenGGTest(), new InitializationOptions()
                                                 .setApplicationName("OpenGG Test")
@@ -121,7 +117,7 @@ public class  OpenGGTest extends GGApplication{
                 Light.createDirectional(Quaternionf.createYXZ(new Vector3f(45,30,0)), new Vector3f(1, 1, 1)));
         WorldEngine.getCurrent().attach(light);
         player = new FreeFlyComponent();
-        WorldEngine.getCurrent().attach(player);;
+        WorldEngine.getCurrent().attach(player);
 
 
         var cube = List.of(
@@ -160,13 +156,13 @@ public class  OpenGGTest extends GGApplication{
                 object.getRigidBody().getPhysicsProvider().get().velocity = new Vector3f((FastMath.random() - 0.5f) * 20f, 0, (FastMath.random() - 0.5f)*20f);
         });
 
-        WorldEngine.getCurrent().getRenderEnvironment().setSkybox(new Skybox(Texture.create(Texture.cubemapConfig(),
+    /*    WorldEngine.getCurrent().getRenderEnvironment().setSkybox(new Skybox(Texture.create(Texture.cubemapConfig(),
                 Resource.getTexturePath("skybox\\majestic_ft.png"),
                 Resource.getTexturePath("skybox\\majestic_bk.png"),
                 Resource.getTexturePath("skybox\\majestic_up.png"),
                 Resource.getTexturePath("skybox\\majestic_dn.png"),
                 Resource.getTexturePath("skybox\\majestic_rt.png"),
-                Resource.getTexturePath("skybox\\majestic_lf.png")), 500f));
+                Resource.getTexturePath("skybox\\majestic_lf.png")), 500f));*/
 
         BindController.addBind(ControlType.KEYBOARD, "forward", KEY_W);
         BindController.addBind(ControlType.KEYBOARD, "backward", KEY_S);
@@ -180,6 +176,7 @@ public class  OpenGGTest extends GGApplication{
 
         RenderEngine.setProjectionData(ProjectionData.getPerspective(100, 0.2f, 3000f));
         WindowController.getWindow().setCursorLock(true);
+        GGDebugRenderer.setEnabled(true);
 
         player = new FreeFlyComponent();
         WorldEngine.getCurrent().attach(player);
