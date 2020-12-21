@@ -7,7 +7,7 @@ package com.opengg.core.world.components;
 
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
-import com.opengg.core.physics.collision.colliders.AABB;
+import com.opengg.core.physics.collision.colliders.BoundingBox;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
 import com.opengg.core.world.components.triggers.TriggerInfo;
@@ -21,24 +21,24 @@ import java.util.function.Consumer;
  * @author ethachu19
  */
 public class Zone extends TriggerComponent {
-    private AABB box;
+    private BoundingBox box;
     private final boolean repeat = false;
     private final List<Component> lastFrames = new ArrayList<>();
 
     public Zone(){
-        box = new AABB(0,0,0);
+        box = new BoundingBox(0,0,0);
     }
     
-    public Zone(AABB box){
+    public Zone(BoundingBox box){
         this.box = box;
     }
 
-    public Zone(AABB box, Consumer<TriggerInfo> triggerInfoConsumer){
+    public Zone(BoundingBox box, Consumer<TriggerInfo> triggerInfoConsumer){
         this.box = box;
         this.addListener((s,i) -> triggerInfoConsumer.accept(i));
     }
 
-    public void setBox(AABB box) {
+    public void setBox(BoundingBox box) {
         this.box = box;
     }
 
@@ -68,7 +68,7 @@ public class Zone extends TriggerComponent {
         lastFrames.removeAll(extra);
     }
 
-    public AABB getBox() {
+    public BoundingBox getBox() {
         return box;
     }   
     
@@ -102,7 +102,7 @@ public class Zone extends TriggerComponent {
         super.deserialize(in);
         Vector3f lwh = in.readVector3f();
         Vector3f pos = in.readVector3f();
-        box = new AABB(lwh);
+        box = new BoundingBox(lwh);
         box.setPosition(pos);
     }
 }

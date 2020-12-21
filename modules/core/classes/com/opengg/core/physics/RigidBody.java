@@ -12,7 +12,7 @@ import com.opengg.core.math.util.Tuple;
 import com.opengg.core.physics.collision.Collider;
 import com.opengg.core.physics.collision.CollisionManager;
 import com.opengg.core.physics.collision.ContactManifold;
-import com.opengg.core.physics.collision.colliders.AABB;
+import com.opengg.core.physics.collision.colliders.BoundingBox;
 import com.opengg.core.util.ClassUtil;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
@@ -33,7 +33,7 @@ public class RigidBody extends PhysicsObject implements Trigger {
     private final ArrayList<Triggerable> subscribers = new ArrayList<>();
     private final List<Collider> colliders = new ArrayList<>();
     private PhysicsProvider physicsProvider;
-    private AABB aabb;
+    private BoundingBox boundingBox;
 
     private RigidBodyComponent componentOwner;
 
@@ -44,14 +44,14 @@ public class RigidBody extends PhysicsObject implements Trigger {
     public float restitution = 0.5f;
 
     public RigidBody(){
-        this(new AABB(1,1,1), new ArrayList<>());
+        this(new BoundingBox(1,1,1), new ArrayList<>());
     }
 
-    public RigidBody(AABB main, Collider... all) {
+    public RigidBody(BoundingBox main, Collider... all) {
         this(main, Arrays.asList(all));
     }
 
-    public RigidBody(AABB main, List<? extends Collider> all) {
+    public RigidBody(BoundingBox main, List<? extends Collider> all) {
         setBoundingBox(main);
         addColliders(all);
     }
@@ -72,14 +72,14 @@ public class RigidBody extends PhysicsObject implements Trigger {
         return colliders;
     }
     
-    public void setBoundingBox(AABB box){
-        this.aabb = box;
+    public void setBoundingBox(BoundingBox box){
+        this.boundingBox = box;
         box.setParent(this);
         children.add(box);
     }
 
-    public AABB getBoundingBox() {
-        return aabb;
+    public BoundingBox getBoundingBox() {
+        return boundingBox;
     }
 
     public Optional<PhysicsProvider> getPhysicsProvider(){
@@ -107,9 +107,9 @@ public class RigidBody extends PhysicsObject implements Trigger {
     }
 
     public Optional<ContactManifold> checkForCollision(RigidBody other) {
-        this.aabb.recalculate();
-        other.aabb.recalculate();
-        if (!aabb.isColliding(other.aabb)) {
+        this.boundingBox.recalculate();
+        other.boundingBox.recalculate();
+        if (!boundingBox.isColliding(other.boundingBox)) {
             return Optional.empty();
         }
         this.getColliders().forEach(Collider::updatePositions);
@@ -189,8 +189,8 @@ public class RigidBody extends PhysicsObject implements Trigger {
             try {
                 var object = (PhysicsObject) ClassUtil.createByName(classname);
                 object.deserialize(in);
-                if(object instanceof AABB)
-                    setBoundingBox((AABB) object);
+                if(object instanceof BoundingBox)
+                    setBoundingBox((BoundingBox) object);
                 else
                     addCollider((Collider) object);
             } catch (ClassInstantiationException e) {

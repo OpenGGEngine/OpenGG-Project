@@ -9,6 +9,7 @@ import com.opengg.core.system.Allocator;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
+import java.util.Objects;
 
 /**
  *
@@ -125,6 +126,10 @@ public class Matrix4f {
         this.m31 = arr[3][1];
         this.m32 = arr[3][2];
         this.m33 = arr[3][3];
+    }
+
+    public Vector3f transform(Vector3f init){
+        return new Vector4f(init).multiply(this).truncate();
     }
 
     public Vector4f transform(Vector4f init){
@@ -488,5 +493,21 @@ public class Matrix4f {
                 m10 + ", " + m11 + ", " + m12 + ", " + m13 + ", " + "\n" +
                 m20 + ", " + m21 + ", " + m22 + ", " + m23 + ", " + "\n" +
                 m30 + ", " + m31 + ", " + m32 + ", " + m33;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Matrix4f matrix4f = (Matrix4f) o;
+        return Float.compare(matrix4f.m00, m00) == 0 && Float.compare(matrix4f.m01, m01) == 0 && Float.compare(matrix4f.m02, m02) == 0 && Float.compare(matrix4f.m03, m03) == 0 &&
+                Float.compare(matrix4f.m10, m10) == 0 && Float.compare(matrix4f.m11, m11) == 0 && Float.compare(matrix4f.m12, m12) == 0 && Float.compare(matrix4f.m13, m13) == 0 &&
+                Float.compare(matrix4f.m20, m20) == 0 && Float.compare(matrix4f.m21, m21) == 0 && Float.compare(matrix4f.m22, m22) == 0 && Float.compare(matrix4f.m23, m23) == 0 &&
+                Float.compare(matrix4f.m30, m30) == 0 && Float.compare(matrix4f.m31, m31) == 0 && Float.compare(matrix4f.m32, m32) == 0 && Float.compare(matrix4f.m33, m33) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33);
     }
 }

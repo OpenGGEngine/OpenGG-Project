@@ -1,7 +1,7 @@
 package com.opengg.core.model;
 
 import com.opengg.core.engine.Resource;
-import com.opengg.core.physics.collision.colliders.AABB;
+import com.opengg.core.physics.collision.colliders.BoundingBox;
 import com.opengg.core.physics.RigidBody;
 import com.opengg.core.physics.collision.colliders.ConvexHull;
 import com.opengg.core.render.Renderable;
@@ -29,7 +29,7 @@ public class Model implements Resource {
     private GGNode rootAnimationNode;
     private long exportConfig;
     private String vaoFormat;
-    private AABB colliderBox;
+    private BoundingBox colliderBox;
 
     public Model(ArrayList<Mesh> meshes, String name){
         this.meshes = meshes;
@@ -80,7 +80,7 @@ public class Model implements Resource {
                 .flatMap(List::stream)
                 .collect(Collectors.toList());
 
-        return new RigidBody(new AABB(points), realHulls);
+        return new RigidBody(new BoundingBox(points), realHulls);
     }
 
     public boolean isAnimated() {
@@ -99,7 +99,7 @@ public class Model implements Resource {
         this.vaoFormat = vaoFormat;
     }
 
-    public AABB getColliderBox() {
+    public BoundingBox getColliderBox() {
         return colliderBox;
     }
 

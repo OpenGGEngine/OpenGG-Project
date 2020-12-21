@@ -59,13 +59,13 @@ public abstract class ComponentViewModel<T extends Component> extends ViewModel<
         serialize.internalname = "serialize";
         serialize.setValueAccessorFromData(model::shouldSerialize);
         serialize.onViewChange(model::setSerializable);
-
+/*
         DataBinding<Boolean> abs = DataBinding.ofType(DataBinding.Type.BOOLEAN);
         abs.autoupdate = true;
         abs.name = "Is position absolute";
         abs.internalname = "abs";
         abs.setValueAccessorFromData(model::isAbsoluteOffset);
-        abs.onViewChange(model::setAbsoluteOffset);
+        abs.onViewChange(model::setAbsoluteOffset);*/
 
         addElement(pos);
         addElement(rot);
@@ -73,7 +73,7 @@ public abstract class ComponentViewModel<T extends Component> extends ViewModel<
         addElement(name);
         addElement(update);
         addElement(serialize);
-        addElement(abs);
+      //  addElement(abs);
     }
 
     @Override

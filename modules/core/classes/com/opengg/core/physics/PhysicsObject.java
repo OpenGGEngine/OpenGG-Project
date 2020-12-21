@@ -34,7 +34,6 @@ public class PhysicsObject {
 
     private boolean serialize = true;
 
-
     public PhysicsObject(){
         id = UUID.randomUUID().getLeastSignificantBits();
     }

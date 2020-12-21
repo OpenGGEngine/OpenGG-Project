@@ -608,8 +608,8 @@ public final class FastMath {
     }
 
     public static Vector3f getRayPlaneIntersection(Ray ray, Vector3f planeNormal, Vector3f planePoint) {
-        var rayPos = ray.getPos();
-        var rayDir = ray.getDir();
+        var rayPos = ray.pos();
+        var rayDir = ray.dir();
         Vector3f diff = rayPos.subtract(planePoint);
         float prod1 = diff.dot(planeNormal);
         float prod2 = rayDir.dot(planeNormal);

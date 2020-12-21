@@ -2,28 +2,12 @@ package com.opengg.core.math.geom;
 
 import com.opengg.core.math.Vector3f;
 
-public class Ray {
-    Vector3f pos;
-    Vector3f dir;
-
-    public Ray(Vector3f pos, Vector3f dir) {
-        this.pos = pos;
-        this.dir = dir;
+public record Ray(Vector3f pos, Vector3f dir) {
+    public Ray setPos(Vector3f pos) {
+        return new Ray(pos, dir);
     }
 
-    public Vector3f getPos() {
-        return pos;
-    }
-
-    public void setPos(Vector3f pos) {
-        this.pos = pos;
-    }
-
-    public Vector3f getDir() {
-        return dir;
-    }
-
-    public void setDir(Vector3f dir) {
-        this.dir = dir;
+    public Ray setDir(Vector3f dir) {
+        return new Ray(pos, dir);
     }
 }

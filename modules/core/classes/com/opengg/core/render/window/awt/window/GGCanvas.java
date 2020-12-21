@@ -65,7 +65,7 @@ public class GGCanvas implements Window {
         canvas.requestFocusInWindow();
         canvas.addMouseListener(mouseCallback = new AWTMouseButtonHandler());
         canvas.addKeyListener(keyCallback = new AWTKeyboardHandler());
-        canvas.addMouseMotionListener(mousePosCallback = new AWTMousePosHandler());
+        canvas.addMouseMotionListener(mousePosCallback = new AWTMousePosHandler(canvas));
         canvas.addMouseWheelListener(scrollCallback = new AWTMouseScrollHandler());
 
         canvas.addKeyListener(new KeyAdapter() {

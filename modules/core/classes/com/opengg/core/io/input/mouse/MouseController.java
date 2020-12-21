@@ -94,9 +94,6 @@ public class MouseController {
     }
 
     public static PhysicsRay getRay(float xpos, float ypos){
-        Vector2f mouse = getRaw();
-        //For Cursor Lock
-        //mouse = new Vector2f(OpenGG.getWindow().getWidth()/2,OpenGG.getWindow().getHeight()/2);
         float z = 1.0f;
         Vector3f ray_nds = new Vector3f((2*xpos)/OpenGG.getWindow().getWidth()-1.0f, 1-(ypos*2)/OpenGG.getWindow().getHeight(), z);
         Vector4f ray_clip = new Vector4f(ray_nds.x,ray_nds.y, -1.0f, 1.0f);
@@ -154,7 +151,7 @@ public class MouseController {
     }
 
     public static Vector2f getRaw(){
-        return poshandler.getPos();
+        return poshandler.getRawPos();
     }
 
     private MouseController() {

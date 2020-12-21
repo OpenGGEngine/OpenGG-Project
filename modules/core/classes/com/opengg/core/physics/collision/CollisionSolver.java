@@ -22,11 +22,11 @@ import java.util.stream.Collectors;
  */
 public class CollisionSolver {
 
-    public static boolean AABBAABB(AABB c1, AABB c2){
+    public static boolean AABBAABB(BoundingBox c1, BoundingBox c2){
         return c1.isColliding(c2);
     }
     
-    public static boolean AABBRay(AABB c1, PhysicsRay c2){
+    public static Optional<Vector3f> AABBRay(BoundingBox c1, PhysicsRay c2){
         return c2.isColliding(c1);
     }
     
@@ -56,7 +56,7 @@ public class CollisionSolver {
     }
 
     public static boolean SphereRay(SphereCollider c1, PhysicsRay c2){
-        Vector3f closest = FastMath.closestPointTo(c2.pos, c2.dir, c1.getPosition(), false);
+        Vector3f closest = FastMath.closestPointTo(c2.pos(), c2.dir(), c1.getPosition(), false);
         return c1.getPosition().distanceTo(closest) < c1.getRadius();
     }
 
@@ -74,7 +74,7 @@ public class CollisionSolver {
     }
 
     public static boolean CapsuleRay(CapsuleCollider c1, PhysicsRay c2){
-        Vector3f[] closest = FastMath.closestApproach(c1.getP1(), c1.getP2(), c2.pos, c2.dir, true, false);
+        Vector3f[] closest = FastMath.closestApproach(c1.getP1(), c1.getP2(), c2.pos(), c2.dir(), true, false);
         return closest[0].distanceTo(closest[1]) < c1.getRadius();
     }
 

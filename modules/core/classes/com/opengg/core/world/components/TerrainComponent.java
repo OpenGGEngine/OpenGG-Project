@@ -17,7 +17,7 @@ import com.opengg.core.render.texture.TextureData;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
 import com.opengg.core.world.Terrain;
-import com.opengg.core.physics.collision.colliders.AABB;
+import com.opengg.core.physics.collision.colliders.BoundingBox;
 import com.opengg.core.physics.collision.colliders.TerrainCollider;
 import com.opengg.core.world.components.physics.RigidBodyComponent;
 import java.io.IOException;
@@ -59,10 +59,10 @@ public class TerrainComponent extends RenderComponent{
             for(int j = 0; j < divz; j++){
                 TerrainCollider mesh = new TerrainCollider(terrain,terrain.getMesh(i*sectionsize, j*sectionsize, sectionsize, sectionsize));
 
-                AABB aabb = new AABB(1f/divx/2,10,1f/divz/2f);
-                aabb.setPosition(new Vector3f((1f/divx)*i+(1f/divx*0.5f),0, (1f/divz)*j+(1f/divz*0.5f)));
+                BoundingBox boundingBox = new BoundingBox(1f/divx/2,10,1f/divz/2f);
+                boundingBox.setPosition(new Vector3f((1f/divx)*i+(1f/divx*0.5f),0, (1f/divz)*j+(1f/divz*0.5f)));
 
-                this.attach(new RigidBodyComponent(new RigidBody(aabb, mesh), false));
+                this.attach(new RigidBodyComponent(new RigidBody(boundingBox, mesh), false));
 
                 collideable = true;
             }

@@ -12,6 +12,7 @@ public class RenderEnvironment{
     private Skybox skybox;
 
     public void addRenderUnit(SceneRenderUnit pair){
+        if(pairs.contains(pair)) return;
         for(int i = 0; i < pairs.size(); i++){
             var nPair = pairs.get(i);
             if(pair.compareTo(nPair) < 0){
