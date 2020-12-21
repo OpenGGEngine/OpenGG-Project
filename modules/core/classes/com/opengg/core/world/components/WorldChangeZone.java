@@ -5,7 +5,7 @@ import com.opengg.core.animation.AnimationManager;
 import com.opengg.core.engine.Executor;
 import com.opengg.core.gui.GUIController;
 import com.opengg.core.gui.UITexture;
-import com.opengg.core.physics.collision.colliders.AABB;
+import com.opengg.core.physics.collision.colliders.BoundingBox;
 import com.opengg.core.render.texture.Texture;
 import com.opengg.core.util.GGInputStream;
 import com.opengg.core.util.GGOutputStream;
@@ -28,7 +28,7 @@ public class WorldChangeZone extends Zone {
         world = "default";
     }
 
-    public WorldChangeZone(String world, AABB box){
+    public WorldChangeZone(String world, BoundingBox box){
         super(box);
         this.world = world;
     }

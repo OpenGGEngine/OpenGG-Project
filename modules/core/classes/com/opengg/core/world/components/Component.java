@@ -49,7 +49,7 @@ public abstract class Component{
     private Vector3f posoffset = new Vector3f();
     private Quaternionf rotoffset = new Quaternionf();
     private Vector3f scaleoffset = new Vector3f(1,1,1);
-    private boolean absoluteOffset = false;
+    private PositionType positionType = PositionType.RELATIVE;
     private boolean absoluteRotation = false;
 
     private Vector3f pos = new Vector3f();
@@ -165,9 +165,11 @@ public abstract class Component{
     
     private void regenPos(){
         if(parent != null){
-            if(absoluteOffset){
+            if(positionType == PositionType.ABSOLUTE_RELATIVE){
                 pos = parent.getPosition().add(posoffset);
-            }else if(posoffset.equals(Vector3f.identity)) {
+            }else if (positionType == PositionType.ABSOLUTE){
+                pos = posoffset;
+            }else if(posoffset.equals(Vector3f.identity)){
                 pos = parent.getPosition();
             }else{
                 pos = parent.getPosition().add(parent.getRotation().transform(posoffset).multiply(parent.getScale()));
@@ -309,19 +311,18 @@ public abstract class Component{
     }
     
     /**
-     * Set whether the position offset should be absolute or take the rotation of the parent into account
-     * @param abs True for absolute, false for relative
+     * Set the behavior of the position given to this component
+     * @param type Position behavior for this component
      */
-    public void setAbsoluteOffset(boolean abs){
-        absoluteOffset = abs;
+    public void setPositionType(PositionType type){
+        this.positionType = type;
     }
     
     /**
-     * Returns whether or not absolute offset is enabled
-     * @return Current state of absolute offset
+     * Returns the usage type for this component's position
      */
-    public boolean isAbsoluteOffset(){
-        return absoluteOffset;
+    public PositionType getPositionType(){
+        return positionType;
     }
 
     /**
@@ -376,7 +377,7 @@ public abstract class Component{
         out.write(scaleoffset);
         out.write(name);
         out.write(enabled);
-        out.write(absoluteOffset);
+        out.write(positionType.name());
         out.write(absoluteRotation);
         out.write(updatedistance);
     }
@@ -397,7 +398,7 @@ public abstract class Component{
         scaleoffset = in.readVector3f();
         name = in.readString();
         enabled = in.readBoolean();
-        absoluteOffset = in.readBoolean();
+        positionType = PositionType.valueOf(in.readString());
         absoluteRotation = in.readBoolean();
         updatedistance = in.readInt();
 
@@ -852,5 +853,9 @@ public abstract class Component{
     @Override
     public String toString(){
         return this.getClass().getSimpleName() + ": " + this.getName();
+    }
+
+    public enum PositionType{
+        RELATIVE, ABSOLUTE_RELATIVE, ABSOLUTE
     }
 }

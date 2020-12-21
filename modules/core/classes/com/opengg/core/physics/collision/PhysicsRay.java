@@ -7,40 +7,25 @@ package com.opengg.core.physics.collision;
 
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.math.geom.Ray;
-import com.opengg.core.physics.collision.colliders.AABB;
+import com.opengg.core.physics.collision.colliders.BoundingBox;
+
+import java.util.Optional;
 
 /**
  *
  * @author ethachu19
  */
-public class PhysicsRay {
-    Vector3f dir;
-    Vector3f pos;
-    float length;
-    
-    public PhysicsRay(Vector3f dir, Vector3f pos, float length) {
-        this.dir = dir.normalize();
-        this.pos = pos;
-        this.length = length;
-    }
-    
+public record PhysicsRay(Vector3f dir, Vector3f pos, float length) {
     public Vector3f vectorBetween(Vector3f vec) {
         return pos.subtract(vec).subtract(dir.multiply(pos.subtract(vec).dot(dir)));
     }
     
-    public boolean isColliding(AABB box) {
-        return box.isColliding(this.getRay());
-    }
-
-    public Vector3f getDir() {
-        return dir;
-    }
-
-    public Vector3f getPos() {
-        return pos;
+    public Optional<Vector3f> isColliding(BoundingBox box) {
+        return box.getCollision(this.getRay());
     }
 
     public Ray getRay(){
         return new Ray(pos, dir);
     }
+
 }

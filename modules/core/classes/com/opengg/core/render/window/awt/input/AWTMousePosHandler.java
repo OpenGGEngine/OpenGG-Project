@@ -18,6 +18,8 @@ import java.awt.event.MouseMotionListener;
  * @author Javier
  */
 public class AWTMousePosHandler implements MousePositionHandler, MouseMotionListener {
+    Component parent;
+
     double x, y;
     double lockXPos, lockYPos;
 
@@ -25,7 +27,8 @@ public class AWTMousePosHandler implements MousePositionHandler, MouseMotionList
 
     Robot robot;
 
-    public AWTMousePosHandler(){
+    public AWTMousePosHandler(Component parent){
+        this.parent = parent;
         try {
             robot = new Robot();
         } catch (AWTException e) {
@@ -77,5 +80,11 @@ public class AWTMousePosHandler implements MousePositionHandler, MouseMotionList
     @Override
     public Vector2f getPos() {
         return new Vector2f((float)x,(float)y);
+    }
+
+    @Override
+    public Vector2f getRawPos() {
+        var loc = parent.getLocationOnScreen();
+        return new Vector2f((float)lockXPos - loc.x,(float)lockYPos - loc.y);
     }
 }

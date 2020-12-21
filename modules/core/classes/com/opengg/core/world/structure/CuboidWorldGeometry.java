@@ -4,7 +4,7 @@ import com.opengg.core.engine.OpenGG;
 import com.opengg.core.engine.Resource;
 import com.opengg.core.math.Quaternionf;
 import com.opengg.core.math.Vector3f;
-import com.opengg.core.physics.collision.colliders.AABB;
+import com.opengg.core.physics.collision.colliders.BoundingBox;
 import com.opengg.core.physics.RigidBody;
 import com.opengg.core.physics.collision.colliders.ConvexHull;
 import com.opengg.core.render.objects.TextureRenderable;
@@ -48,7 +48,7 @@ public class CuboidWorldGeometry extends WorldGeometry{
     }
 
     public void createCollider(){
-        this.setCollider(new RigidBody(new AABB(lwh), new ConvexHull(
+        this.setCollider(new RigidBody(new BoundingBox(lwh), new ConvexHull(
                 List.of(lwh.divide(2).multiply(new Vector3f(-1,-1,1)),
                         lwh.divide(2).multiply(new Vector3f(1,-1,1)),
                         lwh.divide(2).multiply(new Vector3f(-1,-1,-1)),

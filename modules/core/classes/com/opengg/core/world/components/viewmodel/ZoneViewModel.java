@@ -8,7 +8,7 @@ package com.opengg.core.world.components.viewmodel;
 import com.opengg.core.editor.DataBinding;
 import com.opengg.core.editor.ForComponent;
 import com.opengg.core.editor.BindingAggregate;
-import com.opengg.core.physics.collision.colliders.AABB;
+import com.opengg.core.physics.collision.colliders.BoundingBox;
 import com.opengg.core.world.components.Zone;
 
 /**
@@ -27,7 +27,7 @@ public class ZoneViewModel<T extends Zone> extends TriggerComponentViewModel<T> 
         lwh.internalname = "lwh";
         lwh.visible = true;
         lwh.setValueAccessorFromData(() -> model.getBox().getLWH());
-        lwh.onViewChange(v -> model.setBox(new AABB(v)));
+        lwh.onViewChange(v -> model.setBox(new BoundingBox(v)));
 
         addElement(lwh);
 

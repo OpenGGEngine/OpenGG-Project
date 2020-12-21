@@ -45,6 +45,13 @@ public class Vector4f {
         this.z = v.z;
         this.w = 1;
     }
+
+    public Vector4f(Vector3f v, float w){
+        this.x = v.x;
+        this.y = v.y;
+        this.z = v.z;
+        this.w = w;
+    }
    
     /**
      * Returns x value of vector

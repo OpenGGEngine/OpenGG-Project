@@ -41,5 +41,10 @@ public class GLFWMousePositionHandler extends GLFWCursorPosCallback implements M
     public Vector2f getPos(){
         return new Vector2f((float)x, (float)y);
     }
-    
+
+    @Override
+    public Vector2f getRawPos() {
+        return getPos();
+    }
+
 }
