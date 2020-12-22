@@ -123,7 +123,7 @@ public class ShaderFile{
     public void compile(){
         compiledsource = tree.nodes.stream()
                 .map(this::process)
-                .map(s -> s + "\n")
+                .map(s -> s + ";\n")
                 .collect(Collectors.joining());
 
         compiledsource = compiledsource.replaceAll(";\\s*;", ";");
@@ -237,7 +237,6 @@ public class ShaderFile{
                     builder.append(process(assign.value));
                 }
 
-                builder.append(";");
             }
             else if(node instanceof Parser.Identifier identifier){
                 builder.append(identifier.value);

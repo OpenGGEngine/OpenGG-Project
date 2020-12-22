@@ -164,11 +164,13 @@ public class OpenGLRenderer implements Renderer {
             enableDefaultVP();
 
             pass.getSceneBuffer().disableRendering();
-            if(pass.isPostProcessEnabled())
-                PostProcessController.process(pass.getSceneBuffer());
-
-            if(pass.shouldBlitToBack())
+            if(pass.isPostProcessEnabled()){
+                var outputBuffer = PostProcessController.process(pass.getSceneBuffer());
+                if(pass.shouldBlitToBack())
+                    outputBuffer.blitToBack();
+            }else if(pass.shouldBlitToBack()) {
                 pass.getSceneBuffer().blitToBack();
+            }
 
             pass.runDisableOp();
         }

@@ -201,7 +201,7 @@ public class VulkanWindow {
         VkFormatProperties formatProps = VkFormatProperties.calloc();
         for (int format : depthFormats) {
             vkGetPhysicalDeviceFormatProperties(physicalDevice, format, formatProps);
-            // Format must support depth stencil attachment for optimal tiling
+            // Format must support depth stencil texture for optimal tiling
             if ((formatProps.optimalTilingFeatures() & VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT) != 0) {
                 depthFormat.put(0, format);
                 return true;

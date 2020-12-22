@@ -15,10 +15,12 @@ import com.opengg.core.render.objects.ObjectCreator;
 import com.opengg.core.render.shader.CommonUniforms;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.texture.Framebuffer;
-import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.texture.WindowFramebuffer;
+import com.opengg.core.render.window.WindowController;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -27,83 +29,65 @@ import java.util.Map;
  */
 public class PostProcessController {
     public static Renderable renderable;
-    private static final Map<String, PostProcessingPass> passes = new HashMap<>();
-    private static Framebuffer utility;
-    static Framebuffer currentBuffer = null;
-    static Texture t;
-    
+    private static final Map<String, PostProcessStage> stages = new LinkedHashMap<>();
+    private static final Map<String, Framebuffer> buffers = new HashMap<>();
+
     public static void initialize(){
-        utility = WindowFramebuffer.getFloatingPointWindowFramebuffer(1);
         renderable = ObjectCreator.createSquare(new Vector2f(0f,0f), new Vector2f(1f,1f), -0.9f);
-/*
-        Stage ssao = new Stage("ssao");
-        PostProcessingPass ssaopass = new PostProcessingPass(PostProcessingPass.SET, ssao);
-        //addPass("ssao", ssaopass);
 
-        int blurpasses = 4;
-        Stage[] blurs = new Stage[blurpasses*2+2];
-        Stage extract = new Stage("bright", Tuple.of(0,"Ka"), Tuple.of(1,"Kd"));
-        Stage blurv = new Stage("blurv");
-        Stage blurh = new Stage("blurh");
-        blurs[0] = extract;
-        for (int i = 0; i < blurpasses; i++) {
-            blurs[i*2+1] = blurh;
-            blurs[i*2+2] = blurv;
-        }
-        Stage add = new Stage("add");
-        blurs[blurpasses*2+1] = add;
+        buffers.put("output", WindowFramebuffer.getFloatingPointWindowFramebuffer(1));
+        buffers.put("gbuffer2", WindowFramebuffer.getFloatingPointWindowFramebuffer(1));
+        buffers.put("brightness", WindowFramebuffer.getFloatingPointWindowFramebuffer(1));
+        buffers.put("blur", WindowFramebuffer.getFloatingPointWindowFramebuffer(1));
+        buffers.put("bloom", WindowFramebuffer.getFloatingPointWindowFramebuffer(1));
 
-        PostProcessingPass bloom = new PostProcessingPass(PostProcessingPass.SET,
-                blurs);
-        //addPass("bloom", bloom);
-*/
-        Stage hdr = new Stage("hdr");
-        PostProcessingPass hdrpass = new PostProcessingPass(PostProcessingPass.SET, hdr);
-        addPass("hdr", hdrpass);
+        RenderStage bright = new RenderStage("bright", List.of(new RenderStage.InputBuffer("gbuffer", 0, "Kd")), "brightness");
+        addPass("brightness", bright);
 
-//        Stage fxaa = new Stage("fxaa");
-  //      PostProcessingPass fxaapass = new PostProcessingPass(PostProcessingPass.SET, fxaa);
-        //addPass("fxaa", fxaapass);
+        RenderStage blurvBloom = new RenderStage("blur",
+                List.of(new RenderStage.InputBuffer("brightness", 0, "Kd")), "blur",
+                () -> ShaderController.setUniform("direction", new Vector2f(2,0)));
+        addPass("blurv", blurvBloom);
 
-        GGConsole.log("Initialized post processing controller with " + passes.size() + " passes");
+        RenderStage blurhBloom = new RenderStage("blur",
+                List.of(new RenderStage.InputBuffer("blur", 0, "Kd")), "bloom",
+                () -> ShaderController.setUniform("direction", new Vector2f(0,2)));
+        addPass("blurh", blurhBloom);
+
+        RenderStage addBlur = new RenderStage("add",
+                List.of(new RenderStage.InputBuffer("bloom", 0, "Kd"),
+                        new RenderStage.InputBuffer("gbuffer", 0, "Ka")), "gbuffer2");
+        addPass("addBlur", addBlur);
+
+        RenderStage hdr = new RenderStage("hdr", List.of(new RenderStage.InputBuffer("gbuffer", 0, "Kd")), "output");
+        addPass("hdr", hdr);
+
+
+
+        GGConsole.log("Initialized post processing controller with " + stages.size() + " passes");
     }
 
-    public static void addPass(String name, PostProcessingPass pass){
-        passes.put(name, pass);
+    public static void addPass(String name, PostProcessStage stage){
+        stages.put(name, stage);
     }
 
-    public static PostProcessingPass getPass(String name){
-        return passes.get(name);
+    public static Framebuffer getBuffer(String name){
+        return buffers.get(name);
     }
     
-    public static void process(Framebuffer initialBuffer){
+    public static Framebuffer process(Framebuffer initialBuffer){
         ((OpenGLRenderer) RenderEngine.renderer).setCulling(false);
         CommonUniforms.setModel(new Matrix4f());
-        
-        currentBuffer = initialBuffer;
+        ShaderController.setUniform("resolution", new Vector2f(WindowController.getWidth(), WindowController.getHeight()));
+
+        buffers.put("gbuffer", initialBuffer);
         initialBuffer.getTexture(0).setAsUniform("Kd");
         initialBuffer.getTexture(Framebuffer.DEPTH).setAsUniform("Ka");
-        for(PostProcessingPass pass : passes.values()){
-            if(!pass.isEnabled()) continue;
-            pass.render();
-            switch (pass.op) {
-                case PostProcessingPass.SET -> currentBuffer.getTexture(0).setAsUniform("Kd");
-                case PostProcessingPass.ADD -> {
-                    utility.clearFramebuffer();
-                    utility.enableRendering(0,0,utility.getWidth(),utility.getHeight());
-                    ShaderController.useConfiguration("add");
-                    renderable.render();
-                    utility.disableRendering();
-                    utility.getTexture(0).setAsUniform("Kd");
-                    currentBuffer = utility;
-                }
-            }
+        for(var stage : stages.values()){
+            stage.render();
         }
-        initialBuffer.clearFramebuffer();
-        initialBuffer.enableRendering(0,0,initialBuffer.getWidth(),initialBuffer.getHeight());
-        ShaderController.useConfiguration("texture");
-        renderable.render();
-        initialBuffer.disableRendering();
+
+        return buffers.get("output");
     }
 
     private PostProcessController() {
