@@ -181,9 +181,6 @@ public class OpenGLRenderer implements Renderer {
         GGDebugRenderer.render();
 
         this.setCulling(true);
-
-        this.checkForGLErrors();
-
     }
 
     @Override
@@ -214,24 +211,9 @@ public class OpenGLRenderer implements Renderer {
             glDisable(GL_CULL_FACE);
     }
 
-    /**
-     * Checks for and prints out any OpenGL errors
-     */
-    public void checkForGLErrors(){
-        int i;
-        if(suppressErrors) return;
-        while((i = glGetError()) != GL_NO_ERROR){
-           // GGConsole.warning("OpenGL Error code : " + i);
-        }
-    }
 
-    /**
-     * @return The current OpenGL version in a major . minor format
-     */
-    public String getGLVersion(){
-        return OpenGG.getInitOptions().getWindowOptions().renderer == WindowOptions.RendererType.OPENGL ?
-                glGetInteger(GL_MAJOR_VERSION) + "." + glGetInteger(GL_MINOR_VERSION):
-                "unknown";
+    public void endFrame(){
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     }
 
     public void setCurrentVAOFormat(VertexArrayFormat format){
@@ -244,24 +226,58 @@ public class OpenGLRenderer implements Renderer {
         return currentVAO;
     }
 
-    public void setWireframe(boolean wf){
-        if(wf)
+    public void setWireframe(boolean wireframe){
+        if(wireframe)
             glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
         else
             glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
     }
 
-    public void endFrame(){
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    }
 
     public void setCulling(boolean enable){
         cull = enable;
         resetConfig();
     }
 
-    public void setDepthCheck(boolean check){
+    public void setDepthTest(boolean check){
         GLOptions.set(GL_DEPTH_TEST, check);
+    }
+
+    public void setDepthWrite(boolean write){
+        glDepthMask(true);
+    }
+
+    public void setDepthFunc(DepthTestFunction func){
+        int glFunc = switch (func){
+            case ALWAYS -> GL_ALWAYS;
+            case LEQUAL -> GL_LEQUAL;
+        };
+        glDepthFunc(glFunc);
+    }
+
+    public void setAlphaBlendEnable(boolean blend){
+        GLOptions.set(GL_BLEND, blend);
+    }
+
+    public void setAlphaBlendFunction(AlphaBlendFunction function){
+        switch (function){
+            case ADD -> glBlendEquation(GL_FUNC_ADD);
+            case SUBTRACT -> glBlendEquation(GL_FUNC_SUBTRACT);
+            case REV_SUBTRACT -> glBlendEquation(GL_FUNC_REVERSE_SUBTRACT);
+        }
+    }
+
+    public void setAlphaBlendSource(AlphaBlendSource srcFactor, AlphaBlendSource dstFactor){
+        glBlendFunc(getGlBlendSource(srcFactor), getGlBlendSource(dstFactor));
+    }
+
+    private int getGlBlendSource(AlphaBlendSource source){
+        return switch (source){
+            case SRC_ALPHA -> GL_SRC_ALPHA;
+            case ONE_MINUS_SRC_ALPHA -> GL_ONE_MINUS_SRC_ALPHA;
+            case ONE -> GL_ONE;
+            case ZERO -> GL_ZERO;
+        };
     }
 
     public Framebuffer getCurrentFramebuffer() {
@@ -285,4 +301,11 @@ public class OpenGLRenderer implements Renderer {
     public static OpenGLRenderer getOpenGLRenderer(){
         return (OpenGLRenderer) RenderEngine.getRenderer();
     }
+
+    public enum DepthTestFunction{LEQUAL, ALWAYS}
+
+    public enum AlphaBlendSource{SRC_ALPHA, ONE_MINUS_SRC_ALPHA, ONE, ZERO}
+
+    public enum AlphaBlendFunction{ADD, SUBTRACT, REV_SUBTRACT}
+
 }
