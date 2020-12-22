@@ -251,7 +251,7 @@ public class VulkanRenderer implements Renderer {
 
         format = createDefaultPipelineFormat(renderPass);
         var pipeline = VulkanPipelineCache.getPipeline(format);
-        // Select the command buffer for the current framebuffer image/attachment
+        // Select the command buffer for the current framebuffer image/texture
         // Submit to the graphics queue
         var renderPassBeginInfo = renderPass.generateInfo(new Vector3f(), currentFramebuffer, new Vector2i(), swapchain.getExtents());
         currentBuffer.begin();

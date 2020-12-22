@@ -87,7 +87,7 @@ public class GGGameConsole implements KeyboardListener, KeyboardCharacterListene
         //Fixes the Input Field not Rendering
         CommonUniforms.setModel(new Matrix4f());
         ShaderController.useConfiguration("texture");
-        if(RenderEngine.getRendererType() == WindowOptions.RendererType.OPENGL) ((OpenGLRenderer) RenderEngine.renderer).setDepthCheck(false);
+        if(RenderEngine.getRendererType() == WindowOptions.RendererType.OPENGL) ((OpenGLRenderer) RenderEngine.renderer).setDepthTest(false);
         background.render();
 
         var consoledrawable = font.createFromText(Text.from(consoleValue)
@@ -105,7 +105,7 @@ public class GGGameConsole implements KeyboardListener, KeyboardCharacterListene
         CommonUniforms.setModel(Matrix4f.translate(0,0.5f,0f));
         userdrawable.render();
 
-        if(RenderEngine.getRendererType() == WindowOptions.RendererType.OPENGL) ((OpenGLRenderer) RenderEngine.renderer).setDepthCheck(true);
+        if(RenderEngine.getRendererType() == WindowOptions.RendererType.OPENGL) ((OpenGLRenderer) RenderEngine.renderer).setDepthTest(true);
     }
 
     @Override

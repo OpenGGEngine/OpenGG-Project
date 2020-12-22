@@ -136,8 +136,8 @@ public class ShaderController {
         use("object.vert", "hdr.frag");
         saveCurrentConfiguration("hdr");
 
-        //   use("object.vert", "bright.frag");
-        //  saveCurrentConfiguration("bright");
+           use("object.vert", "bright.frag");
+          saveCurrentConfiguration("bright");
 
         //  use("object.vert", "arraytex.frag");
         //  saveCurrentConfiguration("array");
@@ -175,8 +175,8 @@ public class ShaderController {
         use("object.vert", "add.frag");
         saveCurrentConfiguration("add");
 
-        //  use("object.vert", "gaussh.frag");
-        //  saveCurrentConfiguration("blurh");
+         use("object.vert", "blur.frag");
+         saveCurrentConfiguration("blur");
 
         //  use("object.vert", "gaussv.frag");
         //   saveCurrentConfiguration("blurv");
@@ -188,25 +188,8 @@ public class ShaderController {
     }
 
     private static void setUniforms() {
-        /*//setUniform("jointsMatrix", new Matrix4f[200]);
-        setUniform("projection", new Matrix4f());
-        setUniform("divAmount", 1f);
-        setUniform("percent", 1f);*/
-        setUniform("shadow", 1);
-        /*setUniform("fill", new Vector3f());
-        setUniform("back", new Vector3f());
-        setUniform("rot", new Vector3f(0,0,0));
-        setUniform("scale", new Vector3f(1,1,1));
-        setUniform("camera", new Vector3f(0,0,0));
-        setUniform("color", new Vector3f(1,1,1));
-        setUniform("numLights", 1);
-        setUniform("invertMultiplier", 1);
-        setUniform("layer", 0);*/
-        //setUniform("billboard", false);
         setUniform("exposure", 1f);
         setUniform("gamma", 2.2f);
-
-        // setMatLinks();
     }
 
 

@@ -90,7 +90,7 @@ public class VulkanRenderPass {
             subpass = VkSubpassDescription.calloc(1)
                     .pipelineBindPoint(bindPoint)
                     .colorAttachmentCount(colorAttachments.size())
-                    .pColorAttachments(colorAttachmentBuffer) // <- only color attachment
+                    .pColorAttachments(colorAttachmentBuffer) // <- only color texture
                     .pDepthStencilAttachment(depthAttachment.getReference()) // <- and depth-stencil
                     ;
         }

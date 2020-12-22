@@ -64,6 +64,10 @@ public class WindowFramebuffer implements WindowResizeListener, Framebuffer{
         attachDepthTexture(size.x, size.y);
     }
 
+    public Framebuffer getUnderlyingBuffer() {
+        return underlyingBuffer;
+    }
+
     @Override
     public void onResize(Vector2i size) {
         regen();

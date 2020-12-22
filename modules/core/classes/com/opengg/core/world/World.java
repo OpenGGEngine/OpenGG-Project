@@ -218,7 +218,7 @@ public class World extends Component implements Resource {
 
     /**
      * Overrides {@link Component#onParentChange(Component)}, throws an exception to
-     * prevent attachment to any other components
+     * prevent texture to any other components
      * @throws com.opengg.core.exceptions.InvalidParentException
      */
     @Override

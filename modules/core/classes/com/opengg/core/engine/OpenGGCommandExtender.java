@@ -177,10 +177,10 @@ public class OpenGGCommandExtender implements ConsoleListener{
             case "pp" -> {
                 if (command.argCount == 2) {
                     if (command.args[0].equalsIgnoreCase("enable")) {
-                        PostProcessController.getPass(command.args[1]).setEnabled(true);
+                    //    PostProcessController.getPass(command.args[1]).setEnabled(true);
                         GGConsole.log("Enabled post-process path named " + command.args[1]);
                     } else if (command.args[0].equalsIgnoreCase("disable")) {
-                        PostProcessController.getPass(command.args[1]).setEnabled(false);
+                    //    PostProcessController.getPass(command.args[1]).setEnabled(false);
                         GGConsole.log("Disabled post-process path named " + command.args[1]);
 
                     }
