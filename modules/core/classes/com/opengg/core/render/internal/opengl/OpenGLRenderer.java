@@ -39,6 +39,16 @@ public class OpenGLRenderer implements Renderer {
     private boolean suppressErrors = false;
     private int lightoffset;
 
+    private boolean depthTestEnabled = true;
+    private boolean depthWriteEnabled = true;
+    private DepthTestFunction currentDepthFunc = DepthTestFunction.LEQUAL;
+
+    private boolean alphaBlendingEnabled = true;
+    private AlphaBlendFunction currentAlphaBlendFunction = AlphaBlendFunction.ADD;
+    private AlphaBlendSource currentSrcSource = AlphaBlendSource.SRC_ALPHA;
+    private AlphaBlendSource currentDestSource = AlphaBlendSource.ONE_MINUS_SRC_ALPHA;
+
+
     private OpenGLVertexArrayObject currentVAO;
     private GraphicsBuffer lightBuffer;
     private Framebuffer currentFramebuffer;
@@ -240,35 +250,55 @@ public class OpenGLRenderer implements Renderer {
     }
 
     public void setDepthTest(boolean check){
-        GLOptions.set(GL_DEPTH_TEST, check);
+        if(depthTestEnabled != check){
+            depthTestEnabled = check;
+            GLOptions.set(GL_DEPTH_TEST, check);
+        }
     }
 
     public void setDepthWrite(boolean write){
-        glDepthMask(true);
+        if(depthWriteEnabled != write){
+            depthWriteEnabled = write;
+            glDepthMask(write);
+        }
     }
 
     public void setDepthFunc(DepthTestFunction func){
-        int glFunc = switch (func){
-            case ALWAYS -> GL_ALWAYS;
-            case LEQUAL -> GL_LEQUAL;
-        };
-        glDepthFunc(glFunc);
+        if(currentDepthFunc != func){
+            currentDepthFunc = func;
+            int glFunc = switch (func){
+                case ALWAYS -> GL_ALWAYS;
+                case LEQUAL -> GL_LEQUAL;
+            };
+            glDepthFunc(glFunc);
+        }
     }
 
     public void setAlphaBlendEnable(boolean blend){
-        GLOptions.set(GL_BLEND, blend);
+        if(alphaBlendingEnabled != blend){
+            alphaBlendingEnabled = blend;
+            GLOptions.set(GL_BLEND, blend);
+        }
     }
 
     public void setAlphaBlendFunction(AlphaBlendFunction function){
-        switch (function){
-            case ADD -> glBlendEquation(GL_FUNC_ADD);
-            case SUBTRACT -> glBlendEquation(GL_FUNC_SUBTRACT);
-            case REV_SUBTRACT -> glBlendEquation(GL_FUNC_REVERSE_SUBTRACT);
+        if(currentAlphaBlendFunction != function){
+            currentAlphaBlendFunction = function;
+            switch (function){
+                case ADD -> glBlendEquation(GL_FUNC_ADD);
+                case SUBTRACT -> glBlendEquation(GL_FUNC_SUBTRACT);
+                case REV_SUBTRACT -> glBlendEquation(GL_FUNC_REVERSE_SUBTRACT);
+            }
         }
     }
 
     public void setAlphaBlendSource(AlphaBlendSource srcFactor, AlphaBlendSource dstFactor){
-        glBlendFunc(getGlBlendSource(srcFactor), getGlBlendSource(dstFactor));
+        if(currentSrcSource != srcFactor || currentDestSource != dstFactor){
+            currentSrcSource = srcFactor;
+            currentDestSource = dstFactor;
+            glBlendFunc(getGlBlendSource(srcFactor), getGlBlendSource(dstFactor));
+
+        }
     }
 
     private int getGlBlendSource(AlphaBlendSource source){
