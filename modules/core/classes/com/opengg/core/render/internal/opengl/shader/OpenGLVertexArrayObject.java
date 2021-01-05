@@ -32,7 +32,7 @@ public class OpenGLVertexArrayObject implements VertexArrayObject {
         for(var binding : format.getBindings()){
             for(var attrib : binding.attributes()){
                 int bytes = switch (attrib.type()){
-                    case FLOAT, FLOAT4, FLOAT3, FLOAT2, INT -> 4;
+                    case FLOAT, FLOAT4, FLOAT3, FLOAT2, INT, INT2, INT3, INT4 -> 4;
                     case HALF_FLOAT, HALF_FLOAT2, HALF_FLOAT4 -> 2;
                     case BYTE, UNSIGNED_BYTE -> 1;
                 };
@@ -74,7 +74,7 @@ public class OpenGLVertexArrayObject implements VertexArrayObject {
             case FLOAT, FLOAT4, FLOAT3, FLOAT2 -> GL_FLOAT;
             case HALF_FLOAT, HALF_FLOAT2, HALF_FLOAT4 -> GL_HALF_FLOAT;
             case UNSIGNED_BYTE -> GL_UNSIGNED_BYTE;
-            case INT -> GL_INT;
+            case INT, INT2, INT3, INT4 -> GL_INT;
             case BYTE -> GL_BYTE;
         };
     }

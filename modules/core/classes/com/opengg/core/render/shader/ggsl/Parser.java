@@ -175,7 +175,7 @@ public class Parser {
 
             LambdaContainer<TokenType> opcontainer = new LambdaContainer<>();
 
-            accept(ASSIGNMENT, PLUS, MINUS, MULTIPLY, DIVIDE, LESS, LEQUAL, GEQUAL, GREATER, EQUALS, NOT_EQUALS, BOOL_AND, BOOL_OR, BIT_AND, BIT_OR)
+            accept(ASSIGNMENT, PLUS, MINUS, MULTIPLY, DIVIDE, LESS, LEQUAL, GEQUAL, LEFT_SHIFT, RIGHT_SHIFT, GREATER, EQUALS, NOT_EQUALS, BOOL_AND, BOOL_OR, BIT_AND, BIT_OR)
                     .ifPresentOrElse(i -> {
                         opcontainer.value = i.type();
                         BinaryOp op = new BinaryOp();
@@ -206,6 +206,7 @@ public class Parser {
         List<List<String>> chars = List.of(
                 List.of("*", "/"),
                 List.of("+", "-"),
+                List.of("<<", ">>"),
                 List.of("|", "&"),
                 List.of("==", ">=", "<=", "<", ">", "!="),
                 List.of("||", "&&"),
@@ -215,12 +216,12 @@ public class Parser {
             reset: while(true){
                 for(int i = 0; i < expressions.size(); i++) {
                     var exp = expressions.get(i);
-                    if (exp instanceof BinaryOp) {
+                    if (exp instanceof BinaryOp bop) {
                         for (var charr : charlist) {
-                            if (((BinaryOp) exp).op.equals(charr)) {
-                                if (((BinaryOp) exp).right == null) {
-                                    ((BinaryOp) exp).left = expressions.get(i - 1);
-                                    ((BinaryOp) exp).right = expressions.get(i + 1);
+                            if (bop.op.equals(charr)) {
+                                if (bop.right == null) {
+                                    bop.left = expressions.get(i - 1);
+                                    bop.right = expressions.get(i + 1);
                                     expressions.set(i - 1, exp);
                                     expressions.remove(i + 1);
                                     expressions.remove(i);

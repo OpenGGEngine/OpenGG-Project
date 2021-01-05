@@ -41,7 +41,7 @@ public abstract sealed class DrawnObject implements Renderable permits OpenGLDra
     public static DrawnObject create(FloatBuffer... vertices) {
         return switch (RenderEngine.getRendererType()){
             case OPENGL -> new OpenGLDrawnObject(RenderEngine.getDefaultFormat(), null, vertices);
-            case VULKAN -> new VulkanDrawnObject(RenderEngine.getDefaultFormat(), null,vertices);
+            case VULKAN -> new VulkanDrawnObject(RenderEngine.getDefaultFormat(), null, vertices);
         };
     }
 

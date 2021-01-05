@@ -82,11 +82,15 @@ public class VulkanVertexFormat implements VertexArrayObject {
             case HALF_FLOAT4 -> VK_FORMAT_R16G16B16A16_SFLOAT;
             case BYTE -> VK_FORMAT_R8_SINT;
             case UNSIGNED_BYTE -> VK_FORMAT_R8_UINT;
-            case INT -> VK_FORMAT_R32_UINT;
             case FLOAT -> VK_FORMAT_R32_SFLOAT;
             case FLOAT2 -> VK_FORMAT_R32G32_SFLOAT;
             case FLOAT3 -> VK_FORMAT_R32G32B32_SFLOAT;
             case FLOAT4 -> VK_FORMAT_R32G32B32A32_SFLOAT;
+            case INT -> VK_FORMAT_R32_UINT;
+            case INT2 -> VK_FORMAT_R32G32_UINT;
+            case INT3 -> VK_FORMAT_R32G32B32_UINT;
+            case INT4 -> VK_FORMAT_R32G32B32A32_UINT;
+
         };
     }
 }
