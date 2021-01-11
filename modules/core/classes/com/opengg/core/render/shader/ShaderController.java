@@ -220,6 +220,10 @@ public class ShaderController {
         setUniform(name, new UniformContainer.Vector3fContainer(val));
     }
 
+    public static void setUniform(String name, Vector4f val) {
+        setUniform(name, new UniformContainer.Vector4fContainer(val));
+    }
+
     /**
      * Sets the value in the uniform named {@code name} to {@code val} in every shader<br><br>
      *
@@ -392,7 +396,7 @@ public class ShaderController {
                                 } else if (uniform instanceof UniformContainer.Vector3fContainer container) {
                                     glShader.setUniform(editedUniform, container.contents());
                                 } else if (uniform instanceof UniformContainer.Vector4fContainer container) {
-                                    //currentPipeline.getShader(ShaderType.VERTEX).setUniform(editedUniform.descriptor.set, container.contents());
+                                    glShader.setUniform(editedUniform, container.contents());
                                 } else if (uniform instanceof UniformContainer.Vector2iContainer container) {
                                     //currentPipeline.getShader(ShaderType.VERTEX).setUniform(editedUniform.descriptor.set, container.contents());
                                 } else if (uniform instanceof UniformContainer.Vector3iContainer container) {

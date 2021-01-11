@@ -15,6 +15,7 @@ import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.*;
 import com.opengg.core.render.internal.opengl.shader.OpenGLVertexArrayObject;
+import com.opengg.core.render.internal.opengl.texture.OpenGLFramebuffer;
 import com.opengg.core.render.light.Light;
 import com.opengg.core.render.postprocess.PostProcessController;
 import com.opengg.core.render.shader.*;
@@ -24,6 +25,8 @@ import com.opengg.core.render.window.WindowController;
 import com.opengg.core.render.window.WindowOptions;
 import com.opengg.core.system.Allocator;
 import com.opengg.core.world.Camera;
+
+import java.nio.ByteBuffer;
 
 import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.opengl.GL32.GL_PROGRAM_POINT_SIZE;
@@ -52,6 +55,7 @@ public class OpenGLRenderer implements Renderer {
     private OpenGLVertexArrayObject currentVAO;
     private GraphicsBuffer lightBuffer;
     private Framebuffer currentFramebuffer;
+    private Framebuffer lastBackBuffer;
     private DebugCallback callback;
 
     /**
@@ -170,16 +174,17 @@ public class OpenGLRenderer implements Renderer {
 
             setCurrentVAOFormat(RenderEngine.getDefaultFormat());
 
-
             enableDefaultVP();
 
             pass.getSceneBuffer().disableRendering();
             if(pass.isPostProcessEnabled()){
                 var outputBuffer = PostProcessController.process(pass.getSceneBuffer());
+                lastBackBuffer = outputBuffer;
                 if(pass.shouldBlitToBack())
                     outputBuffer.blitToBack();
             }else if(pass.shouldBlitToBack()) {
                 pass.getSceneBuffer().blitToBack();
+                lastBackBuffer = pass.getSceneBuffer();
             }
 
             pass.runDisableOp();
@@ -326,6 +331,10 @@ public class OpenGLRenderer implements Renderer {
     public void destroy(){
         TextureManager.clearCache();
         GGConsole.log("Render engine has released all OpenGL Resource and has finalized");
+    }
+
+    public ByteBuffer getLastPassContents(){
+        return lastBackBuffer.readData();
     }
 
     public static OpenGLRenderer getOpenGLRenderer(){
