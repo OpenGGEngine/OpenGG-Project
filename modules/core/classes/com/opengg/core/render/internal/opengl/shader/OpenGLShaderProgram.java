@@ -11,6 +11,7 @@ import com.opengg.core.exceptions.ShaderException;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
+import com.opengg.core.math.Vector4f;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.shader.ShaderProgram;
 
@@ -130,6 +131,10 @@ public class OpenGLShaderProgram implements ShaderProgram{
      * @param value Value to set
      */
     public void setUniform(String location, Vector3f value) {
+        program.setUniform(uniformSet.get(location), value);
+    }
+
+    public void setUniform(String location, Vector4f value) {
         program.setUniform(uniformSet.get(location), value);
     }
 

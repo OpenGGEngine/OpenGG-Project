@@ -14,7 +14,10 @@ public record VertexArrayBinding(int bindingIndex, int vertexSize, int divisor, 
             HALF_FLOAT4,
             BYTE,
             UNSIGNED_BYTE,
-            INT
+            INT,
+            INT2,
+            INT3,
+            INT4
         }
     }
 }

@@ -9,6 +9,7 @@ package com.opengg.core.render.texture;
 
 import com.opengg.core.render.internal.opengl.texture.OpenGLFramebuffer;
 
+import java.nio.ByteBuffer;
 import java.util.List;
 
 /**
@@ -51,6 +52,8 @@ public interface Framebuffer{
     void enableRendering(int x1, int y1, int x2, int y2);
 
     void disableRendering();
+
+    ByteBuffer readData();
 
     int getWidth();
 

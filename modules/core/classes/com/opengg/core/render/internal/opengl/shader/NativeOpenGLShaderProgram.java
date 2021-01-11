@@ -9,6 +9,7 @@ package com.opengg.core.render.internal.opengl.shader;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
+import com.opengg.core.math.Vector4f;
 import com.opengg.core.math.util.Tuple;
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.system.Allocator;
@@ -126,6 +127,12 @@ public class NativeOpenGLShaderProgram{
     public void setUniform(int location, Vector3f value) {
         if(RenderEngine.validateInitialization()) return;
         glProgramUniform3fv(id, location, value.getStackBuffer());
+        Allocator.popStack();
+    }
+
+    public void setUniform(int location, Vector4f value) {
+        if(RenderEngine.validateInitialization()) return;
+        glProgramUniform4fv(id, location, value.getStackBuffer());
         Allocator.popStack();
     }
 

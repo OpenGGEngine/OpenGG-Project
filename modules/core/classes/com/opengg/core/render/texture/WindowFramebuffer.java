@@ -9,6 +9,7 @@ import com.opengg.core.render.window.WindowController;
 import com.opengg.core.math.Vector2i;
 import com.opengg.core.render.window.WindowResizeListener;
 
+import java.nio.ByteBuffer;
 import java.util.List;
 
 /**
@@ -146,6 +147,11 @@ public class WindowFramebuffer implements WindowResizeListener, Framebuffer{
     @Override
     public void disableRendering(){
         underlyingBuffer.disableRendering();
+    }
+
+    @Override
+    public ByteBuffer readData() {
+        return underlyingBuffer.readData();
     }
 
     @Override

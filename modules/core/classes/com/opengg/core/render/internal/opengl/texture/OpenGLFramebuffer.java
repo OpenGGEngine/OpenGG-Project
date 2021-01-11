@@ -13,7 +13,9 @@ import com.opengg.core.render.window.WindowController;
 import com.opengg.core.render.texture.Framebuffer;
 import com.opengg.core.render.texture.Renderbuffer;
 import com.opengg.core.render.texture.Texture;
+import com.opengg.core.system.Allocator;
 
+import java.nio.ByteBuffer;
 import java.util.*;
 
 import static org.lwjgl.opengl.GL30.*;
@@ -158,7 +160,15 @@ public class OpenGLFramebuffer implements Framebuffer{
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glViewport(0, 0, WindowController.getWindow().getWidth(), WindowController.getWindow().getHeight());
     }
-    
+
+    @Override
+    public ByteBuffer readData() {
+        ByteBuffer pixels = Allocator.alloc(lx * ly * 4);
+        glBindFramebuffer(GL_FRAMEBUFFER, fb.getId());
+        glReadPixels(0, 0, lx, ly, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+        return pixels;
+    }
+
     public void checkForCompletion(){
         int comp;
         if((comp = fb.checkCompleteness()) != GL_FRAMEBUFFER_COMPLETE){

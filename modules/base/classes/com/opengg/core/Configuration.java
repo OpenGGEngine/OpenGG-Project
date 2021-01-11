@@ -9,6 +9,7 @@ package com.opengg.core;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 
 /**
@@ -32,8 +33,8 @@ public final class Configuration{
     
     public static String get(String key){
         return files.values().stream()
-                .filter(k -> k.getAllSettings().containsKey(key))
                 .map(k -> k.getConfig(key))
+                .filter(Objects::nonNull)
                 .findFirst()
                 .orElse("");
     }

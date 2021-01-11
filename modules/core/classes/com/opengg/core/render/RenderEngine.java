@@ -63,7 +63,6 @@ public class RenderEngine {
 
 
     public static void initializeForHeadless() {
-
         defaultVAOFormat = new VertexArrayFormat(List.of(
                 new VertexArrayBinding(0, 8 * 4, 0, List.of(
                         new VertexArrayBinding.VertexArrayAttribute("position", 3 * 4, VertexArrayBinding.VertexArrayAttribute.Type.FLOAT3, 0),
