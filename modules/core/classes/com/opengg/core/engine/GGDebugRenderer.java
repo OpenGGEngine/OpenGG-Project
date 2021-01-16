@@ -19,7 +19,7 @@ import java.text.NumberFormat;
 public class GGDebugRenderer implements KeyboardListener {
     private static boolean render = false;
 
-    private static final Font font = Resource.getTruetypeFont("consolas.ttf");
+    private static Font font;
     private static Text displaytext = Text.from("");
     private static Renderable display;
 
@@ -27,56 +27,57 @@ public class GGDebugRenderer implements KeyboardListener {
 
     private static int counter = 16;
 
-    public static void initialize(){
+    public static void initialize() {
         KeyboardController.addKeyboardListener(new GGDebugRenderer());
+        font = Resource.getTruetypeFont("consolas.ttf");
     }
 
-    public static void render(){
-        if(render){
-            counter++;
+    public static void render() {
+        counter++;
 
-            if(counter > 15){
-                counter = 0;
+        if (counter > 15) {
+            counter = 0;
 
-                var debugString =
-                        "Framebuffer resolution: " + WindowController.getWidth() + "/" + WindowController.getHeight() + "\n" +
-                        "Frame time: " + String.format("%.2f", PerformanceManager.getComputedFrameTime()*1000) + "\n" +
-                        "Frame rate: " + String.format("%.2f", 1/(PerformanceManager.getComputedFrameTime())) + "\n\n" +
-                        "Camera position: (" + String.format("%.2f", RenderEngine.getCurrentView().getPosition().x) + ", " +  String.format("%.2f",     RenderEngine.getCurrentView().getPosition().y) + ", " +  String.format("%.2f", RenderEngine.getCurrentView().getPosition().z) + ") \n\n" +
-                        "Current world: " + WorldEngine.getCurrent().getName() + " \n" +
-                        "Component count: " + WorldEngine.getComponentCount() + "\n\n" +
-                        "Render unit count: " + RenderEngine.getActiveRenderUnits().size() + "\n\n" +
-                        "Average render calls: " + PerformanceManager.getComputedDrawCalls() + "\n" +
-                        "GPU Buffer allocations: " + PerformanceManager.getBufferAllocsThisFrame() + "\n" +
-                        "GPU Buffer allocations size: " + PerformanceManager.getBufferAllocSizeThisFrame();
+            var debugString =
+                    "Framebuffer resolution: " + WindowController.getWidth() + "/" + WindowController.getHeight() + "\n" +
+                            "Frame time: " + String.format("%.2f", PerformanceManager.getComputedFrameTime() * 1000) + "\n" +
+                            "Frame rate: " + String.format("%.2f", 1 / (PerformanceManager.getComputedFrameTime())) + "\n\n" +
+                            "Camera position: (" + String.format("%.2f", RenderEngine.getCurrentView().getPosition().x) + ", " + String.format("%.2f", RenderEngine.getCurrentView().getPosition().y) + ", " + String.format("%.2f", RenderEngine.getCurrentView().getPosition().z) + ") \n\n" +
+                            "Current world: " + WorldEngine.getCurrent().getName() + " \n" +
+                            "Component count: " + WorldEngine.getComponentCount() + "\n\n" +
+                            "Render unit count: " + RenderEngine.getActiveRenderUnits().size() + "\n\n" +
+                            "Average render calls: " + PerformanceManager.getComputedDrawCalls() + "\n" +
+                            "GPU Buffer allocations: " + PerformanceManager.getBufferAllocsThisFrame() + "\n" +
+                            "GPU Buffer allocations size: " + PerformanceManager.getBufferAllocSizeThisFrame();
 
-                if(RenderEngine.getRendererType() == WindowOptions.RendererType.VULKAN){
-                    debugString += "\nDescriptor set allocations: " + PerformanceManager.getDescriptorSetAllocations();
-                }
-
-                if(NetworkEngine.isRunning()){
-                    debugString += "\n\n" + "Packets received / sec: " + PerformanceManager.getPacketsInSec() + "\n" +
-                            "Packets sent / sec: " + PerformanceManager.getPacketsOutSec() + "\n" +
-                            "Guaranteed packets sent / sec: " + PerformanceManager.getAckPacketsOutSec() + "\n" +
-                            "Packets dropped / sec: " + PerformanceManager.getPacketsDroppedSec() + "\n" +
-                            "Packets dropped %: " + NumberFormat.getPercentInstance().format((double)PerformanceManager.getPacketsDroppedSec()/PerformanceManager.getAckPacketsOutSec()) + "\n" +
-                            "Bytes received / sec: " + PerformanceManager.getNetworkBytesInSec() + "\n" +
-                            "Bytes sent / sec: " + PerformanceManager.getNetworkBytesOutSec() ;
-                }
-
-                displaytext = Text.from(debugString)
-                        .maxLineSize(1f)
-                        .kerning(true)
-                        .size(FONT_SCALE);
-                display = font.createFromText(displaytext);
+            if (RenderEngine.getRendererType() == WindowOptions.RendererType.VULKAN) {
+                debugString += "\nDescriptor set allocations: " + PerformanceManager.getDescriptorSetAllocations();
             }
 
-            CommonUniforms.setModel(Matrix4f.translate(0.02f,0.975f,0));
+            if (NetworkEngine.isRunning()) {
+                debugString += "\n\n" + "Packets received / sec: " + PerformanceManager.getPacketsInSec() + "\n" +
+                        "Packets sent / sec: " + PerformanceManager.getPacketsOutSec() + "\n" +
+                        "Guaranteed packets sent / sec: " + PerformanceManager.getAckPacketsOutSec() + "\n" +
+                        "Packets dropped / sec: " + PerformanceManager.getPacketsDroppedSec() + "\n" +
+                        "Packets dropped %: " + NumberFormat.getPercentInstance().format((double) PerformanceManager.getPacketsDroppedSec() / PerformanceManager.getAckPacketsOutSec()) + "\n" +
+                        "Bytes received / sec: " + PerformanceManager.getNetworkBytesInSec() + "\n" +
+                        "Bytes sent / sec: " + PerformanceManager.getNetworkBytesOutSec();
+            }
+
+            displaytext = Text.from(debugString)
+                    .maxLineSize(1f)
+                    .kerning(true)
+                    .size(FONT_SCALE);
+        }
+        if (render) {
+            display = font.createFromText(displaytext);
+
+            CommonUniforms.setModel(Matrix4f.translate(0.02f, 0.975f, 0));
             display.render();
         }
     }
 
-    public static void setEnabled(boolean enabled){
+    public static void setEnabled(boolean enabled) {
         render = enabled;
     }
 
@@ -84,9 +85,13 @@ public class GGDebugRenderer implements KeyboardListener {
         return render;
     }
 
+    public static String getCurrentDebugString() {
+        return displaytext.getText();
+    }
+
     @Override
     public void keyPressed(int key) {
-        if(key == Key.KEY_F3) render = !render;
+        if (key == Key.KEY_F3) render = !render;
     }
 
     @Override

@@ -12,7 +12,7 @@ public class RenderGroupComponent extends Component{
 
     public void attachRenderUnit(Renderable renderable, SceneRenderUnit.UnitProperties unitProperties){
         objects.add(new SceneRenderUnit(renderable, unitProperties));
-        OpenGG.asyncExec(() -> reAddRenderUnits());
+        OpenGG.asyncExec(this::reAddRenderUnits);
     }
 
     public void removeRenderUnit(Renderable renderable, SceneRenderUnit.UnitProperties unitProperties){

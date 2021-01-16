@@ -39,15 +39,15 @@ public class RenderComponent extends RenderGroupComponent implements Renderable 
     @Override
     public void render() {
         if(isAllEnabled() && renderable != null){
+            if((renderDistance > 0) && (getPosition().subtract(RenderEngine.getCurrentView().getPosition()).length() > renderDistance))
+                return;
+
             ShaderController.useConfiguration(unitProperties.shaderPipeline());
 
             if(override == null)
                 CommonUniforms.setPosRotScale(this.getPosition(), this.getRotation(), this.getScale());
             else
                 CommonUniforms.setModel(this.override);
-
-            if((renderDistance > 0) && (getPosition().subtract(RenderEngine.getCurrentView().getPosition()).length() > renderDistance))
-                return;
 
             renderable.render();
         }
