@@ -56,7 +56,7 @@
       */
      public static boolean isRunning() {
          if (server != null) return true;
-         return true;
+         return false;
      }
 
      public static Server getServer() {

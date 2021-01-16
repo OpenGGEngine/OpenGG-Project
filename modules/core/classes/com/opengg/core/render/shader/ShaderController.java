@@ -101,6 +101,8 @@ public class ShaderController {
         generateCommonPipelines();
         setUniforms();
 
+        System.out.println(attributeLocations);
+
         GGConsole.log("Shader Controller initialized, loaded " + programs.size() + " shader programs");
     }
 

@@ -71,7 +71,7 @@ public interface Texture{
     }
 
     static Texture get2DTexture(TextureData data){
-        return get2DTexture(data, SamplerFormat.RGBA, TextureFormat.SRGBA8, InputFormat.UNSIGNED_BYTE);
+        return get2DTexture(data, SamplerFormat.RGBA, TextureFormat.RGBA8, InputFormat.UNSIGNED_BYTE);
     }
 
     static Texture get2DSRGBTexture(String path){
