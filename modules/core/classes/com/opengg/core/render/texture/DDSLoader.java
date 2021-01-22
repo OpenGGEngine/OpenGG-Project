@@ -16,7 +16,8 @@ public class DDSLoader {
     private static final int DXT3 = 0x33545844;//(0x44585433);
     private static final int DXT4 = 0x34545844;//(0x44585434);
     private static final int DXT5 = 0x35545844;//(0x44585435);
-    public static TextureData loadFromBuffer(ByteBuffer b,String path){
+
+    public static TextureData loadFromBuffer(ByteBuffer b, String path){
         b.order(ByteOrder.LITTLE_ENDIAN);
         b.position(12);
         int height = b.getInt();
@@ -31,7 +32,12 @@ public class DDSLoader {
         //System.out.println(width + ","+height+","+linearSize+","+mipMapCount);
 
         int bufferSize = mipMapCount > 1 ? linearSize * 2:linearSize;
-        TextureData data = new TextureData(width, height, numComponents, MemoryUtil.memSlice(b,0,b.remaining()), path,
+
+        var gpuData = MemoryUtil.memSlice(b,0, b.remaining());
+
+        b.position(0);
+
+        TextureData data = new TextureData(width, height, numComponents, gpuData, b, path,
                 switch(fourCC){
                     case DXT3 -> TextureData.TextureDataType.DXT3;
                     case DXT5 -> TextureData.TextureDataType.DXT5;
@@ -41,6 +47,7 @@ public class DDSLoader {
         data.setMipMapCount(mipMapCount);
         return data;
     }
+
     public static TextureData load(String path) throws IOException {
         File f = new File(path);
         try(FileInputStream fc = new FileInputStream(f)){
@@ -67,7 +74,7 @@ public class DDSLoader {
             var readBytes = fc.readNBytes(bufferSize);
             ByteBuffer buffer = Allocator.alloc(readBytes.length).put(readBytes).rewind();
 
-            TextureData data = new TextureData(width, height, numComponents, buffer, path,
+            TextureData data = new TextureData(width, height, numComponents, buffer, null, path,
                     switch(fourCC){
                         case DXT3 -> TextureData.TextureDataType.DXT3;
                         case DXT5 -> TextureData.TextureDataType.DXT5;
