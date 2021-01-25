@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
  */
 public class WorldEngine{
     private static World primaryWorld;
-    private static final List<Component> removal = new LinkedList<>();
     private static boolean enabled = true;
 
     private static final List<Consumer<World>> worldActivationListeners = new ArrayList<>();

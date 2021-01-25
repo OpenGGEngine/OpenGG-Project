@@ -14,9 +14,11 @@ package com.opengg.core.math;
  */
 
 import com.opengg.core.math.geom.Ray;
+import com.opengg.core.math.geom.Triangle;
 import com.opengg.core.math.util.Tuple;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 public final class FastMath {
@@ -607,6 +609,21 @@ public final class FastMath {
         return end;
     }
 
+    public static Vector3f[] closestApproach(Ray r1, Ray r2) {
+        var n = r1.dir().cross(r2.dir());
+        var n2 = r2.dir().cross(n);
+        var n1 = r1.dir().cross(n);
+
+
+        var c1 = r1.pos().add(r2.pos().subtract(r1.pos()).dot(n2) /
+                                r1.dir().dot(n2)).multiply(r1.dir());
+
+        var c2 = r2.pos().add(r1.pos().subtract(r2.pos()).dot(n1) /
+                r2.dir().dot(n1)).multiply(r2.dir());
+
+        return new Vector3f[]{c1, c2};
+    }
+
     public static Vector3f getRayPlaneIntersection(Ray ray, Vector3f planeNormal, Vector3f planePoint) {
         var rayPos = ray.pos();
         var rayDir = ray.dir();
@@ -672,6 +689,36 @@ public final class FastMath {
             }
         }
         return vertices.get(index);
+    }
+
+    public static Optional<Vector3f> getRayTriangleCollision(Ray ray, Triangle triangle){
+        var vertex0 = triangle.a();
+        var vertex1 = triangle.b();
+        var vertex2 = triangle.c();
+        var edge1 = vertex1.subtract(vertex0);
+        var edge2 = vertex2.subtract(vertex0);
+        var h = ray.dir().cross(edge2);
+        float a = edge1.dot(h);
+        if (a > -0.000001f && a < 0.000001f) {
+            return Optional.empty();    // This ray is parallel to this triangle.
+        }
+        float f = 1.0f / a;
+        var s = ray.pos().subtract(vertex0);
+        float u = f * (s.dot(h));
+        if (u < 0.0 || u > 1.0) {
+            return Optional.empty();
+        }
+        var q = s.cross(edge1);
+        float v = f * ray.dir().dot(q);
+        if (v < 0.0 || u + v > 1.0) {
+            return Optional.empty();
+        }
+        float t = f * edge2.dot(q);
+        if (t > 0.000001f) {
+            return Optional.of(ray.pos().add(ray.dir().multiply(t)));
+        } else {
+            return Optional.empty();
+        }
     }
 
     public static boolean isCollinear(Vector3f a, Vector3f b, Vector3f c){

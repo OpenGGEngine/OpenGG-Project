@@ -85,6 +85,6 @@ public class AWTMousePosHandler implements MousePositionHandler, MouseMotionList
     @Override
     public Vector2f getRawPos() {
         var loc = parent.getLocationOnScreen();
-        return new Vector2f((float)lockXPos - loc.x,(float)lockYPos - loc.y);
+        return new Vector2f((float)MouseInfo.getPointerInfo().getLocation().x - loc.x,(float)MouseInfo.getPointerInfo().getLocation().y - loc.y);
     }
 }

@@ -57,7 +57,7 @@ public class GGCanvas implements Window {
 
         osScaleFactor = new Vector2f((float)transform.getScaleX(), (float)transform.getScaleY());
 
-        container.setMinimumSize(new Dimension(info.width/2, info.height/2));
+        container.setMinimumSize(new Dimension(info.width/3, info.height/3));
         container.setPreferredSize(new Dimension(info.width, info.height));
         container.add(canvas);
 

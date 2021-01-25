@@ -20,7 +20,7 @@ public class MeshTriangle {
     public BoundingBox boundingBox;
     
     public MeshTriangle(Triangle t){
-        this(t.a,t.b,t.c);
+        this(t.a(),t.b(),t.c());
     }
     
     public MeshTriangle(Vector3f a, Vector3f b, Vector3f c){
