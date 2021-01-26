@@ -52,7 +52,7 @@ public class  TextureLoader {
         ByteBuffer dataBuffer = Allocator.alloc(tex.remaining());
         byte[] tempCopy = new byte[tex.remaining()];
         tex.get(tempCopy); dataBuffer.put(tempCopy).flip();
-        TextureData data = new TextureData(texWidth,texHeight,4,dataBuffer,path, TextureData.TextureDataType.ATSC);
+        TextureData data = new TextureData(texWidth,texHeight,4,dataBuffer,null,path, TextureData.TextureDataType.ATSC);
         data.setBlockSize(xDim,yDim);
         fIn.close();
         return data;

@@ -8,6 +8,7 @@ package com.opengg.core.render.texture;
 
 import com.opengg.core.engine.Resource;
 import java.nio.Buffer;
+import java.nio.ByteBuffer;
 import java.util.Optional;
 
 /**
@@ -40,26 +41,35 @@ public class TextureData implements Resource{
     public final Buffer buffer;
 
     /**
+     * Buffer containing unprocessed texture data
+     */
+    public final Buffer originalBuffer;
+
+    /**
      * Source of texture (If texture comes from a file, this contains the file path)
      */
     public final String source;
+
     public Texture gpuTextureCache;
 
     public int mipMapCount = 1;
     
-    public TextureData(int width, int height, int channels, Buffer buffer, String source, TextureDataType type) {
+    public TextureData(int width, int height, int channels, Buffer buffer, ByteBuffer originalBuffer, String source, TextureDataType type) {
         this.width = width;
         this.height = height;
         this.channels = channels;
         this.buffer = buffer;
+        this.originalBuffer = originalBuffer;
         this.source = source;
         this.type = type;
     }
+
     public TextureData(int width, int height, int channels, Buffer buffer, String source) {
         this.width = width;
         this.height = height;
         this.channels = channels;
         this.buffer = buffer;
+        this.originalBuffer = buffer;
         this.source = source;
         this.type = TextureDataType.NORMAL;
     }

@@ -8,6 +8,7 @@ package com.opengg.core.math;
 import com.opengg.core.system.Allocator;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.List;
 
@@ -524,9 +525,15 @@ public class Vector3f implements Serializable{
      * @return 
      */
     public byte[] toByteArray(){   
-        ByteBuffer b = Allocator.alloc(12);
         return ByteBuffer.allocate(12).putFloat(x).putFloat(y).putFloat(z).array();
-        //return b.putFloat(x).putFloat(y).putFloat(z).array();
+    }
+
+    /**
+     * Returns a byte array containing the vector in xyz order
+     * @return
+     */
+    public byte[] toLittleEndianByteArray(){
+        return ByteBuffer.allocate(12).order(ByteOrder.LITTLE_ENDIAN).putFloat(x).putFloat(y).putFloat(z).array();
     }
 
     public float[] toFloatArray() {
