@@ -115,8 +115,7 @@ public class GGCanvas implements Window {
     }
 
     @Override
-    public void destroy() {
-    }
+    public void destroy() {}
 
     @Override
     public long getID() {

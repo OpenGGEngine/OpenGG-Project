@@ -6,6 +6,7 @@
 package com.opengg.core.render.internal.opengl.texture;
 
 import com.opengg.core.console.GGConsole;
+import com.opengg.core.math.Vector3f;
 import com.opengg.core.math.Vector3i;
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.render.internal.opengl.OpenGLRenderer;
@@ -142,9 +143,9 @@ public class OpenGLFramebuffer implements Framebuffer{
 
 
     @Override
-    public void clearFramebuffer() {
+    public void clearFramebuffer(Vector3f clearColor) {
         fb.bind(GL_FRAMEBUFFER);
-        fb.clear();
+        fb.clear(clearColor);
     }
 
     @Override

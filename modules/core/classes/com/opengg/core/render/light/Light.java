@@ -163,7 +163,7 @@ public class Light {
             ShaderController.setUniform("lightPos", pos);
             ShaderController.setUniform("farplane", distance);
         }
-        lightBuffer.clearFramebuffer();
+        lightBuffer.clearFramebuffer(new Vector3f());
         lightBuffer.enableRendering(0,0,lightBuffer.getWidth(), lightBuffer.getHeight());
     }
 
