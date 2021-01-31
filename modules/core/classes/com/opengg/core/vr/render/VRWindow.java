@@ -164,7 +164,7 @@ public class VRWindow implements Window {
                 view.setEyeMatrix(VRSystem.VRSystem_GetEyeToHeadTransform(EVREye_Eye_Left, HmdMatrix34.create()));
                 RenderEngine.useView(view);
 
-                hmdFramebuffer.clearFramebuffer();
+                hmdFramebuffer.clearFramebuffer(new Vector3f());
                 hmdFramebuffer.enableRendering(0,0,recx/2, recy);
                 paths.forEach(RenderOperation::render);
 

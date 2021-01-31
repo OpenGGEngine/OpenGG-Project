@@ -48,6 +48,7 @@ public final class OpenGG{
     private static Instant startTime;
     private static boolean force = false;
     private static boolean test = false;
+    private static boolean render = true;
     private static Time time;
     private static Thread mainThread;
     private static final DebugOptions options = new DebugOptions();
@@ -182,7 +183,7 @@ public final class OpenGG{
         while (!getWindow().shouldClose() && !GGInfo.isEnded()) {
             runUpdate();
             runInput();
-            runRender();
+            if(render) runRender();
         }
 
         GGConsole.log("OpenGG closing...");
@@ -428,6 +429,10 @@ public final class OpenGG{
      */
     public static void setOverrideUpdateTIme(float time) {
         OpenGG.overrideUpdate = time;
+    }
+
+    public static void enableRendering(boolean render) {
+        OpenGG.render = render;
     }
 
     /**

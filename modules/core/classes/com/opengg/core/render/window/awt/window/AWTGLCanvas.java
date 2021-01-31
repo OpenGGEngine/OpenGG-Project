@@ -1,5 +1,6 @@
 package com.opengg.core.render.window.awt.window;
 
+import com.opengg.core.engine.OpenGG;
 import org.lwjgl.system.Platform;
 
 import java.awt.*;
@@ -33,9 +34,25 @@ public abstract class AWTGLCanvas extends Canvas {
     protected boolean initCalled;
 
     @Override
+    public void addNotify() {
+        super.addNotify();
+        if(initCalled){
+            OpenGG.asyncExec(() ->  {
+                try {
+                    context = ((PlatformWin32GLCanvas)platformCanvas).recreate(this, data, effective, context);
+                } catch (AWTException e) {
+                    e.printStackTrace();
+                }
+            });
+        }
+    }
+
+    @Override
     public void removeNotify() {
         super.removeNotify();
-        disposeCanvas();
+        if(initCalled){
+            OpenGG.asyncExec(() -> ((PlatformWin32GLCanvas) platformCanvas).setNoContext(context));
+        }
     }
 
     public void disposeCanvas() {

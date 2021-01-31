@@ -5,6 +5,7 @@
  */
 package com.opengg.core.render.texture;
 
+import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.window.WindowController;
 import com.opengg.core.math.Vector2i;
 import com.opengg.core.render.window.WindowResizeListener;
@@ -135,8 +136,8 @@ public class WindowFramebuffer implements WindowResizeListener, Framebuffer{
     }
 
     @Override
-    public void clearFramebuffer() {
-        underlyingBuffer.clearFramebuffer();
+    public void clearFramebuffer(Vector3f clearColor) {
+        underlyingBuffer.clearFramebuffer(clearColor);
     }
 
     @Override

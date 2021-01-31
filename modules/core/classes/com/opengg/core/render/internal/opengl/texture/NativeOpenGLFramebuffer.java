@@ -5,6 +5,7 @@
  */
 package com.opengg.core.render.internal.opengl.texture;
 
+import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.RenderEngine;
 import com.opengg.core.system.NativeResource;
 import com.opengg.core.system.NativeResourceManager;
@@ -70,8 +71,8 @@ public class NativeOpenGLFramebuffer implements NativeResource {
         glNamedFramebufferDrawBuffers(id, buffers);
     }
 
-    public void clear() {
-        glClearNamedFramebufferfv(id, GL_COLOR, 0, new float[]{0,0,0,0});
+    public void clear(Vector3f clearColor) {
+        glClearNamedFramebufferfv(id, GL_COLOR, 0, new float[]{clearColor.x,clearColor.y,clearColor.z,0});
         glClearNamedFramebufferfv(id, GL_DEPTH, 0, new float[]{1});
     }
 

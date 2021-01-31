@@ -51,6 +51,7 @@ public class OpenGLRenderer implements Renderer {
     private AlphaBlendSource currentSrcSource = AlphaBlendSource.SRC_ALPHA;
     private AlphaBlendSource currentDestSource = AlphaBlendSource.ONE_MINUS_SRC_ALPHA;
 
+    private Vector3f clearColor = new Vector3f();
 
     private OpenGLVertexArrayObject currentVAO;
     private GraphicsBuffer lightBuffer;
@@ -162,7 +163,7 @@ public class OpenGLRenderer implements Renderer {
             RenderEngine.getProjectionData().use();
             setCurrentVAOFormat(RenderEngine.getDefaultFormat());
             pass.getSceneBuffer().enableRendering(0,0, pass.getSceneBuffer().getWidth(), pass.getSceneBuffer().getHeight());
-            pass.getSceneBuffer().clearFramebuffer();
+            pass.getSceneBuffer().clearFramebuffer(clearColor);
 
             useLights();
             resetConfig();
@@ -313,6 +314,10 @@ public class OpenGLRenderer implements Renderer {
             case ONE -> GL_ONE;
             case ZERO -> GL_ZERO;
         };
+    }
+
+    public void setClearColor(Vector3f color){
+        this.clearColor = color;
     }
 
     public Framebuffer getCurrentFramebuffer() {

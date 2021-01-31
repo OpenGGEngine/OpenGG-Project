@@ -5,6 +5,7 @@
  */
 package com.opengg.core.render.postprocess;
 
+import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.shader.ShaderController;
 
 import java.util.List;
@@ -46,7 +47,7 @@ public class RenderStage implements PostProcessStage{
 
         var writeBuffer = PostProcessController.getBuffer(output);
 
-        writeBuffer.clearFramebuffer();
+        writeBuffer.clearFramebuffer(new Vector3f());
         writeBuffer.enableRendering(0,0, writeBuffer.getWidth(), writeBuffer.getHeight());
         PostProcessController.renderable.render();
         writeBuffer.disableRendering();

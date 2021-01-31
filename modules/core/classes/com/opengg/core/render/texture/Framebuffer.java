@@ -7,6 +7,7 @@
 
 package com.opengg.core.render.texture;
 
+import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.internal.opengl.texture.OpenGLFramebuffer;
 
 import java.nio.ByteBuffer;
@@ -47,7 +48,7 @@ public interface Framebuffer{
 
     void blitToBack();
 
-    void clearFramebuffer();
+    void clearFramebuffer(Vector3f color);
 
     void enableRendering(int x1, int y1, int x2, int y2);
 
