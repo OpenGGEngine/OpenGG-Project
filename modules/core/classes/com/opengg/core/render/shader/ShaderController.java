@@ -203,6 +203,10 @@ public class ShaderController {
         return false;
     }
 
+    public static UniformContainer getUniform(String name){
+        return currentUniforms.get(name);
+    }
+
     /**
      * Sets the value in the uniform named {@code name} to {@code val} in every shader<br><br>
      */
