@@ -8,10 +8,12 @@ package com.opengg.core.render.window.awt.input;
 
 import com.opengg.core.io.input.mouse.MousePositionHandler;
 import com.opengg.core.math.Vector2f;
+import com.opengg.core.render.window.awt.window.GGCanvas;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
+import java.awt.geom.AffineTransform;
 
 /**
  *
@@ -85,6 +87,10 @@ public class AWTMousePosHandler implements MousePositionHandler, MouseMotionList
     @Override
     public Vector2f getRawPos() {
         var loc = parent.getLocationOnScreen();
-        return new Vector2f((float)MouseInfo.getPointerInfo().getLocation().x - loc.x,(float)MouseInfo.getPointerInfo().getLocation().y - loc.y);
+
+        loc.x *= GGCanvas.osScaleFactor.x;
+        loc.y *= GGCanvas.osScaleFactor.y;
+
+        return new Vector2f((float)MouseInfo.getPointerInfo().getLocation().x * GGCanvas.osScaleFactor.x - loc.x,(float)MouseInfo.getPointerInfo().getLocation().y * GGCanvas.osScaleFactor.y - loc.y);
     }
 }

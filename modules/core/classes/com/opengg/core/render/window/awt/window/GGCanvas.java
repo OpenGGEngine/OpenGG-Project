@@ -26,7 +26,7 @@ public class GGCanvas implements Window {
     private AWTMouseScrollHandler scrollCallback;
     public static Container container;
 
-    private Vector2f osScaleFactor = new Vector2f(1,1);
+    public static Vector2f osScaleFactor = new Vector2f(1,1);
 
     @Override
     public void setup(WindowOptions info) {
