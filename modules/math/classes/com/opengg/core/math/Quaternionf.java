@@ -266,10 +266,21 @@ public class Quaternionf implements Serializable{
 
     public Matrix4f toMatrix() {
         Quaternionf q = this.normalize();
+        float x2 = q.x*q.x;
+        float y2 = q.y*q.y;
+        float z2 = q.z*q.z;
+        float w2 = q.w*q.w;
+        float xy = q.x*q.y;
+        float xz = q.x*q.z;
+        float xw = q.x*q.w;
+        float yz = q.y * q.z;
+        float yw = q.y * q.w;
+        float zw = q.z * q.w;
+
         return new Matrix4f(
-                w*w + x*x - z*z - y*y,    2.0f * q.x * q.y + 2.0f * q.z * q.w,            2.0f * q.x * q.z - 2.0f * q.y * q.w, 0,
-                2.0f * q.x * q.y - 2.0f * q.z * q.w,            y*y - z*z + w*w - x*x,     2.0f * q.y * q.z + 2.0f * q.x * q.w, 0,
-                2.0f * q.x * q.z + 2.0f * q.y * q.w,            2.0f * q.y * q.z - 2.0f * q.x * q.w,            z*z - y*y - x*x + w*w, 0,
+                w2 + x2 - z2 - y2,    2.0f * (xy + zw),            2.0f * (xz-  yw), 0,
+                2.0f * (xy - zw),            y2 - z2 + w2 - x2,     2.0f * (yz+ xw), 0,
+                2.0f * (xz + yw),            2.0f * (yz - xw),            z2 - y2 - x2 +w2, 0,
                 0,                                              0,                                              0,                                        1);
     }
 
