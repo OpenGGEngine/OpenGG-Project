@@ -198,7 +198,8 @@ public class ShaderController {
     }
 
     public static boolean isAlready(String position, UniformContainer val) {
-        if (currentUniforms.get(position) != null && currentUniforms.get(position).equals(val)) return true;
+        var container = currentUniforms.get(position);
+        if (container != null && container.equals(val)) return true;
         currentUniforms.put(position, val);
         return false;
     }

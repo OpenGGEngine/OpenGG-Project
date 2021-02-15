@@ -160,8 +160,12 @@ public class Matrix4f {
         float nm30 = p.x;
         float nm31 = p.y;
         float nm32 = p.z;
+        return new Matrix4f(m00,m01,m02,m03,
+                m10,m11,m12,m13,
+                m20,m21,m22,m03,
+                m30+p.x,m31+p.y,m32+p.z,m33);
 
-        return this.multiply(Matrix4f.translate(p.x,p.y,p.z));
+        //return this.multiply(Matrix4f.translate(p.x,p.y,p.z));
     }
 
     public Matrix4f add(Matrix4f other) {
@@ -188,6 +192,32 @@ public class Matrix4f {
                             nm30, nm31, nm32, nm33);
     }
 
+    public Matrix4f multiply2(Matrix4f other) {
+        float nm00 = Math.fma(this.m00,other.m00,Math.fma(this.m10,other.m01, Math.fma(this.m20, other.m02 , this.m30 * other.m03)));
+        float nm01 = Math.fma(this.m01,other.m00,Math.fma(this.m11, other.m01 , Math.fma(this.m21 , other.m02, this.m31 * other.m03)));
+        float nm02 = Math.fma(this.m02,other.m00,Math.fma(this.m12,other.m01 , Math.fma(this.m22 , other.m02, this.m32 * other.m03)));
+        float nm03 = Math.fma(this.m03,other.m00,Math.fma(this.m13, other.m01 , Math.fma(this.m23 , other.m02 , this.m33 * other.m03)));
+
+        float nm10 = Math.fma(this.m00,other.m10,Math.fma(this.m10 , other.m11 , Math.fma(this.m20 , other.m12 , this.m30 * other.m13)));
+        float nm11 = Math.fma(this.m01,other.m10,Math.fma(this.m11 , other.m11 , Math.fma(this.m21 , other.m12 , this.m31 * other.m13)));
+        float nm12 = Math.fma(this.m02,other.m10,Math.fma(this.m12 , other.m11 , Math.fma(this.m22 , other.m12 , this.m32 * other.m13)));
+        float nm13 = Math.fma(this.m03,other.m10,Math.fma(this.m13 , other.m11 , Math.fma(this.m23 , other.m12 , this.m33 * other.m13)));
+
+        float nm20 = Math.fma(this.m00,other.m20,Math.fma(this.m10 , other.m21 , Math.fma(this.m20 , other.m22 , this.m30 * other.m23)));
+        float nm21 = Math.fma(this.m01,other.m20,Math.fma(this.m11 , other.m21 , Math.fma(this.m21 , other.m22 , this.m31 * other.m23)));
+        float nm22 = Math.fma(this.m02,other.m20,Math.fma(this.m12 , other.m21 , Math.fma(this.m22 , other.m22 , this.m32 * other.m23)));
+        float nm23 = Math.fma(this.m03,other.m20,Math.fma(this.m13 , other.m21 , Math.fma(this.m23 , other.m22 , this.m33 * other.m23)));
+
+        float nm30 = Math.fma(this.m00,other.m30,Math.fma(this.m10 , other.m31 , Math.fma(this.m20 , other.m32 , this.m30 * other.m33)));
+        float nm31 = Math.fma(this.m01,other.m30,Math.fma(this.m11 , other.m31 , Math.fma(this.m21 , other.m32 , this.m31 * other.m33)));
+        float nm32 = Math.fma(this.m02,other.m30,Math.fma(this.m12 , other.m31 , Math.fma(this.m22 , other.m32 , this.m32 * other.m33)));
+        float nm33 = Math.fma(this.m03,other.m30,Math.fma(this.m13 , other.m31 , Math.fma(this.m23 , other.m32 , this.m33 * other.m33)));
+
+        return new Matrix4f(nm00, nm01, nm02, nm03,
+                            nm10, nm11, nm12, nm13,
+                            nm20, nm21, nm22, nm23,
+                            nm30, nm31, nm32, nm33);
+    }
     public Matrix4f multiply(Matrix4f other) {
         float nm00 = this.m00 * other.m00 + this.m10 * other.m01 + this.m20 * other.m02 + this.m30 * other.m03;
         float nm01 = this.m01 * other.m00 + this.m11 * other.m01 + this.m21 * other.m02 + this.m31 * other.m03;
@@ -210,10 +240,11 @@ public class Matrix4f {
         float nm33 = this.m03 * other.m30 + this.m13 * other.m31 + this.m23 * other.m32 + this.m33 * other.m33;
 
         return new Matrix4f(nm00, nm01, nm02, nm03,
-                            nm10, nm11, nm12, nm13,
-                            nm20, nm21, nm22, nm23,
-                            nm30, nm31, nm32, nm33);
+                nm10, nm11, nm12, nm13,
+                nm20, nm21, nm22, nm23,
+                nm30, nm31, nm32, nm33);
     }
+
 
     public static Matrix4f perspective(float fovy, float aspect, float near, float far) {
         float f = (float) (1f / Math.tan(Math.toRadians(fovy) / 2f));
@@ -235,10 +266,15 @@ public class Matrix4f {
         float nm11 = y;
         float nm22 = z;
 
+        return new Matrix4f(m00*nm00,m01,m02,m03,
+                                m10,m11*nm11,m12,m13,
+                                m20,m21,m22*nm22,m03,
+                                m30,m31,m32,m33);
+        /*
         return this.multiply(new Matrix4f(nm00, 0,    0,    0,
                             0,    nm11, 0,    0,
                             0,    0,    nm22, 0,
-                            0,    0,    0,    1));
+                            0,    0,    0,    1));*/
     }
 
     public Matrix4f scale(Vector3f scale) {
