@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
 
@@ -27,7 +28,7 @@ public class ConfigFile {
         properties.load(new FileInputStream(file));
 
         this.name = file.getName();
-        contents = properties.isEmpty() ? new HashMap<>() : new HashMap<>(Map.ofEntries(properties.entrySet().toArray(new Map.Entry[1])));
+        contents = properties.isEmpty() ? new HashMap<>() : new LinkedHashMap<>(Map.ofEntries(properties.entrySet().toArray(new Map.Entry[1])));
     }
 
     public ConfigFile(String name, Map<String, String> contents){

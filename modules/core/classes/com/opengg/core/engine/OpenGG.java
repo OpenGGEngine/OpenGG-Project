@@ -109,6 +109,8 @@ public final class OpenGG{
 
         GGInfo.setServer(!client);
         GGInfo.setApplicationName(options.getApplicationName());
+        GGInfo.setUserDataDirectory(options.getUserDataDirectory().isEmpty() ? options.getApplicationName() : options.getUserDataDirectory());
+
 
         ThreadManager.initialize();
         Executor.initialize();
@@ -252,7 +254,9 @@ public final class OpenGG{
     }
 
     private static void loadConfigs(){
-        var configdir = new File(Resource.getAbsoluteFromLocal("config/"));
+        var configdir = initOptions.configInUserData() ?
+                new File(Resource.getUserDataPath() + "config/"):
+                new File(Resource.getAbsoluteFromLocal("config/"));
         var allconfigs = recursiveLoadConfigs(configdir);
         for(var config : allconfigs){
             try{

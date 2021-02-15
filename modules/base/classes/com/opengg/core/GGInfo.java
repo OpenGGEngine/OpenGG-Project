@@ -16,6 +16,8 @@ public class GGInfo {
     private static UserDataOption userDataLocation = UserDataOption.DOCUMENTS;
     private static final String version = "0.1";
     private static String appname = "default";
+    private static String userDataDirectory = "default";
+
     private static String memallocator = "system";
     private static String basepath = "";
     private static final boolean initialized = false;
@@ -93,6 +95,14 @@ public class GGInfo {
 
     public static void setUserDataLocation(UserDataOption userDataLocation) {
         GGInfo.userDataLocation = userDataLocation;
+    }
+
+    public static String getUserDataDirectory() {
+        return userDataDirectory;
+    }
+
+    public static void setUserDataDirectory(String userDataDirectory) {
+        GGInfo.userDataDirectory = userDataDirectory;
     }
 
     public static void setAgressiveMemoryManagement(boolean agressiveMemory) {

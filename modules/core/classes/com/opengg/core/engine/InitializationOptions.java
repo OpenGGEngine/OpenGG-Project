@@ -5,8 +5,10 @@ import com.opengg.core.render.window.WindowOptions;
 
 public class InitializationOptions {
     private String applicationName = "default";
+    private String userDataDirectory = "";
     private long applicationId = -1;
     private boolean headless = false;
+    private boolean configUserData = false;
     private GGInfo.UserDataOption localDataLocation = GGInfo.UserDataOption.DOCUMENTS;
 
     private WindowOptions windowOptions = new WindowOptions();
@@ -17,6 +19,15 @@ public class InitializationOptions {
 
     public InitializationOptions setApplicationName(String applicationName) {
         this.applicationName = applicationName;
+        return this;
+    }
+
+    public String getUserDataDirectory() {
+        return userDataDirectory;
+    }
+
+    public InitializationOptions setUserDataDirectory(String userDataDirectory) {
+        this.userDataDirectory = userDataDirectory;
         return this;
     }
 
@@ -35,6 +46,15 @@ public class InitializationOptions {
 
     public InitializationOptions setHeadless(boolean headless) {
         this.headless = headless;
+        return this;
+    }
+
+    public boolean configInUserData() {
+        return configUserData;
+    }
+
+    public InitializationOptions setConfigInUserData(boolean configInUserData) {
+        this.configUserData = configInUserData;
         return this;
     }
 

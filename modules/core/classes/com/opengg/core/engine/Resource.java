@@ -68,9 +68,9 @@ public interface Resource {
 
     static String getUserDataPath(){
         if(GGInfo.getUserDataLocation() == GGInfo.UserDataOption.DOCUMENTS)
-            return System.getProperty("user.home") + File.separator + "Documents" + File.separator + GGInfo.getApplicationName() + File.separator;
+            return System.getProperty("user.home") + File.separator + "Documents" + File.separator + GGInfo.getUserDataDirectory() + File.separator;
         else
-            return System.getenv("APPDATA") + File.separator + GGInfo.getApplicationName() + File.separator;
+            return System.getenv("APPDATA") + File.separator + GGInfo.getUserDataDirectory() + File.separator;
     }
 
     /**
