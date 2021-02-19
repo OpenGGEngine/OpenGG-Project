@@ -36,6 +36,7 @@ public class RenderEngine {
     public static VertexArrayFormat superCSCFormat;
     private static VertexArrayFormat tangentVAOFormat;
     private static VertexArrayFormat tangentAnimVAOFormat;
+    public static VertexArrayFormat ttFormat;
     private static View camera = new Camera();
     private static ProjectionData projectionData;
     private boolean bindSkyboxToCamera = false;
@@ -70,6 +71,12 @@ public class RenderEngine {
                         new VertexArrayBinding.VertexArrayAttribute("texcoord", 2 * 4, VertexArrayBinding.VertexArrayAttribute.Type.FLOAT2, 6 * 4)
                 ))
         ));
+        ttFormat = new VertexArrayFormat(List.of(new VertexArrayBinding(0, 28, 0, List.of(
+                new VertexArrayBinding.VertexArrayAttribute("position", 3 * 4, VertexArrayBinding.VertexArrayAttribute.Type.FLOAT3, 0),
+                new VertexArrayBinding.VertexArrayAttribute("normal", 4, VertexArrayBinding.VertexArrayAttribute.Type.BYTE, 3 * 4),
+                new VertexArrayBinding.VertexArrayAttribute("color", 4, VertexArrayBinding.VertexArrayAttribute.Type.BYTE, 16),
+                new VertexArrayBinding.VertexArrayAttribute("texcoord", 2 * 4, VertexArrayBinding.VertexArrayAttribute.Type.FLOAT2, 20)
+        ))));
 
         tangentVAOFormat = new VertexArrayFormat(List.of(new VertexArrayBinding(0, 11 * 4, 0, List.of(
                 new VertexArrayBinding.VertexArrayAttribute("position", 3 * 4, VertexArrayBinding.VertexArrayAttribute.Type.FLOAT3, 0),

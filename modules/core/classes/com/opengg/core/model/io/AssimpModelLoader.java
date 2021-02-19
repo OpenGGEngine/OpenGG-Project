@@ -6,6 +6,8 @@ import com.opengg.core.math.util.Tuple;
 import com.opengg.core.model.*;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.assimp.*;
+import org.lwjgl.system.CallbackI;
+
 import static org.lwjgl.assimp.Assimp.*;
 
 import java.io.File;
@@ -20,6 +22,118 @@ public class AssimpModelLoader {
 
     private static final int NUM_WEIGHTS = 4;
 
+    public static Model loadModelAsTriStrip(String path) throws IOException {
+        String name = path.substring(Math.max(path.lastIndexOf("\\"), path.lastIndexOf("/"))+1, path.lastIndexOf("."));
+
+        File f = new File(path);
+        AIScene scene = Assimp.aiImportFile(f.toString(),
+                Assimp.aiProcess_GenSmoothNormals|Assimp.aiProcess_Triangulate|Assimp.aiProcess_CalcTangentSpace);
+        GGConsole.log("Loading " + f.getName() + " with " +scene.mNumMeshes() + " meshes and " + scene.mNumAnimations() + " animations.");
+
+        GGNode rootNode = recurNode(scene.mRootNode());
+
+        //Load Materials
+        ArrayList<Material> materials = new ArrayList<>(scene.mNumMaterials());
+        if(scene.mNumMaterials() > 0){
+            for(int i = 0;i<scene.mNumMaterials();i++){
+                Material mat2 = processMaterial(AIMaterial.create(scene.mMaterials().get(i)));
+                mat2.texpath = f.getParent() ;
+                materials.add(mat2);
+            }
+        }
+
+        PointerBuffer pMeshes = scene.mMeshes();
+        ArrayList<Mesh> meshes = new ArrayList<>(scene.mNumMeshes());
+
+        boolean animationsEnabled = false;
+        boolean generateHulls = false;
+        boolean generatedTangent = false;
+
+        for(int i = 0;i<pMeshes.capacity();i++){
+            AIMesh mesh = AIMesh.create(pMeshes.get());
+
+            Vector3f positions;
+            Vector3f normals;
+            Vector3f tangents;
+            Vector2f uvs;
+
+            ArrayList<Integer> indices = new ArrayList<>(mesh.mNumFaces() * 3 + (mesh.mNumFaces() - 1)*2);
+            GGBone[] bones = new GGBone[mesh.mNumBones()];
+
+            boolean hasTangents = mesh.mTangents() == null;
+            generatedTangent = !hasTangents;
+            boolean hasNormal = mesh.mNormals() == null;
+            boolean hasUVs = mesh.mTextureCoords(0) == null;
+
+            ArrayList<GGVertex> vertices = new ArrayList<>(mesh.mNumVertices());
+            //Load Mesh VBO Data
+            for(int i2 = 0;i2<mesh.mNumVertices();i2++){
+
+                positions = assimpToV3(mesh.mVertices().get(i2));
+                normals =  hasNormal ? new Vector3f(1) : assimpToV3(mesh.mNormals().get(i2));
+                tangents = hasTangents ? new Vector3f(1) : assimpToV3(mesh.mTangents().get(i2));
+                uvs = hasUVs ? new Vector2f(1) : assimpToV2(mesh.mTextureCoords(0).get(i2));
+
+                vertices.add(new GGVertex(positions,normals,tangents,uvs));
+
+            }
+
+            //Load animation mesh data
+
+            //Load Mesh Index Data
+            for(int i2 = 0;i2<mesh.mFaces().capacity();i2++){
+                AIFace face = mesh.mFaces().get(i2);
+                if(i2 != 0){
+                    indices.add(face.mIndices().get(0));
+                }
+                indices.add(face.mIndices().get(0));
+                indices.add(face.mIndices().get(1));
+                indices.add(face.mIndices().get(2));
+                if(i2 != mesh.mFaces().capacity()-1){
+                    indices.add(face.mIndices().get(2));
+                }
+            }
+
+            Mesh gmesh  = new Mesh(vertices,indices.stream().mapToInt(e -> e).toArray(),animationsEnabled,true);
+            gmesh.setTriStrip(true);
+
+            if(scene.mNumMaterials() > 0){
+                gmesh.setMaterial(materials.get(mesh.mMaterialIndex()));
+                gmesh.matIndex = mesh.mMaterialIndex();
+            }
+            gmesh.setBones(bones);
+
+            meshes.add(gmesh);
+
+        }
+        GGConsole.log("Loaded model: " + f.getName());
+        Model model = new Model(meshes, name);
+        String formatConfig ="{";
+        if(animationsEnabled){
+            formatConfig+="anim_";
+        }
+        if(generatedTangent){
+            formatConfig+="tangent_";
+        }
+        model.setVaoFormat(formatConfig);
+        if(scene.mNumMaterials() > 0) model.setExportConfig(model.getExportConfig() | BMFFile.MATERIAL);
+
+        //Load animations
+        if(scene.mNumAnimations() > 0){
+            for(int i =0;i<scene.mNumAnimations();i++){
+                GGAnimation animation = processAnimation(AIAnimation.create(scene.mAnimations().get(i)));
+                model.getAnimations().put(animation.name,animation);
+            }
+            GGConsole.log("Loaded Animations");
+        }
+
+        model.setFileLocation(f.getParent());
+        model.setAnimated(animationsEnabled);
+        model.setMaterials(materials);
+        model.setRootAnimationNode(rootNode);
+        return model;
+
+    }
     public static Model loadModel(String path) throws IOException {
         String name = path.substring(Math.max(path.lastIndexOf("\\"), path.lastIndexOf("/"))+1, path.lastIndexOf("."));
 
@@ -172,7 +286,7 @@ public class AssimpModelLoader {
         AIString path = AIString.calloc();
         Assimp.aiGetMaterialTexture(material, aiTextureType_DIFFUSE, 0, path, (IntBuffer
                 ) null, null, null, null, null, null);
-        m.mapKdFilename = path.dataString();
+        m.mapKdFilename = path.dataString().replace(".png",".dds");
 
         path = AIString.calloc();
         Assimp.aiGetMaterialTexture(material, aiTextureType_SHININESS, 0, path, (IntBuffer

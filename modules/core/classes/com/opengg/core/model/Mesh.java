@@ -8,6 +8,7 @@ import com.opengg.core.render.objects.DrawnObject;
 import com.opengg.core.render.objects.MaterialRenderable;
 import com.opengg.core.system.Allocator;
 
+import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ public class Mesh {
     private Material material = Material.defaultmaterial; public int matIndex = -1;
     public boolean genAnim = false;
     private final boolean genTangents = true;
+    private boolean isTriStrip = false;
 
     private static final int VBO_NOANIM = 8,VBO_ANIM = 16;
 
@@ -28,6 +30,33 @@ public class Mesh {
 
     private List<Vector3f> convexHull;
 
+    public Mesh(ArrayList<GGVertex> vertices, int[] indices, boolean genTangents,boolean compressNormal){
+
+        ByteBuffer realBuf = Allocator.alloc(vertices.size() * 28);
+
+        for (GGVertex vertex : vertices) {
+            Vector3f position = vertex.position;
+            realBuf.putFloat(position.x).putFloat(position.y).putFloat(position.z);
+            Vector3f normal = vertex.normal;
+            normal = normal.normalize();
+            realBuf.put((byte) 255);
+            realBuf.put((byte) 255);
+            realBuf.put((byte) 255);
+            realBuf.put((byte) 255);
+            realBuf.put((byte) 255);
+            realBuf.put((byte) 255);
+            realBuf.put((byte) 255);
+            realBuf.put((byte) 255);
+            Vector2f uv = vertex.uvs;
+            realBuf.putFloat(uv.x).putFloat(uv.y);
+        }
+        realBuf.flip();
+        vbo = realBuf.asFloatBuffer();
+        System.out.println(realBuf.limit()+","+vbo.limit());
+        setIndexBuffer(Allocator.allocInt(indices.length).put(indices).flip());
+        this.genAnim = genAnim;
+        this.vertices = vertices;
+    }
     public Mesh(ArrayList<GGVertex> vertices, int[] indices, boolean genAnim){
 
         vbo = Allocator.allocFloat(vertices.size() * (  (genAnim?VBO_ANIM:VBO_NOANIM) + (genTangents ? 3 : 4) ) );
@@ -73,6 +102,11 @@ public class Mesh {
         DrawnObject temp = DrawnObject.create(genAnim ?
                 RenderEngine.getTangentAnimVAOFormat() : RenderEngine.getTangentVAOFormat(),
                 this.getIndexBuffer(), this.getVbo());
+        if(isTriStrip)
+            temp.setRenderType(DrawnObject.DrawType.TRIANGLE_STRIP);
+        if(true){
+            temp.setFormat(RenderEngine.ttFormat);
+        }
         return new MaterialRenderable(temp, this.getMaterial());
     }
 
@@ -115,5 +149,9 @@ public class Mesh {
 
     public void setMaterial(Material material) {
         this.material = material;
+    }
+
+    public void setTriStrip(boolean triStrip){
+        this.isTriStrip = triStrip;
     }
 }

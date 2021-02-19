@@ -35,6 +35,7 @@ public class ModelComponent extends RenderComponent implements ResourceUser{
     public ModelComponent(Model model, boolean collider){
         super(new SceneRenderUnit.UnitProperties().shaderPipeline("tangent"));
         setModel(model);
+        this.setShader("texture");
         this.setFormat(model.isAnimated() ? RenderEngine.getTangentAnimVAOFormat(): RenderEngine.getTangentVAOFormat());
         this.setTransparency(true);
         this.collider = collider;

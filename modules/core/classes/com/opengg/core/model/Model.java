@@ -46,6 +46,7 @@ public class Model implements Resource {
         for(Mesh mesh: meshes) objects.add(mesh.getDrawable());
 
         RenderableGroup group = new RenderableGroup(objects);
+
         return group;
     }
 
