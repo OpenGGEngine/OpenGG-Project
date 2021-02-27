@@ -43,10 +43,10 @@ public class Mesh {
             realBuf.put((byte) 255);
             realBuf.put((byte) 255);
             realBuf.put((byte) 255);
-            realBuf.put((byte) 255);
-            realBuf.put((byte) 255);
-            realBuf.put((byte) 255);
-            realBuf.put((byte) 255);
+            realBuf.put((byte) 127);
+            realBuf.put((byte) 127);
+            realBuf.put((byte) 127);
+            realBuf.put((byte) 127);
             Vector2f uv = vertex.uvs;
             realBuf.putFloat(uv.x).putFloat(uv.y);
         }

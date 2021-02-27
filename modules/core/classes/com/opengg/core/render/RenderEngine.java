@@ -73,7 +73,7 @@ public class RenderEngine {
         ));
         ttFormat = new VertexArrayFormat(List.of(new VertexArrayBinding(0, 28, 0, List.of(
                 new VertexArrayBinding.VertexArrayAttribute("position", 3 * 4, VertexArrayBinding.VertexArrayAttribute.Type.FLOAT3, 0),
-                new VertexArrayBinding.VertexArrayAttribute("normal", 4, VertexArrayBinding.VertexArrayAttribute.Type.BYTE, 3 * 4),
+                new VertexArrayBinding.VertexArrayAttribute("normal", 4, VertexArrayBinding.VertexArrayAttribute.Type.BYTE, 12),
                 new VertexArrayBinding.VertexArrayAttribute("color", 4, VertexArrayBinding.VertexArrayAttribute.Type.BYTE, 16),
                 new VertexArrayBinding.VertexArrayAttribute("texcoord", 2 * 4, VertexArrayBinding.VertexArrayAttribute.Type.FLOAT2, 20)
         ))));

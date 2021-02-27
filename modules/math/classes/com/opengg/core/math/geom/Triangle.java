@@ -14,9 +14,8 @@ import com.opengg.core.math.Vector4f;
  * @author Javier
  */
 public record Triangle(Vector3f a, Vector3f b, Vector3f c, Vector3f n) {
-
     public Triangle(Vector3f a, Vector3f b, Vector3f c) {
-        this(a, b, c, b.subtract(a).cross(c.subtract(a)));
+        this(a, b, c, b.subtract(a).cross(c.subtract(a)).normalize());
     }
 
 }

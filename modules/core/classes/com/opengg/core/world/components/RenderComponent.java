@@ -22,7 +22,7 @@ import java.util.ArrayList;
  */
 public class RenderComponent extends RenderGroupComponent implements Renderable {
     private Renderable renderable;
-    SceneRenderUnit.UnitProperties unitProperties;
+    protected SceneRenderUnit.UnitProperties unitProperties;
     private float renderDistance = 0f;
     private Matrix4f override;
 

@@ -2,8 +2,10 @@ package com.opengg.core.model.io;
 
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.math.*;
+import com.opengg.core.math.geom.Triangle;
 import com.opengg.core.math.util.Tuple;
 import com.opengg.core.model.*;
+import com.opengg.core.physics.collision.colliders.MeshTriangle;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.assimp.*;
 import org.lwjgl.system.CallbackI;
@@ -27,7 +29,7 @@ public class AssimpModelLoader {
 
         File f = new File(path);
         AIScene scene = Assimp.aiImportFile(f.toString(),
-                Assimp.aiProcess_GenSmoothNormals|Assimp.aiProcess_Triangulate|Assimp.aiProcess_CalcTangentSpace);
+                Assimp.aiProcess_GenSmoothNormals|Assimp.aiProcess_Triangulate|Assimp.aiProcess_CalcTangentSpace|Assimp.aiProcess_ConvertToLeftHanded| aiProcess_JoinIdenticalVertices);
         GGConsole.log("Loading " + f.getName() + " with " +scene.mNumMeshes() + " meshes and " + scene.mNumAnimations() + " animations.");
 
         GGNode rootNode = recurNode(scene.mRootNode());
@@ -84,13 +86,16 @@ public class AssimpModelLoader {
             for(int i2 = 0;i2<mesh.mFaces().capacity();i2++){
                 AIFace face = mesh.mFaces().get(i2);
                 if(i2 != 0){
-                    indices.add(face.mIndices().get(0));
-                }
-                indices.add(face.mIndices().get(0));
-                indices.add(face.mIndices().get(1));
-                indices.add(face.mIndices().get(2));
-                if(i2 != mesh.mFaces().capacity()-1){
                     indices.add(face.mIndices().get(2));
+                }
+                indices.add(face.mIndices().get(2));
+                indices.add(face.mIndices().get(1));
+                indices.add(face.mIndices().get(0));
+                indices.add(face.mIndices().get(0));
+                indices.add(face.mIndices().get(0));
+                indices.add(face.mIndices().get(0));
+                if(i2 != mesh.mFaces().capacity()-1){
+                    indices.add(face.mIndices().get(0));
                 }
             }
 
@@ -134,6 +139,39 @@ public class AssimpModelLoader {
         return model;
 
     }
+
+    public static List<List<Triangle>> readOnlyTriangles(String path){
+        File f = new File(path);
+        AIScene scene = Assimp.aiImportFile(f.toString(),
+                Assimp.aiProcess_Triangulate|Assimp.aiProcess_ConvertToLeftHanded);
+        GGConsole.log("Loading triangles for " + f.getName() + " with " +scene.mNumMeshes() + " meshes.");
+
+        List<List<Triangle>> allFaces = new ArrayList<>();
+        PointerBuffer pMeshes = scene.mMeshes();
+        for(int i = 0;i<pMeshes.capacity();i++){
+            AIMesh mesh = AIMesh.create(pMeshes.get());
+
+            List<Vector3f> vertices = new ArrayList<>();
+            List<Triangle> triangles = new ArrayList<>();
+            for(int i2 = 0;i2<mesh.mNumVertices();i2++){
+                Vector3f positions = assimpToV3(mesh.mVertices().get(i2));
+                vertices.add(positions);
+            }
+
+            for(int i2 = 0; i2 < mesh.mFaces().capacity(); i2++){
+                AIFace face = mesh.mFaces().get(i2);
+                var v1 = vertices.get(face.mIndices().get(0));
+                var v2 = vertices.get(face.mIndices().get(1));
+                var v3 = vertices.get(face.mIndices().get(2));
+                triangles.add(new Triangle(v1, v2, v3));
+            }
+
+            allFaces.add(triangles);
+        }
+
+        return allFaces;
+    }
+
     public static Model loadModel(String path) throws IOException {
         String name = path.substring(Math.max(path.lastIndexOf("\\"), path.lastIndexOf("/"))+1, path.lastIndexOf("."));
 
