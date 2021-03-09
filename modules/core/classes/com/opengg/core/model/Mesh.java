@@ -39,9 +39,9 @@ public class Mesh {
             realBuf.putFloat(position.x).putFloat(position.y).putFloat(position.z);
             Vector3f normal = vertex.normal;
             normal = normal.normalize();
+            realBuf.put((byte) 0);
             realBuf.put((byte) 255);
-            realBuf.put((byte) 255);
-            realBuf.put((byte) 255);
+            realBuf.put((byte) 0);
             realBuf.put((byte) 255);
             realBuf.put((byte) 127);
             realBuf.put((byte) 127);

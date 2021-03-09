@@ -424,6 +424,53 @@ public class Matrix4f {
                             nm30, nm31, nm32, nm33);
     }
 
+    public Vector3f getTranslation(){
+        return new Vector3f(m30, m31, m32);
+    }
+
+    public Vector3f getScale(){
+        return new Vector3f(m00, m11, m22);
+    }
+
+    public Quaternionf getRotationNormalized(){
+        float t;
+        float w, x, y, z;
+        float tr = m00 + m11 + m22;
+        if (tr >= 0.0) {
+            t = (float) Math.sqrt(tr + 1.0);
+            w = t * 0.5f;
+            t = 0.5f / t;
+            x = (m12 - m21) * t;
+            y = (m20 - m02) * t;
+            z = (m01 - m10) * t;
+        } else {
+            if (m00 >= m11 && m00 >= m22) {
+                t = (float) Math.sqrt(m00 - (m11 + m22) + 1.0);
+                x = t * 0.5f;
+                t = 0.5f / t;
+                y = (m10 + m01) * t;
+                z = (m02 + m20) * t;
+                w = (m12 - m21) * t;
+            } else if (m11 > m22) {
+                t = (float) Math.sqrt(m11 - (m22 + m00) + 1.0);
+                y = t * 0.5f;
+                t = 0.5f / t;
+                z = (m21 + m12) * t;
+                x = (m10 + m01) * t;
+                w = (m20 - m02) * t;
+            } else {
+                t = (float) Math.sqrt(m22 - (m00 + m11) + 1.0);
+                z = t * 0.5f;
+                t = 0.5f / t;
+                x = (m02 + m20) * t;
+                y = (m21 + m12) * t;
+                w = (m01 - m10) * t;
+            }
+        }
+
+        return new Quaternionf(w, x, y, z);
+    }
+
     public ByteBuffer getByteBuffer(){
         ByteBuffer buffer = Allocator.alloc(16*Float.BYTES);
         buffer.putFloat(m00).putFloat(m01).putFloat(m02).putFloat(m03);
