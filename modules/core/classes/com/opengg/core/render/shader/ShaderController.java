@@ -291,6 +291,7 @@ public class ShaderController {
 
 
     public static void setUniform(String name, Texture texture) {
+        if(texture == null) throw new NullPointerException("Null texture");
         setUniform(name, new UniformContainer.TextureContainer(texture));
     }
 

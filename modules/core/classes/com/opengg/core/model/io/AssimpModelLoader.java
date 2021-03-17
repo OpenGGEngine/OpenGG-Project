@@ -24,7 +24,7 @@ public class AssimpModelLoader {
 
     private static final int NUM_WEIGHTS = 4;
 
-    public static Model loadModelAsTriStrip(String path) throws IOException {
+    public static Model loadModelAsTriStrip(String path, Matrix4f initialTransform) throws IOException {
         String name = path.substring(Math.max(path.lastIndexOf("\\"), path.lastIndexOf("/"))+1, path.lastIndexOf("."));
 
         File f = new File(path);
@@ -71,7 +71,7 @@ public class AssimpModelLoader {
             //Load Mesh VBO Data
             for(int i2 = 0;i2<mesh.mNumVertices();i2++){
 
-                positions = assimpToV3(mesh.mVertices().get(i2));
+                positions = initialTransform.transform(assimpToV3(mesh.mVertices().get(i2)));
                 normals =  hasNormal ? new Vector3f(1) : assimpToV3(mesh.mNormals().get(i2));
                 tangents = hasTangents ? new Vector3f(1) : assimpToV3(mesh.mTangents().get(i2));
                 uvs = hasUVs ? new Vector2f(1) : assimpToV2(mesh.mTextureCoords(0).get(i2));
@@ -140,7 +140,7 @@ public class AssimpModelLoader {
 
     }
 
-    public static List<List<Triangle>> readOnlyTriangles(String path){
+    public static List<List<Triangle>> readOnlyTriangles(String path, Matrix4f initialTransform){
         File f = new File(path);
         AIScene scene = Assimp.aiImportFile(f.toString(),
                 Assimp.aiProcess_Triangulate|Assimp.aiProcess_ConvertToLeftHanded);
@@ -154,7 +154,7 @@ public class AssimpModelLoader {
             List<Vector3f> vertices = new ArrayList<>();
             List<Triangle> triangles = new ArrayList<>();
             for(int i2 = 0;i2<mesh.mNumVertices();i2++){
-                Vector3f positions = assimpToV3(mesh.mVertices().get(i2));
+                Vector3f positions = initialTransform.transform(assimpToV3(mesh.mVertices().get(i2)));
                 vertices.add(positions);
             }
 

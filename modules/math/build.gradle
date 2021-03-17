@@ -3,7 +3,7 @@ plugins{
 }
 
 dependencies {
-  compile project(':modules:system')
+  implementation  project(':modules:system')
 }
 
 sourceSets {

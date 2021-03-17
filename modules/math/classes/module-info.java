@@ -5,7 +5,8 @@
  */
 module com.opengg.math {
     requires com.opengg.system;
-    
+    requires jdk.incubator.vector;
+
     exports com.opengg.core.math;
     exports com.opengg.core.math.geom;
     exports com.opengg.core.math.util;

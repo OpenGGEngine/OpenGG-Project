@@ -3,10 +3,10 @@ plugins{
 }
 
 dependencies {
-  compile project(':modules:system')
-  compile project(':modules:base')
-  compile project(':modules:math')
-  compile project(':modules:console')
+	implementation  project(':modules:system')
+	implementation  project(':modules:base')
+	implementation  project(':modules:math')
+	implementation  project(':modules:console')
 }
 
 sourceSets {

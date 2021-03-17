@@ -52,7 +52,6 @@ public class Mesh {
         }
         realBuf.flip();
         vbo = realBuf.asFloatBuffer();
-        System.out.println(realBuf.limit()+","+vbo.limit());
         setIndexBuffer(Allocator.allocInt(indices.length).put(indices).flip());
         this.genAnim = genAnim;
         this.vertices = vertices;
