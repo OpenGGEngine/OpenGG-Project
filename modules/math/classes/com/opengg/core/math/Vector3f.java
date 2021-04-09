@@ -6,12 +6,15 @@
 package com.opengg.core.math;
 
 import com.opengg.core.system.Allocator;
+
+import java.awt.*;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+import java.util.Arrays;
 import java.util.List;
-
+import jdk.incubator.vector.*;
 /**
  * 3 component immutable vector with linear algebra functions
  * @author Javier
@@ -19,7 +22,11 @@ import java.util.List;
 public class Vector3f implements Serializable{
     public static final Vector3f identity = new Vector3f();
     private static final long serialVersionUID = 4404184685145307985L;
-    
+    private static final VectorSpecies<Float> SPECIES = FloatVector.SPECIES_128;
+    private static final VectorShuffle<Float> shuffle = VectorShuffle.fromValues(SPECIES, 3, 0, 2, 1);
+
+
+
     public final float x;
     public final float y;
     public final float z;
@@ -81,6 +88,13 @@ public class Vector3f implements Serializable{
         this.x = v.x;
         this.y = v.y;
         this.z = v.z;
+    }
+
+    public Vector3f(Color color) {
+        this.x = color.getRed() / 255f;
+        this.y = color.getGreen() / 255f;
+        this.z = color.getBlue() / 255f;
+
     }
 
     /**
@@ -213,7 +227,8 @@ public class Vector3f implements Serializable{
     }
     
     public Vector3f divide(Vector3f vector) {
-        //if (scalar == 0) throw new ArithmeticException("Divide by 0");
+
+
         return new Vector3f(x / vector.x, y / vector.y, z / vector.z);
     }
 
@@ -325,6 +340,20 @@ public class Vector3f implements Serializable{
     public float dot(Vector3f v) {
         return x * v.x + y * v.y + z * v.z;
     }
+
+    public float fastDot(Vector3f v) {
+        var sum = FloatVector.zero(SPECIES);
+        var thisAr = new float[]{x,y,z};
+        var otherAr = new float[]{v.x,v.y,v.z};
+        for (int i = 0; i < SPECIES.loopBound(3); i += SPECIES.length()) {
+            FloatVector va = FloatVector.fromArray(SPECIES, thisAr, i);
+            FloatVector vb = FloatVector.fromArray(SPECIES, otherAr, i);
+
+            sum = va.fma(vb, sum);
+        }
+
+        return sum.reduceLanes(VectorOperators.ADD);
+    }
     
     /**
      * Static version of {@link #cross(com.opengg.core.math.Vector3f) }
@@ -347,6 +376,22 @@ public class Vector3f implements Serializable{
         return new Vector3f(y * v.z - z * v.y,
                    z * v.x - x * v.z,
                    x * v.y - y * v.x);
+    }
+
+    public Vector3f fastCross(Vector3f v) {
+        var thisAr = new float[]{x,y,z};
+        var otherAr = new float[]{v.x,v.y,v.z};
+        var t2 = new float[3];
+        for (int i = 0; i < SPECIES.loopBound(3); i += SPECIES.length()) {
+            FloatVector va = FloatVector.fromArray(SPECIES, thisAr, i);
+            FloatVector vb = FloatVector.fromArray(SPECIES, otherAr, i);
+            FloatVector vaShuffle = va.rearrange(shuffle);
+            FloatVector vbShuffle = vb.rearrange(shuffle);
+            vbShuffle = vbShuffle.mul(vb);
+            FloatVector tmp2 = vaShuffle.fma(va, vbShuffle.neg());
+            tmp2.rearrange(shuffle).intoArray(t2, i);
+        }
+        return new Vector3f(t2[0], t2[1], t2[2]);
     }
 
     /**
@@ -551,9 +596,9 @@ public class Vector3f implements Serializable{
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 23 * hash + Float.floatToIntBits(this.x);
-        hash = 23 * hash + Float.floatToIntBits(this.y);
-        hash = 23 * hash + Float.floatToIntBits(this.z);
+        hash = (int) (23 * hash + this.x);
+        hash = (int) (23 * hash + this.y);
+        hash = (int) (23 * hash + this.z);
         return hash;
     }
 

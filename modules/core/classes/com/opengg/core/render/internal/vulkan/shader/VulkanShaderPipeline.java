@@ -89,6 +89,11 @@ public class VulkanShaderPipeline implements ShaderPipeline {
         };
     }
 
+    @Override
+    public List<ShaderProgram> getShaders() {
+        return null;
+    }
+
     public VkPipelineShaderStageCreateInfo.Buffer getPipelineCreateInfo(){
         var shaders = new ArrayList<VulkanShaderStage>();
         shaders.add(vert);

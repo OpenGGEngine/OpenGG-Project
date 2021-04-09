@@ -300,7 +300,7 @@ public class ShaderController {
         switch (RenderEngine.getRendererType()) {
             case OPENGL -> {
                 currentUniforms.put(name, val);
-                if(!editedUniforms.contains(name)) editedUniforms.add(name);
+                editedUniforms.add(name);
             }
             case VULKAN -> {
                 var pos = uniformDescriptorPositions.get(name);
@@ -382,12 +382,9 @@ public class ShaderController {
         switch (RenderEngine.getRendererType()) {
             case OPENGL -> {
                 for (var editedUniform : editedUniforms) {
-                    if (currentUniforms.containsKey(editedUniform)) {
-                        var uniform = currentUniforms.get(editedUniform);
-                        var shaderList = new ArrayList<>(List.of(currentPipeline.getShader(ShaderType.VERTEX), currentPipeline.getShader(ShaderType.FRAGMENT)));
-                        if (currentPipeline.getShader(ShaderType.GEOMETRY) != null)
-                            shaderList.add(currentPipeline.getShader(ShaderType.GEOMETRY));
-
+                    UniformContainer uniform;
+                    if ((uniform = currentUniforms.get(editedUniform)) != null) {
+                        var shaderList = currentPipeline.getShaders();
                         for (var shader : shaderList) {
                             var glShader = (OpenGLShaderProgram) shader;
                             if (glShader.uniformSet.containsKey(editedUniform)) {

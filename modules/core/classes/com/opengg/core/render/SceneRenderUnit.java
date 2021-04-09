@@ -7,7 +7,7 @@ public record SceneRenderUnit(Renderable renderable, UnitProperties renderableUn
     @Override
     public int compareTo(SceneRenderUnit o) {
         if(o.renderableUnitProperties.transparency == this.renderableUnitProperties.transparency){
-            if(this.renderableUnitProperties.format.equals(o.renderableUnitProperties.format)){
+            if(this.renderableUnitProperties.format.hashCode() - o.renderableUnitProperties.hashCode() != 0){
                 if(this.renderableUnitProperties.shaderPipeline.equals(o.renderableUnitProperties.shaderPipeline)){
                     return 0;
                 }else{

@@ -28,7 +28,9 @@ public class OpenGLShaderPipeline implements com.opengg.core.render.shader.Shade
     private OpenGLShaderProgram tesc;
     private OpenGLShaderProgram tese;
     private OpenGLShaderProgram geom;
-    
+
+    private List<ShaderProgram> shaders;
+
     public OpenGLShaderPipeline(ShaderProgram vert, ShaderProgram tesc, ShaderProgram tese, ShaderProgram geom, ShaderProgram frag){
         this.vert = (OpenGLShaderProgram) vert;
         this.tesc = (OpenGLShaderProgram) tesc;
@@ -53,6 +55,9 @@ public class OpenGLShaderPipeline implements com.opengg.core.render.shader.Shade
         validate();
 
         usedUniforms = findUsedUniforms();
+        shaders = new ArrayList<>(List.of(vert, frag));
+        if (geom != null)
+            shaders.add(geom);
     }
 
     private List<String> findUsedUniforms(){
@@ -94,5 +99,10 @@ public class OpenGLShaderPipeline implements com.opengg.core.render.shader.Shade
             case FRAGMENT -> frag;
             default -> null;
         };
+    }
+
+    @Override
+    public List<ShaderProgram> getShaders() {
+        return shaders;
     }
 }

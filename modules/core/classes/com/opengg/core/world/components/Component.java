@@ -42,13 +42,13 @@ public abstract class Component{
 
     private boolean enabled = true;
     private boolean canUpdate = true;
-    private float updatedistance = 0;
+    private float updateDistance = 0;
 
     private Component parent;
 
     private Vector3f posoffset = new Vector3f();
     private Quaternionf rotoffset = new Quaternionf();
-    private Vector3f scaleoffset = new Vector3f(1,1,1);
+    private Vector3f scaleOffset = new Vector3f(1,1,1);
     private PositionType positionType = PositionType.RELATIVE;
     private boolean absoluteRotation = false;
 
@@ -257,7 +257,7 @@ public abstract class Component{
      * @return This component
      */
     public final Component setScaleOffset(Vector3f nscale){
-        this.scaleoffset = nscale;
+        this.scaleOffset = nscale;
         regenScale();
         return this;
     }
@@ -273,9 +273,9 @@ public abstract class Component{
     
     private void regenScale(){
         if(parent != null){
-            scale = parent.getScale().multiply(scaleoffset);
+            scale = parent.getScale().multiply(scaleOffset);
         }else{
-            scale = scaleoffset;
+            scale = scaleOffset;
         }
 
         onScaleChange(scale);
@@ -307,7 +307,7 @@ public abstract class Component{
      * @return
      */
     public Vector3f getScaleOffset(){
-        return scaleoffset;
+        return scaleOffset;
     }
     
     /**
@@ -330,7 +330,7 @@ public abstract class Component{
      * @return
      */
     public float getUpdateDistance() {
-        return updatedistance;
+        return updateDistance;
     }
 
     /**
@@ -338,18 +338,13 @@ public abstract class Component{
      * @param updatedistance
      */
     public void setUpdateDistance(float updatedistance) {
-        this.updatedistance = updatedistance;
+        this.updateDistance = updatedistance;
     }
 
     public final void localUpdate(float delta){
-        if(canUpdate
-                &&
-                (!isEnabled()
-                        ||
-                        (getUpdateDistance() != 0 && getUpdateDistance()*getUpdateDistance() < getPosition().distanceToSquared(RenderEngine.getCurrentView().getPosition())
-                        ))
-        )
+        if(!canUpdate || !isEnabled() || (getUpdateDistance() != 0 && getUpdateDistance()*getUpdateDistance() < getPosition().distanceToSquared(RenderEngine.getCurrentView().getPosition())))
             return;
+
         update(delta);
         for(Component c2 : getChildren()){
             c2.localUpdate(delta);
@@ -374,12 +369,12 @@ public abstract class Component{
     public void serialize(GGOutputStream out) throws IOException{
         out.write(posoffset);
         out.write(rotoffset);
-        out.write(scaleoffset);
+        out.write(scaleOffset);
         out.write(name);
         out.write(enabled);
         out.write(positionType.name());
         out.write(absoluteRotation);
-        out.write(updatedistance);
+        out.write(updateDistance);
     }
     
     /**
@@ -395,12 +390,12 @@ public abstract class Component{
     public void deserialize(GGInputStream in) throws IOException{
         posoffset = in.readVector3f();
         rotoffset = in.readQuaternionf();
-        scaleoffset = in.readVector3f();
+        scaleOffset = in.readVector3f();
         name = in.readString();
         enabled = in.readBoolean();
         positionType = PositionType.valueOf(in.readString());
         absoluteRotation = in.readBoolean();
-        updatedistance = in.readInt();
+        updateDistance = in.readInt();
 
         regenPos();
         regenRot();

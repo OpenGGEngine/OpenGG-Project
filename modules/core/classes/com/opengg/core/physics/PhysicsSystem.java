@@ -60,6 +60,10 @@ public class PhysicsSystem {
     }
 
     public void update(float delta) {
+        tick++;
+
+        if(objects.isEmpty()) return;
+
         CollisionManager.clearCollisions();
 
         var forces = objects.stream().filter(o -> o instanceof ForceGenerator).map(o -> (ForceGenerator)o).collect(Collectors.toList());
@@ -75,7 +79,6 @@ public class PhysicsSystem {
             body.internalUpdate(delta);
         }
         CollisionManager.runCollisionStep(this);
-        tick++;
     }
 
     public void serialize(GGOutputStream out) throws IOException {

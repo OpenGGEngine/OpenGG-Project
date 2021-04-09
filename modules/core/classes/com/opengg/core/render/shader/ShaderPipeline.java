@@ -10,6 +10,8 @@ import com.opengg.core.render.RenderEngine;
 import com.opengg.core.render.internal.opengl.shader.OpenGLShaderPipeline;
 import com.opengg.core.render.internal.vulkan.shader.VulkanShaderPipeline;
 
+import java.util.List;
+
 /**
  *
  * @author Javier
@@ -34,4 +36,6 @@ public interface ShaderPipeline{
     void use();
 
     ShaderProgram getShader(ShaderProgram.ShaderType type);
+
+    List<ShaderProgram> getShaders();
 }

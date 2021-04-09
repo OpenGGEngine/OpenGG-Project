@@ -16,11 +16,15 @@ import java.util.Objects;
  * @author Javier
  */
 public class Matrix4f {
+    public static final Matrix4f IDENTITY = new Matrix4f();
+
 
     public final float m00, m01, m02, m03;
     public final float m10, m11, m12, m13;
     public final float m20, m21, m22, m23;
     public final float m30, m31, m32, m33;
+
+    private int hash;
 
     /**
      * Default Matrix, generates only 0.
@@ -42,6 +46,8 @@ public class Matrix4f {
         m13 = 0;
         m23 = 0;
         m33 = 1;
+
+        hash = -1;
     }
 
     /**
@@ -556,6 +562,8 @@ public class Matrix4f {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Matrix4f matrix4f = (Matrix4f) o;
+
+
         return Float.compare(matrix4f.m00, m00) == 0 && Float.compare(matrix4f.m01, m01) == 0 && Float.compare(matrix4f.m02, m02) == 0 && Float.compare(matrix4f.m03, m03) == 0 &&
                 Float.compare(matrix4f.m10, m10) == 0 && Float.compare(matrix4f.m11, m11) == 0 && Float.compare(matrix4f.m12, m12) == 0 && Float.compare(matrix4f.m13, m13) == 0 &&
                 Float.compare(matrix4f.m20, m20) == 0 && Float.compare(matrix4f.m21, m21) == 0 && Float.compare(matrix4f.m22, m22) == 0 && Float.compare(matrix4f.m23, m23) == 0 &&
@@ -564,6 +572,26 @@ public class Matrix4f {
 
     @Override
     public int hashCode() {
-        return Objects.hash(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33);
+        if(hash == 0){
+            hash = 7;
+            hash = (int) (31 * hash + m00);
+            hash = (int) (31 * hash + m01);
+            hash = (int) (31 * hash + m02);
+            hash = (int) (31 * hash + m03);
+            hash = (int) (31 * hash + m10);
+            hash = (int) (31 * hash + m11);
+            hash = (int) (31 * hash + m12);
+            hash = (int) (31 * hash + m13);
+            hash = (int) (31 * hash + m20);
+            hash = (int) (31 * hash + m21);
+            hash = (int) (31 * hash + m22);
+            hash = (int) (31 * hash + m23);
+            hash = (int) (31 * hash + m30);
+            hash = (int) (31 * hash + m31);
+            hash = (int) (31 * hash + m32);
+            hash = (int) (31 * hash + m33);
+        }
+
+        return hash;
     }
 }

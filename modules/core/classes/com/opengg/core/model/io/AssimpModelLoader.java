@@ -144,7 +144,7 @@ public class AssimpModelLoader {
         File f = new File(path);
         AIScene scene = Assimp.aiImportFile(f.toString(),
                 Assimp.aiProcess_Triangulate|Assimp.aiProcess_ConvertToLeftHanded);
-        GGConsole.log("Loading triangles for " + f.getName() + " with " +scene.mNumMeshes() + " meshes.");
+        GGConsole.log("Loading triangles for " + f.getName() + " with " + scene.mNumMeshes() + " meshes.");
 
         List<List<Triangle>> allFaces = new ArrayList<>();
         PointerBuffer pMeshes = scene.mMeshes();
@@ -168,7 +168,6 @@ public class AssimpModelLoader {
 
             allFaces.add(triangles);
         }
-
         return allFaces;
     }
 
