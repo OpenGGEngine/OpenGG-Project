@@ -17,27 +17,27 @@ public class DDSLoader {
     private static final int DXT4 = 0x34545844;//(0x44585434);
     private static final int DXT5 = 0x35545844;//(0x44585435);
 
-    public static TextureData loadFromBuffer(ByteBuffer b, String path){
-        b.order(ByteOrder.LITTLE_ENDIAN);
-        b.position(12);
-        int height = b.getInt();
-        int width = b.getInt();
-        int linearSize = b.getInt();
-        b.position(28);
-        int mipMapCount = b.getInt();
-        b.position(84);
-        int fourCC = b.getInt();
+    public static TextureData loadFromBuffer(ByteBuffer buffer, String path){
+        buffer.order(ByteOrder.LITTLE_ENDIAN);
+        buffer.position(12);
+        int height = buffer.getInt();
+        int width = buffer.getInt();
+        int linearSize = buffer.getInt();
+        buffer.position(28);
+        int mipMapCount = buffer.getInt();
+        buffer.position(84);
+        int fourCC = buffer.getInt();
         int numComponents = (fourCC == DXT1)?3:4;
-        b.position(128);
+        buffer.position(128);
         //System.out.println(width + ","+height+","+linearSize+","+mipMapCount);
 
         int bufferSize = mipMapCount > 1 ? linearSize * 2:linearSize;
 
-        var gpuData = MemoryUtil.memSlice(b,0, b.remaining());
+        var gpuData = MemoryUtil.memSlice(buffer,0, buffer.remaining());
 
-        b.position(0);
+        buffer.position(0);
 
-        TextureData data = new TextureData(width, height, numComponents, gpuData, b, path,
+        TextureData data = new TextureData(width, height, numComponents, gpuData, buffer, path,
                 switch(fourCC){
                     case DXT3 -> TextureData.TextureDataType.DXT3;
                     case DXT5 -> TextureData.TextureDataType.DXT5;

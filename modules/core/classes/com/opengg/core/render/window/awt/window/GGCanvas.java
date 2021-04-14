@@ -124,12 +124,12 @@ public class GGCanvas implements Window {
 
     @Override
     public int getWidth() {
-        return (int) (canvas.getWidth() * osScaleFactor.x);
+        return (int) Math.max(4, canvas.getWidth() * osScaleFactor.x);
     }
 
     @Override
     public int getHeight() {
-        return (int) (canvas.getHeight() * osScaleFactor.y);
+        return (int) Math.max(4, canvas.getHeight() * osScaleFactor.y);
     }
 
     @Override

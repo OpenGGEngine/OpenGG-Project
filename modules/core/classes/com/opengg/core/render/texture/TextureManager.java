@@ -76,6 +76,7 @@ public class TextureManager {
             return data;
         }catch(IOException e){
             if(cacheMissedTextures){
+                e.printStackTrace();
                 GGConsole.warn("Failed to load texture at " + path + ", using and caching default instead");
                 cacheTexture(path, defaultdata);
             }else{

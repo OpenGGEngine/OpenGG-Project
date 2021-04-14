@@ -10,7 +10,7 @@ package com.opengg.core.physics;
  * @author Javier
  */
 public class PhysicsEngine {
-    static boolean enablephysics = true;
+    static boolean enablePhysics = true;
     static PhysicsSystem instance;
     
     public static void initialize(){
@@ -18,7 +18,7 @@ public class PhysicsEngine {
     }
 
     public static void updatePhysics(float delta){
-        if(enablephysics)
+        if(enablePhysics)
             instance.update(delta);
     }
 
@@ -27,11 +27,11 @@ public class PhysicsEngine {
     }
 
     public static boolean isEnabled() {
-        return enablephysics;
+        return enablePhysics;
     }
 
-    public static void setEnabled(boolean enablephysics) {
-        PhysicsEngine.enablephysics = enablephysics;
+    public static void setEnabled(boolean enablePhysics) {
+        PhysicsEngine.enablePhysics = enablePhysics;
     }
     
     public static PhysicsSystem getInstance(){
