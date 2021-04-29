@@ -435,7 +435,9 @@ public class Matrix4f {
     }
 
     public Vector3f getScale(){
-        return new Vector3f(m00, m11, m22);
+        return new Vector3f(new Vector3f(m00, m10, m20).length(),
+                new Vector3f(m01, m11, m21).length(),
+                new Vector3f(m02, m12, m22).length());
     }
 
     public Quaternionf getRotationNormalized(){
