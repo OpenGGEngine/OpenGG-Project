@@ -272,15 +272,15 @@ public class Matrix4f {
         float nm11 = y;
         float nm22 = z;
 
-        return new Matrix4f(m00*nm00,m01,m02,m03,
-                                m10,m11*nm11,m12,m13,
-                                m20,m21,m22*nm22,m03,
-                                m30,m31,m32,m33);
-        /*
+       // return new Matrix4f(m00*nm00,m01,m02,m03,
+      //                          m10,m11*nm11,m12,m13,
+       //                         m20,m21,m22*nm22,m03,
+       //                         m30,m31,m32,m33);
+
         return this.multiply(new Matrix4f(nm00, 0,    0,    0,
                             0,    nm11, 0,    0,
                             0,    0,    nm22, 0,
-                            0,    0,    0,    1));*/
+                            0,    0,    0,    1));
     }
 
     public Matrix4f scale(Vector3f scale) {
