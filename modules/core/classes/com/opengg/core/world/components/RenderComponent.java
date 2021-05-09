@@ -76,8 +76,9 @@ public class RenderComponent extends RenderGroupComponent implements Renderable 
         return renderDistance;
     }
 
-    public void setRenderDistance(float renderDistance) {
+    public RenderComponent setRenderDistance(float renderDistance) {
         this.renderDistance = renderDistance;
+        return this;
     }
 
     public void setRenderable(Renderable renderable){

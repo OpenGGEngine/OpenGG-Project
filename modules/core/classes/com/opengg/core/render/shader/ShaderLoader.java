@@ -88,6 +88,9 @@ public class ShaderLoader {
     private void dumpShader(ShaderFileHolder holder){
         /*System.out.println(holder.name.toUpperCase() + "============================");
         System.out.println(holder.compiledShader);*/
+       // if(holder.name.contains("barycentric")){
+          //  System.out.println(holder.compiledShader);
+       // }
     }
 
     private void createGLShaderFromFile(){
