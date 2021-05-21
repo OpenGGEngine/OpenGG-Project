@@ -12,7 +12,13 @@ package com.opengg.core.math;
  */
 public class FastInt {
     int val;
-    
+
+    public FastInt(){}
+
+    public FastInt(int val) {
+        this.val = val;
+    }
+
     public void set(int val){
         this.val = val;
     }
