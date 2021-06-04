@@ -4,8 +4,7 @@ import com.opengg.core.math.Vector2f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.math.Vector4f;
 
-public class
-GGVertex {
+public class GGVertex {
     public Vector3f position;
     public Vector3f normal;
     public Vector3f tangent;
