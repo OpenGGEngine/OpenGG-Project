@@ -61,7 +61,8 @@ public class AWTMouseButtonHandler implements MouseListener, MouseButtonHandler 
     private static int getEngineButtonCode(int awtButton){
         return switch (awtButton){
             case MouseEvent.BUTTON1 -> MouseButton.LEFT;
-            case MouseEvent.BUTTON2 -> MouseButton.RIGHT;
+            case MouseEvent.BUTTON2 -> MouseButton.MIDDLE;
+            case MouseEvent.BUTTON3 -> MouseButton.RIGHT;
             default -> awtButton;
         };
     }
