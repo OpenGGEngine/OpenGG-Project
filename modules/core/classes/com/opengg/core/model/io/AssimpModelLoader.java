@@ -158,17 +158,13 @@ public class AssimpModelLoader {
                     indexList.add(strip.get(0));
                 }
 
-           //     System.out.println("STR");
-             //   System.out.println(strip.size());
-               // System.out.println(strip);
                 indexList.addAll(strip);
+                indexList.add(strip.get(strip.size()-1));
 
-                indexList.add(strip.get(strip.size()-1));
-                indexList.add(strip.get(strip.size()-1));
+                if(strip.size() % 2 == 1){
+                    indexList.add(strip.get(strip.size()-1));
+                }
             }
-
-            //System.out.println(indexList);
-           // System.out.println("Ended with " + indexList.size() + " verts, ");// + found + "/" + lost);
 
             Mesh newMesh = new Mesh(vertices, indexList.stream().mapToInt(e -> e).toArray(), animationsEnabled, true);
             newMesh.setTriStrip(true);

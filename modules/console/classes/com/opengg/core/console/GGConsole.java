@@ -67,7 +67,7 @@ public class GGConsole{
         var trace = new StringWriter();
         var pw = new PrintWriter(trace);
         message.printStackTrace(pw);
-        write(message.getMessage() + " at " + trace.toString(), Level.ERROR);
+        write(message.getMessage() + " at " + trace, Level.ERROR);
     }
     
     private static void write(String message, Level level){
