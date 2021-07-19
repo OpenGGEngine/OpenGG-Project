@@ -6,7 +6,7 @@
 package com.opengg.core;
 
 import java.io.File;
-import java.io.IOException;
+import java.nio.file.Path;
 
 /**
  *
@@ -15,46 +15,53 @@ import java.io.IOException;
 public class GGInfo {
     private static UserDataOption userDataLocation = UserDataOption.DOCUMENTS;
     private static final String version = "0.1";
-    private static String appname = "default";
+    private static String appName = "default";
     private static String userDataDirectory = "default";
 
-    private static String memallocator = "system";
-    private static String basepath = "";
+    private static String memAllocator = "system";
+    private static Path applicationRootPath;
     private static final boolean initialized = false;
+
+    private static boolean redirectStandardOut = false;
     private static boolean verbose = false;
-    private static boolean agressiveMemory = false;
+    private static boolean aggressiveMemory = false;
     private static boolean server = false;
+
     private static String glversion;
     private static int userId = -1;
     private static boolean menu = false;
     private static boolean ended = false;
 
-    static{ 
-        try {
-            basepath = new File("").getCanonicalPath();
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
+    static{
+        applicationRootPath = new File("").toPath().toAbsolutePath();
     }
     
     public static String getApplicationName() {
-        return appname;
+        return appName;
     }
 
     public static void setApplicationName(String appname) {
-        GGInfo.appname = appname;
+        GGInfo.appName = appname;
     }
 
     public static String getMemoryAllocator() {
-        return memallocator;
+        return memAllocator;
     }
 
     public static void setMemoryAllocator(String memallocator) {
-        GGInfo.memallocator = memallocator;
+        GGInfo.memAllocator = memallocator;
     }
 
     public static boolean isInitialized() {
         return initialized;
+    }
+
+    public static boolean isRedirectStandardOut() {
+        return redirectStandardOut;
+    }
+
+    public static void setRedirectStandardOut(boolean redirectStandardOut) {
+        GGInfo.redirectStandardOut = redirectStandardOut;
     }
 
     public static String getVersion() {
@@ -85,8 +92,12 @@ public class GGInfo {
         verbose = verb;
     }
 
-    public static boolean shouldAgressivelyManageMemory() {
-        return agressiveMemory;
+    public static boolean shouldAggressivelyManageMemory() {
+        return aggressiveMemory;
+    }
+
+    public static void setAggressiveMemoryManagement(boolean agressiveMemory) {
+        GGInfo.aggressiveMemory = agressiveMemory;
     }
 
     public static UserDataOption getUserDataLocation() {
@@ -105,16 +116,12 @@ public class GGInfo {
         GGInfo.userDataDirectory = userDataDirectory;
     }
 
-    public static void setAgressiveMemoryManagement(boolean agressiveMemory) {
-        GGInfo.agressiveMemory = agressiveMemory;
+    public static Path getApplicationPath() {
+        return applicationRootPath;
     }
 
-    public static String getApplicationPath() {
-        return basepath;
-    }
-
-    public static void setApplicationPath(String basepath) {
-        GGInfo.basepath = basepath;
+    public static void setApplicationPath(Path basepath) {
+        GGInfo.applicationRootPath = basepath;
     }
 
     public static int getUserId(){

@@ -34,7 +34,7 @@ public class Allocator {
             GGConsole.warn("Stack frame index is at " + getStackFrameIndex() + " after an OpenGG frame");
         }
         
-        if(GGInfo.shouldAgressivelyManageMemory()){
+        if(GGInfo.shouldAggressivelyManageMemory()){
             while(getStackFrameIndex() < 0){
                 popStack();
             }

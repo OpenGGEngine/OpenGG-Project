@@ -132,8 +132,8 @@ public class SystemInfo {
     public static void queryEngineInfo() {
         engineinfo.put("Headless mode", String.valueOf(GGInfo.isServer()));
         engineinfo.put("Application Name", GGInfo.getApplicationName());
-        engineinfo.put("Application Path", GGInfo.getApplicationPath());
+        engineinfo.put("Application Path", GGInfo.getApplicationPath().toString());
         engineinfo.put("Default Allocator", GGInfo.getMemoryAllocator());
-        engineinfo.put("Aggressive Stack Management", String.valueOf(GGInfo.shouldAgressivelyManageMemory()));
+        engineinfo.put("Aggressive Stack Management", String.valueOf(GGInfo.shouldAggressivelyManageMemory()));
     }
 }

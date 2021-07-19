@@ -108,6 +108,7 @@ public final class OpenGG{
         app = ggapp;
 
         GGInfo.setServer(!client);
+        GGInfo.setRedirectStandardOut(options.hasRedirectStandardIO());
         GGInfo.setApplicationName(options.getApplicationName());
         GGInfo.setUserDataDirectory(options.getUserDataDirectory().isEmpty() ? options.getApplicationName() : options.getUserDataDirectory());
 

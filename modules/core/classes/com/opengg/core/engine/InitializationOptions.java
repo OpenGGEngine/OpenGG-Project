@@ -9,6 +9,7 @@ public class InitializationOptions {
     private long applicationId = -1;
     private boolean headless = false;
     private boolean configUserData = false;
+    private boolean redirectStandardIO = true;
     private GGInfo.UserDataOption localDataLocation = GGInfo.UserDataOption.DOCUMENTS;
 
     private WindowOptions windowOptions = new WindowOptions();
@@ -46,6 +47,15 @@ public class InitializationOptions {
 
     public InitializationOptions setHeadless(boolean headless) {
         this.headless = headless;
+        return this;
+    }
+
+    public boolean hasRedirectStandardIO() {
+        return redirectStandardIO;
+    }
+
+    public InitializationOptions setRedirectStandardIO(boolean redirectStandardIO) {
+        this.redirectStandardIO = redirectStandardIO;
         return this;
     }
 

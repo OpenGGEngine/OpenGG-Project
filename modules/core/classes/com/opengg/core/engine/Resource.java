@@ -17,6 +17,8 @@ import com.opengg.core.render.texture.TextureData;
 import com.opengg.core.render.text.impl.GGFont;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * Used for loading and managing resources used in the engine <br>
@@ -53,49 +55,26 @@ public interface Resource {
      * @return Absolute version of the path
      */
     static String getAbsoluteFromLocal(String name){
-        try {
-            if(new File(name).isAbsolute()) return name;
-            return new File(GGInfo.getApplicationPath(), name).getCanonicalPath();
-        } catch (IOException ex) {
-            GGConsole.warning("Failed to load " + name + "!");
-        }
-        throw new RuntimeException("Unable to find given file");
+        if(new File(name).isAbsolute()) return name;
+        return Path.of(GGInfo.getApplicationPath().toString(), name).toString();
     }
 
     static String getApplicationPath(){
-        return GGInfo.getApplicationPath();
+        return GGInfo.getApplicationPath().toString();
     }
 
     static String getUserDataPath(){
         if(GGInfo.getUserDataLocation() == GGInfo.UserDataOption.DOCUMENTS)
-            return System.getProperty("user.home") + File.separator + "Documents" + File.separator + GGInfo.getUserDataDirectory() + File.separator;
+            return Path.of(System.getProperty("user.home"), "Documents", GGInfo.getUserDataDirectory()).toString() + "\\";
         else
-            return System.getenv("APPDATA") + File.separator + GGInfo.getUserDataDirectory() + File.separator;
-    }
-
-    /**
-     * Returns if this filename is absolute
-     * @param name Filename
-     * @return
-     */
-    static boolean isAbsolute(String name){
-        return new File(name).isAbsolute();
-    }
-
-    /**
-     * Returns if the file given by this path exists
-     * @param name Filename
-     * @return
-     */
-    static boolean exists(String name){
-        return new File(name).exists();
+            return Path.of(System.getenv("APPDATA"), GGInfo.getUserDataDirectory()).toString() + "\\";
     }
 
 
     private static boolean validate(String name){
-        if(isAbsolute(name)) return true;
-        if(exists(Resource.getApplicationPath() + File.separator + name)) return true;
-        return exists(Resource.getUserDataPath() + File.separator + name);
+        if(Path.of(name).isAbsolute()) return true;
+        if(Files.exists(Path.of(Resource.getApplicationPath(), name))) return true;
+        return Files.exists(Path.of(Resource.getUserDataPath(), name));
     }
     
     /**
@@ -106,21 +85,11 @@ public interface Resource {
     static String getModelPath(String name){
         if(validate(name)) return name;
         if(name.contains(".bmf"))
-            return "resources" + File.separator + "models" + File.separator + name;
+            return Path.of(Resource.getApplicationPath(), "resources", "models", name).toString();
         else
-            return "resources" + File.separator + "models" + File.separator + name + File.separator + name + ".bmf";
+            return Path.of(Resource.getApplicationPath(), "resources", "models", name, name + ".bmf").toString();
     }
-    
-    /**
-     * Returns the path to a configuration file with the given name, with the format cfg/$name$.cfg
-     * @param name Name of configuration file, not including the .cfg extension
-     * @return Relative path to the file
-     */
-    static String getConfigPath(String name){
-        if(validate(name)) return name;
-        return "cfg" + File.separator + name + ".cfg";
-    }
-    
+
     /**
      * Returns the path to a shader file with the given name, with the format resources/glsl/$name$
      * @param name Name of shader file, including the respective file ending
@@ -128,7 +97,7 @@ public interface Resource {
      */
     static String getShaderPath(String name){
         if(validate(name)) return name;
-        return "resources" + File.separator + "glsl" + File.separator +  name;
+        return Path.of(getApplicationPath(), "resources", "glsl", name).toString();
     }
     
     /**
@@ -138,7 +107,7 @@ public interface Resource {
      */
     static String getTexturePath(String name){
         if(validate(name)) return name;
-        return "resources" + File.separator + "tex" + File.separator +  name;
+        return Path.of(Resource.getApplicationPath(), "resources", "tex", name).toString();
     }
     
     /**
@@ -148,7 +117,7 @@ public interface Resource {
      */
     static String getFontPath(String name){
         if(validate(name)) return name;
-        return "resources" + File.separator + "font" + File.separator +  name;
+        return Path.of(Resource.getApplicationPath(), "resources", "font", name).toString();
     }
     
     /**
@@ -158,7 +127,7 @@ public interface Resource {
      */
     static String getSoundPath(String name){
         if(validate(name)) return name;
-        return "resources" + File.separator + "audio" + File.separator +  name;
+        return Path.of(Resource.getApplicationPath(), "resources", "audio", name).toString();
     }
     
     /**
@@ -168,7 +137,7 @@ public interface Resource {
      */
     static String getWorldPath(String name){
         if(validate(name)) return name;
-        return "resources" + File.separator + "worlds" + File.separator +  name + ".bwf";
+        return Path.of(Resource.getApplicationPath(), "resources", "worlds", name + ".bwf").toString();
     }
     
     /**
@@ -239,7 +208,7 @@ public interface Resource {
      * Sets the path used for all method calls to convert from relative to absolute paths
      * @param path Location of base directory for use
      */
-    static void setDefaultPath(String path){
+    static void setApplicationDirectory(Path path){
         GGInfo.setApplicationPath(path);
     }
 }

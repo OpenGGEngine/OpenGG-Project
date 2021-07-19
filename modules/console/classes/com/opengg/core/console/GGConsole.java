@@ -9,8 +9,7 @@ package com.opengg.core.console;
 import com.opengg.core.GGInfo;
 import com.opengg.core.thread.ThreadManager;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
 import java.util.*;
 
 /**
@@ -21,9 +20,10 @@ public class GGConsole{
     private static final List<GGMessage> messages = new LinkedList<>();
     private static final List<ConsoleListener> listeners = new ArrayList<>();
     private static final List<LoggerOutputConsumer> consumers = new ArrayList<>();
-    private static final boolean running = true;
 
     public static void initialize(){
+        var currentOut = System.out;
+
         ThreadManager.setDefaultUncaughtExceptionHandler(new GGThreadExceptionHandler());
         ThreadManager.runDaemon(() -> {
             Scanner in = new Scanner(System.in);
@@ -32,7 +32,26 @@ public class GGConsole{
             }
         }, "ConsoleListener");
 
-        GGConsole.addOutputConsumer(new DefaultLoggerOutputConsumer(Level.DEBUG, System.out::println));
+        GGConsole.addOutputConsumer(new DefaultLoggerOutputConsumer(Level.DEBUG, currentOut::println));
+
+        if(GGInfo.isRedirectStandardOut()){
+            var loggingStream = new PrintStream(currentOut) {
+                @Override
+                public void println(String x) {
+                    GGConsole.log(x);
+                }
+            };
+
+            var errorStream = new PrintStream(currentOut) {
+                @Override
+                public void println(String x) {
+                    GGConsole.error(x);
+                }
+            };
+
+            System.setOut(loggingStream);
+            System.setErr(errorStream);
+        }
     }
 
     public static List<GGMessage> getAllMessages(){
