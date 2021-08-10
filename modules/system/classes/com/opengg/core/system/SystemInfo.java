@@ -78,10 +78,9 @@ public class SystemInfo {
         glinfo.put("Renderer", renderer);
         if(renderer.equals("OpenGL")){
             String glVersion = GGInfo.getGlVersion();
-            glinfo.put("Window GL Version", glVersion);
+            glinfo.put("Requested GL Version", glVersion);
             glinfo.put("Internal GL Version", glGetString(GL_VERSION));
             glinfo.put("GLSL Version", glGetString(GL_SHADING_LANGUAGE_VERSION));
-            glinfo.put("GL Initialization", !(glVersion == null || glVersion.isEmpty()) ? "Initialized successfully" : "Initialization failed");
 
             sysinfo.put("Graphics Renderer", glGetString(GL_RENDERER));
             sysinfo.put("Graphics Vendor", glGetString(GL_VENDOR));
@@ -101,9 +100,7 @@ public class SystemInfo {
     }
 
     public static String getInfo(){
-        String data = "OpenGG Engine Version: " + GGInfo.getVersion();
-
-        data += "\n\nSystem Information";
+        String data = "System Information";
         for(String line : sysinfo.keySet()){
             data += "\n" + line + ": " + sysinfo.get(line);
         }

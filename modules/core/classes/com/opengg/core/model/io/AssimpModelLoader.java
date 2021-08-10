@@ -60,6 +60,7 @@ public class AssimpModelLoader {
             generatedTangent = !hasTangents;
             boolean hasNormal = mesh.mNormals() == null;
             boolean hasUVs = mesh.mTextureCoords(0) == null;
+            //boolean hasColors = mesh.mColors() == null;
 
             ArrayList<GGVertex> vertices = new ArrayList<>(mesh.mNumVertices());
             //Load Mesh VBO Data
@@ -87,7 +88,8 @@ public class AssimpModelLoader {
                     if (a != d && a != e) return a;
                     if (b != d && b != e) return b;
                     if (c != d && c != e) return c;
-                    throw new IllegalArgumentException("No mismatches found in faces");
+                    return -1;
+                    //throw new IllegalArgumentException("No mismatches found in faces");
                 }
 
                 List<Tuple<Integer, Integer>> edges() {

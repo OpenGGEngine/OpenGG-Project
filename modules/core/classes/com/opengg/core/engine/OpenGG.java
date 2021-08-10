@@ -34,6 +34,7 @@ import com.opengg.core.world.WorldEngine;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -70,7 +71,6 @@ public final class OpenGG{
             GGConsole.error("Uncaught exception: " + e.getMessage());
             e.printStackTrace();
             try {Thread.sleep(10);} catch (InterruptedException ex) {}
-            writeUserData();
             closeEngine();
             System.exit(0);
         }
@@ -147,7 +147,6 @@ public final class OpenGG{
             initializeClient(options.getWindowOptions());
         else
             initializeServer();
-
 
         WorldEngine.initialize();
         GGConsole.log("World Engine initialized");
@@ -312,11 +311,14 @@ public final class OpenGG{
         RenderEngine.destroy();
         SoundEngine.destroy();
         NetworkEngine.close();
-        GGConsole.log("Audio controller has been finalized");
         WindowController.destroy();
         ThreadManager.destroy();
+        writeUserData();
+        GGConsole.saveLogs(Path.of(Resource.getUserDataPath(), "logs"));
         GGConsole.log("Thread Manager has closed all remaining threads");
         GGConsole.log("OpenGG has closed gracefully, application can now be ended");
+
+        System.exit(0);
     }
 
     /**
@@ -351,8 +353,8 @@ public final class OpenGG{
     }
 
     private static void writeUserData(){
-        String error = SystemInfo.getInfo();
-        GGConsole.log(error);
+        String userData = SystemInfo.getInfo();
+        GGConsole.log(userData);
     }
 
     /**

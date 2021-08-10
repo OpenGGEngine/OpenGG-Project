@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 public class ConvexHullUtil extends ModelProcess{
 
-    public static List<Vector3f> generateConvexHull(ArrayList<GGVertex> vertices){
+    public static List<Vector3f> generateConvexHull(List<GGVertex> vertices){
         Point3d[] points = new Point3d[vertices.size()];
         for(int i=0;i<vertices.size();i++){
             Vector3f point = vertices.get(i).position;

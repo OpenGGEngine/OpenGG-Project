@@ -16,6 +16,8 @@ import java.util.Calendar;
  * @author Javier
  */
 public class GGMessage {
+    private static DateTimeFormatter nineNanosDtf = DateTimeFormatter.ofPattern("HH:mm:ss.SSSSSS");
+
     String message;
     String sender;
     String time;
@@ -32,7 +34,7 @@ public class GGMessage {
         this.message = message;
         this.sender = sender;
         this.level = level;
-        this.time = Instant.now().atZone(ZoneId.systemDefault()).toLocalTime().format(DateTimeFormatter.ISO_TIME);
+        this.time = Instant.now().atZone(ZoneId.systemDefault()).toLocalTime().format(nineNanosDtf);
     }
 
 

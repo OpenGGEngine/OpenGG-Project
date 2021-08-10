@@ -24,7 +24,7 @@ public class Mesh {
 
     private static final int VBO_NOANIM = 8,VBO_ANIM = 16;
 
-    private ArrayList<GGVertex> vertices = new ArrayList<>();
+    private List<GGVertex> vertices = new ArrayList<>();
 
     private GGBone[] bones;
 
@@ -56,7 +56,7 @@ public class Mesh {
         this.genAnim = genAnim;
         this.vertices = vertices;
     }
-    public Mesh(ArrayList<GGVertex> vertices, int[] indices, boolean genAnim){
+    public Mesh(List<GGVertex> vertices, int[] indices, boolean genAnim){
 
         vbo = Allocator.allocFloat(vertices.size() * (  (genAnim?VBO_ANIM:VBO_NOANIM) + (genTangents ? 3 : 4) ) );
 
@@ -109,7 +109,7 @@ public class Mesh {
         return new MaterialRenderable(temp, this.getMaterial());
     }
 
-    public ArrayList<GGVertex> getVertices(){
+    public List<GGVertex> getVertices(){
         return vertices;
     }
 
@@ -152,5 +152,9 @@ public class Mesh {
 
     public void setTriStrip(boolean triStrip){
         this.isTriStrip = triStrip;
+    }
+
+    public boolean isTriStrip() {
+        return isTriStrip;
     }
 }
