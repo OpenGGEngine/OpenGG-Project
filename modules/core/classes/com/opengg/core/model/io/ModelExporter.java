@@ -147,15 +147,17 @@ public class ModelExporter {
         if(!material.mapKdFilename.isEmpty()) {
             strBuilder.append("map_Kd ").append(material.mapKdFilename).append("\n");
 
+            System.out.println(material.mapKdFilename);
+
             var fullTextureFile = directory.resolve(material.mapKdFilename);
-            exportTexture(material.Kd.getData().get(0), fullTextureFile);
+            exportTexture(material.mapKd.getData().get(0), fullTextureFile);
         }
 
         if(!material.mapNsFilename.isEmpty()) {
             strBuilder.append("bump ").append(material.mapKdFilename).append("\n");
 
             var fullTextureFile = directory.resolve(material.mapKdFilename);
-            exportTexture(material.Ns.getData().get(0), fullTextureFile);
+            exportTexture(material.bumpMap.getData().get(0), fullTextureFile);
         }
 
         strBuilder.append("\n");

@@ -61,14 +61,14 @@ public class MaterialRenderable implements Renderable {
     
     @Override
     public void render() {
-        if(material.Kd != null)
-            ShaderController.setUniform("Kd", material.Kd);
+        if(material.mapKd != null)
+            ShaderController.setUniform("Kd", material.mapKd);
         if(material.norm != null)
             ShaderController.setUniform("bump", material.norm);
         if(material.Ks != null)
             ShaderController.setUniform("Ks", material.Ks);
-        if(material.Ns != null)
-            ShaderController.setUniform("Ns", material.Ns);
+        if(material.bumpMap != null)
+            ShaderController.setUniform("Ns", material.bumpMap);
         if(material.em != null)
             ShaderController.setUniform("em", material.em);
 

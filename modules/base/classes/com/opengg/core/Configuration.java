@@ -7,8 +7,10 @@
 package com.opengg.core;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -79,20 +81,17 @@ public final class Configuration {
         }
     }
 
-    public static void writeFile(ConfigFile file) throws IOException {
+    public static void writeFile(ConfigFile file){
         Properties prop = new Properties();
         file.getAllSettings().forEach(prop::put);
 
-        FileOutputStream fos;
-        if (GGInfo.getUserDataLocation() == GGInfo.UserDataOption.DOCUMENTS)
-            fos = new FileOutputStream(System.getProperty("user.home") + File.separator + "Documents"
-                    + File.separator + GGInfo.getUserDataDirectory() + File.separator + "config" + File.separator + file.getName());
-        else
-            fos = new FileOutputStream(System.getenv("APPDATA") +
-                    File.separator + GGInfo.getUserDataDirectory() + File.separator + "config" + File.separator + file.getName());
-
-
-        prop.store(fos, "");
-        fos.close();
+        var path = GGInfo.getUserDataLocation() == GGInfo.UserDataOption.DOCUMENTS ?
+                Path.of(System.getProperty("user.home"), "Documents", GGInfo.getUserDataDirectory(), "config", file.getName()) :
+                Path.of(System.getenv("APPDATA"), GGInfo.getUserDataDirectory(), "config", file.getName());
+        try(var fos = new FileOutputStream(path.toString())) {
+            prop.store(fos, "");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

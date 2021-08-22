@@ -35,7 +35,7 @@ public class TextVBOGenerator {
         FloatBuffer data = createQuadVertices(text, lines);
         MaterialRenderable t = new MaterialRenderable(data, RenderEngine.getDefaultFormat());
         t.setMaterial(Material.defaultmaterial);
-        t.getMaterial().Kd = f.texture;
+        t.getMaterial().mapKd = f.texture;
         return t;
     }
 

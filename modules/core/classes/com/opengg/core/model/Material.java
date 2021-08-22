@@ -49,10 +49,10 @@ public class Material {
     public String aoFilename = "";
     public int reflType =0;
     public String reflFilename = "";
-    public Texture Kd = null;
+    public Texture mapKd = null;
     public Texture Ka = null;
     public Texture Ks = null;
-    public Texture Ns = null;
+    public Texture bumpMap = null;
     public Texture D = null;
     public Texture norm = null;
     public Texture em;
@@ -88,7 +88,7 @@ public class Material {
         this.hasemm = !this.emmFilename.equals("");
         this.aoFilename = readString(b);
         this.nsExponent = b.getFloat();
-        OpenGG.asyncExec(() -> this.Kd = Texture.ofColor(Color.GRAY));
+        OpenGG.asyncExec(() -> this.mapKd = Texture.ofColor(Color.GRAY));
     }
 
     public Material(String name, String texpath, GGInputStream in) throws IOException {
@@ -123,7 +123,7 @@ public class Material {
     public void loadTextures() {
         if (mapKdFilename != null && !mapKdFilename.isEmpty()) {
             hascolmap = true;
-            Kd = Texture.get2DSRGBTexture(texpath + mapKdFilename);
+            mapKd = Texture.get2DSRGBTexture(texpath + mapKdFilename);
         }
         if (mapKaFilename != null && !mapKaFilename.isEmpty()) {
             hasreflmap = true;
@@ -135,7 +135,7 @@ public class Material {
         }
         if (mapNsFilename != null && !mapNsFilename.isEmpty()) {
             hasspecpow = true;
-            Ns = Texture.get2DTexture(texpath + mapNsFilename);
+            bumpMap = Texture.get2DTexture(texpath + mapNsFilename);
         }
         if (mapDFilename != null && !mapDFilename.isEmpty()) {
             hastrans = true;
