@@ -7,6 +7,7 @@ import com.opengg.core.math.util.Tuple;
 import com.opengg.core.model.*;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.assimp.*;
+import org.lwjgl.util.meshoptimizer.MeshOptimizer;
 
 import java.io.File;
 import java.io.IOException;
@@ -65,111 +66,44 @@ public class AssimpModelLoader {
             ArrayList<GGVertex> vertices = new ArrayList<>(mesh.mNumVertices());
             //Load Mesh VBO Data
             for (int i2 = 0; i2 < mesh.mNumVertices(); i2++) {
-
                 positions = initialTransform.transform(assimpToV3(mesh.mVertices().get(i2)));
                 normals = hasNormal ? new Vector3f(1) : assimpToV3(mesh.mNormals().get(i2));
                 tangents = hasTangents ? new Vector3f(1) : assimpToV3(mesh.mTangents().get(i2));
                 uvs = hasUVs ? new Vector2f(1) : assimpToV2(mesh.mTextureCoords(0).get(i2));
 
                 vertices.add(new GGVertex(positions, normals, tangents, uvs));
-
             }
 
-            //Load animation mesh data
 
-            //Load Mesh Index Data
-
-            record Face(int a, int b, int c) {
-                boolean contains(int d) {
-                    return d == a || d == b || d == c;
-                }
-
-                int getOpposite(int d, int e) {
-                    if (a != d && a != e) return a;
-                    if (b != d && b != e) return b;
-                    if (c != d && c != e) return c;
-                    return -1;
-                    //throw new IllegalArgumentException("No mismatches found in faces");
-                }
-
-                List<Tuple<Integer, Integer>> edges() {
-                    return List.of(Tuple.of(a, b), Tuple.of(b, c), Tuple.of(c, a));
-                }
-            }
-
-            record TestStrip(List<Integer> strip, LinkedList<Face> missing){}
-
-            var remainingFaces = new LinkedList<Face>();
+            var preStripIndices = IntBuffer.allocate(mesh.mFaces().capacity() * 3);
+            var stripIndices = IntBuffer.allocate(mesh.mFaces().capacity() * 3);
             for (int i2 = 0; i2 < mesh.mFaces().capacity(); i2++) {
                 AIFace face = mesh.mFaces().get(i2);
-                remainingFaces.add(new Face(face.mIndices().get(0), face.mIndices().get(1), face.mIndices().get(2)));
+                preStripIndices.put(face.mIndices().get(0)).put(face.mIndices().get(1)).put(face.mIndices().get(2));
             }
 
+            System.out.println(preStripIndices.capacity());
 
-            var strips = new ArrayList<List<Integer>>();
-         //   System.out.println("START GAMING HOUR");
-            while (!remainingFaces.isEmpty()) {
-                var startTri = remainingFaces.getFirst();
-                var stripCandidates = new ArrayList<TestStrip>();
-                for (var startEdge : startTri.edges()) {
-                    var deadEdge = false;
+            var stripLength = MeshOptimizer.meshopt_stripify(stripIndices, preStripIndices, mesh.mNumVertices(), 0);
 
-                    var nextTri = startTri;
-                    int nextIdx = nextTri.getOpposite(startEdge.x(), startEdge.y());
-
-                    var indices = reverseWinding ?
-                            new LinkedList<>(List.of(startEdge.y(), startEdge.x())) :
-                            new LinkedList<>(List.of(startEdge.x(), startEdge.y()));
-                    var possibleTris = new LinkedList<>(remainingFaces);
-
-                    do {
-                        Tuple<Integer, Integer> edge = Tuple.of(indices.getLast(), nextIdx);
-                        possibleTris.remove(nextTri);
-                        indices.add(nextIdx);
-
-                        var fEdge = edge;
-                        // Get the next triangle that shares the active edge with the current one
-                        var nextTriMaybe = possibleTris.stream()
-                                .filter(t -> t.contains(fEdge.x()) && t.contains(fEdge.y()))
-                                .findFirst();
-
-                        if (nextTriMaybe.isPresent()) {
-                            nextTri = nextTriMaybe.get();
-                            nextIdx = nextTri.getOpposite(edge.x(), edge.y());
-                        } else {
-                            deadEdge = true;
-                        }
-                    } while (!deadEdge);
-
-                    stripCandidates.add(new TestStrip(indices, possibleTris));
-                }
-
-                var best = stripCandidates.stream()
-                        .sorted(Comparator.comparingInt(t -> t.strip.size()))
-                        .skip(stripCandidates.size()-1).findFirst().get();
-
-                strips.add(best.strip);
-                remainingFaces = best.missing;
+            System.out.println(stripLength);
+            var finalIndices = new ArrayList<Integer>(mesh.mFaces().capacity() * 3);
+            for(int idx = 0; idx < stripLength; idx++) {
+                finalIndices.add(stripIndices.get(idx));
             }
 
-
-         //   System.out.println(strips.size());
-            var indexList = new ArrayList<Integer>();
-
-            for(var strip : strips){
-                if(strips.indexOf(strip) != 0){
-                    indexList.add(strip.get(0));
+/*
+            var finalIndices = new ArrayList<Integer>(mesh.mFaces().capacity() * 3);
+            for(int idx = 0; idx < stripLength; idx++){
+                if(stripIndices.get(idx) == -1){
+                    finalIndices.add(stripIndices.get(idx-1));
+                    finalIndices.add(stripIndices.get(idx+1));
+                }else{
+                    finalIndices.add(stripIndices.get(idx));
                 }
+            }*/
 
-                indexList.addAll(strip);
-                indexList.add(strip.get(strip.size()-1));
-
-                if(strip.size() % 2 == 1){
-                    indexList.add(strip.get(strip.size()-1));
-                }
-            }
-
-            Mesh newMesh = new Mesh(vertices, indexList.stream().mapToInt(e -> e).toArray(), animationsEnabled, true);
+            Mesh newMesh = new Mesh(vertices, finalIndices.stream().mapToInt(e -> e).toArray(), true, true);
             newMesh.setTriStrip(true);
 
             if (scene.mNumMaterials() > 0) {
