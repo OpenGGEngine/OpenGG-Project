@@ -31,6 +31,7 @@ public class Material {
     public Vector3f kd = new Vector3f();
     public Vector3f ks = new Vector3f();
     public Vector3f tf = new Vector3f();
+    public float transparency = 1;
     public int illumModel = 0;
     public boolean dHalo = false;
     public double dFactor = 0.0;

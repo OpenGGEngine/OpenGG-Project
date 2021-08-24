@@ -17,8 +17,8 @@ module com.opengg.core {
     requires org.lwjgl.meow;
     requires org.lwjgl.shaderc;
     requires org.lwjgl.jawt;
+    requires org.lwjgl.meshoptimizer;
 
-    requires org.lwjgl.natives;
     requires org.lwjgl.glfw.natives;
     requires org.lwjgl.openal.natives;
     requires org.lwjgl.opengl.natives;
@@ -29,7 +29,7 @@ module com.opengg.core {
     requires org.lwjgl.tootle.natives;
     requires org.lwjgl.meow.natives;
     requires org.lwjgl.shaderc.natives;
-
+    requires org.lwjgl.meshoptimizer.natives;
 
     requires java.compiler;
     requires java.logging;

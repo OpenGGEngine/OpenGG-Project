@@ -24,7 +24,7 @@ public class AssimpModelLoader {
 
         File modelFile = new File(path);
         AIScene scene = Assimp.aiImportFile(modelFile.toString(),
-                Assimp.aiProcess_GenSmoothNormals | Assimp.aiProcess_Triangulate | Assimp.aiProcess_CalcTangentSpace | Assimp.aiProcess_ConvertToLeftHanded | aiProcess_JoinIdenticalVertices);
+                Assimp.aiProcess_GenSmoothNormals | Assimp.aiProcess_Triangulate | Assimp.aiProcess_CalcTangentSpace | Assimp.aiProcess_ConvertToLeftHanded | aiProcess_JoinIdenticalVertices | Assimp.aiProcess_PreTransformVertices);
         GGConsole.log("Loading " + modelFile.getName() + " with " + scene.mNumMeshes() + " meshes and " + scene.mNumAnimations() + " animations.");
 
         GGNode rootNode = recurNode(scene.mRootNode());
@@ -104,6 +104,7 @@ public class AssimpModelLoader {
                 AIFace face = mesh.mFaces().get(i2);
                 remainingFaces.add(new Face(face.mIndices().get(0), face.mIndices().get(1), face.mIndices().get(2)));
             }
+
 
             var strips = new ArrayList<List<Integer>>();
          //   System.out.println("START GAMING HOUR");
@@ -407,14 +408,18 @@ public class AssimpModelLoader {
         Vector3f ambient = Material.DEFAULT_COLOR;
         if (aiGetMaterialColor(material, AI_MATKEY_COLOR_AMBIENT, aiTextureType_NONE, 0, color) == 0) {
             ambient = new Vector3f(color.r(), color.g(), color.b());
+            m.ka = ambient;
         }
         Vector3f diffuse = Material.DEFAULT_COLOR;
         if (aiGetMaterialColor(material, AI_MATKEY_COLOR_DIFFUSE, aiTextureType_NONE, 0, color) == 0) {
             diffuse = new Vector3f(color.r(), color.g(), color.b());
+            m.kd = diffuse;
+            m.transparency = color.a() == 0 ? 1 : color.a();
         }
         Vector3f specular = Material.DEFAULT_COLOR;
         if (aiGetMaterialColor(material, AI_MATKEY_COLOR_SPECULAR, aiTextureType_NONE, 0, color) == 0) {
             specular = new Vector3f(color.r(), color.g(), color.b());
+            m.ks = specular;
         }
         float[] temp = new float[1];
 
