@@ -2,9 +2,9 @@ package com.opengg.core.model.io;
 
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.math.*;
-import com.opengg.core.math.geom.Triangle;
 import com.opengg.core.math.util.Tuple;
 import com.opengg.core.model.*;
+import com.opengg.core.system.Allocator;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.assimp.*;
 import org.lwjgl.util.meshoptimizer.MeshOptimizer;
@@ -25,7 +25,8 @@ public class AssimpModelLoader {
 
         File modelFile = new File(path);
         AIScene scene = Assimp.aiImportFile(modelFile.toString(),
-                Assimp.aiProcess_GenSmoothNormals | Assimp.aiProcess_Triangulate | Assimp.aiProcess_CalcTangentSpace | Assimp.aiProcess_ConvertToLeftHanded | aiProcess_JoinIdenticalVertices | Assimp.aiProcess_PreTransformVertices);
+                Assimp.aiProcess_GenSmoothNormals | Assimp.aiProcess_Triangulate | Assimp.aiProcess_CalcTangentSpace | Assimp.aiProcess_ConvertToLeftHanded |
+                        aiProcess_JoinIdenticalVertices | Assimp.aiProcess_PreTransformVertices | aiProcess_OptimizeMeshes);
         GGConsole.log("Loading " + modelFile.getName() + " with " + scene.mNumMeshes() + " meshes and " + scene.mNumAnimations() + " animations.");
 
         GGNode rootNode = recurNode(scene.mRootNode());
@@ -44,78 +45,44 @@ public class AssimpModelLoader {
         ArrayList<Mesh> meshes = new ArrayList<>(scene.mNumMeshes());
 
         boolean animationsEnabled = false;
-        boolean generateHulls = false;
         boolean generatedTangent = false;
 
         for (int i = 0; i < pMeshes.capacity(); i++) {
             AIMesh mesh = AIMesh.create(pMeshes.get());
 
-            Vector3f positions;
-            Vector3f normals;
-            Vector3f tangents;
-            Vector2f uvs;
+            var vertices = parseVertices(mesh, initialTransform);
 
-            GGBone[] bones = new GGBone[mesh.mNumBones()];
-
-            boolean hasTangents = mesh.mTangents() == null;
-            generatedTangent = !hasTangents;
-            boolean hasNormal = mesh.mNormals() == null;
-            boolean hasUVs = mesh.mTextureCoords(0) == null;
-            //boolean hasColors = mesh.mColors() == null;
-
-            ArrayList<GGVertex> vertices = new ArrayList<>(mesh.mNumVertices());
-            //Load Mesh VBO Data
-            for (int i2 = 0; i2 < mesh.mNumVertices(); i2++) {
-                positions = initialTransform.transform(assimpToV3(mesh.mVertices().get(i2)));
-                normals = hasNormal ? new Vector3f(1) : assimpToV3(mesh.mNormals().get(i2));
-                tangents = hasTangents ? new Vector3f(1) : assimpToV3(mesh.mTangents().get(i2));
-                uvs = hasUVs ? new Vector2f(1) : assimpToV2(mesh.mTextureCoords(0).get(i2));
-
-                vertices.add(new GGVertex(positions, normals, tangents, uvs));
-            }
-
-
-            var preStripIndices = IntBuffer.allocate(mesh.mFaces().capacity() * 3);
-            var stripIndices = IntBuffer.allocate(mesh.mFaces().capacity() * 3);
+            int idxCount = mesh.mFaces().capacity() * 3;
+            var preStripIndices = Allocator.allocInt(idxCount);
             for (int i2 = 0; i2 < mesh.mFaces().capacity(); i2++) {
                 AIFace face = mesh.mFaces().get(i2);
                 preStripIndices.put(face.mIndices().get(0)).put(face.mIndices().get(1)).put(face.mIndices().get(2));
             }
 
-            System.out.println(preStripIndices.capacity());
+            preStripIndices.rewind();
 
+            var maxStripLength = MeshOptimizer.meshopt_stripifyBound(idxCount);
+            var stripIndices = Allocator.allocInt((int) maxStripLength);
             var stripLength = MeshOptimizer.meshopt_stripify(stripIndices, preStripIndices, mesh.mNumVertices(), 0);
 
-            System.out.println(stripLength);
-            var finalIndices = new ArrayList<Integer>(mesh.mFaces().capacity() * 3);
+            var finalIndices = new ArrayList<Integer>((int) stripLength);
             for(int idx = 0; idx < stripLength; idx++) {
                 finalIndices.add(stripIndices.get(idx));
             }
 
-/*
-            var finalIndices = new ArrayList<Integer>(mesh.mFaces().capacity() * 3);
-            for(int idx = 0; idx < stripLength; idx++){
-                if(stripIndices.get(idx) == -1){
-                    finalIndices.add(stripIndices.get(idx-1));
-                    finalIndices.add(stripIndices.get(idx+1));
-                }else{
-                    finalIndices.add(stripIndices.get(idx));
-                }
-            }*/
-
-            Mesh newMesh = new Mesh(vertices, finalIndices.stream().mapToInt(e -> e).toArray(), true, true);
+            Mesh newMesh = new Mesh(vertices, finalIndices.stream().mapToInt(e -> e).toArray());
             newMesh.setTriStrip(true);
 
             if (scene.mNumMaterials() > 0) {
                 newMesh.setMaterial(materials.get(mesh.mMaterialIndex()));
                 newMesh.matIndex = mesh.mMaterialIndex();
             }
-            newMesh.setBones(bones);
+            newMesh.setBones(new GGBone[mesh.mNumBones()]);
 
             meshes.add(newMesh);
 
         }
-        GGConsole.log("Loaded model: " + modelFile.getName());
+        GGConsole.log("Loaded model " + modelFile.getName());
         Model model = new Model(meshes, name);
         String formatConfig = "{";
         if (animationsEnabled) {
@@ -174,31 +141,10 @@ public class AssimpModelLoader {
         for (int i = 0; i < pMeshes.capacity(); i++) {
             AIMesh mesh = AIMesh.create(pMeshes.get());
 
-            Vector3f positions;
-            Vector3f normals;
-            Vector3f tangents;
-            Vector2f uvs;
-
             int[] indices = new int[mesh.mNumFaces() * 3];
             GGBone[] bones = new GGBone[mesh.mNumBones()];
 
-            boolean hasTangents = mesh.mTangents() == null;
-            generatedTangent = !hasTangents;
-            boolean hasNormal = mesh.mNormals() == null;
-            boolean hasUVs = mesh.mTextureCoords(0) == null;
-
-            ArrayList<GGVertex> vertices = new ArrayList<>(mesh.mNumVertices());
-            //Load Mesh VBO Data
-            for (int i2 = 0; i2 < mesh.mNumVertices(); i2++) {
-
-                positions = assimpToV3(mesh.mVertices().get(i2));
-                normals = hasNormal ? new Vector3f(1) : assimpToV3(mesh.mNormals().get(i2));
-                tangents = hasTangents ? new Vector3f(1) : assimpToV3(mesh.mTangents().get(i2));
-                uvs = hasUVs ? new Vector2f(1) : assimpToV2(mesh.mTextureCoords(0).get(i2));
-
-                vertices.add(new GGVertex(positions, normals, tangents, uvs));
-
-            }
+            var vertices = parseVertices(mesh, Matrix4f.IDENTITY);
 
             //Load animation mesh data
             if (!animationsEnabled) {
@@ -257,7 +203,7 @@ public class AssimpModelLoader {
             meshes.add(gmesh);
 
         }
-        GGConsole.log("Loaded model: " + f.getName());
+        GGConsole.log("Loaded model " + f.getName());
         Model model = new Model(meshes, name);
         String formatConfig = "{";
         if (animationsEnabled) {
@@ -286,7 +232,30 @@ public class AssimpModelLoader {
 
     }
 
-    public static Material processMaterial(AIMaterial material) {
+    private static List<GGVertex> parseVertices(AIMesh mesh, Matrix4f initialTransform) {
+        boolean hasTangents = mesh.mTangents() == null;
+        boolean hasBiTangent = mesh.mBitangents() == null;
+        boolean hasNormal = mesh.mNormals() == null;
+        boolean hasUVs = mesh.mTextureCoords(0) == null;
+        boolean hasColors = mesh.mColors(0) == null;
+
+        ArrayList<GGVertex> vertices = new ArrayList<>(mesh.mNumVertices());
+        //Load Mesh VBO Data
+        for (int i2 = 0; i2 < mesh.mNumVertices(); i2++) {
+            var position = initialTransform.transform(assimpToV3(mesh.mVertices().get(i2)));
+            var normal = hasNormal ? new Vector3f(1) : assimpToV3(mesh.mNormals().get(i2));
+            var tangent = hasTangents ? new Vector3f(1) : assimpToV3(mesh.mTangents().get(i2));
+            var bitangent = hasBiTangent ? new Vector3f(1) : assimpToV3(mesh.mTangents().get(i2));
+            var color = hasColors ? new Vector3f(1) : assimpToV3(mesh.mTangents().get(i2));
+            var uv = hasUVs ? new Vector2f(1) : assimpToV2(mesh.mTextureCoords(0).get(i2));
+
+            vertices.add(new GGVertex(position, normal, uv).setTangent(tangent).setBiTangent(bitangent).setColor(new Vector4f(color)));
+        }
+
+        return vertices;
+    }
+
+    private static Material processMaterial(AIMaterial material) {
         AIString s = AIString.malloc();
         aiGetMaterialString(material, AI_MATKEY_NAME, 0, 0, s);
         Material m = new Material(s.dataString());

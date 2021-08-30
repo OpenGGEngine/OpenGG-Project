@@ -30,7 +30,7 @@ public class Mesh {
 
     private List<Vector3f> convexHull;
 
-    public Mesh(ArrayList<GGVertex> vertices, int[] indices, boolean genTangents,boolean compressNormal){
+    public Mesh(List<GGVertex> vertices, int[] indices){
 
         ByteBuffer realBuf = Allocator.alloc(vertices.size() * 28);
 
@@ -50,27 +50,29 @@ public class Mesh {
             Vector2f uv = vertex.uvs;
             realBuf.putFloat(uv.x).putFloat(uv.y);
         }
+
         realBuf.flip();
         vbo = realBuf.asFloatBuffer();
         setIndexBuffer(Allocator.allocInt(indices.length).put(indices).flip());
         this.genAnim = genAnim;
         this.vertices = vertices;
     }
+
     public Mesh(List<GGVertex> vertices, int[] indices, boolean genAnim){
 
-        vbo = Allocator.allocFloat(vertices.size() * (  (genAnim?VBO_ANIM:VBO_NOANIM) + (genTangents ? 3 : 4) ) );
+        vbo = Allocator.allocFloat(vertices.size() * ((genAnim ? VBO_ANIM : VBO_NOANIM) + (genTangents ? 3 : 4) ));
 
-        for (GGVertex vertex : vertices) {
-            Vector3f position = vertex.position;
-            vbo.put(position.x).put(position.y).put(position.z);
-            Vector3f normal = vertex.normal;
-            vbo.put(normal.x).put(normal.y).put(normal.z);
+        for (var vertex : vertices) {
+            vbo.put(vertex.position.x).put(vertex.position.y).put(vertex.position.z);
+            vbo.put(vertex.normal.x).put(vertex.normal.y).put(vertex.normal.z);
+
             if (genTangents) {
                 Vector3f tangent = vertex.tangent;
                 vbo.put(tangent.x).put(tangent.y).put(tangent.z);
             } else {
                 vbo.put(0f).put(0f).put(0f).put(0f);
             }
+
             Vector2f uv = vertex.uvs;
             vbo.put(uv.x).put(uv.y);
             if (genAnim) {

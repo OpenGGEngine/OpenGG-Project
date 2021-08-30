@@ -568,6 +568,8 @@ public abstract class Component{
     }
 
     public final void delete(){
+        if (this.getParent() == null) return;
+
         OpenGG.asyncExec(() -> {
             this.localFinalizeComponent();
             this.getParent().remove(this);
