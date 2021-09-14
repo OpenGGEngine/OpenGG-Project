@@ -38,28 +38,28 @@ public abstract sealed class DrawnObject implements Renderable permits OpenGLDra
     protected boolean enforce = true;
 
 
-    public static DrawnObject create(FloatBuffer... vertices) {
+    public static DrawnObject create(Buffer... vertices) {
         return switch (RenderEngine.getRendererType()){
             case OPENGL -> new OpenGLDrawnObject(RenderEngine.getDefaultFormat(), null, vertices);
             case VULKAN -> new VulkanDrawnObject(RenderEngine.getDefaultFormat(), null, vertices);
         };
     }
 
-    public static DrawnObject create(VertexArrayFormat format, IntBuffer index, FloatBuffer... vertices) {
+    public static DrawnObject create(VertexArrayFormat format, IntBuffer index, Buffer... vertices) {
         return switch (RenderEngine.getRendererType()){
             case OPENGL -> new OpenGLDrawnObject(format, index, vertices);
             case VULKAN -> new VulkanDrawnObject(format, index, vertices);
         };
     }
 
-    public static DrawnObject create(IntBuffer index, FloatBuffer... vertices) {
+    public static DrawnObject create(IntBuffer index, Buffer... vertices) {
         return switch (RenderEngine.getRendererType()){
             case OPENGL -> new OpenGLDrawnObject(RenderEngine.getDefaultFormat(), index, vertices);
             case VULKAN -> new VulkanDrawnObject(RenderEngine.getDefaultFormat(), index, vertices);
         };
     }
 
-    public static DrawnObject create(VertexArrayFormat format, FloatBuffer... vertices) {
+    public static DrawnObject create(VertexArrayFormat format, Buffer... vertices) {
         return switch (RenderEngine.getRendererType()){
             case OPENGL -> new OpenGLDrawnObject(format, null, vertices);
             case VULKAN -> new VulkanDrawnObject(format, null, vertices);
@@ -88,7 +88,7 @@ public abstract sealed class DrawnObject implements Renderable permits OpenGLDra
     }
 
     /**
-     * Sets the buffer with the given ID to the given {@link FloatBuffer}
+     * Sets the buffer with the given ID to the given {@link Buffer}
      * <br>
      * This sets the buffer to the given buffer type, optimizing for reading operations
      * @param bufferIndex Buffer to replace
@@ -105,15 +105,15 @@ public abstract sealed class DrawnObject implements Renderable permits OpenGLDra
             vertexBufferObjects.add(generateVertexBuffer(buffer));
         }
 
-        int bufferSize = 0;
         var mainBuffer = buffers[0];
-        if(mainBuffer instanceof ByteBuffer bbuf){
-            bufferSize = bbuf.limit();
-        }else if(mainBuffer instanceof FloatBuffer fbuf){
-            bufferSize = fbuf.limit()*Float.BYTES;
-        }else if(mainBuffer instanceof IntBuffer ibuf){
-            bufferSize = ibuf.limit()*Integer.BYTES;
-        }
+        int bufferSize = switch (mainBuffer) {
+            case ByteBuffer bbuf -> bbuf.limit();
+            case FloatBuffer fbuf -> fbuf.limit() * Float.BYTES;
+            case IntBuffer ibuf -> ibuf.limit() * Integer.BYTES;
+            case null, default -> {
+                yield 0;
+            }
+        };
 
         if(indexBuffer == null){
             this.indexBuffer = generateIndexBuffer(format, bufferSize);
@@ -124,17 +124,12 @@ public abstract sealed class DrawnObject implements Renderable permits OpenGLDra
     }
 
     private GraphicsBuffer generateVertexBuffer(Buffer buffer){
-        GraphicsBuffer vbo;
-        if(buffer instanceof ByteBuffer bbuf){
-            vbo = GraphicsBuffer.allocate(GraphicsBuffer.BufferType.VERTEX_ARRAY_BUFFER, bbuf, GraphicsBuffer.UsageType.NONE);
-        }else if(buffer instanceof FloatBuffer fbuf){
-            vbo = GraphicsBuffer.allocate(GraphicsBuffer.BufferType.VERTEX_ARRAY_BUFFER, fbuf, GraphicsBuffer.UsageType.NONE);
-        }else if(buffer instanceof IntBuffer ibuf){
-            vbo = GraphicsBuffer.allocate(GraphicsBuffer.BufferType.VERTEX_ARRAY_BUFFER, ibuf, GraphicsBuffer.UsageType.NONE);
-        }else{
-            throw new IllegalArgumentException(buffer.getClass().getSimpleName() + " is not a useable buffer type");
-        }
-        return vbo;
+        return switch (buffer) {
+            case ByteBuffer bbuf -> GraphicsBuffer.allocate(GraphicsBuffer.BufferType.VERTEX_ARRAY_BUFFER, bbuf, GraphicsBuffer.UsageType.NONE);
+            case FloatBuffer fbuf -> GraphicsBuffer.allocate(GraphicsBuffer.BufferType.VERTEX_ARRAY_BUFFER, fbuf, GraphicsBuffer.UsageType.NONE);
+            case IntBuffer ibuf -> GraphicsBuffer.allocate(GraphicsBuffer.BufferType.VERTEX_ARRAY_BUFFER, ibuf, GraphicsBuffer.UsageType.NONE);
+            case null, default -> throw new IllegalArgumentException(buffer.getClass().getSimpleName() + " is not a useable buffer type");
+        };
     }
 
     private GraphicsBuffer generateIndexBuffer(VertexArrayFormat format, int primaryBufferSize){

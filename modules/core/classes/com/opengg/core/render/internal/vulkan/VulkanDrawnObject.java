@@ -7,6 +7,7 @@ import com.opengg.core.render.internal.vulkan.shader.VulkanPipelineCache;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.shader.VertexArrayFormat;
 
+import java.nio.Buffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
@@ -15,7 +16,7 @@ import static org.lwjgl.vulkan.VK10.*;
 public final class VulkanDrawnObject extends DrawnObject{
     private boolean hasNonEmptyBuffer = true;
 
-    public VulkanDrawnObject(VertexArrayFormat format, IntBuffer index, FloatBuffer... vertices) {
+    public VulkanDrawnObject(VertexArrayFormat format, IntBuffer index, Buffer... vertices) {
         this.format = format;
         if(vertices[0].capacity() != 0)
             generateGPUMemory(vertices, index);

@@ -7,6 +7,7 @@ import com.opengg.core.render.objects.DrawnObject;
 import com.opengg.core.render.shader.ShaderController;
 import com.opengg.core.render.shader.VertexArrayFormat;
 
+import java.nio.Buffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
@@ -15,7 +16,7 @@ import static org.lwjgl.opengl.GL42.glDrawElementsInstancedBaseVertexBaseInstanc
 
 public final class OpenGLDrawnObject extends DrawnObject {
 
-    public OpenGLDrawnObject(VertexArrayFormat format, IntBuffer index, FloatBuffer... vertices) {
+    public OpenGLDrawnObject(VertexArrayFormat format, IntBuffer index, Buffer... vertices) {
         super(format, index, vertices);
     }
 
