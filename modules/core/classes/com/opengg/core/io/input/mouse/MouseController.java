@@ -69,13 +69,13 @@ public class MouseController {
     }
     
     public static void buttonPressed(int key){
-        for (var listener : buttonlisteners){
+        for (var listener : List.copyOf(buttonlisteners)){
             listener.onButtonPress(key);
         }
     }
     
     public static void buttonReleased(int key){
-        for (var listener : buttonlisteners){
+        for (var listener : List.copyOf(buttonlisteners)){
             listener.onButtonRelease(key);
         }
     }
