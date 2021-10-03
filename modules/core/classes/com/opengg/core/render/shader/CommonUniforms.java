@@ -19,7 +19,7 @@ public class CommonUniforms {
      * @param rotation
      */
     public static void setPosRotScale(Vector3f position, Quaternionf rotation, Vector3f scale){
-        setModel(new Matrix4f().translate(position).rotate(rotation).scale(scale));
+        setModel(Matrix4f.IDENTITY.translate(position).rotate(rotation).scale(scale));
     }
 
     public static void setModel(Matrix4f model){

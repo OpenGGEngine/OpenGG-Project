@@ -149,7 +149,7 @@ public class NativeOpenGLShaderProgram{
             FloatBuffer fb = Allocator.stackAllocFloat(16 * length);
             for (Matrix4f mat : matrices) {
                 if(mat == null){
-                    mat = new Matrix4f();
+                    mat = Matrix4f.IDENTITY;
                 }
                 
                 fb.put(mat.m00).put(mat.m01).put(mat.m02).put(mat.m03);

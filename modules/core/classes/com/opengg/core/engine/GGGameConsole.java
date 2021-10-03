@@ -85,7 +85,7 @@ public class GGGameConsole implements KeyboardListener, KeyboardCharacterListene
                 .collect(Collectors.joining());
 
         //Fixes the Input Field not Rendering
-        CommonUniforms.setModel(new Matrix4f());
+        CommonUniforms.setModel(Matrix4f.IDENTITY);
         ShaderController.useConfiguration("texture");
         if(RenderEngine.getRendererType() == WindowOptions.RendererType.OPENGL) ((OpenGLRenderer) RenderEngine.renderer).setDepthTest(false);
         background.render();

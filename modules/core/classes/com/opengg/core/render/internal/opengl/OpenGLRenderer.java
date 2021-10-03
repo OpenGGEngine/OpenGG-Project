@@ -108,7 +108,7 @@ public class OpenGLRenderer implements Renderer {
             this.setCulling(false);
             if(RenderEngine.getCurrentEnvironment().getSkybox() != null){
                 ShaderController.useConfiguration("sky");
-                CommonUniforms.setModel(new Matrix4f());
+                CommonUniforms.setModel(Matrix4f.IDENTITY);
                 ShaderController.setUniform("cubemap", RenderEngine.getCurrentEnvironment().getSkybox().getCubemap());
                 RenderEngine.getCurrentEnvironment().getSkybox().getDrawable().render();
 

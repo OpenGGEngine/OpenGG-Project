@@ -363,7 +363,7 @@ public class Matrix4f {
     }
 
     public static Matrix4f lookAt(Vector3f eye, Vector3f center, Vector3f up){
-        return new Matrix4f().lookAtLocal(eye, center, up);
+        return Matrix4f.IDENTITY.lookAtLocal(eye, center, up);
     }
 
     public Matrix4f lookAtLocal(Vector3f eye, Vector3f center, Vector3f up){

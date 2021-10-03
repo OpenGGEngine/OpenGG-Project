@@ -52,6 +52,6 @@ public class Camera implements View {
     }
     
     public Matrix4f getMatrix(){
-        return new Matrix4f().translate(pos).rotate(rot).invert();
+        return Matrix4f.IDENTITY.translate(pos).rotate(rot).invert();
     }
 }
