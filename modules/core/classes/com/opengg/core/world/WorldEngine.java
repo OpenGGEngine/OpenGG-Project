@@ -28,6 +28,7 @@ public class WorldEngine{
 
     private static final Map<String, World> worlds = new HashMap<>();
     private static final Map<Long, Component> guidMap = new HashMap<>();
+    private static final Map<String, List<Long>> nameToGuid = new HashMap<>();
 
     public static void initialize(){
         WorldEngine.setOnlyActiveWorld(new World());
@@ -59,6 +60,7 @@ public class WorldEngine{
 
     public static void onComponentAdded(Component comp){
         guidMap.put(comp.getGUID(), comp);
+        nameToGuid.computeIfAbsent(comp.getName(), n -> new ArrayList<>()).add(comp.getGUID());
         componentAdditionListeners.forEach(c -> c.accept(comp));
     }
 
@@ -68,6 +70,18 @@ public class WorldEngine{
 
     public static void onComponentRemoved(Component comp){
         guidMap.remove(comp.getGUID());
+        var list =  nameToGuid.get(comp.getName());
+
+        if (list != null) {
+            if (!list.isEmpty()) {
+                list.remove(comp.getGUID());
+            }
+
+            if (list.isEmpty()) {
+                nameToGuid.remove(comp.getName());
+            }
+        }
+
 
         componentRemovalListeners.forEach(c -> c.accept(comp));
     }
@@ -82,7 +96,7 @@ public class WorldEngine{
      * @return List containing all found components
      */
     public static List<Component> findEverywhereByName(String name){
-        return guidMap.values().stream().filter(c -> c.getName().equals(name)).collect(Collectors.toList());
+        return Optional.ofNullable(nameToGuid.get(name)).stream().flatMap(Collection::stream).map(guidMap::get).collect(Collectors.toList());
     }
 
     /**

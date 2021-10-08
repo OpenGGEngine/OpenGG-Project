@@ -28,7 +28,11 @@ public class GGConsole {
     private static final List<ConsoleListener> listeners = new ArrayList<>();
     private static final List<LoggerOutputConsumer> consumers = new ArrayList<>();
 
+    private static boolean initialized = false;
+
     public static void initialize() {
+        if (initialized) return;
+
         var currentOut = System.out;
 
         ThreadManager.setDefaultUncaughtExceptionHandler(new GGThreadExceptionHandler());
@@ -69,6 +73,8 @@ public class GGConsole {
             System.setOut(loggingStream);
             System.setErr(errorStream);
         }
+
+        initialized = true;
     }
 
     public static void saveLogs(Path logsDirectory) {

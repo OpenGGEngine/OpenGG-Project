@@ -112,7 +112,6 @@ public final class OpenGG{
         GGInfo.setApplicationName(options.getApplicationName());
         GGInfo.setUserDataDirectory(options.getUserDataDirectory().isEmpty() ? options.getApplicationName() : options.getUserDataDirectory());
 
-
         ThreadManager.initialize();
         Executor.initialize();
         GGConsole.initialize();

@@ -22,7 +22,7 @@ public class GGInfo {
     private static Path applicationRootPath;
     private static final boolean initialized = false;
 
-    private static boolean redirectStandardOut = false;
+    private static boolean redirectStandardOut = true;
     private static boolean verbose = false;
     private static boolean aggressiveMemory = false;
     private static boolean server = false;
