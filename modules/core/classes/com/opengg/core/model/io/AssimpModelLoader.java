@@ -23,10 +23,11 @@ public class AssimpModelLoader {
     public static Model loadModelAsTriStrip(String path, Matrix4f initialTransform, boolean reverseWinding) throws IOException {
         String name = path.substring(Math.max(path.lastIndexOf("\\"), path.lastIndexOf("/")) + 1, path.lastIndexOf("."));
 
+        int flags = Assimp.aiProcess_GenSmoothNormals | Assimp.aiProcess_Triangulate | Assimp.aiProcess_CalcTangentSpace | Assimp.aiProcess_ConvertToLeftHanded |
+                aiProcess_JoinIdenticalVertices | Assimp.aiProcess_PreTransformVertices | aiProcess_OptimizeMeshes;
+
         File modelFile = new File(path);
-        AIScene scene = Assimp.aiImportFile(modelFile.toString(),
-                Assimp.aiProcess_GenSmoothNormals | Assimp.aiProcess_Triangulate | Assimp.aiProcess_CalcTangentSpace | Assimp.aiProcess_ConvertToLeftHanded |
-                        aiProcess_JoinIdenticalVertices | Assimp.aiProcess_PreTransformVertices | aiProcess_OptimizeMeshes);
+        AIScene scene = Assimp.aiImportFile(modelFile.toString(), flags);
         GGConsole.log("Loading " + modelFile.getName() + " with " + scene.mNumMeshes() + " meshes and " + scene.mNumAnimations() + " animations.");
 
         GGNode rootNode = recurNode(scene.mRootNode());
@@ -56,7 +57,10 @@ public class AssimpModelLoader {
             var preStripIndices = Allocator.allocInt(idxCount);
             for (int i2 = 0; i2 < mesh.mFaces().capacity(); i2++) {
                 AIFace face = mesh.mFaces().get(i2);
-                preStripIndices.put(face.mIndices().get(0)).put(face.mIndices().get(1)).put(face.mIndices().get(2));
+                if (reverseWinding)
+                    preStripIndices.put(face.mIndices().get(2)).put(face.mIndices().get(1)).put(face.mIndices().get(0));
+                else
+                    preStripIndices.put(face.mIndices().get(0)).put(face.mIndices().get(1)).put(face.mIndices().get(2));
             }
 
             preStripIndices.rewind();

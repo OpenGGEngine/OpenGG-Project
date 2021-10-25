@@ -9,20 +9,17 @@ package com.opengg.core.render.internal.opengl;
 import com.opengg.core.console.GGConsole;
 import com.opengg.core.engine.GGDebugRenderer;
 import com.opengg.core.engine.GGGameConsole;
-import com.opengg.core.engine.OpenGG;
 import com.opengg.core.gui.GUIController;
 import com.opengg.core.math.Matrix4f;
 import com.opengg.core.math.Vector3f;
 import com.opengg.core.render.*;
 import com.opengg.core.render.internal.opengl.shader.OpenGLVertexArrayObject;
-import com.opengg.core.render.internal.opengl.texture.OpenGLFramebuffer;
 import com.opengg.core.render.light.Light;
 import com.opengg.core.render.postprocess.PostProcessController;
 import com.opengg.core.render.shader.*;
 import com.opengg.core.render.texture.Framebuffer;
 import com.opengg.core.render.texture.TextureManager;
 import com.opengg.core.render.window.WindowController;
-import com.opengg.core.render.window.WindowOptions;
 import com.opengg.core.system.Allocator;
 import com.opengg.core.world.Camera;
 
@@ -38,7 +35,6 @@ import static org.lwjgl.opengl.GL43.*;
  * @author Javier
  */
 public class OpenGLRenderer implements Renderer {
-    private boolean cull = true;
     private boolean suppressErrors = false;
     private int lightoffset;
 
@@ -50,6 +46,9 @@ public class OpenGLRenderer implements Renderer {
     private AlphaBlendFunction currentAlphaBlendFunction = AlphaBlendFunction.ADD;
     private AlphaBlendSource currentSrcSource = AlphaBlendSource.SRC_ALPHA;
     private AlphaBlendSource currentDestSource = AlphaBlendSource.ONE_MINUS_SRC_ALPHA;
+    private WindingOrder windingOrder = WindingOrder.CCW;
+    private boolean cullFace = true;
+
 
     private Vector3f clearColor = new Vector3f();
 
@@ -105,7 +104,7 @@ public class OpenGLRenderer implements Renderer {
     private void enableDefaultGroups(){
 
         RenderOperation skybox = new RenderOperation("skyboxpath", () -> {
-            this.setCulling(false);
+            this.setBackfaceCulling(false);
             if(RenderEngine.getCurrentEnvironment().getSkybox() != null){
                 ShaderController.useConfiguration("sky");
                 CommonUniforms.setModel(Matrix4f.IDENTITY);
@@ -113,7 +112,7 @@ public class OpenGLRenderer implements Renderer {
                 RenderEngine.getCurrentEnvironment().getSkybox().getDrawable().render();
 
             }
-            this.setCulling(true);
+            this.setBackfaceCulling(true);
         });
 
         RenderOperation path = new RenderOperation("mainpath", () -> {
@@ -190,13 +189,13 @@ public class OpenGLRenderer implements Renderer {
 
             pass.runDisableOp();
         }
-        this.setCulling(false);
+        this.setBackfaceCulling(false);
 
         GUIController.render();
         GGGameConsole.render();
         GGDebugRenderer.render();
 
-        this.setCulling(true);
+        this.setBackfaceCulling(true);
     }
 
     @Override
@@ -214,17 +213,17 @@ public class OpenGLRenderer implements Renderer {
 
     public void resetConfig(){
         glDepthMask(true);
-        glEnable(GL_DEPTH_TEST);
-        glDepthFunc(GL_LEQUAL);
 
-        glEnable(GL_BLEND);
-        glBlendEquation(GL_FUNC_ADD);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        cull = false;
-        if(cull)
-            glEnable(GL_CULL_FACE);
-        else
-            glDisable(GL_CULL_FACE);
+        this.setDepthTest(true);
+        this.setDepthWrite(true);
+        this.setDepthFunc(DepthTestFunction.LEQUAL);
+
+        this.setAlphaBlendEnable(true);
+        this.setAlphaBlendFunction(AlphaBlendFunction.ADD);
+        this.setAlphaBlendSource(AlphaBlendSource.SRC_ALPHA, AlphaBlendSource.ONE_MINUS_SRC_ALPHA);
+
+        this.setBackfaceCulling(true);
+        this.setCullingFace(CullingFace.BACK);
     }
 
 
@@ -249,27 +248,53 @@ public class OpenGLRenderer implements Renderer {
             glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
     }
 
+    public void setFrontWindingOrder(WindingOrder order) {
+        if (windingOrder != order) {
+            windingOrder = order;
 
-    public void setCulling(boolean enable){
-        cull = enable;
-        resetConfig();
+            switch (order) {
+                case CW -> glFrontFace(GL_CW);
+                case CCW -> glFrontFace(GL_CCW);
+            }
+        }
     }
 
-    public void setDepthTest(boolean check){
+    public void setCullingFace(CullingFace face) {
+        switch (face){
+            case BACK -> glCullFace(GL_BACK);
+            case FRONT -> glCullFace(GL_FRONT);
+            case BOTH -> glCullFace(GL_FRONT_AND_BACK);
+        }
+    }
+
+    public void setBackfaceCulling(boolean enable) {
+        if (cullFace != enable) {
+            cullFace = enable;
+
+            if (enable) {
+                glEnable(GL_CULL_FACE);
+            } else {
+                glDisable(GL_CULL_FACE);
+            }
+        }
+
+    }
+
+    public void setDepthTest(boolean check) {
         if(depthTestEnabled != check){
             depthTestEnabled = check;
             GLOptions.set(GL_DEPTH_TEST, check);
         }
     }
 
-    public void setDepthWrite(boolean write){
+    public void setDepthWrite(boolean write) {
         if(depthWriteEnabled != write){
             depthWriteEnabled = write;
             glDepthMask(write);
         }
     }
 
-    public void setDepthFunc(DepthTestFunction func){
+    public void setDepthFunc(DepthTestFunction func) {
         if(currentDepthFunc != func){
             currentDepthFunc = func;
             int glFunc = switch (func){
@@ -280,14 +305,14 @@ public class OpenGLRenderer implements Renderer {
         }
     }
 
-    public void setAlphaBlendEnable(boolean blend){
+    public void setAlphaBlendEnable(boolean blend) {
         if(alphaBlendingEnabled != blend){
             alphaBlendingEnabled = blend;
             GLOptions.set(GL_BLEND, blend);
         }
     }
 
-    public void setAlphaBlendFunction(AlphaBlendFunction function){
+    public void setAlphaBlendFunction(AlphaBlendFunction function) {
         if(currentAlphaBlendFunction != function){
             currentAlphaBlendFunction = function;
             switch (function){
@@ -303,7 +328,6 @@ public class OpenGLRenderer implements Renderer {
             currentSrcSource = srcFactor;
             currentDestSource = dstFactor;
             glBlendFunc(getGlBlendSource(srcFactor), getGlBlendSource(dstFactor));
-
         }
     }
 
@@ -352,4 +376,7 @@ public class OpenGLRenderer implements Renderer {
 
     public enum AlphaBlendFunction{ADD, SUBTRACT, REV_SUBTRACT}
 
+    public enum CullingFace{BACK, FRONT, BOTH};
+
+    public enum WindingOrder{CW, CCW};
 }

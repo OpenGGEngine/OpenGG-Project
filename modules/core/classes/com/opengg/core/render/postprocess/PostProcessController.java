@@ -76,7 +76,7 @@ public class PostProcessController {
     }
     
     public static Framebuffer process(Framebuffer initialBuffer){
-        ((OpenGLRenderer) RenderEngine.renderer).setCulling(false);
+        ((OpenGLRenderer) RenderEngine.renderer).setBackfaceCulling(false);
         CommonUniforms.setModel(Matrix4f.IDENTITY);
         ShaderController.setUniform("resolution", new Vector2f(WindowController.getWidth(), WindowController.getHeight()));
 
