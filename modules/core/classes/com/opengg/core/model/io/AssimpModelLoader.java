@@ -12,6 +12,7 @@ import org.lwjgl.util.meshoptimizer.MeshOptimizer;
 import java.io.File;
 import java.io.IOException;
 import java.nio.IntBuffer;
+import java.nio.file.Path;
 import java.util.*;
 
 import static org.lwjgl.assimp.Assimp.*;
@@ -21,7 +22,7 @@ public class AssimpModelLoader {
     private static final int NUM_WEIGHTS = 4;
 
     public static Model loadModelAsTriStrip(String path, Matrix4f initialTransform, boolean reverseWinding) throws IOException {
-        String name = path.substring(Math.max(path.lastIndexOf("\\"), path.lastIndexOf("/")) + 1, path.lastIndexOf("."));
+        String name = Path.of(path).getFileName().toString();
 
         int flags = Assimp.aiProcess_GenSmoothNormals | Assimp.aiProcess_Triangulate | Assimp.aiProcess_CalcTangentSpace | Assimp.aiProcess_ConvertToLeftHanded |
                 aiProcess_JoinIdenticalVertices | Assimp.aiProcess_PreTransformVertices | aiProcess_OptimizeMeshes;
@@ -116,7 +117,7 @@ public class AssimpModelLoader {
     }
 
     public static Model loadModel(String path) throws IOException {
-        String name = path.substring(Math.max(path.lastIndexOf("\\"), path.lastIndexOf("/")) + 1, path.lastIndexOf("."));
+        String name = Path.of(path).getFileName().toString();
 
         File f = new File(path);
         AIScene scene = Assimp.aiImportFile(f.toString(),
@@ -130,7 +131,7 @@ public class AssimpModelLoader {
         if (scene.mNumMaterials() > 0) {
             for (int i = 0; i < scene.mNumMaterials(); i++) {
                 Material mat2 = processMaterial(AIMaterial.create(scene.mMaterials().get(i)));
-                mat2.texpath = f.getParent() + "\\tex\\";
+                mat2.texpath = f.getParent() + "/tex/";
                 materials.add(mat2);
             }
         }

@@ -108,11 +108,29 @@ public class GGInfo {
         GGInfo.userDataLocation = userDataLocation;
     }
 
-    public static String getUserDataDirectory() {
+    public static Path getUserDataPath(){
+        if (System.getProperty("os.name").toLowerCase().contains("win")) {
+            if(GGInfo.getUserDataLocation() == GGInfo.UserDataOption.DOCUMENTS) {
+                return Path.of(System.getProperty("user.home"), "Documents", GGInfo.getUserDataDirectoryName());
+            } else {
+                return Path.of(System.getenv("APPDATA"), GGInfo.getUserDataDirectoryName());
+            }
+        } else {
+            if(GGInfo.getUserDataLocation() == GGInfo.UserDataOption.DOCUMENTS) {
+                return Path.of(System.getProperty("user.home"), ".local", "share", GGInfo.getUserDataDirectoryName());
+            } else {
+                return Path.of(System.getProperty("user.home"), "." + GGInfo.getUserDataDirectoryName());
+            }
+        }
+
+    }
+
+
+    public static String getUserDataDirectoryName() {
         return userDataDirectory;
     }
 
-    public static void setUserDataDirectory(String userDataDirectory) {
+    public static void setUserDataDirectoryName(String userDataDirectory) {
         GGInfo.userDataDirectory = userDataDirectory;
     }
 
@@ -154,5 +172,4 @@ public class GGInfo {
     public enum UserDataOption{
         DOCUMENTS, APP_DATA
     }
-    
 }

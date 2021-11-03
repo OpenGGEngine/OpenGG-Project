@@ -55,7 +55,7 @@ public class ScriptCompiler {
         out.close();
         var moduleObject = new JavaSourceFromString("module-info", writer.toString());
 // set compiler's classpath to be same as the runtime's
-        var options = List.of("-d", Resource.getAbsoluteFromLocal("resources/scripts/"), "--release", "12", "--enable-preview", "--module-path", System.getProperty("jdk.module.path"));
+        var options = List.of("-d", Resource.getAbsoluteFromLocal("resources/scripts/").toString(), "--release", "12", "--enable-preview", "--module-path", System.getProperty("jdk.module.path"));
 
         Iterable<? extends JavaFileObject> compilationUnits = Arrays.asList(fileObject, moduleObject);
         JavaCompiler.CompilationTask task = compiler.getTask(null, null, diagnosticsCollector, options, null, compilationUnits);
@@ -77,7 +77,7 @@ public class ScriptCompiler {
                            Path.of(Resource.getAbsoluteFromLocal("resources/scripts/" + name + ".class")), StandardCopyOption.REPLACE_EXISTING);*/
         }
 
-        return new CompilationResult(diagnosticsCollector.getDiagnostics(), success, Resource.getAbsoluteFromLocal("resources/scripts/" + name + ".class"));
+        return new CompilationResult(diagnosticsCollector.getDiagnostics(), success, Resource.getAbsoluteFromLocal("resources/scripts/" + name + ".class").toString());
     }
 
     static class JavaSourceFromString extends SimpleJavaFileObject {

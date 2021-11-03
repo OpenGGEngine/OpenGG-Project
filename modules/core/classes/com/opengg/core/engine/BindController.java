@@ -49,7 +49,7 @@ public class BindController implements KeyboardListener, MouseButtonListener, Mo
         bc = new BindController();
         try {
             var newline = System.getProperty("line.separator");
-            Files.lines(Path.of(Resource.getAbsoluteFromLocal("config/controls.cfg")))
+            Files.lines(Resource.getAbsoluteFromLocal("config/controls.cfg"))
                     .forEach(s -> {
                         if(!s.equals(newline)) {
                             var arr = s.split("\\|");
@@ -158,7 +158,7 @@ public class BindController implements KeyboardListener, MouseButtonListener, Mo
     }
 
     public static void saveBinds(){
-        var path = Path.of(Resource.getAbsoluteFromLocal("config/controls.cfg"));
+        var path = Resource.getAbsoluteFromLocal("config/controls.cfg");
         try (var writer = Files.newBufferedWriter(path)){
             binds.stream()
                     .forEach(bind -> {

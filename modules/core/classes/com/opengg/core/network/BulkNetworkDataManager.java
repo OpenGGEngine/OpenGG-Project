@@ -97,7 +97,7 @@ public class BulkNetworkDataManager {
 
     public CompletableFuture<Boolean> send(String file, String name, ConnectionData target){
         try {
-            var data = Files.readAllBytes(Paths.get(Resource.getAbsoluteFromLocal(file)));
+            var data = Files.readAllBytes(Resource.getAbsoluteFromLocal(file));
             var sendingList = new SendingBulkMessage(data, name, file, target);
             var future = new CompletableFuture<Boolean>();
 

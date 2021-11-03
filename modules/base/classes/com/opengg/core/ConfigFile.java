@@ -9,6 +9,7 @@ package com.opengg.core;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -22,12 +23,12 @@ public class ConfigFile {
     private final String name;
     private Map<String, String> contents;
 
-    public ConfigFile(File file) throws IOException {
+    public ConfigFile(Path file) throws IOException {
         var properties = new Properties();
 
-        properties.load(new FileInputStream(file));
+        properties.load(new FileInputStream(file.toFile()));
 
-        this.name = file.getName();
+        this.name = file.getFileName().toString();
         contents = properties.isEmpty() ? new LinkedHashMap<>() : new LinkedHashMap<>(Map.ofEntries(properties.entrySet().toArray(new Map.Entry[1])));
     }
 

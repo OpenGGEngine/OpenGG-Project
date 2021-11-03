@@ -71,7 +71,7 @@ public class BMFFile extends ModelProcess {
 
     public static Model loadModel(String file) throws IOException{
         String name = file;
-        File f = new File(Resource.getAbsoluteFromLocal(name));
+        File f = Resource.getAbsoluteFromLocal(name).toFile();
         try (FileInputStream fIn = new FileInputStream(f)) {
             //Get original file size from first 4 bytes.
             int originalsize = fIn.read() << 24 | (fIn.read() & 0xFF) << 16 | (fIn.read() & 0xFF) << 8 | (fIn.read() & 0xFF);

@@ -12,6 +12,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
+import java.nio.file.Files;
+
 import static org.lwjgl.openal.AL10.AL_FORMAT_MONO16;
 import static org.lwjgl.openal.AL10.AL_FORMAT_STEREO16;
 import static org.lwjgl.stb.STBVorbis.stb_vorbis_decode_filename;
@@ -33,12 +35,12 @@ public class AudioLoader {
 
         var absolutePath = Resource.getAbsoluteFromLocal(path);
 
-        if(!(new File(absolutePath).exists())){
+        if(!Files.exists(absolutePath)){
             Allocator.popStack();
             Allocator.popStack();
             throw new IOException("Failed to find file at " + new File(path).getAbsolutePath());
         }
-        ShortBuffer buffer = stb_vorbis_decode_filename(absolutePath, channels, samplerate);
+        ShortBuffer buffer = stb_vorbis_decode_filename(absolutePath.toString(), channels, samplerate);
        // Allocator.register(buffer, Allocator.AllocType.NATIVE_HEAP);
         
         SoundData data = new SoundData();

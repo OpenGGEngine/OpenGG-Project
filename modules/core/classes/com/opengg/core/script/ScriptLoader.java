@@ -15,7 +15,7 @@ public class ScriptLoader {
 
     public static void initialize() {
         try {
-            loader = new ScriptClassLoader(new File(Resource.getAbsoluteFromLocal("resources\\scripts") + "\\").toURI().toURL());
+            loader = new ScriptClassLoader(new File(Resource.getAbsoluteFromLocal("resources/scripts") + "\\").toURI().toURL());
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }

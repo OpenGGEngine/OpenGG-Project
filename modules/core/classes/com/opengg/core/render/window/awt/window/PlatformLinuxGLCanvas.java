@@ -1,33 +1,10 @@
 package com.opengg.core.render.window.awt.window;
 
-import static org.lwjgl.system.jawt.JAWTFunctions.*;
-import static org.lwjgl.system.MemoryUtil.*;
-import static org.lwjgl.opengl.GLX.*;
-import static org.lwjgl.opengl.GLX13.*;
-import static org.lwjgl.opengl.GLXARBCreateContext.*;
-import static org.lwjgl.opengl.GLXARBCreateContextProfile.*;
-import static org.lwjgl.opengl.GLXARBCreateContextRobustness.*;
-import static org.lwjgl.opengl.GLXARBRobustnessApplicationIsolation.*;
-import static org.lwjgl.opengl.GLXEXTCreateContextESProfile.*;
-
-import java.awt.AWTException;
-import java.awt.Canvas;
-import java.nio.IntBuffer;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-
 import org.lwjgl.BufferUtils;
 import org.lwjgl.PointerBuffer;
-import org.lwjgl.opengl.ARBRobustness;
-import org.lwjgl.opengl.GL;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
-import org.lwjgl.opengl.GL30;
-import org.lwjgl.opengl.GL32;
-import org.lwjgl.opengl.GL43;
-import org.lwjgl.system.APIUtil.APIVersion;
+import org.lwjgl.opengl.*;
 import org.lwjgl.system.APIUtil;
+import org.lwjgl.system.APIUtil.APIVersion;
 import org.lwjgl.system.Checks;
 import org.lwjgl.system.JNI;
 import org.lwjgl.system.MemoryStack;
@@ -36,6 +13,22 @@ import org.lwjgl.system.jawt.JAWTDrawingSurface;
 import org.lwjgl.system.jawt.JAWTDrawingSurfaceInfo;
 import org.lwjgl.system.jawt.JAWTX11DrawingSurfaceInfo;
 import org.lwjgl.system.linux.X11;
+
+import java.awt.*;
+import java.nio.IntBuffer;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+
+import static org.lwjgl.opengl.GLX.*;
+import static org.lwjgl.opengl.GLX13.*;
+import static org.lwjgl.opengl.GLXARBCreateContext.*;
+import static org.lwjgl.opengl.GLXARBCreateContextProfile.*;
+import static org.lwjgl.opengl.GLXARBCreateContextRobustness.*;
+import static org.lwjgl.opengl.GLXARBRobustnessApplicationIsolation.GLX_CONTEXT_RESET_ISOLATION_BIT_ARB;
+import static org.lwjgl.opengl.GLXEXTCreateContextESProfile.GLX_CONTEXT_ES_PROFILE_BIT_EXT;
+import static org.lwjgl.system.MemoryUtil.*;
+import static org.lwjgl.system.jawt.JAWTFunctions.*;
 
 public class PlatformLinuxGLCanvas implements PlatformGLCanvas {
 	public static final JAWT awt;

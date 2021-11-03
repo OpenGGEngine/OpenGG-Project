@@ -569,7 +569,7 @@ public class ShaderController {
 
         GGConsole.log("Reloading shaders...");
 
-        programs = new ShaderLoader("\\resources\\glsl\\").loadShaders();
+        programs = new ShaderLoader("/resources/glsl/").loadShaders();
 
         generateCommonPipelines();
 

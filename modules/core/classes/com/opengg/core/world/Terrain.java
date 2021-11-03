@@ -81,7 +81,7 @@ public class Terrain {
     private void generateTexture(String path){
         GGConsole.log("Generating terrain from " + path);
         try {
-            BufferedImage image = ImageIO.read(new FileInputStream(Resource.getAbsoluteFromLocal(path)));
+            BufferedImage image = ImageIO.read(new FileInputStream(Resource.getAbsoluteFromLocal(path).toString()));
 
             this.sizex = image.getWidth();
             this.sizez = image.getHeight();

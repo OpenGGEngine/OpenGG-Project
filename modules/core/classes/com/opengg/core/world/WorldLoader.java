@@ -15,6 +15,7 @@ import com.opengg.core.util.GGOutputStream;
 
 import java.io.*;
 import java.nio.ByteBuffer;
+import java.nio.file.Files;
 
 /**
  *
@@ -69,7 +70,7 @@ public class WorldLoader {
     public static void saveWorldFile(World world, String worldname){
         GGConsole.log("Saving world " + worldname + "...");
         String tempPath = worldname.substring(0, worldname.lastIndexOf(new File(worldname).getName())) + "temp_" + new File(worldname).getName();
-        try(GGOutputStream out = new GGOutputStream(new DataOutputStream(new FileOutputStream(Resource.getAbsoluteFromLocal(tempPath))))) {
+        try(GGOutputStream out = new GGOutputStream(new DataOutputStream(new FileOutputStream(Resource.getAbsoluteFromLocal(tempPath).toString())))) {
             out.write(1);
             out.write(GGInfo.getVersion());
             
@@ -80,9 +81,9 @@ public class WorldLoader {
 
             out.close();
 
-            new File(Resource.getAbsoluteFromLocal(worldname  + ".backup")).delete();
-            new File(Resource.getAbsoluteFromLocal(worldname)).renameTo(new File(Resource.getAbsoluteFromLocal(worldname  + ".backup")));
-            new File(Resource.getAbsoluteFromLocal(tempPath)).renameTo(new File(Resource.getAbsoluteFromLocal(worldname)));
+            Files.delete(Resource.getAbsoluteFromLocal(worldname  + ".backup"));
+            Files.move(Resource.getAbsoluteFromLocal(worldname), Resource.getAbsoluteFromLocal(worldname  + ".backup"));
+            Files.move(Resource.getAbsoluteFromLocal(tempPath), Resource.getAbsoluteFromLocal(worldname));
         } catch (FileNotFoundException ex) {
             GGConsole.error("Failed to create file named " + worldname);
         } catch (IOException ex) {

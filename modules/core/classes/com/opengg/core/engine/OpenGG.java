@@ -34,6 +34,7 @@ import com.opengg.core.world.WorldEngine;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -110,7 +111,7 @@ public final class OpenGG{
         GGInfo.setServer(!client);
         GGInfo.setRedirectStandardOut(options.hasRedirectStandardIO());
         GGInfo.setApplicationName(options.getApplicationName());
-        GGInfo.setUserDataDirectory(options.getUserDataDirectory().isEmpty() ? options.getApplicationName() : options.getUserDataDirectory());
+        GGInfo.setUserDataDirectoryName(options.getUserDataDirectory().isEmpty() ? options.getApplicationName() : options.getUserDataDirectory());
 
         ThreadManager.initialize();
         Executor.initialize();
@@ -253,20 +254,27 @@ public final class OpenGG{
     }
 
     private static void loadConfigs(){
-        var configdir = initOptions.configInUserData() ?
-                new File(Resource.getUserDataPath() + "config/"):
-                new File(Resource.getAbsoluteFromLocal("config/"));
-        var allconfigs = recursiveLoadConfigs(configdir);
-        for(var config : allconfigs){
+        var configDirectory = initOptions.configInUserData() ?
+                Path.of(Resource.getUserDataPath().toString() , "config"):
+                Resource.getAbsoluteFromLocal("config");
+
+        List<Path> allConfigs = List.of();
+        try {
+            allConfigs = Files.list(configDirectory).toList();
+        } catch (IOException e) {
+            GGConsole.warning("Failed to load configurations: " + e.getMessage());
+        }
+
+        for(var config : allConfigs){
             try{
                 Configuration.load(config);
             }catch(IOException e){
-                GGConsole.error("Failed to load configuration file at " + config.getAbsolutePath());
+                GGConsole.error("Failed to load configuration file at " + config);
             }
         }
     }
 
-    private static List<File> recursiveLoadConfigs(File directory) {
+    private static List<File> loadConfigs(File directory) {
         var allfiles = directory.listFiles();
         if(allfiles == null){
             throw new RuntimeException("Failed to find config directory " + directory.getAbsolutePath());
@@ -278,7 +286,7 @@ public final class OpenGG{
                     allcfgs.add(file);
                 }
             } else if(file.isDirectory()) {
-                recursiveLoadConfigs(file);
+                loadConfigs(file);
             }
         }
         return allcfgs;
@@ -313,7 +321,7 @@ public final class OpenGG{
         WindowController.destroy();
         ThreadManager.destroy();
         writeUserData();
-        GGConsole.saveLogs(Path.of(Resource.getUserDataPath(), "logs"));
+        GGConsole.saveLogs(Path.of(Resource.getUserDataPath().toString(), "logs"));
         GGConsole.log("Thread Manager has closed all remaining threads");
         GGConsole.log("OpenGG has closed gracefully, application can now be ended");
 

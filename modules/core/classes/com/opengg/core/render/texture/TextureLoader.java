@@ -65,7 +65,7 @@ public class  TextureLoader {
 
         stbi_set_flip_vertically_on_load(flip);
 
-        String fpath = Resource.getAbsoluteFromLocal(path);
+        String fpath = Resource.getAbsoluteFromLocal(path).toString();
 
         fpath = fpath.replace(".tif", ".png");
 

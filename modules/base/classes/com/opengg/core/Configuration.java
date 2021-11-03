@@ -6,8 +6,6 @@
 
 package com.opengg.core;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -25,8 +23,8 @@ public final class Configuration {
     private Configuration() {
     }
 
-    public static void load(File file) throws IOException {
-        files.put(file.getName(), new ConfigFile(file));
+    public static void load(Path file) throws IOException {
+        files.put(file.getFileName().toString(), new ConfigFile(file));
     }
 
     public static void addConfigFile(ConfigFile file) {
@@ -83,11 +81,9 @@ public final class Configuration {
 
     public static void writeFile(ConfigFile file){
         Properties prop = new Properties();
-        file.getAllSettings().forEach(prop::put);
+        prop.putAll(file.getAllSettings());
 
-        var path = GGInfo.getUserDataLocation() == GGInfo.UserDataOption.DOCUMENTS ?
-                Path.of(System.getProperty("user.home"), "Documents", GGInfo.getUserDataDirectory(), "config", file.getName()) :
-                Path.of(System.getenv("APPDATA"), GGInfo.getUserDataDirectory(), "config", file.getName());
+        var path = GGInfo.getUserDataPath().resolve(Path.of("config", file.getName()));
         try(var fos = new FileOutputStream(path.toString())) {
             prop.store(fos, "");
         } catch (IOException e) {

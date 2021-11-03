@@ -16,7 +16,6 @@ import com.opengg.core.render.texture.Texture;
 import com.opengg.core.render.texture.TextureData;
 import com.opengg.core.render.text.impl.GGFont;
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -54,27 +53,23 @@ public interface Resource {
      * @param name Relative path to be converted
      * @return Absolute version of the path
      */
-    static String getAbsoluteFromLocal(String name){
-        if(new File(name).isAbsolute()) return name;
-        return Path.of(GGInfo.getApplicationPath().toString(), name).toString();
+    static Path getAbsoluteFromLocal(String name){
+        if(new File(name).isAbsolute()) return Path.of(name);
+        return Path.of(GGInfo.getApplicationPath().toString(), name);
     }
 
-    static String getApplicationPath(){
-        return GGInfo.getApplicationPath().toString();
+    static Path getApplicationPath(){
+        return GGInfo.getApplicationPath();
     }
 
-    static String getUserDataPath(){
-        if(GGInfo.getUserDataLocation() == GGInfo.UserDataOption.DOCUMENTS)
-            return Path.of(System.getProperty("user.home"), "Documents", GGInfo.getUserDataDirectory()).toString() + "\\";
-        else
-            return Path.of(System.getenv("APPDATA"), GGInfo.getUserDataDirectory()).toString() + "\\";
+    static Path getUserDataPath(){
+        return GGInfo.getUserDataPath();
     }
-
 
     private static boolean validate(String name){
-        if(Path.of(name).isAbsolute()) return true;
-        if(Files.exists(Path.of(Resource.getApplicationPath(), name))) return true;
-        return Files.exists(Path.of(Resource.getUserDataPath(), name));
+        if (Path.of(name).isAbsolute()) return true;
+        if (Files.exists(Path.of(Resource.getApplicationPath().toString(), name))) return true;
+        return Files.exists(Path.of(Resource.getUserDataPath().toString(), name));
     }
     
     /**
@@ -85,9 +80,9 @@ public interface Resource {
     static String getModelPath(String name){
         if(validate(name)) return name;
         if(name.contains(".bmf"))
-            return Path.of(Resource.getApplicationPath(), "resources", "models", name).toString();
+            return Path.of(Resource.getApplicationPath().toString(), "resources", "models", name).toString();
         else
-            return Path.of(Resource.getApplicationPath(), "resources", "models", name, name + ".bmf").toString();
+            return Path.of(Resource.getApplicationPath().toString(), "resources", "models", name, name + ".bmf").toString();
     }
 
     /**
@@ -97,7 +92,7 @@ public interface Resource {
      */
     static String getShaderPath(String name){
         if(validate(name)) return name;
-        return Path.of(getApplicationPath(), "resources", "glsl", name).toString();
+        return Path.of(getApplicationPath().toString(), "resources", "glsl", name).toString();
     }
     
     /**
@@ -107,7 +102,7 @@ public interface Resource {
      */
     static String getTexturePath(String name){
         if(validate(name)) return name;
-        return Path.of(Resource.getApplicationPath(), "resources", "tex", name).toString();
+        return Path.of(Resource.getApplicationPath().toString(), "resources", "tex", name).toString();
     }
     
     /**
@@ -117,7 +112,7 @@ public interface Resource {
      */
     static String getFontPath(String name){
         if(validate(name)) return name;
-        return Path.of(Resource.getApplicationPath(), "resources", "font", name).toString();
+        return Path.of(Resource.getApplicationPath().toString(), "resources", "font", name).toString();
     }
     
     /**
@@ -127,7 +122,7 @@ public interface Resource {
      */
     static String getSoundPath(String name){
         if(validate(name)) return name;
-        return Path.of(Resource.getApplicationPath(), "resources", "audio", name).toString();
+        return Path.of(Resource.getApplicationPath().toString(), "resources", "audio", name).toString();
     }
     
     /**
@@ -137,7 +132,7 @@ public interface Resource {
      */
     static String getWorldPath(String name){
         if(validate(name)) return name;
-        return Path.of(Resource.getApplicationPath(), "resources", "worlds", name + ".bwf").toString();
+        return Path.of(Resource.getApplicationPath().toString(), "resources", "worlds", name + ".bwf").toString();
     }
     
     /**

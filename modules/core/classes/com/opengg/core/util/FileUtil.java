@@ -65,7 +65,7 @@ public class FileUtil {
             }
         } else {
             try (
-                    InputStream source = new BufferedInputStream(new FileInputStream(Resource.getAbsoluteFromLocal(resource)));
+                    InputStream source = new BufferedInputStream(new FileInputStream(Resource.getAbsoluteFromLocal(resource).toString()));
                     ReadableByteChannel rbc = Channels.newChannel(source)
             ) {
                 buffer = BufferUtils.createByteBuffer(bufferSize);

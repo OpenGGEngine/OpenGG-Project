@@ -45,7 +45,7 @@ public class ShaderLoader {
 
 
     private void loadShaderFiles(){
-        var dir = new File(Resource.getAbsoluteFromLocal(path));
+        var dir = new File(Resource.getAbsoluteFromLocal(path).toString());
         var allfiles = dir.list();
 
         var filesToProcess = Arrays.stream(allfiles)
@@ -104,7 +104,7 @@ public class ShaderLoader {
                 shaders.put(name, shader);
             }catch(ShaderException e){
                 try{
-                    var errorfile = new File(Resource.getAbsoluteFromLocal("\\resources\\glsl\\error.glsl"));
+                    var errorfile = new File(Resource.getAbsoluteFromLocal("/resources/glsl/error.glsl").toString());
                     errorfile.createNewFile();
 
                     PrintWriter writer = new PrintWriter(errorfile);
