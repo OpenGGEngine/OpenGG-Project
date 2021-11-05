@@ -16,12 +16,36 @@ import java.nio.Buffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.List;
+import org.lwjgl.util.par.*;
 
 /**
  *
  * @author Javier
  */
+
+
 public class ObjectCreator {
+
+    static DrawnObject cylinder;
+    static DrawnObject parToDrawnObject(ParShapesMesh mesh){
+        var cylinderPosBuffer = mesh.points(mesh.npoints()*3);
+        cylinderPosBuffer.flip();
+        var cylinderFloatBuffer = Allocator.allocFloat(mesh.npoints()*8);
+        for (int i = 0; i < mesh.npoints(); i++) {
+            cylinderFloatBuffer.put(cylinderPosBuffer.get()).put(cylinderPosBuffer.get()).put(cylinderPosBuffer.get()).put(1).put(1).put(1).put(1f).put(1f);
+        }
+        cylinderFloatBuffer.flip();
+        var cylinderIndexBuffer = mesh.triangles(mesh.ntriangles()*3);
+        cylinderIndexBuffer.flip();
+        return DrawnObject.create(cylinderFloatBuffer,cylinderIndexBuffer);
+    }
+
+    public static Renderable createCylinder(){
+        if (cylinder == null) {
+            cylinder =  parToDrawnObject(ParShapes.par_shapes_create_cylinder(8,2));
+        }
+        return cylinder;
+    }
     public static Renderable createQuadPrism(Vector3f c1, Vector3f c2){
         Buffer[] b = createQuadPrismBuffers(c1,c2);
         return DrawnObject.create((IntBuffer)b[1], (FloatBuffer)b[0]);
