@@ -49,7 +49,7 @@ public class ModelUtil {
 
                 var newIndices = MemorySegment.allocateNative(targetIndexCount * Integer.BYTES, scope).asByteBuffer().order(ByteOrder.nativeOrder()).asIntBuffer();
 
-                var optimizedListSize = MeshOptimizer.meshopt_simplifySloppy(newIndices, indices, vertices, mesh.getVertices().size(), 12, targetIndexCount);
+                var optimizedListSize = MeshOptimizer.meshopt_simplifySloppy(newIndices, indices, vertices, mesh.getVertices().size(), 12, targetIndexCount, 1, null);
 
                 if (mesh.isTriStrip()) {
                     var resizedNewIndices = newIndices.slice(0, (int) optimizedListSize);

@@ -5,6 +5,10 @@
 *.bscf
 *.log
 
+*.classpath
+*.project
+*.settings
+
 # Ignore Gradle build output directory
 build/
 dist/internal/
