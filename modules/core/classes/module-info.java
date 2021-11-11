@@ -40,6 +40,8 @@ module com.opengg.core {
     requires com.opengg.base;
     requires com.opengg.system;
     requires com.opengg.console;
+    requires org.lwjgl.par;
+    requires org.lwjgl.par.natives;
 
     exports com.opengg.core.animation;
     exports com.opengg.core.audio;

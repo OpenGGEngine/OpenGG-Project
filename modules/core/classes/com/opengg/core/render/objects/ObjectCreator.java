@@ -27,25 +27,37 @@ import org.lwjgl.util.par.*;
 public class ObjectCreator {
 
     static DrawnObject cylinder;
+    static DrawnObject sphere;
+
     static DrawnObject parToDrawnObject(ParShapesMesh mesh){
         var cylinderPosBuffer = mesh.points(mesh.npoints()*3);
-        cylinderPosBuffer.flip();
+        //cylinderPosBuffer.flip();
         var cylinderFloatBuffer = Allocator.allocFloat(mesh.npoints()*8);
         for (int i = 0; i < mesh.npoints(); i++) {
             cylinderFloatBuffer.put(cylinderPosBuffer.get()).put(cylinderPosBuffer.get()).put(cylinderPosBuffer.get()).put(1).put(1).put(1).put(1f).put(1f);
         }
         cylinderFloatBuffer.flip();
         var cylinderIndexBuffer = mesh.triangles(mesh.ntriangles()*3);
-        cylinderIndexBuffer.flip();
-        return DrawnObject.create(cylinderFloatBuffer,cylinderIndexBuffer);
+        System.out.println(cylinderIndexBuffer.limit());
+        return DrawnObject.create(cylinderIndexBuffer,cylinderFloatBuffer);
     }
 
     public static Renderable createCylinder(){
         if (cylinder == null) {
-            cylinder =  parToDrawnObject(ParShapes.par_shapes_create_cylinder(8,2));
+            var parCylinder = ParShapes.par_shapes_create_cylinder(8,2);
+            ParShapes.par_shapes_rotate(parCylinder, (float)Math.toRadians(90),new float[]{1,0,0});
+            cylinder =  parToDrawnObject(parCylinder);
         }
         return cylinder;
     }
+
+    public static Renderable createSphere(){
+        if (sphere == null) {
+            sphere = parToDrawnObject(ParShapes.par_shapes_create_subdivided_sphere(2));
+        }
+        return sphere;
+    }
+
     public static Renderable createQuadPrism(Vector3f c1, Vector3f c2){
         Buffer[] b = createQuadPrismBuffers(c1,c2);
         return DrawnObject.create((IntBuffer)b[1], (FloatBuffer)b[0]);
