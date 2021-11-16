@@ -12,7 +12,6 @@ import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
-import java.util.Arrays;
 import java.util.List;
 import jdk.incubator.vector.*;
 /**
@@ -577,8 +576,8 @@ public class Vector3f implements Serializable{
      * Returns a byte array containing the vector in xyz order
      * @return
      */
-    public byte[] toLittleEndianByteArray(){
-        return ByteBuffer.allocate(12).order(ByteOrder.LITTLE_ENDIAN).putFloat(x).putFloat(y).putFloat(z).array();
+    public ByteBuffer toLittleEndianByteBuffer(){
+        return ByteBuffer.allocate(12).order(ByteOrder.LITTLE_ENDIAN).putFloat(x).putFloat(y).putFloat(z).flip();
     }
 
     public float[] toFloatArray() {
