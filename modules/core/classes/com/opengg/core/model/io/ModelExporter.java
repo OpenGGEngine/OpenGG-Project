@@ -107,9 +107,9 @@ public class ModelExporter {
 
         for (var f : faces) {
             strBuilder.append("f ").append(" ")
-                    .append(f.v1 + lastVert).append("/").append(f.v1 + lastVert).append(" ").append(f.v1 + lastVert).append(" ")
-                    .append(f.v2 + lastVert).append("/").append(f.v2 + lastVert).append(" ").append(f.v2 + lastVert).append(" ")
-                    .append(f.v3 + lastVert).append("/").append(f.v3 + lastVert).append(" ").append(f.v3 + lastVert).append("\n");
+                    .append(f.v1 + lastVert).append("/").append(f.v1 + lastVert).append("/").append(f.v1 + lastVert).append(" ")
+                    .append(f.v2 + lastVert).append("/").append(f.v2 + lastVert).append("/").append(f.v2 + lastVert).append(" ")
+                    .append(f.v3 + lastVert).append("/").append(f.v3 + lastVert).append("/").append(f.v3 + lastVert).append("\n");
         }
 
         return mesh.getVertices().size();
@@ -147,8 +147,6 @@ public class ModelExporter {
         if(!material.mapKdFilename.isEmpty()) {
             strBuilder.append("map_Kd ").append(material.mapKdFilename).append("\n");
 
-            System.out.println(material.mapKdFilename);
-
             var fullTextureFile = directory.resolve(material.mapKdFilename);
             exportTexture(material.mapKd.getData().get(0), fullTextureFile);
         }
@@ -162,6 +160,6 @@ public class ModelExporter {
 
         strBuilder.append("\n");
 
-        strBuilder.append("illum 0\n");
+        strBuilder.append("illum 3\n");
     }
 }
