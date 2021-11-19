@@ -21,12 +21,18 @@ configure(subprojects.findAll {it.name != 'modules'}) {
 
     version = engineVersion
 
-    sourceCompatibility = 1.15
-    targetCompatibility = 1.15
+    sourceCompatibility = 1.17
+    targetCompatibility = 1.17
 
-    project.ext.lwjglVersion = "3.2.3"
+    project.ext.lwjglVersion = "3.3.0-SNAPSHOT"
+
+    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+        project.ext.lwjglNatives = "natives-windows"
+    } else {
+        project.ext.lwjglNatives = "natives-linux"
+    }
+
     project.ext.steamworks4jVersion = "1.8.0"
-    project.ext.lwjglNatives = "natives-windows"
 
 
     java {
