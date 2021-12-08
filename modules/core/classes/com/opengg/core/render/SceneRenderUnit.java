@@ -6,26 +6,30 @@ public record SceneRenderUnit(Renderable renderable, UnitProperties renderableUn
 
     @Override
     public int compareTo(SceneRenderUnit o) {
-        if(o.renderableUnitProperties.transparency == this.renderableUnitProperties.transparency){
-            if(this.renderableUnitProperties.format.hashCode() - o.renderableUnitProperties.hashCode() != 0){
-                if(this.renderableUnitProperties.shaderPipeline.equals(o.renderableUnitProperties.shaderPipeline)){
-                    return 0;
-                }else{
-                    return this.renderableUnitProperties.shaderPipeline.hashCode()-o.renderableUnitProperties.shaderPipeline.hashCode();
+        if (this.renderableUnitProperties.manualPriority == o.renderableUnitProperties.manualPriority) {
+            if(this.renderableUnitProperties.transparency == o.renderableUnitProperties.transparency){
+                if(this.renderableUnitProperties.format.hashCode() == o.renderableUnitProperties.hashCode()){
+                    if(this.renderableUnitProperties.shaderPipeline.equals(o.renderableUnitProperties.shaderPipeline)){
+                        return 0;
+                    } else {
+                        return this.renderableUnitProperties.shaderPipeline.hashCode() - o.renderableUnitProperties.shaderPipeline.hashCode();
+                    }
+                } else {
+                    return this.renderableUnitProperties.format.hashCode() - o.renderableUnitProperties.format.hashCode();
                 }
-            }else{
-                if(this.renderableUnitProperties.shaderPipeline.equals(o.renderableUnitProperties.shaderPipeline)){
-                    return 0;
-                }else{
-                    return this.renderableUnitProperties.format.hashCode()-o.renderableUnitProperties.format.hashCode();
-                }
+            } else {
+                return this.renderableUnitProperties.transparency ? 1 : -1;
             }
-        }else {
-            return this.renderableUnitProperties.transparency ? 1 : 0;
+        } else {
+            return this.renderableUnitProperties.manualPriority - o.renderableUnitProperties.manualPriority;
         }
     }
 
-    public record UnitProperties(boolean transparency, VertexArrayFormat format, String shaderPipeline){
+    public record UnitProperties(boolean transparency, VertexArrayFormat format, String shaderPipeline, int manualPriority){
+
+        public UnitProperties(boolean transparency, VertexArrayFormat format, String shaderPipeline){
+           this(transparency, format, shaderPipeline, 0); 
+        }
 
         public UnitProperties(){
             this(false, RenderEngine.getDefaultFormat(), "object");
