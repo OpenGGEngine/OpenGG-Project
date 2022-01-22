@@ -220,14 +220,16 @@ public class Vector3f implements Serializable{
     public Vector3f subtract(float f){
         return new Vector3f(x - f, y - f, z - f);
     }
+
+    public Vector3f subtract(float x2, float y2, float z2){
+        return new Vector3f(x - x2, y - y2, z - z2);
+    }
     
     public Vector3f divide(float scalar) {
         return multiply(1f / scalar);
     }
     
     public Vector3f divide(Vector3f vector) {
-
-
         return new Vector3f(x / vector.x, y / vector.y, z / vector.z);
     }
 
