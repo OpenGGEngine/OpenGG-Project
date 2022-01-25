@@ -38,7 +38,6 @@ public class ObjectCreator {
         }
         cylinderFloatBuffer.flip();
         var cylinderIndexBuffer = mesh.triangles(mesh.ntriangles()*3);
-        System.out.println(cylinderIndexBuffer.limit());
         return DrawnObject.create(cylinderIndexBuffer,cylinderFloatBuffer);
     }
 

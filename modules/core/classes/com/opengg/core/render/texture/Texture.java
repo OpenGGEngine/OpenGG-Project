@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.lwjgl.opengl.GL11.glGetError;
 import static org.lwjgl.vulkan.VK10.*;
 
 /**

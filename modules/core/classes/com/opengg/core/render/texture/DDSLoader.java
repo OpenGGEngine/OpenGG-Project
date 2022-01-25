@@ -44,7 +44,7 @@ public class DDSLoader {
                     default-> TextureData.TextureDataType.DXT1;
                 }
         );
-        data.setMipMapCount(mipMapCount);
+        data.setMipMapCount(Math.max(1, mipMapCount));
         return data;
     }
 

@@ -52,6 +52,7 @@ public class OpenGLTexture implements Texture {
         this.internalFormat = getOpenGLTextureFormat(config.internalFormat());
         this.inputFormat = getOpenGLInputFormat(config.inputFormat());
 
+
         tex = new NativeOpenGLTexture(type);
         setMinimumFilterType(getOpenGlFilter(config.minFilter()));
         setMaximumFilterType(getOpenGlFilter(config.maxFilter()));
