@@ -9,6 +9,7 @@ package com.opengg.core.render.window.awt.input;
 import com.opengg.core.io.input.mouse.MousePositionHandler;
 import com.opengg.core.math.Vector2f;
 import com.opengg.core.render.window.awt.window.GGCanvas;
+import com.opengg.core.util.SystemUtil;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -20,14 +21,17 @@ import java.awt.geom.AffineTransform;
  * @author Javier
  */
 public class AWTMousePosHandler implements MousePositionHandler, MouseMotionListener {
-    Component parent;
+    private Component parent;
 
     double x, y;
-    double lockXPos, lockYPos;
+    private double lockXPos, lockYPos;
 
-    boolean mouseLocked = false;
+    private double compatXOffset, compatYOffset;
 
-    Robot robot;
+    private boolean mouseLocked = false;
+    private boolean emulatedLock = false;
+
+    private Robot robot;
 
     public AWTMousePosHandler(Component parent){
         this.parent = parent;
@@ -52,21 +56,34 @@ public class AWTMousePosHandler implements MousePositionHandler, MouseMotionList
     }
 
     public void updateLockMouse(){
-        if(mouseLocked){
+        if(mouseLocked && !emulatedLock){
             x += MouseInfo.getPointerInfo().getLocation().x - lockXPos;
             y += MouseInfo.getPointerInfo().getLocation().y - lockYPos;
             robot.mouseMove((int)lockXPos, (int)lockYPos);
-        }
+        } else if(mouseLocked) { //wayland compat
+            x += MouseInfo.getPointerInfo().getLocation().x - compatXOffset;
+            y += MouseInfo.getPointerInfo().getLocation().y - compatYOffset;
 
+            compatXOffset = MouseInfo.getPointerInfo().getLocation().x ;
+            compatYOffset = MouseInfo.getPointerInfo().getLocation().y;
+        }
     }
 
     public void setMouseLock(boolean mouseLock){
-        if(mouseLock){
+        this.mouseLocked = mouseLock;
+        this.emulatedLock = mouseLock && SystemUtil.WINDOW_SESSION_HOST == SystemUtil.WindowSessionType.WAYLAND;
+
+        System.out.println(emulatedLock);
+
+        if (mouseLock) {
             lockXPos = MouseInfo.getPointerInfo().getLocation().x;
             lockYPos = MouseInfo.getPointerInfo().getLocation().y;
         }
 
-        this.mouseLocked = mouseLock;
+        if (emulatedLock) {
+            compatXOffset = MouseInfo.getPointerInfo().getLocation().x;
+            compatYOffset = MouseInfo.getPointerInfo().getLocation().y;
+        }
     }
 
     @Override

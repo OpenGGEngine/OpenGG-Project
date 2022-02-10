@@ -73,7 +73,6 @@ public final class OpenGG{
             e.printStackTrace();
             try {Thread.sleep(10);} catch (InterruptedException ex) {}
             closeEngine();
-            System.exit(0);
         }
     }
 
@@ -295,9 +294,16 @@ public final class OpenGG{
     /**
      * Marks the current instance of OpenGG to end safely on the next update cycle, will run all cleanup code
      */
-    public static void endApplication(){
+    public static void endApplication() {
         GGConsole.log("Application end has been requested");
         GGInfo.setEnded(true);
+    }
+
+    /**
+     * Ends the current OpenGG instance without waiting for an update cycle.
+     */
+    public static void endApplicationNow() {
+        closeEngine();
     }
 
     /**
