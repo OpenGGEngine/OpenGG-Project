@@ -319,7 +319,6 @@ public final class OpenGG{
         System.exit(0);
     }
 
-
     private static void closeEngine(){
         RenderEngine.destroy();
         SoundEngine.destroy();
