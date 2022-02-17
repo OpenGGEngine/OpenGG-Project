@@ -67,7 +67,7 @@ public final class OpenGG{
      */
     public static void initialize(GGApplication app, InitializationOptions options){
         try{
-            initializeLocal(app, options, !options.isHeadless());
+            initializeLocal(app, options, !options.headless());
         }catch(Exception e){
             GGConsole.error("Uncaught exception: " + e.getMessage());
             e.printStackTrace();
@@ -87,7 +87,7 @@ public final class OpenGG{
 
         GGGameConsole.initialize();
         GGDebugRenderer.initialize();
-        SoundEngine.initialize();
+        if (getInitOptions().initializeSound()) SoundEngine.initialize();
 
         BindController.initialize();
         GGConsole.log("Bind Controller initialized");
@@ -108,16 +108,16 @@ public final class OpenGG{
         app = ggapp;
 
         GGInfo.setServer(!client);
-        GGInfo.setRedirectStandardOut(options.hasRedirectStandardIO());
-        GGInfo.setApplicationName(options.getApplicationName());
-        GGInfo.setUserDataDirectoryName(options.getUserDataDirectory().isEmpty() ? options.getApplicationName() : options.getUserDataDirectory());
+        GGInfo.setRedirectStandardOut(options.redirectStandardIO());
+        GGInfo.setApplicationName(options.applicationName());
+        GGInfo.setUserDataDirectoryName(options.userDataDirectory().isEmpty() ? options.applicationName() : options.userDataDirectory());
 
         ThreadManager.initialize();
         Executor.initialize();
         GGConsole.initialize();
         GGConsole.addListener(new OpenGGCommandExtender());
         GGConsole.log("OpenGG initializing, running on " + System.getProperty("os.name") + ", " + System.getProperty("os.arch"));
-        GGConsole.log("Initializing application " + options.getApplicationName() + " with app ID " + options.getApplicationId());
+        GGConsole.log("Initializing application " + options.applicationName() + " with app ID " + options.applicationId());
 
 
         //Policy.setPolicy(new OpenGGSecurityPolicy());
@@ -143,7 +143,7 @@ public final class OpenGG{
         ExtensionManager.loadStep(Extension.CONFIG);
 
         if(client)
-            initializeClient(options.getWindowOptions());
+            initializeClient(options.windowOptions());
         else
             initializeServer();
 
@@ -217,7 +217,7 @@ public final class OpenGG{
         AnimationManager.update(gameDelta);
         PhysicsEngine.updatePhysics(gameDelta);
         getApp().update(gameDelta);
-        SoundtrackHandler.update();
+        if (getInitOptions().initializeSound()) SoundtrackHandler.update();
         GUIController.update(realDelta);
         NetworkEngine.update(realDelta);
     }
@@ -253,7 +253,7 @@ public final class OpenGG{
     }
 
     private static void loadConfigs(){
-        var configDirectory = initOptions.configInUserData() ?
+        var configDirectory = initOptions.configUserData() ?
                 Path.of(Resource.getUserDataPath().toString() , "config"):
                 Resource.getAbsoluteFromLocal("config");
 

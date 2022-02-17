@@ -219,7 +219,7 @@ public class RenderEngine {
     }
 
     public static WindowOptions.RendererType getRendererType() {
-        return OpenGG.getInitOptions().getWindowOptions().renderer;
+        return OpenGG.getInitOptions().windowOptions().renderer;
     }
 
     public static Renderer getRenderer() {

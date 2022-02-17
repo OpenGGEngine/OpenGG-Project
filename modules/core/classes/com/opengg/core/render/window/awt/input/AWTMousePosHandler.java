@@ -73,8 +73,6 @@ public class AWTMousePosHandler implements MousePositionHandler, MouseMotionList
         this.mouseLocked = mouseLock;
         this.emulatedLock = mouseLock && SystemUtil.WINDOW_SESSION_HOST == SystemUtil.WindowSessionType.WAYLAND;
 
-        System.out.println(emulatedLock);
-
         if (mouseLock) {
             lockXPos = MouseInfo.getPointerInfo().getLocation().x;
             lockYPos = MouseInfo.getPointerInfo().getLocation().y;
