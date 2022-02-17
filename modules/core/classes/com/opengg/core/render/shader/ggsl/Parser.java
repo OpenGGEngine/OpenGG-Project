@@ -1,4 +1,4 @@
-package com.opengg.core.render.shader.ggsl;
+ package com.opengg.core.render.shader.ggsl;
 
 import com.opengg.core.exceptions.ShaderException;
 import com.opengg.core.util.LambdaContainer;

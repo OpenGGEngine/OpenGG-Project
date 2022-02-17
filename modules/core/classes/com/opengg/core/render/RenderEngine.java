@@ -31,9 +31,6 @@ public class RenderEngine {
     private static RenderEnvironment currentEnvironment;
     private static VertexArrayFormat defaultVAOFormat;
     private static VertexArrayFormat particleVAOFormat;
-    private static VertexArrayFormat animationVAOFormat;
-    private static VertexArrayFormat animation2VAOFormat;
-    public static VertexArrayFormat superCSCFormat;
     private static VertexArrayFormat tangentVAOFormat;
     private static VertexArrayFormat tangentAnimVAOFormat;
     public static VertexArrayFormat ttFormat;
@@ -213,10 +210,6 @@ public class RenderEngine {
         return particleVAOFormat;
     }
 
-    public static VertexArrayFormat getAnimationFormat() {
-        return animationVAOFormat;
-    }
-
     public static VertexArrayFormat getTangentVAOFormat() {
         return tangentVAOFormat;
     }
@@ -226,7 +219,7 @@ public class RenderEngine {
     }
 
     public static WindowOptions.RendererType getRendererType() {
-        return OpenGG.getInitOptions().getWindowOptions().renderer;
+        return OpenGG.getInitOptions().windowOptions().renderer;
     }
 
     public static Renderer getRenderer() {
@@ -249,6 +242,5 @@ public class RenderEngine {
     public void setBindSkyboxToCamera(boolean bindSkyboxToCamera) {
         this.bindSkyboxToCamera = bindSkyboxToCamera;
     }
-
 
 }

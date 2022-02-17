@@ -58,10 +58,15 @@ public class AssimpModelLoader {
             var preStripIndices = Allocator.allocInt(idxCount);
             for (int i2 = 0; i2 < mesh.mFaces().capacity(); i2++) {
                 AIFace face = mesh.mFaces().get(i2);
-                if (reverseWinding)
-                    preStripIndices.put(face.mIndices().get(2)).put(face.mIndices().get(1)).put(face.mIndices().get(0));
-                else
-                    preStripIndices.put(face.mIndices().get(0)).put(face.mIndices().get(1)).put(face.mIndices().get(2));
+                if (face.mNumIndices() != 3) {
+                    GGConsole.warning("Skipping non-triangular face: " + face.mNumIndices() + " indices");
+                } else {
+                    if (reverseWinding)
+                        preStripIndices.put(face.mIndices().get(2)).put(face.mIndices().get(1)).put(face.mIndices().get(0));
+                    else
+                        preStripIndices.put(face.mIndices().get(0)).put(face.mIndices().get(1)).put(face.mIndices().get(2));
+                }
+
             }
 
             preStripIndices.rewind();
@@ -192,9 +197,13 @@ public class AssimpModelLoader {
             //Load Mesh Index Data
             for (int i2 = 0; i2 < mesh.mFaces().capacity(); i2++) {
                 AIFace face = mesh.mFaces().get(i2);
-                indices[i2 * 3] = face.mIndices().get(0);
-                indices[i2 * 3 + 1] = face.mIndices().get(1);
-                indices[i2 * 3 + 2] = face.mIndices().get(2);
+                if (face.mNumIndices() != 3) {
+                    GGConsole.warning("Skipping non-triangular face: " + face.mNumIndices() + " indices");
+                } else {
+                    indices[i2 * 3] = face.mIndices().get(0);
+                    indices[i2 * 3 + 1] = face.mIndices().get(1);
+                    indices[i2 * 3 + 2] = face.mIndices().get(2);
+                }
             }
 
             Mesh gmesh = new Mesh(vertices, indices, animationsEnabled);

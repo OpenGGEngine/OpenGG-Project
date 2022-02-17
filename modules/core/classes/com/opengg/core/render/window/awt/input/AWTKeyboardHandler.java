@@ -44,6 +44,10 @@ public class AWTKeyboardHandler extends KeyboardHandler implements KeyListener {
     }
 
     private static int getEngineKeyCode(int awtKey){
+        if (awtKey >= KeyEvent.VK_F1 && awtKey <= KeyEvent.VK_F24) {
+            return Key.KEY_F1 + (awtKey - KeyEvent.VK_F1);
+        }
+
         return switch (awtKey){
             case KeyEvent.VK_SHIFT -> Key.KEY_LEFT_SHIFT;
             case KeyEvent.VK_CONTROL -> Key.KEY_LEFT_CONTROL;

@@ -5,6 +5,7 @@
  * For more details take a look at the Java Libraries chapter in the Gradle
  * User Manual available at https://docs.gradle.org/6.0.1/userguide/java_library_plugin.html
  */
+import org.apache.tools.ant.taskdefs.condition.Os
 
 plugins {
     id 'java-library'
@@ -21,12 +22,18 @@ configure(subprojects.findAll {it.name != 'modules'}) {
 
     version = engineVersion
 
-    sourceCompatibility = 1.15
-    targetCompatibility = 1.15
+    sourceCompatibility = 1.17
+    targetCompatibility = 1.17
 
-    project.ext.lwjglVersion = "3.2.3"
+    project.ext.lwjglVersion = "3.3.0-SNAPSHOT"
+
+    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+        project.ext.lwjglNatives = "natives-windows"
+    } else {
+        project.ext.lwjglNatives = "natives-linux"
+    }
+
     project.ext.steamworks4jVersion = "1.8.0"
-    project.ext.lwjglNatives = "natives-windows"
 
 
     java {

@@ -42,7 +42,7 @@ public interface ShaderProgram{
     }
 
     static ShaderProgram create(ShaderType type, String source, String name, List<Uniform> uniforms){
-        return switch (OpenGG.getInitOptions().getWindowOptions().renderer){
+        return switch (OpenGG.getInitOptions().windowOptions().renderer){
             case OPENGL -> new OpenGLShaderProgram(type, source, name);
             case VULKAN -> new VulkanShaderStage(type, source, name, uniforms);
         };

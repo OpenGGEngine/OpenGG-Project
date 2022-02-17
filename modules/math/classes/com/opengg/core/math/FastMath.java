@@ -328,11 +328,11 @@ public final class FastMath {
 
     /**
      * Returns if a value is a perfect power of two, such that an integer x exists where 2^x=value
-     * @param value
+     * @param num
      * @return
      */
-    public static boolean isPowerOfTwo(int value) {
-        return value != 0 && (value & value - 1) == 0;
+    public static boolean isPowerOfTwo(int num) {
+        return num != 0 && (num & num - 1) == 0;
     }
 
     // ---

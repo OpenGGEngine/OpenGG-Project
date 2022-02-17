@@ -3,86 +3,47 @@ package com.opengg.core.engine;
 import com.opengg.core.GGInfo;
 import com.opengg.core.render.window.WindowOptions;
 
-public class InitializationOptions {
-    private String applicationName = "default";
-    private String userDataDirectory = "";
-    private long applicationId = -1;
-    private boolean headless = false;
-    private boolean configUserData = false;
-    private boolean redirectStandardIO = true;
-    private GGInfo.UserDataOption localDataLocation = GGInfo.UserDataOption.DOCUMENTS;
-
-    private WindowOptions windowOptions = new WindowOptions();
-
-    public String getApplicationName() {
-        return applicationName;
+public record InitializationOptions(String applicationName, String userDataDirectory, long applicationId,
+                                    boolean initializeSound, boolean headless, boolean configUserData, boolean redirectStandardIO,
+                                    GGInfo.UserDataOption localDataLocation, WindowOptions windowOptions) {
+    public InitializationOptions() {
+        this("default", "", -1,
+                true, false, false, true,
+                GGInfo.UserDataOption.DOCUMENTS, new WindowOptions());
     }
 
     public InitializationOptions setApplicationName(String applicationName) {
-        this.applicationName = applicationName;
-        return this;
-    }
-
-    public String getUserDataDirectory() {
-        return userDataDirectory;
+        return new InitializationOptions(applicationName, userDataDirectory, applicationId, initializeSound, headless, configUserData, redirectStandardIO, localDataLocation, windowOptions);
     }
 
     public InitializationOptions setUserDataDirectory(String userDataDirectory) {
-        this.userDataDirectory = userDataDirectory;
-        return this;
-    }
-
-    public long getApplicationId() {
-        return applicationId;
+        return new InitializationOptions(applicationName, userDataDirectory, applicationId, initializeSound, headless, configUserData, redirectStandardIO, localDataLocation, windowOptions);
     }
 
     public InitializationOptions setApplicationId(long applicationId) {
-        this.applicationId = applicationId;
-        return this;
-    }
-
-    public boolean isHeadless() {
-        return headless;
+        return new InitializationOptions(applicationName, userDataDirectory, applicationId, initializeSound, headless, configUserData, redirectStandardIO, localDataLocation, windowOptions);
     }
 
     public InitializationOptions setHeadless(boolean headless) {
-        this.headless = headless;
-        return this;
+        return new InitializationOptions(applicationName, userDataDirectory, applicationId, initializeSound, headless, configUserData, redirectStandardIO, localDataLocation, windowOptions);
     }
 
-    public boolean hasRedirectStandardIO() {
-        return redirectStandardIO;
+    public InitializationOptions setInitializeSound(boolean initializeSound) {
+        return new InitializationOptions(applicationName, userDataDirectory, applicationId, initializeSound, headless, configUserData, redirectStandardIO, localDataLocation, windowOptions);
     }
 
     public InitializationOptions setRedirectStandardIO(boolean redirectStandardIO) {
-        this.redirectStandardIO = redirectStandardIO;
-        return this;
+        return new InitializationOptions(applicationName, userDataDirectory, applicationId, initializeSound, headless, configUserData, redirectStandardIO, localDataLocation, windowOptions);
     }
 
-    public boolean configInUserData() {
-        return configUserData;
+    public InitializationOptions setConfigInUserData(boolean configUserData) {
+        return new InitializationOptions(applicationName, userDataDirectory, applicationId, initializeSound, headless, configUserData, redirectStandardIO, localDataLocation, windowOptions);
     }
-
-    public InitializationOptions setConfigInUserData(boolean configInUserData) {
-        this.configUserData = configInUserData;
-        return this;
-    }
-
-    public GGInfo.UserDataOption getLocalDataLocation() {
-        return localDataLocation;
-    }
-
     public InitializationOptions setLocalDataLocation(GGInfo.UserDataOption localDataLocation) {
-        this.localDataLocation = localDataLocation;
-        return this;
-    }
-
-    public WindowOptions getWindowOptions() {
-        return windowOptions;
+        return new InitializationOptions(applicationName, userDataDirectory, applicationId, initializeSound, headless, configUserData, redirectStandardIO, localDataLocation, windowOptions);
     }
 
     public InitializationOptions setWindowOptions(WindowOptions windowOptions) {
-        this.windowOptions = windowOptions;
-        return this;
+        return new InitializationOptions(applicationName, userDataDirectory, applicationId, initializeSound, headless, configUserData, redirectStandardIO, localDataLocation, windowOptions);
     }
 }
