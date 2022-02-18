@@ -57,6 +57,8 @@ public final class OpenGG{
     private static float targetUpdate = 0f;
     private static float overrideUpdate = -1f;
 
+    private static boolean endRequested = false;
+
     private OpenGG(){}
 
     /**
@@ -65,14 +67,23 @@ public final class OpenGG{
      * @param app Instance of the OpenGG-driven application
      * @param options Initialization information
      */
-    public static void initialize(GGApplication app, InitializationOptions options){
+    public static EngineCloseType initialize(GGApplication app, InitializationOptions options){
         try{
             initializeLocal(app, options, !options.headless());
-        }catch(Exception e){
-            GGConsole.error("Uncaught exception: " + e.getMessage());
-            e.printStackTrace();
-            try {Thread.sleep(10);} catch (InterruptedException ex) {}
             closeEngine();
+
+            GGInfo.setEnded(true);
+            return EngineCloseType.REQUEST;
+        }catch(Exception e){
+            try {
+                GGConsole.exception(e);
+                closeEngine();
+            } catch (Exception e2) {
+                GGConsole.exception(e2);
+            }
+
+            GGInfo.setEnded(true);
+            return EngineCloseType.ERROR;
         }
     }
 
@@ -107,6 +118,8 @@ public final class OpenGG{
         initOptions = options;
         app = ggapp;
 
+        SystemInfo.querySystemInfo();
+
         GGInfo.setServer(!client);
         GGInfo.setRedirectStandardOut(options.redirectStandardIO());
         GGInfo.setApplicationName(options.applicationName());
@@ -118,7 +131,6 @@ public final class OpenGG{
         GGConsole.addListener(new OpenGGCommandExtender());
         GGConsole.log("OpenGG initializing, running on " + System.getProperty("os.name") + ", " + System.getProperty("os.arch"));
         GGConsole.log("Initializing application " + options.applicationName() + " with app ID " + options.applicationId());
-
 
         //Policy.setPolicy(new OpenGGSecurityPolicy());
         //System.setSecurityManager(new SecurityManager());
@@ -136,7 +148,6 @@ public final class OpenGG{
 
         ExtensionManager.loadStep(Extension.LWJGL);
 
-        SystemInfo.querySystemInfo();
         OpenGG.loadConfigs();
         GGConsole.log("Loaded configuration files");
 
@@ -168,31 +179,17 @@ public final class OpenGG{
     }
 
     private static void runHeadless(){
-        while(!GGInfo.isEnded()){
+        while(!endRequested){
             runUpdate();
         }
-
-        GGConsole.log("OpenGG closing...");
-        GGInfo.setEnded(true);
-        if(!force){
-            closeEngine();
-        }
-        writeLog();
     }
 
     private static void run(){
-        while (!getWindow().shouldClose() && !GGInfo.isEnded()) {
+        while (!getWindow().shouldClose() && !endRequested) {
             runUpdate();
             runInput();
             if(render) runRender();
         }
-
-        GGConsole.log("OpenGG closing...");
-        GGInfo.setEnded(true);
-        if(!force){
-            closeEngine();
-        }
-        writeLog();
     }
 
     private static void runUpdate() {
@@ -296,14 +293,7 @@ public final class OpenGG{
      */
     public static void endApplication() {
         GGConsole.log("Application end has been requested");
-        GGInfo.setEnded(true);
-    }
-
-    /**
-     * Ends the current OpenGG instance without waiting for an update cycle.
-     */
-    public static void endApplicationNow() {
-        closeEngine();
+        endRequested = true;
     }
 
     /**
@@ -320,6 +310,8 @@ public final class OpenGG{
     }
 
     private static void closeEngine(){
+        GGConsole.log("OpenGG closing...");
+
         RenderEngine.destroy();
         SoundEngine.destroy();
         NetworkEngine.close();
@@ -327,10 +319,9 @@ public final class OpenGG{
         ThreadManager.destroy();
         writeUserData();
         GGConsole.saveLogs(Path.of(Resource.getUserDataPath().toString(), "logs"));
+
         GGConsole.log("Thread Manager has closed all remaining threads");
         GGConsole.log("OpenGG has closed gracefully, application can now be ended");
-
-        System.exit(0);
     }
 
     /**
@@ -356,12 +347,6 @@ public final class OpenGG{
      */
     public static boolean getEnded(){
         return !GGInfo.isEnded();
-    }
-
-    private static void writeLog(){
-        if(test) {
-        }
-        //GGConsole.writeLog(startTime);
     }
 
     private static void writeUserData(){
@@ -509,5 +494,10 @@ public final class OpenGG{
             this.logOnComponentCreation = logOnComponentCreation;
             return this;
         }
+    }
+
+    public enum EngineCloseType {
+        REQUEST,
+        ERROR
     }
 }

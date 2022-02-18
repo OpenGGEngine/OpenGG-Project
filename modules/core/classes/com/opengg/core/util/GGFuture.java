@@ -8,13 +8,13 @@ public class GGFuture<T> {
     private final Object monitor = new Object();
     private boolean done;
     private T val;
-    private Consumer<T> func = v -> {};
+    private Consumer<T> func = null;
 
     public boolean exists(){
         return done;
     }
 
-    public GGFuture set(T resource){
+    public GGFuture<T> set(T resource){
         this.val = resource;
         this.done = true;
 
@@ -22,7 +22,7 @@ public class GGFuture<T> {
             monitor.notifyAll();
         }
 
-        OpenGG.asyncExec(() -> func.accept(resource));
+        if (func != null) OpenGG.asyncExec(() -> func.accept(resource));
 
         return this;
     }

@@ -236,7 +236,9 @@ public class RenderEngine {
     }
 
     public static void destroy() {
-        renderer.destroy();
+        if (renderer != null) {
+            renderer.destroy();
+        }
     }
 
     public void setBindSkyboxToCamera(boolean bindSkyboxToCamera) {
