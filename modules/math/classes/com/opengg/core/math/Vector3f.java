@@ -612,4 +612,15 @@ public class Vector3f implements Serializable{
         return x + ", " + y + ", " + z;
     }
 
+    public Vector3f rotateY(float angle){
+        float sin = (float) Math.sin(angle);
+        float cos = (float) Math.cos(angle);
+        return new Vector3f(sin*z +cos*x,y,cos*z-sin*x);
+    }
+
+    public Vector3f rotateZ(float angle){
+        float sin = (float) Math.sin(angle);
+        float cos = (float) Math.cos(angle);
+        return new Vector3f(cos*x - sin*y,sin*x + cos*y,z);
+    }
 }
