@@ -155,7 +155,7 @@ public interface Texture{
 
         if(config.type() == TextureType.TEXTURE_ARRAY) {
             try {
-                data = setSize(data,size.x,size.y);
+                data = setSize(data, size.x(), size.y());
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -172,7 +172,7 @@ public interface Texture{
 
         var texture = switch (RenderEngine.getRendererType()){
             case OPENGL -> new OpenGLTexture(config, storageProperties);
-            case VULKAN -> new VulkanImage(config, VK_SAMPLE_COUNT_1_BIT, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT, new Vector3i(size.x, size.y, 1), 6);
+            case VULKAN -> new VulkanImage(config, VK_SAMPLE_COUNT_1_BIT, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT, new Vector3i(size.x(), size.y(), 1), 6);
         };
 
         switch (config.type) {

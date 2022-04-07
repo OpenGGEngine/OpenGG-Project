@@ -57,8 +57,8 @@ class Swapchain {
                 .clipped(true)
                 .compositeAlpha(VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR);
         swapchainCI.imageExtent()
-                .width(extents.x)
-                .height(extents.y);
+                .width(extents.x())
+                .height(extents.y());
 
         LongBuffer pSwapChain = memAllocLong(1);
         VkUtil.catchVulkanException(vkCreateSwapchainKHR(device, swapchainCI, null, pSwapChain));

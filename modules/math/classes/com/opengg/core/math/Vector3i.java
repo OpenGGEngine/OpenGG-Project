@@ -15,75 +15,20 @@ import java.nio.IntBuffer;
  * 3 component integer immutable vector with linear algebra functions
  * @author Javier
  */
-public class Vector3i implements Serializable{
+public record Vector3i(int x, int y, int z) implements Serializable{
     public static final Vector3i identity = new Vector3i();
     private static final long serialVersionUID = 4404184685145307985L;
-
-    public final int x;
-    public final int y;
-    public final int z;
 
     /**
      * Creates a default 3d vector with all values set to 0.
      */
     public Vector3i() {
-        this.x = 0;
-        this.y = 0;
-        this.z = 0;
+        this(0, 0, 0);
     }
 
-    /**
-     * Creates a vector based off of 3 points.
-     *
-     * @param x
-     * @param y
-     * @param z
-     */
-    public Vector3i(int x, int y, int z) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-    }
 
     public Vector3i(int val) {
-        this.x = val;
-        this.y = val;
-        this.z = val;
-    }
-
-    /**
-     * Creates a new vector based off another.
-     *
-     * @param v Vector to be copied
-     */
-    public Vector3i(Vector3i v) {
-        this.x = v.x;
-        this.y = v.y;
-        this.z = v.z;
-    }
-
-    /**
-     * Returns x value of vector
-     * @return x value
-     */
-    public int x(){
-        return x;
-    }
-
-    /**
-     * Returns y value of vector
-     * @return y value
-     */
-    public int y(){
-        return y;
-    }
-
-    /**
-     * Returns z value of vector
-     * @return z value
-     */
-    public int z(){
-        return z;
+        this(val, val, val);    
     }
 
     public Vector2i xz() {
@@ -143,7 +88,7 @@ public class Vector3i implements Serializable{
     }
 
     public Vector3i add(Vector3i[] v){
-        Vector3i sum = new Vector3i(this);
+        Vector3i sum = this;
         for(Vector3i n : v)
              sum.add(n);
         return sum;
@@ -168,7 +113,7 @@ public class Vector3i implements Serializable{
     }
 
     public Vector3i subtract(Vector3i[] v){
-        Vector3i diff = new Vector3i(this);
+        Vector3i diff = this;
         for(Vector3i n : v)
              diff.subtract(n);
         return diff;
@@ -300,23 +245,6 @@ public class Vector3i implements Serializable{
         return getByteBuffer().asIntBuffer();
     }
 
-    @Override
-    public boolean equals(Object ot){
-        if(ot instanceof Vector3i v){
-            return FastMath.isEqual(v.x, x) && FastMath.isEqual(v.y, y)  && FastMath.isEqual(v.z, z);
-        }   
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 23 * hash + Float.floatToIntBits(this.x);
-        hash = 23 * hash + Float.floatToIntBits(this.y);
-        hash = 23 * hash + Float.floatToIntBits(this.z);
-        return hash;
-    }
-    
     @Override
     public String toString(){
         return x + ", " + y + ", " + z;

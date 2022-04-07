@@ -58,10 +58,10 @@ public class OpenGLTexture implements Texture {
         setMaximumFilterType(getOpenGlFilter(config.maxFilter()));
         setTextureWrapType(getOpenGlWrapType(config.wrapTypeS()),getOpenGlWrapType(config.wrapTypeT()),getOpenGlWrapType(config.wrapTypeR()));
         switch (config.type()){
-            case TEXTURE_2D -> tex.set2DImageStorage(properties.mipLevels(), internalFormat, properties.size().x, properties.size().y);
-            case TEXTURE_ARRAY -> tex.set3DImageStorage(properties.mipLevels(), internalFormat, properties.size().x, properties.size().y, properties.size().z);
-            case TEXTURE_3D -> tex.set3DImageStorage(properties.mipLevels(), internalFormat, properties.size().x, properties.size().y, properties.size().z);
-            case TEXTURE_CUBEMAP -> tex.set2DImageStorage(properties.mipLevels(), internalFormat, properties.size().x, properties.size().y);
+            case TEXTURE_2D -> tex.set2DImageStorage(properties.mipLevels(), internalFormat, properties.size().x(), properties.size().y());
+            case TEXTURE_ARRAY -> tex.set3DImageStorage(properties.mipLevels(), internalFormat, properties.size().x(), properties.size().y(), properties.size().z());
+            case TEXTURE_3D -> tex.set3DImageStorage(properties.mipLevels(), internalFormat, properties.size().x(), properties.size().y(), properties.size().z());
+            case TEXTURE_CUBEMAP -> tex.set2DImageStorage(properties.mipLevels(), internalFormat, properties.size().x(), properties.size().y());
         }
     }
 
@@ -119,7 +119,7 @@ public class OpenGLTexture implements Texture {
     
     @Override
     public void set2DSubData(TextureData data, Vector2i offset){
-        tex.set2DImageData(0, offset.x, offset.y, data.width, data.height, samplerFormat, inputFormat, (ByteBuffer)data.buffer);
+        tex.set2DImageData(0, offset.x(), offset.y(), data.width, data.height, samplerFormat, inputFormat, (ByteBuffer)data.buffer);
     }
     
     @Override

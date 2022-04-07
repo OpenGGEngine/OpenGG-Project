@@ -59,11 +59,11 @@ public class WindowFramebuffer implements WindowResizeListener, Framebuffer{
 
         for(int i = 0; i < targets; i++){
             if(fp)
-                attachFloatingPointTexture(size.x, size.y, i);
+                attachFloatingPointTexture(size.x(), size.y(), i);
             else
-                attachColorTexture(size.x, size.y, i);
+                attachColorTexture(size.x(), size.y(), i);
         }
-        attachDepthTexture(size.x, size.y);
+        attachDepthTexture(size.x(), size.y());
     }
 
     public Framebuffer getUnderlyingBuffer() {

@@ -24,8 +24,8 @@ public class VulkanFramebuffer{
         VkFramebufferCreateInfo fci = VkFramebufferCreateInfo.calloc()
                 .sType(VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO)
                 .pAttachments(attachmentsBuf)
-                .width(size.x)
-                .height(size.y)
+                .width(size.x())
+                .height(size.y())
                 .layers(1)
                 .renderPass(renderPass.getPass());
 
