@@ -52,7 +52,7 @@ public class VulkanImage implements Texture, NativeResource {
                 .initialLayout(VK_IMAGE_LAYOUT_UNDEFINED);
         if(config.type() == TextureType.TEXTURE_CUBEMAP) imageCreateInfo.flags(VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT);
 
-        imageCreateInfo.extent().width(size.x).height(size.y).depth(size.z);
+        imageCreateInfo.extent().width(size.x()).height(size.y()).depth(size.z());
 
         LongBuffer imageBuf = memAllocLong(1);
         VkUtil.catchVulkanException(vkCreateImage(VulkanRenderer.getRenderer().getDevice(), imageCreateInfo, null, imageBuf));
@@ -149,15 +149,15 @@ public class VulkanImage implements Texture, NativeResource {
     private void copyBuffer(VulkanCommandBuffer cmd, VulkanBuffer buffer, int layer, Vector3i start, Vector3i copySize){
         VkBufferImageCopy.Buffer region = VkBufferImageCopy.calloc(1)
                 .bufferOffset(0)
-                .bufferRowLength(copySize.x)
-                .bufferImageHeight(copySize.y);
+                .bufferRowLength(copySize.x())
+                .bufferImageHeight(copySize.y());
         region.imageSubresource()
                     .aspectMask(VK_IMAGE_ASPECT_COLOR_BIT)
                     .mipLevel(0)
                     .baseArrayLayer(layer)
                     .layerCount(1);
-        region.imageOffset().set(start.x,start.y,start.z);
-        region.imageExtent().set(copySize.x,copySize.y,copySize.z);
+        region.imageOffset().set(start.x(), start.y(), start.z());
+        region.imageExtent().set(copySize.x(), copySize.y(), copySize.z());
 
         cmd.copyBufferToImage(buffer, this, region);
         region.free();
@@ -234,7 +234,7 @@ public class VulkanImage implements Texture, NativeResource {
     @Override
     public void set2DSubData(TextureData data, Vector2i offset) {
         var buffer = (VulkanBuffer) GraphicsBuffer.allocate(GraphicsBuffer.BufferType.COPY_READ_BUFFER, (ByteBuffer) data.buffer, GraphicsBuffer.UsageType.HOST_MAPPABLE_UPDATABLE);
-        uploadBuffers(new Vector3i(offset.x, offset.y, 1), new Vector3i(data.width, data.height, 1), 0, buffer);
+        uploadBuffers(new Vector3i(offset.x(), offset.y(), 1), new Vector3i(data.width, data.height, 1), 0, buffer);
         buffer.destroy();
     }
 
@@ -243,7 +243,7 @@ public class VulkanImage implements Texture, NativeResource {
         var datums = List.of(data1, data2, data4, data3, data5, data6);
         var vkBufs = datums.stream().map(datum -> (VulkanBuffer) GraphicsBuffer.allocate(GraphicsBuffer.BufferType.COPY_READ_BUFFER, (ByteBuffer) datum.buffer, GraphicsBuffer.UsageType.HOST_MAPPABLE_UPDATABLE))
                 .collect(Collectors.toList());
-        uploadBuffers(new Vector3i(), new Vector3i(size.x, size.y, 1), 0, vkBufs.toArray(new VulkanBuffer[6]));
+        uploadBuffers(new Vector3i(), new Vector3i(size.x(), size.y(), 1), 0, vkBufs.toArray(new VulkanBuffer[6]));
         vkBufs.forEach(VulkanBuffer::destroy);
     }
 

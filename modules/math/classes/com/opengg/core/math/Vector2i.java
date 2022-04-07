@@ -16,51 +16,21 @@ import java.nio.IntBuffer;
  *
  * @author Javier
  */
-public class Vector2i implements Serializable{
-
-    public final int x;
-    public final int y;
-
-    /**
-     * Creates a default 2d vector with all values set to 0.
-     */
+public record Vector2i(int x, int y) implements Serializable{
     public Vector2i() {
-        this.x = 0;
-        this.y = 0;
-    }
-
-    /**
-     * Creates a vector based off of 2 points.
-     *
-     * @param x
-     * @param y
-     */
-    public Vector2i(int x, int y) {
-        this.x = x;
-        this.y = y;
+        this(0, 0);        
     }
 
     public Vector2i(int val) {
-        this.x = val;
-        this.y = val;
+        this(val, val);
     }
     
-    /**
-     * Creates a new vector based off another.
-     *
-     * @param v Vector to be copied
-     */
-    public Vector2i(Vector2i v) {
-        this.x = v.x;
-        this.y = v.y;
-    }
-
     public Vector2i add(Vector2i v){
         return new Vector2i(x + v.x, y + v.y);
     }
     
     public Vector2i add(Vector2i[] v){
-        Vector2i sum = new Vector2i(this);
+        Vector2i sum = this;
         for(Vector2i n : v)
              sum.add(n);
         return sum;
@@ -75,7 +45,7 @@ public class Vector2i implements Serializable{
     }
 
     public Vector2i subtract(Vector2i[] v){
-        Vector2i diff = new Vector2i(this);
+        Vector2i diff = this;
         for(Vector2i n : v)
              diff.subtract(n);
         return diff;
@@ -219,22 +189,6 @@ public class Vector2i implements Serializable{
         return new Vector2i(Integer.parseInt(split[0].trim()), Integer.parseInt(split[1].trim()));
     }
 
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 23 * hash + Float.floatToIntBits(this.x);
-        hash = 23 * hash + Float.floatToIntBits(this.y);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object ot){
-        if(ot instanceof Vector2i v){
-            return FastMath.isEqual(v.x, x) && FastMath.isEqual(v.y, y);
-        }   
-        return false;
-    }
-    
     @Override
     public String toString(){
         return "(" + x + ", " + y + ")";

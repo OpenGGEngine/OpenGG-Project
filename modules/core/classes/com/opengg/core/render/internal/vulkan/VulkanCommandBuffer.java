@@ -44,10 +44,10 @@ public class VulkanCommandBuffer {
 
     public void setViewport(Vector2i size){
         VkViewport.Buffer viewport = VkViewport.calloc(1)
-                .width(size.x)
-                .height(-size.y)
+                .width(size.x())
+                .height(-size.y())
                 .x(0)
-                .y(size.y)
+                .y(size.y())
                 .minDepth(0.0f)
                 .maxDepth(1.0f);
         vkCmdSetViewport(buffer, 0, viewport);
@@ -56,7 +56,7 @@ public class VulkanCommandBuffer {
 
     public void setScissor(Vector2i size){
         VkRect2D.Buffer scissor = VkRect2D.calloc(1);
-        scissor.extent().set(size.x, size.y);
+        scissor.extent().set(size.x(), size.y());
         scissor.offset().set(0, 0);
         vkCmdSetScissor(buffer, 0, scissor);
         scissor.free();

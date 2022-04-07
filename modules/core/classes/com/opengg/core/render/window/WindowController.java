@@ -71,15 +71,15 @@ public class WindowController {
     }
     
     public static int getWidth(){
-        return oldSize.x;
+        return oldSize.x();
     }
     
     public static int getHeight(){
-        return oldSize.y;
+        return oldSize.y();
     }
     
     public static float getRatio(){
-        return oldSize.x/(float) oldSize.y;
+        return oldSize.x()/(float) oldSize.y();
     }
 
     private WindowController() {

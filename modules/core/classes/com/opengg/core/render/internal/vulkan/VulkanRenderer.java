@@ -168,7 +168,7 @@ public class VulkanRenderer implements Renderer {
         // Create the swapchain (this will also add a memory barrier to initialize the framebuffer images)
         swapchain = new Swapchain(window.getDevice(), window.getPhysicalDevice(), window.getSurface(), oldChain,
                 new Vector2i(0,0), window.getColorFormatAndSpace());
-        depthStencil = createDepthStencil();
+
         setupCommandBuffer.end();
         setupCommandBuffer.submitAndWait();
 
@@ -204,7 +204,7 @@ public class VulkanRenderer implements Renderer {
         var image = new VulkanImage(new Texture.TextureConfig(Texture.TextureType.TEXTURE_2D, Texture.FilterType.LINEAR, Texture.FilterType.LINEAR, Texture.WrapType.CLAMP_BORDER,Texture.WrapType.CLAMP_BORDER,Texture.WrapType.CLAMP_BORDER,
                 Texture.SamplerFormat.DEPTH, Texture.TextureFormat.DEPTH32_STENCIL8, Texture.InputFormat.FLOAT, false),
                 VK_SAMPLE_COUNT_1_BIT, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT,
-                new Vector3i(swapchain.getExtents().x, swapchain.getExtents().y, 1), 1);
+                new Vector3i(swapchain.getExtents().x(), swapchain.getExtents().y(), 1), 1);
 
         return image.getImageView(VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT);
     }

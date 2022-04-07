@@ -50,9 +50,9 @@ public class VulkanRenderPass {
     public BeginInfo generateInfo(Vector3f clearColor, VulkanFramebuffer buffer, Vector2i startRenderArea, Vector2i endRenderArea){
         VkClearValue.Buffer clearValues = VkClearValue.calloc(2);
         clearValues.get(0).color()
-                .float32(0, clearColor.x)
-                .float32(1, clearColor.y)
-                .float32(2, clearColor.z)
+                .float32(0, clearColor.x())
+                .float32(1, clearColor.y())
+                .float32(2, clearColor.z())
                 .float32(3, 1.0f);
         clearValues.get(1).depthStencil().depth(1.0f).stencil(0);
         VkRenderPassBeginInfo renderPassBeginInfo = VkRenderPassBeginInfo.calloc()
@@ -60,8 +60,8 @@ public class VulkanRenderPass {
                 .renderPass(renderPass)
                 .pClearValues(clearValues);
         VkRect2D renderArea = renderPassBeginInfo.renderArea();
-        renderArea.offset().set(startRenderArea.x, startRenderArea.y);
-        renderArea.extent().set(endRenderArea.x, endRenderArea.y);
+        renderArea.offset().set(startRenderArea.x(), startRenderArea.y());
+        renderArea.extent().set(endRenderArea.x(), endRenderArea.y());
         renderPassBeginInfo.framebuffer(buffer.getFramebuffer());
 
         return new BeginInfo(renderPassBeginInfo);
