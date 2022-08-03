@@ -71,8 +71,8 @@ public final class OpenGG{
         try{
             initializeLocal(app, options, !options.headless());
             closeEngine();
-
             GGInfo.setEnded(true);
+
             return EngineCloseType.REQUEST;
         }catch(Exception e){
             try {
@@ -346,7 +346,7 @@ public final class OpenGG{
      * @return If marked or actually has ended
      */
     public static boolean getEnded(){
-        return !GGInfo.isEnded();
+        return GGInfo.isEnded();
     }
 
     private static void writeUserData(){
