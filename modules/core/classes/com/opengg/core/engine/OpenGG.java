@@ -263,7 +263,8 @@ public final class OpenGG{
 
         for(var config : allConfigs){
             try{
-                Configuration.load(config);
+                if (Configuration.getConfigFile(config.getFileName().toString()) == null)
+                    Configuration.load(config);
             }catch(IOException e){
                 GGConsole.error("Failed to load configuration file at " + config);
             }
