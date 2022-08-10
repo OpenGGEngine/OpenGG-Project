@@ -49,25 +49,40 @@ public record SceneRenderUnit(Renderable renderable, UnitProperties renderableUn
             this.manualPriority = manualPriority;
         }
 
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            UnitProperties that = (UnitProperties) o;
-            return transparency == that.transparency && manualPriority == that.manualPriority && format.equals(that.format) && shaderPipeline.equals(that.shaderPipeline);
-        }
-
         public VertexArrayFormat format(){
             return format;
         }
+
         public String shaderPipeline(){
             return shaderPipeline;
         }
+
         public boolean transparency(){
             return transparency;
         }
+
         public int manualPriority(){
             return manualPriority;
+        }
+
+        public UnitProperties(){
+            this(false, RenderEngine.getDefaultFormat(), "object", 0);
+        }
+
+        public UnitProperties transparency(boolean transparency){
+            return new UnitProperties(transparency, format, shaderPipeline, manualPriority);
+        }
+
+        public UnitProperties format(VertexArrayFormat format){
+            return new UnitProperties(transparency, format, shaderPipeline, manualPriority);
+        }
+
+        public UnitProperties shaderPipeline(String shaderPipeline){
+            return new UnitProperties(transparency, format, shaderPipeline, manualPriority);
+        }
+
+        public UnitProperties manualPriority(int manualPriority){
+            return new UnitProperties(transparency, format, shaderPipeline, manualPriority);
         }
 
         @Override
@@ -78,25 +93,12 @@ public record SceneRenderUnit(Renderable renderable, UnitProperties renderableUn
             return hashCode;
         }
 
-        public UnitProperties(boolean transparency, VertexArrayFormat format, String shaderPipeline){
-           this(transparency, format, shaderPipeline, 0); 
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            UnitProperties that = (UnitProperties) o;
+            return transparency == that.transparency && manualPriority == that.manualPriority && format.equals(that.format) && shaderPipeline.equals(that.shaderPipeline);
         }
-
-        public UnitProperties(){
-            this(false, RenderEngine.getDefaultFormat(), "object");
-        }
-
-        public UnitProperties transparency(boolean transparency){
-            return new UnitProperties(transparency, format, shaderPipeline);
-        }
-
-        public UnitProperties format(VertexArrayFormat format){
-            return new UnitProperties(transparency, format, shaderPipeline);
-        }
-
-        public UnitProperties shaderPipeline(String shaderPipeline){
-            return new UnitProperties(transparency, format, shaderPipeline);
-        }
-
     }
 }
