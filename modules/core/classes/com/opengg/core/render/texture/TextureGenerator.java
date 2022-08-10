@@ -1,14 +1,20 @@
 package com.opengg.core.render.texture;
 
 import com.opengg.core.console.GGConsole;
+import com.opengg.core.math.util.Tuple;
 import com.opengg.core.system.Allocator;
 
 import java.awt.*;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
-public class TextureGenerator {
-    public static TextureData generateFromURI(String data){
+public interface TextureGenerator {
+    static Map<List<Byte>, TextureData> cachedColors = new HashMap<>();
+
+    static TextureData generateFromURI(String data){
         var preData = data.substring(10);
         var type = preData.substring(0, preData.indexOf("?"));
         var args = Arrays.stream(preData.substring(preData.indexOf("?") + 1).split("&"))
@@ -25,17 +31,17 @@ public class TextureGenerator {
         };
     }
 
-    public static TextureData ofColor(Color color, float transparency){
+    static TextureData ofColor(Color color, float transparency){
         return ofColor((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue(), (byte) (transparency*255f));
     }
 
-    public static TextureData ofColor(byte r, byte g, byte b, byte a){
-        return new TextureData(1,1,4, Allocator.alloc(4)
+    static TextureData ofColor(byte r, byte g, byte b, byte a){
+        return cachedColors.computeIfAbsent(List.of(r,g,b,a), l -> new TextureData(1,1,4, Allocator.alloc(4)
                 .put(r)
                 .put(g)
                 .put(b)
                 .put(a)
                 .flip(),
-                String.format("generated:color?red=%d&green=%d&blue=%d&alpha=%d", r,g,b,a));
+                String.format("generated:color?red=%d&green=%d&blue=%d&alpha=%d", r,g,b,a)));
     }
 }
