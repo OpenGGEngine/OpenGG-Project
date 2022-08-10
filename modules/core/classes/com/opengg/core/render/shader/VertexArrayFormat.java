@@ -8,12 +8,20 @@ package com.opengg.core.render.shader;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 /**
  *
  * @author Javier
  */
-public record VertexArrayFormat(List<VertexArrayBinding> bindingSites) {
+public class VertexArrayFormat{
+    private int hashcode = 0;
+    final List<VertexArrayBinding> bindingSites;
+
+    public VertexArrayFormat(List<VertexArrayBinding> bindingSites) {
+        this.bindingSites = bindingSites;
+    }
+
     public VertexArrayFormat addBinding(VertexArrayBinding attrib){
         bindingSites.add(attrib);
         sort();
@@ -35,4 +43,19 @@ public record VertexArrayFormat(List<VertexArrayBinding> bindingSites) {
                 .sum();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        VertexArrayFormat that = (VertexArrayFormat) o;
+        return bindingSites.equals(that.bindingSites);
+    }
+
+    @Override
+    public int hashCode() {
+        if(hashcode == 0){
+            hashcode = Objects.hash(bindingSites);
+        }
+        return hashcode;
+    }
 }
