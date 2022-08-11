@@ -22,8 +22,8 @@ configure(subprojects.findAll {it.name != 'modules'}) {
 
     version = engineVersion
 
-    sourceCompatibility = 1.17
-    targetCompatibility = 1.17
+    sourceCompatibility = 1.18
+    targetCompatibility = 1.18
 
     project.ext.lwjglVersion = "3.3.0-SNAPSHOT"
 
