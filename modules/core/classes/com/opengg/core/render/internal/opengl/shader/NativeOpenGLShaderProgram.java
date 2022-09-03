@@ -115,7 +115,8 @@ public class NativeOpenGLShaderProgram{
      */
     public void setUniform(int location, Vector2f value) {
         if(RenderEngine.validateInitialization()) return;
-        glProgramUniform2fv(id, location, value.getBuffer());
+        glProgramUniform2fv(id, location, value.getStackBuffer());
+        Allocator.popStack();
     }
 
     /**

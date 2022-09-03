@@ -43,7 +43,7 @@ public class ObjectCreator {
 
     public static Renderable createCylinder(){
         if (cylinder == null) {
-            var parCylinder = ParShapes.par_shapes_create_cylinder(8,2);
+            var parCylinder = ParShapes.par_shapes_create_cylinder(10,1);
             ParShapes.par_shapes_rotate(parCylinder, (float)Math.toRadians(90),new float[]{1,0,0});
             cylinder =  parToDrawnObject(parCylinder);
         }
@@ -106,6 +106,12 @@ public class ObjectCreator {
     public static Renderable createLineList(List<Vector3f> points){
         var renderable = DrawnObject.create(ObjectBuffers.createPointFloatBuffer(points));
         renderable.setRenderType(DrawnObject.DrawType.LINE_STRIP);
+        return renderable;
+    }
+
+    public static Renderable createLines(List<Vector3f> points){
+        var renderable = DrawnObject.create(ObjectBuffers.createPointFloatBuffer(points));
+        renderable.setRenderType(DrawnObject.DrawType.LINES);
         return renderable;
     }
 
