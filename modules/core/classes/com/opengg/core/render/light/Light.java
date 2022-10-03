@@ -116,16 +116,19 @@ public class Light {
     }
 
     public FloatBuffer getBuffer(){
-        FloatBuffer fb = Allocator.allocFloat(BUFFERSIZE);
+        FloatBuffer fb = Allocator.stackAllocFloat(BUFFERSIZE);
         fb.put(pos.x).put(pos.y).put(pos.z);
         fb.put(1f);
         fb.put(color.x).put(color.y).put(color.z);
         fb.put(1f);
-        fb.put(rot.transform(new Vector3f(0,0,-1)).getBuffer());
+        fb.put(rot.transform(new Vector3f(0,0,-1)).getStackBuffer());
+        Allocator.popStack();
         fb.put(0);
 
-        fb.put(new Matrix4f().translate(pos).rotate(rot).invert().getBuffer());
-        fb.put(perspective.getBuffer());
+        fb.put(new Matrix4f().translate(pos).rotate(rot).invert().getStackBuffer());
+        Allocator.popStack();
+        fb.put(perspective.getStackBuffer());
+        Allocator.popStack();
 
         fb.put(distance);
         fb.put(type);

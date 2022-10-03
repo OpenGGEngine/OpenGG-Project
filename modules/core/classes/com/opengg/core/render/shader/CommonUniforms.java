@@ -83,7 +83,7 @@ public class CommonUniforms {
             ShaderController.setUniform("material.hasem", m.hasemm);
         }else {
             var size = 1+3+3+3+1+1+1+1+1+1;
-            var nextBuffer = Allocator.alloc(size * Float.BYTES);
+            var nextBuffer = Allocator.stackAlloc(size * Float.BYTES);
             nextBuffer.asFloatBuffer()
                     .put((float) m.nsExponent)
                     .put(m.ka.toFloatArray())
@@ -96,6 +96,7 @@ public class CommonUniforms {
                     .put(m.hascolmap ? 1 : 0)
                     .put(m.hasemm ? 1 : 0);
             ShaderController.setUniform("material", nextBuffer);
+            Allocator.popStack();
         }
     }
 
