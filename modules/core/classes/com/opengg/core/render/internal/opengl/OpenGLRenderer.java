@@ -207,6 +207,7 @@ public class OpenGLRenderer implements Renderer {
         var allLights = RenderEngine.getActiveLights();
         for(int i = 0; i < allLights.size(); i++){
             lightBuffer.uploadSubData(allLights.get(i).getBuffer(), i * lightoffset);
+            Allocator.popStack();
         }
         ShaderController.setUniform("numLights", allLights.size());
     }

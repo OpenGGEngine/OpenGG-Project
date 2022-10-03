@@ -474,7 +474,7 @@ public class PlatformWin32GLCanvas implements PlatformGLCanvas {
         if (newCtx == 0L) {
             User32.ReleaseDC(windowHandle, hDC);
             WGL.wglMakeCurrent(currentDc, currentContext);
-            throw new AWTException("Failed to create OpenGL context.");
+            throw new AWTException("Failed to create OpenGL context (OpenGL version " + attribs.majorVersion + "." + attribs.minorVersion + " not supported?)");
         }
         // Make context current for next operations
         WGL.wglMakeCurrent(hDC, newCtx);
