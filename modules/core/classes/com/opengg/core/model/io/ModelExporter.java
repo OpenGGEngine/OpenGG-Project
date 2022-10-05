@@ -5,10 +5,13 @@ import com.opengg.core.model.Material;
 import com.opengg.core.model.Mesh;
 import com.opengg.core.model.Model;
 import com.opengg.core.render.texture.TextureData;
+import com.opengg.core.system.Allocator;
+import org.lwjgl.util.meshoptimizer.MeshOptimizer;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -65,24 +68,38 @@ public class ModelExporter {
         boolean invert = true;
         mesh.getIndexBuffer().rewind();
 
-        while(mesh.getIndexBuffer().remaining() > 0) {
-            if(mesh.isTriStrip() && faces.size() > 0){
-                int vec1 = faces.get(faces.size()-1).v2;
-                int vec2 = faces.get(faces.size()-1).v3;
-                int vec3 = mesh.getIndexBuffer().get();
+        if(mesh.isTriStrip()){
+            int bound = (int) MeshOptimizer.meshopt_unstripifyBound(mesh.getIndexBuffer().limit());
+            IntBuffer newIndices = Allocator.allocInt(bound);
+            int numIndices = (int) MeshOptimizer.meshopt_unstripify(newIndices,mesh.getIndexBuffer(),-1);
+            newIndices = newIndices.slice(0,numIndices);
+            while(newIndices.remaining() > 0){
+                int vec1 = newIndices.get();
+                int vec2 = newIndices.get();
+                int vec3 = newIndices.get();
+                faces.add(new Face(vec1,vec2,vec3));
+            }
+        }else {
 
-                if(vec1 != vec2 && vec2 != vec3 && vec3 != vec1){
+            while (mesh.getIndexBuffer().remaining() > 0) {
+                if (mesh.isTriStrip() && faces.size() > 0) {
+                    int vec1 = faces.get(faces.size() - 1).v2;
+                    int vec2 = faces.get(faces.size() - 1).v3;
+                    int vec3 = mesh.getIndexBuffer().get();
+
+                    if (vec1 != vec2 && vec2 != vec3 && vec3 != vec1) {
+                        faces.add(new Face(vec1, vec2, vec3));
+                    }
+                } else {
+                    int vec1 = mesh.getIndexBuffer().get();
+                    int vec2 = mesh.getIndexBuffer().get();
+                    int vec3 = mesh.getIndexBuffer().get();
+
                     faces.add(new Face(vec1, vec2, vec3));
                 }
-            }else{
-                int vec1 = mesh.getIndexBuffer().get();
-                int vec2 = mesh.getIndexBuffer().get();
-                int vec3 = mesh.getIndexBuffer().get();
 
-                faces.add(new Face(vec1, vec2, vec3));
+                invert = !invert;
             }
-
-            invert = !invert;
         }
 
         mesh.getIndexBuffer().rewind();
