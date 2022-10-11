@@ -34,7 +34,6 @@ module com.opengg.core {
     requires java.compiler;
     requires java.logging;
     requires java.desktop;
-    requires jdk.incubator.foreign;
     
     requires com.opengg.math;
     requires com.opengg.base;

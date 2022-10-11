@@ -6,10 +6,10 @@
 
 package com.opengg.core.model;
 
-import jdk.incubator.foreign.MemorySegment;
-import jdk.incubator.foreign.ResourceScope;
 import org.lwjgl.util.meshoptimizer.MeshOptimizer;
 
+import java.lang.foreign.MemorySegment;
+import java.lang.foreign.MemorySession;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.stream.IntStream;
@@ -20,7 +20,7 @@ import java.util.stream.IntStream;
  */
 public class ModelUtil {
     public static Model autoSimplifyToTargetIndexCount(Model model, int targetIndexCount) {
-        try (var scope = ResourceScope.newConfinedScope()) {
+        try (var scope = MemorySession.openConfined()) {
             var meshes = new ArrayList<Mesh>();
             for (var mesh : model.getMeshes()) {
                 if (mesh.getIndexBuffer().capacity() < targetIndexCount) {

@@ -4,8 +4,6 @@
  * and open the template in the editor.
  */
 module com.opengg.system {
-    requires jdk.incubator.foreign;
-
     requires com.opengg.base;
     requires com.opengg.console;
 
