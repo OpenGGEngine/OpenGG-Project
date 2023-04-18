@@ -36,7 +36,7 @@ public class LightComponent extends Component{
     }
 
     @Override
-    public void onWorldChange(){
+    public void onComponentAdded(){
         getWorld().getRenderEnvironment().addLight(getLight());
     }
 
@@ -51,7 +51,7 @@ public class LightComponent extends Component{
     }
 
     @Override
-    public void finalizeComponent() {
+    public void onComponentRemoved() {
         getWorld().getRenderEnvironment().removeLight(getLight());
     }
 

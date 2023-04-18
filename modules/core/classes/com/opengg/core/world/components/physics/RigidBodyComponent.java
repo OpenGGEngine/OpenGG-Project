@@ -50,7 +50,7 @@ public class RigidBodyComponent extends Component{
     }
 
     @Override
-    public void onWorldChange(){
+    public void onComponentAdded(){
         this.getWorld().getSystem().addObject(entity);
     }
 
@@ -87,7 +87,7 @@ public class RigidBodyComponent extends Component{
     }
 
     @Override
-    public void finalizeComponent(){
+    public void onComponentRemoved(){
         if(this.getWorld() != null)
             this.getWorld().getSystem().removeObject(entity);
     }

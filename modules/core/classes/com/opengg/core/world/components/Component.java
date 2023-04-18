@@ -58,11 +58,8 @@ public abstract class Component{
 
     private boolean serialize = true;
     private boolean updateSerialize = true;
-    private Runnable whenAttachedToWorld = null;
     private final Function<Component, Boolean> parentValidator = (c) -> true;
     protected List<Component> children = Collections.synchronizedList(new ArrayList<>());
-
-    private boolean firstAttachment = true;
 
     static{
         ComponentVarAccessor.register(Component.class,Vector3f.class,"position",(BiConsumer<Component,Vector3f>)Component::setPositionOffset,(Function<Component,Vector3f>)Component::getPositionOffset);
@@ -554,16 +551,33 @@ public abstract class Component{
 
     }
 
-    private void localFinalizeComponent(){
-        for(var comp : children)
-            comp.localFinalizeComponent();
-        this.finalizeComponent();
+    public final void localOnAddComponent(){
+        for(Component c : children) c.localOnAddComponent();
+        onComponentAdded();
+
+        WorldEngine.onComponentAdded(this);
+
+        if(WorldEngine.getCurrent() == this.getWorld() && this.getWorld().isEnabled()) localOnWorldEnable();
     }
 
     /**
-     * Called when a component is removed, override if needed. It should not be called directly
+     * Called when this component is added to a world.
      */
-    public void finalizeComponent(){
+    public void onComponentAdded(){
+    }
+
+    private void localOnRemoveComponent(){
+        for(var comp : children)
+            comp.localOnRemoveComponent();
+        this.onComponentRemoved();
+
+        WorldEngine.onComponentRemoved(this);
+    }
+
+    /**
+     * Called when a component is removed from a world, override if needed. It should not be called directly.
+     */
+    public void onComponentRemoved(){
 
     }
 
@@ -571,9 +585,8 @@ public abstract class Component{
         if (this.getParent() == null) return;
 
         OpenGG.asyncExec(() -> {
-            this.localFinalizeComponent();
             this.getParent().remove(this);
-            WorldEngine.onComponentRemoved(this);
+            this.localOnRemoveComponent();
         });
     }
     /**
@@ -607,12 +620,15 @@ public abstract class Component{
 
         WorldEngine.onComponentMoved(this, parent);
 
-        if(getWorld() != parent.getWorld() && parent.getWorld() != null){
+        if(getWorld() != parent.getWorld() && parent.getWorld() != null) {
+            if (getWorld() != null) {
+                localOnRemoveComponent();
+            }
             this.parent = parent;
-            localOnWorldChange();
+            localOnAddComponent();
+        } else {
+            this.parent = parent;
         }
-
-        this.parent = parent;
 
         regenPos();
         regenRot();
@@ -629,20 +645,6 @@ public abstract class Component{
 
     }
 
-    public final void localOnWorldChange(){
-        for(Component c : children) c.localOnWorldChange();
-        onWorldChange();
-
-        if(firstAttachment){
-            firstAttachment = false;
-            WorldEngine.onComponentAdded(this);
-        }
-
-        if(WorldEngine.getCurrent() == this.getWorld() && this.getWorld().isEnabled()) localOnWorldEnable();
-        if(whenAttachedToWorld != null){
-            whenAttachedToWorld.run();
-        }
-    }
 
     public final void localOnWorldEnable(){
         for(Component c : children) c.localOnWorldEnable();
@@ -699,21 +701,6 @@ public abstract class Component{
 
     }
 
-    /**
-     * Called when the world of this component is changed, override to do something on world change<br>
-     * Note, this is also called if the parent changes and the parent is in a new world, including the
-     * first time the parent is changed
-     */
-    public void onWorldChange(){
-    }
-
-    /**
-     * Lambda version of {@link #onWorldChange()}
-     * @param onChange Runnable to run on world change
-     */
-    public final void onWorldChange(Runnable onChange){
-        this.whenAttachedToWorld = onChange;
-    }
 
     /**
      * Returns a list containing this component's direct children

@@ -158,7 +158,7 @@ public class FreeFlyComponent extends ControlledComponent implements Actionable{
         rotspeed = stream.readFloat();
         speed = stream.readFloat();
 
-        this.onWorldChange();
+        this.onComponentAdded();
     }
 
     @Override

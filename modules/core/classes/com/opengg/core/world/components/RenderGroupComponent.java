@@ -24,7 +24,12 @@ public class RenderGroupComponent extends Component{
     }
 
     @Override
-    public void finalizeComponent() {
+    public void onComponentAdded() {
+        objects.forEach(obj -> getWorld().getRenderEnvironment().addRenderUnit(obj));
+    }
+
+    @Override
+    public void onComponentRemoved() {
         objects.forEach(obj -> getWorld().getRenderEnvironment().removeRenderUnit(obj));
     }
 }

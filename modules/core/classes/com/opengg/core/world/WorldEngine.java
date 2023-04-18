@@ -28,7 +28,7 @@ public class WorldEngine{
 
     private static final Map<String, World> worlds = new HashMap<>();
     private static final Map<Long, Component> guidMap = new HashMap<>();
-    private static final Map<String, List<Long>> nameToGuid = new HashMap<>();
+    private static final Map<String, Set<Long>> nameToGuid = new HashMap<>();
 
     public static void initialize(){
         WorldEngine.setOnlyActiveWorld(new World());
@@ -60,7 +60,7 @@ public class WorldEngine{
 
     public static void onComponentAdded(Component comp){
         guidMap.put(comp.getGUID(), comp);
-        nameToGuid.computeIfAbsent(comp.getName(), n -> new ArrayList<>()).add(comp.getGUID());
+        nameToGuid.computeIfAbsent(comp.getName(), n -> new HashSet<>()).add(comp.getGUID());
         componentAdditionListeners.forEach(c -> c.accept(comp));
     }
 
@@ -70,14 +70,14 @@ public class WorldEngine{
 
     public static void onComponentRemoved(Component comp){
         guidMap.remove(comp.getGUID());
-        var list =  nameToGuid.get(comp.getName());
+        var nameSet =  nameToGuid.get(comp.getName());
 
-        if (list != null) {
-            if (!list.isEmpty()) {
-                list.remove(comp.getGUID());
+        if (nameSet != null) {
+            if (!nameSet.isEmpty()) {
+                nameSet.remove(comp.getGUID());
             }
 
-            if (list.isEmpty()) {
+            if (nameSet.isEmpty()) {
                 nameToGuid.remove(comp.getName());
             }
         }
