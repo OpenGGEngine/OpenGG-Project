@@ -9,7 +9,7 @@ package com.opengg.core.model;
 import org.lwjgl.util.meshoptimizer.MeshOptimizer;
 
 import java.lang.foreign.MemorySegment;
-import java.lang.foreign.MemorySession;
+import java.lang.foreign.Arena;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.stream.IntStream;
@@ -20,7 +20,7 @@ import java.util.stream.IntStream;
  */
 public class ModelUtil {
     public static Model autoSimplifyToTargetIndexCount(Model model, int targetIndexCount) {
-        try (var scope = MemorySession.openConfined()) {
+        try (var scope = Arena.openConfined()) {
             var meshes = new ArrayList<Mesh>();
             for (var mesh : model.getMeshes()) {
                 if (mesh.getIndexBuffer().capacity() < targetIndexCount) {
@@ -33,21 +33,21 @@ public class ModelUtil {
 
                 if (mesh.isTriStrip()) {
                     var size = MeshOptimizer.meshopt_unstripifyBound(indices.capacity());
-                    var newIndices = MemorySegment.allocateNative(size * Integer.BYTES, scope).asByteBuffer().order(ByteOrder.nativeOrder()).asIntBuffer();
+                    var newIndices = scope.allocate(size * Integer.BYTES).asByteBuffer().order(ByteOrder.nativeOrder()).asIntBuffer();
                     var triListSize = MeshOptimizer.meshopt_unstripify(newIndices, indices, 0);
 
                     indices = newIndices.slice(0, (int) triListSize);
                 }
 
 
-                var vertices = MemorySegment.allocateNative((long) mesh.getVertices().size() * 3 * Float.BYTES, scope).asByteBuffer().order(ByteOrder.nativeOrder()).asFloatBuffer();
+                var vertices = scope.allocate((long) mesh.getVertices().size() * 3 * Float.BYTES).asByteBuffer().order(ByteOrder.nativeOrder()).asFloatBuffer();
 
                 for(var vertex : mesh.getVertices()) {
                     vertices.put(vertex.position.x).put(vertex.position.y).put(vertex.position.z);
                 }
                 vertices.rewind();
 
-                var newIndices = MemorySegment.allocateNative(targetIndexCount * Integer.BYTES, scope).asByteBuffer().order(ByteOrder.nativeOrder()).asIntBuffer();
+                var newIndices = scope.allocate(targetIndexCount * Integer.BYTES).asByteBuffer().order(ByteOrder.nativeOrder()).asIntBuffer();
 
                 var optimizedListSize = MeshOptimizer.meshopt_simplifySloppy(newIndices, indices, vertices, mesh.getVertices().size(), 12, targetIndexCount, 1, null);
 
@@ -55,7 +55,7 @@ public class ModelUtil {
                     var resizedNewIndices = newIndices.slice(0, (int) optimizedListSize);
 
                     var size = MeshOptimizer.meshopt_stripifyBound(optimizedListSize);
-                    var simpifiedStripIndices = MemorySegment.allocateNative(size * Integer.BYTES, scope).asByteBuffer().order(ByteOrder.nativeOrder()).asIntBuffer();
+                    var simpifiedStripIndices = scope.allocate(size * Integer.BYTES).asByteBuffer().order(ByteOrder.nativeOrder()).asIntBuffer();
                     var simplifiedStripSize = MeshOptimizer.meshopt_stripify(simpifiedStripIndices, resizedNewIndices, mesh.getVertices().size(), 0);
 
                     var newIndicesArray = IntStream.range(0, (int) simplifiedStripSize).map(simpifiedStripIndices::get).toArray();
