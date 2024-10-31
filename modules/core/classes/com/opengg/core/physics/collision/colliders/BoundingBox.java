@@ -114,7 +114,11 @@ public class BoundingBox extends PhysicsObject{
             var newRay = new Ray(
                     transform.invert().transform(new Vector4f(ray.pos(), 1.0f)).truncate(),
                     transform.invert().transform(new Vector4f(ray.dir(), 0.0f)).normalize().truncate());
-            return getAABBCollision(newRay);
+            var result = getAABBCollision(newRay);
+            if(result.isPresent()){
+                result = Optional.of(transform.transform(result.get()));
+            }
+            return result;
         }
     }
 
