@@ -25,10 +25,16 @@ public class DDSLoader {
         int linearSize = buffer.getInt();
         buffer.position(28);
         int mipMapCount = buffer.getInt();
+        buffer.position(80);
+        int flags = buffer.getInt();
         buffer.position(84);
         int fourCC = buffer.getInt();
         int numComponents = (fourCC == DXT1)?3:4;
         buffer.position(128);
+
+        if((flags & 0x40) != 0){
+            fourCC = -1;
+        }
         //System.out.println(width + ","+height+","+linearSize+","+mipMapCount);
 
         int bufferSize = mipMapCount > 1 ? linearSize * 2:linearSize;
@@ -41,6 +47,7 @@ public class DDSLoader {
                 switch(fourCC){
                     case DXT3 -> TextureData.TextureDataType.DXT3;
                     case DXT5 -> TextureData.TextureDataType.DXT5;
+                    case -1 -> TextureData.TextureDataType.NORMAL;
                     default-> TextureData.TextureDataType.DXT1;
                 }
         );
@@ -66,6 +73,26 @@ public class DDSLoader {
             int width = tempBuf.position(12).getInt();
             int linearSize = tempBuf.position(16).getInt();
             int mipMapCount = tempBuf.position(24).getInt();
+
+
+            int flags = tempBuf.position(76).getInt();
+
+            if((flags & 0x40) != 0){
+                int bitCount = tempBuf.position(84).getInt();
+                int rBitMask= tempBuf.position(88).getInt();
+                int gBitMask = tempBuf.position(92).getInt();
+                int bBitMask = tempBuf.position(96).getInt();
+                int aBitMask = tempBuf.position(100).getInt();
+
+                ByteBuffer buffer = Allocator.alloc(10).put((byte)0).rewind();
+
+                TextureData data = new TextureData(width, height, 4, buffer, null, path,
+                        TextureData.TextureDataType.NORMAL
+                );
+                data.setMipMapCount(mipMapCount);
+                return data;
+            }
+
             int fourCC = tempBuf.position(80).getInt();
             int numComponents = (fourCC == DXT1)?3:4;
             Allocator.popStack();
