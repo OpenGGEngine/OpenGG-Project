@@ -12,4 +12,5 @@ package com.opengg.core.io.input.keyboard;
  */
 public interface IKeyboardHandler {
     boolean isKeyDown(int key);
+    void resetKeyStates();
 }

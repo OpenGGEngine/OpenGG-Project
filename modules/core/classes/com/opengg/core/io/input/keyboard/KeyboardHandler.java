@@ -6,6 +6,8 @@
 
 package com.opengg.core.io.input.keyboard;
 
+import java.util.Arrays;
+
 /**
  *
  * @author Javier
@@ -18,5 +20,9 @@ public class KeyboardHandler implements IKeyboardHandler{
     public boolean isKeyDown(int key) {
         return keys[key];
     }
-    
+
+    @Override
+    public void resetKeyStates() {
+        Arrays.fill(keys,false);
+    }
 }

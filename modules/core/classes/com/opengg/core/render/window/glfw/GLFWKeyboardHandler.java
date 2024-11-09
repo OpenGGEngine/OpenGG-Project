@@ -8,6 +8,9 @@ package com.opengg.core.render.window.glfw;
 import com.opengg.core.io.input.keyboard.IKeyboardHandler;
 import com.opengg.core.io.input.keyboard.KeyboardController;
 import org.lwjgl.glfw.GLFWKeyCallback;
+
+import java.util.Arrays;
+
 import static org.lwjgl.glfw.GLFW.*;
 
 public class GLFWKeyboardHandler extends GLFWKeyCallback implements IKeyboardHandler {
@@ -31,5 +34,10 @@ public class GLFWKeyboardHandler extends GLFWKeyCallback implements IKeyboardHan
 	public boolean isKeyDown(int keycode) {
 		return keys[keycode];
 	}
-	
+
+    @Override
+    public void resetKeyStates() {
+        Arrays.fill(keys,false);
+    }
+
 }

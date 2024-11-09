@@ -52,6 +52,10 @@ public class KeyboardController {
     public static void setHandler(IKeyboardHandler handler){
         KeyboardController.handler = handler;
     }
+
+    public static void resetKeyStates(){
+        KeyboardController.handler.resetKeyStates();
+    }
     
     public static boolean isKeyPressed(int key){
         return handler.isKeyDown(key);
