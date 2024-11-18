@@ -47,4 +47,9 @@ public class GLFWMousePositionHandler extends GLFWCursorPosCallback implements M
         return getPos();
     }
 
+    @Override
+    public Vector2f getDeltaPos() {
+        return new Vector2f(0);
+    }
+
 }

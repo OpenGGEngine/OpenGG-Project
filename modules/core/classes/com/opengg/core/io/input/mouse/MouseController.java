@@ -144,6 +144,10 @@ public class MouseController {
         return poshandler.getPos();
     }
 
+    public static Vector2f getDeltaPos(){
+        return poshandler.getDeltaPos();
+    }
+
     public static Vector2f getInScreenspace(){
         var invertedPos = poshandler.getPos().divide(new Vector2f(OpenGG.getWindow().getWidth(), OpenGG.getWindow().getHeight()));
         return new Vector2f(invertedPos.x, 1-invertedPos.y);

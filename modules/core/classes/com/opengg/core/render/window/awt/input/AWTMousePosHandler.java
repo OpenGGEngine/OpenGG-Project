@@ -25,6 +25,7 @@ public class AWTMousePosHandler implements MousePositionHandler, MouseMotionList
 
     double x, y;
     private double lockXPos, lockYPos;
+    private double deltaX,deltaY;
 
     private double compatXOffset, compatYOffset;
 
@@ -59,10 +60,17 @@ public class AWTMousePosHandler implements MousePositionHandler, MouseMotionList
         if(mouseLocked && !emulatedLock){
             x += MouseInfo.getPointerInfo().getLocation().x - lockXPos;
             y += MouseInfo.getPointerInfo().getLocation().y - lockYPos;
+
+            deltaX = (MouseInfo.getPointerInfo().getLocation().x - lockXPos);
+            deltaY = (MouseInfo.getPointerInfo().getLocation().y - lockYPos);
+
             robot.mouseMove((int)lockXPos, (int)lockYPos);
         } else if(mouseLocked) { //wayland compat
             x += MouseInfo.getPointerInfo().getLocation().x - compatXOffset;
             y += MouseInfo.getPointerInfo().getLocation().y - compatYOffset;
+
+            deltaX = MouseInfo.getPointerInfo().getLocation().x - compatXOffset;
+            deltaY = MouseInfo.getPointerInfo().getLocation().y - compatYOffset;
 
             compatXOffset = MouseInfo.getPointerInfo().getLocation().x ;
             compatYOffset = MouseInfo.getPointerInfo().getLocation().y;
@@ -97,6 +105,11 @@ public class AWTMousePosHandler implements MousePositionHandler, MouseMotionList
     @Override
     public Vector2f getPos() {
         return new Vector2f((float)x,(float)y);
+    }
+
+    @Override
+    public Vector2f getDeltaPos(){
+        return new Vector2f((float) deltaX, (float) deltaY);
     }
 
     @Override

@@ -17,4 +17,5 @@ public interface MousePositionHandler{
     double getY();
     Vector2f getPos();
     Vector2f getRawPos();
+    Vector2f getDeltaPos();
 }
