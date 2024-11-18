@@ -127,6 +127,105 @@ public class ObjectBuffers {
         return new Buffer[]{d,d2};
     }
 
+    static Buffer[] genArrow() {
+        Vector3f[] points = new Vector3f[]{
+                new Vector3f(-0.872258f,0f,1f),
+                new Vector3f(-0.872258f, 1f, 1f),
+                new Vector3f(-0.872258f,0f,-1f),
+                new Vector3f(-0.872258f, 1f, -1f),
+                new Vector3f(1.127742f, 0.000000f, 0.000000f),
+                new Vector3f(1.127742f, 1.000000f, 0.000000f),
+                new Vector3f(-0.616997f, 1.000000f, 0.000000f),
+                new Vector3f(-0.616997f, 0.000000f, 0.000000f),
+        };
+        Vector3f[] normals = new Vector3f[]{
+                new Vector3f(0.4472f, -0.0000f, -0.8944f),
+                new Vector3f(0.4472f, -0.0000f, 0.8944f),
+                new Vector3f(-0.0000f, -1.0000f, -0.0000f),
+                new Vector3f(-0.0000f, 1.0000f, -0.0000f),
+                new Vector3f(-0.9689f, -0.0000f, -0.2473f),
+                new Vector3f(-0.9689f, -0.0000f, 0.2473f),
+        };
+
+        Vector2f[] texCoords = new Vector2f[]{
+                new Vector2f(0.375000f, 1.000000f),
+                new Vector2f(0.125000f, 0.750000f),
+                new Vector2f(0.375000f, 0.000000f),
+                new Vector2f(0.875000f, 0.750000f),
+                new Vector2f(0.625000f, 0.000000f),
+                new Vector2f(0.625000f, 1.000000f),
+                new Vector2f(0.125000f ,0.500000f),
+                new Vector2f(0.375000f ,0.250000f),
+                new Vector2f(0.875000f ,0.500000f),
+                new Vector2f(0.625000f ,0.250000f),
+                new Vector2f(0.375000f ,0.500000f),
+                new Vector2f(0.375000f ,0.750000f),
+                new Vector2f(0.625000f ,0.750000f),
+                new Vector2f(0.625000f ,0.500000f),
+                new Vector2f(0.875000f ,0.625000f),
+                new Vector2f(0.625000f ,0.125000f),
+                new Vector2f(0.125000f ,0.625000f),
+                new Vector2f(0.375000f ,0.125000f)
+        };
+
+        int[][] indices = new int[][]{
+                new int[]{4,10,1},
+                new int[]{5,11,1},
+                new int[]{3,8,1},
+                new int[]{6,13,2},
+                new int[]{1,1,2},
+                new int[]{5,12,2},
+                new int[]{5,12,3},
+                new int[]{8,17,3},
+                new int[]{3,7,3},
+                new int[]{6,14,4},
+                new int[]{7,15,4},
+                new int[]{2,4,4},
+                new int[]{7,16,5},
+                new int[]{1,3,5},
+                new int[]{2,5,5},
+                new int[]{8,18,6},
+                new int[]{4,10,6},
+                new int[]{3,8,6},
+                new int[]{6,14,1},
+                new int[]{2,6,2},
+                new int[]{1,2,3},
+                new int[]{4,9,4},
+                new int[]{8,18,5},
+                new int[]{7,16,6},
+        };
+
+        FloatBuffer d = Allocator.allocFloat(indices.length*8);
+
+        for(var indexTriplet : indices) {
+            Vector3f position = points[indexTriplet[0]-1];
+            d.put(position.z/2).put(position.y-0.5f).put(position.x/2);
+            Vector3f normal = normals[indexTriplet[2]-1];
+            d.put(normal.x).put(normal.y).put(normal.z);
+            Vector2f texCoord = texCoords[indexTriplet[1]-1];
+            d.put(texCoord.x).put(texCoord.y);
+        }
+
+        IntBuffer d2 = Allocator.allocInt(12*3);
+        d2.put(0).put(1).put(2);
+        d2.put(3).put(4).put(5);
+        d2.put(6).put(7).put(8);
+        d2.put(9).put(10).put(11);
+        d2.put(12).put(13).put(14);
+        d2.put(15).put(16).put(17);
+        d2.put(0).put(18).put(1);
+        d2.put(3).put(19).put(4);
+        d2.put(6).put(20).put(7);
+        d2.put(9).put(21).put(10);
+        d2.put(12).put(22).put(13);
+        d2.put(15).put(23).put(16);
+
+        d.flip();
+        d2.flip();
+
+        return new Buffer[]{d,d2};
+    }
+
     static FloatBuffer createPointFloatBuffer(List<Vector3f> points){
         FloatBuffer f = Allocator.allocFloat(points.size()*8);
         for(var p : points){

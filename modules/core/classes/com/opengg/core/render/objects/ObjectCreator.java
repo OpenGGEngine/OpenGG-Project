@@ -97,6 +97,11 @@ public class ObjectCreator {
         return DrawnObject.create((IntBuffer)b[1], (FloatBuffer)b[0]);
     }
 
+    public static Renderable createArrow(){
+        Buffer[] b = ObjectBuffers.genArrow();
+        return DrawnObject.create((IntBuffer)b[1], b[0]);
+    }
+
     public static Renderable createPointList(List<Vector3f> points){
         var renderable = DrawnObject.create(ObjectBuffers.createPointFloatBuffer(points));
         renderable.setRenderType(DrawnObject.DrawType.POINTS);
