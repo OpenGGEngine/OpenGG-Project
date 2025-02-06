@@ -36,7 +36,7 @@ public class PostProcessController {
         renderable = ObjectCreator.createSquare(new Vector2f(0f,0f), new Vector2f(1f,1f), -0.9f);
 
         buffers.put("output", WindowFramebuffer.getFloatingPointWindowFramebuffer(1));
-        buffers.put("gbuffer2", WindowFramebuffer.getFloatingPointWindowFramebuffer(1));
+        /*buffers.put("gbuffer2", WindowFramebuffer.getFloatingPointWindowFramebuffer(1));
         buffers.put("brightness", WindowFramebuffer.getFloatingPointWindowFramebuffer(1));
         buffers.put("blur", WindowFramebuffer.getFloatingPointWindowFramebuffer(1));
         buffers.put("bloom", WindowFramebuffer.getFloatingPointWindowFramebuffer(1));
@@ -57,7 +57,7 @@ public class PostProcessController {
         RenderStage addBlur = new RenderStage("add",
                 List.of(new RenderStage.InputBuffer("bloom", 0, "Kd"),
                         new RenderStage.InputBuffer("gbuffer", 0, "Ka")), "gbuffer2");
-        addPass("addBlur", addBlur);
+        addPass("addBlur", addBlur);*/
 
         RenderStage hdr = new RenderStage("hdr", List.of(new RenderStage.InputBuffer("gbuffer", 0, "Kd")), "output");
         addPass("hdr", hdr);
